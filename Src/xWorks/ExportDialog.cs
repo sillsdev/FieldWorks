@@ -129,6 +129,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+		private List<ListViewItem> m_exportItems;
+
 		public ExportDialog(Mediator mediator)
 		{
 			m_mediator = mediator;
@@ -181,7 +183,9 @@ namespace SIL.FieldWorks.XWorks
 				m_chkShowInFolder.Checked = true;
 			else
 				m_chkShowInFolder.Checked = false;
-		}
+
+			m_exportItems = new List<ListViewItem>();
+	}
 
 		private void InitFromMainControl(object objCurrentControl)
 		{
@@ -407,7 +411,8 @@ namespace SIL.FieldWorks.XWorks
 			m_areaOrig = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
-			var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
+			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
+			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == "notebook")
 			{
 				if (ft != FxtTypes.kftConfigured)
@@ -457,12 +462,15 @@ namespace SIL.FieldWorks.XWorks
 
 			//if (ItemDisabled((string)m_exportList.SelectedItems[0].Tag))
 			//    return;
+			m_exportItems.Clear();
+			foreach (ListViewItem sel in m_exportList.SelectedItems)
+				m_exportItems.Add(sel);
 			EnsureViewInfo();
 
 			if (!PrepareForExport())
 				return;
 
-			bool fLiftExport = m_exportList.SelectedItems[0].SubItems[2].Text == "lift";
+			bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
 			string sFileName;
 			string sDirectory;
 			if (fLiftExport)
@@ -471,7 +479,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle;	// can't set title !!??
 					dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
-						m_exportList.SelectedItems[0].SubItems[1].Text);
+						m_exportItems[0].SubItems[1].Text);
 					dlg.ShowNewFolderButton = true;
 					dlg.RootFolder = Environment.SpecialFolder.Desktop;
 					dlg.SelectedPath = m_mediator.PropertyTable.GetStringProperty("ExportDir",
@@ -514,7 +522,7 @@ namespace SIL.FieldWorks.XWorks
 				// See FWR-2506.
 				if (m_rgFxtTypes.Count > 0)
 				{
-					string fxtPath = (string)m_exportList.SelectedItems[0].Tag;
+					string fxtPath = (string)m_exportItems[0].Tag;
 					ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 				}
 				else
@@ -529,9 +537,9 @@ namespace SIL.FieldWorks.XWorks
 						using (var dlg = new ExportTranslatedListsDlg())
 						{
 							dlg.Initialize(m_mediator, m_cache,
-								m_exportList.SelectedItems[0].SubItems[1].Text,
-								m_exportList.SelectedItems[0].SubItems[2].Text,
-							m_exportList.SelectedItems[0].SubItems[3].Text);
+								m_exportItems[0].SubItems[1].Text,
+								m_exportItems[0].SubItems[2].Text,
+								m_exportItems[0].SubItems[3].Text);
 							if (dlg.ShowDialog(this) != DialogResult.OK)
 								return;
 							sFileName = dlg.FileName;
@@ -547,9 +555,9 @@ namespace SIL.FieldWorks.XWorks
 						using (SaveFileDialog dlg = new SaveFileDialog())
 						{
 							dlg.AddExtension = true;
-							dlg.DefaultExt = m_exportList.SelectedItems[0].SubItems[2].Text;
-							dlg.Filter = m_exportList.SelectedItems[0].SubItems[3].Text;
-							dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportList.SelectedItems[0].SubItems[1].Text);
+							dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
+							dlg.Filter = m_exportItems[0].SubItems[3].Text;
+							dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
 							dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
 								Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 							if (dlg.ShowDialog(this) != DialogResult.OK)
@@ -620,7 +628,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void DoExport(string outPath, bool fLiftOutput)
 		{
-			string fxtPath = (string)m_exportList.SelectedItems[0].Tag;
+			string fxtPath = (string)m_exportItems[0].Tag;
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			{
@@ -629,7 +637,7 @@ namespace SIL.FieldWorks.XWorks
 					try
 					{
 						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
-							m_exportList.SelectedItems[0].SubItems[0].Text);
+							m_exportItems[0].SubItems[0].Text);
 						progressDlg.Message = xWorksStrings.Exporting_;
 
 						switch (ft.m_ft)
@@ -1024,6 +1032,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!ItemDisabled((string)lvi.Tag))
 				{
 					lvi.Selected = true;
+					m_exportItems.Add(lvi);
 					break;
 				}
 			}
@@ -1563,7 +1572,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool SelectOption(string exportFormat)
 		{
-			foreach (ListViewItem lvi in m_exportList.Items)
+			// LT-12279 selected a user disturbing, different menu item
+			// return m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat));
+			foreach (ListViewItem lvi in
+				m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat)))
+			{
+				if (!ItemDisabled(lvi.Tag.ToString()))
+				{
+					m_exportItems.Insert(0, lvi);
+					return true;
+				}
+				return false;
+			}
+			return false;
+			/* foreach (ListViewItem lvi in m_exportList.Items)
 			{
 				if (lvi.Tag.ToString().Contains(exportFormat))
 				{
@@ -1573,7 +1595,7 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				}
 			}
-			return false;
+			return false; */
 		}
 
 		/// <summary>
