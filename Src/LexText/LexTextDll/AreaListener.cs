@@ -699,7 +699,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			doc.LoadXml(
 				"<menu id=\"PaneBar-ShowHiddenFields-" + toolName + "\" label=\"\">"
 				+ "<item label=\"Show Hidden Fields\" boolProperty=\"ShowHiddenFields-" + toolName + "\""
-				+ " defaultVisible=\"false\" settingsGroup=\"local\"/>"
+				+ " defaultVisible=\"true\" settingsGroup=\"local\"/>"
 				+ "</menu>");
 			return doc.DocumentElement;
 		}

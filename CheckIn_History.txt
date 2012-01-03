@@ -5627,5 +5627,6 @@ GordonM, 21 Dec 2011. Fixed LT-12376 Down arrow crash in Word Cat.
 JohnT, 21 Dec 2011. LT-12340, Failed Send/Receive should report problems
 NaylorJ, 22 Dec 2011. Refactored a poorly named method related to the issue LT-12357
 GordonM, 22 Dec 2011. Fixed LT-12419 so unwanted Insert menu items don't show up in Lists-ReversalIndexCategories.
-LastufkaM LT-12279 Export selection jumps around after I click Export in the Export dialog box.
+LastufkaM, 3 Jan 2012. LT-12279 Export selection jumps around after I click Export in the Export dialog box.
 GordonM, 3 Jan 2012. Fixed a missing "part" problem that Ken found.
+NaylorJ, 3 Jan 2012. Fixed LT-12382, Show Hidden fields will now appear on custom list items.
