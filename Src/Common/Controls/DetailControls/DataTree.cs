@@ -1554,8 +1554,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (wasVisible)
 				Show();
 			watch.Stop();
-			Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
-			previousSlices.Report();
+			// Uncomment this to investigate slice performance or issues with dissappearing slices
+			//Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
+			//previousSlices.Report();
 		}
 
 		protected override void OnControlAdded(ControlEventArgs e)

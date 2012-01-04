@@ -2404,7 +2404,9 @@ namespace SIL.FieldWorks.Common.Controls
 				StringTable stringTbl = null;
 				if (m_mediator != null && m_mediator.HasStringTable)
 					stringTbl = m_mediator.StringTbl;
-				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null)
+				//Check an option if the label matches, or the unaltered label matches (for multiunicode fields)
+				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null ||
+				   XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label, stringTbl) != null)
 				{
 					mi.Checked = true;
 				}
@@ -2639,7 +2641,10 @@ namespace SIL.FieldWorks.Common.Controls
 			StringTable stringTbl = null;
 			if (m_mediator != null && m_mediator.HasStringTable)
 				stringTbl = m_mediator.StringTbl;
-			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl);
+			//set the column to any column in the specs that matches the menu item text
+			// or the unaltered text (for multiunicode fields).
+			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl)
+						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text, stringTbl);
 			bool fRemovingColumn = true;
 			bool fOrderChanged = false;
 			//The column with this label was not found in the current columns
