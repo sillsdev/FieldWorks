@@ -278,7 +278,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_objectsToDeleteWhenNoLongerFocused.Remove(obj);
 				var wf = (WfiWordform) obj; // for now this is the only kind of object we put in the set.
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, wf.DeleteIfSpurious);
+
+				NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor, wf.DeleteIfSpurious);
 			}
 		}
 

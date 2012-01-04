@@ -14,6 +14,7 @@
 using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
@@ -40,9 +41,39 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			base(((UndoStack)actionHandler).UowService.NonUndoableStack)
 		{
 			m_originalHandler = actionHandler;
-			((UndoStack)actionHandler).UowService.SetCurrentStack(m_actionHandler);
+			PrepareForTask();
+		}
 
+		private void PrepareForTask()
+		{
+			((UndoStack)m_actionHandler).UowService.SetCurrentStack(m_actionHandler);
 			m_actionHandler.BeginNonUndoableTask();
+		}
+
+		/// <summary>
+		/// Special Constructor for  task that must be postponed. This is used only during PropChanged.
+		/// </summary>
+		/// <param name="actionHandler"></param>
+		/// <param name="task"></param>
+		private NonUndoableUnitOfWorkHelper(IActionHandler actionHandler, Action task) :
+			base(((UndoStack)actionHandler).UowService.NonUndoableStack)
+		{
+			m_originalHandler = actionHandler; // as in regular constructor
+			m_postponedTask = task; // remember the task we have to do
+			// Arrange to be notified when we can do it
+			((IActionHandlerExtensions)m_actionHandler).PropChangedCompleted += NonUndoableUnitOfWorkHelper_PropChangedCompleted;
+		}
+
+		private Action m_postponedTask;
+
+		void NonUndoableUnitOfWorkHelper_PropChangedCompleted(object sender, bool fromUndoRedo)
+		{
+			// Don't want to be notified again.
+			((IActionHandlerExtensions)m_actionHandler).PropChangedCompleted -= NonUndoableUnitOfWorkHelper_PropChangedCompleted;
+			PrepareForTask();
+			m_postponedTask();
+			NoteSuccessfulCompletion();
+			Dispose();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -80,6 +111,23 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		}
 
 		/// <summary>
+		/// Make SURE this gets done. If we're in a UOW, do it as part of it. If we can start a new UOW, do so and do it.
+		/// If we can't do it right now, do it when the current UOW finishes.
+		/// </summary>
+		/// <param name="actionHandler"></param>
+		/// <param name="task"></param>
+		public static void DoSomehow(IActionHandler actionHandler, Action task)
+		{
+			var uowService = ((UndoStack)actionHandler).UowService;
+			if (uowService.CurrentProcessingState == UnitOfWorkService.FdoBusinessTransactionState.ProcessingDataChanges)
+				task();
+			else if (uowService.CurrentProcessingState == UnitOfWorkService.FdoBusinessTransactionState.ReadyForBeginTask)
+				Do(actionHandler, task);
+			else
+				new NonUndoableUnitOfWorkHelper(actionHandler, task);
+		}
+
+		/// <summary>
 		/// Perform the specified task, making it a non-undoable task in the specified action handler.
 		/// The task will automatically be begun and ended if all goes well, and rolled
 		/// back if an exception is thrown; the exception will then be rethrown.
@@ -89,8 +137,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			using (var undoHelper = new NonUndoableUnitOfWorkHelper(actionHandler))
 			{
 				task();
-				undoHelper.RollBack = false; // task ran successfully, don't roll back.
+				undoHelper.NoteSuccessfulCompletion(); // task ran successfully, don't roll back.
 			}
+		}
+
+		private void NoteSuccessfulCompletion()
+		{
+			RollBack = false;
 		}
 
 		/// <summary>

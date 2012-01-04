@@ -842,7 +842,7 @@ namespace SIL.FieldWorks.XWorks
 				m_rch.Fixup(false);		// no need to recursively update the list!
 			bool fReload = forceSort || m_list.NeedToReloadList();
 			if (fReload)
-				m_list.ReloadList();
+				m_list.ForceReloadList();
 		}
 
 		#endregion
