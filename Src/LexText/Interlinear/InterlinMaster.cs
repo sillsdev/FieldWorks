@@ -398,20 +398,23 @@ namespace SIL.FieldWorks.IText
 			}
 			if (hvoParaAnchor != 0)
 			{
-				var para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvoParaAnchor);
-				iPara = para.IndexInOwner;
-				if (hvoParaAnchor != hvoParaEnd)
-					ichEnd = ichAnchor;
-				if (ichAnchor == -1)
-					ichAnchor = 0;
-				if (ichEnd == -1)
-					ichEnd = 0;
-				if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
+				IStTxtPara para = null;
+				if (Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().TryGetObject(hvoParaAnchor, out para))
 				{
-					// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
-					// FWR-723.
-					iPara = 0;
-					ichAnchor = ichEnd = 0;
+					iPara = para.IndexInOwner;
+					if (hvoParaAnchor != hvoParaEnd)
+						ichEnd = ichAnchor;
+					if (ichAnchor == -1)
+						ichAnchor = 0;
+					if (ichEnd == -1)
+						ichEnd = 0;
+					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
+					{
+						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
+						// FWR-723.
+						iPara = 0;
+						ichAnchor = ichEnd = 0;
+					}
 				}
 			}
 			if (iPara >= 0)
@@ -883,6 +886,9 @@ namespace SIL.FieldWorks.IText
 				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !Clerk.ShouldNotModifyList
 				&& Clerk.Filter == null)
 			{
+				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
+				// We'll get a chance to do it later.
+				Clerk.SuppressSaveOnChangeRecord = true;
 				// first clear the views of their knowledge of the previous text.
 				// otherwise they could crash trying to access information that is no longer valid. (LT-10024)
 				SwitchText(0);

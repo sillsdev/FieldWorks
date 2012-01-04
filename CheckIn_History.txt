@@ -5632,3 +5632,4 @@ GordonM, 3 Jan 2012. Fixed a missing "part" problem that Ken found.
 NaylorJ, 3 Jan 2012. Fixed LT-12382, Show Hidden fields will now appear on custom list items.
 JohnT, 4 Jan 2012. LT-12420, Crash pasting Chinese text into English Reversal
 	Later: LT-12390, Crash on "Word Analysis" pane When jumping from "Interlinear Texts" to "Word Analysis" pane.
+GordonM and JasonN, 4 Jan 2012. Fixed LT-12411 and probably LT-12288 (Jason).
