@@ -5630,3 +5630,4 @@ GordonM, 22 Dec 2011. Fixed LT-12419 so unwanted Insert menu items don't show up
 LastufkaM, 3 Jan 2012. LT-12279 Export selection jumps around after I click Export in the Export dialog box.
 GordonM, 3 Jan 2012. Fixed a missing "part" problem that Ken found.
 NaylorJ, 3 Jan 2012. Fixed LT-12382, Show Hidden fields will now appear on custom list items.
+JohnT, 4 Jan 2012. LT-12420, Crash pasting Chinese text into English Reversal
