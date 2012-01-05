@@ -403,6 +403,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// In case the requested export requires a particular view and we aren't showing it, create a temporary one
 		/// and update the appropriate variables from it.
+		/// If this returns a non-null value, it is a newly created object which must be disposed. (See LT-11066.)
 		/// </summary>
 		Control EnsureViewInfo()
 		{
@@ -465,132 +466,140 @@ namespace SIL.FieldWorks.XWorks
 			m_exportItems.Clear();
 			foreach (ListViewItem sel in m_exportList.SelectedItems)
 				m_exportItems.Add(sel);
-			EnsureViewInfo();
-
-			if (!PrepareForExport())
-				return;
-
-			bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
-			string sFileName;
-			string sDirectory;
-			if (fLiftExport)
+			var mainControl = EnsureViewInfo();
+			try
 			{
-				using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+
+				if (!PrepareForExport())
+					return;
+
+				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
+				string sFileName;
+				string sDirectory;
+				if (fLiftExport)
 				{
-					dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle;	// can't set title !!??
-					dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
-						m_exportItems[0].SubItems[1].Text);
-					dlg.ShowNewFolderButton = true;
-					dlg.RootFolder = Environment.SpecialFolder.Desktop;
-					dlg.SelectedPath = m_mediator.PropertyTable.GetStringProperty("ExportDir",
-						Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-					if (dlg.ShowDialog(this) != DialogResult.OK)
-						return;
-					sDirectory = dlg.SelectedPath;
-				}
-				string sFile = Path.GetFileName(sDirectory);
-				sFileName = Path.Combine(sDirectory, sFile + FwFileExtensions.ksLexiconInterchangeFormat);
-				string sMsg = null;
-				MessageBoxButtons btns = MessageBoxButtons.OKCancel;
-				if (File.Exists(sFileName))
-				{
-					sMsg = xWorksStrings.ksLIFTAlreadyExists;
-					btns = MessageBoxButtons.OKCancel;
-				}
-				else
-				{
-					string[] rgfiles = Directory.GetFiles(sDirectory);
-					if (rgfiles.Length > 0)
+					using (FolderBrowserDialog dlg = new FolderBrowserDialog())
 					{
-						sMsg = xWorksStrings.ksLIFTFolderNotEmpty;
-						btns = MessageBoxButtons.YesNo;
-					}
-				}
-				if (!String.IsNullOrEmpty(sMsg))
-				{
-					using (LiftExportMessageDlg dlg = new LiftExportMessageDlg(sMsg, btns))
-					{
+						dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle; // can't set title !!??
+						dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
+							m_exportItems[0].SubItems[1].Text);
+						dlg.ShowNewFolderButton = true;
+						dlg.RootFolder = Environment.SpecialFolder.Desktop;
+						dlg.SelectedPath = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+							Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 						if (dlg.ShowDialog(this) != DialogResult.OK)
 							return;
+						sDirectory = dlg.SelectedPath;
 					}
-				}
-			}
-			else
-			{
-				FxtType ft;
-				// Note that DiscourseExportDialog doesn't add anything to m_rgFxtTypes.
-				// See FWR-2506.
-				if (m_rgFxtTypes.Count > 0)
-				{
-					string fxtPath = (string)m_exportItems[0].Tag;
-					ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+					string sFile = Path.GetFileName(sDirectory);
+					sFileName = Path.Combine(sDirectory, sFile + FwFileExtensions.ksLexiconInterchangeFormat);
+					string sMsg = null;
+					MessageBoxButtons btns = MessageBoxButtons.OKCancel;
+					if (File.Exists(sFileName))
+					{
+						sMsg = xWorksStrings.ksLIFTAlreadyExists;
+						btns = MessageBoxButtons.OKCancel;
+					}
+					else
+					{
+						string[] rgfiles = Directory.GetFiles(sDirectory);
+						if (rgfiles.Length > 0)
+						{
+							sMsg = xWorksStrings.ksLIFTFolderNotEmpty;
+							btns = MessageBoxButtons.YesNo;
+						}
+					}
+					if (!String.IsNullOrEmpty(sMsg))
+					{
+						using (LiftExportMessageDlg dlg = new LiftExportMessageDlg(sMsg, btns))
+						{
+							if (dlg.ShowDialog(this) != DialogResult.OK)
+								return;
+						}
+					}
 				}
 				else
 				{
-					// Choose a dummy value that will take the default branch of merely choosing
-					// an output file.
-					ft.m_ft = FxtTypes.kftConfigured;
+					FxtType ft;
+					// Note that DiscourseExportDialog doesn't add anything to m_rgFxtTypes.
+					// See FWR-2506.
+					if (m_rgFxtTypes.Count > 0)
+					{
+						string fxtPath = (string) m_exportItems[0].Tag;
+						ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+					}
+					else
+					{
+						// Choose a dummy value that will take the default branch of merely choosing
+						// an output file.
+						ft.m_ft = FxtTypes.kftConfigured;
+					}
+					switch (ft.m_ft)
+					{
+						case FxtTypes.kftTranslatedLists:
+							using (var dlg = new ExportTranslatedListsDlg())
+							{
+								dlg.Initialize(m_mediator, m_cache,
+									m_exportItems[0].SubItems[1].Text,
+									m_exportItems[0].SubItems[2].Text,
+									m_exportItems[0].SubItems[3].Text);
+								if (dlg.ShowDialog(this) != DialogResult.OK)
+									return;
+								sFileName = dlg.FileName;
+								sDirectory = Path.GetDirectoryName(sFileName);
+								m_translationWritingSystems = dlg.SelectedWritingSystems;
+								m_translatedLists = dlg.SelectedLists;
+							}
+							break;
+						case FxtTypes.kftPathway:
+							ProcessPathwayExport();
+							return;
+						default:
+							using (SaveFileDialog dlg = new SaveFileDialog())
+							{
+								dlg.AddExtension = true;
+								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
+								dlg.Filter = m_exportItems[0].SubItems[3].Text;
+								dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
+								dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+									Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+								if (dlg.ShowDialog(this) != DialogResult.OK)
+									return;
+								sFileName = dlg.FileName;
+								sDirectory = Path.GetDirectoryName(sFileName);
+							}
+							break;
+					}
 				}
-				switch (ft.m_ft)
+				if (sDirectory != null)
 				{
-					case FxtTypes.kftTranslatedLists:
-						using (var dlg = new ExportTranslatedListsDlg())
-						{
-							dlg.Initialize(m_mediator, m_cache,
-								m_exportItems[0].SubItems[1].Text,
-								m_exportItems[0].SubItems[2].Text,
-								m_exportItems[0].SubItems[3].Text);
-							if (dlg.ShowDialog(this) != DialogResult.OK)
-								return;
-							sFileName = dlg.FileName;
-							sDirectory = Path.GetDirectoryName(sFileName);
-							m_translationWritingSystems = dlg.SelectedWritingSystems;
-							m_translatedLists = dlg.SelectedLists;
-						}
-						break;
-					case FxtTypes.kftPathway:
-						ProcessPathwayExport();
-						return;
-					default:
-						using (SaveFileDialog dlg = new SaveFileDialog())
-						{
-							dlg.AddExtension = true;
-							dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
-							dlg.Filter = m_exportItems[0].SubItems[3].Text;
-							dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
-							dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
-								Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-							if (dlg.ShowDialog(this) != DialogResult.OK)
-								return;
-							sFileName = dlg.FileName;
-							sDirectory = Path.GetDirectoryName(sFileName);
-						}
-						break;
+					m_mediator.PropertyTable.SetProperty("ExportDir", sDirectory);
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDir", true);
+				}
+				if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
+				{
+					DoExport(sFileName, true);
+				}
+				else
+				{
+					DoExport(sFileName); // Musn't use the 2 parameter version here or overrides get messed up.
+				}
+				if (m_chkShowInFolder.Checked)
+				{
+					OpenExportFolder(sDirectory, sFileName);
+					m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "true");
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+				}
+				else
+				{
+					m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "false");
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
 			}
-			if (sDirectory != null)
+			finally
 			{
-				m_mediator.PropertyTable.SetProperty("ExportDir", sDirectory);
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDir", true);
-			}
-			if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
-			{
-				DoExport(sFileName, true);
-			}
-			else
-			{
-				DoExport(sFileName); // Musn't use the 2 parameter version here or overrides get messed up.
-			}
-			if (m_chkShowInFolder.Checked)
-			{
-				OpenExportFolder(sDirectory, sFileName);
-				m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "true");
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
-			}
-			else
-			{
-				m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "false");
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+				if (mainControl != null)
+					mainControl.Dispose();
 			}
 		}
 
@@ -1641,10 +1650,16 @@ namespace SIL.FieldWorks.XWorks
 			if (SelectOption(type))
 			{
 				Control main = EnsureViewInfo();
-				DoExport(file);
-				ValidXmlFile(file);
-				if(main != null)
-					main.Dispose();
+				try
+				{
+					DoExport(file);
+					ValidXmlFile(file);
+				}
+				finally
+				{
+					if (main != null)
+						main.Dispose();
+				}
 			}
 		}
 
