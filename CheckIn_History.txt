@@ -5635,3 +5635,4 @@ JohnT, 4 Jan 2012. LT-12420, Crash pasting Chinese text into English Reversal
 GordonM and JasonN, 4 Jan 2012. Fixed LT-12411 and probably LT-12288 (Jason).
 NaylorJ, 4 Jan 2012. Fixed LT-11798 fields with multiple writing system possibilities should still work in the quick configure menu now.
 JohnT, 5 Jan 2012. LT-12239, custom list's sub-items not available in bulk edit
+	Later: LT-12248, Unhelpful unnecessary text repositioning when navigating between Free translations
