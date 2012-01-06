@@ -3777,7 +3777,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				return false;
 			}
-			Guid guid = GetGuidForJumpToTool((Command)commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command)commandObject, true, out tool);
 			if (guid != Guid.Empty)
 			{
 				display.Enabled = display.Visible = true;
@@ -3795,7 +3795,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string tool;
-			Guid guid = GetGuidForJumpToTool((Command) commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
@@ -3871,8 +3871,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
+		/// forEnableOnly is true when called from OnDisplayJumpToTool.
 		/// </summary>
-		private Guid GetGuidForJumpToTool(Command cmd, out string tool)
+		private Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
 			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
@@ -3938,7 +3939,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						return owner.Guid;
 					}
-
+					// Not already owned by a notebook record. So there's nothing yet to jump to.
+					// If the user is really doing the jump we need to make it now.
+					// Otherwise we just need to return something non-null to indicate the jump
+					// is possible (though this is not currently used).
+					if (forEnableOnly)
+						return CurrentSlice.Object.Guid;
+					((IText)CurrentSlice.Object).MoveToNotebook(true);
+					return CurrentSlice.Object.Owner.Guid;
 				}
 				else if (tool == "interlinearEdit")
 				{

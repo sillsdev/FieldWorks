@@ -5638,3 +5638,4 @@ JohnT, 5 Jan 2012. LT-12239, custom list's sub-items not available in bulk edit
 	Later: LT-12248, Unhelpful unnecessary text repositioning when navigating between Free translations
 	Later: LT-11066, Trying to "Export" data from "List" area puts "create new entry" icon in Lists area
 RandyR: 5 Jan 2012. Update LiftbridgeCore dll that has new interface, and get LBListener to use it.
+JohnT, 6 Jan 2012. LT-12286, "Show record in Notebook" shown before record link
