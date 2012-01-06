@@ -5641,3 +5641,4 @@ RandyR: 5 Jan 2012. Update LiftbridgeCore dll that has new interface, and get LB
 JohnT, 6 Jan 2012. LT-12286, "Show record in Notebook" shown before record link
 	Later: LT-12435, Restoring to default settings and then clicking on "Gloss" tab leads to crash.
 	Later: LT-12424, Crash after importing *.LIFT file when moving to another entry.
+GordonM, 6 Jan 2012. Fixed LT-11548 so disposed MSAPopupMgr doesn't crash.
