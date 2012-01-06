@@ -199,18 +199,20 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				writer.WriteNode(nodeReader, true);
 		}
 
-		public static SortedDictionary<Guid, byte[]> GetLessorNewbies(Guid currentGuid, SortedDictionary<Guid, byte[]> newbies)
+		public static List<byte[]> GetLessorNewbies(Guid currentGuid, SortedDictionary<Guid, byte[]> newbies)
 		{
-			var results = new SortedDictionary<Guid, byte[]>();
+			var results = new List<byte[]>();
+			var keys = new List<Guid>();
 
-			foreach (var newbieKvp in newbies.Where(newbieKvp => newbieKvp.Key.CompareTo(currentGuid) < 0))
+			foreach (var newbieKvp in newbies.TakeWhile(newbieKvp => newbieKvp.Key.CompareTo(currentGuid) < 0))
 			{
-				results.Add(newbieKvp.Key, newbieKvp.Value);
+				keys.Add(newbieKvp.Key);
+				results.Add(newbieKvp.Value);
 			}
 			// Remove items in results from 'newbies'.
-			foreach (var resultKvp in results)
+			foreach (var key in keys)
 			{
-				newbies.Remove(resultKvp.Key);
+				newbies.Remove(key);
 			}
 
 			return results;

@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 								// Add new items before 'currentGuid', if their guids come before 'currentGuid'.
 								// NB: workItem.Newbies will no longer contain items returned by GetLessorNewbies.
-								foreach (var newbieXml in DataSortingService.GetLessorNewbies(currentGuid, workItem.Newbies).Values)
+								foreach (var newbieXml in DataSortingService.GetLessorNewbies(currentGuid, workItem.Newbies))
 								{
 									DataSortingService.WriteElement(writer,
 										reader.Settings,
