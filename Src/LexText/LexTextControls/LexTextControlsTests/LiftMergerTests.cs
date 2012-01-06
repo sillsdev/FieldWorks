@@ -1256,6 +1256,10 @@ namespace LexTextControlsTests
 					"<form lang=\"en\"><text>This one Palaso handles as of May24/2011</text></form>",
 					"<form lang=\"qaa-x-spec\"><text>Class= LexEntry; Type=MultiUnicode; WsSelector=kwsAnalVerns</text></form>",
 					"</field>",
+					"<field tag=\"CustomFldEntry String\">",
+					"<form lang=\"en\"><text>Check this out</text></form>",
+					"<form lang=\"qaa-x-spec\"><text>Class= LexEntry; Type=String; WsSelector=kwsVern</text></form>",
+					"</field>",
 
 					"<field tag=\"CustmFldSense Int\">",
 					"<form lang=\"en\"><text>Sense Custom Field, Integer</text></form>",
@@ -1377,6 +1381,11 @@ namespace LexTextControlsTests
 				GenDateLiftFormat = "201105232"
 			};
 			VerifyCustomField(obj, customData, m_customFieldEntryIds["CustomFldEntry GenDate"]);
+
+			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+			var stringFlid = m_customFieldEntryIds["CustomFldEntry String"];
+			var wsSpec = mdc.GetFieldWs(stringFlid);
+			Assert.That(wsSpec, Is.EqualTo(WritingSystemServices.kwsVern));
 		}
 
 		private void VerifyCustomFieldsSense(ICmObject obj)

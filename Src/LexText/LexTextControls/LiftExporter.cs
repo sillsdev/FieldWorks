@@ -1217,6 +1217,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// This method was written for LT-12275 because WritingSystemServices.GetMagicWsNameFromId(ws);
 		/// does not return the desired strings for LIFT export.
+		/// Must be consistent with FlexLiftMerger.GetLiftExportMagicWsIdFromName
 		/// </summary>
 		/// <param name="ws">This should be between -1 and -6.</param>
 		/// <returns></returns>
