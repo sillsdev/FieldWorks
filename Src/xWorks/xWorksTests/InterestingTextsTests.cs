@@ -70,6 +70,24 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA), "text not removed still interesting");
 			Assert.IsFalse(testObj.IsInterestingText(removed), "removed text no longer interesting");
 		}
+
+		[Test]
+		public void ReplaceCoreText()
+		{
+			MockTextRepository mockTextRepo = MakeMockTextRepoWithTwoMockTexts();
+			var testObj = new InterestingTextList(m_propertyTable, mockTextRepo, m_mockStTextRepo);
+			var firstStText = testObj.InterestingTexts.First();
+			MockText firstText = firstStText.Owner as MockText;
+			var replacement = new MockStText();
+			testObj.InterestingTextsChanged += TextsChangedHandler;
+			firstText.ContentsOA = replacement;
+			testObj.PropChanged(firstText.Hvo, TextTags.kflidContents, 0, 1, 1);
+
+			VerifyList(CurrentTexts(mockTextRepo),
+				testObj.InterestingTexts, "texts after replace");
+			// Various possibilities could be valid for the arguments...for now just verify we got something.
+			Assert.That(m_lastTextsChangedArgs, Is.Not.Null);
+		}
 		[Test]
 		public void AddAndRemoveScripture()
 		{
@@ -862,6 +880,8 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_contents; }
 			set
 			{
+				if (m_contents != null)
+					((MockStText)m_contents).IsValidObject = false;
 				m_contents = value;
 				if (m_contents != null)
 					((MockCmObject)m_contents).Owner = this;
