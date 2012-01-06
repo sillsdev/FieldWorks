@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using LiftBridgeCore;
@@ -92,7 +90,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				try
 				{
+					// Send repository identifier to Lift Bridge, if we have it.
+					var liftBridgeAsNewInterface = liftBridge as ILiftBridge2;
+					var repoIdentifier = GetIdentifier();
+					if (liftBridgeAsNewInterface != null && repoIdentifier != null)
+						liftBridgeAsNewInterface.RepositoryIdentifier = repoIdentifier;
+
 					liftBridge.DoSendReceiveForLanguageProject(_parentForm, _databaseName);
+
+					// Set repository identifier in new file, but only once.
+					if (liftBridgeAsNewInterface != null && repoIdentifier == null)
+						SetIdentifier(liftBridgeAsNewInterface.RepositoryIdentifier);
 				}
 				finally
 				{
@@ -365,5 +373,42 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		#endregion Helper methods for ILiftBridge event handlers
+
+		private string GetIdentifier()
+		{
+			var langProjGuid = _cache.LanguageProject.Guid.ToString().ToLowerInvariant();
+			var repoIdPathname = Path.Combine(BasePath, langProjGuid + ".repoId");
+			return File.Exists(repoIdPathname) ? File.ReadAllText(repoIdPathname) : null;
+		}
+
+		private static string BasePath
+		{
+			get
+			{
+				return Path.Combine(
+					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+					"LiftBridge");
+			}
+		}
+
+		private void SetIdentifier(string repositoryIdentifier)
+		{
+			var langProjGuid = _cache.LanguageProject.Guid.ToString().ToLowerInvariant();
+			var repoIdPathname = Path.Combine(BasePath, langProjGuid + ".repoId");
+			if (File.Exists(repoIdPathname))
+			{
+				if (File.ReadAllText(repoIdPathname) != repositoryIdentifier)
+				{
+					MessageBox.Show(_parentForm,
+									"There is a problem with the LIFT Bridge repository that was used. It does not match what was expected.",
+									"LIFT Bridge problem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+				// else Do nothing, since the file has expected contents.
+			}
+			else
+			{
+				File.WriteAllText(repoIdPathname, repositoryIdentifier);
+			}
+		}
 	}
 }
