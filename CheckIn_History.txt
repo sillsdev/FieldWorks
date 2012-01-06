@@ -5644,3 +5644,4 @@ JohnT, 6 Jan 2012. LT-12286, "Show record in Notebook" shown before record link
 GordonM, 6 Jan 2012. Fixed LT-11548 so disposed MSAPopupMgr doesn't crash.
 JohnW, 6 Jan 2012. TE-9842: Changed how fwdata file merges in newbies to maintain order to improve performance when many newbies.
 JohnT, 6 Jan 2012. LT-12430, Text is deselected on center of "Texts" column when I import and merge with existing text.
+	Later: LT-12441, When Notebook filtered, clicking a subrecord's field causes browse pane to jump to top most record

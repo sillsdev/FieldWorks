@@ -2294,7 +2294,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			JumpToIndex(m_list.IndexOf(jumpToHvo), suppressFocusChange);
+			var index = m_list.IndexOf(jumpToHvo);
+			if (index < 0)
+				return; // not found (maybe suppressed by filter?)
+			JumpToIndex(index, suppressFocusChange);
 		}
 
 		public void JumpToIndex(int index)
