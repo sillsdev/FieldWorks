@@ -331,12 +331,12 @@ namespace SIL.FieldWorks.IText
 				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord);
+					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord, m_mediator);
 				}
 				else
 				{
 					mark = new InterAreaBookmark(this, m_mediator, Cache);
-					mark.Restore(IndexOfTextRecord);
+					mark.Restore(IndexOfTextRecord, m_mediator);
 					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
 				}
 			}
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.IText
 			}
 			if (iPara >= 0)
 			{
-				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
+				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true, m_mediator);
 				return true;
 			}
 			return false;
@@ -987,7 +987,7 @@ namespace SIL.FieldWorks.IText
 						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
 					}
 
-					mark.Save(point, false, IndexOfTextRecord);
+					mark.Save(point, false, IndexOfTextRecord, m_mediator);
 				}
 			}
 			return hvoRoot;
@@ -1004,7 +1004,7 @@ namespace SIL.FieldWorks.IText
 				InterAreaBookmark mark;
 				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
 				{
-					mark.Restore(IndexOfTextRecord);
+					mark.Restore(IndexOfTextRecord, m_mediator);
 				}
 				else
 				{
