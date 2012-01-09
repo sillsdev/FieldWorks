@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.XWorks
 			this.panel1.Controls.Add(this.m_chkDisplayWsAbbrs);
 			this.panel1.Controls.Add(this.m_chkDisplayData);
 			this.panel1.Controls.Add(this.m_lblPanel);
-			this.panel1.MinimumSize = new System.Drawing.Size(362, 250);
+			this.panel1.MinimumSize = new System.Drawing.Size(362, 324);
 			this.panel1.MaximumSize = new System.Drawing.Size(362, 400);
 			this.panel1.Name = "panel1";
 			//
