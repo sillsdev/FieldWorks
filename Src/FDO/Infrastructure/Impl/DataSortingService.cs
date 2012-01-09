@@ -158,7 +158,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			foreach (var alternativeElement in multiSomethingProperty.Elements())
 			{
 				var ws = alternativeElement.Attribute("ws").Value;
-				sortedAlternativeElements.Add(ws, alternativeElement);
+				if (!sortedAlternativeElements.ContainsKey(ws))
+					sortedAlternativeElements.Add(ws, alternativeElement);
 			}
 
 			multiSomethingProperty.Elements().Remove();
