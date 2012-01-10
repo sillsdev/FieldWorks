@@ -4365,7 +4365,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class LdmlFileBackup
 	{
 		/// <summary>
-		///
+		/// Copy a complete directory, including all contents recursively.
+		/// Everything in out put will be writeable, even if some input files are read-only.
 		/// </summary>
 		/// <param name="sourcePath"></param>
 		/// <param name="targetPath"></param>
@@ -4385,7 +4386,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Copy each file into its new directory.
 			foreach (FileInfo fi in source.GetFiles())
 			{
-				fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+				var destFileName = Path.Combine(target.ToString(), fi.Name);
+				fi.CopyTo(destFileName, true);
+				File.SetAttributes(destFileName, FileAttributes.Normal); // don't want to copy readonly property.
 			}
 
 			// Copy each subdirectory using recursion.

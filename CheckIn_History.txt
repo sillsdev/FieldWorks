@@ -5660,3 +5660,4 @@ TomB"10 Jan 2012. TXL-47, TXL-60, TXL-73, TXL-79, TXL-80 (TomB): Broke question 
 		doesn't deem relevant.
 	TXL-74, TXL-76: Improved the CC table for doing final cleanup of the QTTallBooks.sfm file to eliminate
 		some bugs and inconsistencies.
+JohnT, Jan 2012. LT-12469, "Problem Importing" warning message using Import/Merge From LIFT File
