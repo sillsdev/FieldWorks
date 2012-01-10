@@ -8,21 +8,31 @@
 // </copyright>
 #endregion
 //
-// File: XmlTranslation.cs
+// File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
 using System.Xml.Serialization;
 
 namespace SILUBS.PhraseTranslationHelper
 {
-	#region class XmlTranslation
+	#region class PhraseCustomization
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
-	/// Little class to support XML serialization
+	/// Little class to support XML serialization of customizations (additions/changes/deletions
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	[XmlType("Translation")]
-	public class XmlTranslation
+	[XmlType("PhraseCustomization")]
+	public class PhraseCustomization
 	{
+		#region CustomizationType enumeration
+		public enum CustomizationType
+		{
+			Modification,
+			Deletion,
+			InsertionBefore,
+			AdditionAfter,
+		}
+		#endregion
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the reference.
@@ -38,17 +48,24 @@ namespace SILUBS.PhraseTranslationHelper
 		public string OriginalPhrase { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets or sets the edited/customized phrase.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public string ModifiedPhrase { get; set; }
+		/// --------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets the translation.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public string Translation { get; set; }
+		[XmlAttribute("type")]
+		public CustomizationType Type { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlTranslation"/> class, needed
 		/// for XML serialization.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public XmlTranslation()
+		public PhraseCustomization()
 		{
 		}
 
@@ -57,11 +74,19 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Initializes a new instance of the <see cref="XmlTranslation"/> class.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public XmlTranslation(TranslatablePhrase tp)
+		public PhraseCustomization(TranslatablePhrase tp)
 		{
 			Reference = tp.Reference;
-			OriginalPhrase = tp.PhraseInUse;
-			Translation = tp.Translation;
+			OriginalPhrase = tp.OriginalPhrase;
+			ModifiedPhrase = tp.ModifiedPhrase;
+			if (tp.IsExcluded)
+				Type = CustomizationType.Deletion;
+			else
+			{
+				//if (tp.OriginalPhrase
+				//Type = tp.Translation;
+				Type = CustomizationType.Modification;
+			}
 		}
 	}
 	#endregion

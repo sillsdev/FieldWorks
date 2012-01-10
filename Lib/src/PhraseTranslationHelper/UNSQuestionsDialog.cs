@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -9,10 +9,10 @@
 #endregion
 //
 // File: UNSQuestionsDialog.cs
-// Responsibility: Tom Bogle
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -42,6 +42,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly Action m_helpDelegate;
 		private PhraseTranslationHelper m_helper;
 		private readonly string m_translationsFile;
+		private readonly string m_phraseCustomizationsFile;
 		private readonly string m_phraseSubstitutionsFile;
 		private static readonly string s_unsDataFolder;
 		private readonly string m_defaultLcfFolder;
@@ -183,288 +184,13 @@ namespace SILUBS.PhraseTranslationHelper
 
 		internal GenerateTemplateSettings GenTemplateSettings { get; private set; }
 
-		internal BCVRef GetScrRefOfRow(int iRow)
+		protected TranslatablePhrase CurrentPhrase
 		{
-			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
-			if (string.IsNullOrEmpty(sRef))
-				return null;
-			int ichDash = sRef.IndexOf('-');
-			if (ichDash > 0)
-				sRef = sRef.Substring(0, ichDash);
-			return new BCVRef(sRef);
-		}
-		#endregion
-
-		#region class AnswersAndComments
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the questions from the file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal class AnswersAndComments
-		{
-			private List<string> m_answers;
-			private List<string> m_comments;
-
-			internal void AddAnswer(string answer)
+			get
 			{
-				if (string.IsNullOrEmpty(answer))
-					return;
-				if (m_answers == null)
-					m_answers = new List<string>(1);
-				m_answers.Add(answer);
+				Debug.Assert(dataGridUns.CurrentRow != null, "Caller is responsible for checking dataGridUns.CurrentRow before accessing this property.");
+				return m_helper[dataGridUns.CurrentRow.Index];
 			}
-
-			internal void AddComment(string comment)
-			{
-				if (string.IsNullOrEmpty(comment))
-					return;
-				if (m_comments == null)
-					m_comments = new List<string>(1);
-				m_comments.Add(comment);
-			}
-
-			internal bool HasAnswer
-			{
-				get { return m_answers != null;}
-			}
-
-			internal bool HasComment
-			{
-				get { return m_comments != null; }
-			}
-
-			internal IEnumerable<string> Answers
-			{
-				get
-				{
-					if (m_answers != null)
-						return m_answers;
-					return new List<string>();
-				}
-			}
-
-			internal IEnumerable<string> Comments
-			{
-				get
-				{
-					if (m_comments != null)
-						return m_comments;
-					return new List<string>();
-				}
-			}
-		}
-		#endregion
-
-		#region class QuestionProvider
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the questions from the file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private class QuestionProvider : IEnumerable<TranslatablePhrase>
-		{
-			private readonly string m_sFilename;
-			private readonly Dictionary<string, string> m_sectionHeadText = new Dictionary<string, string>();
-			private bool m_finishedParsingFile = false;
-			private static readonly string s_kSectionHead = @"\rf";
-			private static readonly string s_kRefMarker = @"\tqref";
-			private static readonly string s_kQuestionMarker = @"\bttq";
-			private static readonly string s_kAnswerMarker = @"\tqe";
-			private static readonly string s_kCommentMarker = @"\an";
-			private static readonly List<string> s_categories = new List<string>();
-			private HashSet<int> m_canonicalBookNumbers;
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes the <see cref="QuestionProvider"/> class.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			static QuestionProvider()
-			{
-				s_categories.Add(@"\oh");
-				s_categories.Add(@"\dh");
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="QuestionProvider"/> class.
-			/// </summary>
-			/// <param name="filename">The filename.</param>
-			/// --------------------------------------------------------------------------------
-			internal QuestionProvider(string filename)
-			{
-				m_sFilename = filename;
-			}
-
-			internal static void ParseRefRange(string sReference, out BCVRef startRef, out BCVRef endRef)
-			{
-				startRef = new BCVRef();
-				endRef = new BCVRef();
-				BCVRef.ParseRefRange(sReference, ref startRef, ref endRef);
-			}
-
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Parses the given reference (that could be a verse bridge) and returns a BBBCCCVVV
-			/// integer representing the start and end references.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			private void Parse(string sReference, out int startRef, out int endRef)
-			{
-				BCVRef bcvStartRef, bcvEndRef;
-				ParseRefRange(sReference, out bcvStartRef, out bcvEndRef);
-				startRef = bcvStartRef;
-				endRef = bcvEndRef;
-				if (bcvStartRef.Valid)
-					m_canonicalBookNumbers.Add(bcvStartRef.Book);
-			}
-
-			#region Internal Properties
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets a dictionary that correlates (textual) Scripture references to
-			/// corresponding section head text (note that these are not the section heads in
-			/// the vernacular Scripture but rather from the master question file).
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			internal IDictionary<string, string> SectionHeads
-			{
-				get
-				{
-					if (!m_finishedParsingFile)
-						throw new InvalidOperationException("Cannot access SectionHeads until all TranslatablePhrases have been retrieved");
-					return m_sectionHeadText;
-				}
-			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets an array of canonical book ids for which questions exist.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			internal int[] AvailableBookIds
-			{
-				get
-				{
-					if (!m_finishedParsingFile)
-						throw new InvalidOperationException("Cannot access AvailableBookIds until all TranslatablePhrases have been retrieved");
-					return m_canonicalBookNumbers.ToArray();
-				}
-			}
-			#endregion
-
-			#region IEnumerable<string> Members
-			public IEnumerator<TranslatablePhrase> GetEnumerator()
-			{
-				m_finishedParsingFile = false;
-				m_canonicalBookNumbers = new HashSet<int>();
-
-				// Initialize the ID textbox.
-				TextReader reader = null;
-				int currCat = -1;
-				string currRef = null;
-				string currQuestion = null;
-				AnswersAndComments currAnswersAndComments = new AnswersAndComments();
-				int startRef = 0, endRef = 0, seq = 0;
-				List<int> categoriesAdded = new List<int>(s_categories.Count);
-				int kSectHeadMarkerLen = s_kSectionHead.Length;
-				int kRefMarkerLen = s_kRefMarker.Length;
-				int kQMarkerLen = s_kQuestionMarker.Length;
-				int kAMarkerLen = s_kAnswerMarker.Length;
-				int kCommentMarkerLen = s_kCommentMarker.Length;
-				string sectionHeadText = null;
-				try
-				{
-					reader = new StreamReader(m_sFilename, Encoding.UTF8);
-
-					string sLine;
-					while ((sLine = reader.ReadLine()) != null)
-					{
-						if (sLine.StartsWith(s_kQuestionMarker))
-						{
-							if (currQuestion != null)
-							{
-								yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq++, currAnswersAndComments);
-								currAnswersAndComments = new AnswersAndComments();
-							}
-							currQuestion = sLine.Substring(kQMarkerLen).Trim();
-						}
-						else if (sLine.StartsWith(s_kAnswerMarker))
-						{
-							currAnswersAndComments.AddAnswer(sLine.Substring(kAMarkerLen).Trim());
-						}
-						else if (sLine.StartsWith(s_kCommentMarker))
-						{
-							currAnswersAndComments.AddComment(sLine.Substring(kCommentMarkerLen).Trim());
-						}
-						else
-						{
-							if (currQuestion != null)
-							{
-								yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq++, currAnswersAndComments);
-								currQuestion = null;
-								currAnswersAndComments = new AnswersAndComments();
-							}
-
-							if (sLine.StartsWith(s_kRefMarker))
-							{
-								currRef = sLine.Substring(kRefMarkerLen).Trim();
-								if (sectionHeadText != null)
-								{
-									m_sectionHeadText[currRef] = sectionHeadText;
-									sectionHeadText = null;
-								}
-								Parse(currRef, out startRef, out endRef);
-								seq = 0;
-							}
-							else if (sLine.StartsWith(s_kSectionHead))
-							{
-								sectionHeadText = sLine.Substring(kSectHeadMarkerLen).Trim();
-							}
-							else
-							{
-								for (int i = 0; i < s_categories.Count; i++)
-								{
-									string category = s_categories[i];
-									if (sLine.StartsWith(category))
-									{
-										if (i == 0)
-											startRef = endRef = 0;
-										seq = 0;
-										currCat = i;
-										if (!categoriesAdded.Contains(i))
-										{
-											yield return new TranslatablePhrase(sLine.Substring(category.Length).Trim(),
-												-1, string.Empty,
-												ScrReference.StartOfBible(ScrVers.English).BBCCCVVV,
-												ScrReference.EndOfBible(ScrVers.English).BBCCCVVV, i);
-											categoriesAdded.Add(i);
-										}
-										break;
-									}
-								}
-							}
-						}
-					}
-					if (currQuestion != null)
-						yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq, currAnswersAndComments);
-				}
-				finally
-				{
-					if (reader != null)
-						reader.Close();
-					m_finishedParsingFile = true;
-				}
-			}
-			#endregion
-
-			#region IEnumerable Members
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return GetEnumerator();
-			}
-			#endregion
 		}
 		#endregion
 
@@ -536,14 +262,26 @@ namespace SILUBS.PhraseTranslationHelper
 				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-			m_questionsFilename = settings.QuestionsFile;
-			if (!File.Exists(m_questionsFilename))
+			m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
+			string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
+				Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
+			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
+			FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
+			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
+
+			if (!finfoXmlQuestions.Exists ||
+				(finfoSfmQuestions.Exists && finfoXmlQuestions.CreationTimeUtc < finfoSfmQuestions.CreationTimeUtc) ||
+				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
 			{
-				MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
-				return;
+				if (!finfoSfmQuestions.Exists)
+					MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
+				if (!finfoAlternatives.Exists)
+					alternativesFilename = null;
+				QuestionSfmFileAccessor.Generate(settings.QuestionsFile, alternativesFilename, m_questionsFilename);
 			}
 
 			m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
+			m_phraseCustomizationsFile = Path.Combine(s_unsDataFolder, string.Format("Question Customizations - {0}.xml", projectName));
 			m_phraseSubstitutionsFile = Path.Combine(s_unsDataFolder, string.Format("Phrase substitutions - {0}.xml", projectName));
 			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
 			KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
@@ -652,7 +390,7 @@ namespace SILUBS.PhraseTranslationHelper
 			switch (e.ColumnIndex)
 			{
 				case 0: e.Value = m_helper[e.RowIndex].Reference; break;
-				case 1: e.Value = m_helper[e.RowIndex].OriginalPhrase; break;
+				case 1: e.Value = m_helper[e.RowIndex].PhraseInUse; break;
 				case 2: e.Value = m_helper[e.RowIndex].Translation; break;
 				case 3: e.Value = m_helper[e.RowIndex].HasUserTranslation; break;
 				case 4: e.Value = m_helper[e.RowIndex].Parts; break;
@@ -708,7 +446,7 @@ namespace SILUBS.PhraseTranslationHelper
 			switch (iClickedCol)
 			{
 				case 0: m_helper.Sort(PhraseTranslationHelper.SortBy.Reference, sortAscending); break;
-				case 1: m_helper.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, sortAscending); break;
+				case 1: m_helper.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, sortAscending); break;
 				case 2: m_helper.Sort(PhraseTranslationHelper.SortBy.Translation, sortAscending); break;
 				case 3: m_helper.Sort(PhraseTranslationHelper.SortBy.Status, sortAscending); break;
 				case 4: m_helper.Sort(PhraseTranslationHelper.SortBy.Default, sortAscending); break;
@@ -737,7 +475,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (dataGridUns.CurrentRow != null && dataGridUns.CurrentCell != null)
 			{
-				m_currentPhrase = m_helper[dataGridUns.CurrentRow.Index];
+				m_currentPhrase = CurrentPhrase;
 				m_iCurrentColumn = dataGridUns.CurrentCell.ColumnIndex;
 			}
 		}
@@ -786,7 +524,7 @@ namespace SILUBS.PhraseTranslationHelper
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
 
-			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter);
+			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter, mnuViewExcludedQuestions.Checked);
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 
 			if (m_currentPhrase != null)
@@ -888,8 +626,15 @@ namespace SILUBS.PhraseTranslationHelper
 			EnsureDataFolderExists();
 			XmlSerializationHelper.SerializeToFile(m_translationsFile,
 				(from translatablePhrase in m_helper.UnfilteredPhrases
-				 where translatablePhrase.HasUserTranslation
-				 select new XmlTranslation(translatablePhrase)).ToList());
+				where translatablePhrase.HasUserTranslation
+				select new XmlTranslation(translatablePhrase)).ToList());
+			List<PhraseCustomization> customizations = (from translatablePhrase
+				in m_helper.UnfilteredPhrases
+				where translatablePhrase.IsCustomized
+				select new PhraseCustomization(translatablePhrase)).ToList();
+			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
+				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
+
 			m_lastSaveTime = DateTime.Now;
 			SaveNeeded = false;
 		}
@@ -1035,20 +780,20 @@ namespace SILUBS.PhraseTranslationHelper
 							}
 
 							sw.WriteLine("<p class=\"question\">" +
-								(phrase.HasUserTranslation ? phrase.Translation : phrase.OriginalPhrase).Normalize(NormalizationForm.FormC) + "</p>");
+								(phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseInUse).Normalize(NormalizationForm.FormC) + "</p>");
 
 							sw.WriteLine("<div class=\"extras\" lang=\"en\">");
 							if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation)
-								sw.WriteLine("<p class=\"questionbt\">" + phrase.OriginalPhrase.Normalize(NormalizationForm.FormC) + "</p>");
-							AnswersAndComments answersAndComments = (AnswersAndComments)phrase.AdditionalInfo[0];
-							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.HasAnswer)
+								sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseInUse.Normalize(NormalizationForm.FormC) + "</p>");
+							Question answersAndComments = (Question)phrase.AdditionalInfo[0];
+							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
 							{
 								foreach (string answer in answersAndComments.Answers)
 									sw.WriteLine("<p class=\"answer\">" + answer.Normalize(NormalizationForm.FormC) + "</p>");
 							}
-							if (dlg.m_chkIncludeComments.Checked && answersAndComments.HasComment)
+							if (dlg.m_chkIncludeComments.Checked && answersAndComments.Notes != null)
 							{
-								foreach (string comment in answersAndComments.Comments)
+								foreach (string comment in answersAndComments.Notes)
 									sw.WriteLine("<p class=\"comment\">" + comment.Normalize(NormalizationForm.FormC) + "</p>");
 							}
 							sw.WriteLine("</div>");
@@ -1134,7 +879,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void phraseSubstitutionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (PhraseSubstitutionsDlg dlg = new PhraseSubstitutionsDlg(m_phraseSubstitutions,
-				m_helper.Phrases.Select(p => p.OriginalPhrase), dataGridUns.CurrentRow.Index))
+				m_helper.Phrases.Select(p => p.PhraseInUse), dataGridUns.CurrentRow.Index))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -1202,7 +947,10 @@ namespace SILUBS.PhraseTranslationHelper
 			if (btnSendScrReferences.Checked)
 				SendScrReference(e.RowIndex);
 
-			m_normalRowHeight = dataGridUns.Rows[e.RowIndex].Height;
+			DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
+			row.ReadOnly = m_helper[e.RowIndex].IsExcluded;
+
+			m_normalRowHeight = row.Height;
 			dataGridUns.AutoResizeRow(e.RowIndex);
 		}
 
@@ -1238,6 +986,64 @@ namespace SILUBS.PhraseTranslationHelper
 					iNewFirstRow++;
 				if (iNewFirstRow < dataGridUns.RowCount)
 					dataGridUns.FirstDisplayedScrollingRowIndex = iNewFirstRow;
+			}
+		}
+
+		private void mnuIncludeOrExcludeQuestion_Click(object sender, EventArgs e)
+		{
+			if (dataGridUns.CurrentRow == null)
+				return;
+
+			TranslatablePhrase phrase = CurrentPhrase;
+			string reference = phrase.Reference;
+			string question = phrase.PhraseInUse;
+			int iCol = dataGridUns.CurrentCell.ColumnIndex;
+			phrase.IsExcluded = (sender == mnuExcludeQuestion);
+			phrase = null;
+			Reload();
+			int iRow = m_helper.FindPhrase(reference, question);
+			if (iRow < 0)
+				iRow = 0;
+			dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+		}
+
+		private void mnuEditQuestion_Click(object sender, EventArgs e)
+		{
+			TranslatablePhrase phrase = CurrentPhrase;
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase))
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					phrase.ModifiedPhrase = dlg.ModifiedPhrase;
+					Reload();
+				}
+			}
+		}
+
+		private void dataGridUns_RowContextMenuStripNeeded(object sender, DataGridViewRowContextMenuStripNeededEventArgs e)
+		{
+			e.ContextMenuStrip = (m_helper[e.RowIndex].Category == -1) ? null : dataGridContextMenu;
+		}
+
+		private void dataGridContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			bool fExcluded = CurrentPhrase.IsExcluded;
+			mnuExcludeQuestion.Visible = !fExcluded;
+			mnuIncludeQuestion.Visible = fExcluded;
+			mnuEditQuestion.Enabled = !fExcluded;
+		}
+
+		private void dataGridUns_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+		{
+			if (m_helper[e.RowIndex].IsExcluded)
+				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightCoral;
+		}
+
+		private void dataGridUns_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+			{
+				dataGridUns.CurrentCell = dataGridUns.Rows[e.RowIndex].Cells[e.ColumnIndex];
 			}
 		}
 
@@ -1408,6 +1214,22 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the Scripture reference of the row corresponding to the given index.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private BCVRef GetScrRefOfRow(int iRow)
+		{
+			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
+			if (string.IsNullOrEmpty(sRef))
+				return null;
+			int ichDash = sRef.IndexOf('-');
+			if (ichDash > 0)
+				sRef = sRef.Substring(0, ichDash);
+			return new BCVRef(sRef);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Ensures the data folder exists.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1429,7 +1251,15 @@ namespace SILUBS.PhraseTranslationHelper
 			if (e != null)
 				MessageBox.Show(e.ToString(), Text);
 
-			QuestionProvider qp = new QuestionProvider(m_questionsFilename);
+			List<PhraseCustomization> customizations = null;
+			if (File.Exists(m_phraseCustomizationsFile))
+			{
+				customizations = XmlSerializationHelper.DeserializeFromFile<List<PhraseCustomization>>(m_phraseCustomizationsFile, out e);
+				if (e != null)
+					MessageBox.Show(e.ToString());
+			}
+
+			QuestionProvider qp = new QuestionProvider(m_questionsFilename, customizations);
 			m_helper = new PhraseTranslationHelper(qp, m_keyTerms, rules, m_phraseSubstitutions);
 			m_helper.KeyTermRenderingRulesFile = Path.Combine(s_unsDataFolder, string.Format("Term rendering selection rules - {0}.xml", m_projectName));
 			m_sectionHeadText = qp.SectionHeads;
@@ -1438,15 +1268,13 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_translationsFile, out e);
 				if (e != null)
-				{
 					MessageBox.Show(e.ToString());
-				}
 				else
 				{
 					foreach (XmlTranslation unsTranslation in translations)
 					{
 						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.OriginalPhrase);
-						if (phrase != null) // unlikely, but an happen if master list is modified
+						if (phrase != null && !phrase.IsExcluded)
 							phrase.Translation = unsTranslation.Translation;
 					}
 				}
@@ -1630,7 +1458,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
 			BCVRef bcvStartRef, bcvEndRef;
-			QuestionProvider.ParseRefRange(sRef, out bcvStartRef, out bcvEndRef);
+			QuestionSfmFileAccessor.ParseRefRange(sRef, out bcvStartRef, out bcvEndRef);
 			return reference >= bcvStartRef && reference <= bcvEndRef;
 		}
 
@@ -1666,10 +1494,10 @@ namespace SILUBS.PhraseTranslationHelper
 				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
 				return;
 			}
-			AnswersAndComments answersAndComments = (AnswersAndComments)addlInfo[0];
+			Question answersAndComments = (Question)addlInfo[0];
 			PopulateAnswerOrCommentLabel(answersAndComments.Answers, m_lblAnswerLabel,
 				m_lblAnswers, Properties.Resources.kstidAnswersLabel);
-			PopulateAnswerOrCommentLabel(answersAndComments.Comments, m_lblCommentLabel,
+			PopulateAnswerOrCommentLabel(answersAndComments.Notes, m_lblCommentLabel,
 				m_lblComments, Properties.Resources.kstidCommentsLabel);
 		}
 
@@ -1687,7 +1515,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private static void PopulateAnswerOrCommentLabel(IEnumerable<string> details,
 			Label label, Label contents, string sLabelMultiple)
 		{
-			label.Visible = contents.Visible = details.Any();
+			label.Visible = contents.Visible = details != null;
 			if (label.Visible)
 			{
 				label.Show();

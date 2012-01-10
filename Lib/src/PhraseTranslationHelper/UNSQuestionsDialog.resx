@@ -125,13 +125,19 @@
 	<value>228, 22</value>
   </data>
   <data name="mnuViewDebugInfo.Text" xml:space="preserve">
-	<value>Generated Translation Details</value>
+	<value>&amp;Generated Translation Details</value>
+  </data>
+  <metadata name="toolStripSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
+	<value>6, 25</value>
   </data>
   <data name="mnuViewAnswers.Size" type="System.Drawing.Size, System.Drawing">
 	<value>228, 22</value>
   </data>
   <data name="mnuViewAnswers.Text" xml:space="preserve">
-	<value>Answers and Comments</value>
+	<value>&amp;Answers and Comments</value>
   </data>
   <metadata name="m_colReference.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
@@ -205,7 +211,40 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;dataGridUns.ZOrder" xml:space="preserve">
-	<value>0</value>
+	<value>1</value>
+  </data>
+  <metadata name="dataGridContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>108, 27</value>
+  </metadata>
+  <data name="mnuExcludeQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>165, 22</value>
+  </data>
+  <data name="mnuExcludeQuestion.Text" xml:space="preserve">
+	<value>E&amp;xclude Question</value>
+  </data>
+  <data name="mnuIncludeQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>165, 22</value>
+  </data>
+  <data name="mnuIncludeQuestion.Text" xml:space="preserve">
+	<value>&amp;Include Question</value>
+  </data>
+  <data name="mnuIncludeQuestion.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="mnuEditQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>165, 22</value>
+  </data>
+  <data name="mnuEditQuestion.Text" xml:space="preserve">
+	<value>&amp;Edit Question...</value>
+  </data>
+  <data name="dataGridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
+	<value>166, 70</value>
+  </data>
+  <data name="&gt;&gt;dataGridContextMenu.Name" xml:space="preserve">
+	<value>dataGridContextMenu</value>
+  </data>
+  <data name="&gt;&gt;dataGridContextMenu.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="m_mainMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>3, 3</value>
@@ -347,6 +386,15 @@
   <data name="mnuViewBiblicalTermsPane.Text" xml:space="preserve">
 	<value>&amp;Biblical Terms Pane</value>
   </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+	<value>225, 6</value>
+  </data>
+  <data name="mnuViewExcludedQuestions.Size" type="System.Drawing.Size, System.Drawing">
+	<value>228, 22</value>
+  </data>
+  <data name="mnuViewExcludedQuestions.Text" xml:space="preserve">
+	<value>&amp;Excluded Questions</value>
+  </data>
   <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
 	<value>44, 20</value>
   </data>
@@ -405,7 +453,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_mainMenu.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>4</value>
   </data>
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>3, 27</value>
@@ -500,12 +548,6 @@
   <data name="lblFilterIndicator.Text" xml:space="preserve">
 	<value>Unfiltered</value>
   </data>
-  <metadata name="toolStripSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-	<value>6, 25</value>
-  </data>
   <data name="lblRemainingWork.Size" type="System.Drawing.Size, System.Drawing">
 	<value>169, 22</value>
   </data>
@@ -534,7 +576,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>3</value>
   </data>
   <data name="m_biblicalTermsPane.AutoScroll" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -573,7 +615,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_biblicalTermsPane.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>2</value>
   </data>
   <data name="m_biblicalTermsPane.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
 	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls /&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
@@ -738,7 +780,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_pnlAnswersAndComments.ZOrder" xml:space="preserve">
-	<value>4</value>
+	<value>5</value>
   </data>
   <data name="m_pnlAnswersAndComments.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
 	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblComments" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAnswers" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAnswerLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lblCommentLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
@@ -1029,6 +1071,12 @@
   <data name="&gt;&gt;mnuViewDebugInfo.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
+	<value>toolStripSeparator5</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuViewAnswers.Name" xml:space="preserve">
 	<value>mnuViewAnswers</value>
   </data>
@@ -1064,6 +1112,24 @@
   </data>
   <data name="&gt;&gt;m_colDebugInfo.Type" xml:space="preserve">
 	<value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuExcludeQuestion.Name" xml:space="preserve">
+	<value>mnuExcludeQuestion</value>
+  </data>
+  <data name="&gt;&gt;mnuExcludeQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuIncludeQuestion.Name" xml:space="preserve">
+	<value>mnuIncludeQuestion</value>
+  </data>
+  <data name="&gt;&gt;mnuIncludeQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuEditQuestion.Name" xml:space="preserve">
+	<value>mnuEditQuestion</value>
+  </data>
+  <data name="&gt;&gt;mnuEditQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;fileToolStripMenuItem.Name" xml:space="preserve">
 	<value>fileToolStripMenuItem</value>
@@ -1173,6 +1239,18 @@
   <data name="&gt;&gt;mnuViewBiblicalTermsPane.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
+	<value>toolStripSeparator6</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuViewExcludedQuestions.Name" xml:space="preserve">
+	<value>mnuViewExcludedQuestions</value>
+  </data>
+  <data name="&gt;&gt;mnuViewExcludedQuestions.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;optionsToolStripMenuItem.Name" xml:space="preserve">
 	<value>optionsToolStripMenuItem</value>
   </data>
@@ -1250,12 +1328,6 @@
   </data>
   <data name="&gt;&gt;lblFilterIndicator.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
-	<value>toolStripSeparator5</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblRemainingWork.Name" xml:space="preserve">
 	<value>lblRemainingWork</value>

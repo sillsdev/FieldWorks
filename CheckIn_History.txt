@@ -5651,3 +5651,12 @@ JohnT, 10 Jan 2012. LT-12439, Wrong options shown at top level of "Referenced Co
 	Later: LT-12426, Writing system migration missed in some configuration contexts
 	Later: LT-12421, Configure Dictionary View dialog box, Referenced Complex Forms: "Display each Complex Form indented on a new line"
 		does not forget what is in Surrounding context that is not now needed.
+TomB"10 Jan 2012. TXL-47, TXL-60, TXL-73, TXL-79, TXL-80 (TomB): Broke question processing into two steps to allow
+		for some one-time cleanup/interpretation of alternate forms and embedded verse numbers. A generated
+		XML form is then used for subsequent access. The alternate forms of the question are available to
+		the user in the new Modify Question dialog box, and there is a process (that includes looking at
+		manually-determined alternate forms) to generate all the distinct alternative forms of questions
+		that have alternate and/or optional words/phrases. Added ability to exclude questions that the user
+		doesn't deem relevant.
+	TXL-74, TXL-76: Improved the CC table for doing final cleanup of the QTTallBooks.sfm file to eliminate
+		some bugs and inconsistencies.
