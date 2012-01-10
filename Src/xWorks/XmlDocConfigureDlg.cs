@@ -2244,10 +2244,16 @@ namespace SIL.FieldWorks.XWorks
 			ltn.ContentVisible = ltn.Checked;
 			if (m_tbBefore.Visible && m_tbBefore.Enabled)
 				ltn.Before = m_tbBefore.Text;
+			else
+				ltn.Before = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbBetween.Visible && m_tbBetween.Enabled)
 				ltn.Between = m_tbBetween.Text;
+			else
+				ltn.Between = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbAfter.Visible && m_tbAfter.Enabled)
 				ltn.After = m_tbAfter.Text;
+			else
+				ltn.After = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_chkDisplayWsAbbrs.Visible)
 				ltn.ShowWsLabels = m_chkDisplayWsAbbrs.Checked && m_chkDisplayWsAbbrs.Enabled;
 			if (m_cfgSenses.Visible)

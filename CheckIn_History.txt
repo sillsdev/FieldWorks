@@ -5649,3 +5649,5 @@ RandyR: 6 Jan 2012. 'Nuther revision related to Lift Bridge.
 RandyR: 9 Jan 2012. Add hack to data sorter to pick first alternative if there are duplicates in the file.
 JohnT, 10 Jan 2012. LT-12439, Wrong options shown at top level of "Referenced Complex Forms".
 	Later: LT-12426, Writing system migration missed in some configuration contexts
+	Later: LT-12421, Configure Dictionary View dialog box, Referenced Complex Forms: "Display each Complex Form indented on a new line"
+		does not forget what is in Surrounding context that is not now needed.
