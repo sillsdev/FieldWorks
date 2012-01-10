@@ -596,16 +596,11 @@ namespace SIL.FieldWorks.IText
 			// What non-word "choice" ie., translation text or note is on this line?
 			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, SelectedOccurrence.Segment, ws);
 			int levels;
-			SelLevInfo noteLevel = MakeNoteLevelForASelection(tagTextProp, out levels);
-			var vsli = new SelLevInfo[levels];
-			for (int i = 0; i < 2; i++)
-				vsli[i] = rgvsli[i];
-			if (tagTextProp == NoteTags.kflidContent)
-			{   // shift the indices
-				vsli[2] = vsli[1];
-				vsli[1] = vsli[0];
-				vsli[0] = noteLevel;
-			}
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel; // note or translation line
+			vsli[1] = rgvsli[0]; // segment
+			vsli[2] = rgvsli[1]; // para
 			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
 			TryHideFocusBoxAndUninstall();
 			RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
@@ -629,19 +624,14 @@ namespace SIL.FieldWorks.IText
 			if (annotationFlid == 0)
 				return null;
 			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, segment, ws);
-			int levels;
-			SelLevInfo noteLevel = MakeNoteLevelForASelection(tagTextProp, out levels);
-			var vsli = new SelLevInfo[levels];
-			vsli[0].ihvo = segment.IndexInOwner; // specifies where segment is in para
-			vsli[0].tag = StTxtParaTags.kflidSegments;
-			vsli[1].ihvo = segment.Paragraph.IndexInOwner; // specifies where para is in IStText.
-			vsli[1].tag = StTextTags.kflidParagraphs;
-			if (tagTextProp == NoteTags.kflidContent)
-			{   // shift the indices so the note sequence is at index 0
-				vsli[2] = vsli[1];
-				vsli[1] = vsli[0];
-				vsli[0] = noteLevel;
-			}
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			// notes and translation lines have 3 levels: 2:para, 1:seg, 0:content or self property
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel;  // note or translation line
+			vsli[1].ihvo = segment.IndexInOwner; // specifies where segment is in para
+			vsli[1].tag = StTxtParaTags.kflidSegments;
+			vsli[2].ihvo = segment.Paragraph.IndexInOwner; // specifies where para is in IStText.
+			vsli[2].tag = StTextTags.kflidParagraphs;
 			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
 			var sel = RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
 												0, 0, 0, false, 0, null, true);
@@ -651,21 +641,24 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Sets up the tags for the 0 level of a note selection structure if the tagTextProp
-		/// indicates a note.
+		/// Sets up the tags for the 0 level of a selection of a free translation or note.
+		/// This will be the level "inside" the ones that select the paragraph and segment.
+		/// For a note, we need to select the first note.
+		/// For a free translation, we need to insert the level for the 'self' property
+		/// which the VC inserts to isolate the free translations and make it easier to update them.
 		/// </summary>
 		/// <param name="tagTextProp">The segment or note tag of an annotation to be selected.</param>
-		/// <param name="levels">Set to the right number of levels for the slection structure.</param>
-		/// <returns>The level information for a note, or all zeros.</returns>
-		static private SelLevInfo MakeNoteLevelForASelection(int tagTextProp, out int levels)
+		private SelLevInfo MakeInnerLevelForFreeformSelection(int tagTextProp)
 		{
-			levels = 2;
 			var noteLevel = new SelLevInfo();
+			noteLevel.ihvo = 0;
 			if (tagTextProp == NoteTags.kflidContent)
 			{
-				levels = 3;
-				noteLevel.ihvo = 0;
 				noteLevel.tag = SegmentTags.kflidNotes;
+			}
+			else
+			{
+				noteLevel.tag = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 			}
 			return noteLevel;
 		}
@@ -687,7 +680,7 @@ namespace SIL.FieldWorks.IText
 				case InterlinLineChoices.kflidFreeTrans:
 					tagTextProp = SegmentTags.kflidFreeTranslation;
 					//if (segment.FreeTranslation.StringOrNull(ws) == null)
-					//	tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
+					//    tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
 					break;
 				case InterlinLineChoices.kflidLitTrans:
 					tagTextProp = SegmentTags.kflidLiteralTranslation;
