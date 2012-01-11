@@ -73,11 +73,6 @@ namespace SIL.FieldWorks.XWorks
 			collector.Add(m_rootSite);
 		}
 
-		public override int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.

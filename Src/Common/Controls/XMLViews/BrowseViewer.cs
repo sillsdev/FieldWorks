@@ -3193,11 +3193,16 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Mediator message handling Priority
+		/// When Colleagues are added to the mediator this priority will determine the order that they are called
+		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
+		///
+		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
+		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
+		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
 		/// </summary>
 		public int Priority
 		{
-			get { return (int)ColleaguePriority.Medium; }
+			get { return (int) ColleaguePriority.Medium; }
 		}
 
 		internal Mediator Mediator

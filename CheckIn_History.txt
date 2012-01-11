@@ -5673,3 +5673,5 @@ KenZ, 11 Jan 2012. JohnT fixed interlinear baseline writing system switching to 
 AnnB. 11 Jan 2012  Changed configuration files for adding the Kinyarwanda language pack.
 GordonM, 11 Jan 2012. Fixed LT-12437 so adding a text in Notebook doesn't crash.
 JohnT, 11 Jan 2012. LT-12474, Yellow Crash while clicking on the Delete button in Texts & Words-->Bulk Edit Wordforms Area
+NaylorJ, 11 Jan 2012. LT-12145 Possibly fixed. Was never able to reproduce. Changed default priority for RecordViews to be after RecordClerks
+	Also changed some code which would return null on attempt to find a RecordClerk if there was a Clerk found which had a null Owner.
