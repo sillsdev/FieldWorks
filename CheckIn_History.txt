@@ -5670,3 +5670,4 @@ TomB, 11 Jan 2012. TXL-83: Prevented extraneous section heads in script when ove
 	verse numbers (in parentheses) in their answers.
 	TXL-85: Added keyTermRules.xml to the installed files (no longer a user-specific AppData file).
 KenZ, 11 Jan 2012. JohnT fixed interlinear baseline writing system switching to wrong ws LT-12471.
+AnnB. 11 Jan 2012  Changed configuration files for adding the Kinyarwanda language pack.
