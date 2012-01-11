@@ -686,7 +686,7 @@ namespace SILUBS.PhraseTranslationHelper
 						};
 					}
 
-					List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef)).ToList();
+					List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
 					if (dlg.m_rdoDisplayWarning.Checked)
 					{
 						int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);

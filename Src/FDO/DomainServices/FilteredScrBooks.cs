@@ -506,8 +506,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void GetRefRangeForContiguousBooks(out ScrReference start, out ScrReference end)
 		{
-			start = ScrReference.Empty;
-			end = ScrReference.Empty;
+			start = new ScrReference(0, m_scr.Versification);
+			end = new ScrReference(0, m_scr.Versification);
 			if (BookCount == 0)
 				return;
 

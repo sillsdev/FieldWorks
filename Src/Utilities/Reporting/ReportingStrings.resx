@@ -190,7 +190,7 @@ I want to be able to interlinearize texts faster without having to make choices 
 Suggestion: Add a field to Word Analyses view in which a regular expression can be specified. If the pattern matches the context in which the word appears, that analysis will be chosen as a suggestion. The pattern should include a special marker for where the word itself must appear.</value>
   </data>
   <data name="kstidSendFailed" xml:space="preserve">
-	<value>FLEx was not able to send your message automatically. Please try copying it to the clipboard and sending it yourself.</value>
+	<value>FieldWorks was not able to send your message automatically. Please try copying it to the clipboard and sending it yourself.</value>
   </data>
   <data name="kstidSendFailedCaption" xml:space="preserve">
 	<value>Send Message Failed</value>
