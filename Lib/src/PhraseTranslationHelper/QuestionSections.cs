@@ -61,6 +61,9 @@ namespace SILUBS.PhraseTranslationHelper
 	[XmlType(AnonymousType = true)]
 	public class Category
 	{
+		[XmlAttribute("overview")]
+		public bool IsOverview { get; set; }
+
 		[XmlAttribute("type")]
 		public string Type { get; set; }
 

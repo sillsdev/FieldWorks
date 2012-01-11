@@ -52,6 +52,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
 		private readonly string m_questionsFilename;
+		private readonly string m_keyTermRulesFilename;
 		private DateTime m_lastSaveTime;
 		private readonly List<Substitution> m_phraseSubstitutions;
 		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
@@ -265,6 +266,7 @@ namespace SILUBS.PhraseTranslationHelper
 			m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
 			string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
 				Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
+			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty, "keyTermRules.xml");
 			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
 			FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
 			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
@@ -739,19 +741,20 @@ namespace SILUBS.PhraseTranslationHelper
 						sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
 						sw.WriteLine("<h1 lang=\"en\">" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</h1>");
 						int prevCategory = -1;
-						string prevSectionRef = null;
+						int prevSectionStartRef = -1, prevSectionEndRef = -1;
 						string prevQuestionRef = null;
 						string pendingSectionHead = null;
 
 						foreach (TranslatablePhrase phrase in allPhrasesInRange)
 						{
-							if (phrase.Category == 0 && prevSectionRef != phrase.Reference)
+							if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
 							{
 								if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
 									pendingSectionHead = phrase.Reference;
 								prevCategory = -1;
 							}
-							prevSectionRef = phrase.Reference;
+							prevSectionStartRef = phrase.StartRef;
+							prevSectionEndRef = phrase.EndRef;
 
 							if (!phrase.HasUserTranslation && !dlg.m_rdoUseOriginal.Checked)
 								continue; // skip this question
@@ -1247,7 +1250,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void LoadTranslations()
 		{
 			Exception e;
-			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(Path.Combine(s_unsDataFolder, "keyTermRules.xml"), out e);
+			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
 			if (e != null)
 				MessageBox.Show(e.ToString(), Text);
 

@@ -5666,3 +5666,6 @@ NaylorJ, 10 Jan 2012. LT-12451 Deleting custom fields will now result in all obj
 	made so that configuration settings will remove obsolete settings from old versions.
 TomB, 11 Jan 2012. TXL-80: Fixed script-generation code to take into account excluded questions.
 	TXL-82: Fixed bug when trying to set filter if Te has a non-contiguous set of books filtered.
+TomB, 11 Jan 2012. TXL-83: Prevented extraneous section heads in script when overview questions have embedded
+	verse numbers (in parentheses) in their answers.
+	TXL-85: Added keyTermRules.xml to the installed files (no longer a user-specific AppData file).

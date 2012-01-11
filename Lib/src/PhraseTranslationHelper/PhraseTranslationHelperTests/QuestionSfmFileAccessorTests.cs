@@ -153,8 +153,11 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
 				@"\rf Acts 1:1-5 Introduction to the book.",
-				@"\dh Details",
+				@"\oh Overview",
 				@"\tqref ACT 1.1-5",
+				@"\bttq What information did Luke, the writer of this book, give in this introduction?",
+				@"\tqe Luke reminded his readers that he was about to continue the true story about Jesus and his apostles that Luke had written in his first book. (1)",
+				@"\dh Details",
 				@"\bttq To whom did the writer of Acts address this book?",
 				@"\tqe He addressed this book to Theophilus. (1)",
 				@"\bttq What happened?",
@@ -172,13 +175,25 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", section.Heading);
 			Assert.AreEqual("ACT 1.1-5", section.ScriptureReference);
 
-			Assert.AreEqual(1, section.Categories.Length);
+			Assert.AreEqual(2, section.Categories.Length);
 
 			Category category = section.Categories[0];
+			Assert.AreEqual("Overview", category.Type);
+
+			Assert.AreEqual(1, category.Questions.Length);
+			Question question = category.Questions[0];
+
+			Assert.AreEqual("What information did Luke, the writer of this book, give in this introduction?", question.Text);
+			Assert.IsNull(question.ScriptureReference);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.IsNull(question.Notes);
+			Assert.AreEqual("Luke reminded his readers that he was about to continue the true story about Jesus and his apostles that Luke had written in his first book. (1)", question.Answers[0]);
+
+			category = section.Categories[1];
 			Assert.AreEqual("Details", category.Type);
 
 			Assert.AreEqual(4, category.Questions.Length);
-			Question question = category.Questions[0];
+			question = category.Questions[0];
 
 			Assert.AreEqual("To whom did the writer of Acts address this book?", question.Text);
 			Assert.AreEqual("ACT 1.1", question.ScriptureReference);

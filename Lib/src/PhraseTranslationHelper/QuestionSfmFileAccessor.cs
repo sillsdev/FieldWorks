@@ -137,33 +137,36 @@ namespace SILUBS.PhraseTranslationHelper
 				else if (sLine.StartsWith(s_kAnswerMarker))
 				{
 					string currAnswer = sLine.Substring(kAMarkerLen).Trim();
-					Match match = regexVerseNum.Match(currAnswer);
-					if (match.Success)
+					if (!currCat.IsOverview)
 					{
-						int startVerse = Int32.Parse(match.Result("${startVerse}"));
-						string sEndVerse = match.Result("${endVerse}");
-						int endVerse = string.IsNullOrEmpty(sEndVerse) ? startVerse : Int32.Parse(sEndVerse);
-						BCVRef bcvStart, bcvEnd;
-						if (currQuestion.StartRef > 0)
+						Match match = regexVerseNum.Match(currAnswer);
+						if (match.Success)
 						{
-							bcvStart = new BCVRef(currQuestion.StartRef);
-							bcvEnd = new BCVRef(currQuestion.EndRef);
-							if (startVerse < bcvStart.Verse)
+							int startVerse = Int32.Parse(match.Result("${startVerse}"));
+							string sEndVerse = match.Result("${endVerse}");
+							int endVerse = string.IsNullOrEmpty(sEndVerse) ? startVerse : Int32.Parse(sEndVerse);
+							BCVRef bcvStart, bcvEnd;
+							if (currQuestion.StartRef > 0)
+							{
+								bcvStart = new BCVRef(currQuestion.StartRef);
+								bcvEnd = new BCVRef(currQuestion.EndRef);
+								if (startVerse < bcvStart.Verse)
+									bcvStart.Verse = startVerse;
+								if (endVerse > bcvEnd.Verse)
+									bcvEnd.Verse = endVerse;
+							}
+							else
+							{
+								bcvStart = new BCVRef(currSection.StartRef);
+								bcvEnd = new BCVRef(currSection.EndRef);
 								bcvStart.Verse = startVerse;
-							if (endVerse > bcvEnd.Verse)
 								bcvEnd.Verse = endVerse;
+							}
+							currQuestion.StartRef = bcvStart.BBCCCVVV;
+							currQuestion.EndRef = bcvEnd.BBCCCVVV;
+							currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
+								currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
 						}
-						else
-						{
-							bcvStart = new BCVRef(currSection.StartRef);
-							bcvEnd = new BCVRef(currSection.EndRef);
-							bcvStart.Verse = startVerse;
-							bcvEnd.Verse = endVerse;
-						}
-						currQuestion.StartRef = bcvStart.BBCCCVVV;
-						currQuestion.EndRef = bcvEnd.BBCCCVVV;
-						currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
-							currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
 					}
 					string[] source = currQuestion.Answers;
 					currQuestion.Answers = new string[cAnswers + 1];
@@ -213,24 +216,29 @@ namespace SILUBS.PhraseTranslationHelper
 						currSection.Heading = sLine.Substring(kSectHeadMarkerLen).Trim();
 						currSectionRefSet = false;
 					}
-					else if (sLine.StartsWith(s_kOverviewMarker) || sLine.StartsWith(s_kDetailsMarker))
+					else
 					{
-						if (currentQuestions.Count > 0)
+						bool isOverviewMarker = sLine.StartsWith(s_kOverviewMarker);
+						if (isOverviewMarker || sLine.StartsWith(s_kDetailsMarker))
 						{
-							currCat.Questions = currentQuestions.ToArray();
-							currentQuestions.Clear();
-						}
-						if (currCat.Type != null || currCat.Questions != null)
-						{
-							currCat = new Category();
-							Category[] source = currSection.Categories;
-							currSection.Categories = new Category[cCategories + 1];
-							if (source != null)
-								Array.Copy(source, currSection.Categories, cCategories);
+							if (currentQuestions.Count > 0)
+							{
+								currCat.Questions = currentQuestions.ToArray();
+								currentQuestions.Clear();
+							}
+							if (currCat.Type != null || currCat.Questions != null)
+							{
+								currCat = new Category();
+								Category[] source = currSection.Categories;
+								currSection.Categories = new Category[cCategories + 1];
+								if (source != null)
+									Array.Copy(source, currSection.Categories, cCategories);
 
-							currSection.Categories[cCategories++] = currCat;
+								currSection.Categories[cCategories++] = currCat;
+							}
+							currCat.Type = sLine.Substring(kCategoryMarkerLen).Trim();
+							currCat.IsOverview = isOverviewMarker;
 						}
-						currCat.Type = sLine.Substring(kCategoryMarkerLen).Trim();
 					}
 
 					if (currQuestion != null)

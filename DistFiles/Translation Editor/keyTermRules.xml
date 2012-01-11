@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<KeyTermRules>
+  <KeyTermRule id="ask" rule="MatchForRefOnly">
+	<Alternate name="asks"/>
+	<Alternate name="asked"/>
+	<Alternate name="asking"/>
+  </KeyTermRule>
+  <KeyTermRule id="bless">
+	<Alternate name="blesses"/>
+	<Alternate name="blessed"/>
+	<Alternate name="blessing"/>
+  </KeyTermRule>
+  <KeyTermRule id="call" rule="MatchForRefOnly" />
+  <KeyTermRule id="concern, care, complaint" rule="MatchForRefOnly"/>
+  <KeyTermRule id="say" rule="Exclude" />
+  <KeyTermRule id="castor oil plant (FF 106,107)" rule="Exclude">
+	<Alternate name="castor oil plant" />
+  </KeyTermRule>
+  <KeyTermRule id="to lift up (one's hand, heart, or soul) = to worship, pray" rule="Exclude">
+	<Alternate name="worship"/>
+	<Alternate name="pray"/>
+	<Alternate name="worships"/>
+	<Alternate name="prays"/>
+	<Alternate name="worshipped"/>
+	<Alternate name="prayed"/>
+  </KeyTermRule>
+  <KeyTermRule id="(Lord, LORD, God of) hosts" rule="Exclude">
+	<Alternate name="lord of hosts"/>
+	<Alternate name="god of hosts"/>
+  </KeyTermRule>
+  <KeyTermRule id="Jesus">
+	<Alternate name="Jesus Christ"/>
+  </KeyTermRule>
+  <KeyTermRule id="Christ">
+	<Alternate name="Christ Jesus"/>
+  </KeyTermRule>
+  <KeyTermRule id="so" rule="MatchForRefOnly" />
+  <KeyTermRule id="official" rule="MatchForRefOnly" />
+  <KeyTermRule id="people who are like a flock" rule="Exclude">
+	<Alternate name="flock"/>
+  </KeyTermRule>
+  <KeyTermRule id="people" rule="MatchForRefOnly" />
+  <KeyTermRule id="think" rule="MatchForRefOnly" />
+  <KeyTermRule id="means" rule="MatchForRefOnly" />
+  <KeyTermRule id="plan, purpose, device, scheme" rule="MatchForRefOnly" />
+  <KeyTermRule id="Put" rule="MatchForRefOnly" />
+  <KeyTermRule id="one one who shows favoritism" rule="Exclude">
+	<Alternate name="one who shows favoritism"/>
+  </KeyTermRule>
+  <KeyTermRule id="one who is under an obligation">
+	<Alternate name="debtor"/>
+	<Alternate name="debtors"/>
+	<Alternate name="under obligation"/>
+  </KeyTermRule>
+  <KeyTermRule id="someone who sins against someone else and therefore 'owes' that person" rule="Exclude">
+	<Alternate name="guilty"/>
+	<Alternate name="sinner"/>
+	<Alternate name="sinners"/>
+  </KeyTermRule>
+  <KeyTermRule id="serve">
+	<Alternate name="serves"/>
+  </KeyTermRule>
+  <KeyTermRule id="have" rule="Exclude" />
+  <KeyTermRule id="to be, become guilty" rule="Exclude">
+	<Alternate name="is guilty"/>
+	<Alternate name="was guilty"/>
+	<Alternate name="were guilty"/>
+	<Alternate name="are guilty"/>
+	<Alternate name="became guilty"/>
+	<Alternate name="be guilty"/>
+	<Alternate name="to be guilty"/>
+	<Alternate name="become guilty"/>
+	<Alternate name="to become guilty"/>
+  </KeyTermRule>
+  <KeyTermRule id="speaking" rule="Exclude" />
+  <KeyTermRule id="timothy">
+	<Alternate name="about timothy"/>
+	<Alternate name="for timothy"/>
+	<Alternate name="to timothy"/>
+  </KeyTermRule>
+  <KeyTermRule id="wick" rule="MatchForRefOnly">
+	<Alternate name="linen"/>
+  </KeyTermRule>
+  <KeyTermRule id="name" rule="MatchForRefOnly" />
+  <KeyTermRule id="figurative extension of meaning of 'sword': violence, warfare, death" rule="MatchForRefOnly">
+	<Alternate name="sword"/>
+	<Alternate name="violence"/>
+	<Alternate name="warfare"/>
+	<Alternate name="war"/>
+	<Alternate name="death"/>
+  </KeyTermRule>
+</KeyTermRules>
