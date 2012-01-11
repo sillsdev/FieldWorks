@@ -2525,7 +2525,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_requestedLoadWhileSuppressed)
 					{
 						m_requestedLoadWhileSuppressed = false;
-						ReloadList();
+						ForceReloadList();
 					}
 				}
 			}

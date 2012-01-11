@@ -1997,6 +1997,7 @@ namespace SIL.FieldWorks.Common.Controls
 													}
 												});
 				m_bv.SetListModificationInProgress(false);
+				ResumeRecordListRowChanges(); // need to show the updated list of rows!
 				state.PercentDone = 100;
 				state.Breath();
 			}

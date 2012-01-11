@@ -3883,7 +3883,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_bv.BrowseView.OnRestoreScrollPosition(null);
 
-				if (m_fHiliteWasVisible)
+				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{
 					// If there WAS a highlighted row visible and it is no longer visible, scroll to make it so.
 					IVwSelection newSel = MakeTestRowSelection(m_irow);
