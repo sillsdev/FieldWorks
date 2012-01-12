@@ -38,3 +38,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}")]
 // Format: FwMajorVersion.FwMinorVersion.FwRevision.Days since Jan 1, 2000.Seconds since midnight
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]
+
+[InternalsVisibleTo("SilUtilsTests")]
