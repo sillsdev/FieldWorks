@@ -339,6 +339,7 @@
 	<Compile Include="StTxtParaBldrTests.cs" />
 	<Compile Include="StTxtParaTests.cs" />
 	<Compile Include="StyleInfoTableTests.cs" />
+	<Compile Include="UowHelperTests.cs" />
 	<Compile Include="ValidationTests.cs" />
 	<Compile Include="ValidCharactersTests.cs" />
 	<Compile Include="FwStyleSheetTests.cs" />

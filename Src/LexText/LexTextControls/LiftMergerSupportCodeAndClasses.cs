@@ -1571,11 +1571,38 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (sDef.StartsWith("WsSelector="))
 				{
 					string sValue = sDef.Substring(11);
-					int ws = WritingSystemServices.GetMagicWsIdFromName(sValue);
+					// Do NOT use WritingSystemServices.GetMagicWsIdFromName...that's a different set of names (LT-12275)
+					int ws = GetLiftExportMagicWsIdFromName(sValue);
 					if (ws == 0)
 						ws = GetWsFromStr(sValue);
 					return ws;
 				}
+			}
+			return 0;
+		}
+
+		/// <summary>
+		/// Method MUST be consistent with LiftExporter.GetLiftExportMagicWsNameFromId.
+		/// Change only with great care...this affects how we can import existing LIFT files.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		private int GetLiftExportMagicWsIdFromName(string name)
+		{
+			switch (name)
+			{
+				case "kwsAnal":
+					return WritingSystemServices.kwsAnal;
+				case "kwsVern":
+					return WritingSystemServices.kwsVern;
+				case "kwsAnals":
+					return WritingSystemServices.kwsAnals;
+				case "kwsVerns":
+					return WritingSystemServices.kwsVerns;
+				case "kwsAnalVerns":
+					return WritingSystemServices.kwsAnalVerns;
+				case "kwsVernAnals":
+					return WritingSystemServices.kwsVernAnals;
 			}
 			return 0;
 		}
@@ -4338,7 +4365,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class LdmlFileBackup
 	{
 		/// <summary>
-		///
+		/// Copy a complete directory, including all contents recursively.
+		/// Everything in out put will be writeable, even if some input files are read-only.
 		/// </summary>
 		/// <param name="sourcePath"></param>
 		/// <param name="targetPath"></param>
@@ -4358,7 +4386,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Copy each file into its new directory.
 			foreach (FileInfo fi in source.GetFiles())
 			{
-				fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+				var destFileName = Path.Combine(target.ToString(), fi.Name);
+				fi.CopyTo(destFileName, true);
+				File.SetAttributes(destFileName, FileAttributes.Normal); // don't want to copy readonly property.
 			}
 
 			// Copy each subdirectory using recursion.

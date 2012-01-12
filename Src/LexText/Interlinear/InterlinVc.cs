@@ -58,6 +58,11 @@ namespace SIL.FieldWorks.IText
 		internal const int kfragPossibiltyAnalysisName = 100032;
 		//internal const int kfragEmptyFreeTransPrompt = 100033;
 		public const int kfragSingleInterlinearAnalysisWithLabelsLeftAlign = 100034;
+		/// <summary>
+		/// Bundle of all the freeform annotations, displayed as a fake property of 'this' to reduce
+		/// what we have to regenerate when doing special prompts (Press Enter to ...).
+		/// </summary>
+		private const int kfragFreeformBundle = 100035;
 		// These ones are special: we select one ws by adding its index in to this constant.
 		// So a good-sized range of kfrags after this must be unused for each one.
 		// This one is used for isolated wordforms (e.g., in Words area) using the current list of
@@ -692,9 +697,16 @@ namespace SIL.FieldWorks.IText
 				// from removing it.
 				//vwenv.NoteDependency(new int[] { hvo }, new int[] { ktagSegmentForms }, 1);
 				vwenv.CloseParagraph();
-				// This puts 3 points of margin on the first FF annotation, if any.
-				AddFreeformAnnotations(vwenv, hvo);
+				// We'd get the same visual effect from just calling AddFreeformAnnotations here. But then a regenerate
+				// such as happens when hiding or showing a prompt has to redisplay the whole segment. This initially
+				// makes it lazy, then the lazy stuff gets expanded. In the process we may get undesired scrolling (LT-12248).
+				// So we insert another layer of object, allowing just the freeforms to be regenerated.
+				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				vwenv.AddObjProp(flidSelf, this, kfragFreeformBundle);
 				vwenv.CloseDiv();
+				break;
+			case kfragFreeformBundle:
+				AddFreeformAnnotations(vwenv, hvo);
 				break;
 			case kfragBundle: // One annotated word bundle; hvo is the IAnalysis object.
 				// checking AllowLayout (especially in context of Undo/Redo make/break phrase)
@@ -1220,13 +1232,10 @@ namespace SIL.FieldWorks.IText
 				m_rootsite.RootBox.PropChanged(hvoOld, flidOld, 0, 0, 0);
 			if (m_hvoActiveFreeform != 0)
 			{
-				var seg = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(m_hvoActiveFreeform);
-				var para = (IStTxtPara) seg.Owner;
-				int hvoPara = para.Hvo;
-				int index = para.SegmentsOS.IndexOf(seg);
-				// Pretend the segment affected has been deleted and re-inserted.
+				// Pretend the 'Self' property of the segment has been changed.
 				// This will force it to be re-displayed, with different results now m_hvoActiveFreeform etc are set.
-				m_rootsite.RootBox.PropChanged(hvoPara, StTxtParaTags.kflidSegments, index, 1, 1);
+				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				m_rootsite.RootBox.PropChanged(m_hvoActiveFreeform, flidSelf, 0, 1, 1);
 			}
 			if (helper != null)
 			{

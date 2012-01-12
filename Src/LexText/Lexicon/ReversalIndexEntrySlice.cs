@@ -1251,7 +1251,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					if (m_mapHvoWsRevForm.TryGetValue(key, out tss))
 						return tss;
 					else
-						return null;
+						return TsStrFactoryClass.Create().EmptyString(ws); // do NOT return null!
 				}
 				else
 				{

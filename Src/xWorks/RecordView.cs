@@ -249,8 +249,8 @@ namespace SIL.FieldWorks.XWorks
 				SetTreebarAvailability();
 				AddPaneBar();
 
-				// NB: It is critical that we get added *after* our RecordClerk,
-				// so that it will get messages, for example about a change of cache, before we do.
+				//Historical comments here indicated that the Clerk should be processed by the mediator before the
+				//view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
 				mediator.AddColleague(this);
 				SetupDataContext();
 				// Only if it was just now created should we try to restore from what we persisted.
@@ -362,6 +362,14 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Other methods
 
 		#region Component Designer generated code
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public override int Priority
+		{
+			get { return RecordClerk.DefaultPriority + 1; } //Views should follow Clerks in processing order.
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify

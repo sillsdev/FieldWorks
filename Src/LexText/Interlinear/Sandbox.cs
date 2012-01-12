@@ -61,6 +61,11 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
+		public bool IsDirty
+		{
+			get { return Caches.DataAccess.IsDirty(); }
+		}
+
 		/// <summary>
 		/// let the parent control the selection.
 		/// </summary>

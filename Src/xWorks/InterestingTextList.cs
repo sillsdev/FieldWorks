@@ -198,6 +198,16 @@ namespace SIL.FieldWorks.XWorks
 							m_interestingTests.Add(text.ContentsOA);
 						RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
 					}
+					else if (cvIns == 1 && cvDel == 1)
+					{
+						ClearInvalidObjects(CoreTexts, 0, false); // get rid of the old one but do NOT raise notification.
+						var text = m_textRepository.GetObject(hvo);
+						CoreTexts.Add(text.ContentsOA);
+						if (m_interestingTests != null)
+							m_interestingTests.Add(text.ContentsOA);
+						// We don't know where the old one was removed, safest to treat as changing all.
+						RaiseInterestingTextsChanged(0, CoreTexts.Count, CoreTexts.Count);
+					}
 					else
 					{
 						// We could try getting the text and removing its ContentsOA from the list,

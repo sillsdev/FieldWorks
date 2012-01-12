@@ -2404,7 +2404,9 @@ namespace SIL.FieldWorks.Common.Controls
 				StringTable stringTbl = null;
 				if (m_mediator != null && m_mediator.HasStringTable)
 					stringTbl = m_mediator.StringTbl;
-				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null)
+				//Check an option if the label matches, or the unaltered label matches (for multiunicode fields)
+				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null ||
+				   XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label, stringTbl) != null)
 				{
 					mi.Checked = true;
 				}
@@ -2639,7 +2641,10 @@ namespace SIL.FieldWorks.Common.Controls
 			StringTable stringTbl = null;
 			if (m_mediator != null && m_mediator.HasStringTable)
 				stringTbl = m_mediator.StringTbl;
-			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl);
+			//set the column to any column in the specs that matches the menu item text
+			// or the unaltered text (for multiunicode fields).
+			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl)
+						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text, stringTbl);
 			bool fRemovingColumn = true;
 			bool fOrderChanged = false;
 			//The column with this label was not found in the current columns
@@ -3188,11 +3193,16 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Mediator message handling Priority
+		/// When Colleagues are added to the mediator this priority will determine the order that they are called
+		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
+		///
+		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
+		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
+		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
 		/// </summary>
 		public int Priority
 		{
-			get { return (int)ColleaguePriority.Medium; }
+			get { return (int) ColleaguePriority.Medium; }
 		}
 
 		internal Mediator Mediator
@@ -3878,7 +3888,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_bv.BrowseView.OnRestoreScrollPosition(null);
 
-				if (m_fHiliteWasVisible)
+				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{
 					// If there WAS a highlighted row visible and it is no longer visible, scroll to make it so.
 					IVwSelection newSel = MakeTestRowSelection(m_irow);

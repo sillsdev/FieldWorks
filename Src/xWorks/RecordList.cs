@@ -2525,7 +2525,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_requestedLoadWhileSuppressed)
 					{
 						m_requestedLoadWhileSuppressed = false;
-						ReloadList();
+						ForceReloadList();
 					}
 				}
 			}
@@ -2567,6 +2567,14 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 				return true;
 			}
+		}
+
+		/// <summary>
+		/// Useed on occasions like changing views, this should suppress any optimization that prevents real reloads.
+		/// </summary>
+		public virtual void ForceReloadList()
+		{
+			ReloadList();  // By default nothing special is needed.
 		}
 		/// <summary>
 		/// Sort and filter the underlying property to create the current list of objects.
@@ -3247,7 +3255,10 @@ namespace SIL.FieldWorks.XWorks
 			int i = 0;
 			foreach (IManyOnePathSortItem item in SortedObjects)
 			{
-				for (var owner = item.RootObjectUsing(m_cache).Owner; owner != null; owner = owner.Owner)
+				var rootObject = item.RootObjectUsing(m_cache);
+				if (rootObject == null)
+					continue;  // may be something that has been deleted?
+				for (var owner = rootObject.Owner; owner != null; owner = owner.Owner)
 				{
 					if (owner.Hvo == hvoTarget)
 						return i;

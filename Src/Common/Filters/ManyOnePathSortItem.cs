@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		/// <summary>
-		/// Note that this may be null if it has not been initialized. This class cannot generate
+		/// Note that this may be null if it has not been initialized or the object has been deleted. This class cannot generate
 		/// it from PathObjects(0) because it lacks an FdoCache.
 		/// </summary>
 		public ICmObject RootObjectUsing(FdoCache cache)
@@ -174,7 +174,9 @@ namespace SIL.FieldWorks.Filters
 			var hvo = RootObjectHvo;
 			if (hvo == 0)
 				return null;
-			return cache.ServiceLocator.GetObject(hvo);
+			ICmObject result;
+			cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out result);
+			return result;
 		}
 
 		/// <summary>

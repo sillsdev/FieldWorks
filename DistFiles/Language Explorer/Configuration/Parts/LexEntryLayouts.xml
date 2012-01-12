@@ -752,6 +752,9 @@
 	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormDefinition">
 		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
 	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormDefinition">
+		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
+	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after=" " ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form"/>
 	</layout>

@@ -71,6 +71,18 @@
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="QuestionAlternativeOverrides.cs" />
+	<Compile Include="QuestionSections.cs" />
+	<Compile Include="Question.cs" />
+	<Compile Include="QuestionSfmFileAccessor.cs" />
+	<Compile Include="EditQuestionDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="EditQuestionDlg.Designer.cs">
+	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="PhraseCustomization.cs" />
+	<Compile Include="QuestionProvider.cs" />
 	<Compile Include="RulesWizardDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -138,6 +150,9 @@
   <ItemGroup>
 	<EmbeddedResource Include="AddRenderingDlg.resx">
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="EditQuestionDlg.resx">
+	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="RulesWizardDlg.resx">
 	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>

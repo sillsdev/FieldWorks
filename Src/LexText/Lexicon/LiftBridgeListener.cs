@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using LiftBridgeCore;
@@ -92,6 +90,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				try
 				{
+					// Send LangProj Guid to Lift Bridge.
+					var liftBridgeAsNewInterface = liftBridge as ILiftBridge3;
+					if (liftBridgeAsNewInterface != null)
+						liftBridgeAsNewInterface.LanguageProjectGuid = _cache.LanguageProject.Guid;
+
 					liftBridge.DoSendReceiveForLanguageProject(_parentForm, _databaseName);
 				}
 				finally

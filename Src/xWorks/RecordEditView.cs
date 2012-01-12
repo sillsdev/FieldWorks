@@ -209,14 +209,6 @@ namespace SIL.FieldWorks.XWorks
 			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
-		public override int Priority
-		{
-			get
-			{
-				return (int)ColleaguePriority.Medium;
-			}
-		}
-
 		/// <summary>
 		/// From IxCoreContentControl
 		/// </summary>

@@ -353,6 +353,9 @@ tinyint - Integer data from 0 through 255. Storage size is 1 byte.
 					var sda = m_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>();
 					foreach (ICmObject obj in Objects)
 					{
+						//Register all objects as modified in case any contain blank versions of the custom property.
+						//(blank versions are not added to the CustomProperties map and would otherwise be left in the file LT-12451)
+						uowService.RegisterObjectAsModified(obj);
 						if (m_cache.CustomProperties.ContainsKey(Tuple.Create(obj, m_id)))
 						{
 							// register the custom field as modified for this object, so that it is properly

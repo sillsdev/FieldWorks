@@ -1304,6 +1304,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void RestoreScrollPos()
 		{
 			IRootSite site = RootSite as IRootSite;
+			if (!Selection.IsValid)
+			{
+				SetSelection(false, false);
+				if (Selection == null || !Selection.IsValid)
+					return; // apparently we can't successfully make an equivalent selection.
+			}
 			if (site != null)
 				site.ScrollSelectionToLocation(Selection, m_dyIPTop);
 		}

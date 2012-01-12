@@ -72,10 +72,25 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		/// This is used in situations like switching views. In such cases we should force a reload.
+		/// </summary>
+		/// <returns></returns>
+		protected override bool NeedToReloadList()
+		{
+			return base.NeedToReloadList() || reloadRequested;
+		}
+
 		public override void ChangeSorter(RecordSorter sorter)
 		{
 			RequestRefresh();
 			base.ChangeSorter(sorter);
+		}
+
+		public override void ForceReloadList()
+		{
+			RequestRefresh();
+			base.ForceReloadList();
 		}
 
 		/// <summary>

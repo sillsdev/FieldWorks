@@ -51,13 +51,14 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ToolStripMenuItem mnuViewDebugInfo;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
+			System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
 			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -65,6 +66,10 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.mnuExcludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuIncludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mainMenu = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,6 +89,8 @@ namespace SILUBS.PhraseTranslationHelper
 			this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewToolbar = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewBiblicalTermsPane = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			this.mnuViewExcludedQuestions = new System.Windows.Forms.ToolStripMenuItem();
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.phraseSubstitutionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,17 +104,18 @@ namespace SILUBS.PhraseTranslationHelper
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnSendScrReferences = new System.Windows.Forms.ToolStripButton();
 			this.btnReceiveScrReferences = new System.Windows.Forms.ToolStripButton();
+			this.lblFilterIndicator = new System.Windows.Forms.ToolStripLabel();
+			this.lblRemainingWork = new System.Windows.Forms.ToolStripLabel();
 			this.m_biblicalTermsPane = new System.Windows.Forms.TableLayoutPanel();
 			this.m_lblAnswerLabel = new System.Windows.Forms.Label();
 			this.m_lblAnswers = new System.Windows.Forms.Label();
 			this.m_lblCommentLabel = new System.Windows.Forms.Label();
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
-			this.lblFilterIndicator = new System.Windows.Forms.ToolStripLabel();
-			this.lblRemainingWork = new System.Windows.Forms.ToolStripLabel();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
+			this.dataGridContextMenu.SuspendLayout();
 			this.m_mainMenu.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.m_pnlAnswersAndComments.SuspendLayout();
@@ -121,6 +129,12 @@ namespace SILUBS.PhraseTranslationHelper
 			mnuViewDebugInfo.Name = "mnuViewDebugInfo";
 			resources.ApplyResources(mnuViewDebugInfo, "mnuViewDebugInfo");
 			mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
+			//
+			// toolStripSeparator5
+			//
+			toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			resources.ApplyResources(toolStripSeparator5, "toolStripSeparator5");
 			//
 			// mnuViewAnswers
 			//
@@ -176,10 +190,13 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridUns.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowEnter);
 			this.dataGridUns.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellDoubleClick);
 			this.dataGridUns.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridUns_ColumnHeaderMouseClick);
+			this.dataGridUns.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridUns_RowPrePaint);
+			this.dataGridUns.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridUns_CellMouseDown);
 			this.dataGridUns.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValueNeeded);
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellEndEdit);
 			this.dataGridUns.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValuePushed);
+			this.dataGridUns.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridUns_RowContextMenuStripNeeded);
 			this.dataGridUns.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridUns_EditingControlShowing);
 			this.dataGridUns.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellEnter);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
@@ -223,6 +240,34 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_colDebugInfo.Name = "m_colDebugInfo";
 			this.m_colDebugInfo.ReadOnly = true;
 			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			//
+			// dataGridContextMenu
+			//
+			this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuExcludeQuestion,
+			this.mnuIncludeQuestion,
+			this.mnuEditQuestion});
+			this.dataGridContextMenu.Name = "dataGridContextMenu";
+			resources.ApplyResources(this.dataGridContextMenu, "dataGridContextMenu");
+			this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
+			//
+			// mnuExcludeQuestion
+			//
+			this.mnuExcludeQuestion.Name = "mnuExcludeQuestion";
+			resources.ApplyResources(this.mnuExcludeQuestion, "mnuExcludeQuestion");
+			this.mnuExcludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
+			//
+			// mnuIncludeQuestion
+			//
+			this.mnuIncludeQuestion.Name = "mnuIncludeQuestion";
+			resources.ApplyResources(this.mnuIncludeQuestion, "mnuIncludeQuestion");
+			this.mnuIncludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
+			//
+			// mnuEditQuestion
+			//
+			this.mnuEditQuestion.Name = "mnuEditQuestion";
+			resources.ApplyResources(this.mnuEditQuestion, "mnuEditQuestion");
+			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
 			//
 			// m_mainMenu
 			//
@@ -359,7 +404,9 @@ namespace SILUBS.PhraseTranslationHelper
 			mnuViewDebugInfo,
 			this.mnuViewAnswers,
 			this.mnuViewToolbar,
-			this.mnuViewBiblicalTermsPane});
+			this.mnuViewBiblicalTermsPane,
+			this.toolStripSeparator6,
+			this.mnuViewExcludedQuestions});
 			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
 			resources.ApplyResources(this.viewToolStripMenuItem, "viewToolStripMenuItem");
 			this.viewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
@@ -381,6 +428,18 @@ namespace SILUBS.PhraseTranslationHelper
 			this.mnuViewBiblicalTermsPane.Name = "mnuViewBiblicalTermsPane";
 			resources.ApplyResources(this.mnuViewBiblicalTermsPane, "mnuViewBiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.CheckedChanged += new System.EventHandler(this.mnuViewBiblicalTermsPane_CheckedChanged);
+			//
+			// toolStripSeparator6
+			//
+			this.toolStripSeparator6.Name = "toolStripSeparator6";
+			resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
+			//
+			// mnuViewExcludedQuestions
+			//
+			this.mnuViewExcludedQuestions.CheckOnClick = true;
+			this.mnuViewExcludedQuestions.Name = "mnuViewExcludedQuestions";
+			resources.ApplyResources(this.mnuViewExcludedQuestions, "mnuViewExcludedQuestions");
+			this.mnuViewExcludedQuestions.Click += new System.EventHandler(this.ApplyFilter);
 			//
 			// optionsToolStripMenuItem
 			//
@@ -477,6 +536,18 @@ namespace SILUBS.PhraseTranslationHelper
 			resources.ApplyResources(this.btnReceiveScrReferences, "btnReceiveScrReferences");
 			this.btnReceiveScrReferences.Name = "btnReceiveScrReferences";
 			//
+			// lblFilterIndicator
+			//
+			this.lblFilterIndicator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			resources.ApplyResources(this.lblFilterIndicator, "lblFilterIndicator");
+			this.lblFilterIndicator.Name = "lblFilterIndicator";
+			//
+			// lblRemainingWork
+			//
+			this.lblRemainingWork.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.lblRemainingWork.Name = "lblRemainingWork";
+			resources.ApplyResources(this.lblRemainingWork, "lblRemainingWork");
+			//
 			// m_biblicalTermsPane
 			//
 			resources.ApplyResources(this.m_biblicalTermsPane, "m_biblicalTermsPane");
@@ -513,24 +584,6 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.m_pnlAnswersAndComments_VisibleChanged);
 			//
-			// lblFilterIndicator
-			//
-			this.lblFilterIndicator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			resources.ApplyResources(this.lblFilterIndicator, "lblFilterIndicator");
-			this.lblFilterIndicator.Name = "lblFilterIndicator";
-			//
-			// toolStripSeparator5
-			//
-			toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			toolStripSeparator5.Name = "toolStripSeparator5";
-			resources.ApplyResources(toolStripSeparator5, "toolStripSeparator5");
-			//
-			// lblRemainingWork
-			//
-			this.lblRemainingWork.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.lblRemainingWork.Name = "lblRemainingWork";
-			resources.ApplyResources(this.lblRemainingWork, "lblRemainingWork");
-			//
 			// UNSQuestionsDialog
 			//
 			resources.ApplyResources(this, "$this");
@@ -544,6 +597,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.Name = "UNSQuestionsDialog";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();
+			this.dataGridContextMenu.ResumeLayout(false);
 			this.m_mainMenu.ResumeLayout(false);
 			this.m_mainMenu.PerformLayout();
 			this.toolStrip1.ResumeLayout(false);
@@ -603,5 +657,11 @@ namespace SILUBS.PhraseTranslationHelper
 		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripLabel lblFilterIndicator;
 		private ToolStripLabel lblRemainingWork;
+		private ToolStripMenuItem mnuViewExcludedQuestions;
+		private ToolStripSeparator toolStripSeparator6;
+		private ContextMenuStrip dataGridContextMenu;
+		private ToolStripMenuItem mnuExcludeQuestion;
+		private ToolStripMenuItem mnuIncludeQuestion;
+		private ToolStripMenuItem mnuEditQuestion;
 	}
 }

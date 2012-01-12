@@ -304,8 +304,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Launch dialog only by a mouse click (or simulated mouse click).
 			if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
 			{
-				if (ChooseFromMasterCategoryList())
-					return;
+				ChooseFromMasterCategoryList();
 			}
 			else if (selectedNode != null && selectedNode.Hvo == kCreate && e.Action == TreeViewAction.ByMouse)
 			{
@@ -345,7 +344,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			});
 		}
 
-		private bool ChooseFromMasterCategoryList()
+		private void ChooseFromMasterCategoryList()
 		{
 			PopupTree pt = GetPopupTree();
 			// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
@@ -358,47 +357,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// for the dialog we're about to show below.
 			pt.HideForm();
 
-			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
-			{
-				dlg.SetDlginfo(List, m_mediator, false, null);
-				switch (dlg.ShowDialog(ParentForm))
-				{
-				case DialogResult.OK:
-					var sandoxMSA = new SandboxGenericMSA();
-					sandoxMSA.MainPOS = dlg.SelectedPOS;
-					sandoxMSA.MsaType = m_sense.GetDesiredMsaType();
-					Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
-						String.Format(LexTextControls.ksRedoSetX, FieldName));
-					m_sense.SandboxMSA = sandoxMSA;
-					Cache.DomainDataByFlid.EndUndoTask();
-					LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
-					// everything should be setup with new node selected, so return.
-					return true;
-				case DialogResult.Yes:
-					// Post a message so that we jump to Grammar(area)/Categories tool.
-					// Do this before we close any parent dialog in case
-					// the parent wants to check to see if such a Jump is pending.
-					// NOTE: We use PostMessage here, rather than SendMessage which
-					// disposes of the PopupTree before we and/or our parents might
-					// be finished using it (cf. LT-2563).
-					m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
-					if (ParentForm != null && ParentForm.Modal)
-					{
-						// Close the dlg that opened the master POS dlg,
-						// since its hotlink was used to close it,
-						// and a new POS has been created.
-						ParentForm.DialogResult = DialogResult.Cancel;
-						ParentForm.Close();
-					}
-					return false;
-				default:
-					// NOTE: If the user has selected "Cancel", then don't change
-					// our m_lastConfirmedNode to the "More..." node. Keep it
-					// the value set by popupTree_PopupTreeClosed() when we
-					// called pt.Hide() above. (cf. comments in LT-2522)
-					return false;
-				}
-			}
+			new MasterCategoryListChooserLauncher(ParentForm, m_mediator, List, FieldName, m_sense);
 		}
 
 		private bool AddNewMsa()
@@ -463,6 +422,88 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 			return false;
+		}
+	}
+
+	/// <summary>
+	/// This is an attempt to avoid LT-11548 where the MSAPopupTreeManager was being disposed
+	/// under certain circumstances while it was still processing AfterSelect messages.
+	/// </summary>
+	public class MasterCategoryListChooserLauncher
+	{
+		private readonly ILexSense m_sense;
+		private readonly Form m_parentOfPopupMgr;
+		private readonly Mediator m_mediator;
+		private readonly string m_field;
+
+		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator,
+			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
+		{
+			m_parentOfPopupMgr = popupMgrParent;
+			m_mediator = mediator;
+			CategoryList = possibilityList;
+			m_sense = sense;
+			FieldName = fieldName;
+			Cache = m_sense.Cache;
+
+			Application.Idle += new EventHandler(LaunchChooseFromMasterCategoryListOnIdle);
+		}
+
+		public ICmPossibilityList CategoryList { get; private set; }
+		public string FieldName { get; private set; }
+		public FdoCache Cache { get; private set; }
+
+		void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
+		{
+			Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle; // now being handled
+
+			// now launch the dialog
+			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
+			{
+				dlg.SetDlginfo(CategoryList, m_mediator, false, null);
+				switch (dlg.ShowDialog(m_parentOfPopupMgr))
+				{
+					case DialogResult.OK:
+						var sandboxMsa = new SandboxGenericMSA();
+						sandboxMsa.MainPOS = dlg.SelectedPOS;
+						sandboxMsa.MsaType = m_sense.GetDesiredMsaType();
+						UndoableUnitOfWorkHelper.Do(String.Format(LexTextControls.ksUndoSetX, FieldName),
+							String.Format(LexTextControls.ksRedoSetX, FieldName), m_sense, () =>
+							{
+								m_sense.SandboxMSA = sandboxMsa;
+							});
+						// Under certain circumstances (LT-11548) 'this' was disposed during the EndUndotask above!
+						// That's why we're now launching this on idle.
+						// Here's hoping we can get away without doing this! (It doesn't seem to make a difference.)
+						//LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
+						// everything should be setup with new node selected, so return.
+						break;
+					case DialogResult.Yes:
+						// represents a click on the link to create a new Grammar Category.
+						// Post a message so that we jump to Grammar(area)/Categories tool.
+						// Do this before we close any parent dialog in case
+						// the parent wants to check to see if such a Jump is pending.
+						// NOTE: We use PostMessage here, rather than SendMessage which
+						// disposes of the PopupTree before we and/or our parents might
+						// be finished using it (cf. LT-2563).
+						m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
+						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)
+						{
+							// Close the dlg that opened the master POS dlg,
+							// since its hotlink was used to close it,
+							// and a new POS has been created.
+							m_parentOfPopupMgr.DialogResult = DialogResult.Cancel;
+							m_parentOfPopupMgr.Close();
+						}
+						break;
+					default:
+						// NOTE: If the user has selected "Cancel", then don't change
+						// our m_lastConfirmedNode to the "More..." node. Keep it
+						// the value set by popupTree_PopupTreeClosed() when we
+						// called pt.Hide() above. (cf. comments in LT-2522)
+						break;
+				}
+			}
 		}
 	}
 }

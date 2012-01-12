@@ -754,7 +754,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex, m_mediator); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -953,7 +953,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
-					m_bookmark.Reset(m_bookmark.TextIndex);
+					m_bookmark.Reset(m_bookmark.TextIndex, m_mediator);
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.

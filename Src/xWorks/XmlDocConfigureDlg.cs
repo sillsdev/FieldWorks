@@ -1015,7 +1015,13 @@ namespace SIL.FieldWorks.XWorks
 		private void StoreChildNodeInfo(XmlNode xn, string className, LayoutTreeNode ltn)
 		{
 			string sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
-			if (!ltn.IsTopLevel)
+			XmlNode xnCaller = m_levels.PartRef;
+			if (xnCaller == null)
+				xnCaller = ltn.Configuration;
+			bool hideConfig = xnCaller == null ? false : XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
+			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
+			// we don't want to configure it at all.
+			if (!ltn.IsTopLevel && !hideConfig)
 			{
 				if (sField == "Senses" && (ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense"))
 				{
@@ -1045,9 +1051,6 @@ namespace SIL.FieldWorks.XWorks
 				ltn.UseParentConfig = true;
 				return;
 			}
-			XmlNode xnCaller = m_levels.PartRef;
-			if (xnCaller == null)
-				xnCaller = ltn.Configuration;
 			string sLayout = XmlVc.GetLayoutName(xn, xnCaller);
 			int clidDst = 0;
 			string sClass = null;
@@ -2241,10 +2244,16 @@ namespace SIL.FieldWorks.XWorks
 			ltn.ContentVisible = ltn.Checked;
 			if (m_tbBefore.Visible && m_tbBefore.Enabled)
 				ltn.Before = m_tbBefore.Text;
+			else
+				ltn.Before = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbBetween.Visible && m_tbBetween.Enabled)
 				ltn.Between = m_tbBetween.Text;
+			else
+				ltn.Between = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbAfter.Visible && m_tbAfter.Enabled)
 				ltn.After = m_tbAfter.Text;
+			else
+				ltn.After = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_chkDisplayWsAbbrs.Visible)
 				ltn.ShowWsLabels = m_chkDisplayWsAbbrs.Checked && m_chkDisplayWsAbbrs.Enabled;
 			if (m_cfgSenses.Visible)

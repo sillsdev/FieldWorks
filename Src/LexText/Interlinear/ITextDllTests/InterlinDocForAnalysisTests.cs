@@ -484,5 +484,10 @@ namespace SIL.FieldWorks.IText
 		{
 			set { ; }
 		}
+
+		public bool IsDirty
+		{
+			get { throw new NotImplementedException(); }
+		}
 	}
 }
