@@ -85,11 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int factor = 6;
 			int maxwidth = maxStringLength * factor;
 			if (maxStringLength > 0 && DropDownWidth < maxwidth)
-			{
 				DropDownWidth = maxwidth;
-				if (MiscUtils.IsUnix)
-					Width = maxwidth;	// See FWNX-545.
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
