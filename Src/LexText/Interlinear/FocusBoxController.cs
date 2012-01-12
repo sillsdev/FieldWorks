@@ -33,6 +33,11 @@ namespace SIL.FieldWorks.IText
 			btnMenu.GotFocus += HandleFocusWrongButton;
 		}
 
+		internal bool IsDirty
+		{
+			get { return m_sandbox.IsDirty; }
+		}
+
 		// There is no logical reason for other buttons ever to get the focus. But .NET helpfully focuses the link words button
 		// as we hide the focus box. And in some other circumstance, which I can't even figure out, it focuses the menu button.
 		// I can't figure out how to prevent it, but it's better for the confirm
@@ -506,6 +511,7 @@ namespace SIL.FieldWorks.IText
 		bool SelectOnOrBeyondLine(int startLine, int increment);
 		void UpdateLineChoices(InterlinLineChoices choices);
 		int MultipleAnalysisColor { set; }
+		bool IsDirty { get; }
 	}
 
 	/// <summary>

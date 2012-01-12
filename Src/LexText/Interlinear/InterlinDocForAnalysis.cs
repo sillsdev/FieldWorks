@@ -102,7 +102,8 @@ namespace SIL.FieldWorks.IText
 		protected override void UpdateWordforms(HashSet<IWfiWordform> wordforms)
 		{
 			base.UpdateWordforms(wordforms);
-			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform))
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform)
+				&& !FocusBox.IsDirty)
 			{
 				// update focus box to display new guess
 				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
