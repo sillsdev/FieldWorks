@@ -166,4 +166,7 @@
 	<value>Removing invalid Generic Date {0} from {1} of {2} ({3}).</value>
 	<comment>0 will be a string representation of a number, 1 a field name, 2 a class name, 3 a guid.</comment>
   </data>
+  <data name="ksRemovingDuplicateAlternative" xml:space="preserve">
+	<value>Removed alternative {0} from {1} of {2} because it has the same writing system as {3}</value>
+  </data>
 </root>

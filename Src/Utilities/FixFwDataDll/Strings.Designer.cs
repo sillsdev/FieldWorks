@@ -142,6 +142,15 @@ namespace SIL.FieldWorks.FixData {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Removed alternative {0} from {1} of {2} because it has the same writing system as {3}.
+		/// </summary>
+		internal static string ksRemovingDuplicateAlternative {
+			get {
+				return ResourceManager.GetString("ksRemovingDuplicateAlternative", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Removing &apos;editable&apos; attribute from a string in a {0}.
 		/// </summary>
 		internal static string ksRemovingEditableAttribute {

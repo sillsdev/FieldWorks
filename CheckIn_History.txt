@@ -13,3 +13,5 @@ Here begins the recent check-in history - please add your notes at the end:
 KenZ, 10 Nov 2011. Created FW_7.2 branch and integrated from WW.
 KenZ, 3 Jan 2011. Integrated WW to 7.2 using auto resolve from other.
 KenZ, 12 Jan 2011. Final full integration from WW to 7.2 using auto resolve from other.
+JohnT, 12 Jan 2011. LT-12472, Selecting word glosses is not working properly.
+	Also enhanced FixFwData to remove multistring alternatives with duplicate WSs.
