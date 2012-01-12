@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LibUtils")]
+[assembly: AssemblyTitle("SilUtils")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jaars, Inc.")]
-[assembly: AssemblyProduct("LibUtils")]
-[assembly: AssemblyCopyright("Copyright © Jaars, Inc. 2009")]
+[assembly: AssemblyCompany("SIL")]
+[assembly: AssemblyProduct("SilUtils")]
+[assembly: AssemblyCopyright("Copyright © 2009-$YEAR SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
