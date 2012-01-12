@@ -130,7 +130,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 
 		protected virtual void SetupInitialState()
 		{
-			splitContainerHorizontal.Panel2Collapsed = true;
+			HideInfoPane();
 			buttonInfo.Visible = false;
 		}
 
@@ -195,42 +195,60 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			}
 			base.Dispose(disposing);
 		}
-		void OnAcceptGlossButtonClick(object obj, EventArgs ea)
+
+		private void OnAcceptGlossButtonClick(object obj, EventArgs ea)
 		{
 			Close();
 		}
-		void OnCancelButtonClick(object obj, EventArgs ea)
+
+		private void OnCancelButtonClick(object obj, EventArgs ea)
 		{
 			Close();
 		}
-		void OnHelpButtonClick(object obj, EventArgs ea)
+
+		private void OnHelpButtonClick(object obj, EventArgs ea)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
-		void OnInfoButtonClick(object obj, EventArgs ea)
+
+		/// <summary>
+		/// Shows the info pane.
+		/// </summary>
+		protected void ShowInfoPane()
 		{
+			// Show the info pane
 			Size sz = new Size(ClientSize.Width, ClientSize.Height);
-			if (splitContainerHorizontal.Panel2Collapsed)
-			{
-				// Show the info pane
-				int splitterDistance = splitContainerHorizontal.Panel1.Height;
-				splitContainerHorizontal.Panel2Collapsed = false;
-				sz.Height += m_panelBottomHeight;
-				ClientSize = sz;
-				splitContainerHorizontal.SplitterDistance = splitterDistance;
-				buttonInfo.Text = MGAStrings.ksHideInfo;
-			}
-			else
-			{
-				// hide the info pane
-				int firstPanelHeight = splitContainerHorizontal.Panel1.Height;
-				m_panelBottomHeight = splitContainerHorizontal.Panel2.Height;
-				splitContainerHorizontal.Panel2Collapsed = true;
-				sz.Height = splitContainerHorizontal.Location.Y + firstPanelHeight;
-				ClientSize = sz;
-				buttonInfo.Text = MGAStrings.ksShowInfo;
-			}
+			int splitterDistance = splitContainerHorizontal.Panel1.Height;
+			splitContainerHorizontal.Panel2Collapsed = false;
+			sz.Height += m_panelBottomHeight;
+			ClientSize = sz;
+			splitContainerHorizontal.SplitterDistance = splitterDistance;
+			buttonInfo.Text = MGAStrings.ksHideInfo;
 		}
+
+		/// <summary>
+		/// Hides the info pane.
+		/// </summary>
+		protected void HideInfoPane()
+		{
+			// hide the info pane
+			Size sz = new Size(ClientSize.Width, ClientSize.Height);
+			int firstPanelHeight = splitContainerHorizontal.Panel1.Height;
+			m_panelBottomHeight = splitContainerHorizontal.Panel2.Height;
+			splitContainerHorizontal.Panel2Collapsed = true;
+			sz.Height = splitContainerHorizontal.Location.Y + firstPanelHeight;
+			ClientSize = sz;
+			buttonInfo.Text = MGAStrings.ksShowInfo;
+		}
+
+		private void OnInfoButtonClick(object obj, EventArgs ea)
+		{
+			if (splitContainerHorizontal.Panel2Collapsed)
+				ShowInfoPane();
+			else
+				HideInfoPane();
+		}
+
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
 			CheckDisposed();

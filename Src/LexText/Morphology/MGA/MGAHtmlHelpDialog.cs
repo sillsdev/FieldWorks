@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
 
-			splitContainerHorizontal.Panel2Collapsed = false;
+			ShowInfoPane();
 			buttonInfo.Visible = true;
 
 			m_webBrowserInfo.Navigate(m_sHelpHtm);
