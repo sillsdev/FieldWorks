@@ -99,8 +99,9 @@ namespace SIL.FieldWorks.TE
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing)
 			{
-				if (m_dlg != null)
-					m_dlg.Dispose();
+				var disposable = m_dlg as IDisposable;
+				if (disposable != null)
+					disposable.Dispose();
 			}
 			m_dlg = null;
 		}

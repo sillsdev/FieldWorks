@@ -14,9 +14,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing && !IsDisposed)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				openFileDialog1.Dispose();
 			}
 			base.Dispose(disposing);
 		}

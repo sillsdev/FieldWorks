@@ -172,21 +172,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Clean up any resources being used.
 		/// </summary>
 		/// -------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+				m_OpenFileDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 

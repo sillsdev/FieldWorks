@@ -115,21 +115,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+
+				saveFileDialog.Dispose();
+				ofDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code

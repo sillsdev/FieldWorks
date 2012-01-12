@@ -203,18 +203,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
-				{
+				if (components != null)
 					components.Dispose();
-				}
+
+				if (ofDlg != null)
+					ofDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			ofDlg = null;
+			components = null;
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
