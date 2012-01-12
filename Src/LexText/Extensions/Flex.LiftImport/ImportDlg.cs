@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.LexText
 	public partial class LiftImportDlg : Form, IFwExtension
 	{
 		private FdoCache _cache;
-	 //   private Mediator _mediator;
+
 		public LiftImportDlg()
 		{
 			InitializeComponent();

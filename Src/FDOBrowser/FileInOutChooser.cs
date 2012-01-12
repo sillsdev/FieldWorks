@@ -22,18 +22,13 @@ namespace FDOBrowser
 		{
 			InitializeComponent();
 
+
 		}
-		private bool mDone;
-		private bool Done
-		{
-			get { return mDone; }
-			set { mDone = value; }
-		}
+
+		private bool Done { get; set; }
 
 		private void chooseDb4o_Click(object sender, EventArgs e)
 		{
-
-
 			Db4oFile.ShowDialog();
 			db4o.Text = Db4oFile.FileName;
 			if (Db4oFile.FileName != "")
@@ -42,22 +37,14 @@ namespace FDOBrowser
 
 				XmlFile.FileName = path;
 				xml.Text = path;
-
 			}
 		}
 
 		private void chooseXML_Click(object sender, EventArgs e)
 		{
-			string path;
-			string bse;
-
-
 			XmlFile.ShowDialog();
 			XmlFile.FileName = xml.Text;
-
 		}
-
-
 
 		private void done_Click(object sender, EventArgs e)
 		{
@@ -81,11 +68,6 @@ namespace FDOBrowser
 		private void cancel_Click(object sender, EventArgs e)
 		{
 			this.Hide();
-
 		}
-
-
-
-
 	}
 }

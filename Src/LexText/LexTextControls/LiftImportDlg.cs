@@ -38,8 +38,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		IProgress m_progressDlg = null;
-		string m_sLogFile = null;		// name of HTML log file (if successful).
+		private IProgress m_progressDlg;
+		private string m_sLogFile; // name of HTML log file (if successful).
 
 		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsKeepOld;
 
