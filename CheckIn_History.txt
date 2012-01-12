@@ -17,3 +17,4 @@ JohnT, 12 Jan 2012. LT-12472, Selecting word glosses is not working properly.
 	Also enhanced FixFwData to remove multistring alternatives with duplicate WSs.
 AnnB, 12 Jan 2012.  Hook up Help Buttons LT-11789 and LT-12490.
 JohnT, 12 Jan 2012. LT-12496, "FieldWorks has stopped working" problem clicking areas in Texts and Words area sequentially
+GordonM, 12 Jan 2012. LT-12232 partial fix.

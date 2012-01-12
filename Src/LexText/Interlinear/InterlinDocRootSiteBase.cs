@@ -349,8 +349,8 @@ namespace SIL.FieldWorks.IText
 			m_contextButton = new Button();
 			var pullDown = ResourceHelper.BlueCircleDownArrowForView;
 			m_contextButton.Image = pullDown;
-			m_contextButton.Height = pullDown.Height + 4;
-			m_contextButton.Width = pullDown.Width + 4;
+			m_contextButton.Height = pullDown.Height + 3;
+			m_contextButton.Width = pullDown.Width + 3;
 			m_contextButton.FlatStyle = FlatStyle.Flat;
 			m_contextButton.ForeColor = BackColor;
 			m_contextButton.BackColor = BackColor;
