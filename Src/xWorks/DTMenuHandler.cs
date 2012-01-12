@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.FilterIndex = 1;
 				if (m_mediator != null && m_mediator.HasStringTable)
 					dlg.Title = m_mediator.StringTbl.GetString(keyCaption);
-				if (dlg.Title == null || dlg.Title.Length == 0 || dlg.Title == "*" + keyCaption + "*")
+				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
 					dlg.Title = defaultCaption;
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;

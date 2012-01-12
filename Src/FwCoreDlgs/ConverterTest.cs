@@ -1,22 +1,21 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Windows.Forms;
 using System.IO;
-using System.Resources;
 using System.Reflection;
-using System.Text;
-using System.Diagnostics;
+using System.Resources;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using ECInterfaces;
 using SIL.CoreImpl;
-using SIL.Utils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using ECInterfaces;
-using SilEncConverters31;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
+using SilEncConverters31;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -263,8 +262,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		void InputArgsChanged()
 		{
-			convertButton.Enabled = (ofDlg.FileName != null && ofDlg.FileName != "" &&
-				m_mapname != null && m_mapname != "");
+			convertButton.Enabled = !string.IsNullOrEmpty(ofDlg.FileName) &&
+				!string.IsNullOrEmpty(m_mapname);
 			m_savedOutput = null;
 			saveFileButton.Enabled = false;
 		}

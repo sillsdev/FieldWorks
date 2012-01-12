@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// dispose</summary>
 		private bool m_fDisposeWsManager;
 
-		CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
+		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
 
 		#endregion
 

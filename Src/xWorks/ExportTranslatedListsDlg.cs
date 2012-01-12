@@ -13,19 +13,13 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
-using System.IO;
-
-using XCore;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using System.Diagnostics;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

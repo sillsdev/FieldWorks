@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
-using SILUBS.SharedScrUtils;
-using System.IO;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using System.Reflection;
-using SIL.FieldWorks.FDO;
-using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

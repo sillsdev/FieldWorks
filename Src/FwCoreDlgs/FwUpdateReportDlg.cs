@@ -69,13 +69,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">context sensitive help</param>
 		/// ------------------------------------------------------------------------------------
 		public FwUpdateReportDlg(List<string> itemsToReport, string projectName,
-			IHelpTopicProvider helpTopicProvider)
+			IHelpTopicProvider helpTopicProvider) : this()
 		{
-			CheckDisposed();
-
-			InitializeComponent();
-
-			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(saveFileDialog.Filter);
 			lblProjectName.Text = String.Format(lblProjectName.Text, projectName);
 
 			m_helpTopicProvider = helpTopicProvider;

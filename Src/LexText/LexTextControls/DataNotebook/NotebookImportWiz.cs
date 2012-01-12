@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IStTxtParaFactory m_factPara;
 		private ICmPossibilityListRepository m_repoList;
 
-		bool m_fCanceling = false;
-		bool m_fDirtySettings = false;
+		private bool m_fCanceling = false;
+		private bool m_fDirtySettings = false;
 
 		/// <summary>
 		/// This class defines an encapsulation of factories for ICmPossibility and its
