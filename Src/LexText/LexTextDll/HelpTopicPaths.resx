@@ -2847,4 +2847,14 @@
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Anthropology_Categories_field_(Info).htm</value>
 	<comment>Anthropology Categories field in Text's Info Tab</comment>
   </data>
+  <data name="khtpBulkEditLocations" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpEntryNotPublished" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+	<comment>I had to hsardcode the path into the source rsather than the topic because of the way </comment>
+  </data>
+  <data name="khtpBulkEditShowAsHeadwordIn" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
 </root>
