@@ -1386,7 +1386,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						morphType.Guid == MoMorphTypeTags.kguidMorphRoot ||
 							morphType.Guid == MoMorphTypeTags.kguidMorphParticle ||
 								morphType.Guid == MoMorphTypeTags.kguidMorphPhrase ||
-									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase)
+									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase ||
+										morphType.Guid == MoMorphTypeTags.kguidMorphClitic)
 			{
 				morphType = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
 			}
