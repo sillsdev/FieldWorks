@@ -125,6 +125,9 @@
 	  <Name>FwControls</Name>
 	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
 	</Reference>
+	<Reference Include="FwCoreDlgs, Version=7.0.6.19050, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="FwResources, Version=5.5.0.16216, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
