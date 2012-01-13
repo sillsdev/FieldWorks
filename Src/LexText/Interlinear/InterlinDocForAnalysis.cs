@@ -1925,6 +1925,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			// The base method does this too, but some paths in this method don't go through the base!
 			RemoveContextButtonIfPresent();
 			if (e.Button == MouseButtons.Right)
 			{

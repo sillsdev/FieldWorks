@@ -355,6 +355,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			RemoveContextButtonIfPresent();
 			var ilineChoice = -1;
 			var sel = GrabMousePtSelectionToTest(e);
 			if (UserClickedOnLabels(sel, out ilineChoice))
@@ -930,6 +931,7 @@ namespace SIL.FieldWorks.IText
 
 			SetRootInternal(hvo);
 			AddDecorator();
+			RemoveContextButtonIfPresent(); // Don't want to keep the context button for a different text!
 		}
 
 		/// <summary>
