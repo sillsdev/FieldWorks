@@ -12,6 +12,7 @@ using SilEncConverters31;
 using System.Diagnostics;
 
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Resources;
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwOverrideComboBox cboConverter;
 		/// <summary></summary>
 		public FwOverrideComboBox cboSpec;
-		private OpenFileDialog ofDlg = new OpenFileDialog();
+		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
 		public event EventHandler ConverterFileChanged;

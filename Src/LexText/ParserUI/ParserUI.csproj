@@ -205,6 +205,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<None Include="AssemblyInfo.cs">
@@ -285,12 +289,6 @@
 	  <ProductName>.NET Framework 3.5</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-	  <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
-	  <Name>FwCoreDlgs</Name>
-	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

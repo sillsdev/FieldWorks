@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 
 namespace VwGraphicsReplayer
 {
@@ -40,11 +41,14 @@ namespace VwGraphicsReplayer
 			var menu = new MainMenu();
 			MenuItem open = new MenuItem("Open", (s, a) =>
 			{
-				var dialog = new OpenFileDialog();
-				dialog.InitialDirectory = "/tmp";
-				if (dialog.ShowDialog() == DialogResult.OK) {
-					m_datafile = new FileInfo(dialog.FileName);
-					m_painted = false;
+				using (var dialog = new OpenFileDialogAdapter())
+				{
+					dialog.InitialDirectory = "/tmp";
+					if (dialog.ShowDialog() == DialogResult.OK)
+					{
+						m_datafile = new FileInfo(dialog.FileName);
+						m_painted = false;
+					}
 				}
 			});
 

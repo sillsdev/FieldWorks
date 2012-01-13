@@ -279,15 +279,6 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
-  <data name="openFileDialog1.Filter" xml:space="preserve">
-	<value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
-  </data>
-  <data name="openFileDialog1.Title" xml:space="preserve">
-	<value>Open Lexicon Interchange FormaT File</value>
-  </data>
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
@@ -563,12 +554,6 @@
   </data>
   <data name="$this.Text" xml:space="preserve">
 	<value>Import/Merge From LIFT File</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog1.Name" xml:space="preserve">
-	<value>openFileDialog1</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>LiftImportDlg</value>

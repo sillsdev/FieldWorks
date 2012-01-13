@@ -32,6 +32,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -101,6 +102,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Button btnDeleteCharMapping;
 		private System.Windows.Forms.ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;	// key=sfm, value=ClsAutoField
+		private OpenFileDialogAdapter openFileDialog;
 
 		private static LexImportWizard m_wizard = null;
 
@@ -163,7 +165,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label lblReadyToImportInstructions;
 		private System.Windows.Forms.Label lblReadyToImport;
 		private System.Windows.Forms.CheckBox m_DisplayImportReport;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.Label lblTotalMarkers;
 		private System.Windows.Forms.Label lblFile;
 		private System.Windows.Forms.Label lblSettingsTag;
@@ -180,6 +181,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
+			openFileDialog = new OpenFileDialogAdapter();
 			m_crcObj = new Sfm2Xml.CRC();	// CRC Object to use for telling if the input file has changed
 			m_lastDateTime = DateTime.MinValue;
 			m_crcOfInputFile = 1;
@@ -2510,7 +2512,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_DisplayImportReport = new System.Windows.Forms.CheckBox();
 			this.lblReadyToImportInstructions = new System.Windows.Forms.Label();
 			this.lblReadyToImport = new System.Windows.Forms.Label();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.btnQuickFinish = new System.Windows.Forms.Button();
 			this.btnSaveMapFile = new System.Windows.Forms.Button();
 			this.tabSteps.SuspendLayout();

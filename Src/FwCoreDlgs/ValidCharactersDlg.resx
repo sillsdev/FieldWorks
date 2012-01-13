@@ -231,12 +231,6 @@
   <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <metadata name="m_openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
-  <data name="m_openFileDialog.Title" xml:space="preserve">
-	<value>Browse for Language File</value>
-  </data>
   <data name="panel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>Bottom</value>
   </data>
@@ -1992,12 +1986,6 @@
   </data>
   <data name="&gt;&gt;dataGridViewTextBoxColumn7.Type" xml:space="preserve">
 	<value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_openFileDialog.Name" xml:space="preserve">
-	<value>m_openFileDialog</value>
-  </data>
-  <data name="&gt;&gt;m_openFileDialog.Type" xml:space="preserve">
-	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;colChar.Name" xml:space="preserve">
 	<value>colChar</value>

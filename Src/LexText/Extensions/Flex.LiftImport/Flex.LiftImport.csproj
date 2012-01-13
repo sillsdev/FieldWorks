@@ -77,6 +77,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils">
+	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="FlexImporter.cs" />

@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -45,7 +46,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private int m_currentPage;
 		private bool m_repeatTitleOnEveryPage = false;
 		private bool m_repeatColumnHeaderOnEveryPage = true;
-
+		/// <summary></summary>
+		protected SaveFileDialogAdapter saveFileDialog;
 		#endregion
 
 		#region Constructors
@@ -57,7 +59,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwUpdateReportDlg()
 		{
 			InitializeComponent();
-			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(saveFileDialog.Filter);
+			saveFileDialog = new SaveFileDialogAdapter();
+			saveFileDialog.DefaultExt = "txt";
+			saveFileDialog.SupportMultiDottedExtensions = true;
+			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.TextFileFilter);
 		}
 
 		/// ------------------------------------------------------------------------------------

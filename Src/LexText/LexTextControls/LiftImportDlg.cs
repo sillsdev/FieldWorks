@@ -30,6 +30,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using XCore;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -40,13 +41,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Mediator m_mediator;
 		private IProgress m_progressDlg;
 		private string m_sLogFile; // name of HTML log file (if successful).
+		private OpenFileDialogAdapter openFileDialog1;
+
 
 		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsKeepOld;
 
 		public LiftImportDlg()
 		{
 			InitializeComponent();
-			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(openFileDialog1.Filter);
+			openFileDialog1 = new OpenFileDialogAdapter();
+			openFileDialog1.Title = LexTextControls.openFileDialog1_Title;
+			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
+				LexTextControls.openFileDialog1_Filter);
 		}
 
 		/// <summary>

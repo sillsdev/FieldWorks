@@ -120,7 +120,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			this.lblAddOrReplaceInstructions = new System.Windows.Forms.Label();
 			this.lblAddOrReplace = new System.Windows.Forms.Label();
 			this.m_btnSaveMapFile = new System.Windows.Forms.Button();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.lblMappingLanguages = new System.Windows.Forms.Label();
 			this.lblMappingLanguagesInstructions = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -818,7 +817,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private System.Windows.Forms.RadioButton m_rbReplaceAllEntries;
 		private System.Windows.Forms.RadioButton m_rbAddEntries;
 		private System.Windows.Forms.Button m_btnSaveMapFile;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.Button m_btnModifyMappingLanguage;
 		private System.Windows.Forms.ListView m_lvMappingLanguages;

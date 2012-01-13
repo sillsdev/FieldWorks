@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
-			this.m_openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.m_lblWsName = new System.Windows.Forms.Label();
 			this.splitContainerOuter = new System.Windows.Forms.SplitContainer();
@@ -216,12 +215,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.btnHelp, "btnHelp");
 			this.btnHelp.Name = "btnHelp";
 			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-			//
-			// m_openFileDialog
-			//
-			this.m_openFileDialog.DefaultExt = "lds";
-			this.m_openFileDialog.InitialDirectory = "c:\\My Paratext Projects";
-			resources.ApplyResources(this.m_openFileDialog, "m_openFileDialog");
 			//
 			// panel2
 			//
@@ -901,7 +894,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.TextBox txtLanguageFile;
 		private System.Windows.Forms.RadioButton rdoLanguageFile;
 		private System.Windows.Forms.RadioButton rdoSimilarWs;
-		private System.Windows.Forms.OpenFileDialog m_openFileDialog;
 		private System.Windows.Forms.Button btnBrowseLangFile;
 		private System.Windows.Forms.Button btnRemoveAll;
 		private System.Windows.Forms.Button btnAddCharacters;

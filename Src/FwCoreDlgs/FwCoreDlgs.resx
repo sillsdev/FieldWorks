@@ -932,4 +932,15 @@ The error was:
 	<value>{0} cannot be the style for the following paragraph for {1} because these two styles cannot be applied in the same context.</value>
 	<comment>Message shown when  user adds a paragraph style and chooses a style for the following paragraph that cannot be applied in the same context (e.g., book title and footnote).</comment>
   </data>
+  <data name="kstidLanguageFileBrowser" xml:space="preserve">
+	<value>Browse for Language File</value>
+	<comment>Title for the Open File dialog show in the CharContextCtrl</comment>
+  </data>
+  <data name="ofDlg_Filter" xml:space="preserve">
+	<value>Text Files (*.txt)|*.txt|All Files (*.*)|*.*</value>
+	<comment>Filter for Open/Save File dialog in ConverterTest</comment>
+  </data>
+  <data name="TextFileFilter" xml:space="preserve">
+	<value>Text files|*.txt</value>
+  </data>
 </root>

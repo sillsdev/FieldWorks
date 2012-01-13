@@ -1863,6 +1863,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Browse for Language File
+		/// </summary>
+		public static string kstidLanguageFileBrowser {
+			get {
+				return ResourceManager.GetString("kstidLanguageFileBrowser", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Text Files (*.txt)|*.txt|All Files (*.*)|*.*
+		/// </summary>
+		public static string ofDlg_Filter {
+			get {
+				return ResourceManager.GetString("ofDlg_Filter", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Unable to start {0}..
 		/// </summary>
 		public static string kstidUnableToStart {
@@ -2090,9 +2108,22 @@ namespace SIL.FieldWorks.FwCoreDlgs {
 		/// <summary>
 		///   Looks up a localized string similar to The most recent scan found 1 punctuation pattern which is not specified as either valid or invalid..
 		/// </summary>
-		public static string PunctuationPatternsScanResultsSingular {
-			get {
+		public static string PunctuationPatternsScanResultsSingular
+		{
+			get
+			{
 				return ResourceManager.GetString("PunctuationPatternsScanResultsSingular", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Text files|*.txt.
+		/// </summary>
+		public static string TextFileFilter
+		{
+			get
+			{
+				return ResourceManager.GetString("TextFileFilter", resourceCulture);
 			}
 		}
 	}

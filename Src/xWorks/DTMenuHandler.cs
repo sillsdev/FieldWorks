@@ -36,6 +36,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -268,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 				obj = le.PronunciationsOS[0];
 				flid = LexPronunciationTags.kflidMediaFiles;
 			}
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.InitialDirectory = Cache.LangProject.LinkedFilesRootDir;
 				dlg.Filter = filter;

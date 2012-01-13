@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -455,7 +456,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// Use 'el cheapo' .Net dlg to find LangProj.
-			using (var dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				Hide();
 				dlg.CheckFileExists = true;

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox m_LinguaLinksXmlFileName;
 		private System.Windows.Forms.Button btn_LinguaLinksXmlBrowse;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
+		private OpenFileDialogAdapter openFileDialog;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -138,6 +139,7 @@ namespace SIL.FieldWorks.IText
 		public LinguaLinksImportDlg()
 		{
 			InitializeComponent();
+			openFileDialog = new OpenFileDialogAdapter();
 			AccessibleName = GetType().Name;
 
 			// Copied from the LexImportWizard dlg Init (LexImportWizard.cs)
@@ -242,7 +244,6 @@ namespace SIL.FieldWorks.IText
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_LinguaLinksXmlFileName = new System.Windows.Forms.TextBox();
 			this.btn_LinguaLinksXmlBrowse = new System.Windows.Forms.Button();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.listViewMapping = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -501,8 +502,7 @@ namespace SIL.FieldWorks.IText
 			// Fire up a file chooser to select an XML file.
 			// Try importing the selected file.
 			// Report success or failure.
-			System.Windows.Forms.OpenFileDialog openFileDialog =
-				new System.Windows.Forms.OpenFileDialog();
+			var openFileDialog = new OpenFileDialogAdapter();
 			openFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
 			openFileDialog.FilterIndex = 0;
 			openFileDialog.CheckFileExists = true;

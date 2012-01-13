@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.IO;
 using SIL.FieldWorks.Resources;
+using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.TE
 {
@@ -54,7 +55,7 @@ namespace SIL.FieldWorks.TE
 		#region Member variables
 		private readonly string m_dbName;
 		private readonly FileType m_fileType;
-		private FileDialog m_dlg;
+		private IFileDialog m_dlg;
 		#endregion
 
 		#region Constructor
@@ -137,8 +138,8 @@ namespace SIL.FieldWorks.TE
 
 			if (fFirstTimeInit)
 			{
-				m_dlg = new SaveFileDialog();
-				((SaveFileDialog)m_dlg).OverwritePrompt = fOverwritePrompt;
+				m_dlg = new SaveFileDialogAdapter();
+				((ISaveFileDialog)m_dlg).OverwritePrompt = fOverwritePrompt;
 			}
 
 			return InitAndShowDialog(fFirstTimeInit, filename, owner);
@@ -157,7 +158,7 @@ namespace SIL.FieldWorks.TE
 			bool fFirstTimeInit = (m_dlg == null);
 
 			if (fFirstTimeInit)
-				m_dlg = new OpenFileDialog();
+				m_dlg = new OpenFileDialogAdapter();
 
 			return InitAndShowDialog(fFirstTimeInit, filename, owner);
 		}

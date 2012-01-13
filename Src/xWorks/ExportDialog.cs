@@ -26,6 +26,7 @@ using System.Xml;
 
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using XCore;
@@ -499,7 +500,7 @@ namespace SIL.FieldWorks.XWorks
 						ProcessPathwayExport();
 						return;
 					default:
-						using (SaveFileDialog dlg = new SaveFileDialog())
+						using (var dlg = new SaveFileDialogAdapter())
 						{
 							dlg.AddExtension = true;
 							dlg.DefaultExt = m_exportList.SelectedItems[0].SubItems[2].Text;

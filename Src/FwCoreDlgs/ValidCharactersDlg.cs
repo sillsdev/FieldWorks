@@ -35,6 +35,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SILUBS.SharedScrUtils;
 using XCore;
 
@@ -662,6 +663,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// dispose</summary>
 		private bool m_fDisposeWsManager;
 
+		private OpenFileDialogAdapter m_openFileDialog;
 		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
 
 		#endregion
@@ -678,6 +680,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+
+			m_openFileDialog = new OpenFileDialogAdapter();
+			m_openFileDialog.DefaultExt = "lds";
+			m_openFileDialog.InitialDirectory = "c:\\My Paratext Projects";
+			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left +
 				(btnTreatAsWrdForming.Right - btnTreatAsPunct.Left);

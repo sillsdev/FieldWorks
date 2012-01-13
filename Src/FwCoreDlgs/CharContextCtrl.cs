@@ -14,6 +14,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -74,6 +75,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
 		private string m_currContextItem;
 		private ValidateList m_listValidator;
+		private OpenFileDialogAdapter m_openFileDialog;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -83,6 +85,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public CharContextCtrl()
 		{
 			InitializeComponent();
+			m_openFileDialog = new OpenFileDialogAdapter();
+			m_openFileDialog.DefaultExt = "lds";
+			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
+
 			gridContext.AutoGenerateColumns = false;
 			colRef.MinimumWidth = 2;
 			colRef.Width = colRef.MinimumWidth;

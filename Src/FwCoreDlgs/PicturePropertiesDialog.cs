@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -764,7 +765,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private DialogResult ShowChoosePictureDlg()
 		{
 			DialogResult dialogResult = DialogResult.None;
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text :
 					s_defaultPicturesFolder;
