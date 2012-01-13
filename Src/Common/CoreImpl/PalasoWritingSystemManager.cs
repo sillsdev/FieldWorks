@@ -296,6 +296,11 @@ namespace SIL.CoreImpl
 						var ident = identifier.Remove(0, 3).Insert(0, "fa");
 						fExists = m_localStore.Contains(ident);
 					}
+					else if (identifier.StartsWith("zlm"))
+					{
+						var ident = identifier.Remove(0, 3).Insert(0, "ms");
+						fExists = m_localStore.Contains(ident);
+					}
 					else if (identifier.StartsWith("arb"))
 					{
 						var ident = identifier.Remove(2, 1); // changes to "ar"
@@ -352,6 +357,11 @@ namespace SIL.CoreImpl
 					else if (identifier.StartsWith("pes"))
 					{
 						var ident = identifier.Remove(0, 3).Insert(0, "fa");
+						m_localStore.TryGet(ident, out wrsys);
+					}
+					else if (identifier.StartsWith("zlm"))
+					{
+						var ident = identifier.Remove(0, 3).Insert(0, "ms");
 						m_localStore.TryGet(ident, out wrsys);
 					}
 					else if (identifier.StartsWith("arb"))
@@ -437,9 +447,36 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public IWritingSystem Set(string identifier)
 		{
+			bool dummy;
+			return Set(identifier, out dummy);
+		}
+
+		/// <summary>
+		/// Create the writing system. Typically we will create it, but we may have to modify the ID and then find
+		/// that there is an existing one. Set foundExisting true if so.
+		/// </summary>
+		/// <param name="identifier"></param>
+		/// <param name="foundExisting"></param>
+		/// <returns></returns>
+		private IWritingSystem Set(string identifier, out bool foundExisting)
+		{
 			lock (m_syncRoot)
 			{
+				foundExisting = false;
 				IWritingSystem ws = Create(identifier);
+				// Pathologically, the ws that Create chooses to create may not have the exact expected ID.
+				// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
+				// In such a case, we may already have a WS with the corrected ID. Set will then fail.
+				// So, in such a case, return the already-known WS.
+				if (identifier != ws.Id)
+				{
+					IWritingSystem wsExisting;
+					if (TryGet(ws.Id, out wsExisting))
+					{
+						foundExisting = true;
+						return wsExisting;
+					}
+				}
 				Set(ws);
 				return ws;
 			}
@@ -458,8 +495,9 @@ namespace SIL.CoreImpl
 			{
 				if (TryGet(identifier, out ws))
 					return true;
-				ws = Set(identifier);
-				return false;
+				bool foundExisting;
+				ws = Set(identifier, out foundExisting);
+				return foundExisting;
 			}
 		}
 
@@ -830,6 +868,14 @@ namespace SIL.CoreImpl
 	public class MemoryWritingSystemStore : WritingSystemRepositoryBase, IFwWritingSystemStore
 	{
 		/// <summary>
+		/// Use the default repository
+		/// </summary>
+		public MemoryWritingSystemStore() :
+			base(WritingSystemCompatibility.Strict)
+		{
+		}
+
+		/// <summary>
 		/// Creates a new writing system definition.
 		/// </summary>
 		/// <returns></returns>
@@ -1013,6 +1059,39 @@ namespace SIL.CoreImpl
 				fwWs.ScriptName = GetSpecialValue(reader, "fw", "scriptName");
 				fwWs.ValidChars = GetSpecialValue(reader, "fw", "validChars");
 				fwWs.VariantName = GetSpecialValue(reader, "fw", "variantName");
+				if (fwWs.VariantName == null)
+				{
+					var variant = fwWs.VariantSubtag;
+					if (variant != null)
+					{
+						var variantName = variant.ToString();
+						if (variantName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+							variantName = variantName.Substring(2);
+						fwWs.VariantName = variantName;
+					}
+				}
+				if (fwWs.RegionName == null)
+				{
+					var region = fwWs.RegionSubtag;
+					if (region != null)
+					{
+						var regionName = region.ToString();
+						if (regionName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+							regionName = regionName.Substring(2);
+						fwWs.RegionName = regionName;
+					}
+				}
+				if (fwWs.ScriptName == null)
+				{
+					var script = fwWs.ScriptSubtag;
+					if (script != null)
+					{
+						var scriptName = script.ToString();
+						if (scriptName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+							scriptName = scriptName.Substring(2);
+						fwWs.ScriptName = scriptName;
+					}
+				}
 				int lcid;
 				if (int.TryParse(GetSpecialValue(reader, "fw", "windowsLCID"), out lcid))
 					fwWs.LCID = lcid;

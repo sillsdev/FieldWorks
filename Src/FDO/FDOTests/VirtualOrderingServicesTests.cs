@@ -475,10 +475,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Verify that setup affects our chosen virtual property
 			Assert.AreEqual(2, testStText.GenreCategories.Count,
 				"Wrong number of items on virtual property.");
-			const int virtFlid = 20000013; // virtual flid for StText.GenreCategoriesRS
 			var mdc = Cache.MetaDataCacheAccessor;
-			Assert.AreEqual(virtFlid, mdc.GetFieldId2(testStText.ClassID, "GenreCategories", true),
-				"My virtual flid is wrong!");
+			int virtFlid = mdc.GetFieldId2(testStText.ClassID, "GenreCategories", true);
 
 			// SUT1
 			VirtualOrderingServices.SetVO(testStText, virtFlid, initialSeq.Cast<ICmObject>());

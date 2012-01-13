@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels.Tcp;
 using System.Security;
 using System.Threading;
 using Db4objects.Db4o;
@@ -518,8 +519,21 @@ namespace FwRemoteDatabaseConnector
 
 			if (ChannelServices.RegisteredChannels.Length > 0)
 			{
-				// Channel got registered before. Don't do it again
-				return;
+				var tcpChannel = ChannelServices.GetChannel("tcp");
+				if (tcpChannel is TcpChannel)
+				{
+					// Channel got registered before. Don't do it again
+					return;
+				}
+				if (tcpChannel != null)
+				{
+					// We probably have a TcpClientChannel which we can't use, so get rid of it.
+					// This can happen in tests when NUnit runs under .NET 2.0 but has to kick
+					// off a nunit-agent process that can run the tests under .NET 4.0. For some
+					// reason in this case we get a TcpClientChannel and so our tests fail
+					// unless we unregister the client channel.
+					ChannelServices.UnregisterChannel(tcpChannel);
+				}
 			}
 
 			// TODO: currently running with no security

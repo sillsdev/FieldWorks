@@ -246,9 +246,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void Work(IQueueAccessor<ParserPriority, ParserWork> queueAccessor)
 		{
 			ParserWork work;
-			bool gotWork = m_tryAWordDialogRunning ? queueAccessor.GetNextWorkItem(ParserPriority.TryAWord, out work)
-				: queueAccessor.GetNextWorkItem(out work);
-			if (gotWork)
+			if (queueAccessor.GetNextWorkItem(out work))
 				work.DoWork();
 		}
 
@@ -275,12 +273,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			lock (SyncRoot)
 			{
 				m_queueCounts[(int) priority]--;
-				if (TryAWordDialogIsRunning)
-					isIdle = m_queueCounts[(int)ParserPriority.TryAWord] == 0;
-				else
-					isIdle = m_queueCounts[(int)ParserPriority.Low] == 0
-							 && m_queueCounts[(int)ParserPriority.Medium] == 0
-							 && m_queueCounts[(int)ParserPriority.High] == 0;
+				isIdle = m_queueCounts[(int)ParserPriority.TryAWord] == 0
+						 && m_queueCounts[(int)ParserPriority.Low] == 0
+						 && m_queueCounts[(int)ParserPriority.Medium] == 0
+						 && m_queueCounts[(int)ParserPriority.High] == 0;
 			}
 			if (isIdle)
 				new TaskReport(ParserCoreStrings.ksIdle_, HandleTaskUpdate);

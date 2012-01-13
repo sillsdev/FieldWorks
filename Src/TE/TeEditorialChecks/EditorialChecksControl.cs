@@ -1817,6 +1817,14 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Not used in TE.

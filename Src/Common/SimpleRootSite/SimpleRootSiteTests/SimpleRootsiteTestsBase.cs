@@ -13,15 +13,15 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
+using NUnit.Framework;
+using SIL.CoreImpl;
+using SIL.FieldWorks.CacheLight;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

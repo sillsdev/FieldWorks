@@ -1,9 +1,0 @@
-// Extracted from AfApp.rc
-kridDbCrawlerProgress DIALOGEX 0, 0, 250, 50
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
-CAPTION "Searching Project"
-FONT 8, "MS Sans Serif"
-BEGIN
-	LTEXT       "", kctidDbCrawlProgAction, 10, 12, 230, 8
-	CONTROL     "progress", kctidDbCrawlProgProgress, "msctls_progress32", PBS_SMOOTH,10, 30, 230, 12
-END

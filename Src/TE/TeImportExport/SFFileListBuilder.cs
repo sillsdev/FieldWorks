@@ -35,6 +35,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.TE;
 using XCore;
 using SIL.FieldWorks.Common.RootSites;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -1689,24 +1689,28 @@ namespace SIL.FieldWorks.Common.Widgets
 		public InnerFwTextBox()
 		{
 			m_DataAccess = new TextBoxDataAccess();
-			m_vc = new TextBoxVc(this); // this
-			// So many things blow up so badly if we don't have one of these that I finally decided to just
-			// make one, even though it won't always, perhaps not often, be the one we want.
-			CreateTempWritingSystemFactory();
-			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
-			IsTextBox = true;	// range selection not shown when not in focus
-
 			// Check for the availability of the FwKernel COM DLL.  Too bad we have to catch an
 			// exception to make this check...
 			try
 			{
 				ITsStrBldr bldr = TsStrBldrClass.Create();
+				m_vc = new TextBoxVc(this);
 				m_fTssRegistered = true;
 			}
 			catch
 			{
 				m_fTssRegistered = false;
 			}
+			// So many things blow up so badly if we don't have one of these that I finally decided to just
+			// make one, even though it won't always, perhaps not often, be the one we want.
+			CreateTempWritingSystemFactory();
+			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
+			IsTextBox = true;	// range selection not shown when not in focus
+		}
+
+		internal bool Rtl
+		{
+			get { return m_vc.m_rtl; }
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -1820,6 +1824,15 @@ namespace SIL.FieldWorks.Common.Widgets
 		#endregion
 
 		#region Properties
+
+		/// <summary>
+		/// The desired text alignment. The default depends on the Vc's basic text direction, but the method is
+		/// here rather than on the VC to allow it to be overriden in ComboTextBox.
+		/// </summary>
+		internal virtual FwTextAlign Alignment
+		{
+			get { return Rtl ? FwTextAlign.ktalRight : FwTextAlign.ktalLeft; }
+		}
 
 		/// <summary>
 		/// Indicates whether a text box control automatically wraps words to the beginning of the next line when necessary.
@@ -2064,6 +2077,17 @@ namespace SIL.FieldWorks.Common.Widgets
 					m_ScrollPosition = newPos;
 					Invalidate();
 				}
+			}
+		}
+
+		/// <summary>
+		/// The text box in a combo should never autoscroll. Doing so produces LT-11073 among other problems.
+		/// </summary>
+		protected override bool ScrollToSelectionOnSizeChanged
+		{
+			get
+			{
+				return false;
 			}
 		}
 
@@ -2342,6 +2366,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		internal void BaseMakeSelectionVisible(IVwSelection sel)
+		{
+			base.MakeSelectionVisible(sel, true);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// First try to make everything visible, if possible. This is especially helpful with
@@ -2382,8 +2411,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				Debug.Fail("Unable to make a simple selection in rootbox.");
 			}
-			// And, in case it really is longer than the box (or was null!), make sure we really can see the actual selection.
-			return base.MakeSelectionVisible(sel, fWantOneLineSpace);
+			// And, in case it really is longer than the box (or was null!), make sure we really can see the actual selection;
+			// but ONLY if we had one, otherwise, it tries again to make everything visible
+			if (m_rootb.Selection != null && m_rootb.Selection.IsValid)
+				return base.MakeSelectionVisible(sel, fWantOneLineSpace);
+			return false;
 		}
 
 		#endregion
@@ -2767,6 +2799,10 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_rootb.Reconstruct();
 			// Don't bother making selection visible until our writing system is set, or the
 			// string has something in it.  See LT-9472.
+			// Also don't try if we have no selection; this can produce undesirable scrolling when the
+			// window is just too narrow. LT-11073
+			if (m_rootb.Selection == null)
+				return;
 			ITsString tss = Tss;
 			if (m_WritingSystem != 0 || (tss != null && tss.Text != null))
 				MakeSelectionVisible(null);
@@ -2852,7 +2888,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class TextBoxVc : FwBaseVc
 	{
 		#region Data members
-		private bool m_rtl;
+		internal bool m_rtl;
 		private bool m_fSaveSize;
 		private int m_dxWidth;
 #pragma warning disable 414
@@ -2870,7 +2906,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_innerTextBox = innerTextBox;
 		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether to save the size.
@@ -2928,9 +2963,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
 					(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
-				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
-					(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 			}
+			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
+				(int)FwTextPropVar.ktpvEnum, (int)m_innerTextBox.Alignment);
 
 			vwenv.OpenParagraph();
 			vwenv.AddStringProp(InnerFwTextBox.ktagText, this);

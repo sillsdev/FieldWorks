@@ -153,8 +153,7 @@ typedef ComMultiMap<HVO, VwAbstractNotifier> ObjNoteMap; // Hungarian mmhvoqnote
 
 #include "UtilView.h"
 // Needed only so VwCacheDa can reference kflids
-// that relate to structured text, and VwOleDbDa can use kwsAnal.
-#include "FwCellarTlb.h"
+// that relate to structured text.
 #include "CellarConstants.h"
 
 // The Enchant spelling checker interfaces.
@@ -220,7 +219,6 @@ class GrEngine;
 #include "StringToNumHelpers.h"
 #include "WriteXml.h"
 #include "FwStyledText.h"
-#include "VwTextStoreX11.h"
 #endif
 #include "AfColorTable.h"
 #include "VwPattern.h"

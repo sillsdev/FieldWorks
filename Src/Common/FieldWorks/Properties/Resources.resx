@@ -150,7 +150,7 @@
   <data name="kstidUnableToOpenLastProject" xml:space="preserve">
 	<value>The last time {0} started, it stopped responding when attempting to open the FieldWorks project:
 {1}</value>
-	<comment>Message shown on the Unable to Open Project dialog box when TE or FLEx prevously crashed on startup</comment>
+	<comment>Message shown on the Unable to Open Project dialog box when FieldWorks previously crashed on startup</comment>
   </data>
   <data name="kstidAboutToConvertCaption" xml:space="preserve">
 	<value>About to Convert</value>
@@ -283,5 +283,8 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="kstidFallbackToEnglishUi" xml:space="preserve">
 	<value>Continue using English as the user interface language?</value>
 	<comment>Message displayed when the UI locale the user previously selected is no supported.</comment>
+  </data>
+  <data name="kstidFieldWorksRespondedNotSure" xml:space="preserve">
+	<value>Another instance of FieldWorks appears to be starting up at the same time as this one, and things have gotten confused. We recommend letting one project open fully before you try to open another one. If you get this message repeatedly or when not trying to open two projects at once, you may have encountered a bug; please report it. It may help to restart your computer.</value>
   </data>
 </root>

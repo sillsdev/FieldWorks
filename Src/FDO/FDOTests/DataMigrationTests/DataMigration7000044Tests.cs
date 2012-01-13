@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='vernacular' wsType='vernacular' style='Dictionary-Headword'  />
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=all analysis' wsType='vernacular' style='Dictionary-Headword'  />
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=x-kal' wsType='vernacular' style='Dictionary-Headword'  />
+					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='x-kal-fonipa,x-kal' visibleWritingSystems='x-kal-fonipa,x-kal' wsType='vernacular' style='Dictionary-Headword'  />
 				</layout>
 			</LayoutInventory>
 			";
@@ -50,6 +51,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			+ "<name>db$local$LexDb.Entries_sorter</name>"
 			+ "<value xsi:type=\"xsd:string\">&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.SortMethodFinder\" layout=\"EntryHeadwordForEntry\" sortmethod=\"FullSortKey\" ws=\"vernacular\"&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"$ws=reversal\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>"
 			+ "</Property>"
+			+ "<Property> <name>db$local$ConcordanceWs</name> <value xsi:type=\"xsd:string\">x-kal</value></Property>"
+			+ "<Property> <name>db$local$WordformInventory.Wordforms_sorter</name> <value xsi:type=\"xsd:string\">>&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.LayoutFinder\" layout=\"\"&gt;&lt;column label=\"Form\" width=\"30%\" cansortbylength=\"true\" ws=\"$ws=best vernacular\" field=\"Form\"&gt;&lt;span&gt;&lt;properties&gt;&lt;bold value=\"off\" /&gt;&lt;/properties&gt;&lt;string field=\"Form\" ws=\"best vernacular\" /&gt;&lt;/span&gt;&lt;/column&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"x-kal\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value> </Property>"
+			+ "<Property>"
+			+ "<name>db$local$lexiconEdit_lexentryList_ColumnList</name> "
+			+ "<value xsi:type=\"xsd:string\">&lt;root version=\"14\"&gt;&lt;column layout=\"LexemeFormForEntry\" common=\"true\" width=\"72000\" ws=\"$ws=x-kal\" sortmethod=\"MorphSortKey\" cansortbylength=\"true\" visibility=\"always\" transduce=\"LexEntry.LexemeForm.Form\" transduceCreateClass=\"MoStemAllomorph\" originalWs=\"vernacular\" originalLabel=\"Lexeme Form\" label=\"Lexeme Form (Sui_ipa)\" /&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;column layout=\"GlossesForSense\" multipara=\"true\" width=\"72000\" ws=\"$ws=zh-CN\" transduce=\"LexSense.Gloss\" cansortbylength=\"true\" visibility=\"always\" originalWs=\"analysis\" originalLabel=\"Glosses\" label=\"Glosses (ManS)\" /&gt;&lt;column layout=\"GrammaticalInfoFullForSense\" headerlabel=\"Grammatical Info.\" chooserFilter=\"external\" label=\"Grammatical Info. (Full)\" multipara=\"true\" width=\"72000\" visibility=\"always\"&gt;&lt;dynamicloaderinfo assemblyPath=\"FdoUi.dll\" class=\"SIL.FieldWorks.FdoUi.PosFilter\" /&gt;&lt;/column&gt;&lt;/root&gt;</value>"
+			+ "</Property>"
 			+ "</ArrayOfProperty>";
 		/// <summary>
 		/// Test the migration from version 7000018 to 7000019.
@@ -67,6 +74,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var xkalPath = Path.Combine(storePath, "x-kal.ldml");
 			File.Copy(Path.Combine(testDataPath, "x-kal_7000043.ldml"), xkalPath);
 			File.SetAttributes(xkalPath, FileAttributes.Normal); // don't want to copy readonly property.
+			var xkalFonipaPath = Path.Combine(storePath, "x-kal-fonipa.ldml");
+			File.Copy(Path.Combine(testDataPath, "x-kal-fonipa_7000043.ldml"), xkalFonipaPath);
+			File.SetAttributes(xkalFonipaPath, FileAttributes.Normal); // don't want to copy readonly property.
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000044.xml");
 			// Create all the Mock classes for the classes in my test data.
@@ -101,6 +111,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.That(File.Exists(testEnglishPath));
 			// Verify that x-kal.ldml is renamed to qaa-x-kal and content changed
 			Assert.That(File.Exists(Path.Combine(storePath, "qaa-x-kal.ldml")));
+			// Verify that x-kal-fonipa.ldml is renamed to qaa-fonipa-x-kal and content changed
+			Assert.That(File.Exists(Path.Combine(storePath, "qaa-x-kal-fonipa.ldml")));
 			// Verify that AUni data in LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c tag is changed to qaa-x-kal
 			var entry = XElement.Parse(dtoRepos.GetDTO("7ecbb299-bf35-4795-a5cc-8d38ce8b891c").Xml);
 			Assert.That(entry.Element("CitationForm").Element("AUni").Attribute("ws").Value, Is.EqualTo("qaa-x-kal"));
@@ -143,6 +155,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(1).First().Attribute("ws").Value, Is.EqualTo("vernacular"));
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(2).First().Attribute("ws").Value, Is.EqualTo("$ws=all analysis"));
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(3).First().Attribute("ws").Value, Is.EqualTo("$ws=qaa-x-kal"));
+			Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("ws").Value, Is.EqualTo("qaa-x-kal-fonipa,qaa-x-kal"));
+			Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("visibleWritingSystems").Value, Is.EqualTo("qaa-x-kal-fonipa,qaa-x-kal"));
 
 			// Check the local settings.
 			var propTable = XElement.Parse(File.ReadAllText(sampleSettings, Encoding.UTF8));
@@ -153,6 +167,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.That(propTable.Elements("Property").Skip(2).First().Element("value").Value.Contains("ws=\"$ws=qaa-x-kal\""));
 			Assert.That(propTable.Elements("Property").Skip(3).First().Element("value").Value.Contains("ws=\"$wsName\""));
 			Assert.That(propTable.Elements("Property").Skip(4).First().Element("value").Value.Contains("ws=\"$ws=reversal\""));
+			Assert.That(propTable.Elements("Property").Skip(5).First().Element("value").Value, Is.EqualTo("qaa-x-kal"));
+			Assert.That(propTable.Elements("Property").Skip(6).First().Element("value").Value.Contains("ws=\"qaa-x-kal\""));
+			Assert.That(propTable.Elements("Property").Skip(7).First().Element("value").Value.Contains("ws=\"$ws=qaa-x-kal\""));
 		}
 
 		private static void PrepareStore(string path)

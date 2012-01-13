@@ -433,9 +433,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 								using (RegistryKey keyFlex = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Language Explorer"))
 									launchesFlex = keyFlex.GetValue("launches", "0") as string;
 							}
-							if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Translation Editor"))
+							if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, FwSubKey.TE))
 							{
-								using (RegistryKey keyTE = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Translation Editor"))
+								using (RegistryKey keyTE = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(FwSubKey.TE))
 									launchesTE = keyTE.GetValue("launches", "0") as string;
 							}
 							if (launchesFlex == "0" && launchesTE == "0")

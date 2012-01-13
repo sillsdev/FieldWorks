@@ -74,6 +74,24 @@ namespace SIL.FieldWorks.FDO
 		/// Note: may answer true, even if all such creations have been Undone.
 		/// </summary>
 		bool InstancesCreatedThisSession(int classId);
+
+		/// <summary>
+		/// Record that the indicated object is in focus. This will postpone automatic deletion of the
+		/// object until it is no longer focused. Multiple calls to this must be balanced by multiple
+		/// calls to RemoveFocusedObject. Deletion happens only when it is in focus nowhere.
+		/// Currently this is used only to postpone deletion of wordforms as a side effect of editing
+		/// the baseline.
+		/// </summary>
+		void AddFocusedObject(ICmObject obj);
+
+		/// <summary>
+		/// Record that the indicated object is no longer in focus. This will postpone automatic deletion of the
+		/// object until it is no longer focused. Multiple calls to this must be balanced by multiple
+		/// calls to RemoveFocusedObject. Deletion happens only when it is in focus nowhere.
+		/// Currently this is used only to postpone deletion of wordforms as a side effect of editing
+		/// the baseline.
+		/// </summary>
+		void RemoveFocusedObject(ICmObject obj);
 	}
 
 	/// <summary>

@@ -36,6 +36,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class DirectoryFinder
 	{
+		private static string s_CommonAppDataFolder;
+
 		/// <summary>
 		/// The name of the Translation Editor folder (Even though this is the same as
 		/// FwUtils.ksTeAppName and FwSubKey.TE, PLEASE do not use them interchangeably. Use
@@ -74,6 +76,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const string ksBiblicaltermsLocFilePrefix = "BiblicalTerms-";
 		private const string ksBiblicaltermsLocFileExtension = ".xml";
+
+		/// <summary>
+		/// Resets the static variables. Used for unit tests.
+		/// </summary>
+		internal static void ResetStaticVars()
+		{
+			s_CommonAppDataFolder = null;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -114,10 +124,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string UserAppDataFolder(string appName)
 		{
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			return Path.Combine(Path.Combine(path, Application.CompanyName), appName);
+			return Path.Combine(Path.Combine(path, CompanyName), appName);
 		}
-
-		private static string s_CommonAppDataFolder;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -136,7 +144,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					if (MiscUtils.IsUnix)
 					{
-						s_CommonAppDataFolder = "/var/lib/fieldworks";
+						// allow to override the /var/lib/fieldworks path by setting the
+						// environment variable FW_CommonAppData. Is this is needed on our CI
+						// build machines.
+						s_CommonAppDataFolder =
+							Environment.GetEnvironmentVariable("FW_CommonAppData") ??
+							"/var/lib/fieldworks";
 					}
 					else
 					{
@@ -163,6 +176,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return Environment.GetFolderPath(folder);
 		}
 
+		static string s_companyName = Application.CompanyName; // default for real use; tests may override.
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the name of the company used for registry settings (replaces
+		/// Application.CompanyName)
+		/// NOTE: THIS SHOULD ONLY BE SET IN TESTS AS THE DEFAULT Application.CompanyName IN
+		/// TESTS WILL BE "nunit.org" or jetbrains.something!!!
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string CompanyName
+		{
+			set { s_companyName = value; }
+			private get
+			{
+				// This might be a good idea but will require all unit tests that depend on these functions to set one. Many of them
+				// don't seem to affected by using an NUnit or JetBrains application name.
+				//if (s_companyName.IndexOf("nunit", StringComparison.InvariantCultureIgnoreCase) >= 0 || s_companyName.IndexOf("jetbrains", StringComparison.InvariantCultureIgnoreCase) >= 0)
+				//    throw new ArgumentException("CompanyName can not be NUnit.org or some variant of NUnit or jetbrains!" +
+				//        " Make sure the test is overriding this property in RegistryHelper");
+				return s_companyName;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the path for storing common application data that might be shared between
@@ -176,7 +212,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string CommonAppDataFolder(string appName)
 		{
-			return Path.Combine(Path.Combine(CommonApplicationData, Application.CompanyName), appName);
+			return Path.Combine(Path.Combine(CommonApplicationData, CompanyName), appName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -518,7 +554,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), Application.CompanyName),
+				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), CompanyName),
 					string.Format("FieldWorks {0}", FwUtils.SuiteVersion));
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
@@ -545,20 +581,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				object rootDir = null;
+				string rootDir = null;
 				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir");
-				if ((rootDir == null) || !(rootDir is string))
-					throw new ApplicationException(string.Format(@"You need to have the registry key LOCAL_MACHINE\Software\SIL\Fieldworks\{0}.0\RootCodeDir pointing at your DistFiles dir.", FwUtils.SuiteVersion));
-#if !__MonoCS__
-				string fw = Directory.GetParent((string)rootDir).ToString();
-#else
-				// TODO-Linux: possible GetParent not working FIXME.
-				string fw = Path.GetFullPath(Path.Combine(rootDir as string, "../"));
-#endif
+					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
+				if (string.IsNullOrEmpty(rootDir))
+				{
+					throw new ApplicationException(
+						string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
+						FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+				}
+				string fw = Directory.GetParent(rootDir).FullName;
 				string src = Path.Combine(fw, "Src");
-				if(!Directory.Exists(src))
-					throw new ApplicationException (@"Could not find the Src directory.  Was expecting it at: " + src);
+				if (!Directory.Exists(src))
+					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
 				return src;
 			}
 		}
@@ -645,18 +680,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// On Vista or later OS's Writing HLKM registry keys can, by processes not running with eleverated privileges,
 				// silently redirect to a virtual location and not the intended HKLM location, rather than throwing a security
 				// exception. The SetValueAsAdmin method writes the registry key in a processes with hopfully elevated
-				// priviliges.
+				// privileges.
 
 				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
 				{
 					// We don't want unittests showing the UAC on Vista or later OS's.
-					if (!MiscUtils.RunningTests)
+					if (!MiscUtils.RunningTests && !MiscUtils.IsUnix)
 						registryKey.SetValueAsAdmin("ProjectsDir", value);
 					else
 						registryKey.SetValue("ProjectsDir", value);
 				}
-
-
 			}
 		}
 
@@ -708,13 +741,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string path = MiscUtils.IsUnix ? UserAppDataFolder(ksWritingSystemsDir) :
-					CommonAppDataFolder(ksWritingSystemsDir);
+				string path = CommonAppDataFolder(ksWritingSystemsDir);
 				if (!Directory.Exists(path))
 				{
 					DirectoryInfo di = Directory.CreateDirectory(path);
-					if (!MiscUtils.IsUnix) // No user shared data on Linux
+					if (!MiscUtils.IsUnix)
 					{
+						// We don't set the permission on Linux. That is done outside of this app.
+						// On Linux the run-app script checks the permissions on startup; the
+						// correct permissions are set when installing the package or by the
+						// system administrator.
+
 						DirectorySecurity ds = di.GetAccessControl();
 						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
 						AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute
@@ -738,7 +775,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return Directory.GetFiles(FWCodeDirectory, ksBiblicaltermsLocFilePrefix + "*" +
+				// SE version doesn't install the TE folder.
+				if (!Directory.Exists(TeFolder))
+					return new string[]{""};
+				return Directory.GetFiles(TeFolder, ksBiblicaltermsLocFilePrefix + "*" +
 					ksBiblicaltermsLocFileExtension, SearchOption.TopDirectoryOnly);
 			}
 		}
@@ -751,7 +791,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		static public string GetKeyTermsLocFilename(string locale)
 		{
-			return Path.Combine(FWCodeDirectory, ksBiblicaltermsLocFilePrefix + locale +
+			return Path.Combine(TeFolder, ksBiblicaltermsLocFilePrefix + locale +
 				ksBiblicaltermsLocFileExtension);
 		}
 

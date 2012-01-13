@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Category("ByHand")]
 		public void SetValueAsAdmin()
 		{
-			using (var registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			using (var registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
 			{
 				registryKey.SetValueAsAdmin("keyname", "value");
 			}

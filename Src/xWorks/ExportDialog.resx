@@ -145,7 +145,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;btnExport.ZOrder" xml:space="preserve">
-	<value>6</value>
+	<value>7</value>
   </data>
   <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
@@ -172,22 +172,10 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
-	<value>5</value>
+	<value>6</value>
   </data>
   <data name="m_exportList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="columnHeader1.Text" xml:space="preserve">
-	<value>Data</value>
-  </data>
-  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
-	<value>110</value>
-  </data>
-  <data name="columnHeader2.Text" xml:space="preserve">
-	<value>Format</value>
-  </data>
-  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
-	<value>138</value>
   </data>
   <data name="m_exportList.Location" type="System.Drawing.Point, System.Drawing">
 	<value>16, 16</value>
@@ -208,7 +196,19 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_exportList.ZOrder" xml:space="preserve">
-	<value>4</value>
+	<value>5</value>
+  </data>
+  <data name="columnHeader1.Text" xml:space="preserve">
+	<value>Data</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+	<value>110</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+	<value>Format</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+	<value>138</value>
   </data>
   <data name="m_description.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Right</value>
@@ -235,7 +235,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_description.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>4</value>
   </data>
   <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Right</value>
@@ -262,7 +262,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>3</value>
   </data>
   <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
@@ -289,7 +289,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>2</value>
   </data>
   <data name="m_chkExportPictures.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
@@ -301,7 +301,7 @@
 	<value>False</value>
   </data>
   <data name="m_chkExportPictures.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 210</value>
+	<value>16, 232</value>
   </data>
   <data name="m_chkExportPictures.Size" type="System.Drawing.Size, System.Drawing">
 	<value>257, 17</value>
@@ -322,6 +322,39 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_chkExportPictures.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_chkShowInFolder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_chkShowInFolder.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkShowInFolder.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkShowInFolder.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 209</value>
+  </data>
+  <data name="m_chkShowInFolder.Size" type="System.Drawing.Size, System.Drawing">
+	<value>96, 17</value>
+  </data>
+  <data name="m_chkShowInFolder.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_chkShowInFolder.Text" xml:space="preserve">
+	<value>Show in folder.</value>
+  </data>
+  <data name="&gt;&gt;m_chkShowInFolder.Name" xml:space="preserve">
+	<value>m_chkShowInFolder</value>
+  </data>
+  <data name="&gt;&gt;m_chkShowInFolder.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkShowInFolder.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkShowInFolder.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

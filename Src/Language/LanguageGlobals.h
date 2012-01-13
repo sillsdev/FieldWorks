@@ -21,7 +21,10 @@ Last reviewed:
 #define LanguageGlobals_H 1
 
 #include "LgFontManager.h"
+
+#ifdef WIN32
 #include "LgTextServices.h"
+#endif
 
 class LanguageGlobals
 {
@@ -32,8 +35,11 @@ public:
 	// Originally from LgFontManager.h
 	static LgFontManager g_fm; // Global LgFontManager.
 
+#ifdef WIN32
 	// Originally from LgTextServices.cpp
 	static LgTextServices g_lts;
+#endif
+
 };
 
 #endif

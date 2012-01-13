@@ -643,7 +643,7 @@
 	<value>5</value>
   </data>
   <data name="m_cbVernWrtSys.HelpString" xml:space="preserve">
-	<value>Specifies the writing system to use as the initial  vernacular language writing system.</value>
+	<value>Specifies the writing system to use as the initial vernacular language writing system.</value>
   </data>
   <data name="m_cbVernWrtSys.ItemHeight" type="System.Int32, mscorlib">
 	<value>13</value>
@@ -673,7 +673,7 @@
 	<value>3</value>
   </data>
   <data name="m_cbAnalWrtSys.HelpString" xml:space="preserve">
-	<value>Specifies the writing system to use as the initial  analysis language writing system.</value>
+	<value>Specifies the writing system to use as the initial analysis language writing system.</value>
   </data>
   <data name="m_cbAnalWrtSys.ItemHeight" type="System.Int32, mscorlib">
 	<value>13</value>

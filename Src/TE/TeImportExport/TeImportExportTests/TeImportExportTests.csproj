@@ -165,6 +165,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="SharedScrControls, Version=7.2.0.15701, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>

@@ -852,12 +852,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			int ichEnd;
 			int ihvoEnd1;
 			ITsTextProps ttp;
-			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative(clev, typeof(SelLevInfo)))
+			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
 				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
 					out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
-				SelLevInfo[] rgvsli = (SelLevInfo[])MarshalEx.NativeToArray(rgvsliTemp, clev,
-					typeof(SelLevInfo));
+				SelLevInfo[] rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
 				int ichInsert = 0;
 				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert,
 					ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);
@@ -941,12 +940,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			int ichEnd;
 			int ihvoEnd1;
 			ITsTextProps ttp;
-			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative(clev, typeof(SelLevInfo)))
+			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
 				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
 					out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
-				SelLevInfo[] rgvsli = (SelLevInfo[])MarshalEx.NativeToArray(rgvsliTemp, clev,
-					typeof(SelLevInfo));
+				SelLevInfo[] rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
 				int ichInsert = 0;
 				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert,
 					ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);

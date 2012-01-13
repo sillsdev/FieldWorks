@@ -182,6 +182,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_rdoWholeBook.Name = "m_rdoWholeBook";
 			this.m_rdoWholeBook.TabStop = true;
 			this.m_rdoWholeBook.UseVisualStyleBackColor = true;
+			this.m_rdoWholeBook.CheckedChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSelectedBook);
 			//
 			// m_grpRange
 			//
@@ -205,37 +206,52 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_cboBooks.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboBooks, "m_cboBooks");
 			this.m_cboBooks.Name = "m_cboBooks";
-			this.m_cboBooks.SelectedIndexChanged += new System.EventHandler(this.m_cboBooks_SelectedIndexChanged);
+			this.m_cboBooks.SelectedIndexChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSelectedBook);
+			this.m_cboBooks.Enter += new System.EventHandler(this.m_cboBooks_Enter);
 			//
 			// m_cboEndSection
 			//
+			this.m_cboEndSection.DropDownHeight = 156;
+			this.m_cboEndSection.DropDownWidth = 250;
 			this.m_cboEndSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboEndSection, "m_cboEndSection");
 			this.m_cboEndSection.Name = "m_cboEndSection";
+			this.m_cboEndSection.SelectedIndexChanged += new System.EventHandler(this.m_cboEndSection_SelectedIndexChanged);
+			this.m_cboEndSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
 			//
 			// m_cboStartSection
 			//
+			this.m_cboStartSection.DropDownHeight = 156;
+			this.m_cboStartSection.DropDownWidth = 250;
 			this.m_cboStartSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboStartSection, "m_cboStartSection");
 			this.m_cboStartSection.Name = "m_cboStartSection";
+			this.m_cboStartSection.SelectedIndexChanged += new System.EventHandler(this.m_cboStartSection_SelectedIndexChanged);
+			this.m_cboStartSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
 			//
 			// m_rdoSectionRange
 			//
 			resources.ApplyResources(this.m_rdoSectionRange, "m_rdoSectionRange");
 			this.m_rdoSectionRange.Name = "m_rdoSectionRange";
 			this.m_rdoSectionRange.UseVisualStyleBackColor = true;
+			this.m_rdoSectionRange.CheckedChanged += new System.EventHandler(this.m_rdoSectionRange_CheckedChanged);
 			//
 			// m_cboSection
 			//
+			this.m_cboSection.DropDownHeight = 156;
+			this.m_cboSection.DropDownWidth = 250;
 			this.m_cboSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboSection, "m_cboSection");
 			this.m_cboSection.Name = "m_cboSection";
+			this.m_cboSection.SelectedIndexChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
+			this.m_cboSection.Enter += new System.EventHandler(this.m_cboSection_Enter);
 			//
 			// m_rdoSingleSection
 			//
 			resources.ApplyResources(this.m_rdoSingleSection, "m_rdoSingleSection");
 			this.m_rdoSingleSection.Name = "m_rdoSingleSection";
 			this.m_rdoSingleSection.UseVisualStyleBackColor = true;
+			this.m_rdoSingleSection.CheckedChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
 			//
 			// m_chkPassageBeforeOverview
 			//

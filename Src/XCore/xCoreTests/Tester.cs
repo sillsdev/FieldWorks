@@ -92,6 +92,11 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
+
 		#endregion
 
 		#region IXCoreUserControl implementation

@@ -21,6 +21,9 @@ DEFINES  := $(DEFINES) -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
 	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
 endif
 
 PACKAGES := gtkmm-2.4
@@ -46,7 +49,7 @@ LINK_LIBS := \
 	$(DEBUG_LIBS) \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O3 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -D_FORTIFY_SOURCE=0
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic
 
 ARFLAGS  = -crs
 
@@ -60,9 +63,9 @@ OBJS = \
 	$(INT_DIR)/GenericFactory.o \
 	$(INT_DIR)/HashMap.o \
 	$(INT_DIR)/MakeDir.o \
-	$(INT_DIR)/ModuleEntry.o \
 	$(INT_DIR)/OleStringLiteral.o \
 	$(INT_DIR)/StackDumper.o \
+	$(INT_DIR)/StackDumperLinux.o \
 	$(INT_DIR)/StringStrm.o \
 	$(INT_DIR)/StringTable.o \
 	$(INT_DIR)/StrUtil.o \
@@ -90,9 +93,9 @@ all: $(OUT_DIR)/libGeneric.a link_check
 $(OUT_DIR)/libGeneric.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libGeneric
+link_check: $(INT_DIR)/libGeneric
 
-libGeneric: $(OBJS) $(INT_DIR)/main.o $(LINK_LIBS)
+$(INT_DIR)/libGeneric: $(OBJS) $(INT_DIR)/main.o $(INT_DIR)/ModuleEntry.o $(LINK_LIBS)
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 # === Rules ===
@@ -101,4 +104,4 @@ libGeneric: $(OBJS) $(INT_DIR)/main.o $(LINK_LIBS)
 -include $(PCHNAME:%.gch=%.d)
 
 clean:
-	$(RM) $(OUT_DIR)/libGeneric.a libGeneric $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
+	$(RM) $(OUT_DIR)/libGeneric.a $(INT_DIR)/libGeneric $(INT_DIR)/*.[od] $(INT_DIR)/*.gch

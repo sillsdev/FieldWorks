@@ -26,6 +26,7 @@ Last reviewed:
 
 #include "testViews.h"
 
+#ifdef WIN32
 #undef ENABLE_TSF
 #define ENABLE_TSF
 
@@ -2654,6 +2655,7 @@ namespace TestViews
 #endif /*ENABLE_TSF*/
 	};
 }
+#endif /*WIN32*/
 
 #endif /*TestVwTextStore_H_INCLUDED*/
 

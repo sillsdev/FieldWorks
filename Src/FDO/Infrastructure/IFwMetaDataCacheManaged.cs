@@ -196,6 +196,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name='className'>Name of the class to look for.</param>
 		/// <returns>Class identification number, or 0 if not found.</returns>
 		int GetClassId(string className);
+
+		/// <summary>
+		/// Get properties that can be sorted (e.g., collection and multi str/uni properties).
+		/// </summary>
+		/// <returns></returns>
+		Dictionary<string, Dictionary<string, HashSet<string>>> GetSortableProperties();
 	}
 
 	/// <summary>

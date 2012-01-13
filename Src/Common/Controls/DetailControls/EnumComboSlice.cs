@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class EnumComboSlice : FieldSlice, IVwNotifyChange
 	{
 		protected ComboBox m_combo;
+		int m_comboWidth;		// computed width of m_combo
 
 		/// <summary>
 		/// Constructor.
@@ -56,6 +57,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo.SelectedValueChanged += new EventHandler(this.SelectionChanged);
 			m_combo.GotFocus += new EventHandler(m_combo_GotFocus);
 			m_combo.DropDownClosed += new EventHandler(m_combo_DropDownClosed);
+#if __MonoCS__	// FWNX-545
+			m_combo.Parent.SizeChanged += new EventHandler(OnComboParentSizeChanged);
+#endif
 			StringTbl = stringTable;
 			PopulateCombo(parameters);
 			// We need to watch the cache for changes to our property.
@@ -140,9 +144,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_combo.Items.Add(label);
 				}
 			}
-			m_combo.Width = width + 25;
+			m_comboWidth = width + 25;
+			m_combo.Width = m_comboWidth;
 			m_combo.MaxDropDownItems = Math.Min(m_combo.Items.Count, 20);
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// In .Net/Windows, shrinking the parent SplitContainer doesn't appear to shrink the
+		/// ComboBox permanently. However, it does in Mono/Linux.  See FWNX-545.
+		/// </summary>
+		private void OnComboParentSizeChanged(object sender, EventArgs e)
+		{
+			if (m_combo.Width < m_comboWidth)
+				m_combo.Width = m_comboWidth;
+		}
+#endif
 
 		protected override void UpdateDisplayFromDatabase()
 		{

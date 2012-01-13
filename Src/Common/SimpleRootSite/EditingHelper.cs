@@ -1161,6 +1161,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 			Callbacks.WsPending = -1; // using these keys suppresses prior input lang change.
+			// sets the arrow direction to physical or logical based on LTR or RTL
 			EditingHelper.CkBehavior nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
 
 			int retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, (int)nFlags);
@@ -3262,7 +3263,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			IDataObject dataObject = new DataObject();
 			dataObject.SetData(TsStringWrapper.TsStringFormat, false, wrapper);
 			dataObject.SetData(DataFormats.Serializable, true, wrapper);
-			dataObject.SetData(DataFormats.UnicodeText, true, tsString.Text);
+			dataObject.SetData(DataFormats.UnicodeText, true, tsString.Text.Normalize(NormalizationForm.FormC));
 			ClipboardUtils.SetDataObject(dataObject, fCopy);
 		}
 
@@ -3554,7 +3555,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// UOW which destoys the current selection and makes the paste fail. However, don't want to
 					// re-introduce FWR-1734 where delete succeeds and when paste fails. Would need to do undo to
 					// restore deleted text, but may seem strange to user since a redo task will now appear.
-					vwsel.ReplaceWithTsString(tss);
+					vwsel.ReplaceWithTsString(TsStringUtils.RemoveIllegalXmlChars(tss));
 				}
 			}
 			catch (Exception e)

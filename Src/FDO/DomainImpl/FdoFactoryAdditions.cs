@@ -508,6 +508,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			seg.BeginOffset = beginOffset;
 			return seg;
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Creates a new segment for the given paragraph with the specified begin offset.
+		/// </summary>
+		/// <param name="para">The para.</param>
+		/// <param name="beginOffset">The begin offset.</param>
+		/// <param name="cache">FdoCache to use for hvo creation</param>
+		/// <param name="guid">The guid to initialize the segment with.</param>
+		/// ------------------------------------------------------------------------------------
+		public ISegment Create(IStTxtPara para, int beginOffset, FdoCache cache, Guid guid)
+		{
+			Segment seg = new Segment(cache, ((IDataReader)cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo(), guid);
+
+			para.SegmentsOS.Add(seg);
+			seg.BeginOffset = beginOffset;
+			return seg;
+		}
 	}
 	#endregion
 
@@ -2316,6 +2334,40 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			newRecord.VersionHistoryOA = textFactory.Create();
 			StTxtParaBldr.CreateEmptyPara(m_cache, newRecord.VersionHistoryOA, "Normal", m_cache.DefaultAnalWs);
 			return newRecord;
+		}
+	}
+	#endregion
+	#region CmMediaURI
+	internal partial class CmMediaURIFactory : ICmMediaURIFactory, IFdoFactoryInternal
+	{
+		/// <summary>
+		/// Basic creation method for an CmMediaURI.
+		/// </summary>
+		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
+		public ICmMediaURI Create(FdoCache cache, Guid guid)
+		{
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			var newby = new CmMediaURI(cache, hvo, guid);
+			if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
+				((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
+			return newby;
+		}
+	}
+	#endregion
+	#region Fdo.Text
+	internal partial class TextFactory : ITextFactory, IFdoFactoryInternal
+	{
+		/// <summary>
+		/// Basic creation method for an CmMediaURI.
+		/// </summary>
+		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
+		public IText Create(FdoCache cache, Guid guid)
+		{
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			var newby = new Text(cache, hvo, guid);
+			if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
+				((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
+			return newby;
 		}
 	}
 	#endregion

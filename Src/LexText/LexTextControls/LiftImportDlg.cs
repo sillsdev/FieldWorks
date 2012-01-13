@@ -209,7 +209,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (string filePath in Directory.GetFiles(sLIFTtempFolder, "*.ldml"))
 					{
 						string file = Path.GetFileName(filePath);
-						File.Move(filePath, Path.Combine(sWritingSystems, file));
+						if (!File.Exists(Path.Combine(sWritingSystems, file)))
+							File.Move(filePath, Path.Combine(sWritingSystems, file));
 					}
 				}
 				var sTempOrigFile = Path.Combine(sLIFTtempFolder, sOrigFile.Substring(sLIFTfolder.Length + 1));
@@ -279,6 +280,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
+						progressDlg.ThreadHelper.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
 						SIL.Utils.Logger.WriteEvent(bldr.ToString());
 				}
 				catch

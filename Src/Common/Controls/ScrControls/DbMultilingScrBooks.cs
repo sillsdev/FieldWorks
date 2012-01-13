@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2009' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2009' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -9,18 +9,10 @@
 #endregion
 //
 // File: DbMultilingScrBooks.cs
-// Responsibility: DavidO
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using System.Diagnostics;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -32,7 +24,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// ----------------------------------------------------------------------------------------
 	public class DBMultilingScrBooks : MultilingScrBooks
 	{
+		#region Data members
 		private IScripture m_scripture;
+		#endregion
 
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
@@ -104,21 +98,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// TODO TeTeam: Figure out how to do this for the DB version of this class.
-		/// </summary>
-		/// <returns>The primary writing system</returns>
-		/// ------------------------------------------------------------------------------------
-		protected override int PrimaryEncoding
-		{
-			get
-			{
-				Debug.Assert(false);
-				return (int)m_requestedEncodings[0];
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Returns false, if hooked to a scr database and the book text does not exist.
 		/// </summary>
 		/// <param name="nBook">Book number used to see if book text exists in database.
@@ -127,7 +106,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// In implementation (b) (hooked to a scr database): return true if book text exists.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool IsBookAvailableInDb(int nBook)
+		public bool IsBookAvailableInDb(int nBook)
 		{
 			return (GetBookFromDB(nBook) != null);
 		}
@@ -229,36 +208,37 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// If name of one book is not available in the first (primary) writing system,
+		/// Gets an array of book labels for the books available in the associated Scripture
+		/// project. If name of one book is not available in the first (primary) writing system,
 		/// the info in the next available (secondary) writing system is substituted.
 		/// If not available in any given writing system, the 3-letter SIL/UBS book code is
 		/// returned.
 		/// </summary>
-		/// <param name="fAvailable">Normally, the output array only includes available books
-		/// if fAvailable is true.</param>
 		/// <returns>An array of BookNameInfo objects in the requested primary writing system,
 		/// as far as possible.</returns>
 		/// ------------------------------------------------------------------------------------
-		public override BookLabel[] GetBookNames(bool fAvailable)
+		public override BookLabel[] BookLabels
 		{
-			// TODO: ToddJ (BryanW)	Implement the description above
-			// foreach (int nEnc in m_requestedEncodings)
-			// Assert that knEncSilCodes is in the list
-
-			if (m_scripture == null)
-				return null;
-			var rgblBookNames = new BookLabel[m_scripture.ScriptureBooksOS.Count];
-
-			for (var i = 0; i < m_scripture.ScriptureBooksOS.Count; i++)
+			get
 			{
-				var book = m_scripture.ScriptureBooksOS[i];
-				var sBookName = book.BestUIName;
-				rgblBookNames[i] = new BookLabel(sBookName, (short)(book.CanonicalNum));
+				// TODO: ToddJ (BryanW)	Implement the description above
+				// foreach (int nEnc in m_requestedEncodings)
+				// Assert that knEncSilCodes is in the list
+
+				if (m_scripture == null)
+					return null;
+				var rgblBookNames = new BookLabel[m_scripture.ScriptureBooksOS.Count];
+
+				for (var i = 0; i < m_scripture.ScriptureBooksOS.Count; i++)
+				{
+					var book = m_scripture.ScriptureBooksOS[i];
+					var sBookName = book.BestUIName;
+					rgblBookNames[i] = new BookLabel(sBookName, (short)(book.CanonicalNum));
+				}
+
+				return rgblBookNames;
 			}
-
-			return rgblBookNames;
 		}
-
 		#endregion
 	}
 

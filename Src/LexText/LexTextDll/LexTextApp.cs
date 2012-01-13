@@ -331,7 +331,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 					break;
 				case "CmdImportInterlinearSfm":
 				case "CmdImportInterlinearData":
-					fEnabled = area == "textsWords";
+					if (mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance" || mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance")
+
+					{
+						fEnabled = false;
+					}
+					else
+					{
+						fEnabled = area == "textsWords";
+					}
 					break;
 				case "CmdImportSFMNotebook":
 					fEnabled = area == "notebook";
@@ -875,6 +883,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
 		}
 
 

@@ -344,6 +344,9 @@ namespace SIL.FieldWorks.IText
 					// Check whether there's a parser-generated analysis that the current settings
 					// subsume.  If so, reuse that analysis by filling in the missing data (word gloss,
 					// word category, and senses).
+					// Another option is that there is an existing 'analysis' that is a trivial one,
+					// created by word-only glossing. We can re-use that, filling in the other details
+					// now supplied.
 					var partialWa = FindMatchingAnalysis(false);
 					bool fNewAnal = partialWa == null;
 					if (fNewAnal)
@@ -368,6 +371,9 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						m_wa = partialWa;
+						// For setting word glosses, we should treat this as a 'found' not new analysis
+						// if it has any glosses, so we will search for and find any existing ones that match.
+						fFoundAnalysis = m_wa.MeaningsOC.Count > 0;
 					}
 					IPartOfSpeech pos = null;
 					if (m_hvoCategoryReal != 0)
@@ -380,7 +386,7 @@ namespace SIL.FieldWorks.IText
 					for (int imorph = 0; imorph < m_cmorphs; imorph++)
 					{
 						IWfiMorphBundle mb;
-						if (fNewAnal)
+						if (imorph >= m_wa.MorphBundlesOS.Count)
 						{
 							mb = mbFactory.Create();
 							m_wa.MorphBundlesOS.Insert(imorph, mb);
@@ -855,7 +861,6 @@ namespace SIL.FieldWorks.IText
 
 			/// <summary>
 			/// Find the analysis that matches the info in the secondary cache.
-			/// Optimize JohnT: there may be a more efficient way to do this using sql.
 			/// </summary>
 			/// <param name="fExactMatch"></param>
 			/// <returns></returns>
@@ -871,13 +876,69 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// If this possibility is Human evaluated, it must match exactly regardless
-						// of the input parameter.
+						// of the input parameter to count as a match on the analysis.
 						bool fIsHumanApproved = SandboxBase.IsAnalysisHumanApproved(m_caches.MainCache, possibleAnalysis);
 						if (CheckAnalysis(possibleAnalysis.Hvo, fIsHumanApproved))
 							return possibleAnalysis;
 					}
 				}
+				if (fExactMatch)
+					return null;
+				// in this inexact case, another way to match is to have correct gloss(es) and trivial analysis.
+				// Todo JohnT: do this and adjust caller.
+				foreach (var possibleAnalysis in m_wf.AnalysesOC)
+				{
+					if (!IsTrivialAnalysis(possibleAnalysis))
+						continue;
+					foreach (var gloss in possibleAnalysis.MeaningsOC)
+					{
+						if (MatchesCurrentGlosses(gloss))
+						{
+							// We want to reuse this gloss. If possible we will reuse and modify this
+							// analalysis. However, if it has other glosses, we don't want to change them.
+							if (possibleAnalysis.MeaningsOC.Count == 1)
+								return possibleAnalysis;
+							var result = possibleAnalysis.Services.GetInstance<IWfiAnalysisFactory>().Create();
+							m_wf.AnalysesOC.Add(result);
+							result.MeaningsOC.Add(gloss); // moves it to its own new private analysis
+							return result;
+						}
+					}
+				}
+
 				return null; // no match found.
+			}
+
+			private bool MatchesCurrentGlosses(IWfiGloss gloss)
+			{
+				foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				{
+					ITsString tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId);
+					if (!tssGloss.Equals(gloss.Form.get_String(wsId)))
+						return false;
+				}
+				return true;
+			}
+
+			/// <summary>
+			/// A trivial analysis, the sort created when just doing word glossing, doesn't really specify anything,
+			/// though it may have one morph bundle that just matches the whole wordform.
+			/// It may possibly specify a part of speech, in which case it must match the one the user entered
+			/// to be reusable.
+			/// </summary>
+			/// <param name="possibleAnalysis"></param>
+			/// <returns></returns>
+			private bool IsTrivialAnalysis(IWfiAnalysis possibleAnalysis)
+			{
+				if (possibleAnalysis.CategoryRA != null
+					&& possibleAnalysis.CategoryRA != m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, ktagSbWordPos)) as IPartOfSpeech)
+					return false;
+				if (possibleAnalysis.MorphBundlesOS.Count == 0)
+					return true;
+				if (possibleAnalysis.MorphBundlesOS.Count > 1)
+					return false;
+				var mb = possibleAnalysis.MorphBundlesOS[0];
+				return (mb.MorphRA == null && mb.MsaRA == null && mb.SenseRA == null);
 			}
 
 			/// <summary>

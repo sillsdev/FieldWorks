@@ -46,14 +46,8 @@ namespace SIL.CoreImpl
 			/// --------------------------------------------------------------------------------
 			public SingletonsContainerImpl()
 			{
-				m_lock = new ReaderWriterLockSlim();
+				m_lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 				m_SingletonsToDispose = new Dictionary<string, IDisposable>();
-				Application.ApplicationExit += OnApplicationExit;
-			}
-
-			private void OnApplicationExit(object sender, EventArgs e)
-			{
-				DisposeSingletons();
 			}
 
 			/// ------------------------------------------------------------------------------------
@@ -68,8 +62,6 @@ namespace SIL.CoreImpl
 						keyValuePair.Value.Dispose();
 
 					m_SingletonsToDispose.Clear();
-
-					Application.ApplicationExit -= OnApplicationExit;
 				}
 				finally
 				{
@@ -149,16 +141,19 @@ namespace SIL.CoreImpl
 			/// <param name="key">The key of the singleton.</param>
 			/// <param name="createFunc">The create function that is called when the singleton
 			/// doesn't exist yet.</param>
-			/// <returns></returns>
+			/// <param name="initFunc">The initialization function that is called after the
+			/// singleton was created.</param>
 			/// <remarks>
 			/// This method tries to retrieve a previously constructed singleton with the
 			/// specified key. If no existing singleton with this key can be found a new one is
-			/// constructed by calling <paramref name="createFunc"/> and added to the container.
+			/// constructed by calling <paramref name="createFunc"/>, added to the container and
+			/// then initialized by calling <paramref name="initFunc"/>.
 			/// If a singleton exists with this key but it has the wrong type an
 			/// InvalidCastException is thrown.
 			/// </remarks>
 			/// --------------------------------------------------------------------------------
-			public T Get<T>(string key, Func<T> createFunc) where T : IDisposable
+			public T Get<T>(string key, Func<T> createFunc, Action initFunc)
+				where T : IDisposable
 			{
 				m_lock.EnterUpgradeableReadLock();
 				try
@@ -170,6 +165,9 @@ namespace SIL.CoreImpl
 					var result = createFunc();
 					// next line will enter/exit WriteLock
 					Add(key, result);
+
+					if (initFunc != null)
+						initFunc();
 					return result;
 				}
 				finally
@@ -217,9 +215,12 @@ namespace SIL.CoreImpl
 		}
 
 		/// ------------------------------------------------------------------------------------
-		/// <summary>Releases this instance. To be used in tests.</summary>
+		/// <summary>Releases this instance. To only be used when application is exiting.
+		/// Tried using the Application.ApplicationExit event, but the timing of this was
+		/// wrong in some cases.
+		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static void Release()
+		public static void Release()
 		{
 			if (s_container != null)
 				s_container.DisposeSingletons();
@@ -289,11 +290,40 @@ namespace SIL.CoreImpl
 		/// specified key. If no existing singleton with this key can be found a new one is
 		/// constructed by calling <paramref name="createFunc"/> and added to the container. If
 		/// a singleton exists with this key but it has the wrong type an InvalidCastException
-		/// is thrown.</remarks>
+		/// is thrown.
+		/// <para>See also the explanation on the Get&lt;T&gt;(Func&lt;T&gt; createFunc)
+		/// overload.</para>
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public static T Get<T>(string key, Func<T> createFunc) where T : IDisposable
 		{
-			return Instance.Get(key, createFunc);
+			return Instance.Get(key, createFunc, null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>Gets or creates a singleton with the specified key.</summary>
+		/// <typeparam name="T">The type of the singleton. Needs to implement
+		/// IDisposable.</typeparam>
+		/// <param name="key">The key of the singleton.</param>
+		/// <param name="createFunc">The create function that is called when the singleton
+		/// doesn't exist yet.</param>
+		/// <param name="initFunc">The initialization function that is called after the
+		/// singleton was created.</param>
+		/// <remarks>
+		/// This method tries to retrieve a previously constructed singleton with the
+		/// specified key. If no existing singleton with this key can be found a new one is
+		/// constructed by calling <paramref name="createFunc"/>, added to the container and
+		/// then initialized by calling <paramref name="initFunc"/>.
+		/// <para>If a singleton exists with this key but it has the wrong type an
+		/// InvalidCastException is thrown.</para>
+		/// <para>See also the explanation on the Get&lt;T&gt;(Func&lt;T&gt; createFunc)
+		/// overload.</para>
+		/// </remarks>
+		/// ------------------------------------------------------------------------------------
+		public static T Get<T>(string key, Func<T> createFunc, Action initFunc)
+			where T : IDisposable
+		{
+			return Instance.Get(key, createFunc, initFunc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -303,13 +333,51 @@ namespace SIL.CoreImpl
 		/// <param name="createFunc">The create function that is called when the singleton
 		/// doesn't exist yet.</param>
 		/// <remarks>This method tries to retrieve a previously constructed singleton with the
-		/// specified type. If no existing singleton with this key can be found a new one is
+		/// specified type. If no existing singleton with this type can be found a new one is
 		/// constructed by calling <paramref name="createFunc"/> and added to the container.
+		/// <para>If a singleton exists with a key equal to <c>typeof(T).FullName</c> but it
+		/// has the wrong type an InvalidCastException is thrown.</para>
+		/// <para>Internally the singletons are stored by key. In the case like here where no
+		/// key is provided the full name of the type is used. This might cause unexpected
+		/// behavior:</para>
+		/// <para>If a singleton got created by specifying a key:
+		/// <code>var a = Get&lt;Book&gt;("title", BookCreatorMethod);</code>
+		/// then retrieving the singleton without key will create a new instance:
+		/// <code>var b = Get&lt;Book&gt;(BookCreatorMethod);</code></para>
+		/// <para>or, similar: if the singleton was created without key:
+		/// <code>var a = Get&lt;SIL.Common.Book&gt;(BookCreatorMethod);</code>
+		/// but then by accident an explicit key is specified but for the wrong type like
+		/// <code>var b = Get&lt;SIL.Common.Animal&gt;("SIL.Common.Book", AnimalCreatorMethod);
+		/// </code> then an InvalidCastException is thrown.</para>
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public static T Get<T>(Func<T> createFunc) where T : IDisposable
 		{
 			return Get(typeof(T).FullName, createFunc);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>Gets or creates a singleton with the specified type.</summary>
+		/// <typeparam name="T">The type of the singleton. Needs to implement
+		/// IDisposable.</typeparam>
+		/// <param name="createFunc">The create function that is called when the singleton
+		/// doesn't exist yet.</param>
+		/// <param name="initFunc">The initialization function that is called after the
+		/// singleton was created.</param>
+		/// <remarks>
+		/// This method tries to retrieve a previously constructed singleton with the
+		/// specified type. If no existing singleton with this type can be found a new one is
+		/// constructed by calling <paramref name="createFunc"/>, added to the container and
+		/// then initialized by calling <paramref name="initFunc"/>.
+		/// <para>If a singleton exists with a key equal to <c>typeof(T).FullName</c> but it
+		/// has the wrong type an InvalidCastException is thrown.</para>
+		/// <para>See also the explanation on the Get&lt;T&gt;(Func&lt;T&gt; createFunc)
+		/// overload.</para>
+		/// </remarks>
+		/// ------------------------------------------------------------------------------------
+		public static T Get<T>(Func<T> createFunc, Action initFunc) where T : IDisposable
+		{
+			return Get(typeof(T).FullName, createFunc, initFunc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -320,7 +388,10 @@ namespace SIL.CoreImpl
 		/// <remarks>This method tries to retrieve a previously constructed singleton with the
 		/// specified key. If no existing singleton with this key can be found a new one is
 		/// constructed and added to the container. If a singleton exists with this key but it
-		/// has the wrong type an InvalidCastException is thrown.</remarks>
+		/// has the wrong type an InvalidCastException is thrown.
+		/// <para>See also the explanation on the Get&lt;T&gt;(Func&lt;T&gt; createFunc)
+		/// overload.</para>
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public static T Get<T>(string key) where T: IDisposable, new()
 		{
@@ -333,7 +404,10 @@ namespace SIL.CoreImpl
 		/// have a default constructor.</typeparam>
 		/// <remarks>This method tries to retrieve a previously constructed singleton of the
 		/// specified type. If no existing singleton of this type can be found a new one is
-		/// constructed and added to the container.</remarks>
+		/// constructed and added to the container.
+		/// <para>See also the explanation on the Get&lt;T&gt;(Func&lt;T&gt; createFunc)
+		/// overload.</para>
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public static T Get<T>() where T : IDisposable, new()
 		{

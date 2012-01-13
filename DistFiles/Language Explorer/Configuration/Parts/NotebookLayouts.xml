@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Nonstandard layouts for Data Notebook. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<!-- Analysis -->
 	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="82290763-1633-4998-8317-0EC3F5027FBD">
 		<part ref="Title" visibility="always"/>
@@ -678,8 +679,8 @@
 	</layout>
 
 	<layout class="CmPossibility" type="jtview" name="publishRnRole">
-		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
-		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+		<part ref="AbbreviationPub" label="Abbreviation" ws="best analorvern" wsType="analysis vernacular" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="best analorvern" wsType="analysis vernacular" visibility="ifdata"/>
 	</layout>
 
 	<layout class="CmPerson" type="jtview" name="publishRnParticipant">

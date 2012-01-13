@@ -53,17 +53,17 @@ namespace SIL.Utils
 			//byte first = target[0];
 			//int targetLength = target.Length;
 			//if (targetLength == 1)
-			//    return Array.IndexOf(source, first); // probably more efficient, and code below won't work.
+			//	return Array.IndexOf(source, first); // probably more efficient, and code below won't work.
 			//int lastStartPosition = source.Length - targetLength;
 			//for (int i = 0; i <= lastStartPosition; i++)
 			//{
-			//    if (source[i] != first)
-			//        continue;
-			//    for (int j = 1; j < targetLength; j++)
-			//        if (source[i + j] != target[j])
-			//            break;
-			//        else if (j == targetLength - 1)
-			//            return i;
+			//	if (source[i] != first)
+			//		continue;
+			//	for (int j = 1; j < targetLength; j++)
+			//		if (source[i + j] != target[j])
+			//			break;
+			//		else if (j == targetLength - 1)
+			//			return i;
 			//}
 			//return -1;
 		}
@@ -339,25 +339,13 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static string FilterForFileName(string sName, FilenameFilterStrength strength)
 		{
-			StringBuilder cleanName = new StringBuilder(sName);
-			string invalidChars = GetInvalidProjectNameChars(strength);
-
-			// replace all invalid characters with an '_'
-			for (int i = 0; i < sName.Length; i++)
-			{
-				if (invalidChars.IndexOf(sName[i]) >= 0 || sName[i] < ' ') // eliminate all control characters too
-					cleanName[i] = '_';
-			}
-			return cleanName.ToString();
+			return StringUtils.FilterForFileName(sName, GetInvalidProjectNameChars(strength));
 		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the list of characters that are not allowed for project names.
-		/// Note that currently the kFilterProjName set is duplicated in AfDbApp::FilterForFileName.
 		/// </summary>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public static string GetInvalidProjectNameChars(FilenameFilterStrength strength)
 		{

@@ -45,6 +45,14 @@
 		<command id="CmdJumpToAnthroList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
 		</command>
+
+		<command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
+			<parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
+		</command>
+		<command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
+			<parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
+		</command>
+
 		<command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels"/>
 		</command>

@@ -10,10 +10,12 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Sfm2Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -300,6 +302,65 @@ namespace SIL.FieldWorks.IText
 				if (m_mappingsList.Items.Count > 0)
 					m_mappingsList.SelectedIndices.Add(0);
 				m_mappingsList.ResumeLayout();
+			}
+			else if(CurrentStepNumber == 2)
+			{
+				ICollection<IWritingSystem> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
+				ICollection<IWritingSystem> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
+				var vernToAdd = new ArrayList();
+				var analysToAdd = new ArrayList();
+				foreach(var mapping in m_mappings)
+				{
+					bool creationCancelled = false;
+					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
+					if(mapping.Destination == InterlinDestination.Baseline)
+					{
+						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
+						{
+							//Show creation dialog for Vernacular
+							var result = MessageBox.Show(this,
+														 String.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws),
+														 String.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
+							if(result == DialogResult.Yes)
+							{
+								vernToAdd.Add(ws);
+							}
+							else //if they bail out we won't add any writing systems, they might change them all
+							{
+								return;
+							}
+						}
+					}
+					else
+					{
+						if(!currentAnalysWSs.Contains(ws) && !analysToAdd.Contains(ws))
+						{
+							var result = MessageBox.Show(this,
+														 String.Format(ITextStrings.ksImportSFMInterlinNewAnalysis, ws),
+														 String.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
+							if (result == DialogResult.Yes)
+							{
+								analysToAdd.Add(ws);
+							}
+							else  //if they bail out we won't add any writing systems, they might change them all
+							{
+								return;
+							}
+						}
+					}
+				}
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
+					() => //Add all the collected new languages into the project in their proper section.
+					{
+						foreach (IWritingSystem analysLang in analysToAdd)
+						{
+							m_cache.LanguageProject.AddToCurrentAnalysisWritingSystems(analysLang);
+						}
+						foreach (IWritingSystem vernLang in vernToAdd)
+						{
+							m_cache.LanguageProject.AddToCurrentVernacularWritingSystems(vernLang);
+						}
+					});
 			}
 			base.OnNextButton();
 		}

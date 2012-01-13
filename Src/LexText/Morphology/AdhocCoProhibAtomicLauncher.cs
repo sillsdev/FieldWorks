@@ -8,6 +8,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -50,11 +51,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override void HandleChooser()
 		{
 			Form frm = FindForm();
+			WaitCursor wc = null;
 			BaseGoDlg dlg = null;
 			try
 			{
 				if (frm != null)
-					frm.Cursor = Cursors.WaitCursor;
+					wc = new WaitCursor(frm);
 				if (m_obj is IMoAlloAdhocProhib)
 					dlg = new LinkAllomorphDlg();
 				else
@@ -69,8 +71,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			finally
 			{
-				if (frm != null)
-					frm.Cursor = Cursors.Default;
+				if (wc != null)
+					wc.Dispose();
 				if (dlg != null)
 					dlg.Dispose();
 			}

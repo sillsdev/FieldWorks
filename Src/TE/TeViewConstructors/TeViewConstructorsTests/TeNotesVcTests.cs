@@ -138,9 +138,16 @@ namespace SIL.FieldWorks.TE
 			note.BeginObjectRA = AddParaToMockedText(footnote, "Whatever");
 			ITsString tss = m_vc.CallMakeLabelFromText("GEN 1:11", "WhoCares", note);
 			Assert.AreEqual(3, tss.RunCount);
-			Assert.AreEqual("\u0032", tss.get_RunText(0));
+#if __MonoCS__
+			const string fontname = "OpenSymbol";
+			const string symbol = "\u2042";
+#else
+			const string fontname = "Marlett";
+			const string symbol = "\u0032";
+#endif
+			Assert.AreEqual(symbol, tss.get_RunText(0));
 			Assert.AreEqual("GEN 1:11", tss.get_RunText(1));
-			Assert.AreEqual("Marlett",
+			Assert.AreEqual(fontname,
 				tss.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptFontFamily));
 			Assert.AreEqual("WhoCares",
 				tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptNamedStyle));

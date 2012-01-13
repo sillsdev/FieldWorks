@@ -162,6 +162,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SimpleRootSite">
 	  <Name>SimpleRootSite</Name>
 	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -209,9 +212,11 @@
 	</Compile>
 	<Compile Include="PageTests.cs" />
 	<Compile Include="PrintLayoutTestBase.cs" />
-	<Compile Include="PrintLayoutTests.cs" />
+	<Compile Include="PrintLayoutTests.cs">
+	</Compile>
 	<Compile Include="PublicationControlTests.cs" />
-	<Compile Include="PubTestsNoDb.cs" />
+	<Compile Include="PubTestsNoDb.cs">
+	</Compile>
 	<Compile Include="TwoColumnPrintLayoutTests.cs" />
   </ItemGroup>
   <ItemGroup>

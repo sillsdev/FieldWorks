@@ -456,10 +456,10 @@ namespace SIL.FieldWorks.TE
 			if (m_StyleType == StyleType.kstParagraph)
 			{
 				ITsTextProps props = StyleUtils.ParaStyleTextProps(m_sStyleName);
-				using (ArrayPtr rgbFmtBufPtr = MarshalEx.ArrayToNative(kcbFmtBufMax, typeof(byte)))
+				using (ArrayPtr rgbFmtBufPtr = MarshalEx.ArrayToNative<byte>(kcbFmtBufMax))
 				{
 					int nBytes = props.SerializeRgb(rgbFmtBufPtr, kcbFmtBufMax);
-					m_rgbParaProps = (byte[])MarshalEx.NativeToArray(rgbFmtBufPtr, nBytes, typeof(byte));
+					m_rgbParaProps = MarshalEx.NativeToArray<byte>(rgbFmtBufPtr, nBytes);
 				}
 			}
 			else

@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.TE
 
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
-		/// Required implementation of abstract property to get the relative path to stylesheet
+		/// Required implementation of abstract property to get the relative path to
 		/// configuration file from the FieldWorks install folder.
 		/// </summary>
 		/// -------------------------------------------------------------------------------------

@@ -1562,7 +1562,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_listBoxRelatedWSs.Items.Cast<IWritingSystem>().Select(ws => Tuple.Create(ws, ws.LanguageSubtag, ws.Modified)).ToList();
 				LanguageSubtag subtag = dlg.LanguageSubtag;
 				foreach (IWritingSystem ws in m_listBoxRelatedWSs.Items)
+				{
 					ws.LanguageSubtag = subtag;
+					if (ws.LanguageSubtag.Code == "zh" && ws.LanguageSubtag.ISO3Code == "cmn" && ws.RegionSubtag == null)
+						ws.RegionSubtag = new RegionSubtag("CN", "China", false);
+				}
 
 				if (!CheckWsIdChange())
 				{

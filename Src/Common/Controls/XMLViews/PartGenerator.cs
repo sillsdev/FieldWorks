@@ -163,11 +163,11 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					int countFoundFlids = m_mdc.GetFields(m_clsid, true, (int)fieldTypes,
 						0, ArrayPtr.Null);
-					using (ArrayPtr flids = MarshalEx.ArrayToNative(countFoundFlids, typeof(int)))
+					using (ArrayPtr flids = MarshalEx.ArrayToNative<int>(countFoundFlids))
 					{
 						countFoundFlids = m_mdc.GetFields(m_clsid, true, (int)fieldTypes,
 							countFoundFlids, flids);
-						uiIds = (int[])MarshalEx.NativeToArray(flids, countFoundFlids, typeof(int));
+						uiIds = MarshalEx.NativeToArray<int>(flids, countFoundFlids);
 					}
 				}
 				foreach (int ui in uiIds)

@@ -10,67 +10,6 @@ namespace KeyboardSwitcherTests
 	[TestFixture]
 	public class KeyboardSwitcherTests
 	{
-		[Test]
-		public void GetEngineDesc_Version1Engine_ValidIBusEngineDesc()
-		{
-			using (var switcher = new KeyboardSwitcher())
-			{
-				var engineDescResult = new IBusEngineDesc
-													{ longname = "longname",
-														name = "name",
-														description = "desc",
-														language = "lang",
-														license = "lic",
-														author = "author",
-														icon = "icon",
-														layout = "layout" };
-
-				var engineDesc = new IBusEngineDesc_v1
-													{ longname = "longname",
-														name = "name",
-														description = "desc",
-														language = "lang",
-														license = "lic",
-														author = "author",
-														icon = "icon",
-														layout = "layout" };
-
-				var engine = new DummyIConvertible(engineDesc);
-				Assert.AreEqual(engineDescResult, switcher.GetEngineDesc(engine));
-			}
-		}
-
-		[Test]
-		public void GetEngineDesc_Version2Engine_ValidIBusEngineDesc()
-		{
-			using (var switcher = new KeyboardSwitcher())
-			{
-				var engineDescResult = new IBusEngineDesc
-													{ longname = "longname",
-														name = "name",
-														description = "desc",
-														language = "lang",
-														license = "lic",
-														author = "author",
-														icon = "icon",
-														layout = "layout" };
-
-				var engine = new DummyIConvertible(engineDescResult);
-				Assert.AreEqual(engineDescResult, switcher.GetEngineDesc(engine));
-			}
-		}
-
-		[Test]
-		[ExpectedException(typeof(InvalidCastException))]
-		public void GetEngineDesc_InvalidEngine_InvalidCastException()
-		{
-			using (var switcher = new KeyboardSwitcher())
-			{
-				var engine = new DummyIConvertible(new object());
-				switcher.GetEngineDesc(engine);
-			}
-		}
-
 		/// <summary>FWNX-442: Keyboard not turning off when it should</summary>
 		[Test]
 		public void IMEKeyboard_SetNoKeyboard_DisablesKeyboard()

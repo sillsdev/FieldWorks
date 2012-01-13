@@ -37,7 +37,14 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			AutoSize = false;
 			BackColor = SystemColors.Control;
+#if __MonoCS__
+			// Linux doesn't have the Marlett font -- do we need to pick a special one to get
+			// Unicode dingbats?  (In practice, the only use of XButton in FieldWorks is in the
+			// color picker, and it never uses a path that tries to draw the dingbats.)
+			Font = new Font("OpenSymbol", 9, GraphicsUnit.Point);
+#else
 			Font = new Font("Marlett", 9, GraphicsUnit.Point);
+#endif
 			Size = new Size(16, 16);
 		}
 
@@ -354,9 +361,13 @@ namespace SIL.FieldWorks.Common.Controls
 			Color clr = (m_state == PaintState.Normal ? SystemColors.ControlDarkDark :
 				SystemColors.ControlText);
 
-			// The 'r' in the Marlette font is the close button symbol 'X'
+#if __MonoCS__
+			// Linux doesn't have the Marlett font, so use a standard Unicode dingbat here.
+			TextRenderer.DrawText(e.Graphics, "\u2573", Font, rc, clr, m_txtFmtflags);
+#else
+			// The 'r' in the Marlett font is the close button symbol 'X'
 			TextRenderer.DrawText(e.Graphics, "r", Font, rc, clr, m_txtFmtflags);
-
+#endif
 			// Draw the border around the button.
 			rc.Width--;
 			rc.Height--;
@@ -407,12 +418,14 @@ namespace SIL.FieldWorks.Common.Controls
 			ControlPaint.DrawButton(e.Graphics, rc,
 				(m_state == PaintState.HotDown ? ButtonState.Pushed : ButtonState.Normal));
 
-			// In the Marlette font, '3' is the left arrow and '4' is the right.
+#if __MonoCS__
+			// Linux doesn't have the Marlett font, so use standard Unicode dingbats here.
+			string arrowGlyph = (m_drawLeftArrowButton ? "\u25C4" : "\u25BA");
+#else
+			// In the Marlett font, '3' is the left arrow and '4' is the right.
 			string arrowGlyph = (m_drawLeftArrowButton ? "3" : "4");
-
+#endif
 			Color clr = (Enabled ? SystemColors.ControlText : SystemColors.GrayText);
-
-			// The 'r' in the Marlette font is the close button symbol 'X'
 			TextRenderer.DrawText(e.Graphics, arrowGlyph, Font, rc,	clr, m_txtFmtflags);
 		}
 

@@ -17,10 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
 using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Discourse
@@ -39,7 +36,6 @@ namespace SIL.FieldWorks.Discourse
 		protected List<StoredMethod> m_calledMethods;
 		protected List<int> m_iStartEmbedding;
 		protected bool m_fInRegurgitation;
-		//internal bool m_fRtLFormattingActive;
 
 		public ChartRowEnvDecorator(IVwEnv vwEnv)
 			: this()
@@ -58,16 +54,12 @@ namespace SIL.FieldWorks.Discourse
 			m_calledMethods = new List<StoredMethod>();
 			m_iStartEmbedding = new List<int>();
 			m_fInRegurgitation = false;
-			//m_fRtLFormattingActive = false;
-			//m_tsPopFormatting = sPopFormatting;
 		}
 
 		/// <summary>
 		/// Must get set after the decorator object is created, but before anything is added to the vwEnv.
 		/// </summary>
 		internal bool IsRtL { get; set; }
-
-		//private ITsString m_tsPopFormatting;
 
 		/// <summary>
 		/// Contains the logic to put out the stored vwEnv calls in the order needed for
@@ -106,11 +98,12 @@ namespace SIL.FieldWorks.Discourse
 
 		private int FindMatchingEndEmbeddingIndex(int index)
 		{
-			// Back up the index to include SetIntProp calls before the OpenTableCell
+			// Back up the index to include SetIntProp or NoteDependency calls before the OpenTableCell
 			// call, but don't go back as far as a CloseTableCell call or AddObjProp.
 			for (var i = index - 1; i > -1; i--)
 			{
-				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.SetIntProperty)
+				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.SetIntProperty ||
+					m_calledMethods[i].MethodType == DecoratorMethodTypes.NoteDependency)
 					continue;
 				return i + 1;
 			}
@@ -173,11 +166,6 @@ namespace SIL.FieldWorks.Discourse
 					m_vwEnv.CloseParagraph();
 					break;
 				case DecoratorMethodTypes.CloseTableCell:
-					//if (m_fRtLFormattingActive)
-					//{
-					//    m_vwEnv.AddString(m_tsPopFormatting);
-					//    m_fRtLFormattingActive = false;
-					//}
 					m_vwEnv.CloseTableCell();
 					break;
 				case DecoratorMethodTypes.NoteDependency:

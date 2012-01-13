@@ -1,19 +1,14 @@
 using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Drawing;
+
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using System.Collections.Generic;
+using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -32,16 +27,11 @@ namespace SIL.FieldWorks.TE
 		#region Member data
 		// Make these static so their values will be retained
 		// when/if the user opens this dialog more than once.
-		static bool s_fImportEntire = true;
-		static bool s_fImportTranslation = true;
-		static bool s_fImportBackTranslation = true;
-		static bool s_fImportBookIntros = true;
-		static bool s_fImportAnnotations = true;
 		static BCVRef s_StartRef;
 		static BCVRef s_EndRef;
 
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected IScripture m_scr;
 		/// <summary></summary>
 		protected FwStyleSheet m_StyleSheet;
 		/// <summary></summary>
@@ -90,8 +80,7 @@ namespace SIL.FieldWorks.TE
 			m_StyleSheet = styleSheet;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_cache = cache;
-			IScripture scr = cache.LangProject.TranslatedScriptureOA;
+			m_scr = cache.LangProject.TranslatedScriptureOA;
 			m_importSettings = settings;
 
 			//InitBookNameList();
@@ -116,11 +105,16 @@ namespace SIL.FieldWorks.TE
 				SetEndRefToLastImportableBook();
 
 			// Finish constructing the ScrBookControl objects.
-			ScrVers versification = scr.Versification;
-			scrPsgFrom.Initialize(new ScrReference(StartRef, versification), scr,
-				m_importSettings.BooksForProject.ToArray());
-			scrPsgTo.Initialize(new ScrReference(EndRef, versification), scr,
-				m_importSettings.BooksForProject.ToArray());
+			InitializeStartAndEndRefControls();
+		}
+
+		static ImportDialog()
+		{
+			ImportAnnotations = true;
+			ImportBookIntros = true;
+			ImportBackTranslation = true;
+			ImportTranslation = true;
+			ImportEntire = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -162,8 +156,7 @@ namespace SIL.FieldWorks.TE
 			radImportRange.Enabled = true;
 			scrPsgFrom.Enabled = scrPsgTo.Enabled = radImportRange.Checked;
 
-			MultilingScrBooks mlBook =
-				new MultilingScrBooks((IScrProjMetaDataProvider)m_cache.LangProject.TranslatedScriptureOA);
+			MultilingScrBooks mlBook = new MultilingScrBooks((IScrProjMetaDataProvider)m_scr);
 			// Get list of books in import files
 			BookLabel[] bookNames = new BookLabel[booksPresent.Count];
 			int iName = 0;
@@ -204,9 +197,9 @@ namespace SIL.FieldWorks.TE
 			this.chkBookIntros = new System.Windows.Forms.CheckBox();
 			this.chkOther = new System.Windows.Forms.CheckBox();
 			this.chkTranslation = new System.Windows.Forms.CheckBox();
-			this.scrPsgFrom = new SIL.FieldWorks.Common.Controls.ScrBookControl();
+			this.scrPsgFrom = new SILUBS.SharedScrControls.ScrBookControl();
 			this.label2 = new System.Windows.Forms.Label();
-			this.scrPsgTo = new SIL.FieldWorks.Common.Controls.ScrBookControl();
+			this.scrPsgTo = new SILUBS.SharedScrControls.ScrBookControl();
 			this.radImportRange = new System.Windows.Forms.RadioButton();
 			this.radImportEntire = new System.Windows.Forms.RadioButton();
 			this.btnOK = new System.Windows.Forms.Button();
@@ -289,7 +282,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrPsgFrom, "scrPsgFrom");
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Reference = "textBox1";
-			this.scrPsgFrom.PassageChanged += new SIL.FieldWorks.Common.Controls.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
+			this.scrPsgFrom.PassageChanged += new SILUBS.SharedScrControls.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
 			//
 			// label2
 			//
@@ -303,7 +296,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrPsgTo, "scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Reference = "textBox1";
-			this.scrPsgTo.PassageChanged += new SIL.FieldWorks.Common.Controls.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
+			this.scrPsgTo.PassageChanged += new SILUBS.SharedScrControls.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
 			//
 			// radImportRange
 			//
@@ -375,10 +368,7 @@ namespace SIL.FieldWorks.TE
 			{
 				m_importSettings.StartRef = StartRef;
 				m_importSettings.EndRef = EndRef;
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					m_importSettings.SaveSettings();
-				});
+				NonUndoableUnitOfWorkHelper.Do(ActionHandler, () => m_importSettings.SaveSettings());
 			}
 
 			base.OnClosing(e);
@@ -440,13 +430,10 @@ namespace SIL.FieldWorks.TE
 		///-------------------------------------------------------------------------------
 		private void btnSource_Click(object sender, System.EventArgs e)
 		{
-			ILangProject lp = m_cache.LangProject;
-			IScripture scr = lp.TranslatedScriptureOA;
-			using (ImportWizard importWizard = new ImportWizard(m_cache.ProjectId.Name,
-				scr, m_StyleSheet, m_cache, m_helpTopicProvider, m_app))
+			using (ImportWizard importWizard = new ImportWizard(m_scr.Cache.ProjectId.Name,
+				m_scr, m_StyleSheet, m_helpTopicProvider, m_app))
 			{
-				using (NonUndoableUnitOfWorkHelper undoHelper = new NonUndoableUnitOfWorkHelper(
-					m_cache.ServiceLocator.GetInstance<IActionHandler>()))
+				using (NonUndoableUnitOfWorkHelper undoHelper = new NonUndoableUnitOfWorkHelper(ActionHandler))
 				{
 					if (importWizard.ShowDialog() == DialogResult.Cancel)
 					{
@@ -466,13 +453,11 @@ namespace SIL.FieldWorks.TE
 					return;
 				}
 
-				// Update the file ranges for import because they may have changed. The default
-				// set of settings may also have changed, so we re-retrieve them from the DB.
-				m_importSettings = scr.DefaultImportSettings;
-				scrPsgFrom.Initialize(new ScrReference(StartRef, scr.Versification), scr,
-					m_importSettings.BooksForProject.ToArray());
-				scrPsgTo.Initialize(new ScrReference(EndRef, scr.Versification), scr,
-					m_importSettings.BooksForProject.ToArray());
+				// The default set of settings may have changed.
+				m_importSettings = m_scr.DefaultImportSettings;
+
+				// Update the file ranges for import because they may have changed.
+				InitializeStartAndEndRefControls();
 
 				// Update the passage controls to reflect the new range of files available
 				// Only make changes that do not expand the available range of books since a
@@ -485,6 +470,17 @@ namespace SIL.FieldWorks.TE
 					SetEndRefToLastImportableBook();
 			}
 			btnOK.Focus();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes the start and end ref controls.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void InitializeStartAndEndRefControls()
+		{
+			scrPsgFrom.Initialize(StartRef.Book, m_importSettings.BooksForProject.ToArray());
+			scrPsgTo.Initialize(EndRef.Book, m_importSettings.BooksForProject.ToArray());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -515,6 +511,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void scrPsgFrom_PassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("New scrPsgFrom reference is {0}", newReference.AsString));
+
 			ScrReference scRefFrom = scrPsgFrom.ScReference;
 			ScrReference scRefTo = scrPsgTo.ScReference;
 
@@ -536,6 +534,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void scrPsgTo_PassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("New scrPsgTo reference is {0}", newReference.AsString));
+
 			ScrReference scRefFrom = scrPsgFrom.ScReference;
 			ScrReference scRefTo = scrPsgTo.ScReference;
 			if (scRefTo.Book < scRefFrom.Book)
@@ -560,55 +560,35 @@ namespace SIL.FieldWorks.TE
 		/// refs).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static bool ImportEntire
-		{
-			get { return s_fImportEntire; }
-			set { s_fImportEntire = value; }
-		}
+		private static bool ImportEntire { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to import the translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static bool ImportTranslation
-		{
-			get { return s_fImportTranslation; }
-			set { s_fImportTranslation = value; }
-		}
+		private static bool ImportTranslation { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to import the back translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static bool ImportBackTranslation
-		{
-			get { return s_fImportBackTranslation; }
-			set { s_fImportBackTranslation = value; }
-		}
+		private static bool ImportBackTranslation { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to import book intros.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static bool ImportBookIntros
-		{
-			get { return s_fImportBookIntros; }
-			set { s_fImportBookIntros = value; }
-		}
+		private static bool ImportBookIntros { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to import annotations.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static bool ImportAnnotations
-		{
-			get { return s_fImportAnnotations; }
-			set { s_fImportAnnotations = value; }
-		}
+		private static bool ImportAnnotations { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -622,7 +602,7 @@ namespace SIL.FieldWorks.TE
 				if (m_importSettings != null && m_importSettings.BooksForProject.Count > 0)
 					return m_importSettings.BooksForProject[0];
 
-				return ScrReference.StartOfBible(m_cache.LangProject.TranslatedScriptureOA.Versification).Book;
+				return ScrReference.StartOfBible(m_scr.Versification).Book;
 			}
 		}
 
@@ -638,8 +618,18 @@ namespace SIL.FieldWorks.TE
 				if (m_importSettings != null && m_importSettings.BooksForProject.Count > 0)
 					return m_importSettings.BooksForProject[m_importSettings.BooksForProject.Count - 1];
 
-				return ScrReference.EndOfBible(m_cache.LangProject.TranslatedScriptureOA.Versification).Book;
+				return ScrReference.EndOfBible(m_scr.Versification).Book;
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the action handler.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private IActionHandler ActionHandler
+		{
+			get { return m_scr.Cache.ServiceLocator.GetInstance<IActionHandler>(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -690,7 +680,7 @@ namespace SIL.FieldWorks.TE
 					scrPsgFrom.ScReference);
 			}
 			set	{scrPsgFrom.ScReference = new ScrReference(value,
-				m_cache.LangProject.TranslatedScriptureOA.Versification);}
+				m_scr.Versification);}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -707,7 +697,7 @@ namespace SIL.FieldWorks.TE
 				return (ImportEntireProject ? new BCVRef(LastImportableBook, 1, 1) :
 					scrPsgTo.ScReference);
 			}
-			set {scrPsgTo.ScReference = new ScrReference(value, m_cache.LangProject.TranslatedScriptureOA.Versification);}
+			set {scrPsgTo.ScReference = new ScrReference(value, m_scr.Versification);}
 		}
 		#endregion
 	}

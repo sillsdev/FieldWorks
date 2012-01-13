@@ -191,7 +191,7 @@
 			<slice field="Contents" label="Text" editor="sttext" sameObject="true" sameObjectNext="true" menu="mnuDataTree-Text"/>
 		</part>
 		<part id="Text-Detail-NotebookSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" menu="mnuTextInfo-Notebook"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo-Notebook"/>
 		</part>
 		<part id="Text-Detail-NotebookFields" type="Detail" >
 			<choice>
@@ -223,7 +223,7 @@
 							<chooserLink type="goto" label="Edit the list of Locations" tool="locationsEdit" />
 						</chooserInfo>
 					</slice>
-					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="AnthroCodes">
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="Anthropology Categories">
 						<chooserInfo helpBrowser="true">
 							<!-- Duplicates info in RnGenericRec-Detail-AnthroCodes-->
 							<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />

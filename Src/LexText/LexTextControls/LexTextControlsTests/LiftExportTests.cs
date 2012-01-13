@@ -531,6 +531,8 @@ namespace LexTextControlsTests
 		private const string kpronunciationFileName = "Pronunciation of test.wav";
 		private const string klexemeFormFileName = "Form of test.wav";
 		private const string kotherLinkedFileName = "File linked to in defn of test.doc";
+		private const string kcitationFormFileName = "Citation form test.wav";
+		private const string kcustomMultiFileName = "Custom multilingual file.wav";
 
 		private void AddLexEntries()
 		{
@@ -540,7 +542,7 @@ namespace LexTextControlsTests
 			var msaVerb = new SandboxGenericMSA { MsaType = MsaType.kRoot, MainPOS = m_mapPartsOfSpeech["verb"] };
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
-					m_entryTest = entryFact.Create("test", "trial", msaNoun);
+					m_entryTest = entryFact.Create("test & trouble", "trials & tribulations", msaNoun);
 					m_entryTest.CitationForm.VernacularDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("citation", m_cache.DefaultVernWs);
 					m_entryTest.Bibliography.AnalysisDefaultWritingSystem =
@@ -585,6 +587,8 @@ namespace LexTextControlsTests
 						m_cache.TsStrFactory.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
 					m_entryTest.SensesOS[0].SocioLinguisticsNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
+					m_entryTest.LiftResidue =
+						"<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
 
 					//Add an academic domain to the sense.
 					ICmPossibility possibility;
@@ -619,6 +623,11 @@ namespace LexTextControlsTests
 					// Lexeme form is a special case
 					CreateDummyFile(Path.Combine(audioFolderPath, klexemeFormFileName));
 					m_entryTest.LexemeFormOA.Form.set_String(m_audioWsCode, klexemeFormFileName);
+					// Citation form is written in a different way. Test it too.
+					CreateDummyFile(Path.Combine(audioFolderPath, kcitationFormFileName));
+					m_entryTest.CitationForm.set_String(m_audioWsCode, kcitationFormFileName);
+					// Set this as a value later, when we create custom fields.
+					CreateDummyFile(Path.Combine(audioFolderPath, kcustomMultiFileName));
 
 					// Try a pronunciation media file.
 					var pronunciationPath = Path.Combine(audioFolderPath, kpronunciationFileName);
@@ -725,6 +734,8 @@ namespace LexTextControlsTests
 								 WritingSystemServices.kwsVernAnals, CustomFieldType.SingleLineText, Guid.Empty);
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
+			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
+				m_cache.TsStrFactory.MakeString(kcustomMultiFileName, m_audioWsCode));
 
 			//---------------------------------------------------------------------------------------------------
 			fd = MakeCustomField("CustomField3-LexEntry Date", LexEntryTags.kClassId,
@@ -1124,7 +1135,10 @@ namespace LexTextControlsTests
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
 				Assert.AreEqual("morph-type", sName);
 				var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-				Assert.AreEqual("stem", sValue);
+				if (entry == m_entryTest)
+					Assert.AreEqual("phrase", sValue);
+				else
+					Assert.AreEqual("stem", sValue);
 				var senselist = xentry.SelectNodes("sense");
 				Assert.IsNotNull(senselist);
 				Assert.AreEqual(1, senselist.Count);
@@ -1213,7 +1227,7 @@ namespace LexTextControlsTests
 			var citations = xentry.SelectNodes("citation");
 			Assert.IsNotNull(citations);
 			Assert.AreEqual(1, citations.Count);
-			VerifyTsString(citations[0], m_cache.DefaultVernWs, entry.CitationForm.VernacularDefaultWritingSystem);
+			VerifyMultiStringAlt(citations[0], m_cache.DefaultVernWs, 2, entry.CitationForm.VernacularDefaultWritingSystem);
 
 			var notes = xentry.SelectNodes("note");
 			Assert.IsNotNull(notes);
@@ -1248,6 +1262,8 @@ namespace LexTextControlsTests
 			var xlf = xentry.SelectSingleNode("lexical-unit");
 			VerifyMultiStringAlt(xlf, m_audioWsCode, 2, m_cache.TsStrFactory.MakeString(klexemeFormFileName, m_audioWsCode));
 			VerifyAudio(klexemeFormFileName);
+			VerifyMultiStringAlt(citations[0], m_audioWsCode, 2, m_cache.TsStrFactory.MakeString(kcitationFormFileName, m_audioWsCode));
+			VerifyAudio(kcitationFormFileName);
 		}
 
 		private void VerifyEntryCustomFields(XmlNode xentry, ILexEntry entry)
@@ -1271,7 +1287,8 @@ namespace LexTextControlsTests
 				else if (sType == "CustomField2-LexEntry")
 				{
 					var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(entry.Hvo, m_customFieldEntryIds[1]);
-					VerifyMultiStringAnalVern(xfield, tssMultiString);
+					VerifyMultiStringAnalVern(xfield, tssMultiString, true);
+					VerifyAudio(kcustomMultiFileName);
 				}
 				else
 					Assert.IsNull(sType, "Unrecognized type attribute");
@@ -1541,7 +1558,7 @@ namespace LexTextControlsTests
 					else if (sType == "CustomField2-Example Multi")
 					{
 						var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[1]);
-						VerifyMultiStringAnalVern(xfield, tssMultiString);
+						VerifyMultiStringAnalVern(xfield, tssMultiString, false);
 					}
 					else
 						Assert.IsNull(sType, "Unrecognized type attribute");
@@ -1589,11 +1606,11 @@ namespace LexTextControlsTests
 			Assert.AreEqual(expected, sText);
 		}
 
-		private void VerifyMultiStringAnalVern(XmlNode xitem, ITsMultiString tssMultiString)
+		private void VerifyMultiStringAnalVern(XmlNode xitem, ITsMultiString tssMultiString, bool expectCustom)
 		{
 			var xforms = xitem.SelectNodes("form");
 			Assert.IsNotNull(xforms);
-			Assert.AreEqual(2, xforms.Count);
+			Assert.AreEqual(expectCustom ? 3 : 2, xforms.Count);
 
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
 			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs), sLang);
@@ -1604,6 +1621,14 @@ namespace LexTextControlsTests
 			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs), sLang);
 			sText = xforms[1].FirstChild.InnerText;
 			Assert.AreEqual(tssMultiString.get_String(m_cache.DefaultVernWs).Text, sText);
+
+			if (expectCustom)
+			{
+				sLang = XmlUtils.GetOptionalAttributeValue(xforms[2], "lang");
+				Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_audioWsCode), sLang);
+				sText = xforms[2].FirstChild.InnerText;
+				Assert.AreEqual(tssMultiString.get_String(m_audioWsCode).Text, kcustomMultiFileName);
+			}
 		}
 
 		///--------------------------------------------------------------------------------------

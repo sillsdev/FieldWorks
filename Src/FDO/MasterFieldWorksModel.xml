@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	Executive Summary: Almost all changes in this file require a new version number even if
-	  extant data does not change.
-	Exceptions are:
+  WARNING 1: Don't even think of not bumping up the version number,
+	unless you are ONLY doing one, or more, of the following three exceptions.
+	ALL other changes to this file REQUIRE a change of the 'version' attribute of the main "EntireModel" element
+	to the next higher number.
+
+	If the model changes do not require a formal data migration in the C# code, you MUST then add the 'do-nothing'
+	data migration to the system in C#.
+	The ONLY exceptions to incrementing the version number are:
 	  1) Add/remove/modify optional <comment> and <notes> elements,
 	  2) Add/remove/modify regular xml comments, and
 	  3) Add stuff that only affects the code generator
+		(e.g., optional singleton attribute added to class element and to the code generator)
 
-	Comments and notes:
+  WARNING 2: You should be using a schema-aware editor, when you edit this file,
+	or you run the risk of leaving it in a state where it becomes invalid.
+	The schema this file is associated with is MasterFieldWorksModel.xsd,
+	and it is in the same folder as this file.
+
+   WARNING 3: Comments and notes within the model:
 	These *must* follow the MS code documentation conventions, with the following exceptions:
 	  1. Must be one or more <para> elements, and
 	  2. <para> elements must not have newlines in them. (The build will likely fail, otherwise.)
 
-	  The original version number was: 7000000. Be sure it has the right number of zeros after
-	  editing it.
-	  Don't forget to change the version number below this comment.
+The original version number was: 7000000. Be sure it has the right number of zeros after
+editing it.
 
-  Change History:
+Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  1 December 2011 (7000050): Add Speaker to Segment. (Only the do-nothing DM needed in C#.)
+  17 November 2011 (7000049): Added CmMediaContainer, CmMediaURI classes, changed Segment to reference a CmMediaURI and include a begin and end time offset
+	Modified Text to include a CmMediaContainer, and elminated the soundfilelocation attribute no significant migration should be required, the removed attribute
+	is believed to have been unused.
+  13 October 2011 (7000048): No actual model change. Reorder the xml output in the xml BEP. This version lets the BEP know to do the first reorderinng.
   22 September 2011 (7000047): No actual model change. DM to clean up legacy ChkRendering objects with null SurfaceForms.
   8 September 2011 (7000046): Added RnGenericRec.Text.
   24 August 2011 (7000045): Added Reference property to Segment
@@ -126,24 +141,24 @@
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000047" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000050" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
-	  <props />
+	  <props/>
 	</class>
 	<class num="1" id="CmProject" abstract="true" abbr="proj" base="CmObject" depth="0">
 	  <props>
-		<basic num="2" id="DateCreated" sig="Time" />
-		<basic num="4" id="DateModified" sig="Time" />
-		<basic num="5" id="Description" sig="MultiString" big="true" />
+		<basic num="2" id="DateCreated" sig="Time"/>
+		<basic num="4" id="DateModified" sig="Time"/>
+		<basic num="5" id="Description" sig="MultiString" big="true"/>
 	  </props>
 	</class>
 	<class num="2" id="CmFolder" abstract="false" abbr="fold" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<owning num="3" id="SubFolders" card="col" sig="CmFolder" />
-		<basic num="5" id="Description" sig="MultiString" big="true" />
-		<owning num="6" id="Files" card="col" sig="CmFile" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<owning num="3" id="SubFolders" card="col" sig="CmFolder"/>
+		<basic num="5" id="Description" sig="MultiString" big="true"/>
+		<owning num="6" id="Files" card="col" sig="CmFile"/>
 	  </props>
 	</class>
 	<class num="3" id="Note" abstract="false" abbr="nt" base="CmObject" depth="0">
@@ -151,20 +166,20 @@
 		<para>Used for all manner of notes.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Content" sig="MultiString" big="true" />
+		<basic num="1" id="Content" sig="MultiString" big="true"/>
 	  </props>
 	</class>
 	<class num="4" id="FsComplexFeature" abstract="false" abbr="comf" base="FsFeatDefn" depth="1">
 	  <props>
-		<rel num="1" id="Type" card="atomic" sig="FsFeatStrucType" />
+		<rel num="1" id="Type" card="atomic" sig="FsFeatStrucType"/>
 	  </props>
 	</class>
 	<class num="5" id="CmMajorObject" abstract="true" abbr="mobj" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="DateCreated" sig="Time" />
-		<basic num="3" id="DateModified" sig="Time" />
-		<basic num="4" id="Description" sig="MultiString" big="true" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="DateCreated" sig="Time"/>
+		<basic num="3" id="DateModified" sig="Time"/>
+		<basic num="4" id="Description" sig="MultiString" big="true"/>
 		<owning num="5" id="Publications" card="col" sig="Publication">
 		  <comment>
 			<para>A collection of all of the publication layouts available for output from the translated scripture database.</para>
@@ -184,17 +199,45 @@
 	  </comment>
 	  <props>
 		<basic num="1" id="BeginOffset" sig="Integer" internalSetter="true"/>
-		<basic num="2" id="FreeTranslation" sig="MultiString" big="true" />
-		<basic num="3" id="LiteralTranslation" sig="MultiString" big="true" />
-		<owning num="4" id="Notes" sig="Note" card="seq" />
-		<rel num="5" id="Analyses" sig="IAnalysis" card="seq" />
+		<basic num="2" id="FreeTranslation" sig="MultiString" big="true"/>
+		<basic num="3" id="LiteralTranslation" sig="MultiString" big="true"/>
+		<owning num="4" id="Notes" sig="Note" card="seq"/>
+		<rel num="5" id="Analyses" sig="IAnalysis" card="seq"/>
 		<basic num="6" id="Reference" sig="String">
-			<comment>
-				<para>This string can be used to store a user specified reference for a segment.</para>
-				<para>This is displayed in the Ref (short for reference) column in the Concordance view.</para>
-				<para>As of Aug 2011 this can not be specified in FLEx, but can be imported. -NaylorJ</para>
-			</comment>
+		  <comment>
+			<para>This string can be used to store a user specified reference for a segment.</para>
+			<para>This is displayed in the Ref (short for reference) column in the Concordance view.</para>
+			<para>As of Aug 2011 this can not be specified in FLEx, but can be imported. -NaylorJ</para>
+		  </comment>
 		</basic>
+		<rel num="7" id="MediaURI" sig="CmMediaURI" card="atomic">
+		  <comment>
+			<para>This references a media file in the interlinear text.</para>
+		  </comment>
+		</rel>
+		<basic num="8" id="BeginTimeOffset" sig="Unicode">
+		  <comment>
+			<para>This string can be used to store the time offset into the mediaFile for the beginning of this segment.</para>
+			<para>Currently intended to hold ELAN information, not modified by FLEx as of Nov 2011 -NaylorJ.</para>
+		  </comment>
+		  <notes>
+<para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para>
+</notes>
+		</basic>
+		<basic num="9" id="EndTimeOffset" sig="Unicode">
+		  <comment>
+			<para>This string can be used to store the time offset into the mediaFile for the end of this segment.</para>
+			<para>Currently intended to hold ELAN information, not modified by FLEx as of Nov 2011 -NaylorJ.</para>
+		  </comment>
+		  <notes>
+<para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para>
+</notes>
+		</basic>
+		<rel num="10" id="Speaker" card="atomic" sig="CmPerson">
+		  <comment>
+			<para>The person who spoke this sentence, ELAN info.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="7" id="CmPossibility" abstract="false" abbr="pss" base="CmObject" depth="0">
@@ -208,11 +251,11 @@
 		<para>object for the list. If not, it is a bug.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Abbreviation" sig="MultiUnicode" />
-		<basic num="3" id="Description" sig="MultiString" big="true" />
-		<owning num="4" id="SubPossibilities" card="seq" sig="CmPossibility" />
-		<basic num="6" id="SortSpec" sig="Integer" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
+		<basic num="3" id="Description" sig="MultiString" big="true"/>
+		<owning num="4" id="SubPossibilities" card="seq" sig="CmPossibility"/>
+		<basic num="6" id="SortSpec" sig="Integer"/>
 		<rel num="7" id="Restrictions" card="col" sig="CmPossibility">
 		  <comment>
 			<para>Indicates whether the data for this possibility item has restrictions for presentation to certain audiences. This value comes from a user-defined list that is used by many different FieldWorks objects (Events, Analysis Records, Lexical Entries and their Senses, etc.) These values are user-definable and initially include: No restrictions, Do not publish, Case by case, Unknown</para>
@@ -228,8 +271,8 @@
 			<para>The status of this Possibility. This is a user-definable list but initial list will include: Confirmed, Disproved, Pending.</para>
 		  </comment>
 		</rel>
-		<basic num="10" id="DateCreated" sig="Time" />
-		<basic num="11" id="DateModified" sig="Time" />
+		<basic num="10" id="DateCreated" sig="Time"/>
+		<basic num="11" id="DateModified" sig="Time"/>
 		<owning num="12" id="Discussion" card="atomic" sig="StText">
 		  <comment>
 			<para>Any pertinent discussion for this Possibility.</para>
@@ -280,16 +323,16 @@
 	<class num="8" id="CmPossibilityList" abstract="false" abbr="pssl" base="CmMajorObject" depth="1" owner="optional">
 	  <!-- GJM 22 June 2010: Custom Lists are unowned in the model, so owner needs to be optional (FWR-133) -->
 	  <props>
-		<basic num="2" id="Depth" sig="Integer" min="0" max="127" />
-		<basic num="3" id="PreventChoiceAboveLevel" sig="Integer" min="0" max="8" />
-		<basic num="4" id="IsSorted" sig="Boolean" />
-		<basic num="5" id="IsClosed" sig="Boolean" />
-		<basic num="6" id="PreventDuplicates" sig="Boolean" />
-		<basic num="7" id="PreventNodeChoices" sig="Boolean" />
-		<owning num="8" id="Possibilities" card="seq" sig="CmPossibility" />
-		<basic num="10" id="Abbreviation" sig="MultiUnicode" />
-		<basic num="11" id="HelpFile" sig="Unicode" />
-		<basic num="12" id="UseExtendedFields" sig="Boolean" />
+		<basic num="2" id="Depth" sig="Integer" min="0" max="127"/>
+		<basic num="3" id="PreventChoiceAboveLevel" sig="Integer" min="0" max="8"/>
+		<basic num="4" id="IsSorted" sig="Boolean"/>
+		<basic num="5" id="IsClosed" sig="Boolean"/>
+		<basic num="6" id="PreventDuplicates" sig="Boolean"/>
+		<basic num="7" id="PreventNodeChoices" sig="Boolean"/>
+		<owning num="8" id="Possibilities" card="seq" sig="CmPossibility"/>
+		<basic num="10" id="Abbreviation" sig="MultiUnicode"/>
+		<basic num="11" id="HelpFile" sig="Unicode"/>
+		<basic num="12" id="UseExtendedFields" sig="Boolean"/>
 		<basic num="13" id="DisplayOption" sig="Integer" min="0" max="2">
 		  <comment>
 			<para>This determines whether we display name (kpntName = 0), name and abbreviation (kpntNameAndAbbrev = 1), or abbreviation (kpntAbbreviation = 2) when we display names.</para>
@@ -305,7 +348,7 @@
 			<para>This indicates whether the list will display vernacular (True) or analysis encodings (false) as the default.</para>
 		  </comment>
 		</basic>
-		<basic num="17" id="WritingSystem" sig="Unicode" />
+		<basic num="17" id="WritingSystem" sig="Unicode"/>
 		<basic num="18" id="WsSelector" sig="Integer">
 		  <comment>
 			<para>// the application to get the appropriate writing system from the application. For example,</para>
@@ -329,44 +372,44 @@
 	</class>
 	<class num="9" id="CmFilter" abstract="false" abbr="fil" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
-		<basic num="2" id="ClassId" sig="Integer" />
-		<basic num="3" id="FieldId" sig="Integer" />
-		<basic num="4" id="FieldInfo" sig="Unicode" />
-		<basic num="5" id="App" sig="Guid" />
-		<basic num="6" id="Type" sig="Integer" min="0" max="127" />
-		<owning num="7" id="Rows" card="seq" sig="CmRow" />
-		<basic num="8" id="ColumnInfo" sig="Unicode" />
-		<basic num="9" id="ShowPrompt" sig="Integer" min="0" max="127" />
-		<basic num="10" id="PromptText" sig="Unicode" />
+		<basic num="1" id="Name" sig="Unicode"/>
+		<basic num="2" id="ClassId" sig="Integer"/>
+		<basic num="3" id="FieldId" sig="Integer"/>
+		<basic num="4" id="FieldInfo" sig="Unicode"/>
+		<basic num="5" id="App" sig="Guid"/>
+		<basic num="6" id="Type" sig="Integer" min="0" max="127"/>
+		<owning num="7" id="Rows" card="seq" sig="CmRow"/>
+		<basic num="8" id="ColumnInfo" sig="Unicode"/>
+		<basic num="9" id="ShowPrompt" sig="Integer" min="0" max="127"/>
+		<basic num="10" id="PromptText" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="10" id="CmRow" abstract="false" abbr="frow" base="CmObject" depth="0">
 	  <props>
-		<owning num="1" id="Cells" card="seq" sig="CmCell" />
+		<owning num="1" id="Cells" card="seq" sig="CmCell"/>
 	  </props>
 	</class>
 	<class num="11" id="CmCell" abstract="false" abbr="fcel" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Contents" sig="String" />
+		<basic num="1" id="Contents" sig="String"/>
 	  </props>
 	</class>
 	<class num="12" id="CmLocation" abstract="false" abbr="loc" base="CmPossibility" depth="1">
 	  <props>
-		<basic num="1" id="Alias" sig="MultiUnicode" />
+		<basic num="1" id="Alias" sig="MultiUnicode"/>
 	  </props>
 	</class>
 	<class num="13" id="CmPerson" abstract="false" abbr="per" base="CmPossibility" depth="1">
 	  <props>
-		<basic num="1" id="Alias" sig="MultiUnicode" />
-		<basic num="3" id="Gender" sig="Integer" min="0" max="2" />
-		<basic num="4" id="DateOfBirth" sig="GenDate" />
-		<rel num="6" id="PlaceOfBirth" card="atomic" sig="CmLocation" />
-		<basic num="8" id="IsResearcher" sig="Boolean" />
-		<rel num="9" id="PlacesOfResidence" card="col" sig="CmLocation" />
-		<rel num="10" id="Education" card="atomic" sig="CmPossibility" />
-		<basic num="11" id="DateOfDeath" sig="GenDate" />
-		<rel num="13" id="Positions" card="col" sig="CmPossibility" />
+		<basic num="1" id="Alias" sig="MultiUnicode"/>
+		<basic num="3" id="Gender" sig="Integer" min="0" max="2"/>
+		<basic num="4" id="DateOfBirth" sig="GenDate"/>
+		<rel num="6" id="PlaceOfBirth" card="atomic" sig="CmLocation"/>
+		<basic num="8" id="IsResearcher" sig="Boolean"/>
+		<rel num="9" id="PlacesOfResidence" card="col" sig="CmLocation"/>
+		<rel num="10" id="Education" card="atomic" sig="CmPossibility"/>
+		<basic num="11" id="DateOfDeath" sig="GenDate"/>
+		<rel num="13" id="Positions" card="col" sig="CmPossibility"/>
 	  </props>
 	</class>
 	<class num="14" id="StText" abstract="false" abbr="stxt" base="CmObject" depth="0">
@@ -374,14 +417,14 @@
 		<para>An object used to represent a moderately structured text (a sequence of styled paragraphs).</para>
 	  </comment>
 	  <props>
-		<owning num="1" id="Paragraphs" card="seq" sig="StPara" />
+		<owning num="1" id="Paragraphs" card="seq" sig="StPara"/>
 		<basic num="2" id="RightToLeft" sig="Boolean">
 		  <comment>
 			<para>Specifies whether the overall document direction for this structured text is right-to-left (true) or not (false).</para>
 		  </comment>
 		</basic>
-		<owning num="3" id="Tags" sig="TextTag" card="col" />
-		<basic num="4" id="DateModified" sig="Time" />
+		<owning num="3" id="Tags" sig="TextTag" card="col"/>
+		<basic num="4" id="DateModified" sig="Time"/>
 	  </props>
 	</class>
 	<class num="15" id="StPara" abstract="true" abbr="spar" base="CmObject" depth="0">
@@ -434,7 +477,7 @@
 			<para>This attribute is used only if the application requires it. It does not obviate the need for TextObjects</para>
 		  </comment>
 		</owning>
-		<owning num="6" id="Segments" sig="Segment" card="seq" />
+		<owning num="6" id="Segments" sig="Segment" card="seq"/>
 		<owning num="8" id="Translations" card="col" sig="CmTranslation">
 		  <comment>
 			<para>Refer to the documentation on LpTranslation.</para>
@@ -447,11 +490,11 @@
 		<para>Represents a style used to display a kind of paragraph</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
-		<rel num="2" id="BasedOn" card="atomic" sig="StStyle" />
-		<rel num="3" id="Next" card="atomic" sig="StStyle" />
-		<basic num="4" id="Type" sig="Integer" min="0" max="255" />
-		<basic num="5" id="Rules" sig="TextPropBinary" />
+		<basic num="1" id="Name" sig="Unicode"/>
+		<rel num="2" id="BasedOn" card="atomic" sig="StStyle"/>
+		<rel num="3" id="Next" card="atomic" sig="StStyle"/>
+		<basic num="4" id="Type" sig="Integer" min="0" max="255"/>
+		<basic num="5" id="Rules" sig="TextPropBinary"/>
 		<basic num="6" id="IsPublishedTextStyle" sig="Boolean">
 		  <comment>
 			<para>TRUE = the style is for use in published text; FALSE = the style is for non-published text</para>
@@ -533,7 +576,7 @@
 		<para>In the original model, we had model CmOverlayTag that could carry their own formatting apart from the formatting defined in the CmPossibility. In the current model, we have removed this capability.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
+		<basic num="1" id="Name" sig="Unicode"/>
 		<rel num="2" id="PossList" card="atomic" sig="CmPossibilityList">
 		  <comment>
 			<para>The list that a CmOverlay gets its PossItems from.</para>
@@ -548,8 +591,8 @@
 	</class>
 	<class num="22" id="TextTag" abstract="false" abbr="tt" base="CmObject" depth="0">
 	  <props>
-		<rel num="1" id="BeginSegment" sig="Segment" card="atomic" />
-		<rel num="2" id="EndSegment" sig="Segment" card="atomic" />
+		<rel num="1" id="BeginSegment" sig="Segment" card="atomic"/>
+		<rel num="2" id="EndSegment" sig="Segment" card="atomic"/>
 		<basic num="3" id="BeginAnalysisIndex" sig="Integer">
 		  <comment>
 			<para>These indices refer to the index of an IAnalysis object in a Segment.Analyses sequence.</para>
@@ -560,7 +603,7 @@
 			<para>These indices refer to the index of an IAnalysis object in a Segment.Analyses sequence.</para>
 		  </comment>
 		</basic>
-		<rel num="5" id="Tag" sig="CmPossibility" card="atomic" />
+		<rel num="5" id="Tag" sig="CmPossibility" card="atomic"/>
 	  </props>
 	</class>
 	<class num="23" id="CmAgent" abstract="false" abbr="laag" base="CmObject" depth="0">
@@ -583,7 +626,7 @@
 			<para>T = human, F = computational agent.</para>
 		  </comment>
 		</basic>
-		<owning num="4" id="Notes" card="atomic" sig="StText" />
+		<owning num="4" id="Notes" card="atomic" sig="StText"/>
 		<basic num="5" id="Version" sig="Unicode">
 		  <comment>
 			<para>This attribute is not finalized but for now possible values include:Normal - represents the parser using the current state of the grammar and lexicon. Debug - represents the parser using a limited grammar (user has turned off some group of constraints) Milestone - represents the parser using a particular grammar and lexicon at a particular time as recorded on CmObject (date created). Works in conjunction with StateInformation.</para>
@@ -602,13 +645,13 @@
 	  </props>
 	</class>
 	<class num="26" id="CmAnthroItem" abstract="false" abbr="anit" base="CmPossibility" depth="1">
-	  <props />
+	  <props/>
 	</class>
 	<class num="27" id="CmCustomItem" abstract="false" abbr="cci" base="CmPossibility" depth="1">
 	  <comment>
 		<para>Purpose is to allow users to add custom fields to custom lists without affecting standard lists.Since these lists are global in a database (since we are modifying the Field$ table) they can't be owned by a language project, so custom lists will be another unowned object.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="28" id="CrossReference" abstract="false" abbr="cref" base="CmObject" depth="0">
 	  <comment>
@@ -648,7 +691,7 @@
 	  <comment>
 		<para>A CmAgentEvaluation indicates that an object is approved or disapproved by the agent that owns it. Approval is indicated by referring to the instance in CmAgent.Approves, disapproval by referrng to the one in CmAgent.Disapproves.</para>
 	  </comment>
-	  <props></props>
+	  <props/>
 	</class>
 	<class num="34" id="CmAnnotation" abstract="true" abbr="anno" base="CmObject" depth="0">
 	  <comment>
@@ -694,7 +737,7 @@
 			<para>To handle multiparagraph annotations.</para>
 		  </comment>
 		</owning>
-		<owning num="8" id="Features" card="atomic" sig="FsFeatStruc" />
+		<owning num="8" id="Features" card="atomic" sig="FsFeatStruc"/>
 		<basic num="9" id="DateCreated" sig="Time">
 		  <comment>
 			<para>Date stamp for when this annotation was created, for display to the user. This may differ from the internally generated timestamp that is used for record locking and conflict detection.</para>
@@ -801,7 +844,7 @@
 	</class>
 	<class num="36" id="CmIndirectAnnotation" abstract="false" abbr="iann" base="CmAnnotation" depth="1">
 	  <props>
-		<rel num="1" id="AppliesTo" card="seq" sig="CmAnnotation" />
+		<rel num="1" id="AppliesTo" card="seq" sig="CmAnnotation"/>
 	  </props>
 	</class>
 	<class num="37" id="CmBaseAnnotation" abstract="false" abbr="bann" base="CmAnnotation" depth="1">
@@ -821,10 +864,10 @@
 			<para>See BeginOffset.</para>
 		  </comment>
 		</basic>
-		<rel num="5" id="BeginObject" card="atomic" sig="CmObject" />
-		<rel num="6" id="EndObject" card="atomic" sig="CmObject" />
-		<rel num="7" id="OtherObjects" card="col" sig="CmObject" />
-		<basic num="8" id="WritingSystem" sig="Unicode" />
+		<rel num="5" id="BeginObject" card="atomic" sig="CmObject"/>
+		<rel num="6" id="EndObject" card="atomic" sig="CmObject"/>
+		<rel num="7" id="OtherObjects" card="col" sig="CmObject"/>
+		<basic num="8" id="WritingSystem" sig="Unicode"/>
 		<basic num="9" id="WsSelector" sig="Integer">
 		  <comment>
 			<para>Refer to documentation on CmPossibilityList_WsSelector.</para>
@@ -846,11 +889,11 @@
 	  <comment>
 		<para>Yet to be defined. Will probably point to a RnMedia item.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="39" id="StFootnote" abstract="false" abbr="stfn" base="StText" depth="1">
 	  <props>
-		<basic num="1" id="FootnoteMarker" sig="String" />
+		<basic num="1" id="FootnoteMarker" sig="String"/>
 	  </props>
 	</class>
 	<class num="40" id="UserConfigAcct" abstract="false" abbr="ucac" base="CmObject" depth="0">
@@ -868,7 +911,7 @@
 			<para>Beginner = 1, Intermediate = 3, Advanced = 5</para>
 		  </comment>
 		</basic>
-		<basic num="3" id="HasMaintenance" sig="Boolean" />
+		<basic num="3" id="HasMaintenance" sig="Boolean"/>
 	  </props>
 	</class>
 	<class num="41" id="UserAppFeatAct" abstract="false" abbr="uafa" base="CmObject" depth="0">
@@ -876,7 +919,7 @@
 		<para>Renamed from UserAppFeatureActivated for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<rel num="1" id="UserConfigAcct" card="col" sig="UserConfigAcct" />
+		<rel num="1" id="UserConfigAcct" card="col" sig="UserConfigAcct"/>
 		<basic num="2" id="ApplicationId" sig="Guid">
 		  <comment>
 			<para>From AppCompat$? Which apps are installed? Look in registry?</para>
@@ -888,13 +931,13 @@
 			<para>UserConfigAccount, ApplicationId, FeatureId form a unique key for the object. </para>
 		  </comment>
 		</basic>
-		<basic num="4" id="ActivatedLevel" sig="Integer" />
+		<basic num="4" id="ActivatedLevel" sig="Integer"/>
 	  </props>
 	</class>
 	<class num="42" id="Publication" abstract="false" abbr="cmpb" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
-		<basic num="2" id="Description" sig="String" big="true" />
+		<basic num="1" id="Name" sig="Unicode"/>
+		<basic num="2" id="Description" sig="String" big="true"/>
 		<basic num="3" id="PageHeight" sig="Integer">
 		  <comment>
 			<para>The height of the trimmed page in the final publication, in millipoints. This includes the top and bottom margins and the printable height of the text area.</para>
@@ -1029,8 +1072,8 @@
 		<para>Encapsulates page layout parameters specifying page margins, header and footer positions, etc. The internal unit of measurement for page layout parameters is millipoints. A CmPageLayout is a page style specification applied to a CmPubDivision. Each CmDivision owns one copy of CmPageLayout. (Other objects may be made owners of CmPageLayout(s) as the design progresses.)</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
-		<basic num="2" id="Description" sig="String" big="true" />
+		<basic num="1" id="Name" sig="Unicode"/>
+		<basic num="2" id="Description" sig="String" big="true"/>
 		<basic num="3" id="MarginTop" sig="Integer">
 		  <comment>
 			<para>Height of top margin from top of page</para>
@@ -1079,8 +1122,8 @@
 		<para>Renamed from PubHeaderFooterSet for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="Unicode" />
-		<basic num="2" id="Description" sig="String" big="true" />
+		<basic num="1" id="Name" sig="Unicode"/>
+		<basic num="2" id="Description" sig="String" big="true"/>
 		<owning num="3" id="DefaultHeader" card="atomic" sig="PubHeader">
 		  <comment>
 			<para>The contents of the default header for pages of a publication division (odd pages use the default header).</para>
@@ -1137,10 +1180,10 @@
 	</class>
 	<class num="47" id="CmFile" abstract="false" abbr="cmfl" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Description" sig="MultiString" big="true" />
-		<basic num="3" id="OriginalPath" sig="Unicode" />
-		<basic num="4" id="InternalPath" sig="Unicode" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Description" sig="MultiString" big="true"/>
+		<basic num="3" id="OriginalPath" sig="Unicode"/>
+		<basic num="4" id="InternalPath" sig="Unicode"/>
 		<basic num="5" id="Copyright" sig="MultiString">
 		  <comment>
 			<para>Publishable information about the copyright that should appear on the copyright page of the publication.</para>
@@ -1150,7 +1193,7 @@
 	</class>
 	<class num="48" id="CmPicture" abstract="false" abbr="pic" base="CmObject" depth="0" owner="optional">
 	  <props>
-		<rel num="2" id="PictureFile" card="atomic" sig="CmFile" />
+		<rel num="2" id="PictureFile" card="atomic" sig="CmFile"/>
 		<basic num="3" id="Caption" sig="MultiString">
 		  <comment>
 			<para>The caption in a string/publication/etc.</para>
@@ -1190,23 +1233,23 @@
 	</class>
 	<class num="49" id="FsFeatureSystem" abstract="false" abbr="fsys" base="CmObject" depth="0">
 	  <props>
-		<owning num="2" id="Types" card="col" sig="FsFeatStrucType" />
-		<owning num="3" id="Features" card="col" sig="FsFeatDefn" />
+		<owning num="2" id="Types" card="col" sig="FsFeatStrucType"/>
+		<owning num="3" id="Features" card="col" sig="FsFeatDefn"/>
 	  </props>
 	</class>
 	<class num="50" id="FsClosedFeature" abstract="false" abbr="clof" base="FsFeatDefn" depth="1">
 	  <props>
-		<owning num="1" id="Values" card="col" sig="FsSymFeatVal" />
+		<owning num="1" id="Values" card="col" sig="FsSymFeatVal"/>
 	  </props>
 	</class>
 	<class num="51" id="FsClosedValue" abstract="false" abbr="clov" base="FsFeatureSpecification" depth="1">
 	  <props>
-		<rel num="1" id="Value" card="atomic" sig="FsSymFeatVal" />
+		<rel num="1" id="Value" card="atomic" sig="FsSymFeatVal"/>
 	  </props>
 	</class>
 	<class num="53" id="FsComplexValue" abstract="false" abbr="cval" base="FsFeatureSpecification" depth="1">
 	  <props>
-		<owning num="1" id="Value" card="atomic" sig="FsAbstractStructure" />
+		<owning num="1" id="Value" card="atomic" sig="FsAbstractStructure"/>
 	  </props>
 	</class>
 	<class num="54" id="FsDisjunctiveValue" abstract="false" abbr="dval" base="FsFeatureSpecification" depth="1">
@@ -1225,9 +1268,9 @@
 		<para>Changed from FsFeatureDefn</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Abbreviation" sig="MultiUnicode" />
-		<basic num="3" id="Description" sig="MultiString" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
+		<basic num="3" id="Description" sig="MultiString"/>
 		<owning num="4" id="Default" card="atomic" sig="FsFeatureSpecification">
 		  <comment>
 			<para>Feature of number might have a default value of singular.</para>
@@ -1270,9 +1313,9 @@
 	</class>
 	<class num="56" id="FsFeatureSpecification" abstract="true" abbr="fspc" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="RefNumber" sig="Integer" min="0" max="268435455" />
-		<basic num="2" id="ValueState" sig="Integer" min="0" max="15" />
-		<rel num="3" id="Feature" card="atomic" sig="FsFeatDefn" />
+		<basic num="1" id="RefNumber" sig="Integer" min="0" max="268435455"/>
+		<basic num="2" id="ValueState" sig="Integer" min="0" max="15"/>
+		<rel num="3" id="Feature" card="atomic" sig="FsFeatDefn"/>
 	  </props>
 	</class>
 	<class num="57" id="FsFeatStruc" abstract="false" abbr="fstr" base="FsAbstractStructure" depth="1">
@@ -1280,9 +1323,9 @@
 		<para>Changed FsFeatureStructure to FSFeatStruc</para>
 	  </comment>
 	  <props>
-		<owning num="1" id="FeatureDisjunctions" card="col" sig="FsFeatStrucDisj" />
-		<owning num="2" id="FeatureSpecs" card="col" sig="FsFeatureSpecification" />
-		<rel num="3" id="Type" card="atomic" sig="FsFeatStrucType" />
+		<owning num="1" id="FeatureDisjunctions" card="col" sig="FsFeatStrucDisj"/>
+		<owning num="2" id="FeatureSpecs" card="col" sig="FsFeatureSpecification"/>
+		<rel num="3" id="Type" card="atomic" sig="FsFeatStrucType"/>
 	  </props>
 	</class>
 	<class num="58" id="FsFeatStrucDisj" abstract="false" abbr="fsd" base="FsAbstractStructure" depth="1">
@@ -1291,7 +1334,7 @@
 		<para>Changed FsFeatureStructureDisJunction to FsFeatStrucDisj</para>
 	  </comment>
 	  <props>
-		<owning num="1" id="Contents" card="col" sig="FsFeatStruc" />
+		<owning num="1" id="Contents" card="col" sig="FsFeatStruc"/>
 	  </props>
 	</class>
 	<class num="59" id="FsFeatStrucType" abstract="false" abbr="fst" base="CmObject" depth="0">
@@ -1299,9 +1342,9 @@
 		<para>Changed FsFeatureStructureType to FsFeatStrucType</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Abbreviation" sig="MultiUnicode" />
-		<basic num="3" id="Description" sig="MultiString" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
+		<basic num="3" id="Description" sig="MultiString"/>
 		<rel num="4" id="Features" card="seq" sig="FsFeatDefn">
 		  <comment>
 			<para>The order of features will be used in the Gloss Assistant system to put feature values in the correct glossing order. For example, the user may want the FsFeatStrucType of TAM (tense aspect modality) to be ordered Aspect, Modality and Tense.</para>
@@ -1315,16 +1358,16 @@
 	  </props>
 	</class>
 	<class num="60" id="FsAbstractStructure" abstract="true" abbr="abst" base="CmObject" depth="0">
-	  <props />
+	  <props/>
 	</class>
 	<class num="61" id="FsNegatedValue" abstract="false" abbr="nval" base="FsFeatureSpecification" depth="1">
 	  <props>
-		<rel num="1" id="Value" card="atomic" sig="FsSymFeatVal" />
+		<rel num="1" id="Value" card="atomic" sig="FsSymFeatVal"/>
 	  </props>
 	</class>
 	<class num="62" id="FsOpenFeature" abstract="false" abbr="opf" base="FsFeatDefn" depth="1">
 	  <props>
-		<basic num="2" id="WritingSystem" sig="Unicode" />
+		<basic num="2" id="WritingSystem" sig="Unicode"/>
 		<basic num="3" id="WsSelector" sig="Integer">
 		  <comment>
 			<para>Refer to documentation on CmPossibilityList_WsSelector.</para>
@@ -1334,12 +1377,12 @@
 	</class>
 	<class num="63" id="FsOpenValue" abstract="false" abbr="oval" base="FsFeatureSpecification" depth="1">
 	  <props>
-		<basic num="1" id="Value" sig="MultiUnicode" />
+		<basic num="1" id="Value" sig="MultiUnicode"/>
 	  </props>
 	</class>
 	<class num="64" id="FsSharedValue" abstract="false" abbr="sval" base="FsFeatureSpecification" depth="1">
 	  <props>
-		<rel num="1" id="Value" card="atomic" sig="FsFeatureSpecification" />
+		<rel num="1" id="Value" card="atomic" sig="FsFeatureSpecification"/>
 	  </props>
 	</class>
 	<class num="65" id="FsSymFeatVal" abstract="false" abbr="fval" base="CmObject" depth="0">
@@ -1347,9 +1390,9 @@
 		<para>Renamed from FsSymbolicFeatureValue for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Abbreviation" sig="MultiUnicode" />
-		<basic num="3" id="Description" sig="MultiString" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
+		<basic num="3" id="Description" sig="MultiString"/>
 		<basic num="4" id="GlossAbbreviation" sig="MultiUnicode">
 		  <comment>
 			<para>Used by the Gloss Assistant to construct glosses. For gloss components that are not to be shown, leave this attribute empty. </para>
@@ -1496,31 +1539,56 @@
 		</basic>
 	  </props>
 	</class>
-	  <class num="71" id="VirtualOrdering" abstract="false" abbr="vo" base="CmObject" depth="0" owner="none">
+	<class num="71" id="VirtualOrdering" abstract="false" abbr="vo" base="CmObject" depth="0" owner="none">
+	  <comment>
+		<para>A virtual ordering is created when the user specifies a non-default order for a virtual property. It specifies the order of the items present in the specified virtual property of the specified source object at the time it was created. We arrange that at the time the virtual is read, it contains the correct items, starting with those the user has manually ordered, and followed by any extras in the default order.</para>
+	  </comment>
+	  <props>
+		<rel num="1" id="Source" card="atomic" sig="CmObject">
 		  <comment>
-			  <para>A virtual ordering is created when the user specifies a non-default order for a virtual property. It specifies the order of the items present in the specified virtual property of the specified source object at the time it was created. We arrange that at the time the virtual is read, it contains the correct items, starting with those the user has manually ordered, and followed by any extras in the default order.</para>
+			<para>The object that has the virtual property whose order is being customized.</para>
 		  </comment>
-		  <props>
-			  <rel num="1" id="Source" card="atomic" sig="CmObject">
-				  <comment>
-					  <para>The object that has the virtual property whose order is being customized.</para>
-				  </comment>
-			  </rel>
-			  <basic num="2" id="Field" sig="Unicode">
-				  <comment>
-					  <para>The name of the virtual property whose order is being customized.</para>
-				  </comment>
-			  </basic>
-			  <rel num="3" id="Items" card="seq" sig="CmObject">
-				  <comment>
-					  <para>The values of the virtual property in the order the user desires. This list may become out of date. Items it contains not in the current computed value are ignored. Additional items in the virtual are included after the ordered ones.</para>
-				  </comment>
-			  </rel>
-		  </props>
-	  </class>
+		</rel>
+		<basic num="2" id="Field" sig="Unicode">
+		  <comment>
+			<para>The name of the virtual property whose order is being customized.</para>
+		  </comment>
+		</basic>
+		<rel num="3" id="Items" card="seq" sig="CmObject">
+		  <comment>
+			<para>The values of the virtual property in the order the user desires. This list may become out of date. Items it contains not in the current computed value are ignored. Additional items in the virtual are included after the ordered ones.</para>
+		  </comment>
+		</rel>
+	  </props>
+	</class>
+	<class num="72" id="CmMediaURI" abstract="false" abbr="media" base="CmObject" depth="0">
+	  <comment>
+		<para>A class that holds the location and offset of a media file (video or audio)</para>
+		<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
+	  </comment>
+	  <props>
+		<basic num="1" id="MediaURI" sig="Unicode">
+		  <comment>
+			<para>The location and offset of the media file, this should be a subset of the MediaFragment specification.</para>
+			<para>see http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/ </para>
+			<para>and discussions at http://flexelan.blogspot.com</para>
+		  </comment>
+		</basic>
+	  </props>
+	</class>
+	<class num="73" id="CmMediaContainer" abstract="false" abbr="mediaContainer" base="CmObject" depth="0">
+	  <comment>
+		<para>This class collects any number of MediaURIs and provides an offset type to indicate how referring object offsets are connected.</para>
+		<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
+	  </comment>
+	  <props>
+		<basic num="1" id="OffsetType" sig="Unicode"/>
+		<owning num="2" id="MediaURIs" card="col" sig="CmMediaURI"/>
+	  </props>
+	</class>
 
   </CellarModule>
-  <CellarModule id="FeatSys" num="2" />
+  <CellarModule id="FeatSys" num="2"/>
   <CellarModule id="Scripture" num="3">
 	<class num="1" id="Scripture" abstract="false" abbr="scrp" base="CmMajorObject" depth="1" singleton="true" generateBasicCreateMethod="false">
 	  <comment>
@@ -1566,7 +1634,7 @@
 			<para>Scripture Import Settings. Supports multiple configurations for importing Scripture and related data from external files.</para>
 		  </comment>
 		</owning>
-		<owning num="9" id="ArchivedDrafts" card="col" sig="ScrDraft" />
+		<owning num="9" id="ArchivedDrafts" card="col" sig="ScrDraft"/>
 		<basic num="10" id="FootnoteMarkerSymbol" sig="Unicode">
 		  <comment>
 			<para>The custom marker that will be used as a literal string for the callout (typically a single character).</para>
@@ -1731,8 +1799,8 @@
 			<para>Id line from SF files (needed for import/export)</para>
 		  </comment>
 		</basic>
-		<owning num="10" id="Footnotes" card="seq" sig="ScrFootnote" />
-		<owning num="11" id="Diffs" card="col" sig="ScrDifference" />
+		<owning num="10" id="Footnotes" card="seq" sig="ScrFootnote"/>
+		<owning num="11" id="Diffs" card="col" sig="ScrDifference"/>
 		<basic num="12" id="UseChapterNumHeading" sig="Boolean">
 		  <comment>
 			<para>In this book chapter number headings will be used instead of drop-cap chapter numbers in the text.</para>
@@ -1749,9 +1817,9 @@
 		  </comment>
 		</basic>
 		<basic num="15" id="ImportedBtCheckSum" sig="MultiUnicode">
-			<comment>
-			  <para>A checksum representing the last imported back translation version from an external source (e.g., Paratext) for each writing system</para>
-			</comment>
+		  <comment>
+			<para>A checksum representing the last imported back translation version from an external source (e.g., Paratext) for each writing system</para>
+		  </comment>
 		</basic>
 	  </props>
 	</class>
@@ -1762,7 +1830,7 @@
 		<para>In the future ScrRefSystem may also be used to persist vernacular book names and abbreviations entered by the user in a canonical reference checking tool so that BCV references can be checked even for Scripture Books that do not yet exist as a ScrBook.</para>
 	  </comment>
 	  <props>
-		<owning num="1" id="Books" card="seq" sig="ScrBookRef" />
+		<owning num="1" id="Books" card="seq" sig="ScrBookRef"/>
 	  </props>
 	</class>
 	<class num="4" id="ScrBookRef" abstract="false" abbr="scbr" base="CmObject" depth="0">
@@ -1896,8 +1964,8 @@
 		<para>Note that ScrDrafts are now referred to as "versions" in the UI (used to be called "archives")</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Description" sig="Unicode" />
-		<owning num="2" id="Books" card="seq" sig="ScrBook" />
+		<basic num="1" id="Description" sig="Unicode"/>
+		<owning num="2" id="Books" card="seq" sig="ScrBook"/>
 		<basic num="3" id="DateCreated" sig="Time">
 		  <comment>
 			<para>The date and time that the record is created. Not automatically the same as the time stamp on a CmObject.</para>
@@ -1965,7 +2033,7 @@
 			<para>Permits the writing system of the data to be specified globally for the source. If NULL, the default writing system for the context will be used.</para>
 		  </comment>
 		</basic>
-		<rel num="2" id="NoteType" card="atomic" sig="CmAnnotationDefn" />
+		<rel num="2" id="NoteType" card="atomic" sig="CmAnnotationDefn"/>
 	  </props>
 	</class>
 	<class num="14" id="ScrImportP6Project" abstract="false" abbr="sipp" base="ScrImportSource" depth="1">
@@ -2047,7 +2115,7 @@
 			<para>Style to apply to data in an internal text stream. Ignored of Target is &lt;&gt; 0.</para>
 		  </comment>
 		</rel>
-		<rel num="11" id="NoteType" card="atomic" sig="CmAnnotationDefn" />
+		<rel num="11" id="NoteType" card="atomic" sig="CmAnnotationDefn"/>
 	  </props>
 	</class>
 	<class num="17" id="ScrBookAnnotations" abstract="false" abbr="scba" base="CmObject" depth="0">
@@ -2140,7 +2208,7 @@
 	  <comment>
 		<para>Special paragraphs that are owned by Scripture</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="21" id="ScrFootnote" abstract="false" abbr="scrfn" base="StFootnote" depth="2">
 	  <comment>
@@ -2350,7 +2418,7 @@
 			<para>A text (suitable for analysis in the Words/Texts tool) that is associated with this record. For example, the record may be a description of how it was obtained.</para>
 		  </comment>
 		</owning>
-	 </props>
+	  </props>
 	</class>
 	<class num="7" id="Reminder" abstract="false" abbr="rem" base="CmObject" depth="0">
 	  <comment>
@@ -2434,15 +2502,15 @@
 		<para>This class describes the attributes common to LexMinorEntry, LexMajorEntry and their subclasses.Ken, I added the virtual lexicalForm but I think that we need to add this as an owning attribute.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="HomographNumber" sig="Integer" min="0" max="255" />
+		<basic num="1" id="HomographNumber" sig="Integer" min="0" max="255"/>
 		<basic num="3" id="CitationForm" sig="MultiUnicode">
 		  <comment>
 			<para>If this is missing, then this defaults to the lexicalForm but the user has the option of specifying a real citation form especially useful for bound roots.</para>
 		  </comment>
 		</basic>
-		<basic num="5" id="DateCreated" sig="Time" />
-		<basic num="6" id="DateModified" sig="Time" />
-		<owning num="9" id="MorphoSyntaxAnalyses" card="col" sig="MoMorphSynAnalysis" />
+		<basic num="5" id="DateCreated" sig="Time"/>
+		<basic num="6" id="DateModified" sig="Time"/>
+		<owning num="9" id="MorphoSyntaxAnalyses" card="col" sig="MoMorphSynAnalysis"/>
 		<owning num="11" id="Senses" card="seq" sig="LexSense">
 		  <comment>
 			<para>I am not currently sure whether senses belong on minor entries or not but we did allow this in LinguaLinks so I will leave it here for now for compatibility's sake.</para>
@@ -2488,7 +2556,7 @@
 			<para>The user may initially add entries not knowing if they are highly regular/predictable. Once discovering that an entry is "non-lexical", the user may still want to retain for example sentences, conjugation charts, etc. This boolean specifies that the parser is not to use the morphs or MSA info in its parsing. Default = False.</para>
 		  </comment>
 		</basic>
-		<rel num="27" id="DoNotShowMainEntryIn" card="col" sig="CmPossibility" >
+		<rel num="27" id="DoNotShowMainEntryIn" card="col" sig="CmPossibility">
 		  <comment>
 			<para>This property lists publications in which this main entry should not appear. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
 		  </comment>
@@ -2523,27 +2591,27 @@
 			<para>This property is empty for main entries. For variant and complex entries, one or more LexEntryRef is used to point to the major entries. One variant entry could apply to more than one main entry, so each one could have a separate LexEntryRef. It’s possible for an entry to be a complex entry as well as a variant. This could be represented by one or more LexEntryRefs. Some may want to order multiple entries in a particular way, so we have a sequence instead of a collection.</para>
 		  </comment>
 		</owning>
-		  <rel num="35" id="DoNotPublishIn" card="col" sig="CmPossibility" >
-			  <comment>
-				  <para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
-			  </comment>
-		  </rel>
+		<rel num="35" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="3" id="ConstChartRow" abbr="ccr" abstract="false" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Notes" sig="String" big="true" />
+		<basic num="1" id="Notes" sig="String" big="true"/>
 		<basic num="2" id="ClauseType" sig="Integer">
 		  <notes>
 			<para>This is an enum with these values: Normal, Dependent, Song, Speech</para>
 		  </notes>
 		</basic>
-		<basic num="3" id="EndParagraph" sig="Boolean" />
-		<basic num="4" id="EndSentence" sig="Boolean" />
-		<basic num="5" id="StartDependentClauseGroup" sig="Boolean" />
-		<basic num="6" id="EndDependentClauseGroup" sig="Boolean" />
-		<owning num="7" id="Cells" sig="ConstituentChartCellPart" card="seq" />
-		<basic num="8" id="Label" sig="String" big="true" />
+		<basic num="3" id="EndParagraph" sig="Boolean"/>
+		<basic num="4" id="EndSentence" sig="Boolean"/>
+		<basic num="5" id="StartDependentClauseGroup" sig="Boolean"/>
+		<basic num="6" id="EndDependentClauseGroup" sig="Boolean"/>
+		<owning num="7" id="Cells" sig="ConstituentChartCellPart" card="seq"/>
+		<basic num="8" id="Label" sig="String" big="true"/>
 	  </props>
 	</class>
 	<class num="4" id="LexExampleSentence" abstract="false" abbr="exsn" base="CmObject" depth="0">
@@ -2556,14 +2624,14 @@
 			<para>This multilingual attribute holds the vernacular example sentence prior to tokenization. After tokenization it is cleared and the contents are transferred to the contents attribute. It is multilingual to allow multiple encodings in the same language (e.g., Thai, Laotian, and Vietnamese). It is multiString rather than multiUnicode to allow formatting - for example, applying bold to the word associated with the LexEntry.</para>
 		  </comment>
 		</basic>
-		<basic num="2" id="Reference" sig="String" />
-		<owning num="3" id="Translations" card="col" sig="CmTranslation" />
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true" />
-		  <rel num="5" id="DoNotPublishIn" card="col" sig="CmPossibility" >
-			  <comment>
-				  <para>This property lists publications in which this example should not appear.</para>
-			  </comment>
-		  </rel>
+		<basic num="2" id="Reference" sig="String"/>
+		<owning num="3" id="Translations" card="col" sig="CmTranslation"/>
+		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
+		<rel num="5" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this example should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="5" id="LexDb" abstract="false" abbr="ldb" base="CmMajorObject" depth="1" singleton="true">
@@ -2572,20 +2640,20 @@
 		<para>Renamed from LexicalDatabase for the port to Firebird.</para>
 	  </comment>
 	  <props>
-		<owning num="2" id="Appendixes" card="col" sig="LexAppendix" />
-		<owning num="5" id="SenseTypes" card="atomic" sig="CmPossibilityList" />
-		<owning num="6" id="UsageTypes" card="atomic" sig="CmPossibilityList" />
-		<owning num="7" id="DomainTypes" card="atomic" sig="CmPossibilityList" />
-		<owning num="8" id="MorphTypes" card="atomic" sig="CmPossibilityList" />
-		<rel num="10" id="LexicalFormIndex" card="col" sig="LexEntry" />
-		<rel num="11" id="AllomorphIndex" card="col" sig="MoForm" />
-		<owning num="12" id="Introduction" card="atomic" sig="StText" />
+		<owning num="2" id="Appendixes" card="col" sig="LexAppendix"/>
+		<owning num="5" id="SenseTypes" card="atomic" sig="CmPossibilityList"/>
+		<owning num="6" id="UsageTypes" card="atomic" sig="CmPossibilityList"/>
+		<owning num="7" id="DomainTypes" card="atomic" sig="CmPossibilityList"/>
+		<owning num="8" id="MorphTypes" card="atomic" sig="CmPossibilityList"/>
+		<rel num="10" id="LexicalFormIndex" card="col" sig="LexEntry"/>
+		<rel num="11" id="AllomorphIndex" card="col" sig="MoForm"/>
+		<owning num="12" id="Introduction" card="atomic" sig="StText"/>
 		<basic num="13" id="IsHeadwordCitationForm" sig="Boolean">
 		  <comment>
 			<para>Used for flags to determine which form to use for headword, etc.</para>
 		  </comment>
 		</basic>
-		<basic num="14" id="IsBodyInSeparateSubentry" sig="Boolean" />
+		<basic num="14" id="IsBodyInSeparateSubentry" sig="Boolean"/>
 		<owning num="17" id="ReversalIndexes" card="col" sig="ReversalIndex">
 		  <comment>
 			<para>Ken Zook: We are pretty well beyond the point where we'll ever allow multiple language projects in a database, so I think it's time we make these indexes owned. Since they are really part of the lexical database, I'm recommending they be owned by the lexical database.</para>
@@ -2637,11 +2705,11 @@
 			<para>Saying</para>
 		  </comment>
 		</owning>
-		  <owning num="24" id="PublicationTypes" card="atomic" sig="CmPossibilityList" >
-			  <comment>
-				  <para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
-			  </comment>
-		  </owning>
+		<owning num="24" id="PublicationTypes" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
 	<class num="6" id="ConstituentChartCellPart" abbr="cccp" abstract="true" base="CmObject" depth="0">
@@ -2651,14 +2719,14 @@
 			<para>Specifically a column identifier.</para>
 		  </comment>
 		</rel>
-		<basic num="2" id="MergesAfter" sig="Boolean" />
-		<basic num="3" id="MergesBefore" sig="Boolean" />
+		<basic num="2" id="MergesAfter" sig="Boolean"/>
+		<basic num="3" id="MergesBefore" sig="Boolean"/>
 	  </props>
 	</class>
 	<class num="7" id="ConstChartWordGroup" abbr="ccwg" abstract="false" base="ConstituentChartCellPart" depth="1">
 	  <props>
-		<rel num="1" id="BeginSegment" sig="Segment" card="atomic" />
-		<rel num="2" id="EndSegment" sig="Segment" card="atomic" />
+		<rel num="1" id="BeginSegment" sig="Segment" card="atomic"/>
+		<rel num="2" id="EndSegment" sig="Segment" card="atomic"/>
 		<basic num="3" id="BeginAnalysisIndex" sig="Integer">
 		  <comment>
 			<para>Indicate the words that occur in the indicated cell of the chart.</para>
@@ -2678,7 +2746,7 @@
 			<para>The target ConstChartWordGroup is in the column that shows the actual position of the text, while the marker indicates where the “something was moved from here” marker should appear.</para>
 		  </comment>
 		</rel>
-		<basic num="2" id="Preposed" sig="Boolean" />
+		<basic num="2" id="Preposed" sig="Boolean"/>
 	  </props>
 	</class>
 	<class num="9" id="ConstChartClauseMarker" abbr="cccm" abstract="false" base="ConstituentChartCellPart" depth="1">
@@ -2704,7 +2772,7 @@
 	</class>
 	<class num="11" id="PunctuationForm" abbr="pf" abstract="false" base="CmObject" depth="0" owner="none">
 	  <props>
-		<basic num="1" id="Form" sig="String" />
+		<basic num="1" id="Form" sig="String"/>
 	  </props>
 	</class>
 	<class num="14" id="LexPronunciation" abstract="false" abbr="pron" base="CmObject" depth="0">
@@ -2734,53 +2802,53 @@
 			<para>This provides a place to store tone patterns of the pronunciation form. It defaults to the top analysis writing system, but being a string, it can be forced to some other writing system. Tone may be marked as HL, 12, etc.</para>
 		  </comment>
 		</basic>
-		<basic num="7" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="7" id="LiftResidue" sig="Unicode" big="true"/>
 	  </props>
 	</class>
 	<class num="16" id="LexSense" abstract="false" abbr="sens" base="CmObject" depth="0">
 	  <props>
-		<rel num="1" id="MorphoSyntaxAnalysis" card="atomic" sig="MoMorphSynAnalysis" />
-		<rel num="2" id="AnthroCodes" card="col" sig="CmAnthroItem" />
-		<owning num="3" id="Senses" card="seq" sig="LexSense" />
-		<rel num="4" id="Appendixes" card="col" sig="LexAppendix" />
+		<rel num="1" id="MorphoSyntaxAnalysis" card="atomic" sig="MoMorphSynAnalysis"/>
+		<rel num="2" id="AnthroCodes" card="col" sig="CmAnthroItem"/>
+		<owning num="3" id="Senses" card="seq" sig="LexSense"/>
+		<rel num="4" id="Appendixes" card="col" sig="LexAppendix"/>
 		<basic num="5" id="Definition" sig="MultiString">
 		  <comment>
 			<para>This is multiString to allow for embedding of one encoding within another and also to allow the user to manipulate formatting of different parts of the string.</para>
 		  </comment>
 		</basic>
-		<rel num="6" id="DomainTypes" card="col" sig="CmPossibility" />
-		<owning num="7" id="Examples" card="seq" sig="LexExampleSentence" />
-		<basic num="8" id="Gloss" sig="MultiUnicode" />
-		<rel num="9" id="ReversalEntries" card="col" sig="ReversalIndexEntry" />
-		<basic num="11" id="ScientificName" sig="String" />
-		<rel num="12" id="SenseType" card="atomic" sig="CmPossibility" />
-		<rel num="13" id="ThesaurusItems" card="col" sig="CmPossibility" />
-		<rel num="14" id="UsageTypes" card="col" sig="CmPossibility" />
-		<basic num="15" id="AnthroNote" sig="MultiString" big="true" />
-		<basic num="16" id="Bibliography" sig="MultiString" />
-		<basic num="17" id="DiscourseNote" sig="MultiString" big="true" />
-		<basic num="18" id="EncyclopedicInfo" sig="MultiString" big="true" />
-		<basic num="19" id="GeneralNote" sig="MultiString" big="true" />
-		<basic num="20" id="GrammarNote" sig="MultiString" big="true" />
-		<basic num="21" id="PhonologyNote" sig="MultiString" big="true" />
-		<basic num="22" id="Restrictions" sig="MultiUnicode" />
-		<basic num="23" id="SemanticsNote" sig="MultiString" big="true" />
-		<basic num="24" id="SocioLinguisticsNote" sig="MultiString" big="true" />
-		<basic num="25" id="Source" sig="String" />
-		<rel num="26" id="Status" card="atomic" sig="CmPossibility" />
-		<rel num="27" id="SemanticDomains" card="col" sig="CmSemanticDomain" />
-		<owning num="29" id="Pictures" card="seq" sig="CmPicture" />
+		<rel num="6" id="DomainTypes" card="col" sig="CmPossibility"/>
+		<owning num="7" id="Examples" card="seq" sig="LexExampleSentence"/>
+		<basic num="8" id="Gloss" sig="MultiUnicode"/>
+		<rel num="9" id="ReversalEntries" card="col" sig="ReversalIndexEntry"/>
+		<basic num="11" id="ScientificName" sig="String"/>
+		<rel num="12" id="SenseType" card="atomic" sig="CmPossibility"/>
+		<rel num="13" id="ThesaurusItems" card="col" sig="CmPossibility"/>
+		<rel num="14" id="UsageTypes" card="col" sig="CmPossibility"/>
+		<basic num="15" id="AnthroNote" sig="MultiString" big="true"/>
+		<basic num="16" id="Bibliography" sig="MultiString"/>
+		<basic num="17" id="DiscourseNote" sig="MultiString" big="true"/>
+		<basic num="18" id="EncyclopedicInfo" sig="MultiString" big="true"/>
+		<basic num="19" id="GeneralNote" sig="MultiString" big="true"/>
+		<basic num="20" id="GrammarNote" sig="MultiString" big="true"/>
+		<basic num="21" id="PhonologyNote" sig="MultiString" big="true"/>
+		<basic num="22" id="Restrictions" sig="MultiUnicode"/>
+		<basic num="23" id="SemanticsNote" sig="MultiString" big="true"/>
+		<basic num="24" id="SocioLinguisticsNote" sig="MultiString" big="true"/>
+		<basic num="25" id="Source" sig="String"/>
+		<rel num="26" id="Status" card="atomic" sig="CmPossibility"/>
+		<rel num="27" id="SemanticDomains" card="col" sig="CmSemanticDomain"/>
+		<owning num="29" id="Pictures" card="seq" sig="CmPicture"/>
 		<basic num="30" id="ImportResidue" sig="String" big="true">
 		  <comment>
 			<para> A place where we can store standard format markers that are not processed in any other way.</para>
 		  </comment>
 		</basic>
-		<basic num="31" id="LiftResidue" sig="Unicode" big="true" />
-		  <rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility" >
-			  <comment>
-				  <para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
-			  </comment>
-		  </rel>
+		<basic num="31" id="LiftResidue" sig="Unicode" big="true"/>
+		<rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="26" id="MoAdhocProhib" abstract="true" abbr="acp" base="CmObject" depth="0">
@@ -3114,7 +3182,7 @@
 			<para>This is used to indicate a lexeme form is an abstract form (e.g.,-[C][V]^2, or iN) and should not be used for parsing.</para>
 		  </comment>
 		</basic>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
 	  </props>
 	</class>
 	<class num="36" id="MoInflAffixSlot" abstract="false" abbr="aslt" base="CmObject" depth="0">
@@ -3158,8 +3226,8 @@
 		<para>The model may need to be modified to accommodate spanned orders. A work-around would be to assign the affixes of the spanning slot to one of the spanned slots, and to create null affixes with the appropriate morphosyntactic features as fillers for the remaining spanned slots. In many cases, the morphosyntactic features of the non-null spanning affixes can be used for these null affixes as well.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Description" sig="MultiString" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Description" sig="MultiString"/>
 		<rel num="3" id="Slots" card="seq" sig="MoInflAffixSlot">
 		  <comment>
 			<para>refers to an ordered seq of MoInflAffixSlot; during the course of a derivation, each Affix Slot is applied in sequence, beginning with the top-most slot. While in many (most?) languages the order of attachment of Inflectional affixes is irrelevant, it may occasionally be necessary to specify a derivational order to account for allomorphy.</para>
@@ -3237,8 +3305,8 @@
 			<para>This field is also provided for import of legacy data. The import mechanism should differentiate between affixes and roots/stems. Roots and stems will have their parts-of-speech placed in the PartOfSpeech list while affixes will have theirs placed in the AffixCategoryList.</para>
 		  </notes>
 		</rel>
-		<rel num="5" id="PartOfSpeech" card="atomic" sig="PartOfSpeech" />
-		<rel num="7" id="Slots" card="col" sig="MoInflAffixSlot" />
+		<rel num="5" id="PartOfSpeech" card="atomic" sig="PartOfSpeech"/>
+		<rel num="7" id="Slots" card="col" sig="MoInflAffixSlot"/>
 		<rel num="8" id="FromProdRestrict" card="col" sig="CmPossibility">
 		  <comment>
 			<para>Refers to a collection of CmPossibility, giving any restriction classes which the stem to which this affix attaches must bear. If this attribute is empty, this affix may attach to a stem regardless of what restriction classes the stem bears (see MoStemMsa.ProductivityRestrictions). If there are two or more restriction classes listed for this affix, then the stem must have at least all of these restriction classes in its MoStemMsa.ProductivityRestrictions attribute in order for this affix to attach to the stem. The stem could have more restriction classes, but not less. (Note that unlike the case with MoDerivationalAffixMsa, there is no 'to productivity restrictions' attribute for inflectional affixes: inflectional affixes cannot add restriction classes to a word.)</para>
@@ -3319,13 +3387,13 @@
 			<para>Used to hold the list of ad hoc cooccurrence restrictions. (Ideally, this is empty!)</para>
 		  </comment>
 		</owning>
-		<rel num="5" id="AnalyzingAgents" card="col" sig="CmAgent" />
+		<rel num="5" id="AnalyzingAgents" card="col" sig="CmAgent"/>
 		<owning num="6" id="TestSets" card="col" sig="WfiWordSet">
 		  <comment>
 			<para>WfiWordSets are a collection of words that the user might want to use to test his word grammar as he adjusts morphological rules and the lexicon.</para>
 		  </comment>
 		</owning>
-		<owning num="7" id="GlossSystem" card="atomic" sig="MoGlossSystem" />
+		<owning num="7" id="GlossSystem" card="atomic" sig="MoGlossSystem"/>
 		<basic num="8" id="ParserParameters" sig="Unicode">
 		  <comment>
 			<para>We need a place to put "maximum parses" and other related parameters. </para>
@@ -3386,7 +3454,7 @@
 			<para>When the user selects gloss items from the language-specific gloss system to form a composite gloss, this analysis is stored in the MSA as a gloss bundle (which an attribute on MSA that stores a set of references to all the selected gloss items). The language-specific feature structure for an MSA is automatically generated by computing the unification of all the feature structure fragments in the gloss bundle.</para>
 		  </comment>
 		</rel>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
 	  </props>
 	</class>
 	<class num="42" id="MoMorphType" abstract="false" abbr="mot" base="CmPossibility" depth="1">
@@ -3473,7 +3541,7 @@
 	</class>
 	<class num="46" id="LexAppendix" abstract="false" abbr="apdx" base="CmObject" depth="0">
 	  <props>
-		<owning num="1" id="Contents" card="atomic" sig="StText" />
+		<owning num="1" id="Contents" card="atomic" sig="StText"/>
 	  </props>
 	</class>
 	<class num="47" id="MoStemName" abstract="false" abbr="snam" base="CmObject" depth="0">
@@ -3652,15 +3720,15 @@
 	</class>
 	<class num="52" id="ReversalIndex" abstract="false" abbr="revi" base="CmMajorObject" depth="1">
 	  <props>
-		<owning num="1" id="PartsOfSpeech" card="atomic" sig="CmPossibilityList" />
-		<owning num="3" id="Entries" card="col" sig="ReversalIndexEntry" />
-		<basic num="4" id="WritingSystem" sig="Unicode" />
+		<owning num="1" id="PartsOfSpeech" card="atomic" sig="CmPossibilityList"/>
+		<owning num="3" id="Entries" card="col" sig="ReversalIndexEntry"/>
+		<basic num="4" id="WritingSystem" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="53" id="ReversalIndexEntry" abstract="false" abbr="reve" base="CmObject" depth="0">
 	  <props>
-		<owning num="2" id="Subentries" card="col" sig="ReversalIndexEntry" />
-		<rel num="3" id="PartOfSpeech" card="atomic" sig="PartOfSpeech" />
+		<owning num="2" id="Subentries" card="col" sig="ReversalIndexEntry"/>
+		<rel num="3" id="PartOfSpeech" card="atomic" sig="PartOfSpeech"/>
 		<basic num="6" id="ReversalForm" sig="MultiUnicode">
 		  <comment>
 			<para>This property contains the index entry forms. The primary form is in the ReversalIndex_WritingSystem. Other acceptable writing systems are ones that are the same language as the primary form (the IcuLocal is identical up to the first _).</para>
@@ -3673,9 +3741,8 @@
 		<para>This Text object will probably be replaced by RnEvent or a new subclass of RnEvent (Larry Hayashi, May 6, 2004).</para>
 	  </comment>
 	  <props>
-		<basic num="2" id="Source" sig="MultiString" />
-		<basic num="3" id="SoundFilePath" sig="Unicode" />
-		<owning num="8" id="Contents" card="atomic" sig="StText" />
+		<basic num="2" id="Source" sig="MultiString"/>
+		<owning num="8" id="Contents" card="atomic" sig="StText"/>
 		<rel num="9" id="Genres" card="col" sig="CmPossibility">
 		  <comment>
 			<para>This associates a text with any number of genres.</para>
@@ -3691,6 +3758,11 @@
 			<para>The user will set this for texts that have translated material as opposed to original texts.</para>
 		  </comment>
 		</basic>
+		<owning num="12" id="MediaFiles" card="atomic" sig="CmMediaContainer">
+		  <comment>
+			<para>A container for media files which are associated with this text, and possibly referenced by segments in the text.</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
 	<class num="59" id="WfiAnalysis" abstract="false" abbr="ana" base="CmObject" depth="0">
@@ -3698,7 +3770,7 @@
 		<para>The WfiAnalysis class contains an analysis for a given wordform, which is defined as how to make morpheme cuts on the wordform, a part of speech for the wordform, plus a sequence of one or more corresponding interpretations of te analysis. Thus English bears would have one analysis related to the animal, and another related to the verb to carry.</para>
 	  </comment>
 	  <props>
-		<rel num="3" id="Category" card="atomic" sig="PartOfSpeech" />
+		<rel num="3" id="Category" card="atomic" sig="PartOfSpeech"/>
 		<owning num="4" id="MsFeatures" card="atomic" sig="FsFeatStruc">
 		  <comment>
 			<para>WfiAnalysis parallels MorphoSyntacticItem in the lexical database. Allowing MSFeatures here allows the user to easily convert a wordform to a subentry. This also supports S2W in that a user may know the features that a wordform bears but not its component parts (e.g may know that it's plural without knowing what the plural morpheme is). Additionally, in the case of suppletion, there may not be a morpheme to identify.</para>
@@ -3709,9 +3781,9 @@
 			<para>In a thorough analysis this attribute will not be used. However, if the linguist wishes to only analyze stems this is an easy way to accomplish this.</para>
 		  </comment>
 		</rel>
-		<owning num="6" id="Derivation" card="atomic" sig="MoDeriv" />
-		<owning num="10" id="Meanings" card="col" sig="WfiGloss" />
-		<owning num="11" id="MorphBundles" card="seq" sig="WfiMorphBundle" />
+		<owning num="6" id="Derivation" card="atomic" sig="MoDeriv"/>
+		<owning num="10" id="Meanings" card="col" sig="WfiGloss"/>
+		<owning num="11" id="MorphBundles" card="seq" sig="WfiMorphBundle"/>
 		<rel num="12" id="CompoundRuleApps" card="seq" sig="MoCompoundRule">
 		  <comment>
 			<para>Allows Morph Sketch Generator to extract example wordforms where a compound rule applied.</para>
@@ -3735,7 +3807,7 @@
 		<para>The WfiGloss class contains a meaning of the parent interpretation. For example, the senses in the parent interpretation might be 3S-Carry; the meanings could then be 'he carries', 'she carries', 'it carries'.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Form" sig="MultiUnicode" />
+		<basic num="1" id="Form" sig="MultiUnicode"/>
 	  </props>
 	</class>
 	<class num="62" id="WfiWordform" abstract="false" abbr="wfm" base="CmObject" depth="0" owner="none">
@@ -3748,7 +3820,7 @@
 			<para>The form of the word. This is multiUnicode in order to allow the user to encode the wordform in more than one encoding (for example, in Japanese a word can be encoded in Kanji, Hiragana, Katakana or Romanji).</para>
 		  </comment>
 		</basic>
-		<owning num="2" id="Analyses" card="col" sig="WfiAnalysis" />
+		<owning num="2" id="Analyses" card="col" sig="WfiAnalysis"/>
 		<basic num="3" id="SpellingStatus" sig="Integer" min="0" max="2">
 		  <comment>
 			<para>The current status of a wordform (e.g. undecided, correct, incorrect). </para>
@@ -3768,17 +3840,17 @@
 		<para>Renameed from WordformLookupItem for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Form" sig="String" />
-		<basic num="2" id="ThesaurusCentral" sig="Integer" min="0" max="32768" />
-		<rel num="3" id="ThesaurusItems" card="col" sig="CmPossibility" />
-		<basic num="4" id="AnthroCentral" sig="Integer" min="0" max="32768" />
-		<rel num="5" id="AnthroCodes" card="col" sig="CmAnthroItem" />
+		<basic num="1" id="Form" sig="String"/>
+		<basic num="2" id="ThesaurusCentral" sig="Integer" min="0" max="32768"/>
+		<rel num="3" id="ThesaurusItems" card="col" sig="CmPossibility"/>
+		<basic num="4" id="AnthroCentral" sig="Integer" min="0" max="32768"/>
+		<rel num="5" id="AnthroCodes" card="col" sig="CmAnthroItem"/>
 	  </props>
 	</class>
 	<class num="65" id="WordformLookupList" abstract="false" abbr="wll" base="CmMajorObject" depth="1">
 	  <props>
-		<owning num="1" id="Wordforms" card="col" sig="WordFormLookup" />
-		<basic num="3" id="WritingSystem" sig="Unicode" />
+		<owning num="1" id="Wordforms" card="col" sig="WordFormLookup"/>
+		<basic num="3" id="WritingSystem" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="66" id="MoRuleMapping" abstract="true" abbr="rlmp" base="CmObject" depth="0">
@@ -3786,7 +3858,7 @@
 		<para>An abstract class for the various sorts of things that a processual affix can 'do' to its input, such as copying all or part of the input, adding phonetic material, or modifying part of the input. (Deleting part of the input is done by not mentioning in the output the PhContextOrVar corresponding to that portion of the Input.)</para>
 		<para>No attributes are defined here. All subclasses implement a Content attribute, but not necessarily in the same way.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="68" id="MoInsertPhones" abstract="false" abbr="insrtphns" base="MoRuleMapping" depth="1">
 	  <comment>
@@ -3998,7 +4070,7 @@
 	  <notes>
 		<para>This class and its subclasses give a regular expression notation. They are used in the environments of phonological rules, and in the input and output of morphological and phonological rules. Since regular expressions are ubiquitous in NLP (the right-hand side of phrase structure rules, for example), it would ideally not be necessary to define classes for the elements of regular expressions. Instead, they would be a built-in possibility for attribute signatures (along with atomic and sequence attrs). The difficulty in generalizing the regular expression notation using classes, is that of ensuring that the 'fillers' belong to the appropriate model. For example, it should not be possible to mix contexts referring to phonological and morphosyntactic features.</para>
 	  </notes>
-	  <props />
+	  <props/>
 	</class>
 	<class num="81" id="PhPhonContext" abstract="true" abbr="pctx" base="PhContextOrVar" depth="1">
 	  <comment>
@@ -4006,8 +4078,8 @@
 		<para>Renamed from PhPhonologicalContext for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<owning num="2" id="Description" card="atomic" sig="StText" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<owning num="2" id="Description" card="atomic" sig="StText"/>
 	  </props>
 	</class>
 	<class num="82" id="PhIterationContext" abstract="false" abbr="itrtncontxt" base="PhPhonContext" depth="2">
@@ -4048,11 +4120,11 @@
 	  <comment>
 		<para>A PhSimpleContext represents the 'atoms' of phonetic regular expressions, analogous to terminal nodes in phrase structure rules. The subclasses define simple contexts in terms of natural classes (= sets of phonemes), phonemes, and boundary markers. It would also be possible to define a subclass for defining contexts in terms of strings, bypassing the need for translating strings into sequences of phonemes. As a linguist, I have avoided that, butAttributes:None defined here. All subclasses define a featureStructure attr, but they do so differently for each class.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="85" id="PhSimpleContextBdry" abstract="false" abbr="smplectxtbdry" base="PhSimpleContext" depth="3">
 	  <props>
-		<rel num="1" id="FeatureStructure" card="atomic" sig="PhBdryMarker" />
+		<rel num="1" id="FeatureStructure" card="atomic" sig="PhBdryMarker"/>
 	  </props>
 	</class>
 	<class num="86" id="PhSimpleContextNC" abstract="false" abbr="simcontxtnc" base="PhSimpleContext" depth="3">
@@ -4060,7 +4132,7 @@
 		<para>Used for natural classes (sets of phonemes).</para>
 	  </comment>
 	  <props>
-		<rel num="1" id="FeatureStructure" card="atomic" sig="PhNaturalClass" />
+		<rel num="1" id="FeatureStructure" card="atomic" sig="PhNaturalClass"/>
 		<rel num="2" id="PlusConstr" card="seq" sig="PhFeatureConstraint">
 		  <comment>
 			<para>Refers to a collection seq of PhFeatureConstraint. The use of a plusConstraint only makes sense if there are two or more contexts in a rule that make use of the same constraint. If two such constraints occur in the environment of the rule (treating the input as part of the environment), then the feature referred to by the constraint is required to have the same value in every place where the word matches the pattern. For example, if a plusConstraint for the feature voiced appears on two adjacent consonant contexts in a rule, then the word being matched must have two adjacent consonants with identical voicing. If one of the constraints is in the environment and one in the output of the rule, then the effect is that of a rule of assimilation: in the form output by the rule, the phoneme affected by the rule will have the same value as the value on the phoneme matched by the environment.This attribute is not intended to be implemented immediately, but is included here for completeness (since it is apparently difficult to add new attributes once a COM interface has been defined).Note that although this attr is defined as a collection seq (not an ordered seq), the order is assumed to be stable. Otherwise the labels used in SPE-style rules would be subject to change. On the other hand, the use of a seq attr here may be overkill; from a linguistic standpoint, a single constraint (plus or minus) might be adequate.</para>
@@ -4091,14 +4163,14 @@
 	  <comment>
 		<para>This represents a variable in morphological rules (see the input and output attrs of MoAffixProcess). A variable corresponds to '.*' in Unix-style regular expressions, i.e. a sequence of zero or more items (in this case, phonemes and/or boundary markers). They are usually shown by an uppercase letter, e.g. 'X'.Attributes:None.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="89" id="PhPhonemeSet" abstract="false" abbr="phnmeset" base="CmObject" depth="0">
 	  <comment>
 		<para>This holds a set of phonemes and boundary markers which belong to a certain " level." The reason for having a special object to hold such a set, rather than storing the phonemes individually in an attr of the class MoStratum, is that several strata may use the same set of phonemes.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
 		<owning num="2" id="Phonemes" card="col" sig="PhPhoneme">
 		  <comment>
 			<para>collection seq of PhPhoneme.</para>
@@ -4109,7 +4181,7 @@
 			<para>collection seq of PhBdryMarker</para>
 		  </comment>
 		</owning>
-		<basic num="4" id="Description" sig="MultiString" />
+		<basic num="4" id="Description" sig="MultiString"/>
 	  </props>
 	</class>
 	<class num="90" id="PhTerminalUnit" abstract="true" abbr="termunit" base="CmObject" depth="0">
@@ -4122,7 +4194,7 @@
 			<para>a string, often a single character or a single base character plus some diacritics.</para>
 		  </comment>
 		</basic>
-		<basic num="2" id="Description" sig="MultiString" />
+		<basic num="2" id="Description" sig="MultiString"/>
 		<owning num="3" id="Codes" card="seq" sig="PhCode">
 		  <comment>
 			<para>a collection of PhCodes (which amounts to a seq of strings), each in a single encoding (but not perhaps all in the same encoding). Each string is a representation of the phoneme or boundary marker in that encoding.</para>
@@ -4137,7 +4209,7 @@
 	  <comment>
 		<para>This represents a boundary marker, e.g. a morpheme boundary or a word boundary.There is no requirement that the user define any boundary markers.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="92" id="PhPhoneme" abstract="false" abbr="phme" base="PhTerminalUnit" depth="1">
 	  <comment>
@@ -4167,9 +4239,9 @@
 		<para>In general, a phonological Natural Class is a set of phonemes that undergo similar sorts of phonological processes, or which condition similar processes. In classical generative phonology (the SPE model), a natural class was presumed to be specifiable by a small number of feature values. In feature geometry models of phonology (such as autosegmental phonology), a natural class is assumed to be specifiable by a feature node, i.e. by one or more feature values dominated exhaustively and exclusively by a single node. Natural classes defined intensionally are represented here by the subclass PhNCFeatures. Natural classes may also be defined extensionally, by simply listing their members, using the subclass PhNCSegments.These classes may be more generally useful, and might belong in the Feature System model, rather than here.</para>
 	  </notes>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="3" id="Description" sig="MultiString" />
-		<basic num="4" id="Abbreviation" sig="MultiUnicode" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="3" id="Description" sig="MultiString"/>
+		<basic num="4" id="Abbreviation" sig="MultiUnicode"/>
 	  </props>
 	</class>
 	<class num="94" id="PhNCFeatures" abstract="false" abbr="ncfts" base="PhNaturalClass" depth="1">
@@ -4216,10 +4288,10 @@
 		<para>This represents a pairing of left and right contexts for an allomorph or a phonological rule. Any given allomorph or rule can have a sequence of such pairings, although in general the goal of the analysis will be to reduce the number of pairs to one.PhEnvironment objects are owned in the PhPhonologicalData object., and referred to by the PhoneEnv attr of MoForms (allomorphs) and by the (to-be-designed) phonological rules.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Description" sig="MultiString" />
-		<rel num="4" id="LeftContext" card="atomic" sig="PhPhonContext" />
-		<rel num="5" id="RightContext" card="atomic" sig="PhPhonContext" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Description" sig="MultiString"/>
+		<rel num="4" id="LeftContext" card="atomic" sig="PhPhonContext"/>
+		<rel num="5" id="RightContext" card="atomic" sig="PhPhonContext"/>
 		<basic num="6" id="AMPLEStringSegment" sig="Unicode">
 		  <comment>
 			<para>This is for storing AMPLE and Shoebox (converted to AMPLE) info about phonetic environments. This will probably be eventually deleted when we decide what to do with Shoebox/AMPLE import and relationship to the LexEntry legacy information.</para>
@@ -4256,7 +4328,7 @@
 			<para>owns a collection of PhPhonemeSets, describing the phonemic inventory of the language. The reason for allowing this to be a collection (rather than atomic) is to allow for phonological descriptions at multiple levels (strata),</para>
 		  </comment>
 		</owning>
-		<owning num="2" id="Environments" card="seq" sig="PhEnvironment" />
+		<owning num="2" id="Environments" card="seq" sig="PhEnvironment"/>
 		<owning num="3" id="NaturalClasses" card="seq" sig="PhNaturalClass">
 		  <comment>
 			<para>Change this here.</para>
@@ -4340,7 +4412,7 @@
 			<para>When the Adjacency attribute is 'Anywhere', the fact that this attribute is a seq, rather than a collection, is unimportant. But the order of allomorphs becomes important when the Adjacency attribute has any other value. Specifically, the order of the allomorphs in this attribute is interpreted as a left-to-right order.</para>
 		  </comment>
 		</rel>
-		<rel num="2" id="FirstAllomorph" card="atomic" sig="MoForm" />
+		<rel num="2" id="FirstAllomorph" card="atomic" sig="MoForm"/>
 		<rel num="3" id="RestOfAllos" card="seq" sig="MoForm">
 		  <comment>
 			<para>Changed from RestOfAllomorphs.</para>
@@ -4361,7 +4433,7 @@
 			<para>Note: we are assuming here that the user interface cannot simply prohibit constraints with a single morpheme, because they arise in the process of creating a constraint. (You cannot count to two until you've counted to one.)</para>
 		  </comment>
 		</rel>
-		<rel num="2" id="FirstMorpheme" card="atomic" sig="MoMorphSynAnalysis" />
+		<rel num="2" id="FirstMorpheme" card="atomic" sig="MoMorphSynAnalysis"/>
 		<rel num="3" id="RestOfMorphs" card="seq" sig="MoMorphSynAnalysis">
 		  <comment>
 			<para>Changed from RestOfMorphemes.</para>
@@ -4383,9 +4455,9 @@
 	</class>
 	<class num="105" id="WfiWordSet" abstract="false" abbr="wwst" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Description" sig="MultiString" />
-		<rel num="4" id="Cases" card="col" sig="WfiWordform" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Description" sig="MultiString"/>
+		<rel num="4" id="Cases" card="col" sig="WfiWordform"/>
 	  </props>
 	</class>
 	<class num="106" id="MoBinaryCompoundRule" abstract="false" abbr="mbcr" base="MoCompoundRule" depth="1">
@@ -4418,11 +4490,11 @@
 		<para>This is a concrete class (a subclass of MoCompoundRule), for compounds of which all the members are heads, as opposed to endocentric compounds, in which one member is the head, or exocentric compounds, in which no member is a head. This class also differs from endocentric and exocentric compounds in that the branching may be non-binary.</para>
 		<para>There are several linguistic terms for this sort of compound, including 'co-ordinate compounds', 'appositional compounds', and 'dvandva compounds'. An example (taken from Fabb 1998, page 74; see also section 1.1.2) is the Tamil for 'courage, bravery and valour'.</para>
 	  </comment>
-	  <props />
+	  <props/>
 	</class>
 	<class num="108" id="MoGlossSystem" abstract="false" abbr="glsys" base="CmObject" depth="0">
 	  <props>
-		<owning num="1" id="Glosses" card="col" sig="MoGlossItem" />
+		<owning num="1" id="Glosses" card="col" sig="MoGlossItem"/>
 	  </props>
 	</class>
 	<class num="109" id="MoGlossItem" abstract="false" abbr="glit" base="CmObject" depth="0">
@@ -4433,8 +4505,8 @@
 		<para>c. a separator character</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Abbreviation" sig="MultiUnicode" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
 		<basic num="3" id="Type" sig="Integer">
 		  <comment>
 			<para>Types:</para>
@@ -4447,7 +4519,7 @@
 			<para>7. xref The item is a cross-reference to the term that is used in preference to this one. </para>
 		  </comment>
 		</basic>
-		<basic num="4" id="AfterSeparator" sig="Unicode" />
+		<basic num="4" id="AfterSeparator" sig="Unicode"/>
 		<basic num="5" id="ComplexNameSeparator" sig="Unicode">
 		  <comment>
 			<para>separates the gloss for the feature name from the gloss string for the value bundle</para>
@@ -4470,7 +4542,7 @@
 			<para>Changed from FeatureStructureFragment.</para>
 		  </comment>
 		</owning>
-		<owning num="9" id="GlossItems" card="seq" sig="MoGlossItem" />
+		<owning num="9" id="GlossItems" card="seq" sig="MoGlossItem"/>
 		<rel num="10" id="Target" card="atomic" sig="MoGlossItem">
 		  <comment>
 			<para>Note also that this attribute has two different functions.</para>
@@ -4494,17 +4566,17 @@
 		<para>Renamed from MoAdhocProhibGr for the Firebird port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Name" sig="MultiUnicode" />
-		<basic num="2" id="Description" sig="MultiString" />
-		<owning num="3" id="Members" card="col" sig="MoAdhocProhib" />
+		<basic num="1" id="Name" sig="MultiUnicode"/>
+		<basic num="2" id="Description" sig="MultiString"/>
+		<owning num="3" id="Members" card="col" sig="MoAdhocProhib"/>
 	  </props>
 	</class>
 	<class num="112" id="WfiMorphBundle" abstract="false" abbr="wmrb" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Form" sig="MultiString" />
-		<rel num="2" id="Morph" card="atomic" sig="MoForm" />
-		<rel num="3" id="Msa" card="atomic" sig="MoMorphSynAnalysis" />
-		<rel num="4" id="Sense" card="atomic" sig="LexSense" />
+		<basic num="1" id="Form" sig="MultiString"/>
+		<rel num="2" id="Morph" card="atomic" sig="MoForm"/>
+		<rel num="3" id="Msa" card="atomic" sig="MoMorphSynAnalysis"/>
+		<rel num="4" id="Sense" card="atomic" sig="LexSense"/>
 	  </props>
 	</class>
 	<class num="113" id="LexEtymology" abstract="false" abbr="ety" base="CmObject" depth="0">
@@ -4512,11 +4584,11 @@
 		<para>History of the entry</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Comment" sig="MultiString" big="true" />
-		<basic num="2" id="Form" sig="MultiUnicode" />
-		<basic num="3" id="Gloss" sig="MultiUnicode" />
-		<basic num="4" id="Source" sig="Unicode" />
-		<basic num="5" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="1" id="Comment" sig="MultiString" big="true"/>
+		<basic num="2" id="Form" sig="MultiUnicode"/>
+		<basic num="3" id="Gloss" sig="MultiUnicode"/>
+		<basic num="4" id="Source" sig="Unicode"/>
+		<basic num="5" id="LiftResidue" sig="Unicode" big="true"/>
 	  </props>
 	</class>
 	<class num="116" id="ChkRef" abstract="false" abbr="chkr" base="CmObject" depth="0">
@@ -4553,7 +4625,7 @@
 	</class>
 	<class num="117" id="MoUnclassifiedAffixMsa" abstract="false" abbr="uamsa" base="MoMorphSynAnalysis" depth="1">
 	  <props>
-		<rel num="1" id="PartOfSpeech" card="atomic" sig="PartOfSpeech" />
+		<rel num="1" id="PartOfSpeech" card="atomic" sig="PartOfSpeech"/>
 	  </props>
 	</class>
 	<class num="118" id="LexEntryType" abstract="false" abbr="let" base="CmPossibility" depth="1">
@@ -4613,13 +4685,13 @@
 			<para>This allows the user to add a comment to the set. We don't allow comments on individual links, but generally this comment can refer to individual items, if desired.</para>
 		  </comment>
 		</basic>
-		<rel num="2" id="Targets" card="seq" sig="CmObject" />
+		<rel num="2" id="Targets" card="seq" sig="CmObject"/>
 		<basic num="3" id="Name" sig="MultiUnicode">
 		  <comment>
 			<para>This allows the user to add a name to the set.</para>
 		  </comment>
 		</basic>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
 	  </props>
 	</class>
 	<class num="121" id="ChkSense" abstract="false" abbr="chks" base="CmObject" depth="0">
@@ -4778,18 +4850,18 @@
 			<para>This field is available for summary information to show with the variant info being displayed from the main entry. It may be in more than one language and might support formatting and embedded languages. Chuck Grimes feels this is important and it is not simply the gloss of the variant entry. This field would contain the MDF \ve, \vn, and \vr information, which may be the name of a dialect and/or any pertinent comment, such as usage restrictions, simple gloss, or inflection. In MDF the contents of \ve is displayed after the variant in parentheses. Since the \ve field is imported from the major entry, and the \ve may differ for the same \va used in different entries, by storing the information with the LexEntryRef we do not lose anything. If we imported it into the SummaryDefinition of the minor entry, we would have to concatenate the various \ve fields and would lose the distinction of which reference they came from. However, my searches so far have not uncovered any place two different main entries refer to the same variant entry, If this does not happen, we could probably ignore this and just use the SummaryDefinition of the minor entry. When displaying the variant entry in a main entry, this summary could be printed following the variant headword. When displaying a subentry in a main entry in the stem-based format, this summary would be displayed following the subentry headword. Would we ever need a different summary for two different LexEntryRefs owned by the same entry? If not, we could do without this property.</para>
 		  </comment>
 		</basic>
-		<basic num="7" id="LiftResidue" sig="Unicode" big="true" />
+		<basic num="7" id="LiftResidue" sig="Unicode" big="true"/>
 		<basic num="8" id="RefType" sig="Integer" max="127">
 		  <comment>
 			<para>This property is needed in the UI to know whether the current LexEntryRef should show up as a variant or a complex form. We currently use VariantTypes and ComplexFormTypes to determine this, but there are occasions when both of these are missing but we still need to show something in the UI. This integer will be used as an enum with 0 for variants and 1 for complex forms. We may later need to specify inflected forms and perhaps combinations of these.</para>
 		  </comment>
 		</basic>
-		  <rel num="9" id="ShowComplexFormsIn" card="seq" sig="CmObject">
-			  <comment>
-				  <para>The UI limits this to a sequence of LexEntry or LexSense. For variants, this field is unused.</para>
-				  <para>For complex entries, this field points to a subset of ComponentLexemes. The entries or senses in this property will list this item as a complex form (in a stem-based dictionary). For example, if ComponentLexemes has un, and known, and ShowComplexFormsIn only has known, then 'unknown' will be listed as a complex form of 'known' but not of 'un-'.</para>
-			  </comment>
-		  </rel>
+		<rel num="9" id="ShowComplexFormsIn" card="seq" sig="CmObject">
+		  <comment>
+			<para>The UI limits this to a sequence of LexEntry or LexSense. For variants, this field is unused.</para>
+			<para>For complex entries, this field points to a subset of ComponentLexemes. The entries or senses in this property will list this item as a complex form (in a stem-based dictionary). For example, if ComponentLexemes has un, and known, and ShowComplexFormsIn only has known, then 'unknown' will be listed as a complex form of 'known' but not of 'un-'.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="128" id="PhSegmentRule" abstract="false" abbr="segrule" base="CmObject" depth="0">
@@ -4932,18 +5004,18 @@
 		<para>Renamed from LanguageProject for the Firebird Port.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="EthnologueCode" sig="Unicode" />
-		<basic num="2" id="WorldRegion" sig="MultiUnicode" />
-		<basic num="3" id="MainCountry" sig="MultiUnicode" />
-		<basic num="4" id="FieldWorkLocation" sig="MultiUnicode" />
-		<owning num="5" id="PartsOfSpeech" card="atomic" sig="CmPossibilityList" />
-		<owning num="6" id="Texts" card="col" sig="Text" />
-		<owning num="7" id="TranslationTags" card="atomic" sig="CmPossibilityList" />
-		<rel num="9" id="Thesaurus" card="atomic" sig="CmPossibilityList" />
-		<rel num="11" id="WordformLookupLists" card="col" sig="WordformLookupList" />
-		<owning num="12" id="AnthroList" card="atomic" sig="CmPossibilityList" />
-		<owning num="14" id="LexDb" card="atomic" sig="LexDb" />
-		<owning num="15" id="ResearchNotebook" card="atomic" sig="RnResearchNbk" />
+		<basic num="1" id="EthnologueCode" sig="Unicode"/>
+		<basic num="2" id="WorldRegion" sig="MultiUnicode"/>
+		<basic num="3" id="MainCountry" sig="MultiUnicode"/>
+		<basic num="4" id="FieldWorkLocation" sig="MultiUnicode"/>
+		<owning num="5" id="PartsOfSpeech" card="atomic" sig="CmPossibilityList"/>
+		<owning num="6" id="Texts" card="col" sig="Text"/>
+		<owning num="7" id="TranslationTags" card="atomic" sig="CmPossibilityList"/>
+		<rel num="9" id="Thesaurus" card="atomic" sig="CmPossibilityList"/>
+		<rel num="11" id="WordformLookupLists" card="col" sig="WordformLookupList"/>
+		<owning num="12" id="AnthroList" card="atomic" sig="CmPossibilityList"/>
+		<owning num="14" id="LexDb" card="atomic" sig="LexDb"/>
+		<owning num="15" id="ResearchNotebook" card="atomic" sig="RnResearchNbk"/>
 		<basic num="17" id="AnalysisWss" sig="Unicode">
 		  <comment>
 			<para>Changed from AnalysisWritingSystems.</para>
@@ -4968,36 +5040,36 @@
 			<para>This is a space-delimited list of writing system tags.</para>
 		  </comment>
 		</basic>
-		<owning num="21" id="MsFeatureSystem" card="atomic" sig="FsFeatureSystem" />
-		<owning num="22" id="MorphologicalData" card="atomic" sig="MoMorphData" />
+		<owning num="21" id="MsFeatureSystem" card="atomic" sig="FsFeatureSystem"/>
+		<owning num="22" id="MorphologicalData" card="atomic" sig="MoMorphData"/>
 		<owning num="23" id="Styles" card="col" sig="StStyle">
 		  <comment>
 			<para>Styles for use in the Data Notebook and Lexical database.</para>
 		  </comment>
 		</owning>
-		<owning num="24" id="Filters" card="col" sig="CmFilter" />
-		<owning num="25" id="ConfidenceLevels" card="atomic" sig="CmPossibilityList" />
-		<owning num="26" id="Restrictions" card="atomic" sig="CmPossibilityList" />
-		<owning num="28" id="Roles" card="atomic" sig="CmPossibilityList" />
-		<owning num="29" id="Status" card="atomic" sig="CmPossibilityList" />
-		<owning num="30" id="Locations" card="atomic" sig="CmPossibilityList" />
-		<owning num="31" id="People" card="atomic" sig="CmPossibilityList" />
-		<owning num="32" id="Education" card="atomic" sig="CmPossibilityList" />
-		<owning num="33" id="TimeOfDay" card="atomic" sig="CmPossibilityList" />
+		<owning num="24" id="Filters" card="col" sig="CmFilter"/>
+		<owning num="25" id="ConfidenceLevels" card="atomic" sig="CmPossibilityList"/>
+		<owning num="26" id="Restrictions" card="atomic" sig="CmPossibilityList"/>
+		<owning num="28" id="Roles" card="atomic" sig="CmPossibilityList"/>
+		<owning num="29" id="Status" card="atomic" sig="CmPossibilityList"/>
+		<owning num="30" id="Locations" card="atomic" sig="CmPossibilityList"/>
+		<owning num="31" id="People" card="atomic" sig="CmPossibilityList"/>
+		<owning num="32" id="Education" card="atomic" sig="CmPossibilityList"/>
+		<owning num="33" id="TimeOfDay" card="atomic" sig="CmPossibilityList"/>
 		<owning num="34" id="AffixCategories" card="atomic" sig="CmPossibilityList">
 		  <comment>
 			<para>In traditional interlinearizing programs, the user is encouraged to provide a part-of-speech or category for all morphemes in a word. Inflectional affixes such as PAST, PRESENT and FUTURE might be labelled as tense. Derivational affixes often take labels very similar to their glosses - CAUSATIVE might be labelled as causative or causative marker or simply verb affix. The AffixCategoryList is provided here to allow the user to label affixes in this way for "stealth" purposes only. Inflectional affixes should ultimately be captured in inflectional templates and slot names used for interlinearizing. Derivational affixes should be default have a MoAffixCategory of "derv" (derivational affix). Refer to MoInflectionalAffixMsa and MoDerivationalAffixMsa for more information.</para>
 		  </comment>
 		</owning>
-		<owning num="35" id="PhonologicalData" card="atomic" sig="PhPhonData" />
-		<owning num="36" id="Positions" card="atomic" sig="CmPossibilityList" />
-		<owning num="37" id="Overlays" card="col" sig="CmOverlay" />
+		<owning num="35" id="PhonologicalData" card="atomic" sig="PhPhonData"/>
+		<owning num="36" id="Positions" card="atomic" sig="CmPossibilityList"/>
+		<owning num="37" id="Overlays" card="col" sig="CmOverlay"/>
 		<owning num="38" id="AnalyzingAgents" card="col" sig="CmAgent">
 		  <comment>
 			<para>At this point, in time (Jan, 2002) CmAnalyzingAgents are used only by MoMorphological data. Refer to CmAnalyzingAgent for more info.</para>
 		  </comment>
 		</owning>
-		<owning num="40" id="TranslatedScripture" card="atomic" sig="Scripture" />
+		<owning num="40" id="TranslatedScripture" card="atomic" sig="Scripture"/>
 		<basic num="41" id="VernWss" sig="Unicode">
 		  <comment>
 			<para>Changed from VernacularWritingSystems</para>
@@ -5009,16 +5081,16 @@
 			<para>LinkedFiles Root Directory: Linked Files links may have a full path name or a relative path name. This property holds the relative path definition when relative path names are used. It could be a physical path name (e.g., c:\FwData) or a network name that could be accessed by other users (e.g., \\ls-daffy\FwData).</para>
 		  </comment>
 		</basic>
-		<owning num="44" id="Annotations" card="col" sig="CmAnnotation" />
-		<owning num="45" id="UserAccounts" card="col" sig="UserConfigAcct" />
-		<owning num="46" id="ActivatedFeatures" card="col" sig="UserAppFeatAct" />
+		<owning num="44" id="Annotations" card="col" sig="CmAnnotation"/>
+		<owning num="45" id="UserAccounts" card="col" sig="UserConfigAcct"/>
+		<owning num="46" id="ActivatedFeatures" card="col" sig="UserAppFeatAct"/>
 		<owning num="47" id="AnnotationDefs" card="atomic" sig="CmPossibilityList">
 		  <comment>
 			<para>Changed from AnnotationDefinitions.</para>
 		  </comment>
 		</owning>
-		<owning num="48" id="Pictures" card="col" sig="CmFolder" />
-		<owning num="49" id="SemanticDomainList" card="atomic" sig="CmPossibilityList" />
+		<owning num="48" id="Pictures" card="col" sig="CmFolder"/>
+		<owning num="49" id="SemanticDomainList" card="atomic" sig="CmPossibilityList"/>
 		<owning num="50" id="CheckLists" card="col" sig="CmPossibilityList">
 		  <comment>
 			<para>The CheckLists will be a collection of CmPossibilityList objects, each with a unique identifier. For example, one CmPossibilityList will be called KeyTerms which will represent a hierarchical list of Biblical key terms. The possibility lists can be imported programmatically from external files. Each CmPossibilityList will hold ChkItem objects (derived from CmPossibility).</para>
@@ -5045,9 +5117,9 @@
 		  </comment>
 		</owning>
 		<owning num="56" id="FilePathsInTsStrings" card="atomic" sig="CmFolder">
-			  <comment>
-				  <para>This contains one folder holding owning CmFile objects. The CmFolder is called "File paths in TsStrings" that holds all externalLink's to files found in TsStrings.</para>
-			  </comment>
+		  <comment>
+			<para>This contains one folder holding owning CmFile objects. The CmFolder is called "File paths in TsStrings" that holds all externalLink's to files found in TsStrings.</para>
+		  </comment>
 		</owning>
 		<owning num="154" id="PhFeatureSystem" card="atomic" sig="FsFeatureSystem">
 		  <comment>

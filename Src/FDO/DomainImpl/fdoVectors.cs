@@ -664,19 +664,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Will make sure the hvo is good, even if new.
 			// base call handles modified registration of MainObject.
 			base.Add(obj);
-
-			Guid guidOldOwner = obj.Owner == null ? Guid.Empty : obj.Owner.Guid;
-			int oldFlid = obj.OwningFlid;
 			((ICmObjectInternal)obj).SetOwner(MainObject, Flid, -1);
-			// We need to register the added object as changed, even though the only thing that has
-			// changed in it is the link to its owner.  Registering the Owner field as changed
-			// doesn't work, because a later Undo / Redo will fail.  (Those operations don't recognize
-			// the flid for Owner, and probably shouldn't do anything with it anyway.)
-			// If the object is not registered as changed, its original XML (including the old, possibly
-			// deleted, owner's guid) will be written out.  This results in interesting (and almost
-			// unfixable) crashes the next time the project is opened.
-			if (guidOldOwner != MainObject.Guid)
-				m_uowService.RegisterObjectOwnershipChange(obj, guidOldOwner, oldFlid, Flid);
 		}
 	}
 
@@ -1950,15 +1938,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				base[index] = value;
 
 				if (!isNew)
-				{
-					Guid guidOldOwner = value.Owner == null ? Guid.Empty : value.Owner.Guid;
-					int oldFlid = value.OwningFlid;
 					((ICmObjectInternal)value).SetOwner(MainObject, Flid, index);
-					// We need to register the added object as changed, even though the only thing that has
-					// changed in it is the link to its owner.  See the comment in FdoOwningCollection.Add().
-					if (guidOldOwner != MainObject.Guid)
-						m_uowService.RegisterObjectOwnershipChange(value, guidOldOwner, oldFlid, Flid);
-				}
 			}
 		}
 
@@ -2043,13 +2023,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						removeEventArgs = new RemoveObjectEventArgs(obj, Flid, obj.IndexInOwner, false, true);
 					}
 				}
-				Guid guidOldOwner = obj.Owner == null ? Guid.Empty : obj.Owner.Guid;
-				int oldFlid = obj.OwningFlid;
 				((ICmObjectInternal)obj).SetOwner(MainObject, Flid, eventArgs.Index);
-				// We need to register the added object as changed, even though the only thing that has
-				// changed in it is the link to its owner.  See the comment in FdoOwningCollection.Add().
-				if (guidOldOwner != MainObject.Guid)
-					m_uowService.RegisterObjectOwnershipChange(obj, guidOldOwner, oldFlid, Flid);
 			}
 			return eventArgs;
 		}

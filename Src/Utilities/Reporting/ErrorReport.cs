@@ -28,7 +28,7 @@ using System.Drawing;  // GDI+ stuff
 using System.Drawing.Imaging;  // ImageFormat
 
 using Microsoft.Win32;
-
+using Palaso.Email;
 using SIL.Utils;
 
 namespace SIL.Utils
@@ -67,6 +67,9 @@ namespace SIL.Utils
 
 		/// <summary></summary>
 		protected static bool s_isOkToInteractWithUser = true;
+		private LinkLabel viewDetailsLink;
+		private Button cancelButton;
+		private Label m_stepsLabel;
 		private static bool s_fIgnoreReport;
 		#endregion
 
@@ -142,9 +145,8 @@ namespace SIL.Utils
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Label label2;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
 			System.Windows.Forms.Label label3;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
 			this.m_reproduce = new System.Windows.Forms.TextBox();
 			this.radEmail = new System.Windows.Forms.RadioButton();
 			this.m_details = new System.Windows.Forms.TextBox();
@@ -153,15 +155,11 @@ namespace SIL.Utils
 			this.btnClose = new System.Windows.Forms.Button();
 			this.m_notification = new System.Windows.Forms.TextBox();
 			this.labelAttemptToContinue = new System.Windows.Forms.Label();
-			label2 = new System.Windows.Forms.Label();
+			this.viewDetailsLink = new System.Windows.Forms.LinkLabel();
+			this.m_stepsLabel = new System.Windows.Forms.Label();
+			this.cancelButton = new System.Windows.Forms.Button();
 			label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			//
-			// label2
-			//
-			resources.ApplyResources(label2, "label2");
-			label2.BackColor = System.Drawing.Color.Transparent;
-			label2.Name = "label2";
 			//
 			// label3
 			//
@@ -175,6 +173,7 @@ namespace SIL.Utils
 			this.m_reproduce.AcceptsTab = true;
 			resources.ApplyResources(this.m_reproduce, "m_reproduce");
 			this.m_reproduce.Name = "m_reproduce";
+			this.m_reproduce.TextChanged += new System.EventHandler(this.m_reproduce_TextChanged);
 			//
 			// radEmail
 			//
@@ -228,18 +227,41 @@ namespace SIL.Utils
 			this.labelAttemptToContinue.ForeColor = System.Drawing.Color.Firebrick;
 			this.labelAttemptToContinue.Name = "labelAttemptToContinue";
 			//
+			// viewDetailsLink
+			//
+			resources.ApplyResources(this.viewDetailsLink, "viewDetailsLink");
+			this.viewDetailsLink.Name = "viewDetailsLink";
+			this.viewDetailsLink.TabStop = true;
+			this.viewDetailsLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.viewDetailsLink_LinkClicked);
+			//
+			// m_stepsLabel
+			//
+			resources.ApplyResources(this.m_stepsLabel, "m_stepsLabel");
+			this.m_stepsLabel.BackColor = System.Drawing.Color.Transparent;
+			this.m_stepsLabel.Name = "m_stepsLabel";
+			//
+			// cancelButton
+			//
+			resources.ApplyResources(this.cancelButton, "cancelButton");
+			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.UseVisualStyleBackColor = true;
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			//
 			// ErrorReporter
 			//
 			this.AcceptButton = this.btnClose;
 			resources.ApplyResources(this, "$this");
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.CancelButton = this.btnClose;
+			this.CancelButton = this.cancelButton;
 			this.ControlBox = false;
+			this.Controls.Add(this.cancelButton);
+			this.Controls.Add(this.viewDetailsLink);
 			this.Controls.Add(this.m_reproduce);
 			this.Controls.Add(this.m_notification);
 			this.Controls.Add(this.m_details);
 			this.Controls.Add(this.labelAttemptToContinue);
-			this.Controls.Add(label2);
+			this.Controls.Add(this.m_stepsLabel);
 			this.Controls.Add(label3);
 			this.Controls.Add(this.emailLabel);
 			this.Controls.Add(this.radEmail);
@@ -249,6 +271,7 @@ namespace SIL.Utils
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ErrorReporter";
+			this.ShowIcon = false;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -333,10 +356,41 @@ namespace SIL.Utils
 
 			using (ErrorReporter e = new ErrorReporter(isLethal, emailAddress))
 			{
-				e.HandleError(applicationKey, error, parent);
+				e.ShowDialog(applicationKey, error, parent);
 				return e.m_userChoseToExit;
 			}
 		}
+
+		/// <summary>
+		/// Invoked by a menu command, allows the user to report a problem that didn't crash the program,
+		/// complete with all the context information we attach to crashes (except a stack dump).
+		/// </summary>
+		public static void ReportProblem(RegistryKey applicationKey, string emailAddress, Form parent)
+		{
+			ErrorReporter e = new ErrorReporter(false, emailAddress);
+			e.m_fUserReport = true;
+			e.ShowDialog(applicationKey, null, parent);
+			e.Closed += ModelessClosed;
+		}
+
+		static void ModelessClosed(object sender, EventArgs e)
+		{
+			((ErrorReporter)sender).Dispose();
+		}
+
+		/// <summary>
+		/// Invoked by a menu command, allows the user to make a suggestion,
+		/// complete with all the context information we attach to crashes (except a stack dump).
+		/// </summary>
+		public static void MakeSuggestion(RegistryKey applicationKey, string emailAddress, Form parent)
+		{
+			ErrorReporter e = new ErrorReporter(false, emailAddress);
+			e.m_fUserReport = true;
+			e.m_fSuggestion = true;
+			e.ShowDialog(applicationKey, null, parent);
+			e.Closed += ModelessClosed;
+		}
+
 		#endregion
 
 		#region Properties
@@ -358,15 +412,15 @@ namespace SIL.Utils
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void GatherData()
+		protected string GatherData()
 		{
 			//m_details.Text += "\r\nTo Reproduce: " + m_reproduce.Text + "\r\n";
 			StringBuilder sb = new StringBuilder(m_details.Text.Length + m_reproduce.Text.Length + 50);
-			sb.AppendLine("To Reproduce:");
+			sb.AppendLine(m_fUserReport ? (m_fSuggestion ? "Suggestion:" : "Problem Description:") : "To Reproduce:");
 			sb.AppendLine(m_reproduce.Text);
 			sb.AppendLine("");
 			sb.Append(m_details.Text);
-			m_details.Text = sb.ToString();
+			return sb.ToString();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -379,16 +433,20 @@ namespace SIL.Utils
 			s_properties[label] = contents;
 		}
 
+		private string m_viewDetailsOriginalText;
+		private int m_originalHeight;
+		private int m_originalHeightWithoutDetails;
+		private Size m_originalMinSize;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the error.
+		/// Shows the dialog (handles the error, if it is one).
 		/// </summary>
 		/// <param name="applicationKey">The application registry key.</param>
 		/// <param name="error">the exception you want to report</param>
 		/// <param name="parent">the parent form that this error belongs to (i.e. the form
 		/// show modally on)</param>
 		/// ------------------------------------------------------------------------------------
-		private void HandleError(RegistryKey applicationKey, Exception error, Form parent)
+		private void ShowDialog(RegistryKey applicationKey, Exception error, Form parent)
 		{
 			CheckDisposed();
 			//
@@ -396,9 +454,38 @@ namespace SIL.Utils
 			//
 			InitializeComponent();
 
-			// These 2 lines can be deleted after the problems with mailto have been resolved.
-			radEmail.Enabled = false;
-			radSelf.Checked = true;
+			m_viewDetailsOriginalText = viewDetailsLink.Text;
+			m_originalHeightWithoutDetails = Height - m_details.Height - 10;
+			m_originalHeight = Height;
+			m_originalMinSize = MinimumSize;
+
+			if (m_fUserReport)
+			{
+				ControlBox = true;
+				cancelButton.Visible = true;
+				btnClose.Size = cancelButton.Size;
+				btnClose.Left = cancelButton.Left - btnClose.Width - 15;
+				if (m_fSuggestion)
+				{
+					Text = ReportingStrings.kstidMakeSuggestionCaption;
+					m_notification.Text = ReportingStrings.kstidMakeSuggestionNotification;
+					m_stepsLabel.Text = ReportingStrings.kstidGoalAndSuggestion;
+					m_reproduce.Text = ReportingStrings.kstidSampleSuggestion;
+				}
+				else
+				{
+					Text = ReportingStrings.kstidReportProblemCaption;
+					m_notification.Text = ReportingStrings.kstidReportProblemNotification;
+					m_stepsLabel.Text = ReportingStrings.kstidProblemAndSteps;
+					m_reproduce.Text = ReportingStrings.ksSampleProblemReport;
+				}
+				// Do this AFTER filling in the sample...it is disabled until they change something.
+				btnClose.Enabled = false;
+			}
+
+			var show = s_showDetails; // should it be showing?
+			s_showDetails = true; // the resource-file state of the dialog is showing.
+			ShowDetails(show); // put everything in the desired state.
 
 			if (m_emailAddress == null)
 			{
@@ -414,7 +501,9 @@ namespace SIL.Utils
 			if (!m_isLethal)
 			{
 				btnClose.Text = ReportingStrings.ks_Ok;
-				BackColor = Color.FromArgb(255, 255, 192);//yellow
+				BackColor = m_fSuggestion
+					? Color.FromKnownColor(KnownColor.Control) // standard dialog background
+					: Color.FromArgb(255, 255, 192);//yellow
 				m_notification.BackColor = BackColor;
 				UpdateCrashCount(applicationKey, "NumberOfAnnoyingCrashes");
 			}
@@ -425,33 +514,44 @@ namespace SIL.Utils
 			UpdateAppRuntime(applicationKey);
 
 			StringBuilder detailsText = new StringBuilder();
-			Exception innerMostException;
-			detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, out innerMostException));
-
-			// if the exception had inner exceptions, show the inner-most exception first, since
-			// that is usually the one we want the developer to read.
-			if (innerMostException != null)
+			Exception innerMostException = null;
+			if (error != null)
 			{
-				StringBuilder innerException = new StringBuilder();
-				innerException.AppendLine("Inner most exception:");
-				innerException.AppendLine(ExceptionHelper.GetExceptionText(innerMostException));
-				innerException.AppendLine();
-				innerException.AppendLine("Full, hierarchical exception contents:");
-				detailsText.Insert(0, innerException.ToString());
+				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, out innerMostException));
+
+				// if the exception had inner exceptions, show the inner-most exception first, since
+				// that is usually the one we want the developer to read.
+				if (innerMostException != null)
+				{
+					StringBuilder innerException = new StringBuilder();
+					innerException.AppendLine("Inner most exception:");
+					innerException.AppendLine(ExceptionHelper.GetExceptionText(innerMostException));
+					innerException.AppendLine();
+					innerException.AppendLine("Full, hierarchical exception contents:");
+					detailsText.Insert(0, innerException.ToString());
+				}
 			}
 
-			detailsText.AppendLine("Error Reporting Properties:");
+			detailsText.AppendLine("Additional information about the computer and project:");
 			foreach(string label in s_properties.Keys )
 				detailsText.AppendLine(label + ": " + s_properties[label]);
 
 			if (innerMostException != null)
 				error = innerMostException;
-			Logger.WriteEvent("Got exception " + error.GetType().Name);
+			if (error != null)
+				Logger.WriteEvent("Got exception " + error.GetType().Name);
 
 			detailsText.AppendLine(Logger.LogText);
 			Debug.WriteLine(detailsText.ToString());
 			m_details.Text = detailsText.ToString();
 
+			if (m_fUserReport)
+			{
+				// show modeless, so they can use the program while filling in details.
+				// Don't set the Ignore flag, a real crash might happen while trying to report a lesser problem.
+				Show(parent);
+				return;
+			}
 			if (s_isOkToInteractWithUser)
 			{
 				s_fIgnoreReport = true;
@@ -502,6 +602,9 @@ namespace SIL.Utils
 		}
 		#endregion
 
+		private bool m_fUserReport;
+		private bool m_fSuggestion;
+
 		#region Event Handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -512,26 +615,44 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
-			GatherData();
+			var body = GatherData();
 
 			if(radEmail.Checked)
 			{
-				try
+				var emailProvider = EmailProviderFactory.PreferredEmailProvider();
+				var emailMessage = emailProvider.CreateMessage();
+				emailMessage.To.Add(m_emailAddress);
+				var emailSubject = s_emailSubject;
+				if (m_fSuggestion)
+					emailSubject = "Suggested Improvement to FLEx:";
+				else if (m_fUserReport)
+					emailSubject = "Manual Error Report:";
+				emailMessage.Subject = emailSubject;
+				emailMessage.Body = body;
+				if (!emailMessage.Send(emailProvider))
 				{
-					// WARNING! This currently does not work. The main issue seems to be the length of the error report. mailto
-					// apparently has some limit on the length of the message, and we are exceeding that.
-					//make it safe, but does too much (like replacing spaces with +'s)
-					//string s = System.Web.HttpUtility.UrlPathEncode( m_details.Text);
-					string body = m_details.Text.Replace(Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
+					MessageBox.Show(this, ReportingStrings.kstidSendFailed, ReportingStrings.kstidSendFailedCaption,
+						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					radSelf.Checked = true;
+					return;
+				}
 
-					Process p = new Process();
-					p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
-					p.Start();
-				}
-				catch(Exception)
-				{
-					//swallow it
-				}
+				//try
+				//{
+				//    // WARNING! This currently does not work. The main issue seems to be the length of the error report. mailto
+				//    // apparently has some limit on the length of the message, and we are exceeding that.
+				//    //make it safe, but does too much (like replacing spaces with +'s)
+				//    //string s = System.Web.HttpUtility.UrlPathEncode( m_details.Text);
+				//    string body = m_details.Text.Replace(Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
+
+				//    Process p = new Process();
+				//    p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
+				//    p.Start();
+				//}
+				//catch(Exception)
+				//{
+				//    //swallow it
+				//}
 //				catch(Exception ex)
 //				{
 //					System.Diagnostics.Debug.WriteLine(ex.Message);
@@ -542,20 +663,29 @@ namespace SIL.Utils
 			{
 				if(m_emailAddress != null)
 				{
-					m_details.Text = string.Format(ReportingStrings.ksPleaseEMailThisTo0WithThisExactSubject12,
-						m_emailAddress, s_emailSubject, m_details.Text);
+					if (m_fUserReport)
+					{
+						body = string.Format(ReportingStrings.kstidPleaseEmailThisTo0WithASuitableSubject,
+							m_emailAddress, body);
+					}
+					else
+					{
+						body = string.Format(ReportingStrings.ksPleaseEMailThisTo0WithThisExactSubject12,
+							m_emailAddress, s_emailSubject, body);
+					}
 				}
 				// Copying to the clipboard works only if thread is STA which is not the case if
 				// called from the Finalizer thread
 				if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-					ClipboardUtils.SetDataObject(m_details.Text, true);
+					ClipboardUtils.SetDataObject(body, true);
 				else
-					Logger.WriteEvent(m_details.Text);
+					Logger.WriteEvent(body);
 			}
 
 			if(!m_isLethal || ModifierKeys.Equals(Keys.Shift))
 			{
 				Logger.WriteEvent("Continuing...");
+				Close();
 				return;
 			}
 
@@ -618,5 +748,52 @@ namespace SIL.Utils
 			base.OnKeyUp(e);
 		}
 		#endregion
+
+		private static bool s_showDetails;
+		private void viewDetailsLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			ShowDetails(!s_showDetails);
+		}
+
+		void ShowDetails(bool show)
+		{
+			viewDetailsLink.Text = show ? ReportingStrings.ksHideDetails : m_viewDetailsOriginalText;
+			if (s_showDetails == show)
+				return; // already in desired state!
+			s_showDetails = show;
+			m_details.Visible = show;
+			// Not currently necessary, all the relevant controls are anchored bottom.
+			//foreach (Control c in Controls)
+			//{
+			//    if (c.Top > m_details.Top)
+			//    {
+			//        if (show)
+			//            c.Top += m_details.Height;
+			//        else
+			//            c.Top -= m_details.Height;
+			//    }
+			//}
+			if (show)
+			{
+				Height = m_originalHeight;
+				MinimumSize = m_originalMinSize;
+			}
+			else
+			{
+				MinimumSize = new Size(m_originalMinSize.Width, m_originalHeightWithoutDetails); // BEFORE height!
+				Height = m_originalHeightWithoutDetails;
+			}
+		}
+
+		private void m_reproduce_TextChanged(object sender, EventArgs e)
+		{
+			// We can send a message only if one has been written!
+			btnClose.Enabled = !string.IsNullOrEmpty(m_reproduce.Text) || !m_fUserReport;
+		}
+
+		private void cancelButton_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 	}
 }

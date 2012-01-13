@@ -167,11 +167,12 @@ namespace SIL.FieldWorks.XWorks
 					progress.SetMilestone();
 
 					m_rootSite.Show();
-					Cursor.Current = Cursors.WaitCursor;
-					IChangeRootObject root = m_rootSite as IChangeRootObject;
-					if (root != null && !Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
-						root.SetRoot(Clerk.CurrentObject.Hvo);
-					Cursor.Current = Cursors.Default;
+					using (new WaitCursor(this))
+					{
+						IChangeRootObject root = m_rootSite as IChangeRootObject;
+						if (root != null && !Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
+							root.SetRoot(Clerk.CurrentObject.Hvo);
+					}
 				}
 				catch (Exception error)
 				{

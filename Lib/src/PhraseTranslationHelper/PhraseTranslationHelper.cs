@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -33,6 +33,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 		#region Data members
 		private readonly List<TranslatablePhrase> m_phrases = new List<TranslatablePhrase>();
+		private readonly Dictionary<Regex, string> m_phraseSubstitutions;
 		/// <summary>A lookup table of the last word of all known English key terms to the
 		/// actual key term objects.</summary>
 		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
@@ -44,6 +45,12 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly Dictionary<TypeOfPhrase, string> m_initialPunct = new Dictionary<TypeOfPhrase, string>();
 		private readonly Dictionary<TypeOfPhrase, string> m_finalPunct = new Dictionary<TypeOfPhrase, string>();
 		private bool m_justGettingStarted = true;
+		private string m_keyTermRenderingRulesFile;
+		private List<RenderingSelectionRule> m_termRenderingSelectionRules;
+		private SortBy m_listSortCriterion = SortBy.Default;
+		private bool m_listSortedAscending = true;
+		/// <summary>Indicates whether the filtered list's sorting has been done</summary>
+		private bool m_listSorted = false;
 
 		private const int kAscending = 1;
 		private const int kDescending = -1;
@@ -54,7 +61,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			Default,
 			Reference,
-			OriginalPhrase,
+			EnglishPhrase,
 			Translation,
 			Status,
 		}
@@ -90,26 +97,30 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public PhraseTranslationHelper(IEnumerable<TranslatablePhrase> phrases,
-			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules)
+			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<Substitution> phrasesToIgnore)
 		{
 			TranslatablePhrase.s_helper = this;
+
 			m_keyTermsTable = new Dictionary<Word, List<KeyTermMatch>>(keyTerms.Count());
 			PopulateKeyTermsTable(keyTerms, keyTermRules);
 
+			m_phraseSubstitutions = new Dictionary<Regex, string>(phrasesToIgnore.Count());
+			foreach (Substitution substitutePhrase in phrasesToIgnore)
+				m_phraseSubstitutions[substitutePhrase.RegEx] = substitutePhrase.RegExReplacementString;
+
 			m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
-			foreach (TranslatablePhrase phrase in phrases)
+			foreach (TranslatablePhrase phrase in phrases.Where(p => !string.IsNullOrEmpty(p.PhraseInUse)))
 			{
-				if (!string.IsNullOrEmpty(phrase.OriginalPhrase))
+				if (!phrase.IsExcluded)
 				{
-					PhraseParser parser = new PhraseParser(m_keyTermsTable, phrase, GetOrCreatePart);
+					PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions, phrase, GetOrCreatePart);
 					foreach (IPhrasePart part in parser.Parse())
 						phrase.m_parts.Add(part);
-					m_phrases.Add(phrase);
-					if (phrase.Category == -1)
-					{
-						m_categories[phrase.SequenceNumber] = phrase;
-					}
 				}
+				m_phrases.Add(phrase);
+				if (phrase.Category == -1)
+					m_categories[phrase.SequenceNumber] = phrase;
 			}
 
 			for (int wordCount = m_partsTable.Keys.Max(); wordCount > 1; wordCount--)
@@ -160,7 +171,7 @@ namespace SILUBS.PhraseTranslationHelper
 					partsTable[partToDelete.m_words[0]].Remove(partToDelete);
 				}
 			}
-			Sort(SortBy.Default, true);
+			m_filteredPhrases = m_phrases;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -170,9 +181,19 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public void Sort(SortBy by, bool ascending)
 		{
-			SortList(m_phrases, by, ascending);
-			if (m_filteredPhrases != null)
-				SortList(m_filteredPhrases, by, ascending);
+			if (m_listSortCriterion != by)
+			{
+				m_listSortCriterion = by;
+				m_listSortedAscending = ascending;
+				m_listSorted = false;
+			}
+			else if (m_listSortedAscending != ascending)
+			{
+				if (m_listSorted)
+					m_filteredPhrases.Reverse();
+				else
+					m_listSortedAscending = ascending;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -197,8 +218,8 @@ namespace SILUBS.PhraseTranslationHelper
 				case SortBy.Reference:
 					how = PhraseReferenceComparison(direction);
 					break;
-				case SortBy.OriginalPhrase:
-					how = (a, b) => a.OriginalPhrase.CompareTo(b.OriginalPhrase) * direction;
+				case SortBy.EnglishPhrase:
+					how = (a, b) => a.PhraseInUse.CompareTo(b.PhraseInUse) * direction;
 					break;
 				case SortBy.Translation:
 					how = (a, b) => a.Translation.CompareTo(b.Translation) * direction;
@@ -359,9 +380,9 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the (first) phrase in the collection that matches the given text.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase GetPhrase(string origPhrase)
+		public TranslatablePhrase GetPhrase(string englishPhrase)
 		{
-			return GetPhrase(null, origPhrase);
+			return GetPhrase(null, englishPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -369,25 +390,80 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the (first) phrase in the collection that matches the given text.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase GetPhrase(string reference, string origPhrase)
+		public TranslatablePhrase GetPhrase(string reference, string englishPhrase)
 		{
-			origPhrase = origPhrase.Normalize(NormalizationForm.FormD);
-			return m_phrases.FirstOrDefault(x => (reference == null || x.Reference == reference) && x.OriginalPhrase == origPhrase);
+			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
+			return m_phrases.FirstOrDefault(x => (reference == null || x.Reference == reference) && x.PhraseInUse == englishPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the phrases.
+		/// Gets the index of the (first) phrase in the (filtered) collection that matches the
+		/// given reference and text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public int FindPhrase(string reference, string englishPhrase)
+		{
+			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
+			for (int i = 0; i < FilteredSortedPhrases.Count; i++)
+			{
+				TranslatablePhrase phrase = FilteredSortedPhrases[i];
+				if (phrase.Reference == reference && phrase.PhraseInUse == englishPhrase)
+					return i;
+			}
+			return -1;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the phrases (filtered and sorted).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IEnumerable<TranslatablePhrase> Phrases
 		{
-			get { return m_filteredPhrases ?? m_phrases; }
+			get { return FilteredSortedPhrases; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the complete list of phrases.
+		/// Gets the filtered phrases, sorting them first if needed.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private List<TranslatablePhrase> FilteredSortedPhrases
+		{
+			get
+			{
+				if (!m_listSorted)
+				{
+					SortList(m_filteredPhrases, m_listSortCriterion, m_listSortedAscending);
+					m_listSorted = true;
+				}
+				return m_filteredPhrases;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the term-rendering selection rules.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public List<RenderingSelectionRule> TermRenderingSelectionRules
+		{
+			get { return m_termRenderingSelectionRules; }
+			set
+			{
+				m_termRenderingSelectionRules = value;
+				if (m_keyTermRenderingRulesFile != null)
+				{
+					UNSQuestionsDialog.EnsureDataFolderExists();
+					XmlSerializationHelper.SerializeToFile(m_keyTermRenderingRulesFile, m_termRenderingSelectionRules);
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the complete list of phrases sorted by reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal IEnumerable<TranslatablePhrase> UnfilteredPhrases
@@ -400,6 +476,35 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
+		internal string KeyTermRenderingRulesFile
+		{
+			set
+			{
+				m_keyTermRenderingRulesFile = value;
+				m_termRenderingSelectionRules = XmlSerializationHelper.LoadOrCreateList<RenderingSelectionRule>(m_keyTermRenderingRulesFile, true);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the number of phrases/questions matching the applied filter.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal int FilteredPhraseCount
+		{
+			get { return m_filteredPhrases.Count; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the total number of phrases/questions.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal int UnfilteredPhraseCount
+		{
+			get { return m_phrases.Count; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the translation of the requested category; if not translated, use the English.
@@ -409,7 +514,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			string catName = m_categories[categoryId].Translation;
 			if (string.IsNullOrEmpty(catName))
-				catName = m_categories[categoryId].OriginalPhrase;
+				catName = m_categories[categoryId].PhraseInUse;
 			return catName;
 		}
 
@@ -420,7 +525,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase this[int index]
 		{
-			get { return (m_filteredPhrases ?? m_phrases)[index]; }
+			get { return FilteredSortedPhrases[index]; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -429,58 +534,46 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="partMatchString">String to filter "translatable" parts (not key term
 		/// parts).</param>
-		/// <param name="exactMatch">If set to <c>true</c> only phrases that have a part that
-		/// exactly matches the match string will be included.</param>
+		/// <param name="wholeWordMatch">If set to <c>true</c> the match string will only match
+		/// complete words.</param>
 		/// <param name="ktFilter">The type of Key Terms filter to apply.</param>
 		/// <param name="refFilter">The reference filter delegate (params are startRef, endRef,
 		/// and string representation of reference).</param>
+		/// <param name="fShowExcludedQuestions">if set to <c>true</c> show excluded questions.
+		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public void Filter(string partMatchString, bool exactMatch, KeyTermFilterType ktFilter,
-			Func<int, int, string, bool> refFilter)
+		public void Filter(string partMatchString, bool wholeWordMatch, KeyTermFilterType ktFilter,
+			Func<int, int, string, bool> refFilter, bool fShowExcludedQuestions)
 		{
 			Func<int, int, string, bool> filterByRef = refFilter ?? new Func<int, int, string, bool>((start, end, sref) => true);
 
-			m_filteredPhrases = null;
+			m_listSorted = false;
+
 			if (string.IsNullOrEmpty(partMatchString))
 			{
 				if (ktFilter != KeyTermFilterType.All)
 					m_filteredPhrases = m_phrases.Where(phrase => phrase.MatchesKeyTermFilter(ktFilter) &&
-						filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference)).ToList();
+						filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
+						(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
 				else if (refFilter != null)
-					m_filteredPhrases = m_phrases.Where(phrase => filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference)).ToList();
+					m_filteredPhrases = m_phrases.Where(phrase => filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
+						(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+				else if (!fShowExcludedQuestions)
+					m_filteredPhrases = m_phrases.Where(phrase => !phrase.IsExcluded).ToList();
+				else
+					m_filteredPhrases = m_phrases;
 				return;
 			}
-			List<Word> wordsToMatch = PhraseParser.GetWordsInString(partMatchString, false);
-			if (wordsToMatch.Count == 0)
-			{
-				m_filteredPhrases = new List<TranslatablePhrase>();
-				return;
-			}
-			if (exactMatch)
-			{
-				int wordCount = partMatchString.Count(ch => ch == ' ') + 1;
-				Dictionary<Word, List<Part>> allPossibleParts;
-				if (!m_partsTable.TryGetValue(wordCount, out allPossibleParts))
-					return;
-				Part match = allPossibleParts.Values.SelectMany(
-					possiblePartList => possiblePartList.Where(part => part.Words.SequenceEqual(wordsToMatch))).FirstOrDefault();
-				m_filteredPhrases = m_phrases.Where(phrase => phrase.m_parts.Contains(match) &&
-					phrase.MatchesKeyTermFilter(ktFilter) &&
-					filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference)).ToList();
-			}
-			else
-			{
-				int partCount = m_partsTable.Values.SelectMany(a => a.Values).Select(a => a.Count).Sum();
-				Debug.WriteLine(partCount);
 
-				IEnumerable<Part> matches = m_partsTable.Where(allLists => allLists.Key >= wordsToMatch.Count).SelectMany(
-					allLists => allLists.Value.Values).SelectMany(
-					list => list.Where(part => part.m_words.ContainsSequence(wordsToMatch)));
-
-				m_filteredPhrases = matches.SelectMany(matchedPart => matchedPart.OwningPhrases).Distinct().Where(
-					phrase => phrase.MatchesKeyTermFilter(ktFilter) &&
-						filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference)).ToList();
-			}
+			partMatchString = Regex.Escape(partMatchString.Normalize(NormalizationForm.FormD));
+			if (wholeWordMatch)
+				partMatchString = @"\b" + partMatchString + @"\b";
+			Regex regexFilter = new Regex(partMatchString,
+				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			m_filteredPhrases = m_phrases.Where(phrase => regexFilter.IsMatch(phrase.PhraseInUse) &&
+				phrase.MatchesKeyTermFilter(ktFilter) &&
+				filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
+				(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
 		}
 		#endregion
 
@@ -497,8 +590,6 @@ namespace SILUBS.PhraseTranslationHelper
 			StringBuilder bldr = new StringBuilder();
 			if (tp.Translation.StartsWith("\u00BF"))
 				bldr.Append(tp.Translation[0]);
-			//foreach (char t in tp.Translation.TakeWhile(Char.IsPunctuation))
-			//    bldr.Append(t);
 			if (bldr.Length > 0 && bldr.Length < tp.Translation.Length)
 				m_initialPunct[tp.TypeOfPhrase] = initialPunct = bldr.ToString();
 			else
@@ -516,38 +607,17 @@ namespace SILUBS.PhraseTranslationHelper
 			if (tpParts.Count == 0)
 				return;
 
-			int iKeyTerm = 0;
-			string translation = tp.Translation;
-			bool allKeyTermsMatched = true;
-			foreach (KeyTermMatch term in tp.GetParts().Where(p => p is KeyTermMatch))
+			string translation = tp.GetTranslationTemplate();
+
+			foreach (TranslatablePhrase similarPhrase in tpParts[0].OwningPhrases.Where(phrase => !phrase.HasUserTranslation && phrase.PartPatternMatches(tp)))
 			{
-				int ich = -1;
-				foreach (string ktTrans in term.AllRenderings)
-				{
-					ich = translation.IndexOf(ktTrans, StringComparison.Ordinal);
-					if (ich >= 0)
-					{
-						translation = translation.Remove(ich, ktTrans.Length);
-						translation = translation.Insert(ich, "{" + iKeyTerm++ + "}");
-						break;
-					}
-				}
-				if (ich == -1)
-					allKeyTermsMatched = false;
+				if (similarPhrase.PhraseInUse == tp.PhraseInUse)
+					similarPhrase.Translation = tp.Translation;
+				else if (tp.AllTermsMatch)
+					similarPhrase.SetProvisionalTranslation(translation);
 			}
 
-			foreach (Part part in tpParts)
-			{
-				foreach (TranslatablePhrase similarPhrase in part.OwningPhrases.Where(phrase => !phrase.HasUserTranslation && phrase.PartPatternMatches(tp)))
-				{
-					if (similarPhrase.OriginalPhrase == tp.OriginalPhrase)
-						similarPhrase.Translation = tp.Translation;
-					else if (allKeyTermsMatched)
-						similarPhrase.SetProvisionalTranslation(translation);
-				}
-			}
-
-			if (allKeyTermsMatched)
+			if (tp.AllTermsMatch)
 			{
 				if (tpParts.Count == 1)
 				{
@@ -556,7 +626,7 @@ namespace SILUBS.PhraseTranslationHelper
 					if (translation.EndsWith(finalPunct))
 						translation = translation.Substring(0, translation.Length - finalPunct.Length);
 
-					tpParts[0].Translation = Regex.Replace(translation, @"\{.+\}", string.Empty);
+					tpParts[0].Translation = Regex.Replace(translation, @"\{.+\}", string.Empty).Trim();
 					if (TranslationsChanged != null)
 						TranslationsChanged();
 					return;
@@ -576,7 +646,7 @@ namespace SILUBS.PhraseTranslationHelper
 			foreach (Part part in tpParts)
 			{
 				partsNeedingUpdating.UnionWith(RecalculatePartTranslation(part).Where(p => !tpParts.Contains(p)));
-				if (!string.IsNullOrEmpty(part.Translation))
+				if (part.Translation.Length > 0)
 				{
 					int ichMatch = translation.IndexOf(part.Translation, StringComparison.Ordinal);
 					if (ichMatch >= 0)
@@ -602,7 +672,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="part">The part.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		private IEnumerable<Part> RecalculatePartTranslation(Part part)
+		private static IEnumerable<Part> RecalculatePartTranslation(Part part)
 		{
 			string originalTranslation = part.Translation;
 
@@ -614,7 +684,7 @@ namespace SILUBS.PhraseTranslationHelper
 				{
 					if (otherPart is KeyTermMatch)
 					{
-						foreach (string ktTrans in ((KeyTermMatch)otherPart).AllRenderings)
+						foreach (string ktTrans in ((KeyTermMatch)otherPart).Renderings)
 						{
 							int ich = toAdd.IndexOf(ktTrans, StringComparison.Ordinal);
 							if (ich >= 0)
@@ -626,7 +696,7 @@ namespace SILUBS.PhraseTranslationHelper
 					}
 					else
 					{
-						if (!string.IsNullOrEmpty(otherPart.Translation))
+						if (otherPart.Translation.Length > 0)
 						{
 							int ichMatch = toAdd.IndexOf(otherPart.Translation, StringComparison.Ordinal);
 							if (ichMatch >= 0)
@@ -672,9 +742,9 @@ namespace SILUBS.PhraseTranslationHelper
 				part.Translation = (string.IsNullOrEmpty(commonTranslation) || statisticallyBestSubstring.Value > totalComparisons) ?
 					statisticallyBestSubstring.Key : commonTranslation;
 			}
-			if (!string.IsNullOrEmpty(originalTranslation) && (part.Translation == null || (originalTranslation.Length > part.Translation.Length &&
-				originalTranslation.Contains(part.Translation))))
+			if (originalTranslation.Length > 0 && (part.Translation.Length == 0 || originalTranslation.Contains(part.Translation)))
 			{
+				// The translation of the part has shrunk
 				return part.OwningPhrases.Where(phr => phr.HasUserTranslation).SelectMany(otherPhrases => otherPhrases.TranslatableParts).Distinct();
 			}
 			return new Part[0];

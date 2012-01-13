@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.IText
 			FocusBox.SelectOccurrence(target);
 		}
 
-		internal override void UpdateGuesses(UpdateGuessesCondition NeedsGuessesUpdated, HashSet<IWfiWordform> wordforms)
+		internal override void UpdateGuesses(HashSet<IWfiWordform> wordforms)
 		{
 			// for now, don't update guesses in these tests.
 		}
@@ -343,6 +343,7 @@ namespace SIL.FieldWorks.IText
 	{
 		internal TestableFocusBox()
 		{
+			m_mediator = new Mediator();
 		}
 
 		internal override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
@@ -482,6 +483,11 @@ namespace SIL.FieldWorks.IText
 		public int MultipleAnalysisColor
 		{
 			set { ; }
+		}
+
+		public bool IsDirty
+		{
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
@@ -128,7 +129,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
-	public class BrowseViewer : XCoreUserControl, ISnapSplitPosition, IxCoreContentControl, IPostLayoutInit
+	public class BrowseViewer : XCoreUserControl, ISnapSplitPosition, IxCoreContentControl, IPostLayoutInit, IRefreshableRoot
 	{
 		/// <summary>
 		/// Check state for items (check and uncheck only).
@@ -155,7 +156,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected internal FilterBar m_filterBar;
 		/// <summary></summary>
 		protected internal RecordFilter m_currentFilter;
-		/// <summary></summary>
+		/// <summary>REFACTOR: this variable should be removed and handled through events. Having this here is bad design.</summary>
 		protected internal BulkEditBar m_bulkEditBar;
 		internal ISortItemProvider m_sortItemProvider;
 		private int m_lastLayoutWidth = 0;
@@ -223,9 +224,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary></summary>
 		public event EventHandler SorterChanged;
+
 		/// <summary> Target Column can be selected by the BulkEdit bar which may need to reorient the
 		/// RecordClerk to build a list based upon another RootObject class.</summary>
 		public event TargetColumnChangedHandler TargetColumnChanged;
+
 		/// <summary>
 		/// Fired whenever a column width or column order changes
 		/// </summary>
@@ -236,6 +239,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary></summary>
 		public event EventHandler SelectionDrawingFailure;
+		/// <summary>
+		/// EventHandler used when a refresh of the BrowseView has been performed.
+		/// </summary>
+		public event EventHandler RefreshCompleted;
 
 		/// <summary>
 		/// True during a major change that affects the master list of objects.
@@ -449,7 +456,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (!m_fFilterInitializationComplete)
 				{
 					// If we can append matching columns, then sync to the new list.
-					if (this.AppendMatchingHiddenColumns(currentFilter))
+					if (AppendMatchingHiddenColumns(currentFilter))
 					{
 						UpdateColumnList(); // adjusts columns and syncs all filters.
 						m_fFilterInitializationComplete = true;
@@ -623,7 +630,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			SyncSortArrows(sorter);
 
-			this.Sorter = sorter;
+			Sorter = sorter;
 			if (fTriggerChanged && SorterChanged != null)
 				SorterChanged(this, EventArgs.Empty);
 		}
@@ -816,16 +823,16 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lvHeader = new DhListView(this);
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			this.SuspendLayout();
+			SuspendLayout();
 			m_scrollContainer = new BrowseViewScroller(this);
 			m_scrollContainer.AutoScroll = true;
 			m_scrollContainer.TabStop = false;
-			this.Controls.Add(m_scrollContainer);
+			Controls.Add(m_scrollContainer);
 			m_scrollBar = new VScrollBar();
 			//m_scrollBar.Scroll += new ScrollEventHandler(m_scrollBar_Scroll);
 			m_scrollBar.ValueChanged += m_scrollBar_ValueChanged;
 			m_scrollBar.TabStop = false;
-			this.Controls.Add(m_scrollBar);
+			Controls.Add(m_scrollBar);
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			m_sortItemProvider = sortItemProvider;
@@ -839,7 +846,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// listView1
 			//
-			//this.m_lvHeader.Dock = System.Windows.Forms.DockStyle.Top;
+			//m_lvHeader.Dock = System.Windows.Forms.DockStyle.Top;
 			m_lvHeader.Name = "HeaderListView";
 			m_lvHeader.Size = new Size(4000, 22);
 			m_lvHeader.TabIndex = 0;
@@ -857,8 +864,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lvHeader.TabStop = false;
 			//AddControl(m_lvHeader); Do this after making the filter bar if any.
 
-			this.Name = "BrowseView";
-			this.Size = new Size(400, 304);
+			Name = "BrowseView";
+			Size = new Size(400, 304);
 			if (ColumnIndexOffset() > 0)
 			{
 				ColumnHeader ch = new ColumnHeader {Text = ""};
@@ -967,18 +974,18 @@ namespace SIL.FieldWorks.Common.Controls
 			m_configureButton.ForeColor = m_configureButton.BackColor;
 			m_tooltip = new ToolTip();
 			m_tooltip.SetToolTip(m_configureButton, XMLViewsStrings.ksTipConfig);
-			this.Controls.Add(m_configureButton);
+			Controls.Add(m_configureButton);
 			m_xbv.AutoScroll = false;
 
 			m_configureButton.ImageAlign = ContentAlignment.MiddleCenter;
 			m_configureButton.TabStop = false;
 
-			this.AutoScroll = true;
-			this.VScroll = false;
-			this.HScroll = true;
+			AutoScroll = true;
+			VScroll = false;
+			HScroll = true;
 //			m_doHScroll = true;
 			m_scrollContainer.ResumeLayout(false);
-			this.ResumeLayout(false);
+			ResumeLayout(false);
 		}
 
 #if false // CS0169
@@ -1016,12 +1023,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is called just before the TargetComboSelecctedIndexChanged event.
 		/// It may set the ForceReload flag on the event for the benefit of other callers.
 		/// </summary>
+		/// REFACTOR: This method should go away, some of it should go into the TargetComboSelectedIndexChanged
+		/// and the rest should be place in the BulkEditBar class
 		internal void BulkEditTargetComboSelectedIndexChanged(TargetColumnChangedEventArgs e)
 		{
+			bool typeChanged = false;
 			if (e.ExpectedListItemsClass != 0)
 			{
 				if (m_xbv.Vc.ListItemsClass != e.ExpectedListItemsClass)
+				{
 					OnListItemsAboutToChange(AllItems);
+					typeChanged = true;
+				}
 				m_xbv.Vc.ListItemsClass = e.ExpectedListItemsClass;
 			}
 			if (m_modifiedColumn != null)
@@ -1048,6 +1061,10 @@ namespace SIL.FieldWorks.Common.Controls
 					m_modifiedColumn = column;
 					e.ForceReload = true;
 				}
+			}
+			if(typeChanged || e.ForceReload)
+			{
+				m_bulkEditBar.ResumeRecordListRowChanges(); // <-- against my better judgement. naylor 11-2011
 			}
 			if (TargetColumnChanged != null)
 				TargetColumnChanged(this, e);
@@ -1594,7 +1611,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lastLayoutWidth = Width;
 
 			// The -5 seems to allow for various borders and put the actual icon in about the right place.
-			m_configureButton.Left = this.Width - m_configureButton.Width;
+			m_configureButton.Left = Width - m_configureButton.Width;
 			// -1 allows the border of the button to be hidden (clipped because it's outside the
 			// client area of its parent), and the blue circle icon to be right at the top of the available space.
 			m_configureButton.Top = -1;
@@ -1602,8 +1619,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// overwriting the bottom border of the header bar.
 			m_configureButton.Height = m_lvHeader.Height;
 
-			int sbHeight = this.Height - m_configureButton.Height;
-			int scrollContHeight = this.Height;
+			int sbHeight = Height - m_configureButton.Height;
+			int scrollContHeight = Height;
 			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
 			{
 				sbHeight -= m_bulkEditBar.Height;
@@ -1612,7 +1629,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollBar.Height = sbHeight;
 			m_scrollBar.Location = new Point(Width - m_scrollBar.Width, m_configureButton.Height);
 			m_scrollBar.Minimum = 0;
-			m_scrollBar.LargeChange = Math.Max(this.Height - ScrollLineHeight, ScrollLineHeight);
+			m_scrollBar.LargeChange = Math.Max(Height - ScrollLineHeight, ScrollLineHeight);
 			m_scrollBar.SmallChange = ScrollLineHeight;
 			//m_scrollBar.Maximum = m_xbv.AutoScrollMinSize.Height;
 			//m_scrollBar.Value = -m_xbv.AutoScrollPosition.Y;
@@ -1634,8 +1651,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_scrollBar == null)
 				return;
 
-			if (m_scrollContainer.Width != this.Width - Math.Max(m_configureButton.Width, m_scrollBar.Width))
-				m_scrollContainer.Width = this.Width - Math.Max(m_configureButton.Width, m_scrollBar.Width);
+			m_scrollContainer.Width = Width - Math.Max(m_configureButton.Width, m_scrollBar.Width);
 		}
 
 		/// <summary>
@@ -1661,7 +1677,7 @@ namespace SIL.FieldWorks.Common.Controls
 				top += m_filterBar.Height;
 			}
 			m_xbv.Width = widthTotal;
-			int bottom = this.Height;
+			int bottom = Height;
 			if (m_scrollContainer.Width < widthTotal)
 				bottom -= 22; // leave room for horizontal scroll to prevent vertical scroll.
 			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
@@ -1815,7 +1831,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private class OneColumnXmlBrowseView : XmlBrowseViewBase
 		{
 			private OneColumnXmlBrowseView()
-				: base()
 			{
 			}
 
@@ -1823,12 +1838,11 @@ namespace SIL.FieldWorks.Common.Controls
 				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.StyleSheet, bv)
 			{
 				// add only the specified column to this browseview.
-				(this.Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
 			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator,
 				IVwStylesheet styleSheet, BrowseViewer bv)
-				: base()
 			{
 				base.Init(mediator, nodeSpec);
 				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
@@ -1845,7 +1859,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_rootb = VwRootBoxClass.Create();
 				m_rootb.SetSite(this);
-				this.ReadOnlyView = this.ReadOnlySelect;
+				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
 				m_rootb.SetRootObject(m_hvoRoot, Vc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
@@ -1945,7 +1959,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_icolAdded = icolToAdd;
 				// if we have a bulk edit bar, we need to process strings added for Preview
 				if (bv.BulkEditBar != null)
-					this.PreviewArrow = bv.BulkEditBar.PreviewArrow;
+					PreviewArrow = bv.BulkEditBar.PreviewArrow;
 			}
 
 			/// <summary>
@@ -2029,14 +2043,27 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				SaveColumnWidths();
 			}
-			FireColumnsChangedEvent();
+			FireColumnsChangedEvent(true);
 			// m_lvHeader.UpdateConfigureButton();
 		}
 
-		private void FireColumnsChangedEvent()
+		private void FireColumnsChangedEvent(bool isWidthChange)
 		{
 			if (ColumnsChanged != null)
-				ColumnsChanged(this, new EventArgs());
+			{
+				if (isWidthChange)
+				{
+					//if this is a width change signal it by the type of event at least,
+					//if we need more info later it can be passed in from AdjustColumnWidths
+					ColumnsChanged(this, new ColumnWidthChangedEventArgs(0));
+				}
+				else
+				{
+					//This is some other column change event, use default EventArgs
+					ColumnsChanged(this, new EventArgs());
+				}
+			}
+
 		}
 
 		/// <summary>
@@ -2155,7 +2182,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 
 			RecordSorter newSorter = fsi.Sorter;
-			if (newSorter.CompatibleSorter(this.Sorter))
+			if (newSorter.CompatibleSorter(Sorter))
 			{
 				// Choosing the same one again...reverse direction.
 				newSorter = reverseNewSorter(newSorter, Sorter);
@@ -2164,9 +2191,9 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// If the user is holding shift down, we need to be working with an AndSorter
 				AndSorter asorter;
-				if (this.Sorter is AndSorter)
+				if (Sorter is AndSorter)
 				{
-					asorter = this.Sorter as AndSorter;
+					asorter = Sorter as AndSorter;
 					if (asorter.CompatibleSorter(newSorter))
 					{
 						// Same one, just reversing the direction
@@ -2181,14 +2208,14 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 				{
 					asorter = new AndSorter();
-					asorter.Add(this.Sorter);
+					asorter.Add(Sorter);
 					asorter.Add(newSorter);
 					m_SortersToDispose.Add(asorter);
 				}
 				newSorter = asorter;
 			}
 
-			this.SetAndRaiseSorter(newSorter, true);
+			SetAndRaiseSorter(newSorter, true);
 		}
 
 		private RecordSorter reverseNewSorter(RecordSorter newSorter, RecordSorter oldSorter) {
@@ -2237,9 +2264,9 @@ namespace SIL.FieldWorks.Common.Controls
 			// This loop attempts to locate the sorter in the list of active sorters that responsible for the column in question
 			foreach(RecordSorter rs in sorters)
 			{
-				int ifsi = this.ColumnInfoIndexOfCompatibleSorter(rs);
+				int ifsi = ColumnInfoIndexOfCompatibleSorter(rs);
 				if (ifsi == icol - m_filterBar.ColumnOffset)
-					return this.SpecificColumnSortedFromEnd(icol);
+					return SpecificColumnSortedFromEnd(icol);
 			}
 
 			// Otherwise, we return false
@@ -2358,38 +2385,39 @@ namespace SIL.FieldWorks.Common.Controls
 		private void HandleConfigIconClick(ConfigIconClickEventArgs e)
 		{
 			var menu = components.ContextMenu("configIconContextMenu");
-				StringTable tbl = null;
+			StringTable tbl = null;
+			if (m_mediator != null && m_mediator.HasStringTable)
+				tbl = m_mediator.StringTbl;
+			// add items
+			foreach (XmlNode node in m_xbv.Vc.ComputePossibleColumns())
+			{
+				// Show those nodes that have visibility="always" or "menu" (or none specified)
+				string vis = XmlUtils.GetOptionalAttributeValue(node, "visibility", "always");
+				if (vis != "always" && vis != "menu")
+					continue;
+
+				string label = XmlUtils.GetLocalizedAttributeValue(tbl, node, "label", null) ??
+							   XmlUtils.GetManditoryAttributeValue(node, "label");
+				MenuItem mi = new MenuItem(label, new EventHandler(ConfigItemClicked));
+
+				// tick the checkbox for items that match something in current visible list.
+				StringTable stringTbl = null;
 				if (m_mediator != null && m_mediator.HasStringTable)
-					tbl = m_mediator.StringTbl;
-				// add items
-				foreach (XmlNode node in m_xbv.Vc.ComputePossibleColumns())
+					stringTbl = m_mediator.StringTbl;
+				//Check an option if the label matches, or the unaltered label matches (for multiunicode fields)
+				if(XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label, stringTbl) != null ||
+				   XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label, stringTbl) != null)
 				{
-					// Show those nodes that have visibility="always" or "menu" (or none specified)
-					string vis = XmlUtils.GetOptionalAttributeValue(node, "visibility", "always");
-					if (vis != "always" && vis != "menu")
-						continue;
-
-					string label = XmlUtils.GetLocalizedAttributeValue(tbl, node, "label", null);
-					if (label == null)
-						label = XmlUtils.GetManditoryAttributeValue(node, "label");
-					MenuItem mi = new MenuItem(label, new EventHandler(ConfigItemClicked));
-					// Check items that match something in current visible list.
-					mi.Checked = this.IsColumnShowing(node);
-					menu.MenuItems.Add(mi);
+					mi.Checked = true;
 				}
-				menu.MenuItems.Add("------");
-				menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, new EventHandler(ConfigMoreChoicesItemClicked));
 
-				menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
+				menu.MenuItems.Add(mi);
 			}
+			menu.MenuItems.Add("-");
+			menu.MenuItems.Add(XMLViewsStrings.ksMoreColumns, new EventHandler(ConfigMoreChoicesItemClicked));
 
-//		private bool Includes(XmlNodeList nodes, XmlNode target)
-//		{
-//			foreach(XmlNode node in nodes)
-//				if (node == target)
-//					return true;
-//			return false;
-//		}
+			menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
+		}
 
 		/// <summary>
 		/// Remap a column index for ColumnSpecs to its matching column in m_lvHeader.Columns.
@@ -2427,7 +2455,7 @@ namespace SIL.FieldWorks.Common.Controls
 			using (ColumnConfigureDialog dlg = new ColumnConfigureDialog(m_xbv.Vc.PossibleColumnSpecs,
 				new List<XmlNode>(ColumnSpecs), m_mediator, stringTbl))
 			{
-				dlg.RootObjectHvo = this.RootObjectHvo;
+				dlg.RootObjectHvo = RootObjectHvo;
 
 				if (m_bulkEditBar != null)
 					// If we have a Bulk Edit bar, we should show the helpful icons
@@ -2476,22 +2504,15 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fOrderChanged = true;
 			if (!fRemovingColumn)
 				fOrderChanged = IsColumnOrderDifferent(ColumnSpecs, newColumnSpecs);
-			// We begin by annotating the nodes for the existing columns with the current column widths.
-			// This is used to preserve widths as far as possible when recreating the list in OK.
-			StoreColumnWidthsInTempAttribute(ColumnSpecs);
+			// We begin by saving the current column widths to preserve widths as far as possible
+			// when recreating the list in OK.
+			Dictionary<XmlNode, int> widths;
+			StoreColumnWidths(ColumnSpecs, out widths);
 
 			// Copy configured list back to ColumnSpecs, update display, etc.x
 			ColumnSpecs = newColumnSpecs;
-			// Rebuild header columns based on the widths we stored in the temp attribute
-			RebuildHeaderColumns(ColumnSpecs);
-			// Remove the temp width attribute before we do anything else with ColumnSpecs.
-			// UpdateColumnList() for instance will persist the temp values,
-			// and that causes problems with detecting active columns in our configuration menu.
-			// (cf. LT-2797).
-			RemoveTempWidthAttribute(ColumnSpecs);
-			// And, we adjusted the column widths prematurely, before we had things set up
-			// so the filter bar could adjust properly, so forget we did it and allow it to
-			// happen again later.
+			// Rebuild header columns based on the widths we stored
+			RebuildHeaderColumns(ColumnSpecs, widths);
 			m_colWidths = null;
 
 			try
@@ -2528,7 +2549,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollContainer.PerformLayout();
 		}
 
-		private void RebuildHeaderColumns(List<XmlNode> colSpecs)
+		private void RebuildHeaderColumns(List<XmlNode> colSpecs, Dictionary<XmlNode, int> widths)
 		{
 			m_lvHeader.BeginUpdate();
 			bool fSave = m_lvHeader.AdjustingWidth;
@@ -2543,8 +2564,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				XmlNode node = colSpecs[i];
 				ColumnHeader ch = MakeColumnHeader(node);
-				ch.Width = XmlUtils.GetOptionalIntegerValue(node, "XYZYwidth",
-					GetInitialColumnWidth(node, m_scrollContainer.ClientRectangle.Width, dpiX));
+				//Set the width either to the temporarily stored width, or the default initial column width
+				int width;
+				ch.Width = widths.TryGetValue(node, out width)
+							? width
+							: GetInitialColumnWidth(node, m_scrollContainer.ClientRectangle.Width, dpiX);
 				if (m_xbv.Vc.ShowColumnsRTL)
 				{
 					int iRev = colSpecs.Count - (i + 1);
@@ -2562,28 +2586,17 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lvHeader.EndUpdate();
 		}
 
-		private void StoreColumnWidthsInTempAttribute(List<XmlNode> colSpecs)
+		private void StoreColumnWidths(List<XmlNode> colSpecs, out Dictionary<XmlNode, int> widths)
 		{
+			widths = new Dictionary<XmlNode, int>();
 			int index = 0;
 			foreach(XmlNode node in colSpecs)
 			{
-				XmlAttribute widthAtt = node.OwnerDocument.CreateAttribute("XYZYwidth");
-				widthAtt.Value = m_lvHeader.Columns[ColumnHeaderIndex(index)].Width.ToString();
-				node.Attributes.Append(widthAtt);
+				widths.Add(node, m_lvHeader.Columns[ColumnHeaderIndex(index)].Width);
 				index++;
 			}
 		}
 
-		private void RemoveTempWidthAttribute(List<XmlNode> colSpecs)
-		{
-			// Clean out the XYZYwidth attributes.
-			foreach(XmlNode node in colSpecs)
-			{
-				XmlAttribute xa = node.Attributes["XYZYwidth"];
-				if (xa != null)
-					node.Attributes.Remove(xa);
-			}
-		}
 
 		private void m_lvHeader_ColumnDragDropReordered(object sender,
 			ColumnDragDropReorderedEventArgs e)
@@ -2607,44 +2620,57 @@ namespace SIL.FieldWorks.Common.Controls
 			m_colWidths = null;
 
 			// Display the browse view with the new column order
-			this.UpdateColumnList();
+			UpdateColumnList();
 
 			SyncSortArrows(Sorter); // Sync sort arrows
 		}
 
+		/// <summary>
+		/// Method for handling the event of a normal item in the configure menu being clicked on.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ConfigItemClicked(object sender, EventArgs args)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.
 			if (m_bulkEditBar != null)
 				m_bulkEditBar.SaveSettings(); // before we change column list!
 			MenuItem mi = sender as MenuItem;
-			List<XmlNode> columns = ColumnSpecs;
+			List<XmlNode> newColumns = new List<XmlNode>(ColumnSpecs);
 			List<XmlNode> possibleColumns = m_xbv.Vc.PossibleColumnSpecs;
 			StringTable stringTbl = null;
 			if (m_mediator != null && m_mediator.HasStringTable)
 				stringTbl = m_mediator.StringTbl;
-			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", mi.Text, stringTbl);
-			int position = XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, column);
-			bool fRemovingColumn = false;
+			//set the column to any column in the specs that matches the menu item text
+			// or the unaltered text (for multiunicode fields).
+			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text, stringTbl)
+						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text, stringTbl);
+			bool fRemovingColumn = true;
 			bool fOrderChanged = false;
-			if (position >= 0)
+			//The column with this label was not found in the current columns
+			if (column == null)
+			{
+				//therefore we are inserting, not removing
+				fRemovingColumn = false;
+				//find the column with the matching label in the possible columns
+				column = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", mi.Text, stringTbl);
+			}
+			int position = XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, column);
+			if (fRemovingColumn)
 			{
 				// Was visible, make it go away. (But not the very last item.)
-				if (columns.Count == 1)
+				if (newColumns.Count == 1)
 				{
 					MessageBox.Show(this, XMLViewsStrings.ksBrowseNeedsAColumn,
 						XMLViewsStrings.ksCannotRemoveColumn);
 					return;
 				}
-				columns.RemoveAt(position);
-				m_lvHeader.Columns.RemoveAt(ColumnHeaderIndex(position));
-				fRemovingColumn = true;
+				newColumns.RemoveAt(position);
 			}
 			else
 			{
 				// Was invisible, make it appear.
 				// Figure where to put it based on how many active columns come before it.
-				//column = XmlViewsUtils.CopyWithParamDefaults(column); // not needed, param marker ignored (and confuses match).
 				Menu menu = mi.Parent;
 				position = 0; // will become the number of checked items before mi
 				for (int i = 0; i < mi.Index; i++)
@@ -2652,19 +2678,11 @@ namespace SIL.FieldWorks.Common.Controls
 					if (menu.MenuItems[i].Checked)
 						position++;
 				}
-				if (position < columns.Count)
+				if (position < newColumns.Count)
 					fOrderChanged = true;
-				InsertColumn(column, position);
+				newColumns.Insert(position, column);
 			}
-			try
-			{
-				m_fUpdatingColumnList = true;
-				UpdateColumnListAndSortingAndScrollbar(fRemovingColumn, fOrderChanged);
-			}
-			finally
-			{
-				m_fUpdatingColumnList = false;
-			}
+			InstallNewColumns(newColumns);
 		}
 
 		private FilterBarCellFilter MakeFilter(List<XmlNode> possibleColumns, string colName, IMatcher matcher)
@@ -2683,6 +2701,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// and
 		/// View Incorrect Words in use  "TeCorrectSpelling"
 		///
+		/// and
+		/// Filter for Lexical Entries with this category  "LexiconEditFilterAnthroItems"
+		/// and
+		/// Filter for Notebook Records with this category  "NotebookEditFilterAnthroItems"
+		///
 		/// Some aspects of the initial state of the tab can be controlled by setting properties from
 		/// an FwLink which brought us here. If this is the case, generate a corresponding filter and
 		/// return it; otherwise, return null.
@@ -2693,43 +2716,74 @@ namespace SIL.FieldWorks.Common.Controls
 			if (linkSetupInfo == null)
 				return null;
 			m_mediator.PropertyTable.RemoveProperty("LinkSetupInfo");
-			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling")
+			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling" &&
+				linkSetupInfo != "FilterAnthroItems")
 				return null; // Only setting we know as yet.
 
 			List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
 
-			XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status", null);
-			if (colSpec == null)
-				return null;
-			int desiredItem;
-			if (linkSetupInfo == "TeCorrectSpelling")
-				desiredItem = (int)SpellingStatusStates.correct;
-			else  //linkSetupInfo == "TeReviewSpelling"
-				desiredItem = (int)SpellingStatusStates.undecided;
+			var spellFilter = new FilterBarCellFilter();
+			if (linkSetupInfo == "TeReviewUndecidedSpelling" || linkSetupInfo == "TeCorrectSpelling")
+			{
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status", null);
+				if (colSpec == null)
+					return null;
+				int desiredItem;
+				if (linkSetupInfo == "TeCorrectSpelling")
+					desiredItem = (int) SpellingStatusStates.correct;
+				else //linkSetupInfo == "TeReviewSpelling"
+					desiredItem = (int) SpellingStatusStates.undecided;
 
-			string[] labels = BrowseView.GetStringList(colSpec);
-			if (labels == null || labels.Length < desiredItem)
-				return null;
-			string correctLabel = labels[desiredItem];
+				string[] labels = BrowseView.GetStringList(colSpec);
+				if (labels == null || labels.Length < desiredItem)
+					return null;
+				string correctLabel = labels[desiredItem];
 
-			FilterBarCellFilter spellFilter;
-			if (linkSetupInfo == "TeCorrectSpelling")   //"Exclude Correct" TE-8200
-				// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
-				// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
-				spellFilter = MakeFilter(possibleColumns, "Spelling Status",
-					new InvertMatcher(new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel))));
-			else // linkSetupInfo == "TeReviewUndecidedSpelling"   --> "Undecided"
-				spellFilter = MakeFilter(possibleColumns, "Spelling Status",
-				new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel)));
+				if (linkSetupInfo == "TeCorrectSpelling") //"Exclude Correct" TE-8200
+					// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
+					// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
+					spellFilter = MakeFilter(possibleColumns, "Spelling Status",
+											 new InvertMatcher(new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel))));
+				else // linkSetupInfo == "TeReviewUndecidedSpelling"   --> "Undecided"
+					spellFilter = MakeFilter(possibleColumns, "Spelling Status",
+											 new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel)));
 
-			FilterBarCellFilter occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus",
-				new RangeIntMatcher(1, Int32.MaxValue));
-			AndFilter andFilter = new AndFilter();
-			andFilter.Add(spellFilter);
-			andFilter.Add(occurrenceFilter);
-			// If we need to change the list of objects, best to do it now, before we load the list
-			// because of the change filter, and suppress the next load.
-			return andFilter;
+				FilterBarCellFilter occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus",
+																  new RangeIntMatcher(1, Int32.MaxValue));
+				AndFilter andFilter = new AndFilter();
+				andFilter.Add(spellFilter);
+				andFilter.Add(occurrenceFilter);
+				// If we need to change the list of objects, best to do it now, before we load the list
+				// because of the change filter, and suppress the next load.
+				return andFilter;
+			}
+			else if (linkSetupInfo == "FilterAnthroItems")
+			{
+				var itemHvos = m_mediator.PropertyTable.GetStringProperty("HvoOfAnthroItem", null);
+				if (itemHvos == null)
+					return null;
+				m_mediator.PropertyTable.RemoveProperty("HvoOfAnthroItem");
+
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories", null);
+				if (colSpec == null)
+					return null;
+
+				var chosenHvos = ParseCommaDelimitedHvoString(itemHvos);
+
+				ListChoiceFilter filterListChoice = new ColumnSpecFilter(m_cache, ListMatchOptions.Any, chosenHvos, colSpec);
+				filterListChoice.MakeUserVisible(true);
+				return filterListChoice;
+			}
+			return null;
+		}
+
+		private static int[] ParseCommaDelimitedHvoString(string itemHvos)
+		{
+			var shvoArray = itemHvos.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
+			var chosenHvos = new int[shvoArray.Length];
+			for (var i = 0; i < shvoArray.Length; i++)
+				chosenHvos[i] = Convert.ToInt32(shvoArray[i]);
+			return chosenHvos;
 		}
 
 		/// <summary>
@@ -2833,7 +2887,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// see if we can re-enstate our column filters
 					m_filterBar.UpdateActiveItems(m_currentFilter);
 					// see if we need to re-enstate our column header sort arrow.
-					this.InitSorter(this.Sorter);
+					InitSorter(Sorter);
 				}
 				if (m_bulkEditBar != null)
 					m_bulkEditBar.UpdateColumnList();
@@ -2858,12 +2912,14 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 				}
+
+				// Make everthing else match, but do NOT remember settings.
+				// This method gets called when adding a column to make a filter visible,
+				// and should not interfere with any widths previously saved.
+				AdjustColumnWidths(false); //Column widths may be needed during the RootBoxReconstruct() LT-10315
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
 
-			// Make everthing else match, but do NOT remember settings.
-			// This method gets called when adding a column to make a filter visible,
-			// and should not interfere with any widths previously saved.
-			AdjustColumnWidths(false);
+			FireColumnsChangedEvent(false);
 
 			// And have the mediator remember the list of columns the user wants.
 			// This information is used in the XmlBrowseViewBaseVc constructor to select the
@@ -2912,7 +2968,7 @@ namespace SIL.FieldWorks.Common.Controls
 					if(m_filterBar.CanActivateFilter(filter, colSpec))
 					{
 						// append column to end of column list
-						this.AppendColumn(colSpec);
+						AppendColumn(colSpec);
 						fInsertedColumn = true;
 					}
 				}
@@ -2946,7 +3002,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec"></param>
 		protected internal void AppendColumn(XmlNode colSpec)
 		{
-			this.InsertColumn(colSpec, ColumnSpecs.Count);
+			InsertColumn(colSpec, ColumnSpecs.Count);
 		}
 
 		internal List<XmlNode> ColumnSpecs
@@ -3035,7 +3091,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			display.Visible = true;
 			display.Enabled = true;
-			display.Checked = this.CurrentColumnSortedFromEnd;
+			display.Checked = CurrentColumnSortedFromEnd;
 			return true;
 		}
 
@@ -3066,7 +3122,7 @@ namespace SIL.FieldWorks.Common.Controls
 					ColumnSpecs[icol] as XmlElement, "cansortbylength", false);
 				display.Visible = fCanSortByLength;
 				display.Enabled = fCanSortByLength;
-				display.Checked = this.CurrentColumnSortedByLength;
+				display.Checked = CurrentColumnSortedByLength;
 			}
 			return true;
 		}
@@ -3099,14 +3155,14 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// REVISIT: If more than one BrowseViewer gets this message, how do
 			// we know which one should handle it?  Can't we handle this some other way?
-			if (name == "SortedFromEnd" && m_filterBar != null && this.Sorter != null)
+			if (name == "SortedFromEnd" && m_filterBar != null && Sorter != null)
 			{
-				this.CurrentColumnSortedFromEnd = !this.CurrentColumnSortedFromEnd;
+				CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
 				SetAndRaiseSorter(Sorter, true);
 			}
-			if (name == "SortedByLength" && m_filterBar != null && this.Sorter != null)
+			if (name == "SortedByLength" && m_filterBar != null && Sorter != null)
 			{
-				this.CurrentColumnSortedByLength = !this.CurrentColumnSortedByLength;
+				CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
 				SetAndRaiseSorter(Sorter, true);
 			}
 		}
@@ -3134,6 +3190,19 @@ namespace SIL.FieldWorks.Common.Controls
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		/// <summary>
+		/// When Colleagues are added to the mediator this priority will determine the order that they are called
+		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
+		///
+		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
+		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
+		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
+		/// </summary>
+		public int Priority
+		{
+			get { return (int) ColleaguePriority.Medium; }
 		}
 
 		internal Mediator Mediator
@@ -3166,7 +3235,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
 		{
 			m_lvHeader_CheckIconClick(this, new ConfigIconClickEventArgs(
-					this.RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
+					RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
 		}
 
 		private void m_lvHeader_CheckIconClick(object sender, ConfigIconClickEventArgs e)
@@ -3191,10 +3260,10 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 				int[] contents;
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
-					contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 				return new List<int>(contents);
 			}
@@ -3211,8 +3280,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (!m_xbv.Vc.HasSelectColumn)
 					return null;
 
-				int hvoRoot = this.RootObjectHvo;
-				int tagMain = this.MainTag;
+				int hvoRoot = RootObjectHvo;
+				int tagMain = MainTag;
 				List<int> checkedItems = new List<int>();
 				ISilDataAccess sda = SpecialCache;
 				int citems = sda.get_VecSize(hvoRoot, tagMain);
@@ -3241,10 +3310,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
-				contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 
 			List<int> changedHvos = new List<int>();
@@ -3287,7 +3356,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_fInUpdateCheckedItems = true;
 			try
 			{
-				if (m_xbv != null && m_xbv.Vc != null && m_xbv.Vc.HasSelectColumn && this.BulkEditBar != null)
+				if (m_xbv != null && m_xbv.Vc != null && m_xbv.Vc.HasSelectColumn && BulkEditBar != null)
 				{
 					// everything seems to be setup, and UpdateCheckedItems should be called
 					// after everything is setup.
@@ -3309,7 +3378,7 @@ namespace SIL.FieldWorks.Common.Controls
 							RestoreSelectionItems();
 						}
 					}
-					this.BulkEditBar.UpdateCheckedItems();
+					BulkEditBar.UpdateCheckedItems();
 				}
 			}
 			finally
@@ -3357,10 +3426,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
-				contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 
 			List<int> changedHvos = new List<int>();
@@ -3443,12 +3512,12 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void m_configureButton_Click(object sender, EventArgs e)
 		{
 			HandleConfigIconClick(new ConfigIconClickEventArgs(
-				this.RectangleToClient(m_configureButton.RectangleToScreen(m_configureButton.ClientRectangle))));
+				RectangleToClient(m_configureButton.RectangleToScreen(m_configureButton.ClientRectangle))));
 		}
 
 		//private void m_scrollBar_Scroll(object sender, ScrollEventArgs e)
 		//{
-		//    m_xbv.ScrollPosition = new Point(0, m_scrollBar.Value);
+		//	m_xbv.ScrollPosition = new Point(0, m_scrollBar.Value);
 		//}
 		void m_scrollBar_ValueChanged(object sender, EventArgs e)
 		{
@@ -3504,7 +3573,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			this.ConfigMoreChoicesItemClicked(sender, new EventArgs());
+			ConfigMoreChoicesItemClicked(sender, new EventArgs());
 			return true;
 		}
 
@@ -3548,17 +3617,17 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 			// Note: when switching panes, we want to give the focus to the BrowseView, not the BrowseViewer.
 			Control focusedControl = null;
-			if (this.BrowseView != null)
+			if (BrowseView != null)
 			{
-				targetCandidates.Add(this.BrowseView);
-				if (this.BrowseView.ContainsFocus)
-					focusedControl = this.BrowseView;
+				targetCandidates.Add(BrowseView);
+				if (BrowseView.ContainsFocus)
+					focusedControl = BrowseView;
 			}
-			if (this.m_bulkEditBar != null)
+			if (m_bulkEditBar != null)
 			{
-				targetCandidates.Add(this.m_bulkEditBar);
-				if (focusedControl == null && this.m_bulkEditBar.ContainsFocus)
-					focusedControl = this.m_bulkEditBar;
+				targetCandidates.Add(m_bulkEditBar);
+				if (focusedControl == null && m_bulkEditBar.ContainsFocus)
+					focusedControl = m_bulkEditBar;
 			}
 			return focusedControl;
 		}
@@ -3592,6 +3661,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_xbv.PostLayoutInit();
 		}
+
+		#region IRefreshableRoot Members
+		/// <summary>
+		/// Handle the refresh display, notify the editbar that we have refreshed, return false
+		/// so our child controls can actually handle the re-drawing.
+		/// </summary>
+		/// <returns></returns>
+		public bool RefreshDisplay()
+		{
+			if(RefreshCompleted != null)
+				RefreshCompleted(this, new EventArgs());
+			return false;
+		}
+
+		#endregion
+
 	}
 
 	/// <summary>
@@ -3626,7 +3711,9 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 #if __MonoCS__ // FWNX-425
+#pragma warning disable 1587
 		/// <summary> </summary>
+#pragma warning restore 1587
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			m_bv.EnsureScrollContainerIsCorrectWidth();
@@ -3801,7 +3888,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_bv.BrowseView.OnRestoreScrollPosition(null);
 
-				if (m_fHiliteWasVisible)
+				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{
 					// If there WAS a highlighted row visible and it is no longer visible, scroll to make it so.
 					IVwSelection newSel = MakeTestRowSelection(m_irow);
@@ -3820,10 +3907,10 @@ namespace SIL.FieldWorks.Common.Controls
 			//// take care to release it.
 			//if (Marshal.IsComObject(m_dataAccess))
 			//{
-			//    if (m_actionHandler != null && Marshal.IsComObject(m_actionHandler))
-			//        Marshal.ReleaseComObject(m_actionHandler);
-			//    if (m_acthTemp != null && Marshal.IsComObject(m_acthTemp))
-			//        Marshal.ReleaseComObject(m_acthTemp);
+			//	if (m_actionHandler != null && Marshal.IsComObject(m_actionHandler))
+			//		Marshal.ReleaseComObject(m_actionHandler);
+			//	if (m_acthTemp != null && Marshal.IsComObject(m_acthTemp))
+			//		Marshal.ReleaseComObject(m_acthTemp);
 			//}
 			//m_acthTemp = null;
 			//m_actionHandler = null;

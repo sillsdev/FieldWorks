@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
@@ -21,10 +20,10 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class RelatedWords : Form, IFWDisposable
 	{
-		private System.Windows.Forms.Button m_btnInsert;
-		private System.Windows.Forms.Button m_btnClose;
-		private System.Windows.Forms.Button m_btnLookup;
-		private System.Windows.Forms.Button m_btnCopy;
+		private Button m_btnInsert;
+		private Button m_btnClose;
+		private Button m_btnLookup;
+		private Button m_btnCopy;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -196,7 +195,7 @@ namespace SIL.FieldWorks.FdoUi
 
 
 		public RelatedWords(FdoCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
-			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, Mediator mediator)
+			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, Mediator mediator, bool hideInsertButton)
 		{
 			m_cache = cache;
 			m_sel = sel;
@@ -208,6 +207,7 @@ namespace SIL.FieldWorks.FdoUi
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+			m_btnInsert.Visible = !hideInsertButton;
 
 			m_cdaTemp = cdaTemp;
 			ISilDataAccess sda = m_cdaTemp as ISilDataAccess;
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.FdoUi
 			SetupForEntry(domains, lexrels);
 
 			var entry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_hvoEntry);
-			m_view = new RelatedWordsView(m_hvoEntry, entry.HeadWord,
+			m_view = new RelatedWordsView(m_cache, m_hvoEntry, entry.HeadWord,
 				m_cdaTemp as ISilDataAccess,
 				cache.ServiceLocator.WritingSystemManager.UserWs);
 			m_view.Width = this.Width - 20;
@@ -499,13 +499,14 @@ namespace SIL.FieldWorks.FdoUi
 
 		private void m_view_SelChanged(object sender, EventArgs e)
 		{
-			bool fEnable = m_view.GotRangeSelection;
-			m_btnCopy.Enabled = fEnable;
-			m_btnInsert.Enabled = fEnable;
-			m_btnLookup.Enabled = fEnable;
 			// Todo: create or update XmlView of selected word if any.
 			using (LexEntryUi leui = GetSelWord())
 			{
+				bool fEnable = m_view.GotRangeSelection && leui != null;
+				m_btnCopy.Enabled = fEnable;
+				m_btnInsert.Enabled = fEnable;
+				m_btnLookup.Enabled = fEnable;
+
 				if (leui == null)
 					return;
 				if (m_detailView == null)
@@ -547,6 +548,7 @@ namespace SIL.FieldWorks.FdoUi
 	{
 		int m_hvoRoot;
 		ISilDataAccess m_sda;
+		FdoCache m_cache;
 		int m_wsUser;
 		RelatedWordsVc m_vc;
 		bool m_fInSelChange = false;
@@ -554,8 +556,9 @@ namespace SIL.FieldWorks.FdoUi
 
 		public event EventHandler SelChanged;
 
-		public RelatedWordsView(int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
+		public RelatedWordsView(FdoCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
 		{
+			m_cache = cache;
 			m_hvoRoot = hvoRoot;
 			m_headword = headword;
 			m_sda = sda;
@@ -618,7 +621,6 @@ namespace SIL.FieldWorks.FdoUi
 			IVwRootBox rootb = VwRootBoxClass.Create();
 			rootb.SetSite(this);
 
-			var entry =
 			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 
 			rootb.DataAccess = m_sda;
@@ -630,8 +632,10 @@ namespace SIL.FieldWorks.FdoUi
 		internal void SetEntry(int hvoEntry)
 		{
 			CheckDisposed();
-
+			var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
+			m_headword = entry.HeadWord;
 			m_hvoRoot = hvoEntry;
+			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 		}
 

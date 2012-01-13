@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.PaToFdoInterfaces;
@@ -17,16 +18,17 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		internal static string GetWritingSystemsAsXml(IFdoServiceLocator svcloc)
 		{
-			var wsList = svcloc.WritingSystems.VernacularWritingSystems.Select(ws =>
-				new PaWritingSystem(ws, svcloc, true, false)).ToList();
+			var wsList = new List<PaWritingSystem>();
 
-			wsList.AddRange(svcloc.WritingSystems.AnalysisWritingSystems.Select(ws =>
-				new PaWritingSystem(ws, svcloc, false, true)));
-
-			// Add the rest of the writing systems that are not vern. or analysis.
-			wsList.AddRange(from ws in svcloc.WritingSystems.AllWritingSystems
-							where wsList.SingleOrDefault(paws => paws.Id == ws.Id) == null
-							select new PaWritingSystem(ws, svcloc, false, false));
+			foreach (var ws in svcloc.WritingSystems.AllWritingSystems)
+			{
+				if (!wsList.Any(w => w.Id == ws.Id))
+				{
+					bool isVern = (svcloc.WritingSystems.VernacularWritingSystems.Contains(ws));
+					bool isAnal = (svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws));
+					wsList.Add(new PaWritingSystem(ws, svcloc, isVern, isAnal));
+				}
+			}
 
 			return XmlSerializationHelper.SerializeToString(wsList);
 		}

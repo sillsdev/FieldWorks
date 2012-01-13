@@ -144,9 +144,6 @@
 	</target>
 	<!-- -->
 	<target name="clear-src" description="Clear generated files in subdirectories of src">
-		<foreach item="String" in="${modulenames}" delim=" " property="module">
-			<delete file="${fwroot}/Src/FDO/${module}.cs" verbose="true" failonerror="false"/>
-		</foreach>
 		<delete failonerror="false" verbose="true">
 			<fileset basedir="${fwroot}/Src/">
 				<include name="**/obj"/>
@@ -155,7 +152,6 @@
 				<include name="**/Collection.cpp"/>
 				<include name="**/asserts.log"/>
 				<include name="Common/*.*"/>
-				<include name="Common/COMInterfaces/FwCellar.cs"/>
 				<include name="Common/COMInterfaces/FwKernel.cs"/>
 				<include name="Common/COMInterfaces/Views.cs"/>
 				<include name="Common/Framework/DbVersion.cs"/>

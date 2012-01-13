@@ -311,7 +311,13 @@ namespace SIL.FieldWorks.TE
 			get { return IsDisposed; }
 		}
 
-
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 		#endregion
 
 		#region Properties

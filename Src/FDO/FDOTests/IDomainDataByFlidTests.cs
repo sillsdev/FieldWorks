@@ -663,11 +663,11 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			IUserConfigAcct acct = Cache.ServiceLocator.GetInstance<IUserConfigAcctFactory>().Create();
 			Cache.LanguageProject.UserAccountsOC.Add(acct);
 			acct.Sid = new byte[] { 1, 2, 3, 4, 5 };
-			using (var arrayPtr = MarshalEx.ArrayToNative(5, typeof(int)))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(5))
 			{
 				int chvo;
 				m_sda.BinaryPropRgb(acct.Hvo, UserConfigAcctTags.kflidSid, arrayPtr, 5, out chvo);
-				var prgbNew = (byte[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(byte));
+				var prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(acct.Sid.Length, prgbNew.Length);
 				for (var i = 0; i < prgbNew.Length; i++)
 					Assert.AreEqual(acct.Sid[i], prgbNew[i]);
@@ -827,13 +827,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			const int flid = LangProjectTags.kflidTexts;
 			var cnt = lp.TextsOC.Count;
 
-			using (var arrayPtr = MarshalEx.ArrayToNative(cnt, typeof(int)))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(cnt))
 			{
 				int chvo;
 				m_sda.VecProp(lp.Hvo, flid, cnt, out chvo, arrayPtr);
 				Assert.AreEqual(cnt, chvo, "Wrong number of Hvos.");
 
-				var hvos = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				var hvos = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				Assert.AreEqual(txt1.Hvo, hvos[0], "Wrong Hvo.");
 				Assert.AreEqual(txt2.Hvo, hvos[1], "Wrong Hvo.");
 			}
@@ -1051,6 +1051,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		{
 			var servLoc = Cache.ServiceLocator;
 			var wf = servLoc.GetInstance<IWfiWordformFactory>().Create();
+			m_actionHandler.EndUndoTask(); // don't want to undo creating it.
+
+			m_actionHandler.BeginUndoTask("undo", "redo");
 
 			// Set custom boolean property.
 			m_sda.SetBoolean(wf.Hvo, m_customCertifiedFlid, true);
@@ -1064,6 +1067,19 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var emptyVernStr = tsf.EmptyString(Cache.DefaultVernWs);
 			m_sda.SetString(wf.Hvo, m_customITsStringFlid, newStringValue);
 			Assert.AreSame(newStringValue, m_sda.get_StringProp(wf.Hvo, m_customITsStringFlid), "Wrong TsString in custom property.");
+
+			m_actionHandler.EndUndoTask();
+
+			m_actionHandler.Undo();
+			Assert.IsFalse(m_sda.get_BooleanProp(wf.Hvo, m_customCertifiedFlid), "Custom bool prop is not undone.");
+			Assert.AreSame(emptyStr, m_sda.get_StringProp(wf.Hvo, m_customITsStringFlid), "Wrong TsString undo.");
+
+			m_actionHandler.Redo();
+			Assert.IsTrue(m_sda.get_BooleanProp(wf.Hvo, m_customCertifiedFlid), "Custom bool prop is not redone.");
+			Assert.AreSame(newStringValue, m_sda.get_StringProp(wf.Hvo, m_customITsStringFlid), "Wrong TsString redo.");
+
+			m_actionHandler.BeginUndoTask("undo", "redo");
+
 			m_sda.SetString(wf.Hvo, m_customITsStringFlid, null);
 			// There really are no null ITsStrings in this scenario, as m_sda.get_StringProp
 			// returns tsf.EmptyString(userWs) in cases of the data being null, unless a more specific WS is given for the field.
@@ -1074,6 +1090,16 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var newUnicodeTsStringValue = tsf.MakeString("New unicode ITsString", userWs);
 			m_sda.SetMultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs, newUnicodeTsStringValue);
 			Assert.AreSame(newUnicodeTsStringValue, m_sda.get_MultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs), "MultiUnicode custom property is not newUnicodeTsStringValue.");
+
+			m_actionHandler.EndUndoTask();
+
+			m_actionHandler.Undo();
+			Assert.AreSame(emptyStr, m_sda.get_MultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs), "MultiUnicode custom property is not undone.");
+
+			m_actionHandler.Redo();
+			Assert.AreSame(newUnicodeTsStringValue, m_sda.get_MultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs), "MultiUnicode custom property is not redone.");
+
+			m_actionHandler.BeginUndoTask("undo", "redo");
 			m_sda.SetMultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs, null);
 			Assert.AreSame(emptyStr, m_sda.get_MultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs), "MultiUnicode custom property is not newUnicodeTsStringValue.");
 
@@ -1083,6 +1109,14 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			m_sda.SetObjProp(wf.Hvo, m_customAtomicReferenceFlid, person.Hvo);
 			Assert.AreEqual(person.Hvo, m_sda.get_ObjectProp(wf.Hvo, m_customAtomicReferenceFlid), "Wrong atomic ref custom value.");
 			Assert.AreEqual(crefs + 1, person.ReferringObjects.Count, "Wrong number of incoming references.");
+
+			m_actionHandler.EndUndoTask();
+
+			m_actionHandler.Undo();
+			Assert.AreEqual(0, m_sda.get_ObjectProp(wf.Hvo, m_customAtomicReferenceFlid), "Wrong atomic ref undo.");
+
+			m_actionHandler.Redo();
+			Assert.AreEqual(person.Hvo, m_sda.get_ObjectProp(wf.Hvo, m_customAtomicReferenceFlid), "Wrong atomic ref redo.");
 		}
 
 		/// <summary>

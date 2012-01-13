@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{ADF93BBC-BF8B-42F2-8791-7A04DD1AFA51}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -91,6 +91,10 @@
 	</Reference>
 	<Reference Include="Framework, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
 	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwControls, Version=7.2.0.15477, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="FwCoreDlgs, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
@@ -196,10 +200,6 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
-	</Reference>
 	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
@@ -242,6 +242,7 @@
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
+	<Compile Include="BIRDInterlinearImporter.cs" />
 	<Compile Include="ChooseAnalysisHander.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -260,6 +261,7 @@
 	<Compile Include="ConcordanceControl.Designer.cs">
 	  <DependentUpon>ConcordanceControl.cs</DependentUpon>
 	</Compile>
+	<Compile Include="ConcordanceWordList.cs" />
 	<Compile Include="ConfigureInterlinDialog.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -269,6 +271,7 @@
 	<Compile Include="EditMorphBreaksDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
+	<Content Include="FlexInterlinModel\FlexInterlinear-generated.cs" />
 	<Compile Include="FlexInterlinModel\FlexInterlinear.cs" />
 	<Compile Include="FocusBoxController.ApproveAndMove.cs">
 	  <DependentUpon>FocusBoxController.cs</DependentUpon>
@@ -280,6 +283,7 @@
 	<Compile Include="FocusBoxController.Designer.cs">
 	  <DependentUpon>FocusBoxController.cs</DependentUpon>
 	</Compile>
+	<None Include="ClassDiagram1.cd" />
 	<None Include="FreeTransEditMonitor.cs" />
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
@@ -290,6 +294,7 @@
 	<Compile Include="InfoPane.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="InterAreaBookmark.cs" />
 	<Compile Include="InterlinDocChart.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -315,6 +320,7 @@
 	<Compile Include="InterlinearSfmImportWizard.Designer.cs">
 	  <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
 	</Compile>
+	<Compile Include="InterlinearTextsRecordClerk.cs" />
 	<Compile Include="InterlinLineChoices.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -328,6 +334,9 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="InterlinMasterNoTitleBar.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinMasterNoTitleContent.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="InterlinPrintView.cs">
@@ -523,12 +532,6 @@
 	  <DependentUpon>StatisticsView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\Common\Controls\FwControls\FwControls.csproj">
-	  <Project>{2322C388-DD81-466A-B079-956B5524B9A9}</Project>
-	  <Name>FwControls</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<Content Include="ZeroWidth.ico" />

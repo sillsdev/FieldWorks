@@ -50,12 +50,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (task.AddSubTask(String.Format(ParserCoreStrings.ksCreatingX, outputName)))
 			{
-		}
-		{
-				XmlUtils.TransformDomToFile(Path.Combine(DirectoryFinder.FWCodeDirectory + @"/Language Explorer/Transforms/", transformName),
+				XmlUtils.TransformDomToFile(Path.Combine(DirectoryFinder.FWCodeDirectory + "/Language Explorer/Transforms/", transformName),
 					inputDOM, Path.Combine(m_outputDirectory, outputName));
-				}
-				}
+			}
+		}
 
 		internal void PrepareTemplatesForXAmpleFiles(ref XmlDocument domModel, XmlDocument domTemplate)
 		{
@@ -145,7 +143,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				startTime = DateTime.Now;
 				TransformDomToFile("FxtM3ParserToXAmpleLex.xsl", model, m_database + "lex.txt", task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Lex XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
-				}
+			}
 		}
 	}
 }

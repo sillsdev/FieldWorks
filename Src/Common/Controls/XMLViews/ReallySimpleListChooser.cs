@@ -78,6 +78,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected FdoCache m_cache;
 
+		/// <summary>
+		/// True to prevent choosing more than one item.
+		/// </summary>
+		public bool Atomic { get; set; }
+
 		/// <summary></summary>
 		protected bool m_fLinkExecuted = false;
 
@@ -653,31 +658,48 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="e"></param>
 		void m_labelsTreeView_AfterCheck(object sender, TreeViewEventArgs e)
 		{
-			if (m_fEnableCtrlCheck && ModifierKeys == Keys.Control)
+			var clickNode = (LabelNode)e.Node;
+			if (m_fEnableCtrlCheck && ModifierKeys == Keys.Control && !Atomic)
 			{
-				var rootNode = (LabelNode)e.Node;
-				Cursor.Current = Cursors.WaitCursor;
-				try
+				using (new WaitCursor())
 				{
 					if (e.Action != TreeViewAction.Unknown)
 					{
 						// The original check, not recursive.
-						rootNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
-						if (!rootNode.IsExpanded)
-							rootNode.Expand(); // open up at least one level to show effects.
+						clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
+						if (!clickNode.IsExpanded)
+							clickNode.Expand(); // open up at least one level to show effects.
 					}
-					foreach (TreeNode node in rootNode.Nodes)
+					foreach (TreeNode node in clickNode.Nodes)
 						node.Checked = e.Node.Checked; // and recursively checks children.
-				}
-				finally
-				{
-					Cursor.Current = Cursors.Default;
 				}
 			}
 			if (m_fForbidNoItemChecked)
 			{
 				btnOK.Enabled = AnyItemChecked(m_labelsTreeView.Nodes);
 			}
+			if (Atomic && clickNode.Checked)
+			{
+				var checkedNodes = new HashSet<TreeNode>();
+				foreach (TreeNode child in m_labelsTreeView.Nodes)
+					CollectCheckedNodes(child, checkedNodes);
+				checkedNodes.Remove(clickNode);
+				foreach (var node in checkedNodes)
+				{
+					// will produce a recursive call, but it won't do much because the changing node
+					// is NOT checked.
+					node.Checked = false;
+				}
+			}
+		}
+
+		// Uncheck every node in the tree except possibly current.
+		void CollectCheckedNodes(TreeNode root, HashSet<TreeNode> checkedNodes)
+		{
+			if (root.Checked)
+				checkedNodes.Add(root);
+			foreach (TreeNode child in root.Nodes)
+				CollectCheckedNodes(child, checkedNodes);
 		}
 
 		/// <summary>
@@ -1645,101 +1667,102 @@ namespace SIL.FieldWorks.Common.Controls
 				m_objs = (from label in labels
 						  select label.Object).ToList();
 			}
-			Cursor.Current = Cursors.WaitCursor;
-			m_labelsTreeView.BeginUpdate();
-			m_labelsTreeView.Nodes.Clear();
-
-			// if m_fSortLabels is true, we'll sort the labels alphabetically, using dumb English sort.
-			// otherwise, we'll keep the labels in their given order.
-			if (!m_fSortLabelsSet && m_cache != null)
+			using (new WaitCursor())
 			{
-				m_fSortLabels = IsListSorted(labels);
-				m_fSortLabelsSet = true;
-			}
-			m_labelsTreeView.Sorted = m_fSortLabels;
-			Stack<ICmObject> ownershipStack = null;
-			LabelNode nodeRepresentingCurrentChoice = null;
-			//add <empty> row
-			if (showCurrentSelection)
-			{
-				if (m_cache != null)
-					ownershipStack = GetOwnershipStack(currentObj);
+				m_labelsTreeView.BeginUpdate();
+				m_labelsTreeView.Nodes.Clear();
 
-				if (m_nullLabel.DisplayName != null)
-					m_labelsTreeView.Nodes.Add(CreateLabelNode(m_nullLabel, m_displayUsageCheckBox.Checked));
-			}
-
-			var rgLabelNodes = new ArrayList();
-			var rgOwnershipStacks = new Dictionary<ICmObject, Stack<ICmObject>>();
-			if (m_chosenObjs != null)
-			{
-				foreach (ICmObject obj in m_chosenObjs)
+				// if m_fSortLabels is true, we'll sort the labels alphabetically, using dumb English sort.
+				// otherwise, we'll keep the labels in their given order.
+				if (!m_fSortLabelsSet && m_cache != null)
 				{
-					if (obj != null)
-						rgOwnershipStacks[obj] = GetOwnershipStack(obj);
+					m_fSortLabels = IsListSorted(labels);
+					m_fSortLabelsSet = true;
 				}
-			}
-			//	m_labelsTreeView.Nodes.AddRange(labels.AsObjectArray);
-			foreach (ObjectLabel label in labels)
-			{
-				if (!WantNodeForLabel(label))
-					continue;
-				// notice that we are only adding the top-level notes now.
-				// others will be added when the user expands them.
-				LabelNode x = CreateLabelNode(label, m_displayUsageCheckBox.Checked);
-				m_labelsTreeView.Nodes.Add(x);
+				m_labelsTreeView.Sorted = m_fSortLabels;
+				Stack<ICmObject> ownershipStack = null;
+				LabelNode nodeRepresentingCurrentChoice = null;
+				//add <empty> row
+				if (showCurrentSelection)
+				{
+					if (m_cache != null)
+						ownershipStack = GetOwnershipStack(currentObj);
+
+					if (m_nullLabel.DisplayName != null)
+						m_labelsTreeView.Nodes.Add(CreateLabelNode(m_nullLabel, m_displayUsageCheckBox.Checked));
+				}
+
+				var rgLabelNodes = new ArrayList();
+				var rgOwnershipStacks = new Dictionary<ICmObject, Stack<ICmObject>>();
 				if (m_chosenObjs != null)
-					x.Checked = m_chosenObjs.Contains(label.Object);
-
-				//notice that we don't actually use the "stack-ness" of the stack.
-				//if we did, we would have to worry about skipping the higher level owners, like
-				//language project.
-				//but just treat it as an array, we can ignore those issues.
-				if (m_cache != null &&
-					showCurrentSelection &&
-					ownershipStack.Contains(label.Object))
-				{
-					nodeRepresentingCurrentChoice = x.AddChildrenAndLookForSelected(currentObj,
-						ownershipStack, null);
-				}
-				if (m_cache != null &&
-					m_chosenObjs != null)
 				{
 					foreach (ICmObject obj in m_chosenObjs)
 					{
-						if (obj == null)
-							continue;
-						var curOwnershipStack = rgOwnershipStacks[obj];
-						if (curOwnershipStack.Contains(label.Object))
-							rgLabelNodes.Add(x.AddChildrenAndLookForSelected(obj, curOwnershipStack, m_chosenObjs));
+						if (obj != null)
+							rgOwnershipStacks[obj] = GetOwnershipStack(obj);
 					}
 				}
-			}
-			m_labelsTreeView.EndUpdate();
-
-			// if for some reason we could not find it is smart way, go do it the painful way of
-			// walking the entire tree, creating objects until we find it.
-			// I'm not clear if we ever need this...the primary cover them would fail if the
-			// labels were constructed in some way other than from an ownership hierarchy.
-			if (showCurrentSelection)
-			{
-				m_labelsTreeView.SelectedNode = nodeRepresentingCurrentChoice ?? FindNodeFromObj(currentObj);
-				if (m_labelsTreeView.SelectedNode != null)
+				//	m_labelsTreeView.Nodes.AddRange(labels.AsObjectArray);
+				foreach (ObjectLabel label in labels)
 				{
-					m_labelsTreeView.SelectedNode.EnsureVisible();
-					//for some reason, doesn't actually select it, so do this:
-					m_labelsTreeView.SelectedNode.ForeColor = Color.Blue;
-				}
-			}
-			else if (m_chosenObjs != null)
-			{
-				// Don't show a selection initially
-				m_labelsTreeView.SelectedNode = null;
-			}
+					if (!WantNodeForLabel(label))
+						continue;
+					// notice that we are only adding the top-level notes now.
+					// others will be added when the user expands them.
+					LabelNode x = CreateLabelNode(label, m_displayUsageCheckBox.Checked);
+					m_labelsTreeView.Nodes.Add(x);
+					if (m_chosenObjs != null)
+						x.Checked = m_chosenObjs.Contains(label.Object);
 
-			//important that we not do this sooner!
-			m_labelsTreeView.BeforeExpand += m_labelsTreeView_BeforeExpand;
-			Cursor.Current = Cursors.Default;
+					//notice that we don't actually use the "stack-ness" of the stack.
+					//if we did, we would have to worry about skipping the higher level owners, like
+					//language project.
+					//but just treat it as an array, we can ignore those issues.
+					if (m_cache != null &&
+						showCurrentSelection &&
+						ownershipStack.Contains(label.Object))
+					{
+						nodeRepresentingCurrentChoice = x.AddChildrenAndLookForSelected(currentObj,
+							ownershipStack, null);
+					}
+					if (m_cache != null &&
+						m_chosenObjs != null)
+					{
+						foreach (ICmObject obj in m_chosenObjs)
+						{
+							if (obj == null)
+								continue;
+							var curOwnershipStack = rgOwnershipStacks[obj];
+							if (curOwnershipStack.Contains(label.Object))
+								rgLabelNodes.Add(x.AddChildrenAndLookForSelected(obj, curOwnershipStack, m_chosenObjs));
+						}
+					}
+				}
+				m_labelsTreeView.EndUpdate();
+
+				// if for some reason we could not find it is smart way, go do it the painful way of
+				// walking the entire tree, creating objects until we find it.
+				// I'm not clear if we ever need this...the primary cover them would fail if the
+				// labels were constructed in some way other than from an ownership hierarchy.
+				if (showCurrentSelection)
+				{
+					m_labelsTreeView.SelectedNode = nodeRepresentingCurrentChoice ?? FindNodeFromObj(currentObj);
+					if (m_labelsTreeView.SelectedNode != null)
+					{
+						m_labelsTreeView.SelectedNode.EnsureVisible();
+						//for some reason, doesn't actually select it, so do this:
+						m_labelsTreeView.SelectedNode.ForeColor = Color.Blue;
+					}
+				}
+				else if (m_chosenObjs != null)
+				{
+					// Don't show a selection initially
+					m_labelsTreeView.SelectedNode = null;
+				}
+
+				//important that we not do this sooner!
+				m_labelsTreeView.BeforeExpand += m_labelsTreeView_BeforeExpand;
+			}
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2322,9 +2345,10 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void m_labelsTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
 			var node = (LabelNode)e.Node;
-			Cursor.Current = Cursors.WaitCursor;
-			node.AddChildren(false, m_chosenObjs);
-			Cursor.Current = Cursors.Default;
+			using (new WaitCursor())
+			{
+				node.AddChildren(false, m_chosenObjs);
+			}
 		}
 
 		/// <summary>

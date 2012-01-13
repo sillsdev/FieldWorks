@@ -132,16 +132,16 @@ namespace SIL.FieldWorks.SharpViews.Paragraphs
 				Segment.GetCharPlacement(IchMin, vg, ichMinRun,
 					ichLimRun, segTrans.SourceRect, segTrans.DestRect, true, 0, out cxd,
 					null, null, null);
-				using (var rgxdLefts = MarshalEx.ArrayToNative(cxd, typeof(int)))
-				using (var rgxdRights = MarshalEx.ArrayToNative(cxd, typeof(int)))
-				using (var rgydTops = MarshalEx.ArrayToNative(cxd, typeof(int)))
+				using (var rgxdLefts = MarshalEx.ArrayToNative<int>(cxd))
+				using (var rgxdRights = MarshalEx.ArrayToNative<int>(cxd))
+				using (var rgydTops = MarshalEx.ArrayToNative<int>(cxd))
 				{
 					Segment.GetCharPlacement(IchMin, vg, ichMinRun,
 						ichLimRun, segTrans.SourceRect, segTrans.DestRect, true, cxd, out cxd,
 						rgxdLefts, rgxdRights, rgydTops);
-					lefts = (int[]) MarshalEx.NativeToArray(rgxdLefts, cxd, typeof (int));
-					rights = (int[]) MarshalEx.NativeToArray(rgxdRights, cxd, typeof (int));
-					tops = (int[]) MarshalEx.NativeToArray(rgydTops, cxd, typeof (int));
+					lefts = MarshalEx.NativeToArray<int>(rgxdLefts, cxd);
+					rights = MarshalEx.NativeToArray<int>(rgxdRights, cxd);
+					tops = MarshalEx.NativeToArray<int>(rgydTops, cxd);
 				}
 				for (int ixd = 0; ixd < cxd; ixd++)
 				{

@@ -286,10 +286,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			/// <param name="e"></param>
 			protected override void OnLostFocus(EventArgs e)
 			{
+				WaitCursor wc = null;
 				Form window = FindForm();
 				if (window != null)
-					window.Cursor = Cursors.WaitCursor;
-
+					wc = new WaitCursor(window);
 				try
 				{
 					ConvertDummiesToReal(0);
@@ -297,8 +297,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				finally
 				{
-					if (window != null)
-						window.Cursor = Cursors.Default;
+					if (wc != null)
+					{
+						wc.Dispose();
+						wc = null;
+					}
 				}
 			}
 
@@ -1248,7 +1251,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					if (m_mapHvoWsRevForm.TryGetValue(key, out tss))
 						return tss;
 					else
-						return null;
+						return TsStrFactoryClass.Create().EmptyString(ws); // do NOT return null!
 				}
 				else
 				{

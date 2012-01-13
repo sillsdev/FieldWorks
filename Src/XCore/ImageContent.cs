@@ -90,6 +90,14 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
+
 
 		public string AreaName
 		{

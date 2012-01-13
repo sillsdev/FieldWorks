@@ -183,7 +183,7 @@ Click OK to continue making changes.</value>
 	<value>Please provide the characters -&gt; between the Find expression and the Replace expression in the Find-&gt;Replace field.</value>
   </data>
   <data name="kstidSetupProcessor" xml:space="preserve">
-	<value>Setup Processor</value>
+	<value>Set up Processor</value>
   </data>
   <data name="kstidAvailableProcessors" xml:space="preserve">
 	<value>Available Processors:</value>

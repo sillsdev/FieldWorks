@@ -86,21 +86,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="ad">if set to <c>true</c> the date is AD, otherwise it is BC.</param>
 		public GenDate(PrecisionType precision, int month, int day, int year, bool ad)
 		{
-			if (year != UnknownYear && (year < MinYear || year > MaxYear))
-				throw new ArgumentOutOfRangeException("year");
 
-			if (month != UnknownMonth && (!ad || month < MinMonth || month > MaxMonth))
-				throw new ArgumentOutOfRangeException("month");
-
-			if (day != UnknownDay && (!ad || month == UnknownMonth
-				|| day < MinDay || day > DateTime.DaysInMonth(year == UnknownYear ? LeapYear : year, month)))
-				throw new ArgumentOutOfRangeException("day");
+			var badPart = ValidateParts(month, day, year, ad);
+			if (badPart != null)
+				throw new ArgumentOutOfRangeException(badPart);
 
 			m_precision = precision;
 			m_month = month;
 			m_day = day;
 			m_year = year;
 			m_ad = ad;
+		}
+
+		/// <summary>
+		/// If the specified arguments will make a valid GenDate, return null. Otherwise return the name of the bad parameter.
+		/// </summary>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
+		/// <param name="year"></param>
+		/// <param name="ad"></param>
+		/// <returns></returns>
+		public static string ValidateParts(int month, int day, int year, bool ad)
+		{
+			if (year != UnknownYear && (year < MinYear || year > MaxYear))
+				return "year";
+
+			if (month != UnknownMonth && (!ad || month < MinMonth || month > MaxMonth))
+				return "month";
+
+			if (day != UnknownDay && (!ad || month == UnknownMonth
+				|| day < MinDay || day > DateTime.DaysInMonth(year == UnknownYear ? LeapYear : year, month)))
+				return "day";
+			return null; // all is well.
 		}
 
 		/// <summary>
@@ -386,8 +403,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (nYear <= 0)
 					nYear = -nYear;
-				gen = new GenDate(precision, nMonth, nDay, nYear, fAD);
-				return true;
+				if (ValidateParts(nMonth, nDay, nYear, fAD) == null)
+				{
+					gen = new GenDate(precision, nMonth, nDay, nYear, fAD);
+					return true;
+				}
 			}
 			if (fAD)
 			{
@@ -409,7 +429,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (date.StartsWith(", "))
 					{
 						date = date.Substring(2);
-						if (Int32.TryParse(date, out nYear))
+						if (Int32.TryParse(date, out nYear) && ValidateParts(nMonth, nDay, nYear, fAD) == null)
 						{
 							gen = new GenDate(precision, nMonth, nDay, nYear, fAD);
 							return true;
@@ -418,20 +438,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 					else if (date.StartsWith(" "))
 					{
 						date = date.Substring(1);
-						if (Int32.TryParse(date, out nDay) && nDay < 32)
+						if (Int32.TryParse(date, out nDay) && nDay < 32 && ValidateParts(nMonth, nDay, nYear, fAD) == null)
 						{
 							gen = new GenDate(precision, nMonth, nDay, nYear, fAD);
 							return true;
 						}
 					}
-					else if (String.IsNullOrEmpty(date))
+					else if (String.IsNullOrEmpty(date) && ValidateParts(nMonth, nDay, nYear, fAD) == null)
 					{
 						gen = new GenDate(precision, nMonth, nDay, nYear, fAD);
 						return true;
 					}
 				}
 				DateTime dt;
-				if (DateTime.TryParse(rawDate, out dt))
+				if (DateTime.TryParse(rawDate, out dt) && ValidateParts(dt.Month, dt.Day, dt.Year, fAD) == null)
 				{
 					gen = new GenDate(precision, dt.Month, dt.Day, dt.Year, fAD);
 					return true;

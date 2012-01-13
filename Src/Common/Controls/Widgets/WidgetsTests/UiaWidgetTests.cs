@@ -68,11 +68,10 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class TestFwList : IFwListBox, IDisposable
 	{
 		private VwCacheDa m_CacheDa = VwCacheDaClass.Create();
-		private ISilDataAccess m_DataAccess;
 
 		public TestFwList()
 		{
-			DataAccess = m_DataAccess = m_CacheDa;
+			DataAccess = m_CacheDa;
 			DataAccess.WritingSystemFactory = new PalasoWritingSystemManager();
 		}
 
@@ -82,6 +81,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		public ISilDataAccess DataAccess { get; private set; }
+
+		public int SelectedIndex { get; set; }
 
 		#region Disposable stuff
 		#if DEBUG
@@ -121,7 +122,6 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 			}
 			m_CacheDa = null;
-			m_DataAccess = null;
 
 			IsDisposed = true;
 		}

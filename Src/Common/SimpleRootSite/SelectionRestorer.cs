@@ -84,7 +84,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting
-		/// unmanaged resources.
+		/// unmanaged resources. In this case, attempt to restore the selection we originally
+		/// saved.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool fDisposing)
@@ -96,28 +97,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_rootSite.ReadOnlyView)
 			{
 				// if we are a read-only view, then we can't make a writable selection
-				try
-				{
-					m_rootSite.RootBox.MakeSimpleSel(true, false, false, true);
-				}
-				catch (COMException)
-				{
-					// Just ignore any errors - don't get an selection but who cares.
-				}
+				RestoreSelectionWhenReadOnly();
 				return;
 			}
 
-			bool makeVisible = false;
-			if (m_topOfViewSelection != null)
-			{
-				IVwSelection selTop = m_topOfViewSelection.SetSelection(m_rootSite, false, false);
-				if (selTop != null && selTop.IsValid)
-					m_topOfViewSelection.RestoreScrollPos();
-				else
-					makeVisible = true;
-			}
-
-			IVwSelection newSel = m_savedSelection.MakeBest(makeVisible);
+			IVwSelection newSel = RestoreSelection();
 			if (newSel == null)
 			{
 				try
@@ -131,8 +115,41 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 			}
 
+
 			IsDisposed = true;
 		}
+
+		/// <summary>
+		/// This is the normal RestoreSelection. For some reason by default it is not used when read-only.
+		/// Returns the selection it successfully restored, or null if it could not restore one.
+		/// </summary>
+		protected virtual IVwSelection RestoreSelection()
+		{
+			bool makeVisible = false;
+			if (m_topOfViewSelection != null)
+			{
+				IVwSelection selTop = m_topOfViewSelection.SetSelection(m_rootSite, false, false);
+				if (selTop != null && selTop.IsValid)
+					m_topOfViewSelection.RestoreScrollPos();
+				else
+					makeVisible = true;
+			}
+
+			return m_savedSelection.MakeBest(makeVisible);
+		}
+
+		private void RestoreSelectionWhenReadOnly()
+		{
+			try
+			{
+				m_rootSite.RootBox.MakeSimpleSel(true, false, false, true);
+			}
+			catch (COMException)
+			{
+				// Just ignore any errors - don't get an selection but who cares.
+			}
+		}
+
 		#endregion
 	}
 }

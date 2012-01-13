@@ -574,7 +574,7 @@
 	<value>scrBookTo</value>
   </data>
   <data name="&gt;&gt;scrBookTo.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ScrPassageControl, ScrControls, Version=5.5.0.20257, Culture=neutral, PublicKeyToken=null</value>
+	<value>SILUBS.SharedScrControls.ScrBookControl, ScrControls, Version=5.5.0.20257, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrBookTo.Parent" xml:space="preserve">
 	<value>grpScrRange</value>
@@ -598,7 +598,7 @@
 	<value>scrBookFrom</value>
   </data>
   <data name="&gt;&gt;scrBookFrom.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ScrPassageControl, ScrControls, Version=5.5.0.20257, Culture=neutral, PublicKeyToken=null</value>
+	<value>SILUBS.SharedScrControls.ScrBookControl, ScrControls, Version=5.5.0.20257, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrBookFrom.Parent" xml:space="preserve">
 	<value>grpScrRange</value>

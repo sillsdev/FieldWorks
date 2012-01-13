@@ -167,6 +167,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly IdleQueue m_idleQueue;
 		private readonly ICmAgent m_parserAgent;
+		private readonly Queue<ParseResult> m_resultQueue;
+		private readonly object m_syncRoot;
 
 		private readonly IWfiWordformRepository m_wordformRepository;
 		private readonly IWfiAnalysisFactory m_analysisFactory;
@@ -212,6 +214,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_taskUpdateHandler = taskUpdateHandler;
 			m_idleQueue = idleQueue;
 			m_parserAgent = parserAgent;
+			m_resultQueue = new Queue<ParseResult>();
+			m_syncRoot = new object();
 
 			var servLoc = cache.ServiceLocator;
 			m_wordformRepository = servLoc.GetInstance<IWfiWordformRepository>();
@@ -314,12 +318,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (disposing)
 			{
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Total number of wordforms updated = " + m_numberOfWordForms);
-				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Total time for parser filer = " + m_ticksFiler);
+				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Total time for parser filer = " + TimeSpan.FromTicks(m_ticksFiler).TotalMilliseconds);
 
 				if (m_numberOfWordForms != 0)
 				{
 					long lAvg = m_ticksFiler / m_numberOfWordForms;
-					Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Average time for parser filer = " + lAvg);
+					Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Average time for parser filer = " + TimeSpan.FromTicks(lAvg).TotalMilliseconds);
 				}
 			}
 
@@ -389,7 +393,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 											  select new ParseAnalysis(morphs.ToList())).ToList(),
 											 errorMessage);
 				}
-				m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordform, result, false);
+
+				lock (m_syncRoot)
+					m_resultQueue.Enqueue(result);
+				m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordforms);
 				return true;
 			}
 			catch (KeyNotFoundException)
@@ -409,65 +416,77 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		/// <param name="parameter">The parameter.</param>
 		/// <returns></returns>
-		private bool UpdateWordform(object parameter)
+		private bool UpdateWordforms(object parameter)
 		{
 			if (IsDisposed)
 				return true;
 			// If a UOW is in progress, the application isn't really idle, so try again later. One case where this used
 			// to be true was the dialog in IText for choosing the writing system of a new text, which was run while
 			// the UOW was active.
-			if (!(m_cache.ActionHandlerAccessor as IActionHandlerExtensions).CanStartUow)
+			if (!((IActionHandlerExtensions) m_cache.ActionHandlerAccessor).CanStartUow)
 				return false;
 
-			var result = (ParseResult) parameter;
-
-			if (!result.IsValid)
+			// update all of the wordforms in a batch, this might slow down the UI thread a little, if it causes too much unresponsiveness
+			// we can bail out early if there is a message in the Win32 message queue
+			IEnumerable<ParseResult> results;
+			lock (m_syncRoot)
 			{
-				// the wordform or the candidate analyses are no longer valid, so just skip this parse
-				FireWordformUpdated(result.Wordform, result.Priority);
-				return true;
+				results = m_resultQueue.ToArray();
+				m_resultQueue.Clear();
 			}
-			var startTime = DateTime.Now;
-			string form = result.Wordform.Form.BestVernacularAlternative.Text;
-			using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
+
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				foreach (ParseResult result in results)
 				{
-					// delete old problem annotations
-					var problemAnnotations = from ann in m_baseAnnotationRepository.AllInstances()
-											 where ann.BeginObjectRA == result.Wordform && ann.SourceRA == m_parserAgent
-											 select ann;
-					foreach (var problem in problemAnnotations)
-						m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
+					if (!result.IsValid)
+					{
+						// the wordform or the candidate analyses are no longer valid, so just skip this parse
+						FireWordformUpdated(result.Wordform, result.Priority);
+						continue;
+					}
+					var startTime = DateTime.Now;
+					string form = result.Wordform.Form.BestVernacularAlternative.Text;
+					using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
+					{
+						// delete old problem annotations
+						var problemAnnotations = from ann in m_baseAnnotationRepository.AllInstances()
+												 where
+													ann.BeginObjectRA == result.Wordform &&
+													ann.SourceRA == m_parserAgent
+												 select ann;
+						foreach (var problem in problemAnnotations)
+							m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
 
-					if (result.ErrorMessage != null)
-					{
-						// there was an error, so create a problem annotation
-						var problemReport = m_baseAnnotationFactory.Create();
-						m_cache.LangProject.AnnotationsOC.Add(problemReport);
-						problemReport.CompDetails = result.ErrorMessage;
-						problemReport.SourceRA = m_parserAgent;
-						problemReport.AnnotationTypeRA = null;
-						problemReport.BeginObjectRA = result.Wordform;
-						FinishWordForm(result.Wordform);
+						if (result.ErrorMessage != null)
+						{
+							// there was an error, so create a problem annotation
+							var problemReport = m_baseAnnotationFactory.Create();
+							m_cache.LangProject.AnnotationsOC.Add(problemReport);
+							problemReport.CompDetails = result.ErrorMessage;
+							problemReport.SourceRA = m_parserAgent;
+							problemReport.AnnotationTypeRA = null;
+							problemReport.BeginObjectRA = result.Wordform;
+							FinishWordForm(result.Wordform);
+						}
+						else
+						{
+							// update the wordform
+							foreach (var analysis in result.Analyses)
+								ProcessAnalysis(result.Wordform, analysis);
+							FinishWordForm(result.Wordform);
+							MarkAnalysisParseFailures(result.Wordform);
+						}
+						result.Wordform.Checksum = (int)result.Crc;
 					}
-					else
-					{
-						// update the wordform
-						foreach (var analysis in result.Analyses)
-							ProcessAnalysis(result.Wordform, analysis);
-						FinishWordForm(result.Wordform);
-						MarkAnalysisParseFailures(result.Wordform);
-					}
-					result.Wordform.Checksum = (int)result.Crc;
-				});
-			}
-			// notify all listeners that the wordform has been updated
-			FireWordformUpdated(result.Wordform, result.Priority);
-			long ttlTicks = DateTime.Now.Ticks - startTime.Ticks;
-			m_ticksFiler += ttlTicks;
-			m_numberOfWordForms++;
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "parser filer(" + form + ") took : " + ttlTicks);
+					// notify all listeners that the wordform has been updated
+					FireWordformUpdated(result.Wordform, result.Priority);
+					long ttlTicks = DateTime.Now.Ticks - startTime.Ticks;
+					m_ticksFiler += ttlTicks;
+					m_numberOfWordForms++;
+					Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "parser filer(" + form + ") took : " + TimeSpan.FromTicks(ttlTicks).TotalMilliseconds);
+				}
+			});
 			return true;
 		}
 

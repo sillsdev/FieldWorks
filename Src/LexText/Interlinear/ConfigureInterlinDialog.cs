@@ -225,6 +225,7 @@ namespace SIL.FieldWorks.IText
 			this.currentList.MultiSelect = false;
 			this.currentList.Name = "currentList";
 			this.currentList.OwnerDraw = true;
+			this.currentList.ShowItemToolTips = true;
 			this.currentList.UseCompatibleStateImageBehavior = false;
 			this.currentList.View = System.Windows.Forms.View.Details;
 			this.currentList.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.currentList_DrawItem);
@@ -332,8 +333,12 @@ namespace SIL.FieldWorks.IText
 						wsName = wsObj.DisplayLabel;
 				}
 				cols[1] = TsStringUtils.NormalizeToNFC(wsName);
+				cols[1] = cols[1].Substring(0, Math.Min(cols[1].Length, 42));
 
-				currentList.Items.Add(new ListViewItem(cols));
+				var item1WithToolTip = new ListViewItem(cols);
+				item1WithToolTip.ToolTipText = TsStringUtils.NormalizeToNFC(wsName);
+
+				currentList.Items.Add(item1WithToolTip);
 			}
 
 			if (index > currentList.Items.Count && index > 0)
@@ -352,22 +357,40 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		private ComboBox.ObjectCollection WsComboItems(ColumnConfigureDialog.WsComboContent comboContent)
 		{
+			return WsComboItemsInternal(m_cache, wsCombo, m_cachedComboBoxes, comboContent);
+		}
+
+		/// <summary>
+		/// This is used to create an object collection with the appropriate writing system choices to be used in wsCombo.  The reason it is cached is because
+		/// list generation will require looping through each kind of combo box several times.
+		///
+		/// This version is visible to InterlinDocRootSiteBase for its context menu.
+		/// </summary>
+		/// <param name="cachedBoxes"></param>
+		/// <param name="comboContent"></param>
+		/// <param name="cache"></param>
+		/// <param name="owner"></param>
+		/// <returns></returns>
+		internal static ComboBox.ObjectCollection WsComboItemsInternal(FdoCache cache, ComboBox owner,
+			Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
+			ColumnConfigureDialog.WsComboContent comboContent)
+		{
 			ComboBox.ObjectCollection objectCollection;
-			if (!m_cachedComboBoxes.ContainsKey(comboContent))
+			if (!cachedBoxes.ContainsKey(comboContent))
 			{
-				objectCollection = new ComboBox.ObjectCollection(wsCombo);
+				objectCollection = new ComboBox.ObjectCollection(owner);
 
 				// The final argument here restricts writing systems that will be added to the combo box to
 				// only be "real" writing systems.  So, English will be added, but not "Default Analysis".
 				// This functionality should eventually go away.  See LT-4740.
 				// JohnT: it now partially has, two lines support 'best analysis'.
-				ColumnConfigureDialog.AddWritingSystemsToCombo(m_cache, objectCollection, comboContent,
+				ColumnConfigureDialog.AddWritingSystemsToCombo(cache, objectCollection, comboContent,
 					comboContent != ColumnConfigureDialog.WsComboContent.kwccBestAnalysis);
-				m_cachedComboBoxes[comboContent] = objectCollection;
+				cachedBoxes[comboContent] = objectCollection;
 			}
 			else
 			{
-				objectCollection = m_cachedComboBoxes[comboContent];
+				objectCollection = cachedBoxes[comboContent];
 			}
 
 			return objectCollection;

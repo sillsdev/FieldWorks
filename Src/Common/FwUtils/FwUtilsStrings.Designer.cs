@@ -160,6 +160,24 @@ namespace SIL.FieldWorks.Common.FwUtils {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug..
+		/// </summary>
+		internal static string kstIdCantDoDictExists {
+			get {
+				return ResourceManager.GetString("kstIdCantDoDictExists", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Spelling Dictionary Problem.
+		/// </summary>
+		internal static string kstidCantDoDictExistsCaption {
+			get {
+				return ResourceManager.GetString("kstidCantDoDictExistsCaption", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to  cm.
 		/// </summary>
 		internal static string kstidCm {

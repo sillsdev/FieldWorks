@@ -75,20 +75,38 @@ namespace SIL.FieldWorks.Common.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to OK will create an empty text.
+		/// </summary>
+		internal static string kOkbtnEmptySelection {
+			get {
+				return ResourceManager.GetString("kOkbtnEmptySelection", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to OK will create an empty text assigned to these genres.
+		/// </summary>
+		internal static string kOkbtnGenreSelection {
+			get {
+				return ResourceManager.GetString("kOkbtnGenreSelection", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to No texts are selected.
+		/// </summary>
+		internal static string kOkbtnNoTextSelection {
+			get {
+				return ResourceManager.GetString("kOkbtnNoTextSelection", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Bible.
 		/// </summary>
 		internal static string kstidBibleNode {
 			get {
 				return ResourceManager.GetString("kstidBibleNode", resourceCulture);
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized string similar to {0} is an invalid Scripture reference..
-		/// </summary>
-		internal static string kstidInvalidScrRefEntered {
-			get {
-				return ResourceManager.GetString("kstidInvalidScrRefEntered", resourceCulture);
 			}
 		}
 

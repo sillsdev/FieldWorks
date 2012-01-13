@@ -34,6 +34,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
+using XCore;
 
 namespace SIL.FieldWorks.TE
 {
@@ -122,6 +123,14 @@ namespace SIL.FieldWorks.TE
 			}
 
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
 		}
 
 		#region Windows Form Designer generated code
@@ -909,11 +918,11 @@ namespace SIL.FieldWorks.TE
 				// TE-9371: Changed way to get hvo's of filtered notes to improve performance
 				int arraySize = dataAccess.get_VecSize(annotations.Hvo, ScrBookAnnotationsTags.kflidNotes);
 				int[] itemHvos;
-				using (var arrayPtr = MarshalEx.ArrayToNative(arraySize, typeof(int)))
+				using (var arrayPtr = MarshalEx.ArrayToNative<int>(arraySize))
 				{
 					int chvo;
 					dataAccess.VecProp(annotations.Hvo, ScrBookAnnotationsTags.kflidNotes, arraySize, out chvo, arrayPtr);
-					itemHvos = (int[]) MarshalEx.NativeToArray(arrayPtr, chvo, typeof (int));
+					itemHvos = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 				foreach (int hvo in itemHvos)
 				{

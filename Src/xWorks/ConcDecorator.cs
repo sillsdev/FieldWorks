@@ -15,8 +15,16 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// This class exists to decorate the main SDA for concordance views.
-	/// It implements the Occurrences and OccurrencesCount properties for WfiWordform.
+	/// This class exists to decorate the main SDA for concordance views and browse views that show occurrence counts.
+	/// It implements the Occurrences and OccurrencesCount properties for WfiWordform, WfiAnalysis, and/or WfiGloss.
+	/// Both occurrences and OccurrencesCount are decorator rather than virtual properties because the results depend
+	/// on per-window choices of which texts to include.
+	/// It also implements the property ConcOccurrences, which is a decorator-only object as well as a decorator-only property.
+	/// ConcOccurrences is the top-level list of occurrences of whatever the user asked to search for in Concordance view.
+	/// Occurrences are 'fake' HVOs that don't correspond to any real object in the database. They also have properties only recognized
+	/// by the decorator, such as a reference, begin and end character offsets (in the original paragraph string...used to bold the
+	/// keyword), the object (typically StTxtPara) and segment they belong to, and several other derived properties which can
+	/// be displayed in optional columns of the concordance views.
 	/// </summary>
 	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator, IRefreshCache
 	{
@@ -26,6 +34,8 @@ namespace SIL.FieldWorks.XWorks
 		private Dictionary<int, int[]> m_values = new Dictionary<int, int[]>();
 		Dictionary<int, IParaFragment> m_occurrences = new Dictionary<int, IParaFragment>();
 		private IFdoServiceLocator m_services;
+		// This variable supports kflidConcOccurrences, the root list for the Concordance view (as opposed to the various word list views).
+		// The value is determined by the concordance control and inserted into this class.
 		private int[] m_concValues = new int[0];
 		private int m_notifieeCount; // How many things are we notifying?
 		private InterestingTextList m_interestingTexts;
@@ -69,9 +79,23 @@ namespace SIL.FieldWorks.XWorks
 			base.RemoveNotification(nchng);
 			m_notifieeCount--;
 			if (m_notifieeCount <= 0 && m_interestingTexts != null)
+			{
 				m_interestingTexts.InterestingTextsChanged -= m_interestingTexts_InterestingTextsChanged;
+				// Also we need to make sure the InterestingTextsList doesn't do propchanges for us anymore
+				// N.B. This avoids LT-12437, but we are assuming that this only gets triggered during Refresh or
+				// shutting down the main window, when all the Clerks are being disposed.
+				// If a clerk were to be disposed some other time when another clerk was still using the ITL,
+				// this would be a bad thing to do.
+				base.RemoveNotification(m_interestingTexts);
+			}
 		}
 
+		/// <summary>
+		/// Count the things that are interested in us so that, when there are no more, we can indicate that we no longer care about
+		/// changes to the collection of interesting texts.
+		/// Review JohnT: could it ever happen that we regain our interest in those changes, getting a new notifiee after we lost our last one?
+		/// </summary>
+		/// <param name="nchng"></param>
 		public override void AddNotification(IVwNotifyChange nchng)
 		{
 			base.AddNotification(nchng);
@@ -109,6 +133,9 @@ namespace SIL.FieldWorks.XWorks
 			m_values.Remove(hvo);
 		}
 
+		/// <summary>
+		/// Get the occurrences of a particular analysis in the currently interesting texts.
+		/// </summary>
 		private int[] GetAnalysisOccurrences(int hvo, bool includeChildren)
 		{
 			int[] values;
@@ -170,6 +197,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Make sure we have the right list of occurrences for the specified analysis.
+		// If we've ever been asked for it, send a PropChanged notification to indicate that it has changed.
 		public void UpdateAnalysisOccurrences(IAnalysis obj, bool includeChildren)
 		{
 			int hvo = obj.Hvo;
@@ -278,7 +306,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Makes more acessible the means of testing for interesting texts.
 		/// </summary>
-		internal bool IsInterestingText(IStText text)
+		public bool IsInterestingText(IStText text)
 		{
 			if (m_interestingTexts == null)
 				return true;
@@ -383,15 +411,15 @@ namespace SIL.FieldWorks.XWorks
 					return GetAnalysisOccurrences(hvo).Length;
 				case kflidBeginOffset:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
 							return occurrence.GetMyBeginOffsetInPara();
 						return 0;
 					}
 				case kflidEndOffset:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
 							return occurrence.GetMyEndOffsetInPara();
 						return 0;
 					}
@@ -456,29 +484,29 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case kflidTextObject:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
 							return occurrence.TextObject.Hvo;
 						return 0;
 					}
 				case kflidSegment:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid && occurrence.Segment != null)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Segment != null)
 							return occurrence.Segment.Hvo;
 						return 0;
 					}
 				case kflidAnalysis:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid && occurrence.Analysis != null)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Analysis != null)
 							return occurrence.Analysis.Hvo;
 						return 0;
 					}
 				case kflidParagraph:
 					{
-						var occurrence = m_occurrences[hvo];
-						if (occurrence.IsValid)
+						IParaFragment occurrence;
+						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
 							return occurrence.Paragraph.Hvo;
 						return 0;
 					}

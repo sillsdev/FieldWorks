@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// "caller" even when the chain has been broken in method calls into the views code and
 		/// back out.  (part of the implementation of LT-10542)
 		/// </summary>
-		readonly List<XmlNode> m_stackPartRef = new List<XmlNode>();
+		internal readonly List<XmlNode> m_stackPartRef = new List<XmlNode>();
 
 		/// <summary>
 		/// List of guids used to filter/sort in DisplayVec().
@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="layouts">The layouts.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlNode GetNodeForChild(XmlNode node, XmlNode callingFrag, LayoutCache layouts)
+		public static XmlNode GetDisplayNodeForChild(XmlNode node, XmlNode callingFrag, LayoutCache layouts)
 		{
 			if (node == null)
 				node = callingFrag; // didn't get anything, hope the calling node has useful children
@@ -532,6 +532,13 @@ namespace SIL.FieldWorks.Common.Controls
 		// Magic number we set up a dependency on to achieve redrawing of stuff that is visible
 		// when we have focus.
 		internal const int FocusHvo = -1;
+
+		// Magic tag used similarly
+		internal const int IsObjectSelectedTag = -14987;
+
+		// Keeps track of which objects are considered selected. Maintained by the view.
+		internal List<int> SelectedObjects = new List<int>(1);
+
 		/// <summary>
 		/// Add a command icon (currently the blue circle icon). Visibility is only while the pane has
 		/// focus. By default, it is also only visible while the current object is selected.
@@ -558,7 +565,10 @@ namespace SIL.FieldWorks.Common.Controls
 				default:
 					throw new ConfigurationException("visibility of commandIcon must be 'objectSelected' or 'focused' but was " + condition);
 			}
-			if (HasFocus)
+			// This phony dependency allows us to regenerate a minimal part of the view when the HasFocus property changes,
+			// or when there is a change in the set of selected objects for which icons should be visible.
+			vwenv.NoteDependency(new int[] { hvoDepends }, new int[] { IsObjectSelectedTag }, 1);
+			if (HasFocus && SelectedObjects.Contains(hvoDepends))
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
 					0xffffff);
@@ -579,65 +589,6 @@ namespace SIL.FieldWorks.Common.Controls
 			// It has to be obsolete, since the new system puts DisplayCommand objects in m_idToDisplayCommand,
 			// not XmlNodes.
 			throw new InvalidOperationException("Obsolete system use for 'DisplayPicture' method.");
-			/*
-			XmlNode node = m_idToDisplayCommand[frag] as XmlNode;
-			Debug.Assert(node.Name == "picturevalues"); // Review: should we check even in release build?
-			// Enhance JohnT: maybe we should give an attribute 'val' to <picture> and search for it?
-			XmlNode picNode = node.ChildNodes[val];
-			if (picNode.Name=="icon")
-			{
-				string assemblyPath = XmlUtils.GetManditoryAttributeValue(picNode, "assemblyPath");
-				string staticProp = XmlUtils.GetOptionalAttributeValue(picNode, "staticproperty", "");
-				Image image = null;
-				if (staticProp != "")
-				{
-					string className = XmlUtils.GetManditoryAttributeValue(picNode, "class");
-					string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-					Assembly assembly=null;
-					try
-					{
-						assembly = Assembly.LoadFrom(Path.Combine(baseDir, assemblyPath));
-					}
-					catch (Exception error)
-					{
-						throw new RuntimeConfigurationException("XmlVc Could not find the DLL at :"+assemblyPath, error);
-					}
-					Type type = null;
-					try
-					{
-						type = assembly.GetType(className);
-					}
-					catch (Exception error)
-					{
-						throw new RuntimeConfigurationException("XmlVc Could not find the class called: "+className, error);
-					}
-					PropertyInfo pi = type.GetProperty(staticProp, BindingFlags.Public | BindingFlags.Static | BindingFlags.GetProperty);
-					if (pi == null)
-						throw new Exception("public static property " + staticProp + " not found");
-					object imageObj = pi.GetValue(null, null);
-					image = imageObj as Image;
-					if (image == null)
-						throw new Exception("property " + staticProp + "did not return an image");
-
-					//					image = (Image)type.InvokeMember(staticProp, BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty,
-					//						null, null, new object[0]);
-				}
-				else
-				{
-					// This option is not yet tested and may not work.
-					object picMaker = SIL.Utils.DynamicLoader.CreateObject(picNode); // Probably ResourceHelper.
-					Type picMakerType = picMaker.GetType();
-					string picFunction = XmlUtils.GetManditoryAttributeValue(picNode, "method");
-					image = (Image)picMakerType.InvokeMember(picFunction, System.Reflection.BindingFlags.Public,
-						null, picMaker, new object[] {});
-				}
-				return (IPicture)SIL.Utils.OLECvt.ToOLE_IPictureDisp(image);
-			}
-			else
-			{
-				// whatever...we may do a 'picture' one that has a filename.
-				return null;
-			}*/
 		}
 
 		// Part of a mechanism by which browse view columns
@@ -684,7 +635,7 @@ namespace SIL.FieldWorks.Common.Controls
 			internal int Index { get; set; }
 		}
 
-		internal int[] FilterAndSortListByGuidMap(int[] hvos, int hvoTarget)
+		internal int[] FilterAndSortListByComplexFormType(int[] hvos, int hvoTarget)
 		{
 			if (hvos.Length == 0)
 				return hvos;
@@ -1473,7 +1424,7 @@ namespace SIL.FieldWorks.Common.Controls
 							if (flid == 0)
 								return; // can't do anything. Report?
 
-							int fragId = GetSubFragId(frag, caller);
+							int fragId = GetSubFragIdSeq(frag, caller);
 							if (fragId == 0)
 								return; // something badly wrong.
 							AddObjectVector(frag, vwenv, flid, fragId, caller);
@@ -1720,7 +1671,18 @@ namespace SIL.FieldWorks.Common.Controls
 					case "part":
 						// This occurs when the node we're processing is a child of a layout,
 						// and therefore a 'part ref'. It calls the specified part of the current object.
+
+						// Some configuration items, like senses, will not display themselves if their type has already been shown
+						// i.e. when displaying a sense any attempt to display sense info under the child of a sense is ignored.
+						// in certain circumstances, like when a minor entry is the component of a sense of a main entry you need to display
+						// the senses of the subentry. The following code will allow that to be specified in the configuration xml.
+						bool wasIgnoring = ShouldIgnoreGramInfo;
+						if (frag.Attributes != null && frag.Attributes["forceSubentryDisplay"] != null)
+						{
+							ShouldIgnoreGramInfo = !Boolean.Parse(frag.Attributes["forceSubentryDisplay"].Value);
+						}
 						ProcessPartRef(frag, hvo, vwenv);
+						ShouldIgnoreGramInfo = wasIgnoring;
 						break;
 					case "sublayout":
 						string layoutName = XmlUtils.GetOptionalAttributeValue(frag, "name", null);
@@ -1744,12 +1706,17 @@ namespace SIL.FieldWorks.Common.Controls
 								if (style == null)
 								{
 									if (caller != null)
-										style = GetParaStyle(caller);
-									else foreach (var parent in m_stackPartRef)
 									{
-										style = GetParaStyle(parent);
-										if (style != null)
-											break;
+										style = GetParaStyle(caller);
+									}
+									else
+									{
+										foreach (var parent in m_stackPartRef)
+										{
+											style = GetParaStyle(parent);
+											if (style != null)
+												break;
+										}
 									}
 								}
 								else if (m_stackPartRef.Count > 0)
@@ -1882,11 +1849,14 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// custom field identified during TryColumnForCustomField. Is not currently meaningful outside TryColumnForCustomField().
+		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
+		/// outside TryColumnForCustomField().
 		/// </summary>
 		XmlNode m_customFieldNode = null;
+
 		/// <summary>
-		/// Determine whether or not the given colSpec refers to a custom field, respective of whether or not it is still valid.
+		/// Determine whether or not the given colSpec refers to a custom field, respective of
+		/// whether or not it is still valid.
 		/// Uses layout/parts to find custom field specifications.
 		/// </summary>
 		/// <param name="colSpec"></param>
@@ -2467,18 +2437,18 @@ namespace SIL.FieldWorks.Common.Controls
 				//bool fGramInfoBeforeNumber = XmlUtils.GetOptionalBooleanAttributeValue(frag, "graminfobeforenumber", false);
 				//if (fGramInfoBeforeNumber && m_tssDelayedNumber != null)
 				//{
-				//    if (node.FirstChild != null && node.FirstChild.Name == "obj")
-				//    {
-				//        int flid = GetFlid(node.FirstChild, hvo);
-				//        int hvoValue = m_cache.GetObjProperty(hvo, flid);
-				//        if (hvoValue == m_hvoGroupedValue)
-				//        {
-				//            vwenv.AddString(m_tssDelayedNumber);
-				//            m_tssDelayedNumber = null;
-				//            return;
-				//        }
-				//        m_hvoGroupedValue = hvoValue;
-				//    }
+				//	if (node.FirstChild != null && node.FirstChild.Name == "obj")
+				//	{
+				//		int flid = GetFlid(node.FirstChild, hvo);
+				//		int hvoValue = m_cache.GetObjProperty(hvo, flid);
+				//		if (hvoValue == m_hvoGroupedValue)
+				//		{
+				//			vwenv.AddString(m_tssDelayedNumber);
+				//			m_tssDelayedNumber = null;
+				//			return;
+				//		}
+				//		m_hvoGroupedValue = hvoValue;
+				//	}
 				//}
 				// We are going to display the contents of the part.
 				string style = XmlUtils.GetOptionalAttributeValue(frag, "style", null);
@@ -2549,8 +2519,8 @@ namespace SIL.FieldWorks.Common.Controls
 				// the future.  (See LT-9663.)
 				//if (fGramInfoBeforeNumber && m_tssDelayedNumber != null)
 				//{
-				//    vwenv.AddString(m_tssDelayedNumber);
-				//    m_tssDelayedNumber = null;
+				//	vwenv.AddString(m_tssDelayedNumber);
+				//	m_tssDelayedNumber = null;
 				//}
 			}
 			finally
@@ -2646,7 +2616,7 @@ namespace SIL.FieldWorks.Common.Controls
 				//vwenv.get_StringWidth(tss, null, out dmpx2, out dmpy2);
 				//int val = (dmpx2 - dmpx) * 1000;
 				//tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptFirstIndent,
-				//    (int)FwTextPropVar.ktpvMilliPoint, val);
+				//	(int)FwTextPropVar.ktpvMilliPoint, val);
 				//tss = tsb.GetString();
 			}
 			AddMarkedString(vwenv, frag, tss);
@@ -2917,21 +2887,22 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		private void AddObjectVector(XmlNode frag, IVwEnv vwenv, int flid, int fragId, XmlNode caller)
 		{
-			XmlNode nodeSeqStuff;
-			XmlNode specialAttrsStuff;
+			XmlNode itemDecorationNode;
+			XmlNode sequenceOptionNode;
 			// seq stuff on the frag node
-			nodeSeqStuff = specialAttrsStuff = frag;
-			if (XmlUtils.GetOptionalBooleanAttributeValue(nodeSeqStuff, "inheritSeps", false))
-				nodeSeqStuff = caller;
-			XmlAttribute xaSep = nodeSeqStuff == null ? null : nodeSeqStuff.Attributes["sep"];
-			XmlAttribute xaNum = nodeSeqStuff == null ? null : nodeSeqStuff.Attributes["number"];
-			// Note that we deliberately don't use nodeSeqStuff here. "excludeHvo" is not a separator property,
+			itemDecorationNode = sequenceOptionNode = frag;
+			if (XmlUtils.GetOptionalBooleanAttributeValue(itemDecorationNode, "inheritSeps", false))
+				itemDecorationNode = caller;
+			XmlAttribute xaSep = itemDecorationNode == null ? null : itemDecorationNode.Attributes["sep"];
+			XmlAttribute xaNum = itemDecorationNode == null ? null : itemDecorationNode.Attributes["number"];
+			// Note that we deliberately don't use itemDecorationNode here. "excludeHvo" is not a separator property,
 			// nor configurable, so it belongs on the 'seq' element, not the part ref.
-			var exclude = XmlUtils.GetOptionalAttributeValue(specialAttrsStuff, "excludeHvo", null);
-			var fFirstOnly = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsStuff, "firstOnly", false);
-			var sort = XmlUtils.GetOptionalAttributeValue(specialAttrsStuff, "sort", null);
+			var exclude = XmlUtils.GetOptionalAttributeValue(sequenceOptionNode, "excludeHvo", null);
+			var fFirstOnly = XmlUtils.GetOptionalBooleanAttributeValue(sequenceOptionNode, "firstOnly", false);
+			var sort = XmlUtils.GetOptionalAttributeValue(sequenceOptionNode, "sort", null);
 			var fNumber = xaNum != null && xaNum.Value != null && xaNum.Value != "";
 			var fSep = xaSep != null && xaSep.Value != null && xaSep.Value != "";
+			bool isDivInPara = XmlUtils.GetOptionalAttributeValue(itemDecorationNode, "flowType", "").Equals("divInPara");
 			if (caller != null)
 			{
 				var guidsFilter = XmlUtils.GetOptionalAttributeValue(caller, "reltypeseq");
@@ -2979,7 +2950,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (fNumber || fSep || exclude != null || fFirstOnly || sort != null ||
 				m_mapGuidToReferenceInfo != null || m_mapGuidToComplexRefInfo != null ||
-				m_mapGuidToVariantRefInfo != null)
+				m_mapGuidToVariantRefInfo != null || isDivInPara)
 			{
 				// This results in DisplayVec being called.
 				vwenv.AddObjVec(flid, this, fragId);
@@ -3646,11 +3617,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 				int[] contents;
 				int chvoMax = sda.get_VecSize(hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoMax, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 				{
 					int chvo;
 					sda.VecProp(hvo, flid, chvoMax, out chvo, arrayPtr);
-					contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 				foreach (int hvoVec in contents)
 				{
@@ -3699,8 +3670,9 @@ namespace SIL.FieldWorks.Common.Controls
 				case "rows":
 					return VwRule.kvrlRows;
 			}
-			return VwRule.kvrlNone;		// or Assert or throw exception?
+			return VwRule.kvrlNone; // or Assert or throw exception?
 		}
+
 		/// <summary>
 		/// Return an enumeration member indicating the default alignment of cells.
 		/// Note JohnT: not sure this feature is implemented yet...full justification certainly isn't.
@@ -3819,9 +3791,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		protected IApp MApp
 		{
 			get { return m_app; }
@@ -4151,8 +4121,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the layout name to use, based on both the current node and the one that invoked it.
@@ -4187,18 +4155,22 @@ namespace SIL.FieldWorks.Common.Controls
 		// The ID identifies both the frag and the caller as a pair in m_idToDisplayInfo
 		// Note: parallel logic in XmlViewsUtils.GetNodeForRelatedObject must be kept in sync.
 		// (Ideas on how to refactor to a single place welcome!!)
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the sub frag id.
 		/// </summary>
-		/// <param name="frag">The frag.</param>
-		/// <param name="caller">The caller.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		protected int GetSubFragId(XmlNode frag, XmlNode caller)
 		{
 			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
 			return GetId(new MainCallerDisplayCommand(frag, caller, false, WsForce), m_idToDisplayCommand, m_displayCommandToId);
+		}
+
+		/// <summary>
+		/// Gets the sub frag id for a sequence. Must retain information about m_stackPartRef in addition to the usual
+		/// </summary>
+		protected int GetSubFragIdSeq(XmlNode frag, XmlNode caller)
+		{
+			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
+			return GetId(new MainCallerDisplayCommandSeq(frag, caller, false, WsForce, m_stackPartRef), m_idToDisplayCommand, m_displayCommandToId);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4233,6 +4205,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			foreach (XmlNode node in frag.ChildNodes)
 			{
+				MainCallerDisplayCommand.PrintNodeTreeStep(hvo, node);
 				ProcessFrag(node, vwenv, hvo, true, caller);
 			}
 			if (!String.IsNullOrEmpty(css))
@@ -4735,7 +4708,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 	}
 
-
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// this class contains the info used as a value in m_idToDisplayInfo
@@ -4761,7 +4733,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo)
 		{
+			++MainCallerDisplayCommand.displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo);
+			--MainCallerDisplayCommand.displayLevel;
 		}
 		// Gather up info about what fields are needed for the specified node.
 		internal void DetermineNeededFieldsForChildren(XmlVc vc, XmlNode node, XmlNode caller,
@@ -4821,7 +4795,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			vc.DetermineNeededFieldsFor(m_node, null, info);
 		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -4897,7 +4870,6 @@ namespace SIL.FieldWorks.Common.Controls
 			return base.Equals(obj) && obj is NodeChildrenDisplayCommand;
 		}
 
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Compiler requires override since Equals is overridden.
@@ -4915,6 +4887,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
+	[DebuggerDisplay("main={m_mainNode.Name},caller={m_caller.Name}")]
 	internal class MainCallerDisplayCommand : DisplayCommand
 	{
 		// The main node, usually one that has a "layout" attribute; obj or seq.
@@ -4929,8 +4902,8 @@ namespace SIL.FieldWorks.Common.Controls
 		bool m_fUseMainAsFrag;
 
 		/// <summary>
-		/// The value of wsForce for the vc when the MainCallerDisplayCommand was needed (restored for the
-		/// duration of building its parts).
+		/// The value of wsForce for the vc when the MainCallerDisplayCommand was needed (restored
+		/// for the duration of building its parts).
 		/// </summary>
 		private int m_wsForce;
 
@@ -4977,6 +4950,8 @@ namespace SIL.FieldWorks.Common.Controls
 				+ (m_caller == null ? 0 : m_caller.GetHashCode())
 				+ m_wsForce;
 		}
+
+		internal static int displayLevel = 0;
 
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
@@ -5035,6 +5010,7 @@ namespace SIL.FieldWorks.Common.Controls
 							vwenv.OpenDiv();
 							break;
 					}
+					PrintNodeTreeStep(hvo, node);
 					ProcessChildren(fragId, vc, vwenv, node, hvo);
 					switch (flowType)
 					{
@@ -5060,6 +5036,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 				{
 					// no flow/style specified
+					PrintNodeTreeStep(hvo, node);
 					ProcessChildren(fragId, vc, vwenv, node, hvo);
 				}
 			}
@@ -5070,6 +5047,17 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (logStream != null)
 				logStream.DecreaseIndent();
+		}
+
+		internal static void PrintNodeTreeStep(int hvo, XmlNode node)
+		{
+			//string indent = "";
+			//for(int i = 0; i < displayLevel; ++i)
+			//    indent += "->";
+			//Debug.Print("|{0}{1} : {2} # {3}|", indent, node.Attributes != null ?
+			//                                                node.Attributes["class"] != null ? node.Attributes["class"].Value :
+			//                                                 node.Attributes["ref"] != null ? node.Attributes["ref"].Value : "" : "",
+			//            node.Name, hvo);
 		}
 
 		internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
@@ -5090,12 +5078,12 @@ namespace SIL.FieldWorks.Common.Controls
 			layoutName = GetLayoutName(out callingFrag, out node);
 			if (node == null)
 				node = vc.GetNodeForPart(hvo, layoutName, true);
-			node = XmlVc.GetNodeForChild(node, callingFrag, vc.m_layouts);
+			node = XmlVc.GetDisplayNodeForChild(node, callingFrag, vc.m_layouts);
 			return node;
 		}
 
 		/// <summary>
-		/// Almost the same as GetNodeForChild, but depends on knowing the class of child
+		/// Almost the same as GetDisplayNodeForChild, but depends on knowing the class of child
 		/// rather than the actual child instance.
 		/// </summary>
 		/// <param name="layoutName"></param>
@@ -5111,7 +5099,7 @@ namespace SIL.FieldWorks.Common.Controls
 			layoutName = GetLayoutName(out callingFrag, out node);
 			if (node == null)
 				node = vc.GetNodeForPart(layoutName, true, clsid);
-			node = XmlVc.GetNodeForChild(node, callingFrag, vc.m_layouts);
+			node = XmlVc.GetDisplayNodeForChild(node, callingFrag, vc.m_layouts);
 			return node;
 		}
 
@@ -5128,6 +5116,59 @@ namespace SIL.FieldWorks.Common.Controls
 				layoutName = XmlVc.GetLayoutName(callingFrag, caller);
 			}
 			return layoutName;
+		}
+	}
+
+	/// <summary>
+	/// This is a subclass of MainCallerDisplayCommand, necessary for sequences.
+	/// When a display of a sequence is regenerated, we must restore m_stackPartRef to the correct state.
+	/// </summary>
+	internal class MainCallerDisplayCommandSeq : MainCallerDisplayCommand
+	{
+		private XmlNode[] m_stackPartRef;
+		internal MainCallerDisplayCommandSeq(XmlNode mainNode, XmlNode caller, bool fUserMainAsFrag, int wsForce, List<XmlNode> stackPartRef)
+			: base(mainNode, caller, fUserMainAsFrag, wsForce)
+		{
+			m_stackPartRef = stackPartRef.ToArray();
+		}
+
+		/// <summary>
+		/// Two of these are equal if everything inherited is equal, and they have the same saved stack items.
+		/// </summary>
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals(obj))
+				return false;
+			var other = obj as MainCallerDisplayCommandSeq;
+			if (other == null || other.m_stackPartRef.Length != m_stackPartRef.Length)
+				return false;
+			for (int i = 0; i < m_stackPartRef.Length; i++)
+			{
+				if (m_stackPartRef[i] != other.m_stackPartRef[i])
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Hash code must incorporate the stack items.
+		/// </summary>
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() + m_stackPartRef.Sum(node => node.GetHashCode());
+		}
+
+		/// <summary>
+		/// Base version wrapped in making the stack what it needs to be.
+		/// </summary>
+		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+		{
+			var save = vc.m_stackPartRef.ToArray();
+			vc.m_stackPartRef.Clear();
+			vc.m_stackPartRef.AddRange(m_stackPartRef);
+			base.PerformDisplay(vc, fragId, hvo, vwenv);
+			vc.m_stackPartRef.Clear();
+			vc.m_stackPartRef.AddRange(save);
 		}
 	}
 
@@ -5280,12 +5321,12 @@ namespace SIL.FieldWorks.Common.Controls
 			DisplayStringAltCommand other = obj as DisplayStringAltCommand;
 			if (other == null)
 				return false;
-			return other.m_tag == m_tag && other.m_ws == m_ws;
+			return other.m_tag == m_tag && other.m_ws == m_ws && other.m_caller == m_caller;
 		}
 
 		public override int GetHashCode()
 		{
-			return m_tag + m_ws;
+			return m_tag + m_ws + (m_caller == null ? 0 : m_caller.GetHashCode());
 		}
 
 		internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
@@ -5412,11 +5453,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 	}
 
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	public class PropWs
 	{
 		/// ------------------------------------------------------------------------------------

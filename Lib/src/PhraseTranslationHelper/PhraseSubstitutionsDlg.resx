@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 9</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>532, 114</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>Phrase substitutions can be used to pre-process the English comprehension checking questions to align the grammar more closely with that of the target language. For example, adjust word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.
+
+To remove text, leave the Replacement column blank.
+
+If you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="tableLayoutPanel1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="tableLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_numTimesToMatch.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="m_numTimesToMatch.Location" type="System.Drawing.Point, System.Drawing">
+	<value>140, 84</value>
+  </data>
+  <data name="m_numTimesToMatch.Size" type="System.Drawing.Size, System.Drawing">
+	<value>107, 20</value>
+  </data>
+  <data name="m_numTimesToMatch.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;m_numTimesToMatch.Name" xml:space="preserve">
+	<value>m_numTimesToMatch</value>
+  </data>
+  <data name="&gt;&gt;m_numTimesToMatch.Type" xml:space="preserve">
+	<value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_numTimesToMatch.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;m_numTimesToMatch.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_btnMatchSingleWord.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnMatchSingleWord.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="m_btnMatchSingleWord.Size" type="System.Drawing.Size, System.Drawing">
+	<value>244, 23</value>
+  </data>
+  <data name="m_btnMatchSingleWord.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_btnMatchSingleWord.Text" xml:space="preserve">
+	<value>Match any single word</value>
+  </data>
+  <data name="&gt;&gt;m_btnMatchSingleWord.Name" xml:space="preserve">
+	<value>m_btnMatchSingleWord</value>
+  </data>
+  <data name="&gt;&gt;m_btnMatchSingleWord.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnMatchSingleWord.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;m_btnMatchSingleWord.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 87</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>122, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>Maximum times to match</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_txtMatchPrefix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="m_txtMatchPrefix.Location" type="System.Drawing.Point, System.Drawing">
+	<value>140, 32</value>
+  </data>
+  <data name="m_txtMatchPrefix.Size" type="System.Drawing.Size, System.Drawing">
+	<value>107, 20</value>
+  </data>
+  <data name="m_txtMatchPrefix.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchPrefix.Name" xml:space="preserve">
+	<value>m_txtMatchPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchPrefix.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchPrefix.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchPrefix.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_txtMatchSuffix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="m_txtMatchSuffix.Location" type="System.Drawing.Point, System.Drawing">
+	<value>140, 58</value>
+  </data>
+  <data name="m_txtMatchSuffix.Size" type="System.Drawing.Size, System.Drawing">
+	<value>107, 20</value>
+  </data>
+  <data name="m_txtMatchSuffix.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchSuffix.Name" xml:space="preserve">
+	<value>m_txtMatchSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchSuffix.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchSuffix.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;m_txtMatchSuffix.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="lblSuffix.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblSuffix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="lblSuffix.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblSuffix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblSuffix.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 61</value>
+  </data>
+  <data name="lblSuffix.Size" type="System.Drawing.Size, System.Drawing">
+	<value>73, 13</value>
+  </data>
+  <data name="lblSuffix.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblSuffix.Text" xml:space="preserve">
+	<value>Match a suffix</value>
+  </data>
+  <data name="&gt;&gt;lblSuffix.Name" xml:space="preserve">
+	<value>lblSuffix</value>
+  </data>
+  <data name="&gt;&gt;lblSuffix.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSuffix.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;lblSuffix.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 35</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>Match a prefix</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>250, 107</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+	<value>m_regexMatchHelper</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_numTimesToMatch" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_btnMatchSingleWord" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="label3" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_txtMatchPrefix" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_txtMatchSuffix" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblSuffix" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="lblRes.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblRes.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblRes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 43</value>
+  </data>
+  <data name="lblRes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>40, 13</value>
+  </data>
+  <data name="lblRes.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblRes.Text" xml:space="preserve">
+	<value>Result:</value>
+  </data>
+  <data name="&gt;&gt;lblRes.Name" xml:space="preserve">
+	<value>lblRes</value>
+  </data>
+  <data name="&gt;&gt;lblRes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRes.Parent" xml:space="preserve">
+	<value>m_grpPreview</value>
+  </data>
+  <data name="&gt;&gt;lblRes.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="tableLayoutPanel2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="tableLayoutPanel2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <metadata name="label4.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label4.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 7</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>67, 13</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+	<value>Match group</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_cboMatchGroup.Items" xml:space="preserve">
+	<value>Remove</value>
+  </data>
+  <data name="m_cboMatchGroup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>76, 3</value>
+  </data>
+  <data name="m_cboMatchGroup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>121, 21</value>
+  </data>
+  <data name="m_cboMatchGroup.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_cboMatchGroup.Name" xml:space="preserve">
+	<value>m_cboMatchGroup</value>
+  </data>
+  <data name="&gt;&gt;m_cboMatchGroup.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cboMatchGroup.Parent" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;m_cboMatchGroup.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 27</value>
+  </data>
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
+	<value>m_regexReplacementHelper</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label4" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_cboMatchGroup" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>199, 434</value>
+  </data>
+  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
+	<value>btnOk</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>282, 434</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+	<value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_dataGridView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="colMatch.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="colMatch.HeaderText" xml:space="preserve">
+	<value>Word or Phrase to Replace</value>
+  </data>
+  <data name="colMatch.MinimumWidth" type="System.Int32, mscorlib">
+	<value>200</value>
+  </data>
+  <data name="colMatch.ToolTipText" xml:space="preserve">
+	<value>Enter text to replace or omit from the original text of the question</value>
+  </data>
+  <data name="colMatch.Width" type="System.Int32, mscorlib">
+	<value>200</value>
+  </data>
+  <metadata name="colReplacement.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="colReplacement.HeaderText" xml:space="preserve">
+	<value>Replacement</value>
+  </data>
+  <data name="colReplacement.MinimumWidth" type="System.Int32, mscorlib">
+	<value>100</value>
+  </data>
+  <data name="colReplacement.ToolTipText" xml:space="preserve">
+	<value>Enter replacement text or expression (leave blank to omit the word or phrase entirely)</value>
+  </data>
+  <metadata name="colIsRegEx.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="colIsRegEx.HeaderText" xml:space="preserve">
+	<value>Regular Expression</value>
+  </data>
+  <data name="colIsRegEx.ToolTipText" xml:space="preserve">
+	<value>Select to interpret as a regular expression</value>
+  </data>
+  <data name="colIsRegEx.Width" type="System.Int32, mscorlib">
+	<value>94</value>
+  </data>
+  <metadata name="colMatchCase.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="colMatchCase.HeaderText" xml:space="preserve">
+	<value>Match Case</value>
+  </data>
+  <data name="colMatchCase.ToolTipText" xml:space="preserve">
+	<value>Select to indicat that matches should be case-sensitive</value>
+  </data>
+  <data name="m_dataGridView.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 126</value>
+  </data>
+  <data name="m_dataGridView.Size" type="System.Drawing.Size, System.Drawing">
+	<value>532, 215</value>
+  </data>
+  <data name="m_dataGridView.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Name" xml:space="preserve">
+	<value>m_dataGridView</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Type" xml:space="preserve">
+	<value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_regexMatchHelper.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_regexMatchHelper.Location" type="System.Drawing.Point, System.Drawing">
+	<value>21, 203</value>
+  </data>
+  <data name="m_regexMatchHelper.Size" type="System.Drawing.Size, System.Drawing">
+	<value>257, 117</value>
+  </data>
+  <data name="m_regexMatchHelper.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="m_regexMatchHelper.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_regexMatchHelper.Name" xml:space="preserve">
+	<value>m_regexMatchHelper</value>
+  </data>
+  <data name="&gt;&gt;m_regexMatchHelper.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_regexMatchHelper.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_regexMatchHelper.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_grpPreview.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="m_lblResult.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_lblResult.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblResult.Location" type="System.Drawing.Point, System.Drawing">
+	<value>52, 43</value>
+  </data>
+  <data name="m_lblResult.Size" type="System.Drawing.Size, System.Drawing">
+	<value>474, 13</value>
+  </data>
+  <data name="m_lblResult.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_lblResult.Text" xml:space="preserve">
+	<value>#</value>
+  </data>
+  <data name="&gt;&gt;m_lblResult.Name" xml:space="preserve">
+	<value>m_lblResult</value>
+  </data>
+  <data name="&gt;&gt;m_lblResult.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblResult.Parent" xml:space="preserve">
+	<value>m_grpPreview</value>
+  </data>
+  <data name="&gt;&gt;m_lblResult.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_cboPreviewQuestion.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_cboPreviewQuestion.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 19</value>
+  </data>
+  <data name="m_cboPreviewQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 21</value>
+  </data>
+  <data name="m_cboPreviewQuestion.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_cboPreviewQuestion.Name" xml:space="preserve">
+	<value>m_cboPreviewQuestion</value>
+  </data>
+  <data name="&gt;&gt;m_cboPreviewQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cboPreviewQuestion.Parent" xml:space="preserve">
+	<value>m_grpPreview</value>
+  </data>
+  <data name="&gt;&gt;m_cboPreviewQuestion.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_grpPreview.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_grpPreview.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 347</value>
+  </data>
+  <data name="m_grpPreview.Size" type="System.Drawing.Size, System.Drawing">
+	<value>532, 70</value>
+  </data>
+  <data name="m_grpPreview.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_grpPreview.Text" xml:space="preserve">
+	<value>Preview</value>
+  </data>
+  <data name="&gt;&gt;m_grpPreview.Name" xml:space="preserve">
+	<value>m_grpPreview</value>
+  </data>
+  <data name="&gt;&gt;m_grpPreview.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_grpPreview.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_grpPreview.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_regexReplacementHelper.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_regexReplacementHelper.Location" type="System.Drawing.Point, System.Drawing">
+	<value>287, 203</value>
+  </data>
+  <data name="m_regexReplacementHelper.Size" type="System.Drawing.Size, System.Drawing">
+	<value>206, 33</value>
+  </data>
+  <data name="m_regexReplacementHelper.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="m_regexReplacementHelper.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_regexReplacementHelper.Name" xml:space="preserve">
+	<value>m_regexReplacementHelper</value>
+  </data>
+  <data name="&gt;&gt;m_regexReplacementHelper.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_regexReplacementHelper.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_regexReplacementHelper.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>556, 469</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Question Adjustments</value>
+  </data>
+  <data name="&gt;&gt;colMatch.Name" xml:space="preserve">
+	<value>colMatch</value>
+  </data>
+  <data name="&gt;&gt;colMatch.Type" xml:space="preserve">
+	<value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colReplacement.Name" xml:space="preserve">
+	<value>colReplacement</value>
+  </data>
+  <data name="&gt;&gt;colReplacement.Type" xml:space="preserve">
+	<value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colIsRegEx.Name" xml:space="preserve">
+	<value>colIsRegEx</value>
+  </data>
+  <data name="&gt;&gt;colIsRegEx.Type" xml:space="preserve">
+	<value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colMatchCase.Name" xml:space="preserve">
+	<value>colMatchCase</value>
+  </data>
+  <data name="&gt;&gt;colMatchCase.Type" xml:space="preserve">
+	<value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>PhraseSubstitutionsDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

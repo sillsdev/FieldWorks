@@ -1686,6 +1686,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			/// <summary>
+			/// This constructor should be used if you want to provide a seperate cache decorator.
+			/// </summary>
+			/// <param name="env"></param>
+			/// <param name="cache"></param>
+			/// <param name="sda">Data access object, decorator, to use for this ItemsCollectorEnv</param>
+			/// <param name="hvoRoot"></param>
+			public ItemsCollectorEnv(IVwEnv env, FdoCache cache, ISilDataAccess sda, int hvoRoot)
+				: base(env, sda, hvoRoot)
+			{
+				m_cache = cache;
+			}
+
+			/// <summary>
 			/// Return the list of hvos used to build the display in DisplayCell.
 			/// </summary>
 			public Set<int> HvosCollectedInCell

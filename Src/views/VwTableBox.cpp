@@ -757,7 +757,7 @@ bool VwTableBox::Relayout(IVwGraphics * pvg, int dxAvailWidth,
 					VwTableRowBox* ptabrow2 = dynamic_cast<VwTableRowBox *>(ptabrow->Next());
 					for (int i = ptabcell->RowSpan() - 1; i > 0; i--)
 					{
-						VwBox * pboxTempRow = ptabrow2;
+						pboxTempRow = ptabrow2;
 						if (pfixmap->Retrieve(pboxTempRow, &vrect))
 						{
 							fAffected = true;
@@ -1363,7 +1363,7 @@ VwBox * VwTableCellBox::FirstBoxInNextTableCell()
 	VwTableRowBox * prow = dynamic_cast<VwTableRowBox *>(Container()->NextRealBox());
 	while (prow)
 	{
-		VwTableCellBox * pcell = dynamic_cast<VwTableCellBox *>(prow->FirstRealBox());
+		pcell = dynamic_cast<VwTableCellBox *>(prow->FirstRealBox());
 		while (pcell)
 		{
 			VwBox * pbox = pcell->FirstRealBox();

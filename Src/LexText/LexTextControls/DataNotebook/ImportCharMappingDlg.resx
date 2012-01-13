@@ -318,6 +318,114 @@
   <data name="&gt;&gt;m_groupStdFmt.ZOrder" xml:space="preserve">
 	<value>4</value>
   </data>
+  <data name="&gt;&gt;m_lblStyle.Name" xml:space="preserve">
+	<value>m_lblStyle</value>
+  </data>
+  <data name="&gt;&gt;m_lblStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblStyle.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_lblStyle.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Name" xml:space="preserve">
+	<value>m_lblWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_chkIgnore.Name" xml:space="preserve">
+	<value>m_chkIgnore</value>
+  </data>
+  <data name="&gt;&gt;m_chkIgnore.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkIgnore.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_chkIgnore.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_btnStyles.Name" xml:space="preserve">
+	<value>m_btnStyles</value>
+  </data>
+  <data name="&gt;&gt;m_btnStyles.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnStyles.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_btnStyles.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_cbStyle.Name" xml:space="preserve">
+	<value>m_cbStyle</value>
+  </data>
+  <data name="&gt;&gt;m_cbStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbStyle.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_cbStyle.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWS.Name" xml:space="preserve">
+	<value>m_btnAddWS</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWS.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.LexText.Controls.AddWritingSystemButton, LexTextControls, Version=7.2.0.26876, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWS.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWS.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Name" xml:space="preserve">
+	<value>m_cbWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Parent" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_groupDest.Location" type="System.Drawing.Point, System.Drawing">
+	<value>10, 121</value>
+  </data>
+  <data name="m_groupDest.Size" type="System.Drawing.Size, System.Drawing">
+	<value>372, 134</value>
+  </data>
+  <data name="m_groupDest.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_groupDest.Text" xml:space="preserve">
+	<value>Notebook Destination</value>
+  </data>
+  <data name="&gt;&gt;m_groupDest.Name" xml:space="preserve">
+	<value>m_groupDest</value>
+  </data>
+  <data name="&gt;&gt;m_groupDest.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_groupDest.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_groupDest.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
   <data name="m_lblStyle.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -487,7 +595,7 @@
 	<value>m_btnAddWS</value>
   </data>
   <data name="&gt;&gt;m_btnAddWS.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.LexText.Controls.AddWritingSystemButton, LexTextControls, Version=6.9.3.19416, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.LexText.Controls.AddWritingSystemButton, LexTextControls, Version=7.2.0.26876, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_btnAddWS.Parent" xml:space="preserve">
 	<value>m_groupDest</value>
@@ -519,32 +627,11 @@
   <data name="&gt;&gt;m_cbWritingSystem.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
-  <data name="m_groupDest.Location" type="System.Drawing.Point, System.Drawing">
-	<value>10, 121</value>
-  </data>
-  <data name="m_groupDest.Size" type="System.Drawing.Size, System.Drawing">
-	<value>372, 134</value>
-  </data>
-  <data name="m_groupDest.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_groupDest.Text" xml:space="preserve">
-	<value>Notebook Destination</value>
-  </data>
-  <data name="&gt;&gt;m_groupDest.Name" xml:space="preserve">
-	<value>m_groupDest</value>
-  </data>
-  <data name="&gt;&gt;m_groupDest.Type" xml:space="preserve">
-	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_groupDest.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_groupDest.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
   <data name="m_btnOK.AccessibleName" xml:space="preserve">
 	<value>btnOK</value>
+  </data>
+  <data name="m_btnOK.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
   </data>
   <data name="m_btnOK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
@@ -641,9 +728,6 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>394, 295</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
   </data>
   <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
 	<value>410, 333</value>

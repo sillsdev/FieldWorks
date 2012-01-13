@@ -1759,14 +1759,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				if (hvo != 0)
 				{
 					int cpt = m_mdc.GetFieldType(fi.FieldId);
-					if (cpt == (int)CellarModuleDefns.kcptReferenceAtom)
+					if (cpt == (int)CellarPropertyType.ReferenceAtomic)
 					{
 						m_sda.SetObjProp(fi.Owner.Hvo, fi.FieldId, hvo);
 					}
 					else
 					{
-						Debug.Assert(cpt == (int)CellarModuleDefns.kcptReferenceCollection ||
-							cpt == (int)CellarModuleDefns.kcptReferenceSequence);
+						Debug.Assert(cpt == (int)CellarPropertyType.ReferenceCollection ||
+							cpt == (int)CellarPropertyType.ReferenceSequence);
 						int cvec = m_sda.get_VecSize(fi.Owner.Hvo, fi.FieldId);
 						m_sda.Replace(fi.Owner.Hvo, fi.FieldId, cvec, cvec, new int[] { hvo }, 1);
 					}

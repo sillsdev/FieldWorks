@@ -103,6 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			//
 			resources.ApplyResources(this.m_btnMoveUp, "m_btnMoveUp");
 			this.m_btnMoveUp.Name = "m_btnMoveUp";
+			this.m_btnMoveUp.Image = Resources.Images.arrowup;
 			this.m_btnMoveUp.UseVisualStyleBackColor = true;
 			this.m_btnMoveUp.Click += new System.EventHandler(this.m_btnMoveUp_Click);
 			//
@@ -111,6 +112,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.m_btnMoveDown, "m_btnMoveDown");
 			this.m_btnMoveDown.Name = "m_btnMoveDown";
 			this.m_btnMoveDown.UseVisualStyleBackColor = true;
+			this.m_btnMoveDown.Image = Resources.Images.arrowdown;
 			this.m_btnMoveDown.Click += new System.EventHandler(this.m_btnMoveDown_Click);
 			//
 			// m_btnDuplicate
@@ -259,12 +261,14 @@ namespace SIL.FieldWorks.XWorks
 			//
 			resources.ApplyResources(this.m_btnMoveItemDown, "m_btnMoveItemDown");
 			this.m_btnMoveItemDown.Name = "m_btnMoveItemDown";
+			this.m_btnMoveItemDown.Image = Resources.Images.arrowdown;
 			this.m_btnMoveItemDown.UseVisualStyleBackColor = true;
 			//
 			// m_btnMoveItemUp
 			//
 			resources.ApplyResources(this.m_btnMoveItemUp, "m_btnMoveItemUp");
 			this.m_btnMoveItemUp.Name = "m_btnMoveItemUp";
+			this.m_btnMoveItemUp.Image = Resources.Images.arrowup;
 			this.m_btnMoveItemUp.UseVisualStyleBackColor = true;
 			//
 			// m_lvItems

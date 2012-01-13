@@ -142,6 +142,9 @@
 	  <Name>RootSite</Name>
 	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SimpleRootSite">
 	  <Name>SimpleRootSite</Name>
 	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>

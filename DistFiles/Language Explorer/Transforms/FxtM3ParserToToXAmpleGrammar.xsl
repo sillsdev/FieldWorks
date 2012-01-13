@@ -1140,9 +1140,11 @@ Let <xsl:value-of select="$sStemName"/><xsl:text>Affix</xsl:text><xsl:value-of s
 	  </xsl:call-template>
 	   <xsl:for-each select="$allos/MoAffixAllomorph/MsEnvFeatures/FsFeatStruc[descendant::FsClosedValue]">
 Let <xsl:value-of select="$sMSEnvFS"/><xsl:value-of select="@Id"/>
-		 <xsl:text> be [ envMorphoSyntax:[name:</xsl:text>
+		 <xsl:text> be [ envMorphoSyntax:[name</xsl:text>
 		 <xsl:value-of select="@Id"/>
-		 <xsl:text> morphoSyntax:[</xsl:text>
+		   <xsl:text>:</xsl:text>
+		   <xsl:value-of select="@Id"/>
+		   <xsl:text> morphoSyntax:[</xsl:text>
 		 <xsl:call-template name="OutputFsFeatStruc"/>
 		 <xsl:text>] ]]</xsl:text>
 	  </xsl:for-each>
@@ -1160,9 +1162,11 @@ Let </xsl:text>
 			   </xsl:for-each>
 			</xsl:variable>
 			<xsl:value-of select="$NotValues"/>
-			<xsl:text> be [ envMorphoSyntax : [name:</xsl:text>
+			<xsl:text> be [ envMorphoSyntax : [name</xsl:text>
 			<xsl:value-of select="$NotValues"/>
-			<xsl:text>]]</xsl:text>
+			 <xsl:text>:</xsl:text>
+			 <xsl:value-of select="$NotValues"/>
+			 <xsl:text>]]</xsl:text>
 		 </xsl:if>
 	  </xsl:for-each>
 	  <!-- @@@ need data for following 2002.01.04 -->
@@ -1374,7 +1378,7 @@ Let&amp;</xsl:text>
    <xsl:template name="AffixAlloWithFeaturesConstraints">
 	  <xsl:param name="sNonTerm"/>
 	  <xsl:if test="$affixAllosWithFeatures">
-		&lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo morphoSyntax&gt; = &lt;<xsl:value-of select="$sNonTerm"/> morphoSyntax>
+		&lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo fullMorphoSyntax&gt; = &lt;<xsl:value-of select="$sNonTerm"/> morphoSyntax>
 			| environment morpho-syntax logical constraint
 		&lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo&gt; == (
 		 <xsl:call-template name="AffixAlloWithFeaturesLogicalConstraint"/>
@@ -1392,7 +1396,7 @@ Let&amp;</xsl:text>
 	  <xsl:param name="sNonTerm"/>
 	  <xsl:param name="sAffixNode"/>
 	  <xsl:if test="$affixAllosWithFeatures">
-		 &lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo name&gt; = &lt;<xsl:value-of select="$sAffixNode"/> envMorphoSyntax name>
+		  &lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo&gt; = &lt;<xsl:value-of select="$sAffixNode"/> envMorphoSyntax&gt;
 	  </xsl:if>
    </xsl:template>
    <!--
@@ -1412,10 +1416,12 @@ Let&amp;</xsl:text>
 			<xsl:text>
 	 &amp; ( </xsl:text>
 		 </xsl:if>
-		 <xsl:text>([name:</xsl:text>
+		 <xsl:text>([name</xsl:text>
 		 <xsl:value-of select="@Id"/>
-		 <xsl:text>] -> </xsl:text>
-		 <xsl:text>[morphoSyntax:[</xsl:text>
+		  <xsl:text>:</xsl:text>
+		  <xsl:value-of select="@Id"/>
+		  <xsl:text>] -> </xsl:text>
+		 <xsl:text>[fullMorphoSyntax:[</xsl:text>
 		 <xsl:call-template name="OutputFsFeatStruc"/>
 		 <xsl:text>]] </xsl:text>
 		 <xsl:text>)</xsl:text>
@@ -1432,15 +1438,17 @@ Let&amp;</xsl:text>
 			   </xsl:for-each>
 			</xsl:variable>
 			<xsl:text>
-	 &amp; ( ([name:</xsl:text>
-			<xsl:value-of select="$sNotValue"/>
-			<xsl:text>] -&gt; ( </xsl:text>
+	 &amp; ( ([name</xsl:text>
+			 <xsl:value-of select="$sNotValue"/>
+			 <xsl:text>:</xsl:text>
+			 <xsl:value-of select="$sNotValue"/>
+			 <xsl:text>] -&gt; ( </xsl:text>
 			<xsl:for-each select="$allosConditionedByFeatures">
 			   <xsl:if test="position()!=1">
 				  <xsl:text>
 		  &amp; (</xsl:text>
 			   </xsl:if>
-			   <xsl:text>(~[morphoSyntax:[</xsl:text>
+			   <xsl:text>(~[fullMorphoSyntax:[</xsl:text>
 				<xsl:for-each select="MsEnvFeatures/FsFeatStruc[descendant::FsClosedValue]">
 				  <xsl:call-template name="OutputFsFeatStruc"/>
 			   </xsl:for-each>
@@ -1857,9 +1865,11 @@ OutputCompoundRuleFeatureMatch
 	  <xsl:variable name="sRest" select="substring-after($sList,' ')"/>
 	  <xsl:if test="string-length($sFirst) &gt; 0">
 		 <xsl:text>
-			&amp; ( ([name:</xsl:text>
+			&amp; ( ([name</xsl:text>
 		 <xsl:value-of select="$sFirst"/>
-		 <xsl:text>] -&gt; ~(</xsl:text>
+		  <xsl:text>:</xsl:text>
+		  <xsl:value-of select="$sFirst"/>
+		  <xsl:text>] -&gt; ~(</xsl:text>
 		 <!-- @#@ -->
 		 <xsl:call-template name="OutputMultipleStemNameRegions">
 			<xsl:with-param name="sStemNames" select="$sFirst"/>

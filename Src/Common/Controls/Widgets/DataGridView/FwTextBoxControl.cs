@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets or sets the index of the hosting cell's parent row.
 		/// </summary>
-		/// <returns>The index of the row that contains the cell, or –1 if there is no parent
+		/// <returns>The index of the row that contains the cell, or -1 if there is no parent
 		/// row.</returns>
 		/// ------------------------------------------------------------------------------------
 		public int EditingControlRowIndex

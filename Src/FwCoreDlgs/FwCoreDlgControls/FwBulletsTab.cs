@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -224,6 +225,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
 			CheckDisposed();
+
+			if (styleInfo.IsCharacterStyle)
+			{
+				Debug.Assert(false, "Somehow, the Bullets tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
+				return;
+			}
 
 			// Save the bullet information
 			BulletInfo bulInfo = new BulletInfo();

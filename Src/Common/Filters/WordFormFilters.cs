@@ -200,7 +200,6 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-
 		/// <summary>
 		/// the list of filters.
 		/// </summary>

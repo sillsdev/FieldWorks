@@ -4,7 +4,7 @@
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{CCF34218-52D9-4092-ADB8-1893BBE5ED31}</ProjectGuid>
+	<ProjectGuid>{A86C3ACB-E264-4D91-A933-936C01AF3701}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
 	<SccLocalPath>..\..\..\..\..</SccLocalPath>
 	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
@@ -172,12 +172,9 @@
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
+	<Compile Include="DBMultilingScrBooksTests.cs" />
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="MultilingScrBooksTests.cs" />
-	<Compile Include="ScrPassageControlTests.cs">
-	  <SubType>UserControl</SubType>
 	</Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

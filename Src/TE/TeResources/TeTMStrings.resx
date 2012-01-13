@@ -1205,10 +1205,6 @@
 	<value>Import from Open XML for Exchanging Key Terms</value>
 	<comment>Tool tip for the import Key Terms renderings (XML) menu item</comment>
   </data>
-  <data name="kstidApplyBookFilter" xml:space="preserve">
-	<value>Apply &amp;Book Filter</value>
-	<comment>Menu item in the Comprehension Checking Questions tool</comment>
-  </data>
   <data name="kstidFindKeyTermItemName" xml:space="preserve">
 	<value>F&amp;ind Biblical Term</value>
 	<comment>Text for the Find Biblical Term menu/toolbar item</comment>

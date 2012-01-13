@@ -416,16 +416,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (entry != null)
 			{
 				Form mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
-				mainWindow.Cursor = Cursors.WaitCursor;
-				using (SwapLexemeWithAllomorphDlg dlg = new SwapLexemeWithAllomorphDlg())
+				using (new WaitCursor(mainWindow))
 				{
-					dlg.SetDlgInfo(cache, m_mediator, entry);
-					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+					using (SwapLexemeWithAllomorphDlg dlg = new SwapLexemeWithAllomorphDlg())
 					{
-						SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);
+						dlg.SetDlgInfo(cache, m_mediator, entry);
+						if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+						{
+							SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);
+						}
 					}
 				}
-				mainWindow.Cursor = Cursors.Default;
 			}
 			return true;
 		}

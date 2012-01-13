@@ -1024,9 +1024,9 @@ namespace SIL.FieldWorks.TE
 			FilteredScrBooks filteredScrBooks = m_cache.ServiceLocator.GetInstance<IFilteredScrBookRepository>().GetFilterInstance(
 				m_bookFilterInstance);
 
-			ScrReference refBook = (SelectedReference.ChkRef != null) ?
-				new ScrReference(SelectedReference.ChkRef.Ref, m_scr.Versification) : null;
-			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, filteredScrBooks, refBook,
+			int defaultBook = (SelectedReference.ChkRef != null) ?
+				BCVRef.GetBookFromBcv(SelectedReference.ChkRef.Ref) : 0;
+			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, filteredScrBooks, defaultBook,
 				m_stylesheet, FileType.OXEKT, m_helpTopicProvider))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)

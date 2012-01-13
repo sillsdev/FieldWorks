@@ -160,6 +160,9 @@
 	  <Name>ScrUtilsInterfaces</Name>
 	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="SharedScrControls, Version=7.2.0.33372, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
@@ -226,7 +229,6 @@
 	<Compile Include="ITeView.cs" />
 	<Compile Include="LocationTrackerImpl.cs" />
 	<Compile Include="PromptSelectionRestorer.cs" />
-	<Compile Include="SantaFeFocusMessageHandler.cs" />
 	<Compile Include="FootnoteEditingHelper.cs">
 	  <SubType>Code</SubType>
 	</Compile>

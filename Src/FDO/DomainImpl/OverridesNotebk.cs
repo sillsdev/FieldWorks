@@ -114,12 +114,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				foreach (IRnRoledPartic roledPartic in ParticipantsOC)
-				{
-					if (roledPartic.RoleRA == null)
-						return roledPartic;
-				}
-				return null;
+				return ParticipantsOC.FirstOrDefault(roledPartic => roledPartic.RoleRA == null);
 			}
 		}
 

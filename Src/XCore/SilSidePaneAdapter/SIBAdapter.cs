@@ -794,6 +794,14 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Message handling priority.
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the specified mediator.

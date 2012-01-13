@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private List<IStText> m_coreTexts;
-		private List<IStText> CoreTexts
+		public List<IStText> CoreTexts
 		{
 
 			get
@@ -78,6 +78,14 @@ namespace SIL.FieldWorks.XWorks
 			return (from obj in result where !excludedGuids.Contains(obj.Guid) select obj).ToList();
 		}
 
+		/// <summary>
+		/// True if all (non-scripture) texts are published
+		/// </summary>
+		public bool AllCoreTextsAreIncluded
+		{
+			get { return ExcludedCoreTextIdList().Count == 0; }
+		}
+
 		private HashSet<Guid> ExcludedCoreTextIdList()
 		{
 			var idList = m_propertyTable.GetStringProperty(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -100,7 +108,10 @@ namespace SIL.FieldWorks.XWorks
 			return excludedGuids;
 		}
 
-		private IEnumerable<IStText> AllCoreTexts
+		/// <summary>
+		/// The core (non-Scripture) texts that might be selected to display and concord.
+		/// </summary>
+		public IEnumerable<IStText> AllCoreTexts
 		{
 			get
 			{
@@ -186,6 +197,16 @@ namespace SIL.FieldWorks.XWorks
 						if (m_interestingTests != null)
 							m_interestingTests.Add(text.ContentsOA);
 						RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
+					}
+					else if (cvIns == 1 && cvDel == 1)
+					{
+						ClearInvalidObjects(CoreTexts, 0, false); // get rid of the old one but do NOT raise notification.
+						var text = m_textRepository.GetObject(hvo);
+						CoreTexts.Add(text.ContentsOA);
+						if (m_interestingTests != null)
+							m_interestingTests.Add(text.ContentsOA);
+						// We don't know where the old one was removed, safest to treat as changing all.
+						RaiseInterestingTextsChanged(0, CoreTexts.Count, CoreTexts.Count);
 					}
 					else
 					{

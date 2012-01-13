@@ -711,7 +711,7 @@ Your changes to this entry will be discarded when you exit the project.</value>
   </data>
   <data name="ksCantModifyTemplateInUse" xml:space="preserve">
 	<value>This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0}).</value>
-	<comment>{0} is the title of a text, or possible a scripture reference.</comment>
+	<comment>{0} is the title of a text, or possibly a scripture reference.</comment>
   </data>
   <data name="ksEmptyFeatureStructure" xml:space="preserve">
 	<value>an empty feature structure</value>

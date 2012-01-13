@@ -600,7 +600,7 @@
 	<comment>caption to go with ksInterlinImportFailed</comment>
   </data>
   <data name="ksInterlinImportFailed" xml:space="preserve">
-	<value>Interlinear Import failed. Are you sure you are importing a file in FieldWorks interlinear format? Word and Open Office docs cannot yet be imported. The following messages from the import process may be helpful:</value>
+	<value>Interlinear Import failed. Are you sure you are importing a file in FLExText interlinear format? Word and Open Office/Libre Office docs cannot yet be imported:</value>
   </data>
   <data name="ksCannotLaunchX" xml:space="preserve">
 	<value>Sorry, could not launch {0}.</value>
@@ -672,7 +672,7 @@
 	<value>The selected file ({0}) may not be valid. Are you sure that you want to use it?</value>
   </data>
   <data name="ksSelectMapFile" xml:space="preserve">
-	<value>Select the mapping file to import</value>
+	<value>Select the mapping file with settings for this import operation</value>
   </data>
   <data name="ksAskSaveSettings" xml:space="preserve">
 	<value>Do you want to save your settings for future imports?</value>
@@ -682,9 +682,11 @@
   </data>
   <data name="ksErrorReadingSettings" xml:space="preserve">
 	<value>Could not load your settings from {0}. The system reported that {1}.</value>
+	<comment>First parameter is the name of a settings file. Second is an error message.</comment>
   </data>
   <data name="ksErrorWritingSettings" xml:space="preserve">
 	<value>Could not save your settings to {0}. The system reported that {1}.</value>
+	<comment>First parameter is the name of a settings file. Second is an error message.</comment>
   </data>
   <data name="ksFldBaseline" xml:space="preserve">
 	<value>Baseline</value>
@@ -755,7 +757,82 @@
   <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
 	<value>Total word count (tokens):</value>
   </data>
-	<data name="ksStatisticsViewTotalWordTypesText">
-		<value xml:space="preserve">Total number of unique words (types):</value>
-	</data>
+  <data name="ksStatisticsViewTotalWordTypesText" xml:space="preserve">
+	<value>Total number of unique words (types):</value>
+  </data>
+  <data name="ksImportAnalysisLangMissing" xml:space="preserve">
+	<value> is used in this text as an analysis language, but it is not currently part of your FieldWorks project.  Would you like to add it?  Click "OK" to add it or "Cancel" to skip this text.</value>
+  </data>
+  <data name="ksImportAnalysisLangMissingTitle" xml:space="preserve">
+	<value>Text has new analysis writing system</value>
+  </data>
+  <data name="ksImportVernacLangMissing" xml:space="preserve">
+	<value> is used in this text as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  Click "OK" to add it or "Cancel" to skip this text.</value>
+  </data>
+  <data name="ksImportVernacLangMissingTitle" xml:space="preserve">
+	<value>Text has new vernacular writing system</value>
+  </data>
+  <data name="ConcordanceSearchTextLabel" xml:space="preserve">
+	<value>For the text: </value>
+	<comment>Alternates with ConcordanceSearchCatLabel (or Tag)</comment>
+  </data>
+  <data name="ConcordanceSearchCatLabel" xml:space="preserve">
+	<value>For the category: </value>
+	<comment>Alternates with ConcordanceSearchTextLabel</comment>
+  </data>
+  <data name="ksTagging" xml:space="preserve">
+	<value>Tagging</value>
+	<comment>Used in Concordance</comment>
+  </data>
+  <data name="ConcordanceSearchTagLabel" xml:space="preserve">
+	<value>For the tag: </value>
+	<comment>Alternates with ConcordanceSearchTextLabel</comment>
+  </data>
+  <data name="ksConfigureLinkText" xml:space="preserve">
+	<value>Configure Interlinear...</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksAddWS" xml:space="preserve">
+	<value>Add Writing System</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksHideLine" xml:space="preserve">
+	<value>Hide {0}</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksMoveDown" xml:space="preserve">
+	<value>Move Down</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksMoveUp" xml:space="preserve">
+	<value>Move Up</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksAddLine" xml:space="preserve">
+	<value>Add Line</value>
+	<comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksImportSFMInterlinNewVernac" xml:space="preserve">
+	<value>This import is set to use the writing system {0} as a vernacular writing system, but it is not in your FieldWorks project. Would you like to add it?</value>
+  </data>
+  <data name="ksImportSFMInterlinNewAnalysis" xml:space="preserve">
+	<value>This import is set to use the writing system {0} as an analysis writing system, but it is not in your FieldWorks project. Would you like to add it?</value>
+  </data>
+  <data name="ksImportSFMInterlinNewWSTitle" xml:space="preserve">
+	<value>Add writing system {0} to your FieldWorks project?</value>
+  </data>
+  <data name="ksAskMergeInterlinearText" xml:space="preserve">
+	<value>You already have this interlinear text in your project. Would you like to merge it?</value>
+  </data>
+  <data name="ksAskMergeInterlinearTextTitle" xml:space="preserve">
+	<value>Duplicate text found.</value>
+  </data>
+  <data name="ksParsing" xml:space="preserve">
+	<value>Parsing</value>
+	<comment>Status bar label</comment>
+  </data>
+  <data name="ksSomeTexts" xml:space="preserve">
+	<value>{0} of {1} Texts</value>
+	<comment>Used for status bar message when some non-Scripture texts are excluded.</comment>
+  </data>
 </root>

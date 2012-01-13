@@ -742,6 +742,17 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="initialOffset">An initial offset to use when creating the segment</param>
 		/// <returns>A new, unowned, Segment with BeginOffset set to the given initial offset.</returns>
 		ISegment Create(IStTxtPara owner, int initialOffset);
+
+		/// <summary>
+		/// Basic creation method for an Segment. This method should only be used in import situations when an offset from the file is relevant.
+		/// The new segment is added at the end of the segments of the owner.
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <param name="initialOffset">An initial offset to use when creating the segment</param>
+		/// <param name="cache">FdoCache to get an hvo from</param>
+		/// <param name="guid">The guid to set this segment to.</param>
+		/// <returns>A new, unowned, Segment with BeginOffset set to the given initial offset.</returns>
+		ISegment Create(IStTxtPara owner, int initialOffset, FdoCache cache, Guid guid);
 	}
 
 	/// ----------------------------------------------------------------------------------------
@@ -931,6 +942,15 @@ namespace SIL.FieldWorks.FDO
 			bool createHeadingPara, bool createContentPara);
 	}
 
+	public partial interface ITextFactory
+	{
+		/// <summary>
+		/// Basic creation method for a Text object.
+		/// </summary>
+		/// <returns>A new, unowned Text with the given guid</returns>
+		IText Create(FdoCache cache, Guid guid);
+	}
+
 	public partial interface IRnGenericRecFactory
 	{
 		/// <summary>
@@ -950,5 +970,14 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="type">The type.</param>
 		/// <returns></returns>
 		IRnGenericRec Create(IRnGenericRec record, ITsString title, ICmPossibility type);
+	}
+
+	public partial interface ICmMediaURIFactory
+	{
+		/// <summary>
+		/// Basic creation method for an CmMediaURI.
+		/// </summary>
+		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
+		ICmMediaURI Create(FdoCache cache, Guid guid);
 	}
 }

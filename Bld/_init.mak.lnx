@@ -3,7 +3,10 @@
 
 # need to set BUILD_PRODUCT before incuding this file
 
-ARCH = $(shell uname -m)
+# GCC46 is 1 if running GCC >= 4.6, otherwise 0
+GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
+
+ARCH := $(shell uname -m)
 SRC = $(BUILD_ROOT)/Src
 LIBRARIES = $(BUILD_ROOT)/..
 

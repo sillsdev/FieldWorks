@@ -88,7 +88,7 @@ namespace SIL.CoreImpl
 		public void VecProp()
 		{
 			// test VecProp
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				int chvo = 99;
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
@@ -100,7 +100,7 @@ namespace SIL.CoreImpl
 				int[] rgHvo = new int[] { 33, 44, 55 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo, rgHvo.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
-				int[] rgHvoNew = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				int[] rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				Assert.AreEqual(rgHvo.Length, rgHvoNew.Length);
 				for (int i = 0; i < rgHvoNew.Length; i++)
 					Assert.AreEqual(rgHvo[i], rgHvoNew[i]);
@@ -108,7 +108,7 @@ namespace SIL.CoreImpl
 				int[] rgHvo2 = new int[] { 66, 77, 88, 99 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo2, rgHvo2.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
-				rgHvoNew = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				Assert.AreEqual(rgHvo2.Length, rgHvoNew.Length);
 				for (int i = 0; i < rgHvoNew.Length; i++)
 					Assert.AreEqual(rgHvo2[i], rgHvoNew[i]);
@@ -155,7 +155,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void BinaryProp()
 		{
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				int chvo = 99;
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, ArrayPtr.Null, 0, out chvo);
@@ -164,7 +164,7 @@ namespace SIL.CoreImpl
 				byte[] prgb = new byte[] { 3, 4, 5 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb, prgb.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
-				byte[] prgbNew = (byte[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(byte));
+				byte[] prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb.Length, prgbNew.Length);
 				for (int i = 0; i < prgbNew.Length; i++)
 					Assert.AreEqual(prgb[i], prgbNew[i]);
@@ -172,7 +172,7 @@ namespace SIL.CoreImpl
 				byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
-				prgbNew = (byte[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(byte));
+				prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb2.Length, prgbNew.Length);
 				for (int i = 0; i < prgbNew.Length; i++)
 					Assert.AreEqual(prgb2[i], prgbNew[i]);
@@ -190,7 +190,7 @@ namespace SIL.CoreImpl
 		{
 			byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
 			m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				int chvo;
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out chvo);
@@ -433,7 +433,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(expValues[0], hvoVal);
 
 			int chvo = 99;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				m_ISilDataAccess.VecProp(hvo, tag, 10, out chvo, arrayPtr);
 				if (expValues[1] is int[])

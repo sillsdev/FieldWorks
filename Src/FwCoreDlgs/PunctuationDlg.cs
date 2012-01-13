@@ -381,15 +381,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_matchedPairList == null || sortedCol == -1)
 				return;
 
-			SortOrder sortOrder = gridMatchedPairs.Columns[sortedCol].HeaderCell.SortGlyphDirection;
+			bool sortAscending = gridMatchedPairs.Columns[sortedCol].HeaderCell.SortGlyphDirection == SortOrder.Ascending;
 
 			switch (sortedCol)
 			{
-				case 0: m_matchedPairList.Sort(sortOrder, MatchedPairList.OpenComparer); break;
-				case 1: m_matchedPairList.Sort(sortOrder, MatchedPairList.OpenCodeComparer); break;
-				case 2: m_matchedPairList.Sort(sortOrder, MatchedPairList.CloseComparer); break;
-				case 3: m_matchedPairList.Sort(sortOrder, MatchedPairList.CloseCodeComparer); break;
-				case 4: m_matchedPairList.Sort(sortOrder, MatchedPairList.ClosedByParaComparer); break;
+				case 0: m_matchedPairList.Sort(sortAscending, MatchedPairList.OpenComparer); break;
+				case 1: m_matchedPairList.Sort(sortAscending, MatchedPairList.OpenCodeComparer); break;
+				case 2: m_matchedPairList.Sort(sortAscending, MatchedPairList.CloseComparer); break;
+				case 3: m_matchedPairList.Sort(sortAscending, MatchedPairList.CloseCodeComparer); break;
+				case 4: m_matchedPairList.Sort(sortAscending, MatchedPairList.ClosedByParaComparer); break;
 			}
 
 			gridMatchedPairs.Invalidate();
@@ -551,14 +551,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_patternList == null || sortedCol == -1)
 				return;
 
-			SortOrder sortOrder = gridPatterns.Columns[sortedCol].HeaderCell.SortGlyphDirection;
+			bool sortAscending = gridPatterns.Columns[sortedCol].HeaderCell.SortGlyphDirection == SortOrder.Ascending;
 
 			switch (sortedCol)
 			{
-				case 0: m_patternList.Sort(sortOrder, PuncPatternsList.PatternComparer); break;
-				case 1: m_patternList.Sort(sortOrder, PuncPatternsList.ContextComparer); break;
-				case 2: m_patternList.Sort(sortOrder, PuncPatternsList.CountComparer); break;
-				case 3: m_patternList.Sort(sortOrder, PuncPatternsList.StatusComparer); break;
+				case 0: m_patternList.Sort(sortAscending, PuncPatternsList.PatternComparer); break;
+				case 1: m_patternList.Sort(sortAscending, PuncPatternsList.ContextComparer); break;
+				case 2: m_patternList.Sort(sortAscending, PuncPatternsList.CountComparer); break;
+				case 3: m_patternList.Sort(sortAscending, PuncPatternsList.StatusComparer); break;
 			}
 
 			gridPatterns.Invalidate();

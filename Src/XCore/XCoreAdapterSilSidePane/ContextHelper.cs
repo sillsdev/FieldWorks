@@ -74,5 +74,9 @@ namespace XCore
 			}
 		}
 
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
 	}
 }

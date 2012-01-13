@@ -593,8 +593,6 @@ void VwStringBox::DoHotLink(IVwGraphics * pvg, VwRootBox * prootb, int xd, int y
 				// Find the higher level view constructor
 				VwBox * pboxFirstProp;
 				int itssFirstProp;
-				int tag;
-				int iprop;
 				Assert(qanote->Parent());
 				VwNotifier * pnote = dynamic_cast<VwNotifier *>(qanote.Ptr());
 				if (pnote)
@@ -1647,6 +1645,19 @@ public:  // we can make anything public since the whole class is private to this
 	}
 
 	/*------------------------------------------------------------------------------------------
+		Change the end-of-line status of the specified box to the specified value,
+		and adjust m_dxWidthRemaining accordingly.
+	------------------------------------------------------------------------------------------*/
+	void BoxEndsLine(VwStringBox * psbox, bool f)
+	{
+		int dxWidthOld = psbox->Width();
+		CheckHr(psbox->Segment()->put_EndLine(psbox->IchMin(), m_pvg, f));
+		// Segment may have changed size, recompute
+		psbox->DoLayout(m_pvg, m_dxInnerAvailWidth, m_dxWidthRemaining);
+		m_dxWidthRemaining += dxWidthOld - psbox->Width();
+	}
+
+	/*------------------------------------------------------------------------------------------
 		If there is a string box at the end of the line, change its end-of-line
 		to the specified value, and adjust m_dxWidthRemaining accordingly.
 	------------------------------------------------------------------------------------------*/
@@ -1655,15 +1666,7 @@ public:  // we can make anything public since the whole class is private to this
 		if (m_pboxEndLine)
 		{
 			if (m_pboxEndLine->IsStringBox())
-			{
-				VwStringBox * psbox =
-					dynamic_cast<VwStringBox *>(m_pboxEndLine);
-				int dxWidthOld = m_pboxEndLine->Width();
-				CheckHr(psbox->Segment()->put_EndLine(psbox->IchMin(), m_pvg, f));
-				// Segment may have changed size, recompute
-				m_pboxEndLine->DoLayout(m_pvg, m_dxInnerAvailWidth, m_dxWidthRemaining);
-				m_dxWidthRemaining += dxWidthOld - m_pboxEndLine->Width();
-			}
+				BoxEndsLine(dynamic_cast<VwStringBox *>(m_pboxEndLine), f);
 		}
 	}
 
@@ -1847,7 +1850,32 @@ public:  // we can make anything public since the whole class is private to this
 	{
 		VwStringBox * psbox = dynamic_cast<VwStringBox *>(pbox);
 		if (psbox)
-			CheckHr(psbox->Segment()->get_DirectionDepth(psbox->IchMin(), pnDepth, pf));
+		{
+			int ichMin = psbox->IchMin();
+			CheckHr(psbox->Segment()->get_DirectionDepth(ichMin, pnDepth, pf));
+			if (*pf && ichMin > 0)
+			{
+				// We think it's weak...but don't treat it so if it is
+				// surrounded by strong direction markers.
+				int cch;
+				CheckHr(psbox->Segment()->get_Lim(ichMin, &cch));
+				if (ichMin + cch < m_pts->CchRen())
+				{
+					OLECHAR chmarker = m_fParaRtl ? 0x200f : 0x200e; // RLM : LRM
+					OLECHAR ch;
+					CheckHr(m_pts->Fetch(ichMin - 1, ichMin, &ch));
+					if (ch == chmarker)
+					{
+						CheckHr(m_pts->Fetch(ichMin + cch, ichMin + cch + 1, &ch));
+						if (ch == chmarker)
+						{
+							*pf = false;
+							*pnDepth = TopDepth(); // the override chars we're looking for are to force it to paragraph direction.
+						}
+					}
+				}
+			}
+		}
 		else
 		{
 			// non-string boxes (see SetDirectionDepth) are considered strong at
@@ -1939,8 +1967,7 @@ public:  // we can make anything public since the whole class is private to this
 			VwStringBox * psbox = dynamic_cast<VwStringBox *>(m_vbox[ibox]);
 			// Set the depth of the weak box to the shallowest of the adjacent boxes.
 			int nDepthPrev = 100;
-			int ibox2;
-			for (ibox2 = ibox; --ibox2 >= 0; )
+			for (int ibox2 = ibox; --ibox2 >= 0; )
 			{
 				if (!vfWeak[ibox2])
 				{
@@ -2148,7 +2175,6 @@ public:  // we can make anything public since the whole class is private to this
 			// Find the higher level view constructor
 			VwBox * pboxFirstProp;
 			int itssFirstProp;
-			int tag;
 			int iprop;
 			Assert(qanote->Parent());
 			if (pnote)
@@ -2330,7 +2356,6 @@ public:  // we can make anything public since the whole class is private to this
 					// purposes there isn't: there is just more text (which the text source translates
 					// the ORC into). Otherwise, things go wrong wrapping paragraphs with links.
 					int ichMin, ichLim, isbt, irun = 0;
-					ITsTextPropsPtr qttp;
 					VwPropertyStorePtr qzvps;
 					m_pts->GetCharPropInfo(m_ichMinString, &ichMin, &ichLim, &isbt, &irun, &qttp, &qzvps);
 					SmartBstr sbstrObjData;
@@ -2516,7 +2541,9 @@ public:  // we can make anything public since the whole class is private to this
 			m_twsh = ktwshAll;
 		else
 			// Toggle between visible and white-space segments.
-			m_twsh = (m_twsh == ktwshNoWs) ? ktwshOnlyWs : ktwshNoWs;
+			// If we were previously building ktwshAll segments, we want to start by looking for
+			// a leading all-white-space segment.
+			m_twsh = (m_twsh == ktwshOnlyWs) ? ktwshNoWs : ktwshOnlyWs;
 
 		ILgSegmentPtr qlseg;
 		int dxWidth;
@@ -2617,7 +2644,13 @@ public:  // we can make anything public since the whole class is private to this
 				}
 				// ENHANCE JohnT: handle hard break that is tab
 				if (CheckForObject())
+				{
+					// We inserted (or will soon try to insert) more stuff on this line.
+					// So the segment we just made no longer ends the line, and must be adjusted.
+					// This may cause backtracking, if psbox ends with white space and gets wider.
+					BoxEndsLine(psbox, false); // Not LastBoxEndsLine, psbox may no longer be the last box
 					break;
+				}
 				// ENHANCE JohnT: should we have code here to skip a LF, if we found a CR?
 				m_zpbs = kzpbsFinalizeLine;
 				OLECHAR ch;
@@ -2698,6 +2731,64 @@ public:  // we can make anything public since the whole class is private to this
 				ppsegRet,
 				pdichwLimSeg, pdxWidth, pest,
 				psegPrev));
+			if (*ppsegRet != NULL && m_twsh == ktwshNoWs)
+			{
+				// An upstream segment may need to be truncated if it embeds downstream white space.
+				OLECHAR chmarker = m_fParaRtl ? 0x200f : 0x200e; // RLM : LRM
+				OLECHAR * rgch = NewObj OLECHAR[*pdichwLimSeg];
+				CheckHr(m_pts->Fetch(ichwMin, ichwMin + *pdichwLimSeg, rgch));
+				ILgCharacterPropertyEnginePtr qcpe;
+				qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
+
+				// We're looking for a sequence of the marker character, some white space, and another marker.
+				// this loop can find a marker that is the last character of the segment with no following white
+				// space, but using that won't shorten the segment so we don't.
+				int ichfirstMarker = -1;
+				for (int i = 0; i < *pdichwLimSeg; i++)
+				{
+					if (rgch[i] == chmarker)
+					{
+						if (ichfirstMarker == -1)
+							ichfirstMarker = i;
+						else
+							break; // got the pattern.
+					}
+					else
+					{
+						ComBool fIsSep;
+						CheckHr(qcpe->get_IsSeparator(rgch[i], &fIsSep));
+						if (!fIsSep)
+						{
+							ichfirstMarker = -1; // reset the search
+						}
+					}
+				}
+				delete[] rgch;
+				if (ichfirstMarker != -1 && ichfirstMarker + 1 < *pdichwLimSeg) // got one at a position that will shorten the segment
+				{
+					(*ppsegRet)->Release(); // discard the segment we got.
+					// truncate segment, by making a new one as if we were backtracking and the first marker
+					// was the last character we are allowed to include.
+					int lim = ichwMin + ichfirstMarker + 1;
+					CheckHr(m_qre->FindBreakPoint(
+						m_pvg, m_pts, m_qvjus, ichwMin, lim, lim,
+						fNeedFinalBreak,
+						fStartLine,
+						dxMaxWidth,
+						lbPref, lbMax,
+						m_twsh, m_fParaRtl,
+						ppsegRet,
+						pdichwLimSeg, pdxWidth, pest,
+						psegPrev));
+					// This is right before a space, so it should definitely be a good break!
+					*pest = kestOkayBreak;
+					// ...unless it's a non-breaking space :-<
+					OLECHAR ch;
+					CheckHr(m_pts->Fetch(lim, lim + 1, &ch)); // we shortened it, so there must be at least one more
+					if (ch == L'\x00a0' || ch == L'\x202F' || ch == L'\xfeff' || ch == L'\x2060')
+						*pest = kestBadBreak;
+				}
+			}
 		}
 		catch(Throwable& thr){
 			if (thr.Result() == E_FAIL)
@@ -3960,8 +4051,10 @@ VwParagraphBox::~VwParagraphBox()
 		VwTextStore * ptxs = prootb->TextStore();
 		if (ptxs)
 			ptxs->ClearPointersTo(this);
-		Assert(prootb->m_pvpboxNextSpellCheck != this);
+#elif defined(MANAGED_KEYBOARDING)
+		prootb->ClearSelectedAnchorPointerTo(this);
 #endif /*ENABLE_TSF*/
+		Assert(prootb->m_pvpboxNextSpellCheck != this);
 	}
 }
 
@@ -4668,6 +4761,8 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 	int ctssNew = pvpboxRep->Source()->CStrings();
 #ifdef ENABLE_TSF
 	VwTextStore * ptxs = Root()->TextStore();
+#elif defined(MANAGED_KEYBOARDING)
+	IViewInputMgr * pvim = Root()->InputManager();
 #endif /*ENABLE_TSF*/
 	VwBox * pboxFirstSubRep = pvpboxRep->FirstBox();
 
@@ -4726,6 +4821,9 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 #ifdef ENABLE_TSF
 			if (ptxs)
 				ptxs->OnDocChange();
+#elif defined(MANAGED_KEYBOARDING)
+			if (pvim)
+				CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
 			return;
 		}
@@ -4843,6 +4941,9 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 #ifdef ENABLE_TSF
 		if (ptxs)
 			ptxs->OnDocChange();
+#elif defined(MANAGED_KEYBOARDING)
+		if (pvim)
+			CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
 		if (fCurrentSelectionChanged && Root()->Selection())
 			Root()->Selection()->CommitAndNotify(ksctSamePara, Root());
@@ -4877,6 +4978,9 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 #ifdef ENABLE_TSF
 			if (ptxs)
 				ptxs->OnDocChange();
+#elif defined(MANAGED_KEYBOARDING)
+			if (pvim)
+				CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
 			if (fCurrentSelectionChanged && Root()->Selection())
 				Root()->Selection()->CommitAndNotify(ksctSamePara, Root());
@@ -4906,6 +5010,9 @@ void VwParagraphBox::ReplaceStrings(IVwGraphics * pvg, int itssMin, int itssLim,
 #ifdef ENABLE_TSF
 		if (ptxs)
 			ptxs->OnDocChange();
+#elif defined(MANAGED_KEYBOARDING)
+		if (pvim)
+			CheckHr(pvim->OnTextChange());
 #endif /*ENABLE_TSF*/
 		if (fCurrentSelectionChanged && Root()->Selection())
 			Root()->Selection()->CommitAndNotify(ksctSamePara, Root());
@@ -5730,6 +5837,9 @@ void VwParagraphBox::DoLayoutAux(IVwGraphics * pvg, void * pv)
 #ifdef ENABLE_TSF
 	if (Root()->TextStore())
 		Root()->TextStore()->OnLayoutChange();
+#elif defined(MANAGED_KEYBOARDING)
+	if (Root()->InputManager())
+		CheckHr(Root()->InputManager()->OnLayoutChange());
 #endif /*ENABLE_TSF*/
 }
 
@@ -5995,9 +6105,9 @@ void VwParagraphBox::GetBoxesInPhysicalOrder(BoxVec & vbox)
 			for (iv = ivMin, ivLim = vbox.Size(); iv < ivLim; )
 			{
 				int ivMid = (iv + ivLim) / 2;
-				VwBox * pbox = vbox[ivMid];
-				if ((m_fParaRtl && pboxNew->Left() < pbox->Left()) ||
-					(!m_fParaRtl && pboxNew->Left() > pbox->Left()))
+				VwBox * pboxTmp = vbox[ivMid];
+				if ((m_fParaRtl && pboxNew->Left() < pboxTmp->Left()) ||
+					(!m_fParaRtl && pboxNew->Left() > pboxTmp->Left()))
 				{
 					iv = ivMid + 1;
 				}
@@ -6492,7 +6602,7 @@ StrUni VwParagraphBox::GetBulNumString(IVwGraphics * pvg, COLORREF * pclrUnder, 
 	OLECHAR rgchNum[100];  // Holds representation of number
 	OLECHAR * pch = rgchNum; // several branches use this
 	OLECHAR * pchLim = rgchNum + isizeof(rgchNum)/isizeof(OLECHAR);
-	int nVal;
+	int nVal = 0;
 	if (vbn == kvbnNone)
 		return StrUni();
 	// Otherwise we need to set the appropriate font etc. Default is to use para props.
@@ -6513,7 +6623,7 @@ StrUni VwParagraphBox::GetBulNumString(IVwGraphics * pvg, COLORREF * pclrUnder, 
 			break; // no more properties
 		}
 		// It must be a numeric property
-		int nVal = *pchProps + ((*(pchProps + 1)) << 16);
+		nVal = *pchProps + ((*(pchProps + 1)) << 16);
 		pchProps += 2;
 		switch(tpt)
 		{

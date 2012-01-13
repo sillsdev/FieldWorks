@@ -490,7 +490,7 @@ namespace SIL.HermitCrab
 						VariableValues instantiatedVars = new VariableValues(m_rule.m_alphaVars);
 						if (MatchEnvEmpty(node, dir, ModeType.ANALYSIS, instantiatedVars))
 						{
-							match = new Match(instantiatedVars);
+							match = new Match(m_analysisTarget, instantiatedVars);
 							match.Add(node);
 							return true;
 						}
@@ -897,7 +897,7 @@ namespace SIL.HermitCrab
 				if (m_lhs.Count == 0)
 				{
 					// epenthesis rules always match the LHS
-					match = new Match(instantiatedVars);
+					match = new Match(m_lhs, instantiatedVars);
 					match.Add(node);
 					return true;
 				}

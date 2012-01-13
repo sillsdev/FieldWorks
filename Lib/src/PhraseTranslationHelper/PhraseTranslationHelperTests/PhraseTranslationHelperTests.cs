@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -57,7 +57,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -71,12 +71,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests getting phrases, where the phrases that have parts that are used by lots of
-		/// other phrases sort first in the list. Specifically, based on the number of owning
-		/// phrases of the part that has the fewest. If they have the same min, then the phrase
-		/// with the fewest parts should sort first. If they are still equal, the one with a
-		/// part that has a maximum number of owning phrases should sort first. Otherwise, sort
-		/// by reference. (Hard to explain)
+		/// Tests getting phrases sorted alphabetically by the English original.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -89,9 +84,9 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0),
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
-			pth.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, true);
+			pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, true);
 
 			Assert.AreEqual("D", pth[0].Reference);
 			Assert.AreEqual("C", pth[1].Reference);
@@ -100,7 +95,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("F", pth[4].Reference);
 			Assert.AreEqual("A", pth[5].Reference);
 
-			pth.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, false);
+			pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, false);
 
 			Assert.AreEqual("A", pth[0].Reference);
 			Assert.AreEqual("F", pth[1].Reference);
@@ -125,7 +120,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0),
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
@@ -166,7 +161,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("What is that dog?", 1, "E", 5, 5, 0),
 				new TranslatablePhrase("What is that dog?", 1, "E-F", 5, 6, 0),
 				new TranslatablePhrase("What is that dog?", 1, "E-G", 5, 7, 0)},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
@@ -215,12 +210,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests getting phrases, where the phrases that have parts that are used by lots of
-		/// other phrases sort first in the list. Specifically, based on the number of owning
-		/// phrases of the part that has the fewest. If they have the same min, then the phrase
-		/// with the fewest parts should sort first. If they are still equal, the one with a
-		/// part that has a maximum number of owning phrases should sort first. Otherwise, sort
-		/// by reference. (Hard to explain)
+		/// Tests getting phrases sorted alphabetically by the translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -233,7 +223,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);
 			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6 }, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			tp1.Translation = "Z";
 			tp2.Translation = "B";
@@ -265,16 +255,11 @@ namespace SILUBS.PhraseTranslationHelper
 		#region List filtering tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests getting phrases, where the phrases that have parts that are used by lots of
-		/// other phrases sort first in the list. Specifically, based on the number of owning
-		/// phrases of the part that has the fewest. If they have the same min, then the phrase
-		/// with the fewest parts should sort first. If they are still equal, the one with a
-		/// part that has a maximum number of owning phrases should sort first. Otherwise, sort
-		/// by reference. (Hard to explain)
+		/// Tests filtering phrases textually with the whole-word-match option
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPart_ExactMatch()
+		public void GetPhrasesFilteredTextually_WholeWordMatch()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -288,25 +273,72 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("F", pth[0].Reference);
 			Assert.AreEqual("B", pth[1].Reference);
 			Assert.AreEqual("E", pth[2].Reference);
+
+			pth.Filter("what is Pau", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(0, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter("what is Paul", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			Assert.AreEqual("B", pth[0].Reference);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests filtering by part using a string that is contained in two different parts
+		/// Tests filtering phrases textually with the whole-word-match option
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPart_PartialMatch()
+		public void GetPhrasesFilteredTextually_WholeWordMatch_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", 1, 4);
+			AddMockedKeyTerm("Paul", 1, 2, 5);
+			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
+			AddMockedKeyTerm("say", 1, 2, 5);
+
+			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			tp2.IsExcluded = true;
+			tp6.IsExcluded = true;
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual(tp5, pth[0]);
+
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, true);
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual(tp5, pth[0]);
+			Assert.AreEqual(tp2, pth[1]);
+			Assert.AreEqual(tp6, pth[2]);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering phrases textually without the whole-word-match option
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredTextually_PartialWordMatch()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -315,23 +347,50 @@ namespace SILUBS.PhraseTranslationHelper
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("This would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (2)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("that dog wishes this Paul and say radish", 1, "E", 5, 5, 0),				  // that dog (4)       | wishes this (1) | and (1)             | radish (1)
+				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (2)        | that dog (4)
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.All, null);
-			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
-			Assert.AreEqual("B", pth[0].Reference);
-			Assert.AreEqual("D", pth[1].Reference);
-			Assert.AreEqual("E", pth[2].Reference);
-			Assert.AreEqual("F", pth[3].Reference);
+			Assert.AreEqual("A", pth[0].Reference);
+			Assert.AreEqual("B", pth[1].Reference);
+			Assert.AreEqual("D", pth[2].Reference);
+			Assert.AreEqual("E", pth[3].Reference);
+			Assert.AreEqual("F", pth[4].Reference);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering phrases textually using a string that would result in a bogus
+		/// regular expression if not properly escaped.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredTextually_PreventBogusRegExCrash()
+		{
+			AddMockedKeyTerm("God", 1, 4);
+			AddMockedKeyTerm("Paul", 1, 2, 5);
+			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
+			AddMockedKeyTerm("say", 1, 2, 5);
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("This would God have me [to] say with respect to Paul?", 1, "A", 1, 1, 0),
+				new TranslatablePhrase("What is that dog?", 1, "B", 6, 6, 0)},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter("[", false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			Assert.AreEqual("A", pth[0].Reference);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -340,7 +399,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPart_NoMatches()
+		public void GetPhrasesFilteredTextually_NoMatches()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -354,11 +413,11 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("finkelsteins", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("finkelsteins", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(0, pth.Phrases.Count(), "Wrong number of phrases in helper");
 		}
 
@@ -382,12 +441,12 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"));
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("B", pth[0].Reference);
@@ -395,8 +454,49 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("E", pth[2].Reference);
 
 			// Now remove the ref filter
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering by ref
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredOnlyByRef_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", 1, 4);
+			AddMockedKeyTerm("Paul", 1, 2, 5);
+			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
+			AddMockedKeyTerm("say", 1, 2, 5);
+
+			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			tp4.IsExcluded = true;
+			tp5.IsExcluded = true;
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6 },
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
+			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
+			Assert.AreEqual(tp2, pth[0]);
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), true);
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
+			Assert.AreEqual(tp2, pth[0]);
+			Assert.AreEqual(tp4, pth[1]);
+			Assert.AreEqual(tp5, pth[2]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -419,11 +519,11 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -431,6 +531,47 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("C", pth[1].Reference);
 			Assert.AreEqual("E", pth[2].Reference);
 			Assert.AreEqual("F", pth[3].Reference);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering for phrases where all key terms have renderings
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredByKeyTerms_WithRenderings_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", (string)null);
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have", (string)null);
+			AddMockedKeyTerm("say");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0) { IsExcluded = true },       // God & have don't have renderings
+				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0) { IsExcluded = true },
+				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
+				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
+				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0) { IsExcluded = true },
+				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
+			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual("C", pth[0].Reference);
+			Assert.AreEqual("F", pth[1].Reference);
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, true);
+			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual("A", pth[0].Reference); // Even though there is an unrendered term, this phrase gets included because we don't actually parse excluded phrases to look for key term matches.
+			Assert.AreEqual("B", pth[1].Reference);
+			Assert.AreEqual("C", pth[2].Reference);
+			Assert.AreEqual("E", pth[3].Reference);
+			Assert.AreEqual("F", pth[4].Reference);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -453,11 +594,11 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -472,7 +613,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPart_ExactMatchKeyTermsWithRenderings()
+		public void GetPhrasesFilteredTextually_WholeWordMatch_KeyTermsWithRenderings()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -486,11 +627,11 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is have radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null);
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("F", pth[0].Reference);
@@ -504,7 +645,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPartAndRef_ExactMatchKeyTermsWithRenderings()
+		public void GetPhrasesFilteredTextuallyAndRef_WholeWordMatch_KeyTermsWithRenderings()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -518,12 +659,12 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is have radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings,
-				((start, end, sref) => start < 6));
+				((start, end, sref) => start < 6), false);
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("E", pth[0].Reference);
@@ -536,7 +677,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetPhrasesFilteredByPart_PartialMatchWithoutRenderings()
+		public void GetPhrasesFilteredTextually_PartialMatchWithoutRenderings()
 		{
 			AddMockedKeyTerm("God", 1, 4);
 			AddMockedKeyTerm("Paul", 1, 2, 5);
@@ -550,16 +691,17 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
 				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null);
-			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
-			Assert.AreEqual("B", pth[0].Reference);
-			Assert.AreEqual("E", pth[1].Reference);
+			Assert.AreEqual("A", pth[0].Reference);
+			Assert.AreEqual("B", pth[1].Reference);
+			Assert.AreEqual("E", pth[2].Reference);
 		}
 		#endregion
 
@@ -570,7 +712,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetParts_EmptyKeyTermsList()
+		public void GetParts_EmptyKeyTermsList_NoPhraseSubstitutions()
 		{
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new [] {
 				new TranslatablePhrase(" What do  you think?"),
@@ -579,7 +721,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("-OR-"),
 				new TranslatablePhrase("How could I have forgotten the question mark"),
 				new TranslatablePhrase("What do you think  it means to bless someone? "),
-				new TranslatablePhrase("What is this? ")}, m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("What is this? ")}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -597,7 +739,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void GetParts_KeyTermsList()
+		public void GetParts_KeyTermsList_NoPhraseSubstitutions()
 		{
 			AddMockedKeyTerm("John"); // The apostle
 			AddMockedKeyTerm("John"); // The Baptist
@@ -624,7 +766,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Who went to the well with Jesus?"),
 				new TranslatablePhrase("Do you think God could forgive someone who sins?"),
 				new TranslatablePhrase("What do you think it means to serve two masters?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(13, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -639,8 +781,191 @@ namespace SILUBS.PhraseTranslationHelper
 			VerifyTranslatablePhrase(pth, "Why do you think God created man?", "why do you think", 2, "created man", 1);
 			VerifyTranslatablePhrase(pth, "Why do you think God  sent Jesus to earth?", "why do you think", 2, "sent", 1, "to earth", 1);
 			VerifyTranslatablePhrase(pth, "Who went to the well with Jesus?", "who went to the well", 2, "with", 1);
-			VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "do you think", 2, "could", 1, "someone who sins", 1);
+			VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "do you think", 2, "could", 1, "someone who", 1);
 			VerifyTranslatablePhrase(pth, "What do you think it means to serve two masters?", "what do you think it means to", 3, "serve two masters", 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where an empty key terms list is supplied and
+		/// there are phrases ignored/substituted.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_EmptyKeyTermsList_PhraseSubstitutions()
+		{
+			List<Substitution> ignored = new List<Substitution>();
+			ignored.Add(new Substitution("What do you think it means", "What means", false, false));
+			ignored.Add(new Substitution("tHe", null, false, false));
+			ignored.Add(new Substitution("do", string.Empty, false, false));
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("What do you think it means?"),
+				new TranslatablePhrase("What do you think it means to forgive?"),
+				new TranslatablePhrase(string.Empty),
+				new TranslatablePhrase("-OR-"),
+				new TranslatablePhrase("How could I have forgotten the question mark"),
+				new TranslatablePhrase("What do you think it means to bless someone? "),
+				new TranslatablePhrase("What means of support do disciples have?")},
+				m_dummyKtList, m_keyTermRules, ignored);
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			VerifyTranslatablePhrase(pth, "What do you think it means?", "what means", 4);
+			VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means", 4, "to forgive", 1);
+			VerifyTranslatablePhrase(pth, "-OR-", "-or-", 1);
+			VerifyTranslatablePhrase(pth, "How could I have forgotten the question mark", "how could i have forgotten question mark", 1);
+			VerifyTranslatablePhrase(pth, "What do you think it means to bless someone? ", "what means", 4, "to bless someone", 1);
+			VerifyTranslatablePhrase(pth, "What means of support do disciples have?", "what means", 4, "of support disciples have", 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where a non-empty key terms list is supplied
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_KeyTermsList_Apostrophes()
+		{
+			AddMockedKeyTerm("(God described as the) Most High");
+			AddMockedKeyTerm("(God of) hosts");
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("heavenly creature, symbol of God's majesty and associated with his presence");
+			AddMockedKeyTerm("(one's own) burial-place");
+			AddMockedKeyTerm("to make straight (one's way)");
+			AddMockedKeyTerm("love for one's fellow believer");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("If one gives one's word and doesn't keep it, is it sin?"),
+				new TranslatablePhrase("Is there one way to heaven?"),
+				new TranslatablePhrase("Is the Bible God's Word?"),
+				new TranslatablePhrase("Who is God's one and only Son?"),
+				new TranslatablePhrase("Can the God of hosts also be called the Most High God?"),
+				new TranslatablePhrase("Should one be buried in one's own burial-place?"),
+				new TranslatablePhrase("Do wise people make straight paths for themselves?"),
+				new TranslatablePhrase("How can you tell if one has love for one's fellow believer?"),
+				new TranslatablePhrase("Is the earth God's?")},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(9, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			VerifyTranslatablePhrase(pth, "If one gives one's word and doesn't keep it, is it sin?", "if one gives one's word and doesn't keep it is it sin", 1);
+			VerifyTranslatablePhrase(pth, "Is there one way to heaven?", "is there one way to heaven", 1);
+			VerifyTranslatablePhrase(pth, "Is the Bible God's Word?", "is the bible", 1, "word", 1);
+			VerifyTranslatablePhrase(pth, "Who is God's one and only Son?", "who is", 1, "one and only son", 1);
+			VerifyTranslatablePhrase(pth, "Can the God of hosts also be called the Most High God?", "can the", 1, "also be called the", 1);
+			VerifyTranslatablePhrase(pth, "Should one be buried in one's own burial-place?", "should one be buried in", 1);
+			VerifyTranslatablePhrase(pth, "Do wise people make straight paths for themselves?", "do wise people", 1, "paths for themselves", 1);
+			VerifyTranslatablePhrase(pth, "How can you tell if one has love for one's fellow believer?", "how can you tell if one has", 1);
+			VerifyTranslatablePhrase(pth, "Is the earth God's?", "is the earth", 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where a non-empty key terms list is supplied
+		/// and there are substitutions defined with regular expressions and case-sensitive
+		/// matching.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_KeyTermsList_SimplePhraseSubstitutions()
+		{
+			AddMockedKeyTerm("John"); // The apostle
+			AddMockedKeyTerm("John"); // The Baptist
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("Mary");
+			AddMockedKeyTerm("temple");
+			AddMockedKeyTerm("forgive");
+			AddMockedKeyTerm("bless");
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Jesus");
+			AddMockedKeyTerm("sin");
+
+			List<Substitution> ignored = new List<Substitution>();
+			ignored.Add(new Substitution("What do you think it means", "What means", false, false));
+			ignored.Add(new Substitution("the", null, false, false));
+			ignored.Add(new Substitution("do", string.Empty, false, false));
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("Who was John?"),
+				new TranslatablePhrase("Who was Paul?"),
+				new TranslatablePhrase("Who was Mary?"),
+				new TranslatablePhrase("Who went to the well?"),
+				new TranslatablePhrase("Who went to the temple?"),
+				new TranslatablePhrase("What do you think it means to forgive?"),
+				new TranslatablePhrase("What do you think it means to bless someone?"),
+				new TranslatablePhrase("What do you think God wants you to do?"),
+				new TranslatablePhrase("Why do you think God created man?"),
+				new TranslatablePhrase("Why do you think God  sent Jesus to the earth?"),
+				new TranslatablePhrase("Who went to the well with Jesus?"),
+				new TranslatablePhrase("Do you think God could forgive someone who sins?"),
+				new TranslatablePhrase("What do you think it means to serve two masters?")},
+				m_dummyKtList, m_keyTermRules, ignored);
+
+			Assert.AreEqual(13, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			VerifyTranslatablePhrase(pth, "Who was John?", "who was", 3);
+			VerifyTranslatablePhrase(pth, "Who was Paul?", "who was", 3);
+			VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 3);
+			VerifyTranslatablePhrase(pth, "Who went to the well?", "who went to well", 2);
+			VerifyTranslatablePhrase(pth, "Who went to the temple?", "who went to", 1);
+			VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means to", 3);
+			VerifyTranslatablePhrase(pth, "What do you think it means to bless someone?", "what means to", 3, "someone", 1);
+			VerifyTranslatablePhrase(pth, "What do you think God wants you to do?", "what", 1, "you think", 2, "wants you to", 1);
+			VerifyTranslatablePhrase(pth, "Why do you think God created man?", "why you think", 2, "created man", 1);
+			VerifyTranslatablePhrase(pth, "Why do you think God  sent Jesus to the earth?", "why you think", 2, "sent", 1, "to earth", 1);
+			VerifyTranslatablePhrase(pth, "Who went to the well with Jesus?", "who went to well", 2, "with", 1);
+			VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "you think", 2, "could", 1, "someone who", 1);
+			VerifyTranslatablePhrase(pth, "What do you think it means to serve two masters?", "what means to", 3, "serve two masters", 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where a non-empty key terms list is supplied
+		/// and there are phrases ignored/substituted.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_KeyTermsList_ComplexPhraseSubstitutions()
+		{
+			AddMockedKeyTerm("John"); // The apostle
+			AddMockedKeyTerm("John"); // The Baptist
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("Mary");
+			AddMockedKeyTerm("altar");
+			AddMockedKeyTerm("forgive");
+			AddMockedKeyTerm("bless");
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Jesus");
+			AddMockedKeyTerm("sin");
+
+			List<Substitution> ignored = new List<Substitution>();
+			ignored.Add(new Substitution("what do you think it means", "what means", false, true));
+			ignored.Add(new Substitution(@"\ban\b", "a", true, false));
+			ignored.Add(new Substitution(@"did (\S+) do", @"did $1", true, true));
+			ignored.Add(new Substitution(@"ed\b", null, true, true));
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("What did John do?"),
+				new TranslatablePhrase("What did Paul do?"),
+				new TranslatablePhrase("Who was Mary?"),
+				new TranslatablePhrase("Who walked on a wall?"),
+				new TranslatablePhrase("Who walked on an altar?"),
+				new TranslatablePhrase("What do you think it means to forgive?"),
+				new TranslatablePhrase("what do you think it means to bless someone?"),
+				new TranslatablePhrase("Did Mary do the right thing?")},
+				m_dummyKtList, m_keyTermRules, ignored);
+
+			Assert.AreEqual(8, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			VerifyTranslatablePhrase(pth, "What did John do?", "what did", 2);
+			VerifyTranslatablePhrase(pth, "What did Paul do?", "what did", 2);
+			VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 1);
+			VerifyTranslatablePhrase(pth, "Who walked on a wall?", "who walk on a", 2, "wall", 1);
+			VerifyTranslatablePhrase(pth, "Who walked on an altar?", "who walk on a", 2);
+			VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what do you think it means to", 1);
+			VerifyTranslatablePhrase(pth, "what do you think it means to bless someone?", "what means to", 1, "someone", 1);
+			VerifyTranslatablePhrase(pth, "Did Mary do the right thing?", "did", 1, "do the right thing", 1);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -669,7 +994,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("high priest"),
 				new TranslatablePhrase("If the high priest wants you to forgive God, can he ask you using a sentence that is seven words long or not?"),
 				new TranslatablePhrase("Is this sentence that is seven dwarves?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(8, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -682,6 +1007,28 @@ namespace SILUBS.PhraseTranslationHelper
 			VerifyTranslatablePhrase(pth, "If the high priest wants you to forgive God, can he ask you using a sentence that is seven words long or not?",
 				"if the", 1, "wants you", 2, "can he ask you using a", 1, "or not", 1);
 			VerifyTranslatablePhrase(pth, "Is this sentence that is seven dwarves?", "is this", 1, "that is", 1, "dwarves", 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where the phrase contains the word "Pharisees"
+		/// This deals with a weakness in the original (v1) Porter Stemmer algortihm. (TXL-52)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_MatchPluralFormOfMultiSyllabicWordEndingInDoubleE()
+		{
+			AddMockedKeyTerm("pharisee");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("What did the pharisee want?"),
+				new TranslatablePhrase("What did the pharisees eat?")},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			VerifyTranslatablePhrase(pth, "What did the pharisee want?", "what did the", 2, "want", 1);
+			VerifyTranslatablePhrase(pth, "What did the pharisees eat?", "what did the", 2, "eat", 1);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -700,7 +1047,7 @@ namespace SILUBS.PhraseTranslationHelper
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("What did John tell the Christians?"),
 				new TranslatablePhrase("Why should you tell the good news?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -722,7 +1069,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("Did John sin when he told Herod that it was unlawful to marry Herodius?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -750,7 +1097,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Whose lovingkindness is everlasting?"),
 				new TranslatablePhrase("What did John ask for earnestly?"),
 				new TranslatablePhrase("Is showing kindness in this life a way to earn salvation?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -775,7 +1122,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("Who was the man?"),
 				new TranslatablePhrase("Who went to the store?"),
 				new TranslatablePhrase("Who was the man with the goatee who went to the store?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -797,7 +1144,7 @@ namespace SILUBS.PhraseTranslationHelper
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("Are you the one who knows the man who ate the monkey?"),
 				new TranslatablePhrase("Who knows the man?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -815,12 +1162,12 @@ namespace SILUBS.PhraseTranslationHelper
 		[Test]
 		public void GetParts_PreventMatchOfPartialWords()
 		{
-			AddMockedKeyTerm("thinks");
+			AddMockedKeyTerm("think");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("Was a man happy?"),
 				new TranslatablePhrase("As a man thinks in his heart, how is he?")},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -846,7 +1193,7 @@ namespace SILUBS.PhraseTranslationHelper
 				tp1,
 				tp2,
 				tp3},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.IsTrue(tp1.PartPatternMatches(tp2));
 			Assert.IsTrue(tp2.PartPatternMatches(tp1));
@@ -881,7 +1228,7 @@ namespace SILUBS.PhraseTranslationHelper
 				tp3,
 				tp4,
 				tp5},
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.IsTrue(tp1.PartPatternMatches(tp2));
 			Assert.IsTrue(tp1.PartPatternMatches(tp3));
@@ -909,7 +1256,7 @@ namespace SILUBS.PhraseTranslationHelper
 		public void SetNewTranslation_Null()
 		{
 			TranslatablePhrase phrase = new TranslatablePhrase("Who was the man?", 1, "A", 1, 1, 0);
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase}, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			phrase.Translation = null;
@@ -931,7 +1278,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Where was the woman?", 1, "A", 1, 1, 0);
 			TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man?", 1, "B", 2, 2, 0);
 			TranslatablePhrase phrase4 = new TranslatablePhrase("Where was the woman?", 1, "C", 3, 3, 0);
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
@@ -946,7 +1293,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the translation for a phrase when that whole phrase matches part of
-		/// another phrase, eve if it has an untranslated key term.
+		/// another phrase, even if it has an untranslated key term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -956,7 +1303,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man?", 1, "A", 1, 1, 0);
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Who was the man?", 1, "B", 2, 2, 0);
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 }, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
@@ -977,7 +1324,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase shortPhrase = new TranslatablePhrase("Who was the man?");
 			TranslatablePhrase longPhrase = new TranslatablePhrase("Who was the man with the jar?");
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules);
+				shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
@@ -990,7 +1337,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual(partTrans, shortPhrase[0].Translation);
 			Assert.AreEqual(partTrans + "?", longPhrase.Translation);
 			Assert.AreEqual(partTrans, longPhrase[0].Translation);
-			Assert.IsNull(longPhrase[1].Translation);
+			Assert.AreEqual(0, longPhrase[1].Translation.Length);
 			Assert.IsTrue(shortPhrase.HasUserTranslation);
 			Assert.IsFalse(longPhrase.HasUserTranslation);
 		}
@@ -1007,7 +1354,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase shortPhrase = new TranslatablePhrase("Who was the man?");
 			TranslatablePhrase longPhrase = new TranslatablePhrase("Who was the man with the jar?");
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules);
+				shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
@@ -1022,7 +1369,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual(partTrans, shortPhrase[0].Translation);
 			Assert.AreEqual(trans, longPhrase.Translation);
 			Assert.AreEqual(partTrans, longPhrase[0].Translation);
-			Assert.IsNull(longPhrase[1].Translation);
+			Assert.AreEqual(0, longPhrase[1].Translation.Length);
 			Assert.IsTrue(shortPhrase.HasUserTranslation);
 			Assert.IsFalse(longPhrase.HasUserTranslation);
 		}
@@ -1030,7 +1377,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the translation for two phrases that have a common part and verify
-		/// that a third phrase that has that part shows the tranlation of the translated part.
+		/// that a third phrase that has that part shows the translation of the translated part.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1045,10 +1392,10 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man Jesus healed?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
 			Assert.AreEqual(2, phrase2.TranslatableParts.Count());
 			Assert.AreEqual(2, phrase3.TranslatableParts.Count());
 
@@ -1069,7 +1416,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the translation for two phrases that have a common part and verify
-		/// that a third phrase that has that part shows the tranlation of the translated part.
+		/// that a third phrase that has that part shows the translation of the translated part.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1093,7 +1440,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase8 = new TranslatablePhrase("Does the arrow belong to the lion?");
 
 			PhraseTranslationHelper helper = new PhraseTranslationHelper(
-				new[] { phrase1, phrase2, phrase3, phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules);
+				new[] { phrase1, phrase2, phrase3, phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
 
 			foreach (TranslatablePhrase phrase in helper.Phrases)
@@ -1111,7 +1458,13 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la leo\u0301n?", phrase6.Translation);
 
 			phrase3.Translation = "\u00BFEl taob le pertenece al barco?";
-			Assert.AreEqual("\u00BFEl flecha le pertenece al leo\u0301n?", phrase8.Translation);
+			// This is a bizarre special case where the original question has the same key term twice and
+			// the user has translated it differently. Internal details of the logic (specifically, it finds
+			// the longer rendering first) dictate the order in which the key terms are considered to have
+			// been found. For the purposes of this test case, we don't care in which order the terms of the
+			// untranslated question get substituted.
+			Assert.IsTrue("\u00BFEl leo\u0301n le pertenece al flecha?" == phrase8.Translation ||
+				"\u00BFEl flecha le pertenece al leo\u0301n?" == phrase8.Translation);
 
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
@@ -1125,8 +1478,90 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests setting the translation for one phrase and then repeatedly accepting and
+		/// un-accepting the generated translation for the other phrase that differs only by
+		/// key terms. (TXL-51)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_PreventAddedSpacesWhenAcceptingGeneratedTranslation()
+		{
+			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+			AddMockedKeyTerm("Phillip", "Felipe");
+			AddMockedKeyTerm("Matthew", "Mateo");
+
+			TranslatablePhrase phrase0 = new TranslatablePhrase("What asked Jesus Matthew?");
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What asked Jesus Phillip?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("What asked Phillip Matthew?");
+
+			PhraseTranslationHelper helper = new PhraseTranslationHelper(
+				new[] { phrase0, phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
+
+
+			phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Mateo?";
+			phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Felipe?";
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+			Assert.IsFalse(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = true;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+			Assert.IsTrue(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = false;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+			Assert.IsFalse(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = true;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+			Assert.IsTrue(phrase2.HasUserTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that unconfirming a user translation will go back to a template-based
+		/// translation if one is available. Specifically, it will revert to the template of the
+		/// first translated question it finds.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_ClearingUserTranslationFlagRestoresTemplateBasedTranslation()
+		{
+			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+			AddMockedKeyTerm("Phillip", "Felipe");
+			AddMockedKeyTerm("Matthew", "Mateo");
+
+			TranslatablePhrase phrase0 = new TranslatablePhrase("What asked Jesus Matthew?");
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What asked Jesus Phillip?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("What asked Phillip Matthew?");
+
+			PhraseTranslationHelper helper = new PhraseTranslationHelper(
+				new[] { phrase0, phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
+
+
+			phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Mateo?";
+			phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Felipe?";
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+			Assert.IsFalse(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = true;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+			Assert.IsTrue(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = false;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+			Assert.IsFalse(phrase2.HasUserTranslation);
+
+			phrase2.HasUserTranslation = true;
+			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+			Assert.IsTrue(phrase2.HasUserTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests setting the translation for two phrases that have a common part and verify
-		/// that a third phrase that has that part shows the tranlation of the translated part.
+		/// that a third phrase that has that part shows the translation of the translated part.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1136,15 +1571,15 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("lion");
 			AddMockedKeyTerm("jar");
 
-			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man in the lion's den?");
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man in the lions' den?");
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Who was the man with the jar?");
 			TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man Jesus healed?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
 			Assert.AreEqual(2, phrase2.TranslatableParts.Count());
 			Assert.AreEqual(2, phrase3.TranslatableParts.Count());
 
@@ -1182,7 +1617,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Who was Euticus?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(1, phrase1.TranslatableParts.Count());
@@ -1202,7 +1637,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the translation for two phrases that have a common part and verify
-		/// that a third phrase that has that part shows the tranlation of the translated part.
+		/// that a third phrase that has that part shows the translation of the translated part.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1215,7 +1650,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Was Matthew one of the disciples?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
@@ -1259,7 +1694,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase8 = new TranslatablePhrase("Did Moses ask, \"What did Jacob do?\"");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3,
-				phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules);
+				phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
@@ -1313,7 +1748,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase4 = new TranslatablePhrase("EFG thing ABC");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
@@ -1355,7 +1790,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase5 = new TranslatablePhrase("So what did the Apostle Paul say about that?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phraseBreakerA, phraseBreakerB,
-				phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1402,7 +1837,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase6 = new TranslatablePhrase("Why did they treat the Apostle Paul so?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phraseBreakerA, phraseBreakerB, phraseBreakerC,
-				phrase1, phrase2, phrase3, phrase4, phrase5, phrase6 }, m_dummyKtList, m_keyTermRules);
+				phrase1, phrase2, phrase3, phrase4, phrase5, phrase6 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1444,7 +1879,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase2 = new TranslatablePhrase("Were Isaiah and Paul prophets?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 },
-				m_dummyKtList, m_keyTermRules);
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1473,7 +1908,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase4 = new TranslatablePhrase("And what did Paul do next?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1507,7 +1942,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase5 = new TranslatablePhrase("When Mary went to the tomb, where did Jesus meet her?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-				phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules);
+				phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(1, phrase1.TranslatableParts.Count());
@@ -1548,7 +1983,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1587,7 +2022,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+				phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1625,7 +2060,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase3 = new TranslatablePhrase("What did the donkey and Balaam do?");
 			TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(3, phrase1.TranslatableParts.Count());
@@ -1663,7 +2098,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase4 = new TranslatablePhrase("What Balaam eats?");
 			TranslatablePhrase phrase5 = new TranslatablePhrase("Donkey eats?");
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
 			Assert.AreEqual(1, phrase1.TranslatableParts.Count());
@@ -1706,7 +2141,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
 				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 1, "D", 4, 4, 0),
 				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)}, m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would god have me to say with respect to", 1);
@@ -1736,7 +2171,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
 				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 0, "B-D", 2, 4, 0),
 				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
@@ -1766,7 +2201,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
 				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 0, "B-D", 2, 4, 0),
 				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
@@ -1797,7 +2232,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("I have eaten the horse.", 1, "A", 1, 1, 0),
 				new TranslatablePhrase("How high is this?", 1, "C", 3, 3, 0),
 				new TranslatablePhrase("That drunk sailor has eaten a radish", 0, "C-D", 3, 4, 0),
-				new TranslatablePhrase("That high sailor was to have drunk some radish juice", 0, "A-B", 1, 2, 0)}, m_dummyKtList, m_keyTermRules);
+				new TranslatablePhrase("That high sailor was to have drunk some radish juice", 0, "A-B", 1, 2, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "Was the high priest on his high horse?", "was the", 2, "on his", 1, "horse", 1);
@@ -1806,6 +2241,272 @@ namespace SILUBS.PhraseTranslationHelper
 			VerifyTranslatablePhrase(pth, "How high is this?", "how high is this", 1);
 			VerifyTranslatablePhrase(pth, "That drunk sailor has eaten a radish", "that", 2, "has", 1, "a radish", 1);
 			VerifyTranslatablePhrase(pth, "That high sailor was to have drunk some radish juice", "that", 2, "was", 1, "some", 1, "juice", 1);
+		}
+		#endregion
+
+		#region TranslatablePhrase.FindTermRenderingInUse tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests finding renderings of key terms when there is exactly one occurrence of each
+		/// term in a particular phrase and one of the renderings is present in the translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestFindTermRenderingInUse_Present()
+		{
+			IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
+			IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
+			IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
+			IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
+
+			new PhraseTranslationHelper(new[] {phrase1, phrase2},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			phrase1.Translation = "\u00BFQue\u0301 le dijo Dios a Pablo?";
+			phrase2.Translation = "\u00BFQue\u0301 dice luaP que tenemos que dar a Dios?";
+
+			SubstringDescriptor sd;
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
+			Assert.AreEqual(14, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
+			Assert.AreEqual(21, sd.Offset);
+			Assert.AreEqual(5, sd.Length);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
+			Assert.AreEqual(11, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktSay, 0));
+			Assert.AreEqual(6, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktHave, 0));
+			Assert.AreEqual(20, sd.Offset);
+			Assert.AreEqual(7, sd.Length);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
+			Assert.AreEqual(38, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests finding renderings of key terms when there is exactly one occurrence of each
+		/// term in a particular phrase and one of the renderings is present in the translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestFindTermRenderingInUse_SomeMissing()
+		{
+			IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
+			IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
+			IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
+			IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
+
+			new PhraseTranslationHelper(new[] { phrase1, phrase2 },
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			phrase1.Translation = "\u00BFQue\u0301 le dijo Jehovah a Pablo?";
+			phrase2.Translation = "Pi\u0301dale ayuda a Bill.";
+
+			SubstringDescriptor sd;
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
+			Assert.IsNull(sd);
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
+			Assert.AreEqual(24, sd.Offset);
+			Assert.AreEqual(5, sd.Length);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
+			Assert.IsNull(sd);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktSay, 0));
+			Assert.IsNull(sd);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktHave, 0));
+			Assert.IsNull(sd);
+
+			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
+			Assert.IsNull(sd);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests finding renderings of key terms when there is exactly one occurrence of each
+		/// term in a particular phrase and one of the renderings is present in the translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestFindTermRenderingInUse_RepeatedTerms()
+		{
+			IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
+			IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?/What was Paul told by God");
+
+			new PhraseTranslationHelper(new[] { phrase1 },
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			phrase1.Translation = "\u00BFQue\u0301 le dijo Dios a Pablo?/\u00BFQue\u0301 le fue dicho a Pablo por Dios?";
+
+			SubstringDescriptor sd;
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
+			Assert.AreEqual(14, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+			int endOfLastOccurrenceOfGod = sd.EndOffset;
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
+			Assert.AreEqual(21, sd.Offset);
+			Assert.AreEqual(5, sd.Length);
+			int endOfLastOccurrenceOfPaul = sd.EndOffset;
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, endOfLastOccurrenceOfGod));
+			Assert.AreEqual(59, sd.Offset);
+			Assert.AreEqual(4, sd.Length);
+
+			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, endOfLastOccurrenceOfPaul));
+			Assert.AreEqual(49, sd.Offset);
+			Assert.AreEqual(5, sd.Length);
+		}
+		#endregion
+
+		#region Rendering Selection Rules tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering selection rule based on the preceding (English) word
+		/// causes the correct vernacular rendering to be selected.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_NoPartsTranslated_BasedOnPrecedingWordRule()
+		{
+			AddMockedKeyTerm("Jesus", "Cristo", new [] {"Jesucristo", "Jesus", "Cristo Jesus"});
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man Jesus healed?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+
+			Assert.IsFalse(phrase1.HasUserTranslation);
+			Assert.AreEqual("Cristo", phrase1.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new [] {new RenderingSelectionRule(@"\bman {0}", @"ucristo\b") });
+
+			Assert.AreEqual("Jesucristo", phrase1.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering selection rule based on the following (English) word
+		/// causes the correct vernacular rendering to be inserted into the partial translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_SomePartsTranslated_BasedOnFollowingWordRule()
+		{
+			AddMockedKeyTerm("Stephen", "Esteban");
+			AddMockedKeyTerm("Mary", "Mari\u0301a");
+			AddMockedKeyTerm("look", "mirar", new[] { "pareci\u0301a", "buscaba", "busca", "busco" });
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("What did Stephen look like to the priests and elders and other people present?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("What did Stephen do?");
+			TranslatablePhrase phrase3 = new TranslatablePhrase("What did Mary look for?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+			Assert.AreEqual(2, phrase3.TranslatableParts.Count());
+
+			phrase1.Translation = "\u00BFCo\u0301mo pareci\u0301a Esteban a los sacerdotes y ancianos y a los dema\u0301s?";
+			phrase2.Translation = "\u00BFCo\u0301mo hizo Esteban?";
+
+			Assert.IsFalse(phrase3.HasUserTranslation);
+			Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?", phrase3.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+				new RenderingSelectionRule(@"{0} like\b", @"\bparec"),
+				new RenderingSelectionRule(@"{0} for\b", @"\bbusc")});
+
+			Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?", phrase3.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering selection rule based on the (English) suffix causes
+		/// the correct vernacular rendering to be inserted into the translation template.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule()
+		{
+			AddMockedKeyTerm("magician", "mago", new[] { "brujo" });
+			AddMockedKeyTerm("servant", "criado", new[] { "siervo" });
+			AddMockedKeyTerm("heal", "sanar", new[] { "curada", "sanada", "sanara\u0301", "sanas", "curan", "cura", "sana", "sanado" });
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Was the servant healed?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("Was the magician healed?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(1, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(1, phrase2.TranslatableParts.Count());
+
+			phrase1.Translation = "\u00BFFue sanado el siervo?";
+
+			Assert.IsFalse(phrase2.HasUserTranslation);
+			Assert.AreEqual("\u00BFFue sanar el mago?", phrase2.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+				new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
+
+			Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a disabled rendering selection rule does not change the resulting
+		/// translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_RuleDisabled()
+		{
+			AddMockedKeyTerm("Jesus", "Cristo", new[] { "Jesucristo", "Jesus", "Cristo Jesus" });
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man Jesus healed?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+
+			Assert.IsFalse(phrase1.HasUserTranslation);
+			Assert.AreEqual("Cristo", phrase1.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] { new RenderingSelectionRule(@"\bman {0}", @"ucristo\b") });
+			pth.TermRenderingSelectionRules[0].Disabled = true;
+
+			Assert.AreEqual("Cristo", phrase1.Translation);
 		}
 		#endregion
 
@@ -1825,18 +2526,30 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Adds the mocked key term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void AddMockedKeyTerm(string term, string bestRendering, params int[] occurences)
+		private IKeyTerm AddMockedKeyTerm(string term, string bestRendering, params int[] occurences)
+		{
+			return AddMockedKeyTerm(term, bestRendering,
+				(bestRendering != null) ? new[] { new string(term.Reverse().ToArray()) } : new string[0],
+				occurences);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds the mocked key term.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private IKeyTerm AddMockedKeyTerm(string term, string bestRendering, string[] otherRenderings,
+			params int[] occurences)
 		{
 			IKeyTerm mockedKt = KeyTermMatchBuilderTests.AddMockedKeyTerm(term, occurences);
 			if (bestRendering != null)
 			{
-				mockedKt.Stub(kt => kt.Renderings).Return(new[] { bestRendering, new string(term.Reverse().ToArray()) });
+				otherRenderings = (otherRenderings == null) ? new [] { bestRendering } :
+					(new [] { bestRendering }).Concat(otherRenderings).ToArray();
 				mockedKt.Stub(kt => kt.BestRendering).Return(bestRendering);
 			}
-			else
-			{
-				mockedKt.Stub(kt => kt.Renderings).Return(new string[0]);
-			}
+			mockedKt.Stub(kt => kt.Renderings).Return(otherRenderings);
+
 			if (occurences.Length > 0)
 			{
 				if (m_keyTermRules == null)
@@ -1850,6 +2563,7 @@ namespace SILUBS.PhraseTranslationHelper
 				m_keyTermRules.Items.Add(rule);
 			}
 			m_dummyKtList.Add(mockedKt);
+			return mockedKt;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1889,6 +2603,31 @@ namespace SILUBS.PhraseTranslationHelper
 		private static int GetWordCount(IEnumerable<char> text)
 		{
 			return 1 + text.Count(c => c == ' ');
+		}
+		#endregion
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Dummy class so we don't have to use a real list box
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	internal class DummyKeyTermRenderingInfo : ITermRenderingInfo
+	{
+		#region Implementation of ITermRenderingInfo
+		public IKeyTerm Term { get; private set; }
+
+		public IEnumerable<string> Renderings
+		{
+			get { return Term.Renderings; }
+		}
+
+		public int EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm { get; set; }
+
+		public DummyKeyTermRenderingInfo(IKeyTerm keyTerm, int endOffsetOfPrev)
+		{
+			Term = keyTerm;
+			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 		}
 		#endregion
 	}

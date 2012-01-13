@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 using Enchant;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -96,6 +98,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return wsId;
 		}
 
+		static Dictionary<string, bool> s_existingDictionaries = new Dictionary<string, bool>();
+
+		/// <summary>
+		/// LT-11603 was traced in part to calls to Dictionary.Exists which never return, possibly because
+		/// the OS has become confused and thinks the file is locked. To guard against this we run the test in a background
+		/// thread with a timeout. Not sure whether this is enough protection, other calls may be at risk also, but if
+		/// we can confirm the dictionary exists at least it isn't spuriously locked when we first consider it.
+		/// </summary>
+		private static bool DictionaryExists(string wsId)
+		{
+			bool result;
+			if (s_existingDictionaries.TryGetValue(wsId, out result))
+				return result;
+			var tester = new ExistsTester() {WsId = wsId};
+			var newThread = new Thread(tester.Test);
+			newThread.Start();
+			if (newThread.Join(4000))
+				result = tester.Result;
+			else
+			{
+				result = false;
+				MessageBox.Show(String.Format(FwUtilsStrings.kstIdCantDoDictExists, wsId), FwUtilsStrings.kstidCantDoDictExistsCaption,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			s_existingDictionaries[wsId] = result;
+			return result;
+		}
+
+		class ExistsTester
+		{
+			public bool Result;
+			public string WsId;
+
+			public void Test()
+			{
+				Result = Broker.Default.DictionaryExists(WsId);
+			}
+		}
+
 		/// <summary>
 		/// Return the string which should be used to request a dictionary for the specified writing system,
 		/// or null if none will work.
@@ -108,7 +149,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string wsId = RawDictionaryId(ws, wsf);
 			if (String.IsNullOrEmpty(wsId))
 				return null;
-			if (Enchant.Broker.Default.DictionaryExists(wsId))
+			if (DictionaryExists(wsId))
 			{
 				return wsId;
 			}
@@ -221,6 +262,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Note: I (JohnT) have a vague recollection that disposing the broker can cause problems for
 			// any existing dictionaries we hang on to. So don't dispose it more than necessary.
 			Broker.Default.Dispose();
+			s_existingDictionaries.Clear();
 		}
 
 		/// <summary>

@@ -1,0 +1,14 @@
+begin >
+		store(BackSlash)
+			"\"
+		endstore
+		use(Main)
+
+group(Main)
+
+nl fol(BackSlash)   > dup
+c cont(BackSlash)     > dup back(1)
+
+c for all other nls, replace with a space
+nl              > " "
+nl nl           > dup

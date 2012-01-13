@@ -16,9 +16,9 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 
@@ -69,6 +69,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 					fd = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 				m_cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.Add(fd);
+				IFsFeatStrucType type = m_cache.LanguageProject.MsFeatureSystemOA.GetFeatureType("Infl");
+				if (type == null)
+				{
+					type = m_cache.ServiceLocator.GetInstance<IFsFeatStrucTypeFactory>().Create();
+					m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.Add(type);
+					type.CatalogSourceId = "Infl";
+					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+					{
+						var tss = m_cache.TsStrFactory.MakeString("Infl", ws.Handle);
+						type.Abbreviation.set_String(ws.Handle, tss);
+						type.Name.set_String(ws.Handle, tss);
+					}
+				}
+				type.FeaturesRS.Add(fd);
 				m_selFeatDefn = fd;
 
 				undoHelper.RollBack = false;

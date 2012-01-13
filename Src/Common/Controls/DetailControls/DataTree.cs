@@ -13,6 +13,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IxCoreColleague
+	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
 	{
 		/// <summary>
 		/// Occurs when the current slice changes
@@ -1383,8 +1384,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			}
 			Form myWindow = FindForm();
+			WaitCursor wc = null;
 			if (myWindow != null)
-				myWindow.Cursor = Cursors.WaitCursor;
+				wc = new WaitCursor(myWindow);
 			try
 			{
 				Slice oldCurrent = m_currentSlice;
@@ -1470,8 +1472,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				DeepResumeLayout();
 				RefreshListNeeded = false;  // reset our flag.
-				if (myWindow != null)
-					myWindow.Cursor = Cursors.Default;
+				if (wc != null)
+				{
+					wc.Dispose();
+					wc = null;
+				}
 				m_currentSlicePartName = null;
 				m_currentSliceObjGuid = Guid.Empty;
 				m_fSetCurrentSliceNew = false;
@@ -1549,8 +1554,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (wasVisible)
 				Show();
 			watch.Stop();
-			Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
-			previousSlices.Report();
+			// Uncomment this to investigate slice performance or issues with dissappearing slices
+			//Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
+			//previousSlices.Report();
 		}
 
 		protected override void OnControlAdded(ControlEventArgs e)
@@ -1564,15 +1570,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// This is called (by reflection) when the user issues a Refresh command.
-		/// All data will have been cleared from the cache, so some additional preloading may
-		/// be helpful.
+		/// This method is the implementation of IRefreshableRoot, which FwXWindow calls on all children to implement
+		/// Refresh. The DataTree needs to reconstruct the list of controls, and returns true to indicate that
+		/// children need not be refreshed.
 		/// </summary>
-		public virtual void RefreshDisplay()
+		public virtual bool RefreshDisplay()
 		{
 			CheckDisposed();
 
 			RefreshList(true);
+			return true;
 		}
 
 		/// <summary>
@@ -1642,10 +1649,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						&& nextSlice.Weight != ObjectWeight.heavy && IsChildSlice(slice, nextSlice))
 						continue;
 
+					//LT-11962 Improvements to display in Info tab.
+					// (remove the line directly below the Notebook Record header)
+					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) &&
+						slice is SummarySlice)
+						continue;
+
 					// Check for attribute that the next slice should be grouped with the current slice
 					// regardless of whether they represent the same object.
-					bool fSameObject = XmlUtils.GetOptionalBooleanAttributeValue(nextSlice.ConfigurationNode, "sameObject", false)
-						|| XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "sameObjectNext", false);
+					bool fSameObject = XmlUtils.GetOptionalBooleanAttributeValue(nextSlice.ConfigurationNode, "sameObject", false);
 
 					xPos = Math.Min(xPos, loc.X + nextSlice.LabelIndent());
 					if (nextSlice.Weight == ObjectWeight.heavy)
@@ -1746,6 +1758,33 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvo = m_cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
 				if (hvo != 0)
 					choiceGuidStr = m_cache.ServiceLocator.GetObject(hvo).Guid.ToString();
+			}
+
+			//Custom Lists can have different selections of writing systems. LT-11941
+			if (m_mdc.GetClassName(classId) == "CmCustomItem")
+			{
+				var owningList = (obj as ICmPossibility).OwningList;
+				if (owningList == null)
+					layoutName = "CmPossibilityA"; // As good a default as any
+				else
+				{
+					var wss = owningList.WsSelector;
+					switch (wss)
+					{
+						case WritingSystemServices.kwsVerns:
+							layoutName = "CmPossibilityV";
+							break;
+						case WritingSystemServices.kwsAnals:
+							layoutName = "CmPossibilityA";
+							break;
+						case WritingSystemServices.kwsAnalVerns:
+							layoutName = "CmPossibilityAV";
+							break;
+						case WritingSystemServices.kwsVernAnals:
+							layoutName = "CmPossibilityVA";
+							break;
+					}
+				}
 			}
 
 			XmlNode template;
@@ -2441,6 +2480,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_monitoredProps.Add(new Tuple<int, int>(hvo, flid));
 		}
 
+		/// <summary>
+		/// This constant governs the decision of how many sequence items are needed before we create
+		/// DummyObjectSlices instead of building the slices instantly (through CreateSlicesFor()).
+		/// </summary>
+		private const int kInstantSliceMax = 20;
+
 		private NodeTestResult AddSeqNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
 			bool fVisIfData, XmlNode caller)
@@ -2470,18 +2515,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
-			else if (cobj < 15 ||	// This may be a little on the small side
+			else if (cobj < kInstantSliceMax ||	// This may be a little on the small side
 				m_currentObjectFlids.Contains(flid) ||
 				(!String.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
 			{
 				//Create slices immediately
-				int[] contents;
-				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoMax, typeof(int)))
-				{
-					m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-					contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvoMax, typeof(int));
-				}
+				var contents = SetupContents(flid, obj);
 				foreach (int hvo in contents)
 				{
 					path.Add(hvo);
@@ -2496,32 +2535,37 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// preceived benefit, but this way doesn't crash now that the slices are being
 				// disposed of.
 				int cnt = 0;
-				int[] contents;
-				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoMax, typeof(int)))
-				{
-					m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-					contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvoMax, typeof(int));
-				}
+				var contents = SetupContents(flid, obj);
 				foreach (int hvo in contents)
 				{
 					// TODO (DamienD): do we need to add the layout choice field to the monitored props for a dummy slice?
-					path.Add(hvo);
+					// LT-12302 exposed a path through here that was messed up when hvo was added before Dummy slices
+					//path.Add(hvo); // try putting this AFTER the dos creation
 					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()),
 						obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = m_cache, ParentSlice = parentSlice};
+					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
 					// or Show() will reorder them.
 					dos.Visible = false;
 					InsertSlice(insertPosition++, dos);
-					////InstallSlice(dos, -1);
-					////ResetTabIndices(insertPosition);
-					////insertPosition++;
 					path.RemoveAt(path.Count - 1);
 					cnt++;
 				}
 			}
 			path.RemoveAt(path.Count - 1);
 			return NodeTestResult.kntrNothing;
+		}
+
+		private int[] SetupContents(int flid, ICmObject obj)
+		{
+			int[] contents;
+			int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+			{
+				m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+			}
+			return contents;
 		}
 
 		private readonly Set<string> m_setInvalidFields = new Set<string>();
@@ -2727,8 +2771,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							if (hvoT == 0)
 								return NodeTestResult.kntrNothing;
 							var objt = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoT);
-							int clid = objt.ClassID;
-							if (clid == StTextTags.kClassId) // if clid is an sttext clid
+							if (objt.ClassID == StTextTags.kClassId) // if clid is an sttext clid
 							{
 								var txt = (IStText) objt;
 								// Test if the StText has only one paragraph
@@ -3636,6 +3679,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get { return IsDisposed || m_fDisposing; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion IxCoreColleague implementation
 
 		#region IxCoreColleague message handlers
@@ -3664,6 +3715,53 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// Enable/Disable menu items for jumping to the Lexicon Edit tool and applying a column filter on the Anthropology Category
+		/// the user has right clicked on.
+		/// </summary>
+		public virtual bool OnDisplayJumpToLexiconEditFilterAnthroItems(object commandObject, ref UIItemDisplayProperties display)
+		{
+			return DisplayJumpToToolAndFilterAnthroItem(display, commandObject, "CmdJumpToLexiconEditWithFilter");
+		}
+
+		/// <summary>
+		/// Enable/Disable menu items for jumping to the Notebook Edit tool and applying a column filter on the Anthropology Category
+		/// the user has right clicked on.
+		/// </summary>
+		public virtual bool OnDisplayJumpToNotebookEditFilterAnthroItems(object commandObject, ref UIItemDisplayProperties display)
+		{
+			return DisplayJumpToToolAndFilterAnthroItem(display, commandObject, "CmdJumpToNotebookEditWithFilter");
+		}
+
+		private bool DisplayJumpToToolAndFilterAnthroItem(UIItemDisplayProperties display, object commandObject, string cmd)
+		{
+			CheckDisposed();
+
+			if (display.Group != null && display.Group.IsContextMenu &&
+				!String.IsNullOrEmpty(display.Group.Id) &&
+				!display.Group.Id.StartsWith("mnuReferenceChoices"))
+			{
+				return false;
+			}
+
+			var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
+			if (String.IsNullOrEmpty(fieldName) || !fieldName.Equals("AnthroCodes"))
+			{
+				display.Enabled = display.Visible = false;
+				return true;
+			}
+
+			var xmlNode = (commandObject as XCore.Command).ConfigurationNode;
+			var command = XmlUtils.GetOptionalAttributeValue(xmlNode, "id");
+			if (String.IsNullOrEmpty(command))
+				return false;
+			if (command.Equals(cmd))
+				display.Enabled = display.Visible = true;
+			else
+				display.Enabled = display.Visible = false;
+			return true;
+		}
+
+		/// <summary>
 		/// Enable menu items for jumping to the concordance (or lexiconEdit) tool.
 		/// </summary>
 		/// <param name="commandObject"></param>
@@ -3679,7 +3777,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				return false;
 			}
-			Guid guid = GetGuidForJumpToTool((Command)commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command)commandObject, true, out tool);
 			if (guid != Guid.Empty)
 			{
 				display.Enabled = display.Visible = true;
@@ -3697,7 +3795,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string tool;
-			Guid guid = GetGuidForJumpToTool((Command) commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
@@ -3709,14 +3807,79 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
+		/// Handle jumping to the lexiconEdit tool and filtering on the Anthropology Category the user has
+		/// right clicked on.
 		/// </summary>
-		private Guid GetGuidForJumpToTool(Command cmd, out string tool)
+		public virtual bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
+		{
+			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "lexiconEdit");
+			return true;
+		}
+
+		/// <summary>
+		/// Handle jumping to the NotebookEdit tool and filtering on the Anthropology Category the user has
+		/// right clicked on.
+		/// </summary>
+		public virtual bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
+		{
+			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "notebookEdit");
+			return true;
+		}
+
+		private void OnJumpToToolAndFilterAnthroItem(string linkSetupInfo, string toolToJumpTo)
+		{
+			var rootBx
+				= ((CurrentSlice.Control as VectorReferenceLauncher).MainControl as VectorReferenceView).RootBox;
+			var selection = rootBx.Selection;
+
+			// Enhance GJM: I don't like the way this matches the Abbreviation-Name string. We should be getting the
+			// hvos of the objects (at least partially) selected from views. (See LT-12240)
+			ITsString TsStr;
+			selection.GetSelectionString(out TsStr, "");
+			var sMatchText = TsStr.Text;
+
+			var repoAnthroCats = m_cache.ServiceLocator.GetInstance<ICmAnthroItemRepository>();
+			var hvoList = (from item in repoAnthroCats.AllInstances()
+						   where sMatchText.Contains(item.AbbrAndName)
+						   select item.Hvo).ToList();
+			if (hvoList.Count == 0)
+			{
+				// For now just don't do anything if we didn't get an exact match.
+				// This can happen, for instance, if we try to select more than one Anthro category to filter on.
+				return;
+			}
+			var shvos = ConvertHvoListToString(hvoList);
+
+			FwLinkArgs link = new FwAppArgs(FwUtils.FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
+											Cache.ProjectId.ServerName, toolToJumpTo, Guid.Empty);
+			List<Property> additionalProps = link.PropertyTableEntries;
+			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
+			additionalProps.Add(new Property("HvoOfAnthroItem", shvos));
+			m_mediator.PostMessage("FollowLink", link);
+		}
+
+		/// <summary>
+		/// Converts a List of integers into a comma-delimited string of numbers.
+		/// </summary>
+		/// <param name="hvoList"></param>
+		/// <returns></returns>
+		private string ConvertHvoListToString(List<int> hvoList)
+		{
+			return hvoList.ToString(",");
+		}
+
+		/// <summary>
+		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
+		/// forEnableOnly is true when called from OnDisplayJumpToTool.
+		/// </summary>
+		private Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
 			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
 			if (CurrentSlice != null && CurrentSlice.Object != null)
 			{
+				var owner = CurrentSlice.Object.Owner;
 				if (tool == "concordance")
 				{
 					int flidSlice = 0;
@@ -3764,25 +3927,32 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else if (tool == "lexiconEdit")
 				{
-					if (CurrentSlice.Object.Owner != null &&
-						CurrentSlice.Object.Owner != m_root &&
-						CurrentSlice.Object.Owner.ClassID == LexEntryTags.kClassId)
+					if (owner != null && owner != m_root && owner.ClassID == LexEntryTags.kClassId)
 					{
-						return CurrentSlice.Object.Owner.Guid;
+						return owner.Guid;
 					}
-				}
-				else if (tool == "interlinearEdit")
-				{
-					if (CurrentSlice.Object is IText && ((IText)CurrentSlice.Object).ContentsOA != null)
-						return ((IText)CurrentSlice.Object).ContentsOA.Guid;
 				}
 				else if (tool == "notebookEdit")
 				{
-					if (CurrentSlice.Object is IText)
+					if (owner != null &&
+						owner.ClassID == RnGenericRecTags.kClassId)
 					{
-						((IText)CurrentSlice.Object).MoveToNotebook(true); // may be there already, but make sure there's a record to jump to
-						if (CurrentSlice.Object.Owner is IRnGenericRec)
-							return CurrentSlice.Object.Owner.Guid;
+						return owner.Guid;
+					}
+					// Not already owned by a notebook record. So there's nothing yet to jump to.
+					// If the user is really doing the jump we need to make it now.
+					// Otherwise we just need to return something non-null to indicate the jump
+					// is possible (though this is not currently used).
+					if (forEnableOnly)
+						return CurrentSlice.Object.Guid;
+					((IText)CurrentSlice.Object).MoveToNotebook(true);
+					return CurrentSlice.Object.Owner.Guid;
+				}
+				else if (tool == "interlinearEdit")
+				{
+					if (CurrentSlice.Object.ClassID == TextTags.kClassId)
+					{
+						return CurrentSlice.Object.Guid;
 					}
 				}
 			}

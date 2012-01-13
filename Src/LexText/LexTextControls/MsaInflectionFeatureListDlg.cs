@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -32,19 +31,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		int m_owningFlid;
 		private IPartOfSpeech m_highestPOS;
 		private Dictionary<int, IPartOfSpeech> m_poses = new Dictionary<int, IPartOfSpeech>();
-		private System.Windows.Forms.Button m_btnOK;
-		private System.Windows.Forms.Button m_btnCancel;
-		private System.Windows.Forms.Button m_bnHelp;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.LinkLabel linkLabel1;
-		private System.Windows.Forms.ImageList m_imageList;
-		private System.Windows.Forms.ImageList m_imageListPictures;
+		private Button m_btnOK;
+		private Button m_btnCancel;
+		private Button m_bnHelp;
+		private PictureBox pictureBox1;
+		private LinkLabel linkLabel1;
+		private ImageList m_imageList;
+		private ImageList m_imageListPictures;
 		private FeatureStructureTreeView m_tvMsaFeatureList;
-		private System.Windows.Forms.Label labelPrompt;
+		private Label labelPrompt;
 		private System.ComponentModel.IContainer components;
 
 		private const string m_helpTopic = "khtpChoose-lexiconEdit-InflFeats";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 
 		public MsaInflectionFeatureListDlg()
 		{
@@ -120,6 +119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="fs"></param>
+		/// <param name="owningFlid"></param>
 		public void SetDlgInfo(FdoCache cache, Mediator mediator, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_hvoOwner = cobj.Hvo;
 			Mediator = mediator;
 			m_cache = cache;
-			LoadInflFeats(cobj, (int)owningFlid);
+			LoadInflFeats(cobj, owningFlid);
 			EnableLink();
 		}
 		/// <summary>
@@ -167,14 +167,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void EnableLink()
 		{
-			if (m_highestPOS == null)
-			{
-				linkLabel1.Enabled = false;
-			}
-			else
-			{
-				linkLabel1.Enabled = true;
-			}
+			linkLabel1.Enabled = m_highestPOS != null;
 		}
 
 		private Mediator Mediator
@@ -190,15 +183,14 @@ namespace SIL.FieldWorks.LexText.Controls
 					object szWnd = m_mediator.PropertyTable.GetValue("msaInflFeatListDlgSize");
 					if (locWnd != null && szWnd != null)
 					{
-						Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
+						var rect = new Rectangle((Point) locWnd, (Size) szWnd);
 						ScreenUtils.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
 					}
 					if (m_mediator.HelpTopicProvider != null) // Will be null when running tests
 					{
-						helpProvider = new HelpProvider();
-						helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
+						helpProvider = new HelpProvider { HelpNamespace = m_mediator.HelpTopicProvider.HelpFile };
 						helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopic));
 						helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 					}
@@ -303,46 +295,36 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IPartOfSpeech GetPosFromCmObjectAndFlid(ICmObject cobj, int owningFlid)
 		{
-			IPartOfSpeech pos = null;
 			switch (cobj.ClassID)
 			{
 				case MoInflAffMsaTags.kClassId:
-					var infl = cobj as IMoInflAffMsa;
-					if (infl != null)
-						pos = infl.PartOfSpeechRA;
-					break;
+					var infl = (IMoInflAffMsa) cobj;
+					return infl.PartOfSpeechRA;
 				case MoDerivAffMsaTags.kClassId:
-					var deriv = cobj as IMoDerivAffMsa;
-					if (deriv != null)
-					{
-						if (owningFlid == MoDerivAffMsaTags.kflidFromMsFeatures)
-							pos = deriv.FromPartOfSpeechRA;
-						else if (owningFlid == MoDerivAffMsaTags.kflidToMsFeatures)
-							pos = deriv.ToPartOfSpeechRA;
-					}
+					var deriv = (IMoDerivAffMsa) cobj;
+					if (owningFlid == MoDerivAffMsaTags.kflidFromMsFeatures)
+						return deriv.FromPartOfSpeechRA;
+					if (owningFlid == MoDerivAffMsaTags.kflidToMsFeatures)
+						return deriv.ToPartOfSpeechRA;
 					break;
 				case MoStemMsaTags.kClassId:
-					var stem = cobj as IMoStemMsa;
-					if (stem != null)
-						pos = stem.PartOfSpeechRA;
-					break;
+					var stem = (IMoStemMsa) cobj;
+					return stem.PartOfSpeechRA;
 				case MoStemNameTags.kClassId:
-					var sn = cobj as IMoStemName;
-					pos = sn.Owner as IPartOfSpeech;
-					break;
+					var sn = (IMoStemName) cobj;
+					return sn.Owner as IPartOfSpeech;
 				case MoAffixAllomorphTags.kClassId:
 					// get entry of the allomorph and then get the msa of first sense and return its (from) POS
 					var entry = cobj.Owner as ILexEntry;
 					if (entry == null)
-						return pos;
+						return null;
 					var sense = entry.SensesOS[0];
 					if (sense == null)
-						return pos;
+						return null;
 					var msa = sense.MorphoSyntaxAnalysisRA;
-					pos = GetPosFromCmObjectAndFlid(msa, MoDerivAffMsaTags.kflidFromMsFeatures);
-					break;
+					return GetPosFromCmObjectAndFlid(msa, MoDerivAffMsaTags.kflidFromMsFeatures);
 			}
-			return pos;
+			return null;
 		}
 
 		/// <summary>
@@ -384,17 +366,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 
-				string s1;
-				if (value == null)
-					s1 = LexTextControls.ksFeaturesForX;
-				else
-					s1 = value;
+				string s1 = value ?? LexTextControls.ksFeaturesForX;
 				string s2;
 				if (m_poses.Count == 0)
 					s2 = LexTextControls.ksUnknownCategory;
 				else
 				{
-					StringBuilder sb = new StringBuilder();
+					var sb = new StringBuilder();
 					Dictionary<int, IPartOfSpeech>.ValueCollection poses = m_poses.Values;
 					bool fFirst = true;
 					foreach (var pos in poses)
@@ -442,16 +420,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 
-				string s1;
-				if (value == null)
-					s1 = LexTextControls.ksAddFeaturesToX;
-				else
-					s1 = value;
-				string s2;
-				if (m_highestPOS == null)
-					s2 = LexTextControls.ksUnknownCategory;
-				else
-					s2 = m_highestPOS.Name.AnalysisDefaultWritingSystem.Text;
+				string s1 = value ?? LexTextControls.ksAddFeaturesToX;
+				string s2 = m_highestPOS == null ? LexTextControls.ksUnknownCategory : m_highestPOS.Name.AnalysisDefaultWritingSystem.Text;
 				linkLabel1.Text = String.Format(s1, s2);
 			}
 		}
@@ -594,7 +564,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								// Didn't have one to begin with. See whether we want to create one.
 								if (CheckFeatureStructure(m_tvMsaFeatureList.Nodes))
 								{
-									IFsFeatStrucRepository repo = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>();
+									var repo = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>();
 									// FsFeatStruc may be owned atomically or in a colllection. See which fake insertion index we need.
 									int where = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid) == (int) CellarPropertyType.OwningAtomic ? -2: -1;
 									int hvoNew = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner,
@@ -685,6 +655,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 		}
+
 		/// <summary>
 		/// Recursively builds the feature structure based on contents of treeview node path.
 		/// It recurses back up the treeview node path to the top and then builds the feature structure
@@ -692,6 +663,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <param name="fs"></param>
+		/// <param name="val"></param>
 		/// <returns></returns>
 		private void BuildFeatureStructure(FeatureTreeNode node, ref IFsFeatStruc fs, ref IFsFeatureSpecification val)
 		{
@@ -705,17 +677,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					val = complex;
 					val.FeatureRA = complexFeat;
 					if (fs.TypeRA == null)
-					{
-						foreach (var type in m_cache.LanguageProject.MsFeatureSystemOA.TypesOC)
-						{
-							if (type.FeaturesRS.Contains(complexFeat))
-							{
-								// this is the type which contains the complex feature
-								fs.TypeRA = type;
-								break;
-							}
-						}
-					}
+						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.SingleOrDefault(type => type.FeaturesRS.Contains(complexFeat));
 					fs = (IFsFeatStruc)complex.ValueOA;
 					if (fs.TypeRA == null)
 					{
@@ -731,17 +693,17 @@ namespace SIL.FieldWorks.LexText.Controls
 					var closedFeat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(node.Hvo);
 					val = fs.GetOrCreateValue(closedFeat);
 					val.FeatureRA = closedFeat;
+					if (fs.TypeRA == null)
+						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.SingleOrDefault(type => type.FeaturesRS.Contains(closedFeat));
 					break;
 				case FeatureTreeNodeInfo.NodeKind.SymFeatValue:
 					var closed = val as IFsClosedValue;
 					if (closed != null)
 						closed.ValueRA = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(node.Hvo);
 					break;
-				default:
-					break; // do nothing
 			}
 		}
-		private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if (m_highestPOS == null)
 				return;  // nowhere to go
@@ -750,7 +712,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Close();
 		}
 
-		private void m_bnHelp_Click(object sender, System.EventArgs e)
+		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
 		}

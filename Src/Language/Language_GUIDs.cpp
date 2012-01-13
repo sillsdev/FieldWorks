@@ -1,4 +1,4 @@
-// Automatically generated from LanguageTlb.h by D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\BldSys\extract_iids.cmd
+// Automatically generated from LanguageTlb.h by D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\Bin\extract_iids.cmd
 #include "LanguageTlb.h"
 
 template<> const GUID __uuidof(ITsString)("295B2E11-B149-49C5-9BE9-9F46185609AA");

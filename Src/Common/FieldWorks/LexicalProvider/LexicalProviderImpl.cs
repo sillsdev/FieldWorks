@@ -87,6 +87,36 @@ namespace SIL.FieldWorks.LexicalProvider
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Displays the related words to the specified entry using the application with the
+		/// lexical data.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void ShowRelatedWords(string entry, EntryType entryType)
+		{
+			LexicalProviderManager.ResetLexicalProviderTimer();
+			Logger.WriteEvent("Showing related word from external application for the " + entryType + " " + entry);
+
+			if (entryType != EntryType.Word)
+				throw new ArgumentException("Unknown entry type specified.");
+
+			// An asynchronous call is necessary because the WCF server (FieldWorks) will not
+			// respond until this method returns. This also allows methods that show dialogs on the
+			// WCF server to not be OneWay. (Otherwise, time-out exceptions occur.)
+			FieldWorks.ThreadHelper.InvokeAsync(() =>
+			{
+				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
+				Mediator mediator = new Mediator();
+				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider(FwUtils.ksFlexAbbrev);
+				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
+				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
+
+				LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, mediator.HelpTopicProvider,
+					"UserHelpFile", tss);
+			});
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets all lexemes in the Lexicon
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -254,8 +284,8 @@ namespace SIL.FieldWorks.LexicalProvider
 					}
 
 					// Add the new gloss to the list of glosses for the sense
-					int wsId = m_cache.WritingSystemFactory.GetWsFromStr(language);
-					dbGlosses.set_String(wsId, TsStringUtils.MakeTss(text, wsId));
+					ILgWritingSystem writingSystem = m_cache.WritingSystemFactory.get_Engine(language);
+					dbGlosses.set_String(writingSystem.Handle, TsStringUtils.MakeTss(text, writingSystem.Handle));
 
 					return new LexGloss(language, text);
 				});

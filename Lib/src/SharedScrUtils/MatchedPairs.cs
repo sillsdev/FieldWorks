@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using System.Windows.Forms;
 using SIL.Utils;
 
 namespace SILUBS.SharedScrUtils
@@ -15,7 +14,7 @@ namespace SILUBS.SharedScrUtils
 	[XmlType("MatchedPairs")]
 	public class MatchedPairList : List<MatchedPair>
 	{
-		private static SortOrder s_currSortOrder = SortOrder.Ascending;
+		private static bool s_sortAscending = true;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -132,12 +131,12 @@ namespace SILUBS.SharedScrUtils
 		#region Matched pairs sorting methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Sort the list of matched pairs using the specified order and comparer
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Sort(SortOrder sortOrder, Comparison<MatchedPair> comparer)
+		public void Sort(bool sortAscending, Comparison<MatchedPair> comparer)
 		{
-			s_currSortOrder = sortOrder;
+			s_sortAscending = sortAscending;
 			Sort(comparer);
 		}
 
@@ -155,13 +154,12 @@ namespace SILUBS.SharedScrUtils
 			}
 
 			if (x == null || string.IsNullOrEmpty(x.Open))
-				return (s_currSortOrder == SortOrder.Ascending ? -1 : 1);
+				return (s_sortAscending ? -1 : 1);
 
 			if (y == null || string.IsNullOrEmpty(y.Open))
-				return (s_currSortOrder == SortOrder.Ascending ? 1 : -1);
+				return (s_sortAscending ? 1 : -1);
 
-			return (s_currSortOrder == SortOrder.Ascending ?
-				x.Open.CompareTo(y.Open) :
+			return (s_sortAscending ? x.Open.CompareTo(y.Open) :
 				y.Open.CompareTo(x.Open));
 		}
 
@@ -179,13 +177,12 @@ namespace SILUBS.SharedScrUtils
 			}
 
 			if (x == null || string.IsNullOrEmpty(x.Close))
-				return (s_currSortOrder == SortOrder.Ascending ? -1 : 1);
+				return (s_sortAscending ? -1 : 1);
 
 			if (y == null || string.IsNullOrEmpty(y.Close))
-				return (s_currSortOrder == SortOrder.Ascending ? 1 : -1);
+				return (s_sortAscending ? 1 : -1);
 
-			return (s_currSortOrder == SortOrder.Ascending ?
-				x.Close.CompareTo(y.Close) :
+			return (s_sortAscending ? x.Close.CompareTo(y.Close) :
 				y.Close.CompareTo(x.Close));
 		}
 
@@ -203,13 +200,12 @@ namespace SILUBS.SharedScrUtils
 			}
 
 			if (x == null || string.IsNullOrEmpty(x.Open))
-				return (s_currSortOrder == SortOrder.Ascending ? -1 : 1);
+				return (s_sortAscending ? -1 : 1);
 
 			if (y == null || string.IsNullOrEmpty(y.Open))
-				return (s_currSortOrder == SortOrder.Ascending ? 1 : -1);
+				return (s_sortAscending ? 1 : -1);
 
-			return (s_currSortOrder == SortOrder.Ascending ?
-				x.Open[0].CompareTo(y.Open[0]) :
+			return (s_sortAscending ? x.Open[0].CompareTo(y.Open[0]) :
 				y.Open[0].CompareTo(x.Open[0]));
 		}
 
@@ -227,13 +223,12 @@ namespace SILUBS.SharedScrUtils
 			}
 
 			if (x == null || string.IsNullOrEmpty(x.Close))
-				return (s_currSortOrder == SortOrder.Ascending ? -1 : 1);
+				return (s_sortAscending ? -1 : 1);
 
 			if (y == null || string.IsNullOrEmpty(y.Close))
-				return (s_currSortOrder == SortOrder.Ascending ? 1 : -1);
+				return (s_sortAscending ? 1 : -1);
 
-			return (s_currSortOrder == SortOrder.Ascending ?
-				x.Close[0].CompareTo(y.Close[0]) :
+			return (s_sortAscending ? x.Close[0].CompareTo(y.Close[0]) :
 				y.Close[0].CompareTo(x.Close[0]));
 		}
 
@@ -248,13 +243,12 @@ namespace SILUBS.SharedScrUtils
 				return 0;
 
 			if (x == null)
-				return (s_currSortOrder == SortOrder.Ascending ? -1 : 1);
+				return (s_sortAscending ? -1 : 1);
 
 			if (y == null)
-				return (s_currSortOrder == SortOrder.Ascending ? 1 : -1);
+				return (s_sortAscending ? 1 : -1);
 
-			return (s_currSortOrder == SortOrder.Ascending ?
-				x.PermitParaSpanning.CompareTo(y.PermitParaSpanning) :
+			return (s_sortAscending ? x.PermitParaSpanning.CompareTo(y.PermitParaSpanning) :
 				y.PermitParaSpanning.CompareTo(x.PermitParaSpanning));
 		}
 

@@ -219,6 +219,7 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		public int Priority { get { return (int)ColleaguePriority.High; } }
 
 		#endregion IxCoreColleague implementation
 	}

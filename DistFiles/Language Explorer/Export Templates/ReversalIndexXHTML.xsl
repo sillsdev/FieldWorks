@@ -437,7 +437,11 @@ display/printout!
 	  </span>
 	</xsl:if>
   </xsl:template>
-
+  <xsl:template match="ItemNumber">
+	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
+		<xsl:value-of select="Str/Run"/>
+	  </span>
+  </xsl:template>
   <!-- ************************** -->
   <!-- * Process custom fields. * -->
   <!-- ************************** -->
@@ -507,6 +511,9 @@ display/printout!
 	<xsl:copy>
 	  <xsl:copy-of select="@title"/>
 	  <xsl:choose>
+		  <xsl:when test="@class='headword'">
+			  <xsl:attribute name="class">headref</xsl:attribute>
+		  </xsl:when>
 		<xsl:when test="ReversalIndexEntry_ReversalForm/AStr/Run">
 		  <xsl:call-template name="SetAnalAttrs"><xsl:with-param name="Class" select="@class"/><xsl:with-param name="Lang" select="ReversalIndexEntry_ReversalForm//AStr[1]/@ws"/></xsl:call-template>
 		</xsl:when>
@@ -710,8 +717,11 @@ MoInflAffixSlot_Name/AStr/Run
 	  <xsl:choose>
 		<xsl:when test="not(@ws=../@ws)">
 			<xsl:choose>
-				<xsl:when test="@superscript='sub'">
-					<span class="xhomographnumber"><xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute><xsl:value-of select="."/></span>
+				<xsl:when test="@superscript='sub' or @namedStyle='Homograph-Number'">
+					<span class="homographnumberrev"><xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute><xsl:value-of select="."/></span>
+				</xsl:when>
+				<xsl:when test="@namedStyle='Sense-Reference-Number'">
+					<span class="sensenumberref"><xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute><xsl:value-of select="."/></span>
 				</xsl:when>
 				<xsl:otherwise>
 					<span><xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute><xsl:value-of select="."/></span>
@@ -720,8 +730,11 @@ MoInflAffixSlot_Name/AStr/Run
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:choose>
-				<xsl:when test="@superscript='sub'">
-					<span class="xhomographnumber"><xsl:value-of select="."/></span>
+				<xsl:when test="@superscript='sub' or @namedStyle='Homograph-Number'">
+					<span class="homographnumberrev"><xsl:value-of select="."/></span>
+				</xsl:when>
+				<xsl:when test="@namedStyle='Sense-Reference-Number'">
+					<span class="sensenumberref"><xsl:value-of select="."/></span>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="."/>

@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				}
 				foreach (int flid in delFields)
 					m_mapFlidName.Remove(flid);
-				foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarModuleDefns.kgrfcptAll))
+				foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarPropertyTypeFilter.All))
 				{
 					if (m_mapFlidName.ContainsKey(flid))
 						continue;

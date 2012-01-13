@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -176,6 +177,41 @@ namespace SIL.Utils
 			{
 				return kstid;
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Produce a version of the given name that can be used as a file name. This is done
+		/// by replacing characters that the current OS does not allow with underscores '_'.
+		/// </summary>
+		/// <param name="sName">Name to be filtered</param>
+		/// <returns>the filtered name</returns>
+		/// ------------------------------------------------------------------------------------
+		public static string FilterForFileName(string sName)
+		{
+			return FilterForFileName(sName, new string(Path.GetInvalidFileNameChars()));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Produce a version of the given name that can be used as a file name. This is done
+		/// by replacing invalid characters with underscores '_'.
+		/// </summary>
+		/// <param name="sName">Name to be filtered</param>
+		/// <param name="invalidChars">characters to filter out</param>
+		/// <returns>the filtered name</returns>
+		/// ------------------------------------------------------------------------------------
+		public static string FilterForFileName(string sName, string invalidChars)
+		{
+			StringBuilder cleanName = new StringBuilder(sName);
+
+			// replace all invalid characters with an '_'
+			for (int i = 0; i < sName.Length; i++)
+			{
+				if (invalidChars.IndexOf(sName[i]) >= 0 || sName[i] < ' ') // eliminate all control characters too
+					cleanName[i] = '_';
+			}
+			return cleanName.ToString();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -537,4 +573,48 @@ namespace SIL.Utils
 			return bestMatch;
 		}
 	}
+
+	#region StrLengthComparer class
+	/// -----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Class to compare strings and sort by length
+	/// </summary>
+	/// -----------------------------------------------------------------------------------------
+	public class StrLengthComparer : IComparer<string>
+	{
+		private readonly int m_asc;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StrLengthComparer"/> class that sorts
+		/// from shortest to longest.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public StrLengthComparer() : this(true)
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StrLengthComparer"/> class.
+		/// </summary>
+		/// <param name="ascending">if set to <c>true</c>, strings will be sorted from shortest
+		/// to longest; otherwise, from longest to shortest.</param>
+		/// ------------------------------------------------------------------------------------
+		public StrLengthComparer(bool ascending)
+		{
+			m_asc = ascending ? 1 : -1;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Comparison method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public int Compare(string obj1, string obj2)
+		{
+			return m_asc * (obj1.Length - obj2.Length);
+		}
+	}
+	#endregion
 }

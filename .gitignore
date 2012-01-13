@@ -1,18 +1,9 @@
 # Generated files
 GeneratedAssemblyInfo.cs
 Collection.cpp
-/Src/Common/COMInterfaces/FwCellar.cs
 /Src/Common/COMInterfaces/FwKernel.cs
 /Src/Common/COMInterfaces/Views.cs
-/Src/Common/COMInterfaces/WorldPad.cs
-/Src/Common/Framework/DbVersion.cs
-/Src/FDO/Cellar.cs
-/Src/FDO/FdoInterfaces.cs
-/Src/FDO/FeatSys.cs
-/Src/FDO/LangProj.cs
-/Src/FDO/Ling.cs
-/Src/FDO/Notebk.cs
-/Src/ScrFDO/Scripture.cs
+/Src/Common/CoreImpl/CellarPropertyType.cs
 /DistFiles/Data/
 /DistFiles/Icu40/data/
 /DistFiles/Icu40/icudt40l/

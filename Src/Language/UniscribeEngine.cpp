@@ -584,7 +584,6 @@ LEmptySeg:
 					// Check for the last line break in the current segment.
 					// If the last line break is at the end of the segment, the overall line break
 					// is okay.
-					ILgCharacterPropertyEnginePtr qcpe;
 					AssertPtr(m_qwsf);
 					CheckHr(m_qwsf->get_CharPropEngine(chrpThis.ws, &qcpe));
 					AssertPtr(qcpe.Ptr());
@@ -1035,8 +1034,9 @@ LQuit:
 						Assert(irun == viglyphRun.Size());
 						fBacktracking = true;
 						fRemovedWsSeg = true;
-						if (pscri > UniscribeSegment::g_vscri.Begin())
-							--pscri;
+						// We may have moved back into a previous script run, too.
+						while (ichLimNfc < pscri->iCharPos && pscri > UniscribeSegment::g_vscri.Begin() )
+							pscri--; // we're back in the previous script run
 						continue;
 					}
 					else

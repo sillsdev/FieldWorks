@@ -17,6 +17,7 @@ OBJ_GENERIC=\
 	$(INT_DIR)\autopch\StringStrm.obj\
 	$(INT_DIR)\autopch\ResourceStrm.obj\
 	$(INT_DIR)\autopch\StackDumper.obj\
+	$(INT_DIR)\autopch\StackDumperWin32.obj\
 	$(INT_DIR)\autopch\MakeDir.obj\
 	$(INT_DIR)\autopch\Zipper.obj\
 	$(INT_DIR)\autopch\UtilSil.obj\

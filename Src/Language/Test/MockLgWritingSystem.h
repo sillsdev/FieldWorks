@@ -74,7 +74,8 @@ public:
 
 	STDMETHOD(get_LCID)(int * pnLcid)
 	{
-		return E_NOTIMPL;
+		*pnLcid = 0;
+		return S_OK;
 	}
 
 	STDMETHOD(put_LCID)(int nLcid)
@@ -219,7 +220,8 @@ public:
 
 	STDMETHOD(get_CurrentLCID)(int * pnLangId)
 	{
-		return E_NOTIMPL;
+		*pnLangId = 0;
+		return S_OK;
 	}
 
 	STDMETHOD(put_CurrentLCID)(int nLangId)

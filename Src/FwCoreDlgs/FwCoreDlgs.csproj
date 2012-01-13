@@ -634,7 +634,7 @@
   <ItemGroup>
 	<None Include="Resources\Bullet.png" />
 	<None Include="Resources\wait22trans.gif" />
-	<Content Include="Resources\warning.png" />
+	<Content Include="Resources\Warning.png" />
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="res\" />

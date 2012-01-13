@@ -15,12 +15,19 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.Utils;
 
 namespace SILUBS.PhraseTranslationHelper
 {
 	[TestFixture]
 	public class KeyTermMatchBuilderTests
 	{
+		static KeyTermMatchBuilderTests()
+		{
+			ReflectionHelper.SetField(typeof(KeyTermMatch), "m_keyTermRenderingInfo",
+				new List<KeyTermRenderingInfo>());
+		}
+
 		#region Sanitized data Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -483,7 +490,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
-		/// real evil data: missing closing parenthesis for optional phrase.
+		/// real evil data: complex insanity.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -514,6 +521,38 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual(2, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "olive", "oil");
 			VerifyKeyTermMatch(bldr, 1, "olive", "oil", "used", "as", "food");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+		/// real evil data: optional comma-separated parts.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Ignore("We're still trying to figure out what to do with this.")]
+		public void RealData13()
+		{
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("(Lord, LORD, God of) hosts"));
+			Assert.AreEqual(3, bldr.Matches.Count());
+			VerifyKeyTermMatch(bldr, 0, "hosts");
+			VerifyKeyTermMatch(bldr, 1, "lord", "of", "hosts");
+			VerifyKeyTermMatch(bldr, 2, "god", "of", "hosts");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+		/// real evil data: optional comma-separated parts.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RealData14()
+		{
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("(one's own) burial-place"));
+			Assert.AreEqual(2, bldr.Matches.Count());
+			VerifyKeyTermMatch(bldr, 0, "burial-place");
+			VerifyKeyTermMatch(bldr, 1, "one's", "own", "burial-place");
 		}
 
 		/// ------------------------------------------------------------------------------------

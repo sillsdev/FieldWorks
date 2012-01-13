@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2004, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2004' company='SIL International'>
-//		Copyright (c) 2004, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,9 +10,6 @@
 //
 // File: ScripturePropertiesTests.cs
 // Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
 
@@ -22,10 +19,10 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -112,10 +109,10 @@ namespace SIL.FieldWorks.TE
 
 			ReflectionHelper.CallMethod(dlg, "ConvertChapterVerseNumbers", null);
 
-			int[] expectedNumbers = new int[] { 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			int[] expectedNumbers = new [] { 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			int expectedIndex = 0;
 
-			ITsString tss = ((IStTxtPara)((IScrSection)m_exodus.SectionsOS[0]).ContentOA.ParagraphsOS[0]).Contents;
+			ITsString tss = ((IStTxtPara)(m_exodus.SectionsOS[0]).ContentOA.ParagraphsOS[0]).Contents;
 			for (int i = 0; i < tss.RunCount; i++)
 			{
 				TsRunInfo tri;

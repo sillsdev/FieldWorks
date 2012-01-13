@@ -813,6 +813,11 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXHomographNumber();
 				m_dictClassData.Remove("xhomographnumber");
 			}
+			if (m_dictClassData.ContainsKey("homographnumberrev"))
+			{
+				WriteCssHomographNumberRev();
+				m_dictClassData.Remove("homographnumberrev");
+			}
 			if (m_dictClassData.ContainsKey("sense"))
 			{
 				WriteCssSense();
@@ -857,6 +862,11 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				WriteCssComplexForm();
 				m_dictClassData.Remove("complexform");
+			}
+			if (m_dictClassData.ContainsKey("minorentry"))
+			{
+				WriteCssMinorEntry();
+				m_dictClassData.Remove("minorentry");
 			}
 			List<string> rgsLangs;
 			if (m_dictClassData.TryGetValue("xitem", out rgsLangs))
@@ -990,6 +1000,22 @@ namespace SIL.FieldWorks.Common.Framework
 			WriteParaBulletInfoToCss(style, "subentry", "subentryCounter");
 		}
 
+		private void WriteCssMinorEntry()
+		{
+			m_writer.WriteLine(".minorentry {");
+			XmlNode xnSub;
+			string style = null;
+			if (m_mapCssClassToXnode.TryGetValue("minorentries", out xnSub))
+				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
+			if (String.IsNullOrEmpty(style))
+				style = "Dictionary-Minor";
+			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "minorentry");
+			WriteParaStyleInfoToCss(esi);
+			m_writer.WriteLine("}");
+			WriteParaBulletInfoToCss(style, "minorentry", "minorentryCounter");
+			// Todo: more style details; see LT-12184
+		}
+
 		private void WriteCssXHomographNumber()
 		{
 			m_writer.WriteLine(".xhomographnumber {");
@@ -1009,6 +1035,26 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine("}");
 		}
 
+		// Makes a distinct CSS style with the same properties as xhomographnumber; but the user can make it
+		// different if desired. This is used for homograph number in a reference in a reversal entry.
+		private void WriteCssHomographNumberRev()
+		{
+			m_writer.WriteLine(".homographnumberrev {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Homograph-Number", "homographnumberrev");
+			// This is the info we originally had to set xhomographnumber explicitly.
+			//m_writer.WriteLine("    font-weight: bold;");
+			//m_writer.WriteLine("    font-size: 55%;");
+			//m_writer.WriteLine("    vertical-align: sub;");
+			//BaseStyleInfo bsi;
+			//if (m_styleTable.TryGetValue("Dictionary-Normal", out bsi))
+			//{
+			//    ExportStyleInfo esi = bsi as ExportStyleInfo;
+			//    WriteFontAttr(m_cache.DefaultAnalWs, "font-family", esi, null, true);
+			//    //WriteFontAttr(m_cache.DefaultAnalWs, "color", esi, null, true);
+			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
+			//}
+			m_writer.WriteLine("}");
+		}
 		private void WriteCssSense()
 		{
 			m_writer.WriteLine(".sense {");
@@ -1379,7 +1425,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			m_writer.WriteLine(".{0}:before {{", sClass.Replace(' ', '_'));
 			if (bullet != null)
-				m_writer.WriteLine("    content: \"{0}  \"", bullet);
+				m_writer.WriteLine("    content: \"{0}  \";", bullet);
 			else
 				m_writer.WriteLine("    content: counter({0}, {1}) \" \";", sCounter, type);
 			m_writer.WriteLine("    counter-increment: {0};", sCounter);

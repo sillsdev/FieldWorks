@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				int ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 
 				// Make sure we handle the magic writing systems
-				if (ws == (int)CellarModuleDefns.kwsAnal)
+				if (ws == WritingSystemServices.kwsAnal)
 				{
 					// default analysis writing system
 					ITsPropsBldr bldr = props.GetBldr();
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						m_cache.DefaultAnalWs);
 					props = bldr.GetTextProps();
 				}
-				else if (ws == (int)CellarModuleDefns.kwsVern)
+				else if (ws == WritingSystemServices.kwsVern)
 				{
 					// default vernacular writing system
 					ITsPropsBldr bldr = props.GetBldr();

@@ -64,17 +64,22 @@
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.Data" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>
 	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
 	</Reference>
+	<Reference Include="TestUtils, Version=7.2.0.17118, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
 	<Compile Include="ListUtilsTests.cs" />
+	<Compile Include="ScreenUtilsTest.cs" />
 	<Compile Include="StringUtilsTests.cs" />
 	<Compile Include="SurrogateTests.cs" />
+	<Compile Include="TextBoxExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

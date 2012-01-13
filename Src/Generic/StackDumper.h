@@ -14,8 +14,13 @@ Last reviewed:
 #ifndef STACK_DUMP_H
 #define STACK_DUMP_H 1
 
-#ifndef WIN32
+#ifdef WIN32
+typedef char SDCHAR;
+#else
+typedef const char SDCHAR;
 typedef ComSmartPtr<IErrorInfo> IErrorInfoPtr;
+// we don't use CONTEXT on Linux, so defined to anything to make compiler happy
+struct CONTEXT {};
 #endif
 
 // Generate a stack dump, with the given message as header.
@@ -26,8 +31,8 @@ void TransFuncDump( unsigned int u, EXCEPTION_POINTERS * pExp);
 class StackDumper
 {
 public:
-	static void ShowStack( HANDLE hThread, CONTEXT& c, char * pszHdr = NULL); // dump a stack
-	static void InitDump(char * pszHdr);
+	static void ShowStack( HANDLE hThread, CONTEXT& c, SDCHAR * pszHdr = NULL); // dump a stack
+	static void InitDump(SDCHAR * pszHdr);
 	static void AppendShowStack( HANDLE hThread, CONTEXT& c);
 	static const char * GetDump();
 	static HRESULT RecordError(REFGUID iid, StrUni stuDescr, StrUni stuSource,
@@ -35,9 +40,8 @@ public:
 	StackDumper();
 	~StackDumper();
 protected:
-	static bool EnumAndLoadModuleSymbols( HANDLE hProcess, DWORD pid );
-	void ShowStackCore( HANDLE hThread, CONTEXT& c );
 	int FindStartOfFrame(int ichStart);
+	void ShowStackCore( HANDLE hThread, CONTEXT& c );
 
 	// Buffer we will dump into.
 	StrAnsiBufHuge * m_pstaDump;
@@ -56,6 +60,8 @@ DWORD Filter( EXCEPTION_POINTERS *ep );
 
 StrUni GetModuleHelpFilePath();
 StrUni GetModuleVersion(const OLECHAR * pchPathName);
+
+StrUni ConvertException(DWORD dwExcept);
 
 /*----------------------------------------------------------------------------------------------
 	Standard class to wrap an HRESULT, HelpID, and message.
@@ -144,12 +150,17 @@ protected:
 class ThrowableSd : public Throwable
 {
 public:
+	const char * GetDump() {return m_staDump.Chars();}
+
 	// Finding this constant in the Description of an ErrorInfo is a signal to
 	// the FieldWorks error handler of an error message that contains information the
 	// average user should not see. It should be displayed if "details" is clicked, and copied
 	// to the clipboard.
+#ifdef WIN32
 	static const OLECHAR * MoreSep() {return (OLECHAR*)L"\n---***More***---\n";}
-	const char * GetDump() {return m_staDump.Chars();}
+#else
+	static const wchar_t * MoreSep() {return L"\n---***More***---\n";}
+#endif
 
 #ifdef WIN32
 	ThrowableSd(HRESULT hr = S_OK, const wchar * pszMsg = NULL, int hHelpId = 0,

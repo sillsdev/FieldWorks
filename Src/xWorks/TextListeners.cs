@@ -165,6 +165,11 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 // CS0169
 #if false
 		private int WritingSystemHvo
@@ -417,6 +422,11 @@ namespace SIL.FieldWorks.XWorks
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
 		}
 
 		#endregion

@@ -274,6 +274,18 @@ namespace SIL.FieldWorks.IText
 		public virtual bool OnDisplayShowInvisibleSpaces(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = true; // If this class is a current colleague we want the command
+			bool isTextPresent = RootBox != null && RootBox.Selection != null;
+			if (isTextPresent) //well, the rootbox is at least there, test it for text.
+			{
+				ITsString tss;
+				int ichLim, hvo, tag, ws;
+				bool fAssocPrev;
+				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
+					out ws);
+				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+					isTextPresent = false;
+			}
+			display.Enabled = isTextPresent;
 			return true; //we've handled this
 		}
 
@@ -283,6 +295,18 @@ namespace SIL.FieldWorks.IText
 		public virtual bool OnDisplayClickInvisibleSpace(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = true; // If this class is a current colleague we want the command
+			bool isTextPresent = RootBox != null && RootBox.Selection != null;
+			if (isTextPresent) //well, the rootbox is at least there, test it for text.
+			{
+				ITsString tss;
+				int ichLim, hvo, tag, ws;
+				bool fAssocPrev;
+				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
+					out ws);
+				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+					isTextPresent = false;
+			}
+			display.Enabled = isTextPresent;
 			return true; //we've handled this
 		}
 
@@ -318,7 +342,8 @@ namespace SIL.FieldWorks.IText
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			m_mediator.PropertyTable.SetProperty("ShowInvisibleSpaces", true);
+			if(m_mediator != null)
+				m_mediator.PropertyTable.SetProperty("ShowInvisibleSpaces", true);
 		}
 
 		private void TurnOffClickInvisibleSpace()
@@ -329,12 +354,12 @@ namespace SIL.FieldWorks.IText
 
 		private bool ShowInvisibleSpaces
 		{
-			get { return m_mediator.PropertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
+			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
 		}
 
 		private bool ClickInvisibleSpace
 		{
-			get { return m_mediator.PropertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
+			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
 		}
 
 		#region Overrides of RootSite
@@ -415,6 +440,12 @@ namespace SIL.FieldWorks.IText
 			// selection no longer useable.
 			if (!vwselNew.IsValid)
 				return;
+
+			IWfiWordform wordform;
+			if (!GetSelectedWordform(vwselNew, out wordform))
+				wordform = null;
+			m_mediator.PropertyTable.SetProperty("TextSelectedWord", wordform);
+			m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
@@ -497,6 +528,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Handle a right mouse up, invoking an appropriate context menu.
 		/// </summary>
+		/// <param name="sel"></param>
 		/// <param name="pt"></param>
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
@@ -507,35 +539,23 @@ namespace SIL.FieldWorks.IText
 			if (base.DoContextMenu(sel, pt, rcSrcRoot, rcDstRoot))
 				return true;
 
-			XWindow mainWind = this.ParentForm as XWindow;
+			var mainWind = ParentForm as XWindow;
 			if (mainWind == null || sel == null)
 				return false;
-			ITsString tssWord;
-
-			sel.GrowToWord().GetSelectionString(out tssWord, " ");
-			TemporaryColleagueParameter tempColleague = null;
 			CmObjectUi ui = null;
 			try
 			{
-				if (tssWord != null && !string.IsNullOrEmpty(tssWord.Text))
+				TemporaryColleagueParameter tempColleague = null;
+				IWfiWordform wordform;
+				if (GetSelectedWordform(m_rootb.Selection, out wordform))
 				{
-					// We can have a WfiWordformUi as an additional colleague to handle more menu items.
-					// The temporaray colleague handles adding and removing it.
-					// Specifically this is needed for the "Show in Word Analyses" and "Show Wordform in Concordance" menu items.
-					// See FWR-958 and be SURE to test this if you think about removing this.
-
-					IWfiWordform form = null;
-
-					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-										() => { form = WfiWordformServices.FindOrCreateWordform(Cache, tssWord); });
-
-					ui = CmObjectUi.MakeUi(Cache, form.Hvo);
+					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
 					ui.Mediator = m_mediator;
 					tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
 				}
-
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),
 					tempColleague, null);
+
 				return true;
 			}
 			finally
@@ -652,18 +672,8 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			IVwSelection wordsel = SelectionBeginningGrowToWord(m_rootb.Selection);
-			if (wordsel == null)
-				return false;
-			ITsString tss;
 			int ichMin, ichLim, hvo, tag, ws;
-			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag,
-				out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
-				out ws);
-
-			if (ichLim > 0)
+			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_fdoCache, hvo, tag, ws, ichMin, ichLim, this,
 					m_mediator, m_mediator.HelpTopicProvider, "UserHelpFile");
@@ -688,21 +698,57 @@ namespace SIL.FieldWorks.IText
 			IVwSelection sel = m_rootb.Selection;
 			if (sel == null)
 				return false;
-			IVwSelection sel2 = sel.EndPoint(false);
-			if (sel2 == null)
+			IWfiWordform wordform;
+			return GetSelectedWordform(sel, out wordform);
+		}
+
+		private bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
+		{
+			IVwSelection wordsel = SelectionBeginningGrowToWord(sel);
+			if (wordsel == null)
+			{
+				hvo = tag = ws = 0;
+				ichMin = ichLim = -1;
 				return false;
-			IVwSelection sel3 = sel2.GrowToWord();
-			if (sel3 == null)
-				return false;
+			}
 			ITsString tss;
-			int ichLim, hvo, tag, ws;
 			bool fAssocPrev;
-			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
+			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag,
 				out ws);
-			if (ichLim == 0)
+			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
+				out ws);
+			return ichLim > 0;
+		}
+
+		private bool GetSelectedWordform(IVwSelection sel, out IWfiWordform wordform)
+		{
+			wordform = null;
+			int ichMin, ichLim, hvo, tag, ws;
+			if (!GetSelectedWordPos(sel, out hvo, out tag, out ws, out ichMin, out ichLim))
 				return false;
-			// We're not disqualified, so we must be enabled!
-			return true;
+
+			if (tag != StTxtParaTags.kflidContents)
+				return false;
+
+			IStTxtPara para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+			IAnalysis anal = null;
+			foreach (ISegment seg in para.SegmentsOS)
+			{
+				if (seg.BeginOffset <= ichMin && seg.EndOffset >= ichLim)
+				{
+					bool exact;
+					AnalysisOccurrence occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
+					if (occurrence != null)
+						anal = occurrence.Analysis;
+					break;
+				}
+			}
+			if (anal != null && anal.HasWordform)
+			{
+				wordform = anal.Wordform;
+				return true;
+			}
+			return false;
 		}
 
 		public bool OnDisplayGuessWordBreaks(object commandObject,

@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE.TeEditingHelpers
 {

@@ -397,7 +397,7 @@
 					<xsl:value-of select="normalize-space($mprFeats)"/>
 				</xsl:attribute>
 			</xsl:if>
-			<xsl:variable name="headFeats" select="$msa/InflectionFeatures/FsFeatStruc[@Type != 0]"/>
+			<xsl:variable name="headFeats" select="$msa/InflectionFeatures/FsFeatStruc[node()]"/>
 			<xsl:variable name="allos" select="$entry/LexemeForm | $entry/AlternateForms"/>
 			<xsl:variable name="stemAllos" select="$allomorphs/MoStemAllomorph[@Id=$allos/@dst and @IsAbstract='0' and @MorphType!=$sDiscontiguousPhrase and @StemName!='0']"/>
 			<xsl:variable name="stemNameList">
@@ -1346,8 +1346,8 @@
 				<xsl:with-param name="id" select="@Id"/>
 			</xsl:call-template>
 
-			<xsl:variable name="outHeadFeats" select="ToMsFeatures/FsFeatStruc[@Type != 0]"/>
-			<xsl:variable name="reqHeadFeats" select="FromMsFeatures/FsFeatStruc[@Type != 0]"/>
+			<xsl:variable name="outHeadFeats" select="ToMsFeatures/FsFeatStruc[node()]"/>
+			<xsl:variable name="reqHeadFeats" select="FromMsFeatures/FsFeatStruc[node()]"/>
 			<xsl:call-template name="MorphologicalSubrules">
 				<xsl:with-param name="entry" select="$entry"/>
 				<xsl:with-param name="msa" select="."/>
@@ -1468,7 +1468,7 @@
 				<xsl:with-param name="id" select="@Id"/>
 			</xsl:call-template>
 
-			<xsl:variable name="realFeats" select="InflectionFeatures/FsFeatStruc[@Type != 0]"/>
+			<xsl:variable name="realFeats" select="InflectionFeatures/FsFeatStruc[node()]"/>
 			<xsl:variable name="stemName">
 				<xsl:call-template name="InflAffMsaStemName">
 					<xsl:with-param name="fs" select="$realFeats"/>
@@ -1603,7 +1603,7 @@
 							</xsl:if>
 						</xsl:for-each>
 					</xsl:if>
-					<xsl:variable name="headFeats" select="InflectionFeatures/FsFeatStruc[@Type != 0]"/>
+					<xsl:variable name="headFeats" select="InflectionFeatures/FsFeatStruc[node()]"/>
 					<xsl:if test="count($headFeats) != 0">
 						<xsl:text> </xsl:text>
 						<xsl:value-of select="$sMSFS"/>
@@ -1673,7 +1673,7 @@
 					</xsl:call-template>
 				</xsl:variable>
 				<xsl:if test="string-length($valid) != 0">
-					<xsl:variable name="envFeats" select="$form/MsEnvFeatures/FsFeatStruc[@Type != 0]"/>
+					<xsl:variable name="envFeats" select="$form/MsEnvFeatures/FsFeatStruc[node()]"/>
 					<xsl:if test="count($envFeats) != 0">
 						<xsl:text>Not</xsl:text>
 						<xsl:value-of select="$envFeats/@Id"/>
@@ -2328,7 +2328,7 @@
 				<Property name="MsaID">
 					<xsl:value-of select="$msa/@Id"/>
 				</Property>
-				<xsl:variable name="envFeats" select="$form1/MsEnvFeatures/FsFeatStruc[@Type != 0]"/>
+				<xsl:variable name="envFeats" select="$form1/MsEnvFeatures/FsFeatStruc[node()]"/>
 				<xsl:if test="string-length(normalize-space($featDesc)) != 0 or count($envFeats) != 0 or string-length($allNotEnvFeats) != 0">
 					<Property name="FeatureDescriptors">
 						<xsl:value-of select="normalize-space($featDesc)"/>
@@ -4057,9 +4057,7 @@ TODO
 - - - - - - - - - - - - - - - - - - -
 -infixes in circumfixes
 -MoAlloAdhocProhib where a circumfix is an other allomorph
-
-Revision History
-- - - - - - - - - - - - - - - - - - -
-09-Feb-2009	Damien Daspit	Initial Draft
+-free fluctuation when an AffixAllomorph has more than one
+environment
 ================================================================
 -->

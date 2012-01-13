@@ -28,6 +28,219 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	[System.SerializableAttribute()]
 //	[System.Diagnostics.DebuggerStepThroughAttribute()]
 	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false, ElementName = "document")]
+	public partial class BIRDDocument
+	{
+
+		private Interlineartext[] interlineartextField;
+
+		private string exportSourceField;
+
+		private string exportTargetField;
+
+		private string versionField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("interlinear-text", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Interlineartext[] interlineartext
+		{
+			get
+			{
+				return this.interlineartextField;
+			}
+			set
+			{
+				this.interlineartextField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string exportSource
+		{
+			get
+			{
+				return this.exportSourceField;
+			}
+			set
+			{
+				this.exportSourceField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string exportTarget
+		{
+			get
+			{
+				return this.exportTargetField;
+			}
+			set
+			{
+				this.exportTargetField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string version
+		{
+			get
+			{
+				return this.versionField;
+			}
+			set
+			{
+				this.versionField = value;
+			}
+		}
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "interlinear-text")]
+	public partial class Interlineartext
+	{
+
+		private item[] itemField;
+
+		private Paragraph[] paragraphsField;
+
+		private Languages languagesField;
+
+		private MediaFiles mediaFilesField;
+
+		private string guidField;
+
+		private scrSectionTypes scrSectionTypeField;
+
+		private bool scrSectionTypeFieldSpecified;
+
+		private string scrBookField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("item", IsNullable = true)]
+		public item[] Items
+		{
+			get
+			{
+				return this.itemField;
+			}
+			set
+			{
+				this.itemField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		[System.Xml.Serialization.XmlArrayItemAttribute("paragraph", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+		public Paragraph[] paragraphs
+		{
+			get
+			{
+				return this.paragraphsField;
+			}
+			set
+			{
+				this.paragraphsField = value;
+			}
+		}
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("languages", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Languages languages
+		{
+			get
+			{
+				return this.languagesField;
+			}
+			set
+			{
+				this.languagesField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("media-files", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public MediaFiles mediafiles
+		{
+			get
+			{
+				return this.mediaFilesField;
+			}
+			set
+			{
+				this.mediaFilesField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid
+		{
+			get
+			{
+				return this.guidField;
+			}
+			set
+			{
+				this.guidField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public scrSectionTypes scrSectionType
+		{
+			get
+			{
+				return this.scrSectionTypeField;
+			}
+			set
+			{
+				this.scrSectionTypeField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public bool scrSectionTypeSpecified
+		{
+			get
+			{
+				return this.scrSectionTypeFieldSpecified;
+			}
+			set
+			{
+				this.scrSectionTypeFieldSpecified = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string scrBook
+		{
+			get
+			{
+				return this.scrBookField;
+			}
+			set
+			{
+				this.scrBookField = value;
+			}
+		}
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+	//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "")]
 	public partial class item
 	{
@@ -35,6 +248,10 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		private string typeField;
 
 		private string langField;
+
+		private analysisStatusTypes analysisStatusField;
+
+		private bool analysisStatusFieldSpecified;
 
 		private string valueField;
 
@@ -67,6 +284,34 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		}
 
 		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public analysisStatusTypes analysisStatus
+		{
+			get
+			{
+				return this.analysisStatusField;
+			}
+			set
+			{
+				this.analysisStatusField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public bool analysisStatusSpecified
+		{
+			get
+			{
+				return this.analysisStatusFieldSpecified;
+			}
+			set
+			{
+				this.analysisStatusFieldSpecified = value;
+			}
+		}
+
+		/// <remarks/>
 		[System.Xml.Serialization.XmlTextAttribute()]
 		public string Value
 		{
@@ -84,86 +329,20 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	/// <remarks/>
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
 	[System.SerializableAttribute()]
-//	[System.Diagnostics.DebuggerStepThroughAttribute()]
-	[System.ComponentModel.DesignerCategoryAttribute("code")]
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false, ElementName = "document")]
-	public partial class BIRDDocument
+	public enum analysisStatusTypes
 	{
 
-		private Interlineartext[] interlineartextField;
+		/// <remarks/>
+		humanApproved,
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("interlinear-text", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		public Interlineartext[] interlineartext
-		{
-			get
-			{
-				return this.interlineartextField;
-			}
-			set
-			{
-				this.interlineartextField = value;
-			}
-		}
-	}
-
-	/// <remarks/>
-	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-	[System.SerializableAttribute()]
-//	[System.Diagnostics.DebuggerStepThroughAttribute()]
-	[System.ComponentModel.DesignerCategoryAttribute("code")]
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "interlinear-text")]
-	public partial class Interlineartext
-	{
-
-		private item[] itemField;
-
-		private Paragraph[] paragraphsField;
-
-		private Languages[] languagesField;
+		guess,
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("item", IsNullable = true)]
-		public item[] Items
-		{
-			get
-			{
-				return this.itemField;
-			}
-			set
-			{
-				this.itemField = value;
-			}
-		}
+		guessByHumanApproved,
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		[System.Xml.Serialization.XmlArrayItemAttribute("paragraph", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-		public Paragraph[] paragraphs
-		{
-			get
-			{
-				return this.paragraphsField;
-			}
-			set
-			{
-				this.paragraphsField = value;
-			}
-		}
-		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("languages", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		public Languages[] languages
-		{
-			get
-			{
-				return this.languagesField;
-			}
-			set
-			{
-				this.languagesField = value;
-			}
-		}
+		guessByStatisticalAnalysis,
 	}
 
 	/// <remarks/>
@@ -177,6 +356,8 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private Phrase[] phrasesField;
 
+		private string guidField;
+
 		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
 		[System.Xml.Serialization.XmlArrayItemAttribute("phrase", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
@@ -189,6 +370,20 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 			set
 			{
 				this.phrasesField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid
+		{
+			get
+			{
+				return this.guidField;
+			}
+			set
+			{
+				this.guidField = value;
 			}
 		}
 	}
@@ -206,19 +401,20 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private item[] itemField;
 
-		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("words", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		public WordsContent WordsContent
-		{
-			get
-			{
-				return this._wordsContentField;
-			}
-			set
-			{
-				this._wordsContentField = value;
-			}
-		}
+		[System.Xml.Serialization.XmlAttributeAttribute("begin-time-offset")]
+		public string beginTimeOffset;
+
+		[System.Xml.Serialization.XmlAttributeAttribute("end-time-offset")]
+		public string endTimeOffset;
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string speaker;
+
+		[System.Xml.Serialization.XmlAttributeAttribute("media-file")]
+		public string mediaFile;
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid;
 
 		/// <remarks/>		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("item", IsNullable = true)]
@@ -233,6 +429,22 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 				this.itemField = value;
 			}
 		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("words", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public WordsContent WordsContent
+		{
+			get
+			{
+				return this._wordsContentField;
+			}
+			set
+			{
+				this._wordsContentField = value;
+			}
+		}
+
+
 	}
 
 	/// <remarks/>
@@ -243,8 +455,24 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "words")]
 	public partial class WordsContent
 	{
+		private ScrMilestone[] scrMilestoneField;
 
 		private Word[] wordField;
+
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("scrMilestone", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public ScrMilestone[] scrMilestone
+		{
+			get
+			{
+				return this.scrMilestoneField;
+			}
+			set
+			{
+				this.scrMilestoneField = value;
+			}
+		}
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("word", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -264,6 +492,48 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	/// <remarks/>
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
 	[System.SerializableAttribute()]
+	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class ScrMilestone
+	{
+
+		private string chapterField;
+
+		private string verseField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
+		public string chapter
+		{
+			get
+			{
+				return this.chapterField;
+			}
+			set
+			{
+				this.chapterField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
+		public string verse
+		{
+			get
+			{
+				return this.verseField;
+			}
+			set
+			{
+				this.verseField = value;
+			}
+		}
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
 //	[System.Diagnostics.DebuggerStepThroughAttribute()]
 	[System.ComponentModel.DesignerCategoryAttribute("code")]
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "word")]
@@ -272,7 +542,17 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private item[] itemField;
 
-		private Morph[] morphemesField;
+		private Morphemes morphemesField;
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid;
+
+		private string typeField;
+
+		public Word()
+		{
+			this.typeField = "phrase";
+		}
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("item", IsNullable = true)]
@@ -289,9 +569,8 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		[System.Xml.Serialization.XmlArrayItemAttribute("morph", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-		public Morph[] morphemes
+		[System.Xml.Serialization.XmlElementAttribute("morphemes", typeof(Morphemes), Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Morphemes morphemes
 		{
 			get
 			{
@@ -300,6 +579,78 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 			set
 			{
 				this.morphemesField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string type
+		{
+			get
+			{
+				return this.typeField;
+			}
+			set
+			{
+				this.typeField = value;
+			}
+		}
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class Morphemes
+	{
+
+		private Morph[] morphField;
+
+		private analysisStatusTypes analysisStatusField;
+
+		private bool analysisStatusFieldSpecified;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("morph", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Morph[] morphs
+		{
+			get
+			{
+				return this.morphField;
+			}
+			set
+			{
+				this.morphField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public analysisStatusTypes analysisStatus
+		{
+			get
+			{
+				return this.analysisStatusField;
+			}
+			set
+			{
+				this.analysisStatusField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public bool analysisStatusSpecified
+		{
+			get
+			{
+				return this.analysisStatusFieldSpecified;
+			}
+			set
+			{
+				this.analysisStatusFieldSpecified = value;
 			}
 		}
 	}
@@ -313,15 +664,18 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	public partial class Morph
 	{
 
-		private item itemField;
+		private item[] itemField;
 
 		private morphTypes typeField;
 
 		private bool typeFieldSpecified;
 
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid;
+
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-		public item item
+		[System.Xml.Serialization.XmlArrayItemAttribute("item", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+		public item[] items
 		{
 			get
 			{
@@ -432,6 +786,191 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		discontiguousphrase,
 	}
 
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class Language
+	{
+
+		private string langField;
+
+		private string encodingField;
+
+		private string fontField;
+
+		private bool vernacularField;
+
+		private bool vernacularFieldSpecified;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string lang
+		{
+			get
+			{
+				return this.langField;
+			}
+			set
+			{
+				this.langField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string encoding
+		{
+			get
+			{
+				return this.encodingField;
+			}
+			set
+			{
+				this.encodingField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string font
+		{
+			get
+			{
+				return this.fontField;
+			}
+			set
+			{
+				this.fontField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public bool vernacular
+		{
+			get
+			{
+				return this.vernacularField;
+			}
+			set
+			{
+				this.vernacularField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public bool vernacularSpecified
+		{
+			get
+			{
+				return this.vernacularFieldSpecified;
+			}
+			set
+			{
+				this.vernacularFieldSpecified = value;
+			}
+		}
+	}
+
+	[System.SerializableAttribute()]
+	//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "media-files")]
+	public partial class MediaFiles
+	{
+		private MediaFile[] mediaField;
+
+		private string offsetTypeField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public MediaFile[] media
+		{
+			get
+			{
+				return this.mediaField;
+			}
+			set
+			{
+				this.mediaField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public string offsetType
+		{
+			get
+			{
+				return this.offsetTypeField;
+			}
+			set
+			{
+				this.offsetTypeField = value;
+			}
+		}
+	}
+
+	[System.SerializableAttribute()]
+	//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, TypeName = "media")]
+	public partial class MediaFile
+	{
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid;
+
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string location;
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+	public enum scrSectionTypes
+	{
+
+		/// <remarks/>
+		title,
+
+		/// <remarks/>
+		heading,
+
+		/// <remarks/>
+		verseText,
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+	//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class Languages
+	{
+
+		private Language[] languageField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Language[] language
+		{
+			get
+			{
+				return this.languageField;
+			}
+			set
+			{
+				this.languageField = value;
+			}
+		}
+	}
+
+
 	/// <remarks>
 	/// This enumeration is just for convenience and not actually generated by the schema.
 	///
@@ -468,89 +1007,5 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		/// <remarks/>
 		punct,
-	}
-
-	/// <remarks/>
-	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-	[System.SerializableAttribute()]
-//	[System.Diagnostics.DebuggerStepThroughAttribute()]
-	[System.ComponentModel.DesignerCategoryAttribute("code")]
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class Languages
-	{
-
-		private Language languageField;
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		public Language language
-		{
-			get
-			{
-				return this.languageField;
-			}
-			set
-			{
-				this.languageField = value;
-			}
-		}
-	}
-
-	/// <remarks/>
-	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-	[System.SerializableAttribute()]
-//	[System.Diagnostics.DebuggerStepThroughAttribute()]
-	[System.ComponentModel.DesignerCategoryAttribute("code")]
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class Language
-	{
-
-		private string langField;
-
-		private string fontField;
-
-		private string vernacularField;
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string lang
-		{
-			get
-			{
-				return this.langField;
-			}
-			set
-			{
-				this.langField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string font
-		{
-			get
-			{
-				return this.fontField;
-			}
-			set
-			{
-				this.fontField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string vernacular
-		{
-			get
-			{
-				return this.vernacularField;
-			}
-			set
-			{
-				this.vernacularField = value;
-			}
-		}
 	}
 }

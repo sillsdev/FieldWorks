@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -154,6 +155,12 @@ namespace SIL.FieldWorks.Common.Controls
 			LoadTextsFromGenres(textsNode, genreList, allTexts);
 
 			var textsWithNoGenre = new List<TreeNode>(); // and get the ones with no genre
+			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
+			// before actually adding them to the tree:
+			var foundFirstText = false;
+			// Create a collator ready for sorting:
+			var collator = LgIcuCollatorClass.Create();
+
 			foreach (var tex in allTexts)
 			{
 				if (tex.GenresRC.Count == 0)
@@ -162,11 +169,25 @@ namespace SIL.FieldWorks.Common.Controls
 					texItem.Tag = tex.ContentsOA;
 					texItem.Name = "Text";
 					textsWithNoGenre.Add(texItem);
+
+					// LT-12179: If this is the first tex we've added, establish the collator's details
+					// according to the writing system at the start of the tex:
+					if (!foundFirstText)
+					{
+						foundFirstText = true;
+						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+						var wsEngine = cache.WritingSystemFactory.get_EngineOrNull(ws1);
+						collator.Open(wsEngine.Id);
+					}
 				}
 			}
 
 			if (textsWithNoGenre.Count > 0)
-			{   // Make a TreeNode for the texts with no known genre
+			{
+				// LT-12179: Order the TreeNodes alphabetically:
+				textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+
+				// Make a TreeNode for the texts with no known genre
 				var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray());
 				woGenreTreeNode.Name = "TextsWoGenre";
 				textsNode.Nodes.Add(woGenreTreeNode);
@@ -185,24 +206,60 @@ namespace SIL.FieldWorks.Common.Controls
 		private void LoadTextsFromGenres(TreeNode parent, IFdoOwningSequence<ICmPossibility> genreList, IEnumerable<FDO.IText> allTexts)
 		{
 			if (parent == null) return;
-			var genreTreeNodes = new List<TreeNode>(); // top level of genre tree
+			var sortedGenreList = new List<ICmPossibility>();
 			foreach (var gen in genreList)
 			{
+				sortedGenreList.Add(gen);
+			}
+			var sorter = new CmPossibilitySorter();
+			sortedGenreList.Sort(sorter);
+			foreach (var gen in sortedGenreList)
+			{
 				// This tree node is added to genreTreeNodes if there are texts or children
-				TreeNode genItem = new TreeNode(gen.ChooserNameTS.Text);
-				foreach (FDO.IText tex in allTexts)
+				var genItem = new TreeNode(gen.ChooserNameTS.Text);
+
+				// LT-12179: Create a List for collecting selected tree nodes which we will later sort
+				// before actually adding them to the tree:
+				var sortedNodes = new List<TreeNode>();
+				var foundFirstText = false;
+				// Create a collator ready for sorting:
+				var collator = LgIcuCollatorClass.Create();
+
+				foreach (IText tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
 					foreach (var tgen in tex.GenresRC)
 					{
 						if (tgen.Equals(gen))
 						{
+							// The current tex is valid, so create a TreeNode with its details:
 							var texItem = new TreeNode(tex.ChooserNameTS.Text);
 							texItem.Tag = tex.ContentsOA;
 							texItem.Name = "Text";
-							genItem.Nodes.Add(texItem);
+
+							// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
+							sortedNodes.Add(texItem);
+
+							// LT-12179: If this is the first tex we've added, establish the collator's details
+							// according to the writing system at the start of the tex:
+							if (!foundFirstText)
+							{
+								foundFirstText = true;
+								var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+								var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
+								collator.Open(wsEngine.Id);
+							}
 							break;
 						}
 					}
+				}
+
+				// LT-12179:
+				if (foundFirstText)
+				{
+					// Order the TreeNodes alphabetically:
+					sortedNodes.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+					// Add the TreeNodes to the tree:
+					genItem.Nodes.AddRange(sortedNodes.ToArray());
 				}
 
 				if (gen.SubPossibilitiesOS.Count > 0)
@@ -215,6 +272,25 @@ namespace SIL.FieldWorks.Common.Controls
 				genItem.Name = "Genre";
 				parent.Nodes.Add(genItem);
 			}
+		}
+
+		// Class to sort the Genre's before they are displayed.
+		private class CmPossibilitySorter : IComparer<ICmPossibility>
+		{
+			internal CmPossibilitySorter()
+			{
+			}
+
+			#region IComparer<T> Members
+
+			public int Compare(ICmPossibility x, ICmPossibility y)
+			{
+				var xString = x.ChooserNameTS.Text;
+				var yString = y.ChooserNameTS.Text;
+				return xString.CompareTo(yString);
+			}
+
+			#endregion
 		}
 
 		/// ------------------------------------------------------------------------------------

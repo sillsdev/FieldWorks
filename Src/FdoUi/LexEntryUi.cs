@@ -345,17 +345,14 @@ namespace SIL.FieldWorks.FdoUi
 				IStTxtPara para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvoSrc);
 				foreach (ISegment seg in para.SegmentsOS)
 				{
-					for (int i = 0; i < seg.AnalysesRS.Count; ++i)
+					if (seg.BeginOffset <= ichMin && seg.EndOffset >= ichLim)
 					{
-						int ich = seg.GetAnalysisBeginOffset(i);
-						if (ich == ichMin)
-						{
-							anal = seg.AnalysesRS[i];
-							break;
-						}
-					}
-					if (anal != null)
+						bool exact;
+						AnalysisOccurrence occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
+						if (occurrence != null)
+							anal = occurrence.Analysis;
 						break;
+					}
 				}
 				if (anal != null)
 				{
@@ -612,6 +609,60 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
+		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn,
+			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
+		{
+			DisplayRelatedEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tss, true);
+		}
+
+		/// ------------------------------------------------------------
+		/// <summary>
+		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
+		/// be found, show the related words dialog with the words related to the selected one.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="owner">The owning window.</param>
+		/// <param name="mediatorIn">The mediator.</param>
+		/// <param name="helpProvider">The help provider.</param>
+		/// <param name="helpFileKey">The help file key.</param>
+		/// <param name="tssWf">The ITsString for the word form.</param>
+		/// ------------------------------------------------------------
+		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
+			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			bool hideInsertButton)
+		{
+			if (tssWf == null || tssWf.Length == 0)
+				return;
+
+			using (LexEntryUi leui = FindEntryForWordform(cache, tssWf))
+			{
+				// This doesn't work as well (unless we do a commit) because it may not see current typing.
+				//LexEntryUi leui = LexEntryUi.FindEntryForWordform(cache, hvo, tag, ichMin, ichLim);
+				if (leui == null)
+				{
+					RelatedWords.ShowNotInDictMessage(owner);
+					return;
+				}
+				int hvoEntry = leui.Object.Hvo;
+				int[] domains;
+				int[] lexrels;
+				IVwCacheDa cdaTemp;
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
+					return;
+				StringTable stOrig;
+				Mediator mediator;
+				IVwStylesheet styleSheet;
+				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
+					mediatorIn, hideInsertButton))
+				{
+					rw.ShowDialog(owner);
+				}
+				if (fRestore)
+					mediator.StringTbl = stOrig;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
@@ -663,7 +714,7 @@ namespace SIL.FieldWorks.FdoUi
 				Mediator mediator;
 				IVwStylesheet styleSheet;
 				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
-				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediatorIn))
+				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediatorIn, false))
 				{
 					rw.ShowDialog(owner);
 				}

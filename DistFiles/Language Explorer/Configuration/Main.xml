@@ -73,7 +73,7 @@
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
 			</parameters>
 		</command>
-		<command id="CmdImportInterlinearData" label="F_ieldWorks Interlinear..." message="LaunchConnectedDialog">
+		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
 			</parameters>
@@ -123,6 +123,8 @@
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
+		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
+		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
 		<command id="CmdHelpUserManual" label="_Student Manual..." message="HelpUserManual"/>
 		<command id="CmdHelpInstructorGuide" label="_Instructor Guide..." message="HelpInstructorGuide"/>
@@ -204,8 +206,11 @@
 		<command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
 		</command>
+		<command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
+			<parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
+		</command>
 		<command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
-			<parameters tool="concordance" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
+			<parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
 		</command>
 		<command id="CmdMorphJumpToConcordance" label="Show Morph in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="MoForm"/>
@@ -590,6 +595,9 @@ WANTPORT -->
 				<item command="CmdHelpXLingPap"/>
 			</menu>
 			<item label="-" translate="do not translate"/>
+			<item command="CmdHelpReportBug"/>
+			<item command="CmdHelpMakeSuggestion"/>
+			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpAbout"/>
 		</menu>
 	</menubar>
@@ -603,12 +611,11 @@ WANTPORT -->
 			<item command="CmdWordformJumpToAnalyses"/>
 			<menu label="Show Concordance of">
 				<item command="CmdWordformJumpToConcordance" label="Wordform"/>
-
 				<item command="CmdAnalysisJumpToConcordance" label="Analysis"/>
 				<item command="CmdMorphJumpToConcordance" label="Morph"/>
 				<item command="CmdEntryJumpToConcordance" label="Entry"/>
 				<item command="CmdSenseJumpToConcordance" label="Sense"/>
-				<item command="CmdPOSJumpToConcordance" label="Category"/>
+				<item command="CmdLexGramInfoJumpToConcordance"/>
 				<item command="CmdWordGlossJumpToConcordance" label="Word Gloss"/>
 				<item command="CmdWordPOSJumpToConcordance" label="Word Category"/>
 			</menu>
@@ -642,6 +649,16 @@ WANTPORT -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDeleteSelectedObject"/>
 		</menu>
+		<!-- The following commands are involked/displayed on a right click on a slice on at Possibility list item.
+
+			 In the C# code see the following  class ReferenceViewBase and class ReferenceBaseUi
+			 where ContextMenuId returns  "mnuReferenceChoices".
+
+			 Search in the xml files for the particular command (for example CmdJumpToAnthroList and CmdJumpToAnthroList2)
+			 See how the command has the following parameters
+				 className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"
+			 These parameters must be used to determine that this command is only shown on slices which contain
+			 Anthropology Categories.  The messsage is the command that is executed.-->
 		<menu id="mnuReferenceChoices">
 			<item command="CmdEntryJumpToDefault"/>
 			<item command="CmdRecordJumpToDefault"/>
@@ -651,7 +668,11 @@ WANTPORT -->
 			<item command="CmdEntryJumpToConcordance"/>
 			<item command="CmdSenseJumpToConcordance"/>
 			<item command="CmdJumpToAcademicDomainList"/>
+
 			<item command="CmdJumpToAnthroList"/>
+			<item command="CmdJumpToLexiconEditWithFilter"/>
+			<item command="CmdJumpToNotebookEditWithFilter"/>
+
 			<item command="CmdJumpToConfidenceList"/>
 			<item command="CmdJumpToDiscChartMarkerList"/>
 			<item command="CmdJumpToDiscChartTemplateList"/>
@@ -777,9 +798,9 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<include path="Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 		</toolbar>
-		<toolbar id="Edit">
+		<!--<toolbar id="Edit">
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Edit']/item"/>
-		</toolbar>
+		</toolbar>-->
 		<toolbar id="View">
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item"/>
 			<item command="CmdChangeFilterClearAll"/>

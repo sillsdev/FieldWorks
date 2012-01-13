@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2007, SIL International. All Rights Reserved.
-// <copyright from='2007' to='2007' company='SIL International'>
-//		Copyright (c) 2007, SIL International. All Rights Reserved.
+#region // Copyright (c) 211, SIL International. All Rights Reserved.
+// <copyright from='2007' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,9 +10,6 @@
 //
 // File: ScriptureReferenceComparerTests.cs
 // Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -39,6 +36,17 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public ScrVers Versification
 		{
 			get { return ScrVers.English; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a string (typically a single character) that is used to separate the chapter
+		/// number from the verse number in a well-formed Scripture reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ChapterVerseSepr
+		{
+			get { return ":"; }
 		}
 	}
 

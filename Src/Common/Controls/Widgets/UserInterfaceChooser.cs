@@ -160,7 +160,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		private void AddAvailableLangsFromKeyTermsLocalizations()
 		{
 			foreach (string file in DirectoryFinder.KeyTermsLocalizationFiles)
-				AddLanguage(DirectoryFinder.GetLocaleFromKeyTermsLocFile(file));
+			{
+				if (!String.IsNullOrEmpty(file))
+					AddLanguage(DirectoryFinder.GetLocaleFromKeyTermsLocFile(file));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

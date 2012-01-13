@@ -12,7 +12,7 @@ BUILD_PRODUCT = $(VIEWS_NAME)Test
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
 UNIT = $(BUILD_ROOT)/Include/unit++
-LIB_UNIT  = $(BUILD_ROOT)/Lib/src/unit++
+LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 VIEWS_LIB	= $(VIEWS_OBJ)/lib
 GRENG   = $(SRC)/Graphite/lib
@@ -21,7 +21,7 @@ GRFW    = $(SRC)/Graphite/FwOnly
 LANGUAGETEST_SRC=$(SRC)/Language/Test
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
-	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -DENABLE_TSF -D_DEBUG
+	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -D_DEBUG
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid enchant
 
@@ -33,7 +33,7 @@ INCLUDES := \
 	$(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
-	-I$(LIB_UNIT) \
+	-I$(UNIT) -I$(LIB_UNIT) \
 	-I$(COM_OUT_DIR) \
 	-I$(LIBRARIES)/Win32More/include \
 	-I$(LIBRARIES)/COM/include \
@@ -53,21 +53,20 @@ LDLIBS := \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all
+LDFLAGS = -g -z muldefs
 
 PRECOMPS = $(VIEWS_OBJ)/Main.h.gch
 
-LINK_LIBS := $(LIB_UNIT)/build$(ARCH)/libunit++.a $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libAppCore.a \
-	$(COM_OUT_DIR)/libFwKernelTlb.a $(OUT_DIR)/libDebugProcs.a
-COMS := $(OUT_DIR)/libLanguage.so $(OUT_DIR)/libViews.so
-
-#	$(VIEWS_SRC)/GrGraphics.o \
-#	$(VIEWS_SRC)/AfColorTable.o \
-#	$(VIEWS_SRC)/AfGfx.o \
-#	$(VIEWS_SRC)/VwTextStore.o \
+LINK_LIBS := \
+	$(LIB_UNIT)/libunit++.a \
+	$(OUT_DIR)/libGeneric.a \
+	$(OUT_DIR)/libAppCore.a \
+	$(COM_OUT_DIR)/libFwKernelTlb.a \
+	$(COM_OUT_DIR)/libViewsTlb.a \
+	$(OUT_DIR)/libDebugProcs.a
 
 VIEWS_OBJS = \
 	$(VIEWS_OBJ)/ViewsGlobals.o \
-	$(VIEWS_OBJ)/VwTextStoreX11.o \
 	$(VIEWS_OBJ)/ExplicitInstantiation.o \
 	$(VIEWS_OBJ)/VwEnv.o \
 	$(VIEWS_OBJ)/VwLayoutStream.o \
@@ -95,8 +94,6 @@ VIEWS_OBJS = \
 	$(VIEWS_LIB)/VwUndo.o \
 	$(VIEWS_LIB)/Enchant.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
-	$(KERNEL_OBJ)/FwKernel_GUIDs.o \
-	$(VIEWS_OBJ)/Views_GUIDs.o \
 
 DEPS = $(PRECOMPS:%.gch=%.d)
 
@@ -104,8 +101,13 @@ DEPS = $(PRECOMPS:%.gch=%.d)
 
 all: $(OUT_DIR)/testViews
 
-$(OUT_DIR)/testViews: $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS) $(COMS)
-	$(LINK.cc) -v -o $@ $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS) $(LDLIBS)
+$(OUT_DIR)/testViews: $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS)
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LDLIBS)
+else
+	$(LINK.cc) -o $@ $^ $(LDLIBS)
+endif
+
 
 # this now assumes environ has been sourced
 check: all

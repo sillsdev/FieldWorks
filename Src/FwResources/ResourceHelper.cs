@@ -103,6 +103,10 @@ namespace SIL.FieldWorks.Resources
 		FieldWorksTranslatedLists,
 		/// <summary>Open XML for Exchanging Key Terms (*.oxekt)</summary>
 		OXEKT,
+		/// <summary>
+		/// FLExText interlinear format (*.flextext)
+		/// </summary>
+		FLExText
 	}
 	#endregion
 
@@ -175,6 +179,7 @@ namespace SIL.FieldWorks.Resources
 				FwFileExtensions.ksFwBackupFileExtension, FwFileExtensions.ksFw60BackupFileExtension);
 			s_fileFilterExtensions[FileFilterType.FieldWorksTranslatedLists] = "*.xml";
 			s_fileFilterExtensions[FileFilterType.OXEKT] = "*" + FwFileExtensions.ksOpenXmlForExchangingKeyTerms;
+			s_fileFilterExtensions[FileFilterType.FLExText] = "*" + FwFileExtensions.ksFLexText;
 		}
 
 		/// ------------------------------------------------------------------------------------

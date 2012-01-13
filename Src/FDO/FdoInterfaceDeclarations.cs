@@ -679,6 +679,19 @@ namespace SIL.FieldWorks.FDO
 		/// Clear any necessary caches when an Undo or Redo occurs.
 		/// </summary>
 		void ClearCachesOnUndoRedo();
+
+		/// <summary>
+		/// Return true if some window has this object in focus, so it should not be deleted automatically at present.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		bool IsFocused(ICmObject obj);
+
+		/// <summary>
+		/// When the specified object is no longer focused, try again to delete it.
+		/// </summary>
+		/// <param name="obj"></param>
+		void DeleteFocusedObjectWhenNoLongerFocused(ICmObject obj);
 	}
 
 	/// <summary>

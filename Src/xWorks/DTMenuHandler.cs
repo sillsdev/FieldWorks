@@ -146,6 +146,11 @@ namespace SIL.FieldWorks.XWorks
 			get { return false; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
+		}
+
 		#endregion
 
 		/// <summary>

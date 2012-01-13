@@ -17,14 +17,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.AccessControl;
 using System.Text;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using ECInterfaces;
@@ -41,7 +42,7 @@ namespace SIL.FieldWorks.IText
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class LinguaLinksImport
+	public partial class LinguaLinksImport
 	{
 		private int m_phaseProgressStart, m_phaseProgressEnd, m_shownProgress;
 		private IThreadedProgress m_progress;
@@ -202,6 +203,22 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
+		[Flags]
+		public enum ImportAnalysesLevel
+		{
+			Wordform,
+			WordGloss
+		}
+
+		public class ImportInterlinearOptions
+		{
+			public IThreadedProgress Progress;
+			public Stream BirdData;
+			public int AllottedProgress;
+			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
+			public ImportAnalysesLevel AnalysesLevel;
+		}
+
 		/// <summary>
 		/// Import a file which looks like a FieldWorks interlinear XML export.
 		/// </summary>
@@ -212,7 +229,7 @@ namespace SIL.FieldWorks.IText
 		{
 			bool retValue = false;
 			Debug.Assert(parameters.Length == 1);
-			using (var stream = new FileStream((string) parameters[0], FileMode.Open))
+			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
 			{
 				FDO.IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
@@ -222,6 +239,16 @@ namespace SIL.FieldWorks.IText
 
 		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref FDO.IText firstNewText)
 		{
+			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress },
+				ref firstNewText);
+		}
+
+		public bool ImportInterlinear(ImportInterlinearOptions options, ref FDO.IText firstNewText)
+		{
+			IThreadedProgress progress = options.Progress;
+			Stream birdData = options.BirdData;
+			int allottedProgress = options.AllottedProgress;
+
 			bool retValue = false;
 			firstNewText = null;
 			BIRDDocument doc;
@@ -241,18 +268,84 @@ namespace SIL.FieldWorks.IText
 					{
 						step++;
 						ILangProject langProject = m_cache.LangProject;
-						FDO.IText newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-						langProject.TextsOC.Add(newText);
+						FDO.IText newText = null;
+						if (!String.IsNullOrEmpty(interlineartext.guid))
+						{
+							ICmObject repoObj;
+							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
+							newText = repoObj as FDO.IText;
+							if(newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
+							{
+								MergeTextWithBIRDDoc(ref newText, new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
+																						   Progress = progress,
+																						   ImportOptions = options
+								});
+							}
+							else if(newText == null)
+							{
+								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
+								//must be added for the cache to be initialized which is necessary for its population
+								langProject.TextsOC.Add(newText);
+
+								if (!PopulateTextFromBIRDDoc(ref newText, new TextCreationParams
+									{
+										Cache = m_cache,
+										InterlinText = interlineartext,
+										Progress = progress,
+										ImportOptions = options
+									})) //if the user aborted this text
+								{
+									langProject.TextsOC.Remove(newText); //remove it from the list
+								}
+							}
+							else //user said do not merge.
+							{
+								//ignore the Guid, we shouldn't have two texts with the same guid
+								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+								langProject.TextsOC.Add(newText);
+								if (!PopulateTextFromBIRDDoc(ref newText,
+									new TextCreationParams
+									{
+										Cache = m_cache,
+										InterlinText = interlineartext,
+										Progress = progress,
+										ImportOptions = options
+									})) //if the user aborted this text
+								{
+									langProject.TextsOC.Remove(newText);  //remove it from the list
+								}
+
+							}
+						}
+						else
+						{
+							newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+							//must be added for the cache to be initialized which is necessary for its population
+							langProject.TextsOC.Add(newText);
+
+							if (!PopulateTextFromBIRDDoc(ref newText,
+								new TextCreationParams
+								{
+									Cache = m_cache,
+									InterlinText = interlineartext,
+									Progress = progress,
+									ImportOptions = options
+								})) //if the user aborted this text
+							{
+								langProject.TextsOC.Remove(newText); //remove it from the list
+							}
+						}
+						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
 						if (firstNewText == null)
 							firstNewText = newText;
-						PopulateTextFromBIRDDoc(ref newText, interlineartext, m_cache);
-						progress.Position = initialProgress + allottedProgress/2 +  allottedProgress * step / 2 / doc.interlineartext.Length;
+
 					}
 					retValue = true;
 				}
 			}
 			catch (Exception e)
 			{
+				Debug.Print(e.Message);
 				Debug.Print(e.StackTrace);
 			}
 			finally
@@ -264,130 +357,22 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// This method is static and can be easily moved to another file if there is a better location for it. NaylorJ - Aug 2011
+		/// This method exists for testing purposes only, we don't want to show this dialog when we are testing the merge behavior.
 		/// </summary>
-		/// <param name="newText">The text to populate</param>
-		/// <param name="doc">The Interlineartext object from the BIRDDocument read from the xml file</param>
-		/// <param name="cache">The FdoCache to use when populating the text object</param>
-		private static void PopulateTextFromBIRDDoc(ref SIL.FieldWorks.FDO.IText newText, Interlineartext interlinText, FdoCache cache)
-		{
-			ILgWritingSystemFactory wsFactory = cache.WritingSystemFactory;
-			char space = ' ';
-			//handle the header information
-			if (interlinText.Items != null) // apparently it is null if there are no items.
-			{
-				foreach (var item in interlinText.Items)
-				{
-					switch (item.type)
-					{
-						case "title":
-							newText.Name.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-							break;
-						case "title-abbreviation":
-							newText.Abbreviation.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-							break;
-						case "source":
-							newText.Source.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-							break;
-						case "comment":
-							newText.Description.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-							break;
-
-					}
-				}
-			}
-			//create all the paragraphs
-			foreach (var paragraph in interlinText.paragraphs)
-			{
-				if(newText.ContentsOA == null)
-				{
-					newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				}
-				IStTxtPara newTextPara = newText.ContentsOA.AddNewTextPara("");
-				int offset = 0;
-				foreach(var phrase in paragraph.phrases)
-				{
-					ISegment newSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
-					var tsStrFactory = cache.ServiceLocator.GetInstance<ITsStrFactory>();
-					if (phrase.Items != null)
-					{
-						foreach (var item in phrase.Items)
-						{
-							switch (item.type)
-							{
-								case "reference-label":
-									newSegment.Reference = tsStrFactory.MakeString(item.Value, wsFactory.GetWsFromStr(item.lang));
-									break;
-								case "gls":
-									newSegment.FreeTranslation.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-									break;
-								case "lit":
-									newSegment.LiteralTranslation.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-									break;
-								case "note":
-									INote note = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-									newSegment.NotesOS.Add(note);
-									note.Content.set_String(wsFactory.get_Engine(item.lang).Handle, item.Value);
-									break;
-							}
-						}
-					}
-					ITsString phraseText = null;
-					bool lastWasWord = false;
-					bool isWord = false;
-					foreach(var word in phrase.WordsContent.Words)
-					{
-						foreach (var item in word.Items)
-						{
-							switch (item.type)
-							{
-								case "txt": //intentional fallthrough
-									isWord = true;
-									goto case "punct";
-								case "punct":
-									ITsString wordString = tsStrFactory.MakeString(item.Value, wsFactory.get_Engine(item.lang).Handle);
-									if (phraseText == null)
-									{
-										phraseText = wordString;
-									}
-									else
-									{
-										var phraseBldr = phraseText.GetBldr();
-										if(lastWasWord && isWord) //two words next to each other deserve a space between
-										{
-											phraseBldr.ReplaceTsString(phraseText.Length, phraseText.Length, tsStrFactory.MakeString("" + space, wsFactory.get_Engine(item.lang).Handle));
-										}
-										else if(!isWord) //handle punctuation
-										{
-											wordString = GetSpaceAdjustedPunctString(wsFactory, tsStrFactory, item, wordString, space, lastWasWord);
-										}
-										phraseBldr.ReplaceTsString(phraseBldr.Length, phraseBldr.Length, wordString);
-										phraseText = phraseBldr.GetString();
-									}
-									lastWasWord = isWord;
-									isWord = false;
-									break;
-							}
-						}
-					}
-					if (phraseText != null && phraseText.Length > 0)
-					{
-						offset += phraseText.Length;
-						var bldr = newTextPara.Contents.GetBldr();
-						var oldText = (bldr.Text ?? "").Trim();
-						if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], LgGeneralCharCategory.kccPo))
-						{
-							// 'segment' does not end with recognizable EOS character. Add our special one.
-							bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
-						}
-						// Insert a space between phrases unless there is already one
-						if (bldr.Length > 0 && phraseText.Text[0] != ' ' && bldr.Text[bldr.Length - 1] != ' ')
-							bldr.Replace(bldr.Length, bldr.Length, " ", null);
-						bldr.ReplaceTsString(bldr.Length, bldr.Length, phraseText);
-						newTextPara.Contents = bldr.GetString();
-					}
-				}
-			}
+		/// <param name="progress"></param>
+		/// <returns></returns>
+		virtual protected DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
+			//otherwise the message box can be displayed behind everything
+			IAsyncResult asyncResult = progress.ThreadHelper.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+																		 new object[]
+																			{
+																				progress,
+																				ITextStrings.ksAskMergeInterlinearText,
+																				ITextStrings.ksAskMergeInterlinearTextTitle,
+																				MessageBoxButtons.YesNo
+																			});
+			return (DialogResult)progress.ThreadHelper.EndInvoke(asyncResult);
 		}
 
 		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
@@ -395,22 +380,27 @@ namespace SIL.FieldWorks.IText
 		{
 			if(item.Value.Length > 0)
 			{
-				ITsString tempValue = AdjustPunctStringForCharacter(item, wsFactory, wordString, item.Value[0], tsStrFactory, space, followsWord);
+				var index = 0;
+				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, wordString, item.Value[index], index, space, followsWord);
 				if(item.Value.Length > 1)
 				{
-					tempValue = AdjustPunctStringForCharacter(item, wsFactory, tempValue, item.Value[item.Value.Length - 1],
-															  tsStrFactory, space, followsWord);
+					index = item.Value.Length - 1;
+					tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, tempValue, item.Value[index], index, space, followsWord);
 				}
 				return tempValue;
 			}
 			return wordString;
 		}
 
-		private static ITsString AdjustPunctStringForCharacter(item item, ILgWritingSystemFactory wsFactory, ITsString wordString,
-															   char punctChar, ITsStrFactory tsStrFactory, char space, bool followsWord)
+		private static ITsString AdjustPunctStringForCharacter(
+			ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
+			item item, ITsString wordString, char punctChar, int index,
+			char space, bool followsWord)
 		{
 			bool spaceBefore = false;
 			bool spaceAfter = false;
+			bool spaceHere = false;
+			char quote = '"';
 			var charType = Icu.GetCharType(punctChar);
 			switch (charType)
 			{
@@ -423,12 +413,16 @@ namespace SIL.FieldWorks.IText
 					spaceBefore = true;
 					break;
 				case Icu.UCharCategory.U_OTHER_PUNCTUATION: //handle special characters
-					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!','"'}) == wordString.Length - 1) //treat as ending characters
+					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!',quote}) == wordString.Length - 1) //treat as ending characters
 					{
 						spaceAfter = punctChar != '"' || wordString.Length > 1; //quote characters are extra special, if we find them on their own
 																				//it is near impossible to know what to do, but it's usually nothing.
 					}
-					if (punctChar == '"' && wordString.Length == 1)
+					if (punctChar == '\xA1' || punctChar == '\xBF')
+					{
+						spaceHere = true;
+					}
+					if (punctChar == quote && wordString.Length == 1)
 					{
 						spaceBefore = followsWord; //if we find a lonely quotation mark after a word, we'll put a space before it.
 					}
@@ -437,19 +431,60 @@ namespace SIL.FieldWorks.IText
 			var wordBuilder = wordString.GetBldr();
 			if(spaceBefore) //put a space to the left of the punct
 			{
-				wordBuilder.ReplaceTsString(0, 0, tsStrFactory.MakeString("" + space,
-																		  wsFactory.get_Engine(item.lang).Handle));
+				ILgWritingSystem wsEngine;
+				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				{
+					wordBuilder.ReplaceTsString(0, 0, tsStrFactory.MakeString("" + space,
+						wsEngine.Handle));
+				}
+				wordString = wordBuilder.GetString();
+			}
+			if (spaceHere && followsWord && !LastCharIsSpaceOrQuote(wordString, index, space, quote))
+			{
+				ILgWritingSystem wsEngine;
+				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				{
+					wordBuilder.ReplaceTsString(index, index, tsStrFactory.MakeString("" + space,
+						wsEngine.Handle));
+				}
 				wordString = wordBuilder.GetString();
 			}
 			if(spaceAfter) //put a space to the right of the punct
 			{
-				wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length,
-											tsStrFactory.MakeString("" + space,
-																	wsFactory.get_Engine(item.lang).Handle));
+				ILgWritingSystem wsEngine;
+				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				{
+					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length,
+						tsStrFactory.MakeString("" + space, wsEngine.Handle));
+				}
 				wordString = wordBuilder.GetString();
 			}
 			//otherwise punct doesn't deserve a space.
 			return wordString;
+		}
+
+		private static bool LastCharIsSpaceOrQuote(ITsString wordString, int index, char space, char quote)
+		{
+			index -= 1;
+			if (index < 0)
+				return false;
+			var charString = wordString.GetChars(index, index + 1);
+			return (charString[0] == space || charString[0] == quote);
+		}
+
+		private static bool TryGetWsEngine(ILgWritingSystemFactory wsFact, string langCode, out ILgWritingSystem wsEngine)
+		{
+			wsEngine = null;
+			try
+			{
+				wsEngine = wsFact.get_Engine(langCode);
+			}
+			catch (ArgumentException e)
+			{
+				Debug.Assert(false, "We hit the non-existant ws in AdjustPunctStringForCharacter().");
+				return false;
+			}
+			return true;
 		}
 
 		enum modes { kStart, kRun1, kRun2, kRun3, kRun4, kAUni1, kAUni2, kAUni3, kAUni4, kAStr1, kAStr2, kAStr3, kRIE1, kRIE2, kRIE3, kRIE4, kRIE5, kRIE6, kRIE7, kLink1, kLink2, kLink3, kLink4, kLink5, kLinkA2, kLinkA3, kLinkA4, kICU1, kICU2, kDtd };

@@ -162,10 +162,9 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// </summary>
 		/// <param name="scr">The Scripture object.</param>
 		/// <param name="styleSheet">The styleSheet</param>
-		/// <param name="cache">The cache</param>
 		/// ------------------------------------------------------------------------------------
-		public ImportWizardWrapper(IScripture scr, FwStyleSheet styleSheet,
-			FdoCache cache) : base("Test", scr, styleSheet, cache, null, null)
+		public ImportWizardWrapper(IScripture scr, FwStyleSheet styleSheet) :
+			base("Test", scr, styleSheet, null, null)
 		{
 			m_lvCurrentMappingList = lvScrMappings;
 			m_btnCurrentModifyButton = m_btnModifyScrMapping;
@@ -490,7 +489,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_importWizard = new ImportWizardWrapper(m_scr, m_styleSheet, Cache);
+			m_importWizard = new ImportWizardWrapper(m_scr, m_styleSheet);
 			MethodInfo createHandle = m_importWizard.ScrMappings.GetType().GetMethod("CreateHandle",
 				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			createHandle.Invoke(m_importWizard.ScrMappings, null);

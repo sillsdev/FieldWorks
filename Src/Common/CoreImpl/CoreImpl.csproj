@@ -104,7 +104,9 @@
 	  <DependentUpon>CoreImplStrings.resx</DependentUpon>
 	</Compile>
 	<Compile Include="DebugProcs.cs" />
+	<Compile Include="CmObjectFields.cs" />
 	<Compile Include="CellarPropertyType.cs" />
+	<Compile Include="CellarPropertyTypeFilter.cs" />
 	<Compile Include="IWritingSystem.cs" />
 	<Compile Include="IWritingSystemManager.cs" />
 	<Compile Include="LangTagUtils.cs" />

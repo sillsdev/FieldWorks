@@ -1888,53 +1888,52 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private bool EnableNextButton()
 		{
-			System.Windows.Forms.Cursor cursor = this.Cursor;
-			this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
 			//AllowQuickFinishButton();	// this should be done at least before each step
 			bool rval = false;
-			switch (CurrentStepNumber)
+			using (new WaitCursor(this))
 			{
-				case kstepOverviewAndBackup:
-					if (IsValidSfmFile(m_tbDatabaseFileName.Text) &&
-						m_tbSaveAsFileName.Text.ToLowerInvariant() != m_tbDatabaseFileName.Text.ToLowerInvariant() &&
-						m_tbSaveAsFileName.Text.ToLowerInvariant() != m_sStdImportMap.ToLowerInvariant())
-					{
+				switch (CurrentStepNumber)
+				{
+					case kstepOverviewAndBackup:
+						if (IsValidSfmFile(m_tbDatabaseFileName.Text) &&
+							m_tbSaveAsFileName.Text.ToLowerInvariant() != m_tbDatabaseFileName.Text.ToLowerInvariant() &&
+							m_tbSaveAsFileName.Text.ToLowerInvariant() != m_sStdImportMap.ToLowerInvariant())
+						{
+							rval = true;
+						}
+						break;
+
+					case kstepFileAndSettings:
+						// make sure there is a value for the 'Save as:' entry
+						if (m_tbSaveAsFileName.Text.Length <= 0)
+						{
+							m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text),
+								Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
+						}
 						rval = true;
-					}
-					break;
+						break;
 
-				case kstepFileAndSettings:
-					// make sure there is a value for the 'Save as:' entry
-					if (m_tbSaveAsFileName.Text.Length <= 0)
-					{
-						m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text),
-							Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
-					}
-					rval = true;
-					break;
+					case kstepEncodingConversion:
+						rval = true;
+						break;
 
-				case kstepEncodingConversion:
-					rval = true;
-					break;
+					case kstepContentMapping:
+						rval = true;
+						break;
 
-				case kstepContentMapping:
-					rval = true;
-					break;
+					case kstepKeyMarkers:
+						rval = true;
+						break;
 
-				case kstepKeyMarkers:
-					rval = true;
-					break;
+					case kstepCharacterMapping:
+						rval = true;
+						break;
 
-				case kstepCharacterMapping:
-					rval = true;
-					break;
-
-				default:
-					rval = true;
-					break;
+					default:
+						rval = true;
+						break;
+				}
 			}
-			this.Cursor = cursor;
 			return rval;
 		}
 
@@ -3309,6 +3308,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			cmText = null;
 			foreach (CharMapping cm in m_rgcm)
 			{
+				if (cm.BeginMarker.Length == 0)
+					continue;
 				int idxT = sText.IndexOf(cm.BeginMarker);
 				if (idxT != -1)
 				{
@@ -4463,10 +4464,10 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			// and so that we know where to insert it (at the end) if it is.
 			int chvo = m_cache.DomainDataByFlid.get_VecSize(rec.Hvo, rsf.m_flid);
 			int[] hvosField;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				m_cache.DomainDataByFlid.VecProp(rec.Hvo, rsf.m_flid, chvo, out chvo, arrayPtr);
-				hvosField = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				hvosField = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 			ICmPossibility poss;
 			List<string> rgsHier = SplitForSubitems(rsf, sData);

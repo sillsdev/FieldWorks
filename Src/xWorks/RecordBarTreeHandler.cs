@@ -474,56 +474,57 @@ namespace SIL.FieldWorks.XWorks
 			m_list = list;
 
 			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
-			window.Cursor = Cursors.WaitCursor;
-			window.TreeBarControl.IsFlatList = false;
-			TreeView tree = (TreeView)window.TreeStyleRecordList;
-			Set<int> expandedItems = new Set<int>();
-			if (m_tree != null && !m_expand)
-				GetExpandedItems(m_tree.Nodes, expandedItems);
-			m_tree = tree;
-			// id = nextID++; // CS0414
-			// treeHash = m_tree.GetHashCode(); // CS0414
-
-			// Removing the handlers first seems to be necessary because multiple tree handlers are
-			// working with one treeview. Only this active one should have handlers connected.
-			// If we fail to do this, switching to a different list causes drag and drop to stop working.
-			ReleaseRecordBar();
-
-			tree.NodeMouseClick += new TreeNodeMouseClickEventHandler(tree_NodeMouseClick);
-			tree.MouseDown += new MouseEventHandler(tree_MouseDown);
-			tree.MouseMove += new MouseEventHandler(tree_MouseMove);
-			tree.DragDrop += new DragEventHandler(tree_DragDrop);
-			tree.DragOver += new DragEventHandler(tree_DragOver);
-			tree.GiveFeedback += new GiveFeedbackEventHandler(tree_GiveFeedback);
-			tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-			tree.ContextMenuStrip.MouseClick += new MouseEventHandler(tree_MouseClicked);
-			tree.AllowDrop = true;
-			tree.BeginUpdate();
-			window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
-			m_hvoToTreeNodeTable.Clear();
-
-			// type size must be set before AddTreeNodes is called
-			m_typeSize = list.TypeSize;
-			AddTreeNodes(list.SortedObjects, tree);
-
-			tree.Font = new System.Drawing.Font(list.FontName, m_typeSize);
-			tree.ShowRootLines = m_hierarchical;
-
-			if (m_expand)
-				tree.ExpandAll();
-			else
+			using (new WaitCursor(window))
 			{
-				tree.CollapseAll();
-				ExpandItems(tree.Nodes, expandedItems);
-			}
-			// Set the selection after expanding/collapsing the tree.  This allows the true
-			// selection to be visible even when the tree is collapsed but the selection is
-			// an internal node.  (See LT-4508.)
-			UpdateSelection(list.CurrentObject);
-			tree.EndUpdate();
+				window.TreeBarControl.IsFlatList = false;
+				TreeView tree = (TreeView)window.TreeStyleRecordList;
+				Set<int> expandedItems = new Set<int>();
+				if (m_tree != null && !m_expand)
+					GetExpandedItems(m_tree.Nodes, expandedItems);
+				m_tree = tree;
+				// id = nextID++; // CS0414
+				// treeHash = m_tree.GetHashCode(); // CS0414
 
-			EnsureSelectedNodeVisible(tree);
-			window.Cursor = Cursors.Default;
+				// Removing the handlers first seems to be necessary because multiple tree handlers are
+				// working with one treeview. Only this active one should have handlers connected.
+				// If we fail to do this, switching to a different list causes drag and drop to stop working.
+				ReleaseRecordBar();
+
+				tree.NodeMouseClick += new TreeNodeMouseClickEventHandler(tree_NodeMouseClick);
+				tree.MouseDown += new MouseEventHandler(tree_MouseDown);
+				tree.MouseMove += new MouseEventHandler(tree_MouseMove);
+				tree.DragDrop += new DragEventHandler(tree_DragDrop);
+				tree.DragOver += new DragEventHandler(tree_DragOver);
+				tree.GiveFeedback += new GiveFeedbackEventHandler(tree_GiveFeedback);
+				tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
+				tree.ContextMenuStrip.MouseClick += new MouseEventHandler(tree_MouseClicked);
+				tree.AllowDrop = true;
+				tree.BeginUpdate();
+				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
+				m_hvoToTreeNodeTable.Clear();
+
+				// type size must be set before AddTreeNodes is called
+				m_typeSize = list.TypeSize;
+				AddTreeNodes(list.SortedObjects, tree);
+
+				tree.Font = new System.Drawing.Font(list.FontName, m_typeSize);
+				tree.ShowRootLines = m_hierarchical;
+
+				if (m_expand)
+					tree.ExpandAll();
+				else
+				{
+					tree.CollapseAll();
+					ExpandItems(tree.Nodes, expandedItems);
+				}
+				// Set the selection after expanding/collapsing the tree.  This allows the true
+				// selection to be visible even when the tree is collapsed but the selection is
+				// an internal node.  (See LT-4508.)
+				UpdateSelection(list.CurrentObject);
+				tree.EndUpdate();
+
+				EnsureSelectedNodeVisible(tree);
+			}
 		}
 
 		/// <summary>

@@ -117,19 +117,13 @@
 				<include name="${fwroot}/DistFiles/FormattedEditor.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/HelpSystem.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/HtmlEditor.dll" unless="${property::exists('remakele')}"/>
-				<include name="${fwroot}/DistFiles/LanguageEngine.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/log4net.dll"/>
 				<include name="${fwroot}/DistFiles/NetLoc.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/ParatextShared.dll" unless="${property::exists('remakele')}"/>
-				<include name="${fwroot}/DistFiles/ScriptureObjects.dll" unless="${property::exists('remakele')}"/>
-				<include name="${fwroot}/DistFiles/ScriptureTextFile.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/Utilities.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/wrtXML.dll" unless="${property::exists('remakele')}"/>
 				<include name="${fwroot}/DistFiles/XceedZip.dll"/>
 				<include name="${fwroot}/Bin/NUnit/bin/lib/nunit.core.interfaces.dll"/>
-				<include name="${fwroot}/DistFiles/Interop.SCRIPTUREOBJECTSLib.dll"/>
-				<include name="${fwroot}/DistFiles/Interop.LANGUAGEENGINELib.dll"/>
-				<include name="${fwroot}/DistFiles/Interop.SCRIPTURETEXTFILELib.dll"/>
 			</fileset>
 		</copy>
 		<attrib readonly="false">
@@ -389,7 +383,7 @@
 		</delete>
 	</target>
 	<!-- -->
-	<target name="mkfwk" description="FwKernel" depends="mkGenLib">
+	<target name="mkfwk" description="FwKernel" depends="mkGenLib,GenerateFilesFromModel">
 		<call target="mkfwk-nodep" cascade="false"/>
 	</target>
 	<target name="mkfwk-nodep" description="FwKernel">
@@ -432,6 +426,15 @@
 		<call target="rebuild-compmap" cascade="true" if="${platform::is-unix()}"/>
 	</target>
 	<!-- -->
+	<target name="Keyboarding" description="Keyboard utils"
+		depends="COMInterfaces,KeyboardSwitcher">
+			<call target="Keyboarding-nodep" cascade="false"/>
+	</target>
+	<target name="Keyboarding-nodep">
+		<property name="dir.srcProj" value="${fwroot}/Src/Common/Keyboarding"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
 	<target name="ManagedLgIcuCollator" description="ManagedLgIcuCollator" depends="COMInterfaces,BasicUtils">
 			<call target="ManagedLgIcuCollator-nodep" cascade="false" if="${platform::is-unix()}"/>
 	</target>
@@ -462,7 +465,7 @@
 		<call target="rebuild-compmap" cascade="true" if="${platform::is-unix()}"/>
 	</target>
 	<!-- -->
-	<target name="mklg" description="Language" depends="mkfwk,ManagedLgIcuCollator">
+	<target name="mklg" description="Language" depends="mkfwk,ManagedLgIcuCollator,GenerateFilesFromModel">
 		<call target="mklg-nodep" cascade="false"/>
 	</target>
 	<target name="mklg-nodep" description="Language">
@@ -495,10 +498,6 @@
 
 		<property name="bld_makefile" value="${fwroot}\Src\views\Views.mak"/>
 		<property name="bld_targets" value="dirs ${dir.fwoutputCommon}\ViewsTlb.tlb"/>
-		<call target="call-make"/>
-
-		<property name="bld_makefile" value="${fwroot}\Src\Cellar\FwCellar.mak"/>
-		<property name="bld_targets" value="dirs ${dir.fwoutputCommon}\FwCellarTlb.tlb"/>
 		<call target="call-make"/>
 	</target>
 	<target name="call-make">
@@ -559,15 +558,6 @@
 	<target name="mkgre-nodep" description="Graphite engine">
 		<property name="batch-file" value="mkgre" unless="${platform::is-unix()}"/>
 		<property name="batch-file" value="Graphite-GrEngine" if="${platform::is-unix()}"/>
-		<call target="call-batch"/>
-	</target>
-	<!-- -->
-	<target name="mkwp" description="WorldPad" depends="mkGenLib,mkfwk,mkvw,FwCoreDlgs,mkWidgLib">
-		<call target="mkwp-nodep" cascade="false"/>
-	</target>
-	<target name="mkwp-nodep" description="WorldPad">
-		<property name="batch-file" value="mkwp" unless="${platform::is-unix()}"/>
-		<property name="batch-file" value="WorldPad" if="${platform::is-unix()}"/>
 		<call target="call-batch"/>
 	</target>
 	<!-- -->

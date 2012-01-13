@@ -687,7 +687,7 @@ only in multiple-paragraph fields like 'Description'</value>
   </data>
   <data name="kstidFileProjectPropertiesMsg" xml:space="preserve">
 	<value>Modify properties of a FieldWorks project.</value>
-	<comment>This is the status bar message for the Fieldworks project properties menu option.</comment>
+	<comment>This is the status bar message for the FieldWorks project properties menu option.</comment>
   </data>
   <data name="kstidFileBackupRestoreMsg" xml:space="preserve">
 	<value>Backup or restore a FieldWorks project.</value>
@@ -1085,7 +1085,7 @@ FieldWorks ReadMe for help in this area.</value>
   </data>
   <data name="kstidUILangNotFound" xml:space="preserve">
 	<value>FieldWorks does not recognize '{0}' as a valid user interface language ID. English will be used instead.</value>
-	<comment>Message displayed at startup if the user's version of Windows is not supported in the user interface, or if the user specifies a langauge on the command line (using the 'locale' command-line option) that isn't supported. The parameter is the language id that was not found as part of the FW installation.</comment>
+	<comment>Message displayed at startup if the user's version of Windows is not supported in the user interface, or if the user specifies a language on the command line (using the 'locale' command-line option) that isn't supported. The parameter is the language id that was not found as part of the FW installation.</comment>
   </data>
   <data name="kstidPunctCheckWhitespaceChar" xml:space="preserve">
 	<value> </value>
@@ -1128,7 +1128,7 @@ FieldWorks ReadMe for help in this area.</value>
 	<comment>Used in the list of file types in file save dialogs</comment>
   </data>
   <data name="kstidOpenOffice" xml:space="preserve">
-	<value>Open Office Files</value>
+	<value>OpenOffice/LibreOffice Files</value>
 	<comment>Used in the list of file types in file open/save dialogs</comment>
   </data>
   <data name="kstidOXES" xml:space="preserve">

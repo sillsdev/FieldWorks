@@ -14,19 +14,6 @@ namespace SIL.FieldWorks.Views
 	[Guid("4ED1E8bC-DAdE-11DE-B350-0019DBf4566E")]
 	public class KeyboardSwitcher : IIMEKeyboardSwitcher, IDisposable
 	{
-		// enums of supported ibus versions
-		// these numbers are NOT the same as the ibus version numbers.
-		public enum IBusVersions
-		{
-			Unknown,
-			Version1,
-			// commit e2793f52bf3da7a22321 changed IBusEngineDesc to contain rank field.
-			Version2,
-			Version_1_3_7,
-		}
-
-		private IBusVersions m_ibusVersion = IBusVersions.Unknown;
-
 		private IBusConnection Connection = IBusConnectionFactory.Create();
 
 		#region IDisposable implementation
@@ -70,8 +57,8 @@ namespace SIL.FieldWorks.Views
 				InputContext context = GlobalCachedInputContext.InputContext;
 
 				object engine = context.GetEngine();
-				IBusEngineDesc engineDesc = GetEngineDesc(engine);
-				return engineDesc.longname;
+				IBusEngineDesc engineDesc = IBusEngineDesc.GetEngineDesc(engine);
+				return engineDesc.LongName;
 			}
 
 			set
@@ -100,9 +87,9 @@ namespace SIL.FieldWorks.Views
 
 					foreach (object engine in engines)
 					{
-						IBusEngineDesc engineDesc = GetEngineDesc(engine);
+						IBusEngineDesc engineDesc = IBusEngineDesc.GetEngineDesc(engine);
 						if (value == FormatKeyboardIdentifier(engineDesc))
-							context.SetEngine(engineDesc.longname);
+							context.SetEngine(engineDesc.LongName);
 					}
 
 					GlobalCachedInputContext.KeyboardName = value;
@@ -121,7 +108,7 @@ namespace SIL.FieldWorks.Views
 				return String.Empty;
 			var ibusWrapper = new IBusDotNet.InputBusWrapper(Connection);
 			object[] engines = ibusWrapper.InputBus.ListActiveEngines();
-			IBusEngineDesc engineDesc = GetEngineDesc(engines[index]);
+			IBusEngineDesc engineDesc = IBusEngineDesc.GetEngineDesc(engines[index]);
 
 			return FormatKeyboardIdentifier(engineDesc);
 		}
@@ -131,7 +118,7 @@ namespace SIL.FieldWorks.Views
 		/// </summary>
 		internal string FormatKeyboardIdentifier(IBusEngineDesc engineDesc)
 		{
-			return String.Format("{0} - {1}", engineDesc.language, engineDesc.name);
+			return String.Format("{0} - {1}", engineDesc.Language, engineDesc.Name);
 		}
 
 		/// <summary>number of ibus keyboards</summary>
@@ -152,65 +139,6 @@ namespace SIL.FieldWorks.Views
 		public void Close()
 		{
 			Dispose();
-		}
-		#endregion
-
-		#region helper methods
-		/// <summary>Get IBusEngineDesc names in a way tolerant to IBusEngineDesc versions.</summary>
-		internal IBusEngineDesc GetEngineDesc(object engine)
-		{
-			switch (m_ibusVersion)
-			{
-			case IBusVersions.Unknown:
-			case IBusVersions.Version1:
-				try
-				{
-					IBusEngineDesc_v1 engineDesc = (IBusEngineDesc_v1)Convert.ChangeType(
-						engine, typeof(IBusEngineDesc_v1));
-					// we must be version1 api.
-					m_ibusVersion = IBusVersions.Version1;
-
-					return new IBusEngineDesc { longname = engineDesc.longname,
-						name = engineDesc.name, description = engineDesc.description,
-						language = engineDesc.language, license = engineDesc.license,
-						author = engineDesc.author, icon = engineDesc.icon,
-						layout = engineDesc.layout };
-				}
-				catch (InvalidCastException)
-				{
-					// try next version.
-					m_ibusVersion = IBusVersions.Version2;
-					return GetEngineDesc(engine);
-				}
-
-			case IBusVersions.Version2:
-				try
-				{
-					IBusEngineDesc_v2 engineDesc = (IBusEngineDesc_v2)Convert.ChangeType(
-						engine, typeof(IBusEngineDesc_v2));
-					m_ibusVersion = IBusVersions.Version2;
-
-					return new IBusEngineDesc { longname = engineDesc.longname,
-						name = engineDesc.name, description = engineDesc.description,
-						language = engineDesc.language, license = engineDesc.license,
-						author = engineDesc.author, icon = engineDesc.icon,
-						layout = engineDesc.layout, rank = engineDesc.rank };
-				}
-				catch (InvalidCastException)
-				{
-					// try next version.
-					m_ibusVersion = IBusVersions.Version_1_3_7;
-					return GetEngineDesc(engine);
-				}
-
-			case IBusVersions.Version_1_3_7:
-				IBusEngineDesc engineDesc = (IBusEngineDesc)Convert.ChangeType(engine,
-					typeof(IBusEngineDesc));
-				return engineDesc;
-
-			default:
-				throw new NotSupportedException("Unknown ibus version");
-			}
 		}
 		#endregion
 	}

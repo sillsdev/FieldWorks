@@ -117,65 +117,32 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-	<value>24, 64</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>318, 13</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-	<value>19</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-	<value>Please describe the steps necessary to make this problem appear:</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-	<value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
   <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
   </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
   <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
 	<value>24, 264</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-	<value>130, 13</value>
+	<value>321, 13</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
 	<value>17</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
-	<value>Details for the developers:</value>
+	<value>Additional information about your computer and project will be sent:</value>
   </data>
   <data name="&gt;&gt;label3.Name" xml:space="preserve">
 	<value>label3</value>
@@ -187,7 +154,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-	<value>5</value>
+	<value>7</value>
   </data>
   <data name="m_reproduce.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
@@ -217,7 +184,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_reproduce.ZOrder" xml:space="preserve">
-	<value>0</value>
+	<value>2</value>
   </data>
   <data name="radEmail.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left, Right</value>
@@ -235,7 +202,7 @@
 	<value>1</value>
   </data>
   <data name="radEmail.Text" xml:space="preserve">
-	<value>&amp;Send an email message filled with this information.</value>
+	<value>&amp;Open an email containing this message using the default email client</value>
   </data>
   <data name="&gt;&gt;radEmail.Name" xml:space="preserve">
 	<value>radEmail</value>
@@ -247,7 +214,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;radEmail.ZOrder" xml:space="preserve">
-	<value>7</value>
+	<value>9</value>
   </data>
   <data name="m_details.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
@@ -277,7 +244,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_details.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>4</value>
   </data>
   <data name="emailLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
@@ -289,10 +256,10 @@
 	<value>NoControl</value>
   </data>
   <data name="emailLabel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 412</value>
+	<value>24, 411</value>
   </data>
   <data name="emailLabel.Size" type="System.Drawing.Size, System.Drawing">
-	<value>258, 13</value>
+	<value>255, 13</value>
   </data>
   <data name="emailLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>9</value>
@@ -310,7 +277,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;emailLabel.ZOrder" xml:space="preserve">
-	<value>6</value>
+	<value>8</value>
   </data>
   <data name="radSelf.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left, Right</value>
@@ -346,7 +313,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;radSelf.ZOrder" xml:space="preserve">
-	<value>8</value>
+	<value>10</value>
   </data>
   <data name="btnClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
@@ -379,7 +346,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
-	<value>9</value>
+	<value>11</value>
   </data>
   <data name="m_notification.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
@@ -412,7 +379,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_notification.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>3</value>
   </data>
   <data name="labelAttemptToContinue.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
@@ -448,7 +415,94 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;labelAttemptToContinue.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>5</value>
+  </data>
+  <data name="viewDetailsLink.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="viewDetailsLink.Location" type="System.Drawing.Point, System.Drawing">
+	<value>413, 262</value>
+  </data>
+  <data name="viewDetailsLink.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 13</value>
+  </data>
+  <data name="viewDetailsLink.TabIndex" type="System.Int32, mscorlib">
+	<value>25</value>
+  </data>
+  <data name="viewDetailsLink.Text" xml:space="preserve">
+	<value>View Details</value>
+  </data>
+  <data name="&gt;&gt;viewDetailsLink.Name" xml:space="preserve">
+	<value>viewDetailsLink</value>
+  </data>
+  <data name="&gt;&gt;viewDetailsLink.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;viewDetailsLink.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;viewDetailsLink.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_stepsLabel.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_stepsLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_stepsLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 64</value>
+  </data>
+  <data name="m_stepsLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>318, 13</value>
+  </data>
+  <data name="m_stepsLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="m_stepsLabel.Text" xml:space="preserve">
+	<value>Please describe the steps necessary to make this problem appear:</value>
+  </data>
+  <data name="&gt;&gt;m_stepsLabel.Name" xml:space="preserve">
+	<value>m_stepsLabel</value>
+  </data>
+  <data name="&gt;&gt;m_stepsLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_stepsLabel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_stepsLabel.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="cancelButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>461, 492</value>
+  </data>
+  <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="cancelButton.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="cancelButton.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="cancelButton.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Name" xml:space="preserve">
+	<value>cancelButton</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
+	<value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>

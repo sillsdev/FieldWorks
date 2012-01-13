@@ -221,10 +221,17 @@ namespace SIL.FieldWorks.TE
 					int ownerOwnFlid = startPara.Owner.OwningFlid;
 					if (ownerOwnFlid == ScrBookTags.kflidFootnotes)
 					{
+#if __MonoCS__
+			const string fontname = "OpenSymbol";
+			const string symbol = "\u2042";
+#else
+			const string fontname = "Marlett";
+			const string symbol = "\u0032";
+#endif
 						ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-						propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Marlett");
+						propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, fontname);
 						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.WritingSystemFactory.UserWs);
-						bldr.Replace(0, 0, "\u0032", propsBldr.GetTextProps());
+						bldr.Replace(0, 0, symbol, propsBldr.GetTextProps());
 					}
 				}
 			}

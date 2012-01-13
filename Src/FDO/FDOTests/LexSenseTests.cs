@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -215,7 +216,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ILexSense sense1 = le1.SensesOS[0];
 			newItems.Add(sense1.Hvo);
 			// get an id for the 'list of senses' property (which isn't in the model)
-			int fakeFlid = (int)CellarModuleDefns.kflidStartDummyFlids + 1;
+			int fakeFlid = (int)CmObjectFields.kflidStartDummyFlids + 1;
 
 			List<XmlNode> columns = new List<XmlNode>();
 			bool fSenseDeleted = sense1.RDEMergeSense(semDom1.Hvo, columns, Cache, newItems);

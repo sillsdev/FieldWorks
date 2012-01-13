@@ -377,28 +377,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_btnRunUtils_Click(object sender, System.EventArgs e)
 		{
-			Cursor = Cursors.WaitCursor;
-			// Note: Resetting the steps text doesn't work.
-			//m_lSteps.Text = String.Empty;
-			//int totalSteps = m_clbUtilities.CheckedItems.Count;
-			//int currentStep = 0;
-			Set<IUtility> checkedItems = new Set<IUtility>();
-			foreach (IUtility util in m_clbUtilities.CheckedItems)
+			using (new WaitCursor(this))
 			{
-				//m_lSteps.SuspendLayout();
-				//m_lSteps.Text = String.Format("Step {0} of {1}", ++currentStep, totalSteps);
-				//m_lSteps.ResumeLayout(true);
-				util.Process();
-				m_progressBar.Value = 0;
-				checkedItems.Add(util);
+				// Note: Resetting the steps text doesn't work.
+				//m_lSteps.Text = String.Empty;
+				//int totalSteps = m_clbUtilities.CheckedItems.Count;
+				//int currentStep = 0;
+				Set<IUtility> checkedItems = new Set<IUtility>();
+				foreach (IUtility util in m_clbUtilities.CheckedItems)
+				{
+					//m_lSteps.SuspendLayout();
+					//m_lSteps.Text = String.Format("Step {0} of {1}", ++currentStep, totalSteps);
+					//m_lSteps.ResumeLayout(true);
+					util.Process();
+					m_progressBar.Value = 0;
+					checkedItems.Add(util);
+				}
+
+				// Uncheck each one that was done.
+				foreach (IUtility checkedUtil in checkedItems)
+					m_clbUtilities.SetItemChecked(m_clbUtilities.Items.IndexOf(checkedUtil), false);
+
+				//m_lSteps.Text = String.Empty;
 			}
-
-			// Uncheck each one that was done.
-			foreach (IUtility checkedUtil in checkedItems)
-				m_clbUtilities.SetItemChecked(m_clbUtilities.Items.IndexOf(checkedUtil), false);
-
-			//m_lSteps.Text = String.Empty;
-			Cursor = Cursors.Default;
 		}
 
 		private void m_btnClose_Click(object sender, System.EventArgs e)

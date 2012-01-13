@@ -147,7 +147,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblTop.ZOrder" xml:space="preserve">
-	<value>14</value>
+	<value>15</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -174,34 +174,34 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-	<value>13</value>
+	<value>14</value>
   </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_searchContentLabel.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_searchContentLabel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 100</value>
   </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_searchContentLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>63, 13</value>
   </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_searchContentLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>20</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
+  <data name="m_searchContentLabel.Text" xml:space="preserve">
 	<value>For the text:</value>
   </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-	<value>label3</value>
+  <data name="&gt;&gt;m_searchContentLabel.Name" xml:space="preserve">
+	<value>m_searchContentLabel</value>
   </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_searchContentLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_searchContentLabel.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-	<value>12</value>
+  <data name="&gt;&gt;m_searchContentLabel.ZOrder" xml:space="preserve">
+	<value>13</value>
   </data>
   <data name="m_cbLine.Location" type="System.Drawing.Point, System.Drawing">
 	<value>128, 36</value>
@@ -225,7 +225,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_cbLine.ZOrder" xml:space="preserve">
-	<value>11</value>
+	<value>12</value>
   </data>
   <data name="m_tbSearchText.Font" type="System.Drawing.Font, System.Drawing">
 	<value>Microsoft Sans Serif, 100pt</value>
@@ -233,7 +233,6 @@
   <data name="m_tbSearchText.Location" type="System.Drawing.Point, System.Drawing">
 	<value>128, 94</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_tbSearchText.Size" type="System.Drawing.Size, System.Drawing">
 	<value>200, 28</value>
   </data>
@@ -244,13 +243,13 @@
 	<value>m_tbSearchText</value>
   </data>
   <data name="&gt;&gt;m_tbSearchText.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=5.5.0.13960, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.2.0.29677, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_tbSearchText.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_tbSearchText.ZOrder" xml:space="preserve">
-	<value>10</value>
+	<value>11</value>
   </data>
   <data name="m_btnRegExp.Location" type="System.Drawing.Point, System.Drawing">
 	<value>332, 94</value>
@@ -274,11 +273,12 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnRegExp.ZOrder" xml:space="preserve">
-	<value>9</value>
+	<value>10</value>
   </data>
   <data name="m_chkMatchDiacritics.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_chkMatchDiacritics.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
@@ -304,7 +304,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_chkMatchDiacritics.ZOrder" xml:space="preserve">
-	<value>4</value>
+	<value>5</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
 	<value>264, 130</value>
@@ -328,7 +328,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-	<value>8</value>
+	<value>9</value>
   </data>
   <data name="m_btnSearch.Location" type="System.Drawing.Point, System.Drawing">
 	<value>192, 130</value>
@@ -352,7 +352,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnSearch.ZOrder" xml:space="preserve">
-	<value>7</value>
+	<value>8</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -379,7 +379,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-	<value>6</value>
+	<value>7</value>
   </data>
   <data name="m_cbWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
 	<value>128, 65</value>
@@ -400,7 +400,7 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_cbWritingSystem.ZOrder" xml:space="preserve">
-	<value>5</value>
+	<value>6</value>
   </data>
   <data name="m_rbtnAnywhere.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -571,14 +571,14 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_chkMatchCase.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>358, 58</value>
+	<value>4</value>
   </data>
   <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>17, 17</value>
   </metadata>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>358, 58</value>
+  </data>
   <data name="groupBox1.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -598,8 +598,11 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>3</value>
   </data>
+  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
   <data name="m_fwtbItem.AccessibleName" xml:space="preserve">
 	<value>fwtbItem</value>
   </data>
@@ -618,23 +621,17 @@
   <data name="m_fwtbItem.TabIndex" type="System.Int32, mscorlib">
 	<value>21</value>
   </data>
-  <data name="m_fwtbItem.Text" xml:space="preserve">
-	<value>(concorded item)</value>
-  </data>
-  <data name="m_fwtbItem.Visible" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
   <data name="&gt;&gt;m_fwtbItem.Name" xml:space="preserve">
 	<value>m_fwtbItem</value>
   </data>
   <data name="&gt;&gt;m_fwtbItem.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=5.5.0.13960, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.2.0.29677, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_fwtbItem.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_fwtbItem.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>2</value>
   </data>
   <data name="m_lnkSpecify.AccessibleName" xml:space="preserve">
 	<value>lnkSpecify</value>
@@ -670,6 +667,30 @@
 	<value>$this</value>
   </data>
   <data name="&gt;&gt;m_lnkSpecify.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_cbSearchText.Location" type="System.Drawing.Point, System.Drawing">
+	<value>127, 97</value>
+  </data>
+  <data name="m_cbSearchText.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbSearchText.Size" type="System.Drawing.Size, System.Drawing">
+	<value>219, 21</value>
+  </data>
+  <data name="m_cbSearchText.TabIndex" type="System.Int32, mscorlib">
+	<value>23</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Name" xml:space="preserve">
+	<value>m_cbSearchText</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

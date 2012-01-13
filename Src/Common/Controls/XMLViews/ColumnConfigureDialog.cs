@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -523,80 +521,177 @@ namespace SIL.FieldWorks.Common.Controls
 
 		void InitChoicesList()
 		{
-			foreach(XmlNode node in m_currentColumns)
-				AddCurrentItem(node);
+			// LT-12253 It's just possible that AddCurrentItem() will delete a column
+			// (e.g. if the user previously deleted a ws that it references).
+			// So don't use foreach here!
+			for (var i = 0; i < m_currentColumns.Count; i++)
+			{
+				var node = m_currentColumns[i];
+				var item = AddCurrentItem(node);
+				if (item == null)
+					i--;
+			}
 		}
 
+		/// <summary>
+		/// Creates the ListViewItem for the current Xml node.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns>The ListViewItem or null. If null is returned, the caller should delete this
+		/// column from the current list.</returns>
 		ListViewItem MakeCurrentItem(XmlNode node)
 		{
-			string[] cols = new string[2];
-			string label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, node, "label", null);
+			var cols = new string[2];
+			var label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, node, "label", null);
 			if (label == null)
 				label = XmlUtils.GetManditoryAttributeValue(node, "label");
 			cols[0] = label;
-			cols[1] = XmlViewsUtils.FindWsParam(node);
-			if (cols[1] == "analysis")
-			{
-				cols[1] = XMLViewsStrings.ksDefaultAnal;
-			}
-			else if (cols[1] == "vernacular")
-			{
-				cols[1] = XMLViewsStrings.ksDefaultVern;
-			}
-			else if (cols[1] == "pronunciation")
-			{
-				cols[1] = XMLViewsStrings.ksDefaultPron;
-			}
-			else if (cols[1] == "best vernoranal")
-			{
-				cols[1] = XMLViewsStrings.ksBestVernAnal;
-			}
-			else if (cols[1] == "best analorvern")
-			{
-				cols[1] = XMLViewsStrings.ksBestAnalVern;
-			}
-			else if (cols[1] == "best analysis")
-			{
-				cols[1] = XMLViewsStrings.ksBestAnal;
-			}
-			else if (cols[1] == "best vernacular")
-			{
-				cols[1] = XMLViewsStrings.ksBestVern;
-			}
-			else if (cols[1] == "reversal")
-			{
-				// Get the language for this reversal index.
-				string sWsName = GetDefaultReversalWsName();
-				if (!String.IsNullOrEmpty(sWsName))
-					cols[1] = sWsName;
-			}
-			else if (cols[1] == "reversal index")
-			{
-				// Get the language for this reversal index.
-			}
-			// The next two are needed to fix LT-6647.
-			else if (cols[1] == "analysis vernacular")
-			{
-				cols[1] = XMLViewsStrings.ksDefaultAnal;
-			}
-			else if (cols[1] == "vernacular analysis")
-			{
-				cols[1] = XMLViewsStrings.ksDefaultVern;
-			}
-			else if (!string.IsNullOrEmpty(cols[1]))
+			var wsParam = XmlViewsUtils.FindWsParam(node);
+			var dispCategory = TranslateWsParamToLocalizedDisplayCategory(wsParam);
+			cols[1] = dispCategory;
+			// Failure to translate (Empty string result) means either:
+			//    1) wsParam is a specific Writing System... look up how to display it.
+			// or 2) the user deleted the Writing System... try to revert to a default ws
+			//       unless there is a column for that already, in which case return null
+			//       so we can delete this column.
+			if (String.IsNullOrEmpty(dispCategory) && !String.IsNullOrEmpty(wsParam))
 			{
 				// Display the language name, not its ICU locale.
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(cols[1]);
-				cols[1] = ws.DisplayLabel;
+				IWritingSystem ws;
+				if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsParam, out ws))
+					cols[1] = ws.DisplayLabel;
+				else
+				{
+					// Probably this ws was deleted. See LT-12253.
+					string newWsDispCat;
+					string newColName;
+					if (!TryToRevertToDefaultWs(node, out newColName, out newWsDispCat))
+					{
+						// Caller should delete this node from the current list of columns.
+						return null;
+					}
+					cols[0] = newColName;
+					cols[1] = newWsDispCat;
+				}
 			}
 
-			var item = new ListViewItem(cols);
-			if (XmlUtils.GetOptionalAttributeValue(node, "bulkEdit") != null || XmlUtils.GetOptionalAttributeValue(node, "transduce") != null)
+			var itemWithToolTip = new ListViewItem(cols);
+			itemWithToolTip.ToolTipText = cols[1];
+			if (XmlUtils.GetOptionalAttributeValue(node, "bulkEdit") != null ||
+				XmlUtils.GetOptionalAttributeValue(node, "transduce") != null)
 			{
-				item.ImageIndex = 0;
+				itemWithToolTip .ImageIndex = 0;
 			}
 
-			return item;
+			return itemWithToolTip ;
+		}
+
+		private string TranslateWsParamToLocalizedDisplayCategory(string wsParam)
+		{
+			var result = String.Empty; // if the switch doesn't match wsParam, this will be returned.
+			switch (wsParam)
+			{
+				case "analysis":
+					result = XMLViewsStrings.ksDefaultAnal;
+					break;
+				case "vernacular":
+					result = XMLViewsStrings.ksDefaultVern;
+					break;
+				case "pronunciation":
+					result = XMLViewsStrings.ksDefaultPron;
+					break;
+				case "best vernoranal":
+					result = XMLViewsStrings.ksBestVernAnal;
+					break;
+				case "best analorvern":
+					result = XMLViewsStrings.ksBestAnalVern;
+					break;
+				case "best analysis":
+					result = XMLViewsStrings.ksBestAnal;
+					break;
+				case "best vernacular":
+					result = XMLViewsStrings.ksBestVern;
+					break;
+				case "reversal":
+					{
+						// Get the language for this reversal index.
+						var sWsName = GetDefaultReversalWsName();
+						if (!String.IsNullOrEmpty(sWsName))
+							result = sWsName;
+					}
+					break;
+				case "reversal index": // ??? is this case used?
+					break;
+				case "analysis vernacular":
+					result = XMLViewsStrings.ksDefaultAnal;
+					break;
+				case "vernacular analysis":
+					result = XMLViewsStrings.ksDefaultVern;
+					break;
+			}
+			return result;
+		}
+
+		private bool TryToRevertToDefaultWs(XmlNode node, out string newColName, out string newWsDispCat)
+		{
+			newColName = String.Empty;
+			newWsDispCat = String.Empty;
+			var origWs = XmlUtils.GetOptionalAttributeValue(node, "originalWs");
+			if (origWs == null)
+				return false;
+
+			var origDisplayCategory = TranslateWsParamToLocalizedDisplayCategory(origWs);
+			var layoutName = XmlUtils.GetManditoryAttributeValue(node, "layout");
+			if (CurrentColumnsContainsOriginalDefault(layoutName, origWs))
+				return false;
+
+			var dispName = UpdateNodeToReflectDefaultWs(node, origWs);
+			if (!String.IsNullOrEmpty(dispName))
+				newColName = dispName;
+			newWsDispCat = origDisplayCategory;
+			return true;
+		}
+
+		private string UpdateNodeToReflectDefaultWs(XmlNode node, string origWs)
+		{
+			var result = String.Empty;
+			if (node.Attributes != null)
+			{
+				const string wsAttrName = "ws";
+				if (XmlUtils.GetOptionalAttributeValue(node, wsAttrName)!= null)
+				{
+					XmlUtils.SetAttribute(node, wsAttrName, StringServices.WsParamLabel+origWs);
+					// reset 'label' attribute to 'originalLabel'
+					const string origLabelAttrName = "originalLabel";
+					var origLabel = XmlUtils.GetOptionalAttributeValue(node, origLabelAttrName);
+					if (origLabel != null)
+					{
+						result = origLabel;
+						const string origWsAttrName = "originalWs";
+						XmlUtils.SetAttribute(node, "label", origLabel);
+						// remove 'originalLabel' and 'originalWs' attributes
+						node.Attributes.RemoveNamedItem(origLabelAttrName);
+						node.Attributes.RemoveNamedItem(origWsAttrName);
+					}
+				}
+			}
+			return result;
+		}
+
+		private bool CurrentColumnsContainsOriginalDefault(string layoutName, string origWs)
+		{
+			// Search through m_currentColumns for one that has the same layout attribute
+			// and original writing system.
+			foreach (var col in m_currentColumns)
+			{
+				var colLayout = XmlUtils.GetManditoryAttributeValue(col, "layout");
+				if (layoutName != colLayout)
+					continue;
+				var wsParam = XmlViewsUtils.FindWsParam(col);
+				if (wsParam == origWs)
+					return true;
+			}
+			return false;
 		}
 
 		private string GetDefaultReversalWsName()
@@ -621,8 +716,16 @@ namespace SIL.FieldWorks.Common.Controls
 
 		ListViewItem AddCurrentItem(XmlNode node)
 		{
-			ListViewItem item = MakeCurrentItem(node);
-			currentList.Items.Add(item);
+			var item = MakeCurrentItem(node);
+			// Should only occur if user deleted this ws
+			if (item == null)
+			{
+				if (m_currentColumns.Contains(node))
+					m_currentColumns.Remove(node);
+			}
+			else
+				currentList.Items.Add(item);
+
 			return item;
 		}
 
@@ -630,10 +733,16 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			IComparer<XmlNode> columnSorter = new ColumnSorter(m_stringTbl);
 			m_possibleColumns.Sort(columnSorter); // Sort the list before it's displayed
+			SafelyMakeOptionsList(optionsList);
+		}
 
-			foreach (XmlNode node in m_possibleColumns)
+		private void SafelyMakeOptionsList(ListView optionsList)
+		{
+			foreach (var node in m_possibleColumns)
 			{
-				optionsList.Items.Add(MakeCurrentItem(node));
+				var listItem = MakeCurrentItem(node);
+				if (listItem != null)
+					optionsList.Items.Add(listItem);
 			}
 		}
 
@@ -724,6 +833,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.currentList.HideSelection = false;
 			this.currentList.MultiSelect = false;
 			this.currentList.Name = "currentList";
+			this.currentList.ShowItemToolTips = true;
 			this.currentList.UseCompatibleStateImageBehavior = false;
 			this.currentList.View = System.Windows.Forms.View.Details;
 			this.currentList.SelectedIndexChanged += new System.EventHandler(this.currentList_SelectedIndexChanged);
@@ -1224,9 +1334,16 @@ namespace SIL.FieldWorks.Common.Controls
 
 			XmlAttribute xa = replacement.Attributes["label"];
 			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
+			var listItem = MakeCurrentItem(replacement);
+			if (listItem == null) // The user deleted this ws and there was already one with the default ws.
+			{
+				Debug.Assert(false, "Did the user delete the ws?!");
+				currentList.Items.RemoveAt(index);
+				return;
+			}
 			m_currentColumns[index] = replacement;
 			currentList.Items.RemoveAt(index);
-			currentList.Items.Insert(index, MakeCurrentItem(replacement));
+			currentList.Items.Insert(index, listItem);
 			currentList.Items[index].Selected = true;
 		}
 

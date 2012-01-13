@@ -10,8 +10,10 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -35,6 +37,7 @@ namespace SIL.FieldWorks.IText
 		private bool m_fObjectConcorded = false;
 		private int m_hvoMatch = 0;
 		private IHelpTopicProvider m_helpTopicProvider;
+		private POSPopupTreeManager m_pOSPopupTreeManager;
 
 		// True after the first time we do it.
 		internal bool HasLoadedMatches { get; private set; }
@@ -80,9 +83,10 @@ namespace SIL.FieldWorks.IText
 			FillLineComboList();
 
 			m_fwtbItem.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_fwtbItem.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
 			m_fwtbItem.Text = String.Empty;
+			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
 
 			// Set some default values.
 
@@ -91,7 +95,6 @@ namespace SIL.FieldWorks.IText
 			m_chkMatchDiacritics.Checked = false;
 			m_chkMatchCase.Checked = false;
 			m_btnSearch.Enabled = false;
-
 
 			m_regexContextMenu = new RegexHelperMenu(m_tbSearchText, m_helpTopicProvider);
 
@@ -105,6 +108,7 @@ namespace SIL.FieldWorks.IText
 				m_btnHelp.Enabled = true;
 			}
 
+			m_cbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
 			if (m_clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
@@ -412,8 +416,47 @@ namespace SIL.FieldWorks.IText
 			kWordGloss,
 			kFreeTranslation,
 			kLiteralTranslation,
-			kNote
+			kNote,
+			kGramCategory,
+			kWordCategory,
+			kTags
 		};
+
+		/// <summary>
+		/// This class stores the objects used by the combo box by the Word Cat. and Lex. Gram. Info. lines.
+		/// </summary>
+		private sealed class POSComboController : POSPopupTreeManager
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, Form parent) :
+				base(treeCombo, cache, list, ws, useAbbr, mediator, parent)
+			{
+				Sorted = true;
+			}
+
+			protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
+			{
+				int tagName = UseAbbr ?
+					CmPossibilityTags.kflidAbbreviation :
+					CmPossibilityTags.kflidName;
+				popupTree.Sorted = Sorted;
+				TreeNode match = null;
+				if (List != null)
+					match = AddNodes(popupTree.Nodes, List.Hvo,
+									 CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+				return match ?? popupTree.Nodes[0];
+			}
+
+			private bool m_sorted;
+			public bool Sorted
+			{
+				get { return m_sorted; }
+				set { m_sorted = value;  }
+			}
+
+		}
 
 		/// <summary>
 		/// This class stores the objects used by the Line combo box.
@@ -474,10 +517,25 @@ namespace SIL.FieldWorks.IText
 		private void UpdateButtonState()
 		{
 			ConcordLine sel = (ConcordLine)m_cbLine.SelectedItem;
-			SyncWritingSystemComboToSelectedLine(sel);
+			m_searchContentLabel.Text = ITextStrings.ConcordanceSearchTextLabel;
 			switch (sel.Line)
 			{
+				case ConcordanceLines.kGramCategory:
+				case ConcordanceLines.kWordCategory:
+				case ConcordanceLines.kTags:
+					m_cbSearchText.Enabled = true;
+					m_cbSearchText.Visible = true;
+					FillSearchComboList(sel.Line);
+					m_tbSearchText.Visible = m_btnRegExp.Visible = false;
+					DisableDetailedSearchControls();
+					if (sel.Line != ConcordanceLines.kTags)
+						m_searchContentLabel.Text = ITextStrings.ConcordanceSearchCatLabel;
+					else
+						m_searchContentLabel.Text = ITextStrings.ConcordanceSearchTagLabel;
+					break;
 				case ConcordanceLines.kBaseline:
+					SyncWritingSystemComboToSelectedLine(sel);
+					SetDefaultButtonState();
 					// the Baseline currently tries to match in an entire paragraph.
 					// so disable "at start" and "at end" and "whole item" matchers.
 					if (!m_rbtnAnywhere.Checked && !m_rbtnUseRegExp.Checked)
@@ -487,11 +545,89 @@ namespace SIL.FieldWorks.IText
 					m_rbtnWholeItem.Enabled = false;
 					break;
 				default:
-					m_rbtnAtEnd.Enabled = true;
-					m_rbtnAtStart.Enabled = true;
-					m_rbtnWholeItem.Enabled = true;
+					SyncWritingSystemComboToSelectedLine(sel);
+					SetDefaultButtonState();
 					break;
 			}
+		}
+
+		private void SetDefaultButtonState()
+		{
+			EnableDetailedSearchControls();
+			m_btnRegExp.Visible = m_tbSearchText.Visible = true;
+			m_cbSearchText.Enabled = m_cbSearchText.Visible = false;
+		}
+
+		private void EnableDetailedSearchControls()
+		{
+			m_rbtnAtEnd.Enabled = true;
+			m_rbtnAtStart.Enabled = true;
+			m_rbtnWholeItem.Enabled = true;
+			m_rbtnAnywhere.Enabled = true;
+			m_rbtnUseRegExp.Enabled = true;
+			m_chkMatchCase.Enabled = true;
+			m_chkMatchDiacritics.Enabled = true;
+			m_cbWritingSystem.Enabled = true;
+		}
+
+		/// <summary>
+		/// Don't want all the radio buttons and checkboxes active when searching
+		/// by possibility list item.
+		/// </summary>
+		private void DisableDetailedSearchControls()
+		{
+			m_rbtnAtEnd.Enabled = false;
+			m_rbtnAtStart.Enabled = false;
+			m_rbtnWholeItem.Enabled = false;
+			m_rbtnAnywhere.Enabled = false;
+			m_rbtnUseRegExp.Enabled = false;
+			// LT-6966/10312 reopened. Don't confuse user with ws options when they just want to find
+			// the tag or category they used. The list already shows BestAnalysisAlternative. We will
+			// search for that too.
+			m_cbWritingSystem.Enabled = false;
+			// Again, don't confuse the user by making this look like a string match.
+			// We want these disabled for list item matching.
+			m_chkMatchDiacritics.Enabled = false;
+			m_chkMatchCase.Enabled = false;
+		}
+
+		/// <summary>
+		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
+		/// </summary>
+		/// <param name="line"></param>
+		private void FillSearchComboList(ConcordanceLines line)
+		{
+			if(m_pOSPopupTreeManager != null)
+				m_pOSPopupTreeManager.Dispose();
+			switch(line)
+			{
+				case ConcordanceLines.kTags:
+					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
+											m_cache,
+											InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
+											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
+											false,
+											m_mediator,
+											(Form)m_mediator.PropertyTable.GetValue("window")) {Sorted = false};
+					break;
+				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
+					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
+											 m_cache,
+											 m_cache.LanguageProject.PartsOfSpeechOA,
+											 m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
+											 false,
+											 m_mediator,
+											 (Form)m_mediator.PropertyTable.GetValue("window"));
+					break;
+			}
+			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;
+			m_pOSPopupTreeManager.LoadPopupTree(0);
+		}
+
+		private void POSAfterSelect(object sender, TreeViewEventArgs e)
+		{
+			// Enable the search after any selection in the SearchCombo
+			m_btnSearch.Enabled = true;
 		}
 
 		private void m_cbWritingSystem_SelectedIndexChanged(object sender, EventArgs e)
@@ -582,7 +718,7 @@ namespace SIL.FieldWorks.IText
 					fCreatedProgressState = true;
 				}
 #endif
-				string sMatch = m_tbSearchText.Text.Trim();
+				string sMatch = m_tbSearchText.Visible ? m_tbSearchText.Text.Trim() : m_cbSearchText.SelectedItem.ToString();
 				if (sMatch.Length == 0)
 					return new List<IParaFragment>();
 				if (sMatch.Length > 1000)
@@ -597,31 +733,40 @@ namespace SIL.FieldWorks.IText
 				switch (conc.Line)
 				{
 					case ConcordanceLines.kBaseline:
-						occurrences = UpdateConcordanceForBaseline(sMatch, ws);
+						occurrences = UpdateConcordanceForBaseline(ws);
 						break;
 					case ConcordanceLines.kWord:
-						occurrences = UpdateConcordanceForWord(sMatch, ws);
+						occurrences = UpdateConcordanceForWord(ws);
 						break;
 					case ConcordanceLines.kMorphemes:
-						occurrences = UpdateConcordanceForMorphemes(sMatch, ws);
+						occurrences = UpdateConcordanceForMorphemes(ws);
 						break;
 					case ConcordanceLines.kLexEntry:
-						occurrences = UpdateConcordanceForLexEntry(sMatch, ws);
+						occurrences = UpdateConcordanceForLexEntry(ws);
 						break;
 					case ConcordanceLines.kLexGloss:
-						occurrences = UpdateConcordanceForLexGloss(sMatch, ws);
+						occurrences = UpdateConcordanceForLexGloss(ws);
 						break;
 					case ConcordanceLines.kWordGloss:
-						occurrences = UpdateConcordanceForWordGloss(sMatch, ws);
+						occurrences = UpdateConcordanceForWordGloss(ws);
 						break;
 					case ConcordanceLines.kFreeTranslation:
-						occurrences = UpdateConcordanceForFreeTranslation(sMatch, ws);
+						occurrences = UpdateConcordanceForFreeTranslation(ws);
 						break;
 					case ConcordanceLines.kLiteralTranslation:
-						occurrences = UpdateConcordanceForLiteralTranslation(sMatch, ws);
+						occurrences = UpdateConcordanceForLiteralTranslation(ws);
 						break;
 					case ConcordanceLines.kNote:
-						occurrences = UpdateConcordanceForNote(sMatch, ws);
+						occurrences = UpdateConcordanceForNote(ws);
+						break;
+					case ConcordanceLines.kGramCategory:
+						occurrences = UpdateConcordanceForGramInfo(ws);
+						break;
+					case ConcordanceLines.kWordCategory:
+						occurrences = UpdateConcordanceForWordCategory(ws);
+						break;
+					case ConcordanceLines.kTags:
+						occurrences = UpdateConcordanceForTag(ws);
 						break;
 					default:
 						occurrences = new List<IParaFragment>();
@@ -638,23 +783,23 @@ namespace SIL.FieldWorks.IText
 			return occurrences;
 		}
 
+
 		private List<IParaFragment> FindMatchingItems()
 		{
 			var result = new List<IParaFragment>();
 			var target = m_cache.ServiceLocator.GetObject(m_hvoMatch);
 			int clid = target.ClassID;
+			var analyses = new HashSet<IAnalysis>();
 			switch (clid)
 			{
 				case WfiGlossTags.kClassId:
 				case WfiAnalysisTags.kClassId:
 					{
-						var analyses = new List<IAnalysis>();
 						analyses.Add(m_cache.ServiceLocator.GetObject(m_hvoMatch) as IAnalysis);
 						return GetOccurrencesOfAnalyses(analyses);
 					}
 				case PartOfSpeechTags.kClassId:
 					{
-						var analyses = new HashSet<IAnalysis>();
 						foreach (var analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances())
 						{
 							if (analysis.CategoryRA == target)
@@ -666,7 +811,6 @@ namespace SIL.FieldWorks.IText
 					}
 				case LexEntryTags.kClassId:
 					{
-						var analyses = new HashSet<IAnalysis>();
 						foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
 						{
 							if (mb.MorphRA != null && mb.MorphRA.Owner == target)
@@ -678,7 +822,6 @@ namespace SIL.FieldWorks.IText
 					}
 				case LexSenseTags.kClassId:
 					{
-						var analyses = new HashSet<IAnalysis>();
 						foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
 						{
 							if (mb.SenseRA == target)
@@ -688,10 +831,27 @@ namespace SIL.FieldWorks.IText
 						}
 						return GetOccurrencesOfAnalyses(analyses);
 					}
+				case MoStemMsaTags.kClassId:
+				case MoInflAffMsaTags.kClassId:
+				case MoDerivAffMsaTags.kClassId:
+				case MoUnclassifiedAffixMsaTags.kClassId:
+					// In the interlinear texts analysis tab the user selects Concord On -> Lex Gram Info while right clicking on a
+					// morpheme.
+					// This code finds each Wordform with a morpheme bundle that matched the morpheme selected.
+					foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
+					{
+						if (mb.MsaRA != null && mb.MsaRA.ComponentsRS != null)
+						{
+							if (mb.MsaRA.Hvo == m_hvoMatch)
+							{
+								analyses.Add(mb.Owner as IWfiAnalysis);
+							}
+						}
+					}
+					return GetOccurrencesOfAnalyses(analyses);
 				default:
 					if (m_cache.ClassIsOrInheritsFrom((int)clid, (int)MoFormTags.kClassId))
 					{
-						var analyses = new HashSet<IAnalysis>();
 						foreach (
 							var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
 						{
@@ -794,9 +954,15 @@ namespace SIL.FieldWorks.IText
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexGloss,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kLexGloss));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksGramInfo,
+				WritingSystemServices.kwsAnals,
+				ConcordanceLines.kGramCategory));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordGloss,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kWordGloss));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordCat,
+				WritingSystemServices.kwsAnals,
+				ConcordanceLines.kWordCategory));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksFreeTranslation,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kFreeTranslation));
@@ -806,6 +972,11 @@ namespace SIL.FieldWorks.IText
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksNote,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kNote));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging,
+				WritingSystemServices.kwsAnals,
+				ConcordanceLines.kTags));
+
+
 			m_cbLine.SelectedIndex = 0;
 		}
 
@@ -826,6 +997,8 @@ namespace SIL.FieldWorks.IText
 
 		private void FillWritingSystemCombo(int wsMagic)
 		{
+			//store the current selection if any
+			var current = m_cbWritingSystem.SelectedItem;
 			m_cbWritingSystem.Items.Clear();
 			int wsSet = 0;
 			switch (wsMagic)
@@ -841,10 +1014,11 @@ namespace SIL.FieldWorks.IText
 					wsSet = m_cache.DefaultAnalWs;
 					break;
 			}
-			// now try to add the ws of the tss string in our textbox if it hasn't already been added.
-			if (m_tbSearchText.Tss.Length != 0)
-				wsSet = TsStringUtils.GetWsAtOffset(m_tbSearchText.Tss, 0);
-			SetWritingSystem(wsSet);
+			//Keep the users current selection if they have switched to a similar field (vernacular or analysis)
+			if(current != null && m_cbWritingSystem.Items.Contains(current))
+				m_cbWritingSystem.SelectedItem = current;
+			else //otherwise set it to the default for the correct language type
+				SetWritingSystem(wsSet);
 		}
 
 		private void SetWritingSystem(int ws)
@@ -884,7 +1058,7 @@ namespace SIL.FieldWorks.IText
 			return new ParaFragment(seg, ichMin, ichLim, null);
 		}
 
-		private List<IParaFragment> UpdateConcordanceForBaseline(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForBaseline(int ws)
 		{
 			SimpleStringMatcher matcher = GetMatcher(ws) as SimpleStringMatcher;
 			if (!matcher.IsValid())
@@ -915,6 +1089,143 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return occurrences;
+		}
+
+		private List<IParaFragment> UpdateConcordanceForWordCategory(int ws)
+		{
+			// Find analyses that have the relevant Category.
+			var analyses = new HashSet<IAnalysis>();
+			var hvoPossToMatch = GetHvoOfListItemToMatch(ws);
+			foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances())
+			{
+				if (mb.Analysis != null && mb.Analysis.CategoryRA != null &&
+					hvoPossToMatch == mb.Analysis.CategoryRA.Hvo)
+				{
+						analyses.Add(mb);
+				}
+			}
+			return GetOccurrencesOfAnalyses(analyses);
+		}
+
+		/// <summary>
+		/// In the concordance the user selects the Lex Gram Info line along with a particular part of speech.
+		/// This method finds each Wordform analysis with a morpheme that has the part of speech
+		/// matching the selected part of speech.
+		/// </summary>
+		private List<IParaFragment> UpdateConcordanceForGramInfo(int ws)
+		{
+			// Find analyses that have the relevant morpheme.
+			var analyses = new HashSet<IAnalysis>();
+			var hvoPossToMatch = GetHvoOfListItemToMatch(ws);
+			foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
+			{
+				if (mb.MsaRA != null && mb.MsaRA.ComponentsRS != null)
+				{
+					var myHvos = GetHvoOfMsaPartOfSpeech(mb.MsaRA);
+					if (myHvos.Contains(hvoPossToMatch))
+					{
+						analyses.Add(mb.Owner as IWfiAnalysis);
+					}
+				}
+			}
+			return GetOccurrencesOfAnalyses(analyses);
+		}
+
+		/// <summary>
+		/// Get the hvo(s) for the Part of Speech for the various subclasses of MSA.
+		/// N.B. If we add new subclasses or rearrange the class hierarchy, this will
+		/// need to change.
+		/// </summary>
+		/// <param name="msa"></param>
+		/// <returns></returns>
+		private static List<int> GetHvoOfMsaPartOfSpeech(IMoMorphSynAnalysis msa)
+		{
+			var result = new List<int>();
+			ICmPossibility pos;
+			if (msa is IMoInflAffMsa)
+			{
+				pos = ((IMoInflAffMsa) msa).PartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+			}
+			if (msa is IMoStemMsa)
+			{
+				pos = ((IMoStemMsa) msa).PartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+			}
+			if (msa is IMoDerivAffMsa)
+			{
+				var derivMsa = ((IMoDerivAffMsa) msa);
+				pos = derivMsa.ToPartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+				pos = derivMsa.FromPartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+			}
+			if (msa is IMoDerivStepMsa)
+			{
+				pos = ((IMoDerivStepMsa)msa).PartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+			}
+			if (msa is IMoUnclassifiedAffixMsa)
+			{
+				pos = ((IMoUnclassifiedAffixMsa)msa).PartOfSpeechRA;
+				if (pos != null)
+					result.Add(pos.Hvo);
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// This one matches on the Tags from the Tagging tab.
+		/// </summary>
+		private List<IParaFragment> UpdateConcordanceForTag(int ws)
+		{
+			// Find analyses that have the relevant morpheme.
+			var matchedTags = new HashSet<ITextTag>();
+			var hvoPossToMatch = GetHvoOfListItemToMatch(ws);
+			var tagRepo = m_cache.ServiceLocator.GetInstance<ITextTagRepository>();
+			foreach (var tagInstance in tagRepo.AllInstances())
+			{
+				// LT-10312 reopened: BestAnalysisAlternative is how we build the chooser list,
+				// but now we want to search by possibility item, not by string matching.
+				if (tagInstance.IsValidRef && tagInstance.TagRA != null
+					&& hvoPossToMatch == tagInstance.TagRA.Hvo)
+				{
+					matchedTags.Add(tagInstance);
+				}
+			}
+			return GetParaFragmentsOfTags(matchedTags);
+		}
+
+		private List<IParaFragment> GetParaFragmentsOfTags(IEnumerable<ITextTag> matchedTags)
+		{
+			var result = new List<IParaFragment>();
+			var interestingParas = ParagraphsToSearch;
+			foreach (var tagInstance in matchedTags)
+			{
+				// Enhance GJM: This works until tags can span paragraphs
+				var myPara = tagInstance.BeginSegmentRA.Owner as IStTxtPara;
+				if (!interestingParas.Contains(myPara))
+					continue;
+				result.Add(MakeOccurrence(myPara,
+					GetReferenceBeginOffsetInPara(tagInstance),
+					GetReferenceEndOffsetInPara(tagInstance)));
+			}
+			return result;
+		}
+
+		private static int GetReferenceBeginOffsetInPara(IAnalysisReference refToAnalyses)
+		{
+			return refToAnalyses.BegRef().GetMyBeginOffsetInPara();
+		}
+
+		private static int GetReferenceEndOffsetInPara(IAnalysisReference refToAnalyses)
+		{
+			return refToAnalyses.EndRef().GetMyEndOffsetInPara();
 		}
 
 		/// <summary>
@@ -965,7 +1276,7 @@ namespace SIL.FieldWorks.IText
 				}
 		}
 
-		private List<IParaFragment> UpdateConcordanceForWord(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForWord(int ws)
 		{
 			// Find analyses that have the relevant word.
 			var analyses = new HashSet<IAnalysis>();
@@ -978,24 +1289,6 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return GetOccurrencesOfAnalyses(analyses);
-			//IMatcher matcher = GetMatcher(ws);
-			//if (!matcher.IsValid())
-			//	return new List<IParaFragment>();
-			//IWfiWordform wf;
-			//var analyses = new List<IAnalysis>();
-			//var wfRepo = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			//if (wfRepo.TryGetObject(m_cache.TsStrFactory.MakeString(sMatch, ws), out wf))
-			//	analyses.Add(wf);
-			//var lower = sMatch.ToLowerInvariant();
-			//if (lower != sMatch && wfRepo.TryGetObject(m_cache.TsStrFactory.MakeString(lower, ws), out wf))
-			//	analyses.Add(wf);
-			//var upper = sMatch.ToUpperInvariant();
-			//if (upper != sMatch && wfRepo.TryGetObject(m_cache.TsStrFactory.MakeString(upper, ws), out wf))
-			//	analyses.Add(wf);
-			//var title = Icu.ToTitle(lower, null);
-			//if (title != sMatch && title != upper && wfRepo.TryGetObject(m_cache.TsStrFactory.MakeString(title, ws), out wf))
-			//	analyses.Add(wf);
-			//return GetOccurrencesOfAnalyses(analyses);
 		}
 
 		private List<IParaFragment> GetOccurrencesOfAnalyses(IEnumerable<IAnalysis> analyses)
@@ -1063,7 +1356,7 @@ namespace SIL.FieldWorks.IText
 		/// Concordance contains all occurrences of analyses which contain exactly the specified morpheme.
 		/// A match may be either on the Form of the morph bundle, or on the form of the MoForm it points to.
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForMorphemes(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForMorphemes(int ws)
 		{
 			// Find analyses that have the relevant morpheme.
 			var analyses = new HashSet<IAnalysis>();
@@ -1077,6 +1370,12 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return GetOccurrencesOfAnalyses(analyses);
+		}
+
+		private int GetHvoOfListItemToMatch(int ws)
+		{
+			var possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
+			return ((HvoTreeNode) m_cbSearchText.SelectedItem).Hvo;
 		}
 
 		private IMatcher GetMatcher(int ws)
@@ -1134,9 +1433,15 @@ namespace SIL.FieldWorks.IText
 			m_vwPattern.UseRegularExpressions = m_rbtnUseRegExp.Checked;
 			m_vwPattern.MatchDiacritics = m_chkMatchDiacritics.Checked;
 			m_vwPattern.MatchCase = m_chkMatchCase.Checked;
-			m_vwPattern.Pattern = m_tbSearchText.Tss;
+			m_vwPattern.Pattern = GetSearchText();
 			m_vwPattern.IcuLocale = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 			m_vwPattern.MatchOldWritingSystem = true;
+		}
+
+		private ITsString GetSearchText()
+		{
+			return m_tbSearchText.Visible ?
+				m_tbSearchText.Tss : ((HvoTreeNode)m_cbSearchText.SelectedItem).Tss;
 		}
 
 // CS0169
@@ -1159,7 +1464,7 @@ namespace SIL.FieldWorks.IText
 		/// Enhance JohnT: the VC will show the citation form, in the (unlikely? impossible?) event that the
 		/// LexemeForm doesn't have a form. Should we search there too?
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForLexEntry(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForLexEntry(int ws)
 		{
 			// Find analyses that have the relevant morpheme.
 			var analyses = new HashSet<IAnalysis>();
@@ -1177,7 +1482,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This one matches on the gloss of the morph bundle's sense.
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForLexGloss(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForLexGloss(int ws)
 		{
 			// Find analyses that have the relevant morpheme.
 			var analyses = new HashSet<IAnalysis>();
@@ -1198,7 +1503,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="sMatch"></param>
 		/// <param name="ws"></param>
 		/// <returns></returns>
-		private List<IParaFragment> UpdateConcordanceForWordGloss(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForWordGloss(int ws)
 		{
 			// Find analyses that have the relevant gloss.
 			var analyses = new HashSet<IAnalysis>();
@@ -1216,7 +1521,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Here the match is a complete segment, if the requested free translation matches.
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForFreeTranslation(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForFreeTranslation(int ws)
 		{
 			var result = new List<IParaFragment>();
 			var matcher = GetMatcher(ws);
@@ -1234,7 +1539,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Here the match is a complete segment, if the requested literal translation matches.
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForLiteralTranslation(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForLiteralTranslation(int ws)
 		{
 			var result = new List<IParaFragment>();
 			var matcher = GetMatcher(ws);
@@ -1252,7 +1557,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Here the match is a complete segment, if one of its notes matches.
 		/// </summary>
-		private List<IParaFragment> UpdateConcordanceForNote(string sMatch, int ws)
+		private List<IParaFragment> UpdateConcordanceForNote(int ws)
 		{
 			var result = new List<IParaFragment>();
 			var matcher = GetMatcher(ws);
@@ -1307,11 +1612,12 @@ namespace SIL.FieldWorks.IText
 				m_fwtbItem.BorderStyle = BorderStyle.None;
 			}
 			label2.Visible = fDefault;
-			label3.Visible = fDefault;
+			m_searchContentLabel.Visible = fDefault;
 			label4.Visible = fDefault;
 			m_cbLine.Visible = fDefault;
 			m_cbWritingSystem.Visible = fDefault;
 			m_tbSearchText.Visible = fDefault;
+			m_cbSearchText.Visible = false; // See LT-12255.
 			m_btnRegExp.Visible = fDefault;
 			m_chkMatchCase.Visible = fDefault;
 			m_chkMatchDiacritics.Visible = fDefault;
@@ -1321,26 +1627,51 @@ namespace SIL.FieldWorks.IText
 
 		private bool InitializeConcordanceSearch(ICmObject cmo)
 		{
+			return InitializeConcordanceSearch(cmo, cmo.ShortNameTSS);
+		}
+
+		private bool InitializeConcordanceSearch(ICmObject cmo, ITsString tssObj)
+		{
 			string sType = cmo.GetType().Name;
 			string sTag = m_mediator.StringTbl.GetString(sType, "ClassNames");
 			SetDefaultVisibilityOfItems(false, sTag);
 			m_fObjectConcorded = true;
 			m_hvoMatch = cmo.Hvo;
-			ITsString tssObj = cmo.ShortNameTSS;
 			ITsTextProps ttpObj = tssObj.get_PropertiesAt(0);
 			int nVar;
 			int ws = ttpObj.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			m_fwtbItem.WritingSystemCode = (ws > 0) ? ws : m_cache.DefaultVernWs;
 			int dyHeight = m_fwtbItem.PreferredHeight;
-			if (dyHeight != m_fwtbItem.Height)
-				m_fwtbItem.Height = dyHeight;
+			m_fwtbItem.Height = dyHeight;
 			m_fwtbItem.Tss = tssObj;
 			int dxWidth = m_fwtbItem.PreferredWidth;
-			if (dxWidth != m_fwtbItem.Width)
-				m_fwtbItem.Width = dxWidth;
+			m_fwtbItem.Width = dxWidth;
 			LoadMatches(true);
 			return true;
 		}
+
+		/// <summary>
+		/// Select the Word Category line to search on and then select the part of speech to match the target
+		/// then search based on those selections.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		private bool InitializeConcordanceSearchWordPOS(ICmObject target)
+		{
+			if (!(target is IPartOfSpeech))
+				return false;
+
+			var partOfSpeech = (IPartOfSpeech) target;
+			SetConcordanceLine(ConcordanceLines.kWordCategory);
+			m_pOSPopupTreeManager.LoadPopupTree(partOfSpeech.Hvo);
+
+			//m_btnSearch.Enabled = true;
+			//m_btnSearch_Click(this, new EventArgs()); // This button click just does LoadMatches(true)
+			LoadMatches(true);
+			SaveSettings();
+			return true;
+		}
+
 		#endregion
 
 		#region IXCore related (callable) methods
@@ -1351,6 +1682,8 @@ namespace SIL.FieldWorks.IText
 			// Check if we're the right tool, and that we have a valid object id.
 			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
 			string areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			string concordOn = m_mediator.PropertyTable.GetStringProperty("ConcordOn", null);
+			m_mediator.PropertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
 			if (areaName != "textsWords" || toolName != "concordance")
 				return false;
@@ -1375,7 +1708,29 @@ namespace SIL.FieldWorks.IText
 					case WfiAnalysisTags.kClassId:
 					case PartOfSpeechTags.kClassId:
 					case WfiGlossTags.kClassId:
-						InitializeConcordanceSearch(target);
+						if (!String.IsNullOrEmpty(concordOn) && concordOn.Equals("WordPartOfSpeech"))
+						{
+							InitializeConcordanceSearchWordPOS(target);
+						}
+						else
+						{
+							InitializeConcordanceSearch(target);
+						}
+						break;
+					case MoStemMsaTags.kClassId:
+					case MoInflAffMsaTags.kClassId:
+					case MoDerivAffMsaTags.kClassId:
+					case MoUnclassifiedAffixMsaTags.kClassId:
+						if (!String.IsNullOrEmpty(concordOn) && concordOn.Equals("PartOfSpeechGramInfo"))
+						{
+							Debug.Assert(target is IMoMorphSynAnalysis);
+							var msa = target as IMoMorphSynAnalysis;
+							InitializeConcordanceSearch(target, msa.InterlinearNameTSS);
+						}
+						else
+						{
+							InitializeConcordanceSearch(target);
+						}
 						break;
 					default:
 						if (m_cache.ClassIsOrInheritsFrom((int)clid, (int)MoFormTags.kClassId))

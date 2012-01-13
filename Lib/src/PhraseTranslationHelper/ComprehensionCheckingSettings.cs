@@ -40,13 +40,25 @@ namespace SILUBS.PhraseTranslationHelper
 		[XmlAttribute("ktFilter")]
 		public PhraseTranslationHelper.KeyTermFilterType KeyTermFilterType { get; set; }
 
-		/// <summary>Indicates whether matching on parts matches whole part</summary>
-		[XmlAttribute("matchWholeParts")]
-		public bool MatchWholeParts { get; set; }
+		/// <summary>Indicates whether the textual question filter allows partial-word matches.</summary>
+		[XmlAttribute("matchPartialWors")]
+		public bool MatchPartialWords { get; set; }
 
 		/// <summary>Indicates whether toolbar is displayed</summary>
 		[XmlAttribute("showToolbar")]
 		public bool ShowToolbar { get; set; }
+
+		/// <summary>Indicates whether to send Scripture references as Santa-Fe messages</summary>
+		[XmlAttribute("sendScrRefs")]
+		public bool SendScrRefs { get; set; }
+
+		/// <summary>Indicates whether to receive Santa-Fe Scripture reference focus messages</summary>
+		[XmlAttribute("recvScrRefs")]
+		public bool ReceiveScrRefs { get; set; }
+
+		/// <summary>Indicates whether to show a pane with the answers and comments on the questions</summary>
+		[XmlAttribute("showAnswers")]
+		public bool ShowAnswersAndComments { get; set; }
 		#endregion
 
 		#region XML elements
@@ -81,10 +93,13 @@ namespace SILUBS.PhraseTranslationHelper
 			DefaultWindowState = dlg.WindowState;
 			Location = dlg.Location;
 			DialogSize = dlg.Size;
-			MatchWholeParts = dlg.MatchWholeParts;
+			MatchPartialWords = !dlg.MatchWholeWords;
 			KeyTermFilterType = dlg.CheckedKeyTermFilterType;
 			ShowToolbar = dlg.ShowToolbar;
 			GenTemplateSettings = dlg.GenTemplateSettings;
+			SendScrRefs = dlg.SendScrRefs;
+			ReceiveScrRefs = dlg.ReceiveScrRefs;
+			ShowAnswersAndComments = dlg.ShowAnswersAndComments;
 		}
 		#endregion
 

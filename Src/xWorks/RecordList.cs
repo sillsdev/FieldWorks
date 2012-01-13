@@ -893,7 +893,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 			ComputeInsertableClasses();
-			m_currentIndex = -1;
+			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 		}
 
@@ -1139,118 +1139,6 @@ namespace SIL.FieldWorks.XWorks
 			m_oldLength = 0;
 		}
 
-		// If the source (unfiltered, unsorted) list of objects is being maintained in a private list in the decorator, update it.
-		// If this cannot be done at once and the Reload needs to be completed later, return true.
-		private bool UpdatePrivateList()
-		{
-			if (m_flid != ObjectListPublisher.OwningFlid)
-				return false; // we are not involved in the reload process.
-
-			// further initialization for fake owning properties (typically used when no available owning
-			// object has a legitimate real or virtual property for the list we want to show).
-			switch(m_propertyName)
-			{
-				case "Wordforms":
-
-					if (((IActionHandlerExtensions)Cache.ActionHandlerAccessor).CanStartUow)
-						ParseAndUpdate(); // do it now
-					else // do it as soon as possible. (we might be processing PropChanged.)
-					{
-						// In case something already forced us to do this, we don't want to be notified twice!
-						((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted -= RecordList_PropChangedCompleted;
-						((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted += RecordList_PropChangedCompleted;
-						return true;
-					}
-
-					// Enhance JohnT: set up some mechanism to notify of changes to this.
-					break;
-			}
-			return false;
-		}
-
-		void RecordList_PropChangedCompleted(object sender, bool fromUndoRedo)
-		{
-			((IActionHandlerExtensions)Cache.ActionHandlerAccessor).PropChangedCompleted -= RecordList_PropChangedCompleted;
-			// REVIEW (FWR-1906): Do we need to do this reload only when the prop change is not from undo or redo?
-			ReloadList();
-		}
-
-		private void ParseAndUpdate()
-		{
-			var publisher = (VirtualListPublisher as ObjectListPublisher);
-			publisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, ParseInterestingTexts);
-			publisher.SetOwningPropValue(
-				(from wf in Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances() select wf.Hvo).ToArray());
-		}
-
-		private bool IsInterestingScripture(IStText text)
-		{
-			// Typically this question only arises where we have a ConcDecorator involved.
-			if (VirtualListPublisher is DomainDataByFlidDecoratorBase)
-			{
-				var concDecorator = ((DomainDataByFlidDecoratorBase) VirtualListPublisher).BaseSda as ConcDecorator;
-				if (concDecorator != null)
-					return concDecorator.IsInterestingText(text);
-			}
-			return true; // if by any chance this is used without a conc decorator, assume all Scripture is interesting.
-		}
-
-		/// <summary>
-		/// Return true if the text is Scripture (and not part of a saved revision).
-		/// </summary>
-		private bool IsCurrentScripture(IStText text)
-		{
-			ICmObject owner = text.Owner;
-			while(owner != null)
-			{
-				if (owner.ClassID == ScriptureTags.kClassId)
-					return true;
-				if (owner.ClassID == ScrDraftTags.kClassId)
-					return false;
-				owner = owner.Owner;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Parse (if necessary...ParseIsCurrent will be checked to see) the texts we want in the concordance.
-		/// </summary>
-		private void ParseInterestingTexts()
-		{
-			// Also it should be forced to be empty if FwUtils.IsTEInstalled returns false.
-			IEnumerable<IStText> scriptureTexts = Cache.LangProject.TranslatedScriptureOA == null ? new IStText[0] :
-				from aText in Cache.LangProject.TranslatedScriptureOA.StTexts
-				where IsInterestingScripture(aText)
-				select aText;
-			// Enhance JohnT: might eventually want to be more selective here, perhaps a genre filter.
-			IEnumerable<IStText> vernacularTexts = from st in Cache.LangProject.TextsOC select st.ContentsOA;
-			// Filtered list that excludes IScrBookAnnotations.
-			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x!= null).ToList();
-			int count = (from text in texts from para in text.ParagraphsOS select para).Count();
-			int done = 0;
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
-			{
-				progress.SetMilestone(xWorksStrings.ksParsing);
-				foreach (var text in texts)
-				{
-					foreach (IStTxtPara para in text.ParagraphsOS)
-					{
-						done++;
-						int newPercentDone = done*100/count;
-						if (newPercentDone != progress.PercentDone)
-						{
-							progress.PercentDone = newPercentDone;
-							progress.Breath();
-						}
-						if (para.ParseIsCurrent) continue;
-
-						ParagraphParser.ParseParagraph(para);
-					}
-				}
-			}
-		}
-
 		protected void BaseInit(FdoCache cache, Mediator mediator, XmlNode recordListNode)
 		{
 			Debug.Assert(mediator != null);
@@ -1259,7 +1147,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = mediator;
 			m_propertyName = XmlUtils.GetOptionalAttributeValue(recordListNode, "property", "");
 			m_cache = cache;
-			m_currentIndex = -1; // Can't use setter before sorted objects has a value.
+			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 			m_oldLength = 0;
 		}
@@ -1573,7 +1461,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// will return -1 if the vector is empty.
 		/// </summary>
-		public int CurrentIndex
+		public virtual int CurrentIndex
 		{
 			get
 			{
@@ -1585,7 +1473,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_currentIndex != -1)
 					{
 						Debug.WriteLine("RecordList index should be negative one since vector is empty");
-						m_currentIndex = -1;
+						CurrentIndex = -1;
 					}
 				}
 				else
@@ -1593,7 +1481,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_currentIndex < 0 || m_currentIndex >= m_sortedObjects.Count)
 					{
 						Debug.WriteLine("RecordList index out of range");
-						m_currentIndex = 0;
+						CurrentIndex = 0;
 					}
 				}
 //				Debug.Assert(m_sortedObjects.Count > 0 || m_currentIndex==-1, "index should be negative one since vector is empty");
@@ -1619,8 +1507,12 @@ namespace SIL.FieldWorks.XWorks
 				if (m_currentIndex == value && m_hvoCurrent == hvoCurrent)
 					return;
 
+
+
 				m_currentIndex = value;
 				m_hvoCurrent = hvoCurrent;
+
+				ICmObject newFocusedObject = null;
 
 				if (m_currentIndex < 0)
 					Logger.WriteEvent("No current record");
@@ -1630,7 +1522,8 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (IsCurrentObjectValid())
 						{
-							Logger.WriteEvent("Current Record = " + m_cache.ServiceLocator.GetObject(CurrentObjectHvo).ShortName);
+							newFocusedObject = m_cache.ServiceLocator.GetObject(CurrentObjectHvo);
+							Logger.WriteEvent("Current Record = " + newFocusedObject.ShortName);
 						}
 						else
 						{
@@ -1640,8 +1533,21 @@ namespace SIL.FieldWorks.XWorks
 					else
 						Logger.WriteEvent("No Current Record");
 				}
+
+				if (newFocusedObject == RecordedFocusedObject)
+					return;
+				var repo = Cache.ServiceLocator.ObjectRepository;
+				repo.RemoveFocusedObject(RecordedFocusedObject);
+				RecordedFocusedObject = newFocusedObject;
+				repo.AddFocusedObject(RecordedFocusedObject);
 			}
 		}
+
+		/// <summary>
+		/// This keeps track of the object if any that we have noted in the CmObjectRepository as focused.
+		/// My intention is to reserve it for this purpose ONLY.
+		/// </summary>
+		internal ICmObject RecordedFocusedObject;
 
 		internal bool IsCurrentObjectValid()
 		{
@@ -1684,7 +1590,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal FdoCache Cache
+		public FdoCache Cache
 		{
 			get
 			{
@@ -1715,6 +1621,9 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void DisposeManagedResources()
 		{
+			if (m_cache != null && RecordedFocusedObject != null)
+				m_cache.ServiceLocator.ObjectRepository.RemoveFocusedObject(RecordedFocusedObject);
+			RecordedFocusedObject = null;
 			// make sure we uninstall any remaining event handler,
 			// irrespective of whether we're active or not.
 			if (m_windowPendingOnActivated != null && !m_windowPendingOnActivated.IsDisposed)
@@ -1895,13 +1804,15 @@ namespace SIL.FieldWorks.XWorks
 
 		protected bool EntriesDependsUponProp(int tag)
 		{
-			switch (tag / 1000)
-			{
-				case LexEntryTags.kClassId:
-				case LexSenseTags.kClassId:
-				case MoFormTags.kClassId:
-					return true;
-			}
+			// Disabled this as part of fix for LT-12092. This means we don't resort the list when
+			// the user edits a field that might affect the order.
+			//switch (tag / 1000)
+			//{
+			//    case LexEntryTags.kClassId:
+			//    case LexSenseTags.kClassId:
+			//    case MoFormTags.kClassId:
+			//        return true;
+			//}
 			return false;
 		}
 
@@ -2123,7 +2034,7 @@ namespace SIL.FieldWorks.XWorks
 			m_sda.AddNotification(this);
 
 			ComputeInsertableClasses();
-			m_currentIndex = -1;
+			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 
 			if (loadList)
@@ -2139,7 +2050,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Change the sorter...and resort if the list already exists.
 		/// </summary>
 		/// <param name="sorter"></param>
-		public void ChangeSorter(RecordSorter sorter)
+		public virtual void ChangeSorter(RecordSorter sorter)
 		{
 			CheckDisposed();
 
@@ -2521,7 +2432,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_currentIndex < 0 && SortedObjects.Count == 1)
 			{
 				// Prevent assertion accessing CurrentIndex when inserting the very first item in a list.
-				m_currentIndex = 0;
+				CurrentIndex = 0;
 				m_hvoCurrent = CurrentObjectHvo;
 			}
 			else
@@ -2531,7 +2442,7 @@ namespace SIL.FieldWorks.XWorks
 				// one (if the added object comes earlier in the list).
 				if (CurrentObjectHvo != m_hvoCurrent)
 				{
-					++m_currentIndex;
+					++CurrentIndex;
 					Debug.Assert(CurrentObjectHvo == m_hvoCurrent);
 				}
 			}
@@ -2581,6 +2492,11 @@ namespace SIL.FieldWorks.XWorks
 			set { m_fUpdatingList = value; }
 		}
 
+		protected virtual bool UpdatePrivateList()
+		{
+			return false;
+		}
+
 		/// <summary>
 		/// This may be set to suppress automatic reloading of the list. When set false again, if the list
 		/// would have been reloaded at least once, it will be at that point. Use ListModificationInProgress instead
@@ -2609,7 +2525,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_requestedLoadWhileSuppressed)
 					{
 						m_requestedLoadWhileSuppressed = false;
-						ReloadList();
+						ForceReloadList();
 					}
 				}
 			}
@@ -2652,6 +2568,14 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 		}
+
+		/// <summary>
+		/// Useed on occasions like changing views, this should suppress any optimization that prevents real reloads.
+		/// </summary>
+		public virtual void ForceReloadList()
+		{
+			ReloadList();  // By default nothing special is needed.
+		}
 		/// <summary>
 		/// Sort and filter the underlying property to create the current list of objects.
 		/// </summary>
@@ -2672,7 +2596,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_owningObject != null && SortedObjects.Count > 0 &&
 					((Clerk.UpdateHelper != null && Clerk.UpdateHelper.ClearBrowseListUntilReload) || !Clerk.IsActiveInGui))
 				{
-					m_indexToRestoreDuringReload = CurrentIndex;    // try to restore this index during reload.
+					m_indexToRestoreDuringReload = CurrentIndex;	// try to restore this index during reload.
 					// clear everything for now, including the current index, but don't issue a RecordNavigation.
 					SendPropChangedOnListChange(-1, new ArrayList(),
 						ListChangedEventArgs.ListChangedActions.SkipRecordNavigation);
@@ -2701,7 +2625,7 @@ namespace SIL.FieldWorks.XWorks
 						// restoring m_currentIndex directly isn't effective until SortedObjects
 						// is greater than 0.
 						// so, try to force to restore the current index to what we persist.
-						m_currentIndex = -1;
+						CurrentIndex = -1;
 						m_mediator.PropertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload,
 							PropertyTable.SettingsGroup.LocalSettings);
 						m_indexToRestoreDuringReload = -1;
@@ -2711,7 +2635,7 @@ namespace SIL.FieldWorks.XWorks
 				m_reloadingList = true;
 				if (UpdatePrivateList())
 					return; // Cannot complete the reload until PropChangeds complete.
-				int newCurrentIndex = m_currentIndex;
+				int newCurrentIndex = CurrentIndex;
 				ArrayList newSortedObjects = null;
 				ListChangedEventArgs.ListChangedActions actions;
 
@@ -2743,7 +2667,7 @@ namespace SIL.FieldWorks.XWorks
 					// Nothing should be displaying the list if there is no root object.
 					// However, as a safety precaution in case we previously had one, let's fix the
 					// current object information.
-					m_currentIndex = -1;
+					CurrentIndex = -1;
 					m_hvoCurrent = 0;
 					// we still need to broadcast the list changed to update dependent views. (LT-5987)
 					if (ListChanged != null)
@@ -2751,39 +2675,20 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// YiSpeed 6 seconds on startup, 10 seconds afterwards!
-				//review: eventually, we need to decide between storing a vector of hvos into storing a vector of objects.
-				//it may be that storing a vector of all objects (e.g. all lexical entries) is not feasible.
-				newSortedObjects = new ArrayList();
-				if (m_filter != null)
-					m_filter.Preload();
-					// Preload the sorter (if any) only if we do NOT have a filter.
-					// If we also have a filter, it's pretty well certain currently that it already did
-					// the preloading. If we ever have a filter and sorter that want to preload different
-					// data, we'll need to refactor so we can determine this, because we don't want to do it twice!
-				else if (m_sorter != null)
-					m_sorter.Preload();
-
-				using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
+				try
 				{
-					progress.SetMilestone(xWorksStrings.ksSorting);
-					// Allocate an arbitrary 20% for making the items.
-					var objectSet = GetObjectSet();
-					int count = objectSet.Count();
-					int done = 0;
-					foreach (var obj in objectSet)
-					{
-						done++;
-						var newPercentDone = done*20/count;
-						if (progress.PercentDone != newPercentDone)
-						{
-							progress.PercentDone = newPercentDone;
-							progress.Breath();
-						}
-						MakeItemsFor(newSortedObjects, obj);
-					}
-
-					SortList(newSortedObjects, progress);
+					newSortedObjects = GetFilteredSortedList();
+				}
+				catch (FDOInvalidFieldException)
+				{
+					newSortedObjects = HandleInvalidFilterSortField();
+				}
+				catch(ConfigurationException ce)
+				{
+					if (ce.InnerException is FDOInvalidFieldException)
+						newSortedObjects = HandleInvalidFilterSortField();
+					else
+						throw;
 				}
 
 				// Try to stay on the same object if possible.
@@ -2818,6 +2723,54 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_reloadingList = false;
 			}
+		}
+
+		private ArrayList HandleInvalidFilterSortField()
+		{
+			ArrayList newSortedObjects;
+			m_filter = null;
+			m_sorter = null;
+			MessageBox.Show(Form.ActiveForm, xWorksStrings.ksInvalidFieldInFilterOrSorter, xWorksStrings.ksErrorCaption,
+				MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			newSortedObjects = GetFilteredSortedList();
+			return newSortedObjects;
+		}
+
+		private ArrayList GetFilteredSortedList()
+		{
+			ArrayList newSortedObjects;
+			newSortedObjects = new ArrayList();
+			if (m_filter != null)
+				m_filter.Preload();
+				// Preload the sorter (if any) only if we do NOT have a filter.
+				// If we also have a filter, it's pretty well certain currently that it already did
+				// the preloading. If we ever have a filter and sorter that want to preload different
+				// data, we'll need to refactor so we can determine this, because we don't want to do it twice!
+			else if (m_sorter != null)
+				m_sorter.Preload();
+
+			using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
+			{
+				progress.SetMilestone(xWorksStrings.ksSorting);
+				// Allocate an arbitrary 20% for making the items.
+				var objectSet = GetObjectSet();
+				int count = objectSet.Count();
+				int done = 0;
+				foreach (var obj in objectSet)
+				{
+					done++;
+					var newPercentDone = done*20/count;
+					if (progress.PercentDone != newPercentDone)
+					{
+						progress.PercentDone = newPercentDone;
+						progress.Breath();
+					}
+					MakeItemsFor(newSortedObjects, obj);
+				}
+
+				SortList(newSortedObjects, progress);
+			}
+			return newSortedObjects;
 		}
 
 		private void RequestReloadOnActivation(Form window)
@@ -2983,7 +2936,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Handle adding and/or removing a filter.
 		/// </summary>
 		/// <param name="args"></param>
-		public void OnChangeFilter(FilterChangeEventArgs args)
+		public virtual void OnChangeFilter(FilterChangeEventArgs args)
 		{
 			CheckDisposed();
 
@@ -3302,7 +3255,10 @@ namespace SIL.FieldWorks.XWorks
 			int i = 0;
 			foreach (IManyOnePathSortItem item in SortedObjects)
 			{
-				for (var owner = item.RootObjectUsing(m_cache).Owner; owner != null; owner = owner.Owner)
+				var rootObject = item.RootObjectUsing(m_cache);
+				if (rootObject == null)
+					continue;  // may be something that has been deleted?
+				for (var owner = rootObject.Owner; owner != null; owner = owner.Owner)
 				{
 					if (owner.Hvo == hvoTarget)
 						return i;
@@ -3786,9 +3742,9 @@ namespace SIL.FieldWorks.XWorks
 			m_sortedObjects = items;
 			m_requestedLoadWhileSuppressed = false; // If a load was pending, we just removed the need for it.
 			if (m_currentIndex == -1 && m_sortedObjects.Count > 0)
-				m_currentIndex = 0;
+				CurrentIndex = 0;
 			if (m_currentIndex > m_sortedObjects.Count)
-				m_currentIndex = m_sortedObjects.Count == 0 ? -1 : 0;
+				CurrentIndex = m_sortedObjects.Count == 0 ? -1 : 0;
 			// Let the view update to show the restored list.
 			SendPropChangedOnListChange(m_currentIndex, m_sortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
 			return true;

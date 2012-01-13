@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Data;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Resources;
@@ -27,6 +28,8 @@ namespace SIL.FieldWorks.Common.Controls
 		Timer m_configDisplayTimer = null; // See comment on UpdateConfigureButton
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
 		bool m_suppressColumnWidthChanges;
+		private ToolTip m_tooltip;
+
 //		int m_checkColWidth;
 
 #if __MonoCS__	// FWNX-224
@@ -170,6 +173,16 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (m_imgList != null)
 					m_imgList.Dispose();
+				if (m_timer != null)
+				{
+					m_timer.Dispose();
+					m_timer = null;
+				}
+				if (m_tooltip != null)
+				{
+					m_tooltip.Dispose();
+					m_tooltip = null;
+				}
 			}
 			m_configDisplayTimer = null;
 			m_imgList = null;
@@ -252,8 +265,159 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_suppressColumnWidthChanges = true;
 			base.OnHandleCreated (e);
-			SetHeaderImageList(m_imgList);
 			m_suppressColumnWidthChanges = false;
+			this.OwnerDraw = true;
+			this.DrawColumnHeader += DhListView_DrawColumnHeader;
+		}
+
+		// Set when we paint with the background color that indicates the mouse is inside.
+		// For some reason Windows knows to paint the header when we move into a column but not when we move out of it.
+		private Rectangle m_hotRectangle;
+
+		/// <summary>
+		/// This seems to be the only way to find out when the mouse moves out of one of our column headers. Ugh!!
+		/// </summary>
+		private Timer m_timer;
+		private int m_cTicks;
+		private string m_tooltipText;
+		// even if there is a fresh paint (e.g., because the tooltip went away) we don't want to show the same one again
+		// during the same visit to the same header.
+		private string m_lastTooltipText;
+
+		void m_timer_Tick(object sender, EventArgs e)
+		{
+			var cursorLocation = PointToClient(Cursor.Position);
+			if (m_hotRectangle.Height > 0 && !m_hotRectangle.Contains(cursorLocation))
+			{
+				m_timer.Stop();
+				m_timer.Dispose();
+				m_timer = null;
+				Invalidate(true);
+				m_hotRectangle = Rectangle.Empty;
+				if (m_tooltip != null)
+				{
+					m_tooltip.Dispose();
+					m_tooltip = null;
+					m_lastTooltipText = null;
+				}
+				return;
+			}
+			m_cTicks++;
+			if (m_cTicks == 10 && m_lastTooltipText != m_tooltipText)
+			{
+				m_lastTooltipText = m_tooltipText;
+				if (m_tooltip == null)
+				{
+					m_tooltip = new ToolTip();
+					m_tooltip.InitialDelay = 10;
+					m_tooltip.ReshowDelay = 10;
+					m_tooltip.SetToolTip(this, m_tooltipText);
+				}
+				m_tooltip.Show(m_tooltipText, this, cursorLocation.X, cursorLocation.Y, 2000);
+			}
+		}
+
+		void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+		{
+			var paleBlue = Color.FromArgb(187, 235, 254);
+			var veryPaleBlue = Color.FromArgb(227, 247, 255);
+			var lightBlue = Color.LightBlue;
+			var drawRect = e.Bounds;
+			// For some reason Bounds.Height is much too big. Bigger than our whole control!
+			drawRect.Height = Height - 4;
+			int imageIndex;
+			if (!m_columnIconIndexes.TryGetValue(e.Header.Index, out imageIndex))
+				imageIndex = -1;
+			if (imageIndex >= 0)
+				drawRect.Width -= m_imgList.ImageSize.Width;
+
+			var topHeight = drawRect.Height / 2 - 1;
+			var drawText = e.Header.Text;
+			var realSize = e.Graphics.MeasureString(drawText, e.Font);
+			if ((e.State & ListViewItemStates.Selected) != 0)
+			{
+				using (var brush = new SolidBrush(paleBlue))
+				{
+					e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Left, e.Bounds.Top, e.Bounds.Width, topHeight));
+				}
+				using (var brush = new SolidBrush(lightBlue))
+				{
+					e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Left, e.Bounds.Top + topHeight, e.Bounds.Width, e.Bounds.Height - topHeight));
+				}
+			}
+			else if (e.Bounds.Contains(PointToClient(Cursor.Position))) // seems to be no state that indicates mouse is in it...Hot should but doesn't.
+			{
+				m_hotRectangle = e.Bounds;
+				if (m_timer == null)
+				{
+					m_timer = new Timer();
+					m_timer.Interval = 50;
+					m_timer.Tick += m_timer_Tick;
+					m_timer.Start();
+				}
+				m_cTicks = 0;
+				if (realSize.Width > drawRect.Width)
+				{
+					m_tooltipText = drawText;
+				}
+				else
+				{
+					m_tooltipText = null;
+				}
+				using (var brush = new SolidBrush(veryPaleBlue))
+				{
+					e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Left, e.Bounds.Top, e.Bounds.Width, topHeight));
+				}
+				using (var brush = new SolidBrush(paleBlue))
+				{
+					e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Left, e.Bounds.Top + topHeight, e.Bounds.Width, e.Bounds.Height - topHeight));
+				}
+			}
+			else
+				e.DrawBackground(); // standard background
+			// Draw the header text.
+			if (realSize.Width > drawRect.Width)
+			{
+				// Guess how much we can fit.
+				int len = (int)(drawText.Length * drawRect.Width / realSize.Width) + 1;
+
+				// Subtract more until it fits.
+				do
+				{
+					len = len - 1;
+					drawText = drawText.Substring(0, len) + "\x2026"; // ellipsis
+					realSize = e.Graphics.MeasureString(drawText, e.Font);
+				} while (len > 0 && realSize.Width > drawRect.Width);
+
+				// Add any more that fits.
+				while (len < e.Header.Text.Length - 1)
+				{
+					len = len + 1;
+					var possibleText = e.Header.Text.Substring(0, len) + "\x2026"; // ellipsis
+					realSize = e.Graphics.MeasureString(possibleText, e.Font);
+					if (realSize.Width > drawRect.Width)
+						break; // we can't add this one more character.
+					drawText = possibleText; // we can fit this much at least.
+				}
+			}
+			using (StringFormat sf = new StringFormat())
+			{
+				sf.Trimming = StringTrimming.Character;
+				sf.FormatFlags = StringFormatFlags.NoWrap;
+				sf.LineAlignment = StringAlignment.Far; // bottom
+
+				//if (drawRect.Height > realSize.Height - 2)
+				//{
+				//    drawRect = new Rectangle(drawRect.X, drawRect.Top + drawRect.Height - (int)realSize.Height - 2, drawRect.Width, (int)realSize.Height + 2);
+				//}
+				e.Graphics.DrawString(drawText, e.Font,
+					Brushes.Black, drawRect, sf);
+			}
+			if (imageIndex >= 0)
+			{
+				var size = m_imgList.ImageSize;
+				m_imgList.Draw(e.Graphics, e.Bounds.Right - 2 - size.Width, e.Bounds.Top + 2, imageIndex);
+			}
 		}
 #endif
 
@@ -826,6 +990,7 @@ namespace SIL.FieldWorks.Common.Controls
 		static extern IntPtr SendMessage(IntPtr Handle, Int32 msg, IntPtr wParam, IntPtr lParam);
 #endif
 
+		Dictionary<int, int> m_columnIconIndexes = new Dictionary<int, int>();
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the header icon. (Thanks to a post by Eddie Velasquez.)
@@ -838,112 +1003,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (columnIndex < 0 || columnIndex >= this.Columns.Count)
+			if (columnIndex < 0 || columnIndex >= Columns.Count)
 				return;
-#if !__MonoCS__ // FWNX-131
-
-			IntPtr hHeader = SendMessage(this.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-
-			ColumnHeader colHdr = this.Columns[columnIndex];
-
-			// Setting these icons happens during view startup BEFORE we restore the saved settings,
-			// so saving the current ones overwrites the saved ones. Anyway, modifying the icon
-			// doesn't modif the width, so doing anything about column widths would be a waste.
-			bool oldSuppress = SuppressColumnWidthChanges;
-			SuppressColumnWidthChanges = true;
-			// the following commented out code uses the default visual style sort arrows,
-			// we are not using them so that we can use different size arrows
-			//if (Application.RenderWithVisualStyles)
-			//{
-			//    IntPtr colPtr = new IntPtr(columnIndex);
-			//    HDITEM hd = new HDITEM();
-			//    hd.mask = HDI_FORMAT;
-			//    SendMessage2(hHeader, HDM_GETITEM, colPtr, ref hd);
-			//    if (sortOrder != SortOrder.None)
-			//    {
-			//        switch (sortOrder)
-			//        {
-			//            case SortOrder.Ascending:
-			//                hd.fmt &= ~HDF_SORTDOWN;
-			//                hd.fmt |= HDF_SORTUP;
-			//                break;
-
-			//            case SortOrder.Descending:
-			//                hd.fmt &= ~HDF_SORTUP;
-			//                hd.fmt |= HDF_SORTDOWN;
-			//                break;
-			//        }
-			//    }
-			//    else
-			//    {
-			//        hd.fmt &= ~HDF_SORTDOWN & ~HDF_SORTUP;
-			//    }
-
-			//    SendMessage2(hHeader, HDM_SETITEM, colPtr, ref hd);
-			//}
-			//else
-			//{
-			HDITEM hd = new HDITEM();
-			hd.mask = HDI_IMAGE | HDI_FORMAT;
-
-			HorizontalAlignment align = colHdr.TextAlign;
-
-			if (align == HorizontalAlignment.Left)
-				hd.fmt = HDF_LEFT | HDF_STRING | HDF_BITMAP_ON_RIGHT;
-
-			else if (align == HorizontalAlignment.Center)
-				hd.fmt = HDF_CENTER | HDF_STRING | HDF_BITMAP_ON_RIGHT;
-
-			else	// HorizontalAlignment.Right
-				hd.fmt = HDF_RIGHT | HDF_STRING;
-
-			if (sortOrder != SortOrder.None)
-			{
-				hd.fmt |= HDF_IMAGE;
-			}
 
 			if (sortOrder == SortOrder.None)
-				hd.iImage = -1;
+			{
+				m_columnIconIndexes.Remove(columnIndex);
+			}
 			else
 			{
 				// There are 3 potential sizes: Large, Medium, and Small with 2 sort orders, Ascending and Descending
 				// The images are stored in that order, so the following works
-				hd.iImage = (int)size + (3 * ((int)sortOrder - 1));
+				m_columnIconIndexes[columnIndex] = (int)size + (3 * ((int)sortOrder - 1));
 			}
 
-			SendMessage2(hHeader, HDM_SETITEM, new IntPtr(columnIndex), ref hd);
-			//}
-			SuppressColumnWidthChanges = oldSuppress;
-
 			Update();
-#else // FWNX-131
-			ColumnHeader colHdr = this.Columns[columnIndex];
-
-			bool oldSuppress = SuppressColumnWidthChanges;
-			SuppressColumnWidthChanges = true;
-
-			if (sortOrder == SortOrder.None)
-				colHdr.ImageIndex = -1;
-			else
-			{
-				// There are 3 potential sizes: Large, Medium, and Small with 2 sort orders, Ascending and Descending
-				// The images are stored in that order, so the following works
-				colHdr.ImageIndex = (int)size + (3 * ((int)sortOrder - 1));
-			}
-
-			SuppressColumnWidthChanges = oldSuppress;
-
-			Update();
-#endif
 		}
-
-#if !__MonoCS__ // FWNX-131
-		private void SetHeaderImageList(ImageList imgList)
-		{
-			IntPtr hHeader = SendMessage(this.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-			SendMessage(hHeader, HDM_SETIMAGELIST, IntPtr.Zero, imgList.Handle);
-		}
-#endif
 
 		// Todo JohnT: These could possibly move to Win32Wrappers.
 		[StructLayout(LayoutKind.Sequential)]

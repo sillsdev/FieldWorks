@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordClerk : IFWDisposable, IxCoreColleague, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
 	{
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
+		internal static int DefaultPriority = (int)ColleaguePriority.Medium;
 
 		protected string m_id;
 		protected Mediator m_mediator;
@@ -388,11 +389,11 @@ namespace SIL.FieldWorks.XWorks
 				m_recordBarHandler = RecordBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
 				//if (m_list is PossibilityRecordList)
 				//{
-				//    m_recordBarHandler = TreeBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
+				//	m_recordBarHandler = TreeBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
 				//}
 				//else
 				//{
-				//    // Don't use a RecordBarHandler for non-PossibilityRecordList. Use RecordBrowseView instead.
+				//	// Don't use a RecordBarHandler for non-PossibilityRecordList. Use RecordBrowseView instead.
 				//}
 			}
 			else
@@ -763,6 +764,14 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get
+			{
+				//RecordClerks apparently need to receive messages before the views, hence this fudge.
+				return DefaultPriority;
+			}
+		}
 
 		#endregion
 
@@ -835,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 				m_rch.Fixup(false);		// no need to recursively update the list!
 			bool fReload = forceSort || m_list.NeedToReloadList();
 			if (fReload)
-				m_list.ReloadList();
+				m_list.ForceReloadList();
 		}
 
 		#endregion
@@ -1084,19 +1093,15 @@ namespace SIL.FieldWorks.XWorks
 					// May be the item was just created by another program or tool (e.g., LT-8827)
 					m_list.ReloadList();
 					index = IndexOfObjOrChildOrParent(hvoTarget);
+					if (index == -1)
+					{
+						// It may be the wrong clerk, so just bail out.
+						//MessageBox.Show("The list target is no longer available. It may have been deleted.",
+						//	"Target not found", MessageBoxButtons.OK);
+						return false;
+					}
 				}
-
-				if (index == -1)
-				{
-					// It may be the wrong clerk, so just bail out.
-					//MessageBox.Show("The list target is no longer available. It may have been deleted.",
-					//	"Target not found", MessageBoxButtons.OK);
-					return false;
-				}
-				else
-				{
-					JumpToIndex(index);
-				}
+				JumpToIndex(index);
 				return true;	//we handled this.
 			}
 			finally
@@ -1117,7 +1122,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		public bool OnRefresh(object argument)
+		public virtual bool OnRefresh(object argument)
 		{
 			CheckDisposed();
 
@@ -1915,15 +1920,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string name = GetCorrespondingPropertyName(id);
 			var clerk = (RecordClerk)mediator.PropertyTable.GetValue(name);
-			// FWR-3171 Crash going between BulkEdit Reversal Entries and Reversal Indexes after deleting RIndex.
-			if (clerk != null)
-			{
-				Debug.Assert(clerk.OwningObject != null);
-				if (clerk.OwningObject == null || !clerk.OwningObject.IsValidObject)
-					return null;
-			}
 			return clerk;
 		}
+
 
 		/// <summary>
 		/// Stop notifications of prop changes
@@ -1945,6 +1944,12 @@ namespace SIL.FieldWorks.XWorks
 		/// a can be a dependent clerk which does not have any relationship to the tree bar,
 		/// or it can be in the background altogether, because the tool(s) it is associated with are not
 		/// currently active.
+		///
+		/// note: PLEASE REFACTOR: If this method is causing problems again please re-factor.
+		/// This code has proven to cause bugs elsewhere and is handling things in a non-obvious way.
+		/// Ideally this whole property would be removed or re-written and the original problem fixed in a different way.
+		/// Some code in SIL.FieldWorks.IText.InfoPane.InitializeInfoView() is a patch to unwanted side effects of this method.
+		/// Naylor, Thomson 12-2011
 		///
 		/// This property was added when we ran into the following problem: when a user added a new entry
 		/// from the interlinear text section, that generated a notification that a new entry had been added to
@@ -1973,6 +1978,8 @@ namespace SIL.FieldWorks.XWorks
 					// circular dependency in compilation.
 					m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", OwningObject);
 					m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+					m_mediator.PropertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject);
+					m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
 					Cache.DomainDataByFlid.AddNotification(this);
 				}
 			}
@@ -1989,7 +1996,7 @@ namespace SIL.FieldWorks.XWorks
 		/// but I (JohnT) haven't yet fully determined whether it needs to. I just needed to
 		/// stop it being called in another, much more common context, so moved a call there.
 		/// </summary>
-		public void ReloadIfNeeded()
+		public virtual void ReloadIfNeeded()
 		{
 			if (OwningObject != null && m_list.IsVirtualPublisherCreated)
 			{
@@ -2283,7 +2290,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			JumpToIndex(m_list.IndexOf(jumpToHvo), suppressFocusChange);
+			var index = m_list.IndexOf(jumpToHvo);
+			if (index < 0)
+				return; // not found (maybe suppressed by filter?)
+			JumpToIndex(index, suppressFocusChange);
 		}
 
 		public void JumpToIndex(int index)
@@ -2299,7 +2309,21 @@ namespace SIL.FieldWorks.XWorks
 		public void JumpToIndex(int index, bool suppressFocusChange)
 		{
 			CheckDisposed();
-
+			//if we aren't changing the index, just bail out. (Fixes, LT-11401)
+			if (m_list.CurrentIndex == index)
+			{
+				//Refactor: we would prefer to bail out without broadcasting anything but...
+				//There is a chain of messages and events that I don't yet understand which relies on
+				//the RecordNavigation event being sent when we jump to the record we are already on.
+				//The back button navigation in particular has major problems if we don't do this.
+				//I suspect that something is suppressing the event handling initially, and I have found evidence in
+				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
+				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
+				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
+				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
+				m_mediator.BroadcastMessage("RecordNavigation", rni);
+				return;
+			}
 			try
 			{
 				m_list.CurrentIndex = index;
@@ -2308,6 +2332,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new IndexOutOfRangeException("The RecordClerk tried to jump to a record which is not in the current active set of records.", error);
 			}
+			//This broadcast will often cause a save of the record, which clears the undo stack.
 			BroadcastChange(suppressFocusChange);
 		}
 
@@ -2567,27 +2592,27 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			var window = (Form) m_mediator.PropertyTable.GetValue("window");
-			Cursor oldCursor = window.Cursor;
-			window.Cursor = Cursors.WaitCursor;
-			Logger.WriteEvent("Changing filter.");
-			// if our clerk is in the state of suspending loading the list, reset it now.
-			if (SuspendLoadListUntilOnChangeFilter)
-				SuspendLoadListUntilOnChangeFilter = false;
-			m_list.OnChangeFilter(args);
-			// Remember the active filter for this list.
-			string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-			m_mediator.PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, PropertyTable.SettingsGroup.LocalSettings);
-			// adjust menu bar items according to current state of Filter, where needed.
-			m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
-			UpdateFilterStatusBarPanel();
-			if (m_list.Filter != null)
-				Logger.WriteEvent("Filter changed: "+m_list.Filter);
-			else
-				Logger.WriteEvent("Filter changed: (no filter)");
-			// notify clients of this change.
-			if (FilterChangedByClerk != null)
-				FilterChangedByClerk(this, args);
-			window.Cursor = oldCursor;
+			using (new WaitCursor(window))
+			{
+				Logger.WriteEvent("Changing filter.");
+				// if our clerk is in the state of suspending loading the list, reset it now.
+				if (SuspendLoadListUntilOnChangeFilter)
+					SuspendLoadListUntilOnChangeFilter = false;
+				m_list.OnChangeFilter(args);
+				// Remember the active filter for this list.
+				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
+				m_mediator.PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, PropertyTable.SettingsGroup.LocalSettings);
+				// adjust menu bar items according to current state of Filter, where needed.
+				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
+				UpdateFilterStatusBarPanel();
+				if (m_list.Filter != null)
+					Logger.WriteEvent("Filter changed: "+m_list.Filter);
+				else
+					Logger.WriteEvent("Filter changed: (no filter)");
+				// notify clients of this change.
+				if (FilterChangedByClerk != null)
+					FilterChangedByClerk(this, args);
+			}
 		}
 
 		/// <summary>
@@ -2641,8 +2666,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-
-		private void UpdateFilterStatusBarPanel()
+		/// <summary>
+		/// Figure out what should show in the filter status panel and make it so.
+		/// </summary>
+		protected void UpdateFilterStatusBarPanel()
 		{
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
@@ -2650,16 +2677,14 @@ namespace SIL.FieldWorks.XWorks
 			if (fIgnore)
 			{
 				// Set the value so that it can be picked up by the dialog (or whoever).
-				if (m_list.Filter == null || !m_list.Filter.IsUserVisible)
-					ResetStatusBarPanel("DialogFilterStatus", String.Empty);
-				else
-					ResetStatusBarPanel("DialogFilterStatus", xWorksStrings.Filtered);
+				ResetStatusBarPanel("DialogFilterStatus", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? String.Empty);
 				return;
 			}
 			var b = m_mediator.PropertyTable.GetValue("Filter") as StatusBarTextBox;
 			if (b == null) //Other xworks apps may not have this panel
 				return;
-			if (m_list.Filter == null || !m_list.Filter.IsUserVisible)
+			string filterStatusText = FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible);
+			if (string.IsNullOrEmpty(filterStatusText))
 			{
 				b.BackBrush = System.Drawing.Brushes.Transparent;
 				b.TextForReal = "";
@@ -2667,8 +2692,13 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				b.BackBrush = System.Drawing.Brushes.Yellow;
-				b.TextForReal = xWorksStrings.Filtered;
+				b.TextForReal = filterStatusText;
 			}
+		}
+
+		protected virtual string FilterStatusContents(bool listIsFiltered)
+		{
+			return listIsFiltered ? xWorksStrings.Filtered : "";
 		}
 
 		private void UpdateSortStatusBarPanel()

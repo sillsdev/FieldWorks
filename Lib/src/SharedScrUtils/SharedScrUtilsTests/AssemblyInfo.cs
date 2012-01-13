@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SharedScrUtilsTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("JAARS Inc.")]
-[assembly: AssemblyProduct("SharedScrUtilsTests")]
-[assembly: AssemblyCopyright("Copyright © JAARS Inc. 2008")]
+[assembly: AssemblyCompany("SIL")]
+[assembly: AssemblyProduct("SIL/UBS Shared")]
+[assembly: AssemblyCopyright("Copyright © 2011-$YEAR SIL International ")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

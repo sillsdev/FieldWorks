@@ -120,7 +120,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected StringTable m_stringTable;
 		/// <summary></summary>
 		protected bool m_fEditable = true;
-		private List<int> m_selectedObjects = new List<int>(1);
 		bool m_fInChangeSelectedObjects = false;
 		private ISilDataAccess m_sda;
 
@@ -411,12 +410,21 @@ namespace SIL.FieldWorks.Common.Controls
 						newSelectedObjects.Add(rgvsli[i].hvo);
 					}
 				}
-				m_selectedObjects = newSelectedObjects;
-				if (sel != null && !sel.IsValid)
+				var changed = new HashSet<int>(m_xmlVc.SelectedObjects);
+				changed.SymmetricExceptWith(newSelectedObjects);
+				if (changed.Count != 0)
 				{
-					// we wiped it out by regenerating parts of the display in our PropChanged calls! Restore it if we can.
-					sel = m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp,
-						cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
+					m_xmlVc.SelectedObjects = newSelectedObjects;
+					// Generate propChanged calls that force the relevant parts of the view to redraw
+					// to indicate which command icons should be visible.
+					foreach (int hvo in changed)
+						m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+					if (sel != null && !sel.IsValid)
+					{
+						// we wiped it out by regenerating parts of the display in our PropChanged calls! Restore it if we can.
+						sel = m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp,
+							cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
+					}
 				}
 			}
 
@@ -425,6 +433,24 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fInChangeSelectedObjects = false;
 			}
 			base.HandleSelectionChange(prootb, sel);
+		}
+
+		/// <summary>
+		/// in some views, mouseup moves the selection from the place clicked to some nearby editable point.
+		/// We'd like the selected objects to depend on the place clicked, not how the selection got changed later.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			m_fInChangeSelectedObjects = true;
+			try
+			{
+				base.OnMouseUp(e);
+			}
+			finally
+			{
+				m_fInChangeSelectedObjects = false;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -436,9 +462,24 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void OnGotFocus(EventArgs e)
 		{
 			m_xmlVc.HasFocus = true;
-			if (!m_selectedObjects.Contains(XmlVc.FocusHvo))
-				m_selectedObjects.Add(XmlVc.FocusHvo);
+			if (!m_xmlVc.SelectedObjects.Contains(XmlVc.FocusHvo))
+				m_xmlVc.SelectedObjects.Add(XmlVc.FocusHvo);
+			UpdateFocusCommandIconVisibility();
 			base.OnGotFocus(e);
+		}
+
+		private void UpdateFocusCommandIconVisibility()
+		{
+			// LT-12067: During disposal of views following a user request to change UI language,
+			// a WM_ACTIVATE message is handled, and its call chain can get to here when m_rootb is null.
+			// This simple fix is a band-aid, and the code still smells, although the origin of the
+			// code is not apparent.
+			if (m_rootb != null)
+			{
+				// This causes the critical part of the view to redraw to hide or show the icon,
+				// because the XmlVc.AddCommandIcon method made the icon 'depend on' this fake property.
+				m_rootb.PropChanged(XmlVc.FocusHvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -450,6 +491,20 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void OnLostFocus(EventArgs e)
 		{
 			m_xmlVc.HasFocus = false;
+			UpdateFocusCommandIconVisibility();
+			// All selected objects are no longer considered selected.
+			var oldSelectedObjects = m_xmlVc.SelectedObjects.ToArray();
+			m_xmlVc.SelectedObjects.Clear();
+
+			// LT-12067: During disposal of views following a user request to change UI language,
+			// a WM_ACTIVATE message is handled, and its call chain can get to here when m_rootb is null.
+			// This simple fix is a band-aid, and the code still smells, although the origin of the
+			// code is not apparent.
+			if (m_rootb != null)
+			{
+				foreach (var hvo in oldSelectedObjects)
+					m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+			}
 			base.OnLostFocus(e);
 		}
 	}

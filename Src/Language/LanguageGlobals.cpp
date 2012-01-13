@@ -30,5 +30,7 @@ LanguageGlobals::~LanguageGlobals()
 // The single global instance of the LgFontManager.
 LgFontManager LanguageGlobals::g_fm; // Global LgFontManager.
 
+#ifdef WIN32
 // The single global instance of the LgTextServices.
 LgTextServices LanguageGlobals::g_lts;
+#endif

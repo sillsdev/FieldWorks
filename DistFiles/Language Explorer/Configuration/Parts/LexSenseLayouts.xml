@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Manually created Layouts for LexSense. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
   <layout class="LexSense" type="detail" name="Normal">
 	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" notifyVirtual="LexSenseOutline">
 		<indent>
@@ -302,7 +303,7 @@
 			</part>
 		</generate>
 		<part ref="ComplexFormsNotSubentries" label="Other Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootSenseComplexFormRef" css="sense-complexformrefs"/>
-		<part ref="Subentries" label="Subentries" visibility="never" param="publishRootSubentry" indent="true" parastyle="Dictionary-Subentry" preventnullstyle="true" flowType="divInPara" css="sense-subentries"/>
+		<part ref="Subentries" label="Subentries" visibility="never" param="publishRootSubentry" indent="true" recurseConfig="false" recurseConfigLabel="Main Entry\Subentries" forceSubentryDisplay="true" parastyle="Dictionary-Subentry" preventnullstyle="true" flowType="divInPara" css="sense-subentries"/>
 		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRoot" css="subsenses" parastyle="Dictionary-Sense"/>
 	</layout>
 
@@ -370,12 +371,12 @@
 				<obj field="$fieldName" layout="publishFullTextInParas"/>
 			</part>
 		</generate>
-		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
+		<part ref="RootComplexFormsConfig" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
 		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinor" css="subsenses-minor" parastyle="Dictionary-Sense"/>
 	</layout>
 
-	<layout class="LexSense" type="jtview" name="publishRootSub_AsPara">
-		<sublayout name="publishRootSub"/>
+	<layout class="LexSense" type="jtview" name="publishMinorComplexFormDefn">
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before=" " after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor-complex"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishRootSub">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootSub" css="grammatical-info-sub"/>
@@ -506,7 +507,7 @@
 				<obj field="$fieldName" layout="publishFullTextInParas"/>
 			</part>
 		</generate>
-		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSubSenseComplexFormRef" css="sense-complexformrefs-minor"/>
+		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSubSenseComplexFormRef" css="sense-complexformrefs-minor-sub"/>
 		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinorSub" css="subsenses-minor" parastyle="Dictionary-Sense"/>
 	</layout>
 

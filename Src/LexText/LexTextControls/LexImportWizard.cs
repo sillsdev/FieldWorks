@@ -1732,8 +1732,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			protected override string GetMorphTypeInfo(ref string sForm, out string sAlloClass,
 				out string sMorphTypeWs)
 			{
-				int clsid;
-				var mmt = MorphServices.FindMorphType(m_cache, ref sForm, out clsid);
+				int clsid = MoStemAllomorphTags.kClassId;
+				IMoMorphType mmt;
+				if (sForm.Length > 0)
+					mmt = MorphServices.FindMorphType(m_cache, ref sForm, out clsid);
+				else
+					mmt = m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
 				sAlloClass = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(clsid);
 				int ws;
 				ITsString tss = mmt.Name.GetAlternativeOrBestTss(m_wsEn, out ws);
@@ -1754,49 +1758,48 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="e"></param>
 		private void btnGenerateReport_Click(object sender, System.EventArgs e)
 		{
-			System.Windows.Forms.Cursor cursor = this.Cursor;
-			this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+			using (new WaitCursor(this))
+			{
+				SaveSettings();	// saves to registry and creates the new map file
+				btnGenerateReport.Enabled = false;
+				Sfm2Xml.Converter importConverter = new FlexConverter(m_cache);
+				Sfm2Xml.Converter.Log.Reset();	// remove any previous error msgs
 
-			SaveSettings();	// saves to registry and creates the new map file
-			btnGenerateReport.Enabled = false;
-			Sfm2Xml.Converter importConverter = new FlexConverter(m_cache);
-			Sfm2Xml.Converter.Log.Reset();	// remove any previous error msgs
-
-			// if there are auto fields in the xml file, pass them on to the converter
-			Dictionary<string, Sfm2Xml.ILexImportField> autoFields = m_MappingMgr.LexImportFields.GetAutoFields();
-			foreach (KeyValuePair<string, Sfm2Xml.ILexImportField> kvp in autoFields)
-			{
-				string entryClass = kvp.Key;
-				Sfm2Xml.ILexImportField lexField = kvp.Value;
-				string fwDest = lexField.ID;
-				importConverter.AddPossibleAutoField(entryClass, fwDest);
-			}
-			try
-			{
-				// Note: don't use the m_MappingMgr sense it already has been used for reading data.
-				importConverter.Convert(m_processedInputFile, m_SaveAsFileName.Text, m_sPhase1Output);
-				m_cEntries = importConverter.LevelOneElements;
-				ProcessPhase1Errors(m_sPhase1Output, m_SaveAsFileName.Text, m_cEntries, false);
-				string sHtmlFile = m_sTempDir + "ImportPreviewReport.htm";
-				ViewHtmlReport(sHtmlFile);
-			}
-			catch (System.Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine("Convert Exception: " + ex.Message);
-				if (ProcessPhase1Errors(m_sPhase1Output, m_SaveAsFileName.Text, importConverter.LevelOneElements, false))
+				// if there are auto fields in the xml file, pass them on to the converter
+				Dictionary<string, Sfm2Xml.ILexImportField> autoFields = m_MappingMgr.LexImportFields.GetAutoFields();
+				foreach (KeyValuePair<string, Sfm2Xml.ILexImportField> kvp in autoFields)
 				{
+					string entryClass = kvp.Key;
+					Sfm2Xml.ILexImportField lexField = kvp.Value;
+					string fwDest = lexField.ID;
+					importConverter.AddPossibleAutoField(entryClass, fwDest);
+				}
+				try
+				{
+					// Note: don't use the m_MappingMgr sense it already has been used for reading data.
+					importConverter.Convert(m_processedInputFile, m_SaveAsFileName.Text, m_sPhase1Output);
+					m_cEntries = importConverter.LevelOneElements;
+					ProcessPhase1Errors(m_sPhase1Output, m_SaveAsFileName.Text, m_cEntries, false);
 					string sHtmlFile = m_sTempDir + "ImportPreviewReport.htm";
 					ViewHtmlReport(sHtmlFile);
 				}
-				else
+				catch (System.Exception ex)
 				{
-					MessageBox.Show(this,
-						String.Format(LexTextControls.ksConversionProblem, ex.Message),
-						LexTextControls.ksConversionError,
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
+					System.Diagnostics.Debug.WriteLine("Convert Exception: " + ex.Message);
+					if (ProcessPhase1Errors(m_sPhase1Output, m_SaveAsFileName.Text, importConverter.LevelOneElements, false))
+					{
+						string sHtmlFile = m_sTempDir + "ImportPreviewReport.htm";
+						ViewHtmlReport(sHtmlFile);
+					}
+					else
+					{
+						MessageBox.Show(this,
+							String.Format(LexTextControls.ksConversionProblem, ex.Message),
+							LexTextControls.ksConversionError,
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
 				}
 			}
-			this.Cursor = cursor;
 			btnGenerateReport.Enabled = true;
 		}
 
@@ -2171,95 +2174,94 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool EnableNextButton()
 		{
-			System.Windows.Forms.Cursor cursor = this.Cursor;
-			this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
 			AllowQuickFinishButton();	// this should be done atleast before each step
 			bool rval = false;
-			switch (CurrentStepNumber)
+			using (new WaitCursor(this))
 			{
-			case 1: // has to have a dictionary file to allow 'next'
-				if (m_isPhaseInputFile || (m_DatabaseFileName.Text.Length > 0 &&
-					System.IO.File.Exists(m_DatabaseFileName.Text) &&
-					m_SaveAsFileName.Text != m_sMDFImportMap))		// not same as MDFImport.map file
+				switch (CurrentStepNumber)
 				{
+				case 1: // has to have a dictionary file to allow 'next'
+					if (m_isPhaseInputFile || (m_DatabaseFileName.Text.Length > 0 &&
+						System.IO.File.Exists(m_DatabaseFileName.Text) &&
+						m_SaveAsFileName.Text != m_sMDFImportMap))		// not same as MDFImport.map file
+					{
+						rval = true;
+					}
+					break;
+
+				case 2:	// preparing to display the languages info
+					if (m_dirtyMapFile)
+					{
+						ReadLanguageInfoFromMapFile();
+						m_processedMapFile = m_SettingsFileName.Text;
+//						m_dirtyMapFile = false;
+					}
 					rval = true;
+
+					// make sure there is a value for the 'Save as:' entry
+					if (m_SaveAsFileName.Text.Length <= 0 && !m_isPhaseInputFile)
+					{
+						m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
+					}
+					break;
+
+				case 3:
+					// current technique for getting the custom fields in the DB
+					bool customFieldsChanged = false;
+					m_CustomFields = LexImportWizard.Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
+
+					UpdateIfInputFileContentsChanged();
+					if (m_dirtyInputFile || m_dirtyMapFile)
+					{
+						ReadMarkersFromDataFile();
+						ReadIFMFromMapFile();	// do it now before setting the dirty map flag to false
+						m_processedInputFile = m_DatabaseFileName.Text;
+						m_lastDateTime = System.IO.File.GetLastWriteTime(m_processedInputFile);	// used to keep track of the last write date on the data file
+						m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);		// the computed crc of the data file
+						m_dirtyInputFile = false;
+						m_dirtyMapFile = false;
+						string topAnalysisWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
+						m_MappingMgr = new MarkerPresenter( /*m_cache,*/DirectoryFinder.FWCodeDirectory,
+							LexImportWizard.Wizard().GetUILanguages(),
+							topAnalysisWS,
+							m_SettingsFileName.Text,
+							m_DatabaseFileName.Text,
+							m_sImportFields, 6);	// number of columns
+						DisplayMarkerStep();
+						m_FeasabilityReportGenerated = false;	// reset when intputs change
+					}
+					rval = true;
+					break;
+
+				case 4:
+					UpdateIfInputFileContentsChanged();
+					if (m_DirtyStep5 || true)
+					{
+						DisplayBeginMarkers();
+						m_DirtyStep5 = false;
+					}
+					rval = Step5NextButtonEnabled();
+					break;
+
+				case 5:	// preparing to display the inline markers
+//					if (true || m_hasShownIFMs)
+					{
+						//ReadIFMFromMapFile();
+						DisplayInlineMarkers();
+//						m_hasShownIFMs = true;
+					}
+					rval = true;
+					break;
+
+				case 6:
+					rval = m_FeasabilityReportGenerated;
+					break;
+
+				default:
+					rval = true;
+					break;
 				}
-				break;
-
-			case 2:	// preparing to display the languages info
-				if (m_dirtyMapFile)
-				{
-					ReadLanguageInfoFromMapFile();
-					m_processedMapFile = m_SettingsFileName.Text;
-//					m_dirtyMapFile = false;
-				}
-				rval = true;
-
-				// make sure there is a value for the 'Save as:' entry
-				if (m_SaveAsFileName.Text.Length <= 0 && !m_isPhaseInputFile)
-				{
-					m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
-				}
-				break;
-
-			case 3:
-				// current technique for getting the custom fields in the DB
-				bool customFieldsChanged = false;
-				m_CustomFields = LexImportWizard.Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
-
-				UpdateIfInputFileContentsChanged();
-				if (m_dirtyInputFile || m_dirtyMapFile)
-				{
-					ReadMarkersFromDataFile();
-					ReadIFMFromMapFile();	// do it now before setting the dirty map flag to false
-					m_processedInputFile = m_DatabaseFileName.Text;
-					m_lastDateTime = System.IO.File.GetLastWriteTime(m_processedInputFile);	// used to keep track of the last write date on the data file
-					m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);		// the computed crc of the data file
-					m_dirtyInputFile = false;
-					m_dirtyMapFile = false;
-					string topAnalysisWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-					m_MappingMgr = new MarkerPresenter( /*m_cache,*/DirectoryFinder.FWCodeDirectory,
-						LexImportWizard.Wizard().GetUILanguages(),
-						topAnalysisWS,
-						m_SettingsFileName.Text,
-						m_DatabaseFileName.Text,
-						m_sImportFields, 6);	// number of columns
-					DisplayMarkerStep();
-					m_FeasabilityReportGenerated = false;	// reset when intputs change
-				}
-				rval = true;
-				break;
-
-			case 4:
-				UpdateIfInputFileContentsChanged();
-				if (m_DirtyStep5 || true)
-				{
-					DisplayBeginMarkers();
-					m_DirtyStep5 = false;
-				}
-				rval = Step5NextButtonEnabled();
-				break;
-
-			case 5:	// preparing to display the inline markers
-//				if (true || m_hasShownIFMs)
-				{
-					//ReadIFMFromMapFile();
-					DisplayInlineMarkers();
-//					m_hasShownIFMs = true;
-				}
-				rval = true;
-				break;
-
-			case 6:
-				rval = m_FeasabilityReportGenerated;
-				break;
-
-			default:
-				rval = true;
-				break;
 			}
-			this.Cursor = cursor;
 			return rval;
 		}
 

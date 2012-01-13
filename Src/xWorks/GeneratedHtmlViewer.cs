@@ -109,7 +109,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.ComponentModel.IContainer components;
 
 		private const string m_skExtensionUri = "urn:xsltExtension-DateTime";
-		private Button m_SaveAsHtmlBtn;
 
 		/// <summary>
 		/// since we are going to hide the tree bar, remember the state it was in so
@@ -217,8 +216,6 @@ namespace SIL.FieldWorks.XWorks
 			m_sProgressDialogTitle = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "dialogTitle");
 			m_sFileNameKey = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "fileNameKey");
 			m_sStringsPath = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "stringsPath");
-			string s = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "saveButtonToolTip");
-			toolTip1.SetToolTip(m_SaveAsHtmlBtn, s);
 
 			foreach (XmlNode rNode in m_configurationParameters.ChildNodes)
 			{
@@ -323,7 +320,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ProduceSketch();
 			ShowSketch();
-			m_SaveAsHtmlBtn.Enabled = true;
 			ResetURLCount();
 			WriteRegistry();
 		}
@@ -344,6 +340,54 @@ namespace SIL.FieldWorks.XWorks
 			m_htmlControl.Forward();
 			// N.B. no need to increment m_iURLCounter because OnBeforeNavigate does it
 		}
+		public bool OnSaveAsWebpage(object parameterObj)
+		{
+			var param = parameterObj as Tuple<string, string>;
+			if (param == null)
+				return false; // we sure can't handle it; should we throw?
+			string whatToSave = param.Item1;
+			string outPath = param.Item2;
+			string directory = Path.GetDirectoryName(outPath);
+			if (!Directory.Exists(directory))
+			{
+				// can't copy to a directory that doesn't exist
+				return false;
+			}
+				switch (whatToSave)
+				{
+					case "GrammarSketchXLingPaper":
+							if (File.Exists(m_sAlsoSaveFileName))
+							{
+								CopyFile(m_sAlsoSaveFileName, outPath);
+								return true;
+							}
+						break;
+					default:
+						if (File.Exists(m_sHtmlFileName))
+						{
+							CopyFile(m_sHtmlFileName, outPath);
+							return true;
+						}
+						break;
+			}
+			return false;
+		}
+
+		private void CopyFile(string sFileName, string outPath)
+		{
+			// For those poor souls who have run into LT-6264,
+			// we need to be nice and remove the read-only attr.
+			// Besides, the reporter may not believe the bug is dead,
+			// as it still won't be in a copy state. :-)
+			RemoveWriteProtection(outPath);
+			File.Copy(sFileName, outPath, true);
+			// If m_sHtmlFileName is the initial doc, then it will be read-only.
+			// Setting the attr to normal fixes LT-6264.
+			// I (RandyR) don't know why the save button is enabled,
+			// when the sketch has not been generated, but this ought to be the 'fix/hack'.
+			RemoveWriteProtection(outPath);
+		}
+
 		private void OnSaveAsHtmlButtonClick(object sender, EventArgs e)
 		{
 			if (File.Exists(m_sHtmlFileName))
@@ -715,6 +759,10 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
 		#endregion // IxCoreColleague implementation
 
@@ -791,7 +839,6 @@ namespace SIL.FieldWorks.XWorks
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GeneratedHtmlViewer));
 			this.m_GenerateBtn = new System.Windows.Forms.Button();
 			this.m_panelTop = new System.Windows.Forms.Panel();
-			this.m_SaveAsHtmlBtn = new System.Windows.Forms.Button();
 			this.m_ForwardBtn = new System.Windows.Forms.Button();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.m_BackBtn = new System.Windows.Forms.Button();
@@ -810,18 +857,10 @@ namespace SIL.FieldWorks.XWorks
 			// m_panelTop
 			//
 			resources.ApplyResources(this.m_panelTop, "m_panelTop");
-			this.m_panelTop.Controls.Add(this.m_SaveAsHtmlBtn);
 			this.m_panelTop.Controls.Add(this.m_ForwardBtn);
 			this.m_panelTop.Controls.Add(this.m_BackBtn);
 			this.m_panelTop.Controls.Add(this.m_GenerateBtn);
 			this.m_panelTop.Name = "m_panelTop";
-			//
-			// m_SaveAsHtmlBtn
-			//
-			resources.ApplyResources(this.m_SaveAsHtmlBtn, "m_SaveAsHtmlBtn");
-			this.m_SaveAsHtmlBtn.Name = "m_SaveAsHtmlBtn";
-			this.toolTip1.SetToolTip(this.m_SaveAsHtmlBtn, resources.GetString("m_SaveAsHtmlBtn.ToolTip"));
-			this.m_SaveAsHtmlBtn.Click += new System.EventHandler(this.OnSaveAsHtmlButtonClick);
 			//
 			// m_ForwardBtn
 			//
@@ -892,6 +931,22 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			return true;	// we handled this, no need to ask anyone else.
+		}
+		public bool OnDisplayExport(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true;
+		}
+		public bool OnExport(object argument)
+		{
+			CheckDisposed();
+
+				using (var dlg = new ExportDialog(m_mediator))
+				{
+					dlg.ShowDialog();
+				}
+			return true;	// handled
 		}
 	}
 

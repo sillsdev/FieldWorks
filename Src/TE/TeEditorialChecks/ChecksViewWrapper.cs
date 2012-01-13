@@ -777,6 +777,14 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			// Not used.
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion
 	}
 }

@@ -54,6 +54,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
+			DirectoryFinder.CompanyName = "SIL";
 
 			Assert.IsTrue(InitializeIcuData());
 			m_sCustomCharsFile = Path.Combine(Icu.DefaultDirectory, "CustomChars.xml");
@@ -104,6 +105,25 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			// Use ICU to check out the newly installed character properties.
 			VerifyNewlyCreatedChars();
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LT-12051...had problems installing this one character in isolation.
+		/// Not a problem when we insert it as one of a group.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void InstallAA6B()
+		{
+			// Use ICU to check out existing/nonexisting character properties.
+			VerifyNonexistentChars();
+
+			// Create our own CustomChars.xml file with test data in it, and install it.
+			CreateAndInstallAA6B(m_sCustomCharsFile);
+
+			// Use ICU to check out the newly installed character properties.
+			//VerifyNewlyCreatedChars();
 		}
 
 		private static void VerifyNonexistentChars()
@@ -256,6 +276,20 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				writer.WriteLine("<CharDef code=\"E001\" data=\"MY UPPERCASE CHARACTER;Lu;0;R;;;;;N;;;;E000;\"/>");
 				writer.WriteLine("<CharDef code=\"D7D7\" data=\"NEW PUNCTUATION MARK;Po;0;ON;;;;;N;;;;;\"/>");
 				writer.WriteLine("<CharDef code=\"DDDDD\" data=\"NEW DIGIT NINE;Nd;0;EN;;9;9;9;N;;;;;\"/>");
+				writer.WriteLine("</PuaDefinitions>");
+				writer.Close();
+			}
+			var inst = new PUAInstaller();
+			inst.InstallPUACharacters(sCustomCharsFile);
+		}
+
+		private static void CreateAndInstallAA6B(string sCustomCharsFile)
+		{
+			using (var writer = new StreamWriter(sCustomCharsFile))
+			{
+				writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+				writer.WriteLine("<PuaDefinitions>");
+				writer.WriteLine("<CharDef code=\"AA6B\" data=\"MYANMAR LETTER KHAMTI NA;Ll;0;L;;;;;N;;;;;\"/>");
 				writer.WriteLine("</PuaDefinitions>");
 				writer.Close();
 			}

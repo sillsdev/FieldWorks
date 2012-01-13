@@ -16,14 +16,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Remoting;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
-using System.Linq;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -366,8 +368,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			if (e is SocketException)
+			if (e is SocketException || e is RemotingException)
 			{
+				Logger.WriteError(string.Format(
+					"Got {0} populating language projects list - ignored", e.GetType().Name), e);
 				MessageBox.Show(ActiveForm, FwCoreDlgs.ksCannotConnectToServer, FwCoreDlgs.ksWarning,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
@@ -397,7 +401,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_lstLanguageProjects.Items.Clear();
 			m_lstLanguageProjects.Enabled = true;
 
-			ClientServerServices.Current.BeginFindProjects(host, AddProject, HandleProjectFindingExceptions, showLocalProjects);
+			ClientServerServices.Current.BeginFindProjects(host, AddProject,
+				HandleProjectFindingExceptions, showLocalProjects);
 		}
 		#endregion
 

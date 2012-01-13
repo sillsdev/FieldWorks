@@ -66,7 +66,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FdoCache cache = Cache;
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
-				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
+			{
+				if (!pos.SubPossibilitiesOS.Contains(POS))
+				{
+					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
+				}
+			}
 			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_mediator.HelpTopicProvider, labels, null,
 				LexEdStrings.ksCategoryToMoveTo, null))
 			{
@@ -79,9 +84,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						LexEdStrings.ksRedoMoveRevCategory, cache.ActionHandlerAccessor,
 						() =>
 							{
-								// ICmObject newOwningObj = // CS0219
-								newOwner.MoveIfNeeded(currentPOS);
-								newOwner.SubPossibilitiesOS.Add(currentPOS);
+								newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
+								if (!newOwner.SubPossibilitiesOS.Contains(currentPOS)) //this is also prevented in the interface, but I'm paranoid
+								{
+									newOwner.SubPossibilitiesOS.Add(currentPOS);
+								}
 							});
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
@@ -90,6 +97,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			return true;
+		}
+
+		protected override bool CanInsert(Command command, Slice currentSlice, out int index)
+		{
+			if (base.CanInsert(command, currentSlice, out index))
+			{
+				switch (command.Id)
+				{
+					case "CmdDataTree-Insert-POS-AffixSlot":
+					case "CmdDataTree-Insert-POS-AffixTemplate":
+					case "CmdDataTree-Insert-POS-InflectionClass":
+						return false;
+					default:
+						return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>

@@ -1,9 +1,0 @@
-// Extracted from AfApp.rc
-kridPrintCancelDlg DIALOG DISCARDABLE  0, 0, 160, 70
-STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-CAPTION "View printing"
-BEGIN
-// Cancel button won't work unless dialog is in separated thread
-	DEFPUSHBUTTON   "Cancel",kctidCancel,60,45,45,15
-	CTEXT           "",kctidPrintProgress,10,20,140,15
-END

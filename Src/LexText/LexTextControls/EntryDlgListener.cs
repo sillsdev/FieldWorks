@@ -167,49 +167,32 @@ namespace SIL.FieldWorks.LexText.Controls
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-
+			var command = (Command)commandObject;
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
 
 		/// <summary>
-		///
+		/// Determines in which menus the Merge Entries command item can show up in.
+		/// Should only be in the Lexicon area.
 		/// </summary>
-		/// <remarks> this is something of a hack until we come up with a generic solution to
-		/// the problem on how to control we are CommandSet are handled by listeners are
-		/// visible. It is difficult because some commands, like this one, may be appropriate
-		/// from more than 1 area.</remarks>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		protected  bool InFriendlyArea
+		/// <remarks>Obviously copied from another area that had more complex criteria for displaying its menu items.</remarks>
+		/// <returns>true if Merge Entry ought to be displayed, false otherwise.</returns>
+		protected bool InFriendlyArea
 		{
 			get
 			{
-				if (m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete")
-					return false;
-
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice",
-					null);
-				string[] areas = new string[]{"lexicon"};
-				foreach(string area in areas)
+				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				if (areaChoice == null) return false; // happens at start up
+				if ("lexicon" == areaChoice)
 				{
-					if (area == areaChoice)
-					{
-						// We want to show goto dialog for dictionary views, but not lists, etc.
-						// that may be in the Lexicon area.
-						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = (ICmObject)m_mediator.PropertyTable.GetValue("ActiveClerkOwningObject");
-						if (obj == null || obj.ClassID != LexDbTags.kClassId)
-							return false;
-						obj = (ICmObject)m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject");
-						return (obj != null && obj.ClassID != LexSenseTags.kClassId); // Disable in bulk edit.
-					}
+					string tool = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+					if (tool == "lexiconEdit") return true;
+					return false;
 				}
-				return false; //we are not in an area that wants to see the parser commands
+				return false; //we are not in an area that wants to see the merge command
 			}
 		}
-
 		#endregion XCORE Message Handlers
 	}
 

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2008, SIL International. All Rights Reserved.
-// <copyright from='2008' to='2008' company='SIL International'>
-//		Copyright (c) 2008, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2008' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,15 +10,11 @@
 //
 // File: ScrReferencePositionComparerTests.cs
 // Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

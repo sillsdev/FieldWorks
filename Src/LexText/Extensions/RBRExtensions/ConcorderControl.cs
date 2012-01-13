@@ -165,7 +165,7 @@ namespace RBRExtensions
 
 		internal abstract class FindComboFillerBase : IxCoreColleague
 		{
-			private string m_label;
+			protected string m_label;
 			private readonly List<UsedByFiller> m_ubfList = new List<UsedByFiller>();
 			protected XmlNode m_configurationNode;
 			protected Control m_currentControl;
@@ -255,6 +255,8 @@ namespace RBRExtensions
 				get { return false; }
 			}
 
+			public abstract int Priority { get; }
+
 			#endregion IxCoreColleague implementation
 
 			public override string ToString()
@@ -307,6 +309,11 @@ namespace RBRExtensions
 				}
 				base.LoadListInternal(mediator, parent);
 			}
+
+			public override int Priority
+			{
+				get { return m_label.GetHashCode(); }
+			}
 		}
 
 		internal class FindPossibilityComboFiller : FindComboFillerBase
@@ -354,6 +361,11 @@ namespace RBRExtensions
 					tv.AfterSelect -= tv_AfterSelect;
 				}
 				base.RemovePreviousControl();
+			}
+
+			public override int Priority
+			{
+				get { return 42; }
 			}
 
 			void tv_AfterSelect(object sender, TreeViewEventArgs e)
@@ -467,6 +479,11 @@ namespace RBRExtensions
 			public bool ShouldNotCall
 			{
 				get { return false; }
+			}
+
+			public int Priority
+			{
+				get { return (int)ColleaguePriority.Medium; }
 			}
 
 			#endregion IxCoreColleague implementation

@@ -8,6 +8,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -40,24 +41,47 @@ namespace SIL.FieldWorks.XWorks
 			int widthKick = view.Vc.ItemWidths[kick.LexemeFormOA.Hvo];
 			int widthKickSense = view.Vc.ItemWidths[kick.SensesOS[0].Hvo];
 
+			var mockItems = new MockSortItemProvider();
+			mockItems.Items.AddRange(new[] { kick.Hvo, boot.Hvo });
+			var nullAdjuster = new NullTargetAdjuster();
+
 			// click on the lexeme form: should find nothing, it's a root object.
 			Point where = new Point(1,1);
-			var result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache);
+			var result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 			Assert.That(result, Is.Null);
 
 			// click on the gloss of kick: should find nothing, it's still part of the root.
 			where = new Point(widthKick + 5, 1);
-			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache);
+			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 			Assert.That(result, Is.Null);
 
 			// click on the gloss, asking for a sense: should find nothing, no containing sense
-			result = XmlDocView.SubitemClicked(where, LexSenseTags.kClassId, view, Cache);
+			result = XmlDocView.SubitemClicked(where, LexSenseTags.kClassId, view, Cache, mockItems, nullAdjuster);
 			Assert.That(result, Is.Null);
 
 			// click on the synonym: should find the other entry.
 			where = new Point(widthKick + widthKickSense * 2 + 5, 1);
-			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache);
+			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 			Assert.That(result, Is.EqualTo(boot));
+
+			// Should not return the item it otherwise would if it is not a possible target.
+			mockItems.Items.Remove(boot.Hvo);
+			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
+			Assert.That(result, Is.Null);
+
+			// MainEntryFromSubEntryTargetAdjuster should convert subentry to main entry
+			// Make boot a subentry of bootRoot
+			var bootRoot = MakeEntry("boo", "fragment of boot");
+			var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			boot.EntryRefsOS.Add(ler);
+			ler.RefType = LexEntryRefTags.krtComplexForm;
+			ler.PrimaryLexemesRS.Add(bootRoot);
+			mockItems.Items.Add(boot.Hvo); // not rejected as item
+			mockItems.Items.Add(bootRoot.Hvo); // has to be valid itself also
+			var subentryAdjuster = new MainEntryFromSubEntryTargetAdjuster();
+			result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, subentryAdjuster);
+			Assert.That(result, Is.EqualTo(bootRoot));
+
 		}
 
 		/// <summary>
@@ -187,5 +211,37 @@ namespace SIL.FieldWorks.XWorks
 			int dx = mpx*96/72000; // to pixels
 			ItemWidths[hvo] = dx;
 		}
+	}
+	class MockSortItemProvider : ISortItemProvider
+	{
+		public List<int> Items = new List<int>();
+		#region ISortItemProvider Members
+
+		public int AppendItemsFor(int hvo)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int IndexOf(int hvo)
+		{
+			return Items.IndexOf(hvo);
+		}
+
+		public int ListItemsClass
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public void RemoveItemsFor(int hvo)
+		{
+			throw new NotImplementedException();
+		}
+
+		public SIL.FieldWorks.Filters.IManyOnePathSortItem SortItemAt(int index)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }

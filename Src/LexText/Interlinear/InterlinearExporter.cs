@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -30,11 +31,10 @@ namespace SIL.FieldWorks.IText
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
 		ITsString m_tssPendingHomographNumber;
-		ITsString m_tssPendingTitle; // these come along before the right element is open.
-		ITsString m_tssPendingTitle2 = null;
-		ITsString m_tssPendingSource;
-		private ITsString m_tssTitleAbbreviation;
-		ITsString m_tssPendingDescription;
+		List<ITsString> pendingTitles = new List<ITsString>(); // these come along before the right element is open.
+		List<ITsString> pendingSources = new List<ITsString>();
+		private List<ITsString> pendingAbbreviations = new List<ITsString>();
+		List<ITsString> pendingComments = new List<ITsString>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.IText
 			m_flidStTextTitle = m_cache.MetaDataCacheAccessor.GetFieldId("StText", "Title", false);
 			m_flidStTextSource = m_cache.MetaDataCacheAccessor.GetFieldId("StText", "Source", false);
 			m_vc = vc;
-			SetTitleAndAbbreviation(objRoot as IStText);
+			SetTextTitleAndMetadata(objRoot as IStText);
 
 			// Get morphtype information that we need later.  (plus stuff we don't...)  See LT-8288.
 			IMoMorphType mmtStem;
@@ -127,9 +127,12 @@ namespace SIL.FieldWorks.IText
 
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
+			//get the writing system for english for use in writing out the morphType, the types will ALWAYS be defined in english
+			//but they may not be defined in other languages, using English on import and export should garauntee the correct behavior
+			int englishWS = m_cache.WritingSystemFactory.GetWsFromStr("en");
 			if (m_fDoingMorphType)
 			{
-				m_writer.WriteAttributeString("type", GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws)));
+				m_writer.WriteAttributeString("type", GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, englishWS)));
 				// also output the GUID so any tool that processes the output can know for sure which morphtype it is
 				// Save the morphtype.  See LT-8288.
 				m_guidMorphType = WriteGuidAttributeForCurrentObj();
@@ -175,18 +178,20 @@ namespace SIL.FieldWorks.IText
 			else if (tag == m_flidStTextTitle)
 			{
 				ITsString tssTitle = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
-				if (m_tssPendingTitle == null)
-					m_tssPendingTitle = tssTitle;
-				else
-					m_tssPendingTitle2 = tssTitle;
+				if (!pendingTitles.Contains(tssTitle))
+					pendingTitles.Add(tssTitle);
 			}
 			else if (tag == m_flidStTextSource)
 			{
-				m_tssPendingSource = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+				ITsString source = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+				if (!pendingSources.Contains(source))
+					pendingSources.Add(source);
 			}
 			else if (tag == CmMajorObjectTags.kflidDescription)
 			{
-				m_tssPendingDescription = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+				ITsString comment = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+				if (!pendingComments.Contains(comment))
+					pendingComments.Add(comment);
 			}
 			else
 			{
@@ -486,19 +491,45 @@ namespace SIL.FieldWorks.IText
 			m_fItemIsOpen = true;
 		}
 
+		/// <summary>
+		/// This method (as far as I know) will be first called on the StText object, and then recursively from the
+		/// base implementation for vector items in component objects.
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="vc"></param>
+		/// <param name="frag"></param>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
+			FDO.IText text = null;
 			switch(frag)
 			{
 				case InterlinVc.kfragInterlinPara:
 					m_writer.WriteStartElement("interlinear-text");
-					WritePendingItem("title", ref m_tssPendingTitle);
-					if (m_tssPendingTitle2 != null && m_tssPendingTitle2.Length > 0)
-						WritePendingItem("title", ref m_tssPendingTitle2);
-					WritePendingItem("title-abbreviation", ref m_tssTitleAbbreviation);
-					if (m_tssPendingSource != null && m_tssPendingSource.Length > 0)
-						WritePendingItem("source", ref m_tssPendingSource);
-					WritePendingItem("description", ref m_tssPendingDescription);
+					//here the m_hvoCurr object is an StText object, store the IText owner
+					//so that we can pull data from it to close out the interlinear-text element
+					//Naylor 11-2011
+					text = (FDO.IText)m_repoObj.GetObject(m_hvoCurr).Owner;
+					m_writer.WriteAttributeString("guid", text.Guid.ToString());
+					foreach (var mTssPendingTitle in pendingTitles)
+					{
+						var hystericalRaisens = mTssPendingTitle;
+						WritePendingItem("title", ref hystericalRaisens);
+					}
+					foreach (var mTssPendingAbbrev in pendingAbbreviations)
+					{
+						var hystericalRaisens = mTssPendingAbbrev;
+						WritePendingItem("title-abbreviation", ref hystericalRaisens);
+					}
+					foreach(var source in pendingSources)
+					{
+						var hystericalRaisens = source;
+						WritePendingItem("source", ref hystericalRaisens);
+					}
+					foreach (var desc in pendingComments)
+					{
+						var hystericalRaisens = desc;
+						WritePendingItem("comment", ref hystericalRaisens);
+					}
 					m_writer.WriteStartElement("paragraphs");
 					break;
 				case InterlinVc.kfragParaSegment:
@@ -536,7 +567,27 @@ namespace SIL.FieldWorks.IText
 						m_writer.WriteEndElement();
 					}
 					m_writer.WriteEndElement();	// languages
+					//Media files section
+					if (text != null && text.MediaFilesOA != null)
+					{
+						m_writer.WriteStartElement("media-files");
+						m_writer.WriteAttributeString("offset-type", text.MediaFilesOA.OffsetType);
+						foreach (var mediaFile in text.MediaFilesOA.MediaURIsOC)
+						{
+							m_writer.WriteStartElement("media");
+							m_writer.WriteAttributeString("guid", mediaFile.Guid.ToString());
+							m_writer.WriteAttributeString("location", mediaFile.MediaURI);
+							m_writer.WriteEndElement(); //media
+						}
+						m_writer.WriteEndElement(); //media-files
+					}
 					m_writer.WriteEndElement(); // interlinear-text
+
+					//wipe out the pending items to be clean for next text.
+					pendingTitles.Clear();
+					pendingSources.Clear();
+					pendingAbbreviations.Clear();
+					pendingComments.Clear();
 					break;
 				case InterlinVc.kfragParaSegment:
 				case InterlinVc.kfragBundle:
@@ -561,7 +612,7 @@ namespace SIL.FieldWorks.IText
 					WriteStartParagraph(hvo);
 					break;
 				case WfiAnalysisTags.kflidMorphBundles:
-					m_writer.WriteStartElement("morph");
+					WriteStartMorpheme(hvo);
 					m_guidMorphType = Guid.Empty;	// reset morphtype before each morph bundle.
 					break;
 				case StTxtParaTags.kflidSegments:
@@ -572,6 +623,12 @@ namespace SIL.FieldWorks.IText
 					break;
 			}
 			base.OpenTheObject(hvo, ihvo);
+		}
+
+		protected virtual void WriteStartMorpheme(int hvo)
+		{
+			m_writer.WriteStartElement("morph");
+
 		}
 
 		protected virtual void WriteStartWord(int hvo)
@@ -630,23 +687,41 @@ namespace SIL.FieldWorks.IText
 		internal void SetRootObject(ICmObject objRoot)
 		{
 			m_hvoCurr = objRoot.Hvo;
-			SetTitleAndAbbreviation(objRoot as IStText);
+			SetTextTitleAndMetadata(objRoot as IStText);
 		}
 
-		private void SetTitleAndAbbreviation(IStText txt)
+		/// <summary>
+		/// Sets title, abbreviation, source and comment(description) data for the text.
+		/// </summary>
+		/// <param name="txt"></param>
+		private void SetTextTitleAndMetadata(IStText txt)
 		{
 			if (txt == null)
 				return;
 			var text = txt.Owner as FDO.IText;
 			if (text != null)
 			{
-				m_tssPendingTitle = text.Name.BestVernacularAnalysisAlternative;
-				m_tssTitleAbbreviation = text.Abbreviation.BestVernacularAnalysisAlternative;
+				foreach (var writingSystemId in text.Name.AvailableWritingSystemIds)
+				{
+					pendingTitles.Add(text.Name.get_String(writingSystemId));
+				}
+				foreach (var writingSystemId in text.Abbreviation.AvailableWritingSystemIds)
+				{
+					pendingAbbreviations.Add(text.Abbreviation.get_String(writingSystemId));
+				}
+				foreach (var writingSystemId in text.Source.AvailableWritingSystemIds)
+				{
+					pendingSources.Add(text.Source.get_String(writingSystemId));
+				}
+				foreach (var writingSystemId in text.Description.AvailableWritingSystemIds)
+				{
+					pendingComments.Add(text.Description.get_String(writingSystemId));
+				}
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{
-				m_tssPendingTitle = txt.ShortNameTSS;
-				m_tssTitleAbbreviation = null;
+				pendingTitles.Add(txt.ShortNameTSS);
+				pendingAbbreviations.Add(null);
 			}
 		}
 	}
@@ -659,7 +734,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
-		private const int kDocVersion = 1;
+		private const int kDocVersion = 2;
 		protected internal InterlinearExporterForElan(FdoCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
@@ -669,10 +744,8 @@ namespace SIL.FieldWorks.IText
 		public override void WriteBeginDocument()
 		{
 			base.WriteBeginDocument();
-			m_writer.WriteAttributeString("exportTarget", "elan");
 			m_writer.WriteAttributeString("version", kDocVersion.ToString());
 		}
-
 
 		protected override void WriteStartParagraph(int hvo)
 		{
@@ -684,6 +757,17 @@ namespace SIL.FieldWorks.IText
 		{
 			base.WriteStartPhrase(hvo);
 			WriteGuidAttributeForObj(hvo);
+			ISegment phrase = m_repoObj.GetObject(hvo) as ISegment;
+			if(phrase != null && phrase.MediaURIRA != null)
+			{
+				m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
+				m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
+				if (phrase.SpeakerRA != null)
+				{
+					m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
+				}
+				m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
+			}
 		}
 
 		protected override void WriteStartWord(int hvo)

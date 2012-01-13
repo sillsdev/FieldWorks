@@ -14,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using SIL.Utils;
 
 namespace SILUBS.PhraseTranslationHelper
 {
@@ -32,20 +34,26 @@ namespace SILUBS.PhraseTranslationHelper
 		private int m_iStartMatch;
 		private int m_iNextWord;
 		private List<KeyTermMatch> m_matches;
+		private static PorterStemmer s_stemmer = new PorterStemmer();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PhraseParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal PhraseParser(Dictionary<Word, List<KeyTermMatch>> keyTermsTable, TranslatablePhrase phrase,
+		internal PhraseParser(Dictionary<Word, List<KeyTermMatch>> keyTermsTable,
+			Dictionary<Regex, string> substituteStrings, TranslatablePhrase phrase,
 			Func<IEnumerable<Word>, TranslatablePhrase, int, Part> yieldPart)
 		{
 			m_keyTermsTable = keyTermsTable;
 			YieldPart = yieldPart;
 			m_phrase = phrase;
 
-			m_words = GetWordsInString(m_phrase.OriginalPhrase, true);
+			string phraseToParse = m_phrase.PhraseInUse;
+			foreach (KeyValuePair<Regex, string> substituteString in substituteStrings)
+				phraseToParse = substituteString.Key.Replace(phraseToParse, substituteString.Value);
+
+			m_words = GetWordsInString(phraseToParse.Trim().ToLowerInvariant(), true);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -58,7 +66,7 @@ namespace SILUBS.PhraseTranslationHelper
 			List<Word> words = new List<Word>();
 			StringBuilder wordBldr = new StringBuilder();
 			string word;
-			foreach (char ch in phrase.Trim().ToLowerInvariant())
+			foreach (char ch in phrase)
 			{
 				if (Char.IsLetter(ch) || ch == '\'' || ch == '-')
 					wordBldr.Append(ch);
@@ -128,8 +136,14 @@ namespace SILUBS.PhraseTranslationHelper
 				List<KeyTermMatch> matches;
 				if (!m_keyTermsTable.TryGetValue(nextWord, out matches))
 				{
-					m_iStartMatch++;
-					return null;
+					Word stem = s_stemmer.stemTerm(nextWord);
+					if (m_keyTermsTable.TryGetValue(stem, out matches))
+						stem.AddAlternateForm(nextWord);
+					else
+					{
+						m_iStartMatch++;
+						return null;
+					}
 				}
 
 				m_matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
@@ -197,7 +211,7 @@ namespace SILUBS.PhraseTranslationHelper
 			int cCompare = Math.Min(term.m_words.Count, cMatchingWordsInTermSoFar);
 			for (int iWord = m_iStartMatch; iWord < cCompare + m_iStartMatch; iWord++)
 			{
-				if (m_words[iWord] != term.m_words[iWord - m_iStartMatch])
+				if (!term.m_words[iWord - m_iStartMatch].IsEquivalent(m_words[iWord]))
 					return false;
 			}
 			return true;

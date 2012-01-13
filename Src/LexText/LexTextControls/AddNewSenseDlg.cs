@@ -408,22 +408,21 @@ namespace SIL.FieldWorks.LexText.Controls
 						return;
 					}
 
-					Cursor = Cursors.WaitCursor;
+					using (new WaitCursor(this))
+					{
+						m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense,
+							LexTextControls.ksRedoCreateNewSense);
 
-					m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense,
-						LexTextControls.ksRedoCreateNewSense);
+						var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+						m_le.SensesOS.Add(lsNew);
+						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+						lsNew.Gloss.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(m_fwtbGloss.Text, defAnalWs));
 
-					var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-					m_le.SensesOS.Add(lsNew);
-					int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					lsNew.Gloss.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(m_fwtbGloss.Text, defAnalWs));
+						lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
+						m_newSenseID = lsNew.Hvo;
 
-					lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
-					m_newSenseID = lsNew.Hvo;
-
-					m_cache.DomainDataByFlid.EndUndoTask();
-
-					Cursor = Cursors.Default;
+						m_cache.DomainDataByFlid.EndUndoTask();
+					}
 					break;
 				}
 			}

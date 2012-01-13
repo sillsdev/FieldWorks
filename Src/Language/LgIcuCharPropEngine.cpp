@@ -30,11 +30,9 @@ Description:
 #include <io.h>
 #endif
 #include "FwXml.h"
-#include "FwCellarRes.h"
 #include "FwStyledText.h"
 #undef THIS_FILE
 DEFINE_THIS_FILE
-// Doesn't seem to be used. #define ICU_2_2_BREAKING
 
 #if !WIN32
 #include "LocaleIndex.h"

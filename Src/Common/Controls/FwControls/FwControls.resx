@@ -142,9 +142,6 @@
 		jHghygCYIdhilWgDcCUJvAaQmJypm5QHJmMDAGISW7Nk0F5GAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="kstidInvalidScrRefEntered" xml:space="preserve">
-	<value>{0} is an invalid Scripture reference.</value>
-  </data>
   <data name="kstidLangNoneAbove" xml:space="preserve">
 	<value>None of the above</value>
   </data>
@@ -178,4 +175,13 @@
 	<value>Old Testament</value>
 	<comment>text for OT node in Scripture tree controls (see Save Version and Book Filter dialog boxes in TE and Choose Texts dialog box in FLEx)</comment>
   </data>
+	<data name="kOkbtnEmptySelection">
+		<value xml:space="preserve">OK will create an empty text</value>
+	</data>
+	<data name="kOkbtnGenreSelection">
+		<value xml:space="preserve">OK will create an empty text assigned to these genres</value>
+	</data>
+	<data name="kOkbtnNoTextSelection">
+		<value xml:space="preserve">No texts are selected</value>
+	</data>
 </root>

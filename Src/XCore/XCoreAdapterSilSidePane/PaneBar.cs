@@ -52,6 +52,8 @@ namespace XCore
 			base.OnPaintBackground (e);
 
 			var rectangleToPaint = ClientRectangle;
+			if (rectangleToPaint.Width <= 0 || rectangleToPaint.Height <= 0)
+				return; // can't draw anything, and will crash if we try
 			var beginColor = Color.FromArgb(0x58, 0x80, 0xd0);
 			var endColor = Color.FromArgb(0x08, 0x40, 0x98);
 
@@ -117,7 +119,8 @@ namespace XCore
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components;
+
 
 		#endregion Data members
 
@@ -284,6 +287,17 @@ namespace XCore
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Medium;
+			}
 		}
 
 		/// <summary>

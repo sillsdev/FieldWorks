@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2007, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2007' company='SIL International'>
-//		Copyright (c) 2007, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -26,13 +26,13 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -2557,6 +2557,14 @@ namespace SIL.FieldWorks.TE
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		/// <summary>
+		/// Mediator message processing priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
 		}
 
 		#endregion

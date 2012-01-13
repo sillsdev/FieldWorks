@@ -14,6 +14,9 @@
 				<string field="LexSenseOutline"></string>
 			</para>
 		</part>
+		<part id="LexSense-Jt-MLHeadWord" type="jtview">
+			<string field="MLOwnerOutlineName"  ws="$ws=vernacular"/>
+		</part>
 		<part id="LexSense-Jt-SummaryCollapsed" type="jtview">
 			<para>
 				<properties>
@@ -293,9 +296,9 @@
 			<string class="LexSense" field="Source"/>
 		</part>
 		<part id="LexSense-Jt-AnthropologyCategoriesForSense" type="jtview">
-			<seq field="AnthroCodes" layout="AbbrAndName" sep="; "/>
-		</part>
-		<part id="LexSense-Jt-AcademicDomainsForSense" type="jtview">
+	  <seq field="AnthroCodes" layout="PossibilityAbbrAndName"/>
+	</part>
+	<part id="LexSense-Jt-AcademicDomainsForSense" type="jtview">
 			<seq field="DomainTypes" layout="Name" sep=", "/>
 		</part>
 		<part id="LexSense-Jt-SenseTypeForSense" type="jtview">
@@ -848,7 +851,7 @@
 			<seq field="VariantFormEntryBackRefs" layout="publishStemSenseVariantRef" inheritSeps="true" targetclass="LexEntryRef"/>
 		</part>
 
-<part id="LexSense-Jt-SensesConfig">
+		<part id="LexSense-Jt-SensesConfig">
 			<seq class="LexSense" field="Senses" layout="publishStem" inheritSeps="true" />
 		</part>
 

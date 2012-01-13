@@ -18,6 +18,9 @@ DEFINES := $(DEFINES) -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUE
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
 	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
 endif
 
 LANG_SRC = $(SRC)/Language
@@ -63,7 +66,7 @@ LDLIBS = \
 	-luuid -lexpat
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O3 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -D_FORTIFY_SOURCE=0
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic
 
 ARFLAGS  = -crs
 
@@ -127,7 +130,6 @@ OBJ_LANG = \
 	$(INT_DIR)/LgUnicodeCollater.o \
 	$(INT_DIR)/LgIcuCollator.o \
 	$(INT_DIR)/LgInputMethodEditor.o \
-	$(INT_DIR)/LgTextServices.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/LgCodePageEnumerator.o \
 	$(INT_DIR)/LgKeymanHandler.o \
@@ -174,7 +176,11 @@ XMO_LANGSERV = \
 	$(COM_INT_DIR)/LgWordBreakSpaceSpec.xmo \
 
 OBJ_OTHER = \
+	$(INT_DIR)/ModuleEntry.o \
 	$(INT_DIR)/TextProps1.o \
+
+OBJ_LIB = \
+	$(INT_DIR)/Language_GUIDs.o
 
 #OBJ_GRUTIL = \
 #	$(GRUTIL_LIB)/GrUtil.o \
@@ -196,17 +202,20 @@ OBJ_ALL = $(OBJ_LANG) $(OBJ_LANGSERV) $(OBJ_OTHER) $(OBJ_GRUTIL)
 
 all: $(OUT_DIR)/libLanguage.so $(COM_OUT_DIR)/libLanguageTlb.a ComponentsMap link_check
 
-$(OUT_DIR)/libLanguage.so: $(OBJ_ALL) $(LINK_LIBS)
+$(OUT_DIR)/libLanguage.so: $(OBJ_ALL) $(LINK_LIBS) $(COM_OUT_DIR)/libLanguageTlb.a
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -shared -o $@ -Wl,-whole-archive $(COM_OUT_DIR)/libLanguageTlb.a -Wl,-no-whole-archive $(OBJ_ALL) $(LINK_LIBS) $(LDLIBS)
+else
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
+endif
 
-
-$(COM_OUT_DIR)/libLanguageTlb.a: $(INT_DIR)/Language_GUIDs.o
+$(COM_OUT_DIR)/libLanguageTlb.a: $(OBJ_LIB)
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libLanguage
+link_check: $(INT_DIR)/libLanguage
 
-libLanguage: $(OBJ_ALL) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
-	$(LINK.cc) -o $@ $^ $(LDLIBS)
+$(INT_DIR)/libLanguage: $(OBJ_ALL) $(GENERIC_OBJ)/main.o $(LINK_LIBS) $(COM_OUT_DIR)/libLanguageTlb.a
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(COM_OUT_DIR)/libLanguageTlb.a -Wl,-no-whole-archive $(GENERIC_OBJ)/main.o $(OBJ_ALL) $(LINK_LIBS) $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libLanguage.so
 	(export PATH=$(PATH):$(COM_DIR)/bin$(ARCH) && cd $(OUT_DIR) && generate-map.sh libLanguage.so > libLanguage.compmap)
@@ -266,4 +275,4 @@ $(COM_OUT_DIR)/libViewsTlb.a:
 -include $(PCHNAME:%.gch=%.d)
 
 clean:
-	$(RM) $(OUT_DIR)/libLanguage.so $(COM_OUT_DIR)/libLanguageTlb.a libLanguage $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
+	$(RM) $(OUT_DIR)/libLanguage.so $(COM_OUT_DIR)/libLanguageTlb.a $(INT_DIR)/libLanguage $(INT_DIR)/*.[od] $(INT_DIR)/*.gch

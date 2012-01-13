@@ -2281,6 +2281,35 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(String.Format("<Str>{0}<Run ws=\"en\"></Run>{0}</Str>{0}", Environment.NewLine), result);
 		}
 
+		/// <summary>
+		/// Test various cases of TsStringUtils.RemoveIllegalXmlChars().
+		/// </summary>
+		[Test]
+		public void RemoveIllegalXmlChars()
+		{
+			var tsf = TsStrFactoryClass.Create();
+			var ws = m_wsf.UserWs;
+			var empty = tsf.MakeString("", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(empty), Is.EqualTo(empty));
+			var good = tsf.MakeString("good", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(good), Is.EqualTo(good));
+			var controlChar = tsf.MakeString("ab\x001ecd", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(controlChar).Text, Is.EqualTo("abcd"));
+			var twoBadChars = tsf.MakeString("\x000eabcde\x001f", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(twoBadChars).Text, Is.EqualTo("abcde"));
+			var allBad = tsf.MakeString("\x0000\x0008\x000b\x000c\xfffe\xffff", ws);
+			Assert.That(string.IsNullOrEmpty(TsStringUtils.RemoveIllegalXmlChars(allBad).Text));
+			var goodSpecial = tsf.MakeString("\x0009\x000a\x000d \xfffd", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(goodSpecial), Is.EqualTo(goodSpecial));
+			var badIsolatedLeadingSurrogate = tsf.MakeString("ab\xd800c\xdbff", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(badIsolatedLeadingSurrogate).Text, Is.EqualTo("abc"));
+			var goodSurrogates = tsf.MakeString("\xd800\xdc00 \xdbff\xdfff", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(goodSurrogates), Is.EqualTo(goodSurrogates));
+			var badIsolatedTrailingSurrogate = tsf.MakeString("\xdc00xy\xdcffz", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(badIsolatedTrailingSurrogate).Text, Is.EqualTo("xyz"));
+			var outOfOrderSurrogates = tsf.MakeString("\xd800\xdc00\xdc00\xdbffz", ws);
+			Assert.That(TsStringUtils.RemoveIllegalXmlChars(outOfOrderSurrogates).Text, Is.EqualTo("\xd800\xdc00z"));
+		}
 
 		#endregion
 	}

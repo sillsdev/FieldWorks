@@ -9,29 +9,25 @@
 #endregion
 //
 // File: GenerateTemplateDlg.cs
-// Responsibility: Bogle
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.PhraseTranslationHelper
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// Dialog to present user with options for generating an LCF file to use for generating a
+	/// printable script to do comprehension checking.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class GenerateTemplateDlg : Form
 	{
-		#region
+		#region RangeOption enum
 		public enum RangeOption
 		{
 			WholeBook,
@@ -43,6 +39,9 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Data members
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
+		private readonly List<string> m_sectionRefs = new List<string>();
+		private BCVRef m_startRef = new BCVRef();
+		private BCVRef m_endRef = new BCVRef();
 		#endregion
 
 		#region Constructor and initialization methods
@@ -52,7 +51,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal GenerateTemplateDlg(string projectName, GenerateTemplateSettings settings,
-			IEnumerable<int> canonicalBookIds)
+			IEnumerable<int> canonicalBookIds, IEnumerable<KeyValuePair<string, string>> sections)
 		{
 			InitializeComponent();
 			m_chkEnglishQuestions.Tag = btnChooseEnglishQuestionColor;
@@ -66,6 +65,7 @@ namespace SILUBS.PhraseTranslationHelper
 			m_sFilenameTemplate = string.Format(m_txtFilename.Text, projectName, "{0}");
 
 			LoadBooks(canonicalBookIds);
+			LoadSectionCombos(sections);
 
 			if (settings != null)
 			{
@@ -140,15 +140,33 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Loads the three combo boxes with section information (note that these are not the
+		/// section heads in the vernacular Scripture but rather from the master question file).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal void LoadSectionCombos()
+		private void LoadSectionCombos(IEnumerable<KeyValuePair<string, string>> sections)
 		{
+			foreach (KeyValuePair<string, string> sectionInfo in sections)
+			{
+				m_sectionRefs.Add(sectionInfo.Key);
+				m_cboSection.Items.Add(sectionInfo.Value);
+				m_cboStartSection.Items.Add(sectionInfo.Value);
+				m_cboEndSection.Items.Add(sectionInfo.Value);
+			}
 		}
 		#endregion
 
 		#region Properties
+		public BCVRef VerseRangeStartRef
+		{
+			get { return m_startRef; }
+		}
+
+		public BCVRef VerseRangeEndRef
+		{
+			get { return m_endRef; }
+		}
+
 		public string FileName
 		{
 			get
@@ -261,13 +279,23 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
-		private void m_cboBooks_SelectedIndexChanged(object sender, EventArgs e)
+		private void UpdateTitleAndFilenameForSelectedBook(object sender, EventArgs e)
 		{
 			if (m_cboBooks.SelectedIndex < 0)
 				return;
 			string sBook = (string)m_cboBooks.SelectedItem;
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, sBook, m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sBook, m_sTitleTemplate);
+		}
+
+		private void UpdateTitleAndFilenameForSingleSection(object sender, EventArgs e)
+		{
+			if (m_cboSection.SelectedIndex < 0)
+				return;
+			string sRef = m_sectionRefs[m_cboSection.SelectedIndex];
+			BCVRef.ParseRefRange(sRef, ref m_startRef, ref m_endRef);
+			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(sRef), m_sFilenameTemplate);
+			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}
 
 		private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
@@ -332,6 +360,77 @@ namespace SILUBS.PhraseTranslationHelper
 			if (Path.GetDirectoryName(cssFile) != m_lblFolder.Text)
 				m_chkAbsoluteCssPath.Checked = true;
 			m_chkOverwriteCss.Enabled = File.Exists(cssFile);
+		}
+
+		private void m_cboBooks_Enter(object sender, EventArgs e)
+		{
+			if (!m_rdoWholeBook.Checked)
+				m_rdoWholeBook.Checked = true;
+		}
+
+		private void m_cboSection_Enter(object sender, EventArgs e)
+		{
+			if (!m_rdoSingleSection.Checked)
+				m_rdoSingleSection.Checked = true;
+		}
+
+		private void SectionRangeCombo_Enter(object sender, EventArgs e)
+		{
+			if (!m_rdoSectionRange.Checked)
+				m_rdoSectionRange.Checked = true;
+		}
+
+		private void m_cboStartSection_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (m_cboStartSection.SelectedIndex > m_cboEndSection.SelectedIndex)
+				m_cboEndSection.SelectedIndex = m_cboStartSection.SelectedIndex;
+			if (UpdateSectionRangeStartRef())
+				UpdateTitleAndFilenameForSectionRange();
+		}
+
+		private void m_cboEndSection_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (m_cboStartSection.SelectedIndex > m_cboEndSection.SelectedIndex)
+				m_cboStartSection.SelectedIndex = m_cboEndSection.SelectedIndex;
+			if (UpdateSectionRangeEndRef())
+				UpdateTitleAndFilenameForSectionRange();
+		}
+
+		private void m_rdoSectionRange_CheckedChanged(object sender, EventArgs e)
+		{
+			if (m_rdoSectionRange.Checked && UpdateSectionRangeStartRef() && UpdateSectionRangeEndRef())
+				UpdateTitleAndFilenameForSectionRange();
+		}
+		#endregion
+
+		#region Private helper methods
+		private bool UpdateSectionRangeStartRef()
+		{
+			if (m_cboStartSection.SelectedIndex < 0)
+				return false;
+			string sRef = m_sectionRefs[m_cboStartSection.SelectedIndex];
+			BCVRef dummy = new BCVRef();
+			BCVRef.ParseRefRange(sRef, ref m_startRef, ref dummy);
+			return true;
+		}
+
+		private bool UpdateSectionRangeEndRef()
+		{
+			if (m_cboEndSection.SelectedIndex < 0)
+				return false;
+			string sRef = m_sectionRefs[m_cboEndSection.SelectedIndex];
+			BCVRef dummy = new BCVRef();
+			BCVRef.ParseRefRange(sRef, ref dummy, ref m_endRef);
+			return true;
+		}
+
+		private void UpdateTitleAndFilenameForSectionRange()
+		{
+			if (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0)
+				return;
+			string sRef = BCVRef.MakeReferenceString(m_startRef, m_endRef, ".", "-");
+			UpdateTextBoxWithSelectedPassage(m_txtFilename, sRef, m_sFilenameTemplate);
+			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}
 		#endregion
 	}

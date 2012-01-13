@@ -237,6 +237,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion
 
 		public bool OnInflTemplateInsertSlot(object cmd)

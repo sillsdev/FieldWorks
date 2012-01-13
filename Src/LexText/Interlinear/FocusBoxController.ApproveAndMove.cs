@@ -8,16 +8,14 @@
 // </copyright>
 #endregion
 //
-// File: InterlinDocForAnalysis.cs
+// File: FocusBoxController.ApproveAndMove.cs
 // Responsibility: pyle
 //
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -25,7 +23,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
@@ -45,6 +42,18 @@ namespace SIL.FieldWorks.IText
 
 		/// <summary>
 		/// Approves an analysis and moves the selection to the next wordform or the
+		/// next Interlinear line.
+		/// Normally, this is invoked as a result of pressing the <Enter> key
+		/// or clicking the "Approve and Move Next" green check in an analysis.
+		/// </summary>
+		/// <param name="undoRedoText"></param>
+		internal virtual void ApproveAndMoveNext(ICommandUndoRedoText undoRedoText)
+		{
+			ApproveAndMoveNextRecursive(undoRedoText);
+		}
+
+		/// <summary>
+		/// Approves an analysis and moves the selection to the next wordform or the
 		/// next Interlinear line. An Interlinear line is one of the configurable
 		/// "lines" in the Tools->Configure->Interlinear Lines dialog, not a segement.
 		/// The list of lines is collected in choices[] below.
@@ -52,105 +61,57 @@ namespace SIL.FieldWorks.IText
 		/// Normally, this is invoked as a result of pressing the <Enter> key in an analysis.
 		/// </summary>
 		/// <param name="undoRedoText"></param>
-		internal virtual void ApproveAndMoveNext(ICommandUndoRedoText undoRedoText)
+		/// <returns>true if IP moved on, false otherwise</returns>
+		internal virtual bool ApproveAndMoveNextRecursive(ICommandUndoRedoText undoRedoText)
 		{
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
 			var nextWordform = navigator.GetNextWordformOrDefault(SelectedOccurrence);
-			int tryAnnotationIndex = -1; // if this gets set, try to select an annotation
-			if (nextWordform == null || nextWordform.Segment != SelectedOccurrence.Segment)
-			{   // We're at the end of a segment...try to go to the free translation etc. of SelectedOccurrence.Segment
+			if (nextWordform == null || nextWordform.Segment != SelectedOccurrence.Segment ||
+				nextWordform == SelectedOccurrence)
+			{
+				// We're at the end of a segment...try to go to an annotation of SelectedOccurrence.Segment
+				// or possibly (See LT-12229:If the nextWordform is the same as SelectedOccurrence)
+				// at the end of the text.
 				UpdateRealFromSandbox(undoRedoText, true, null); // save work done in sandbox
-				var lines = InterlinDoc.LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
-				Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
-				var annotationsAfter = lines.SkipWhile(line => line.WordLevel);
-				tryAnnotationIndex = lines.Count() - annotationsAfter.Count();
-				if (annotationsAfter.Count() > 0)
-				{   // We want to select at the start of this annotation if it is not a null note.
-					bool isaNote = annotationsAfter.First().Flid == InterlinLineChoices.kflidNote;
-					if (isaNote && SelectedOccurrence.Segment.NotesOS.Count == 0)
-					{
-						// this note was not added - skip to the next non-note annotation
-						var otherAnnotations = annotationsAfter.SkipWhile(line => line.Flid == InterlinLineChoices.kflidNote);
-						tryAnnotationIndex = lines.Count() - otherAnnotations.Count();
-						if (otherAnnotations.Count() == 0)
-							tryAnnotationIndex = -1; // no more annotations, go to an analysis in the next segment.
-					}
+				// try to select the first configured annotation (not a null note) in this segment
+				if (InterlinDoc.SelectFirstTranslationOrNote())
+				{   // IP should now be on an annotation line.
+					return true;
 				}
-				else // no annotations to go to
-					tryAnnotationIndex = -1;
-				if (tryAnnotationIndex > -1)
-				{   // try to select this annotation
-					var sel = InterlinDoc.MakeSandboxSel();
-					int clev = sel.CLevels(true);
-					clev--; // result it returns is one more than what the AllTextSelInfo routine wants.
-					ITsTextProps ttp;
-					SelLevInfo[] rgvsli;
-					using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative(clev, typeof (SelLevInfo)))
-					{
-						int ihvoRoot;
-						int cpropPrevious;
-						int ichAnchor;
-						int ichEnd;
-						int ihvoEnd1;
-						int tag, ws;
-						bool fAssocPrev;
-						sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
-										   out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
-						rgvsli = (SelLevInfo[]) MarshalEx.NativeToArray(rgvsliTemp, clev, typeof (SelLevInfo));
-					}
-					int cprop = 2;
-					//IVwPropertyStore ps;
-					//for (int i = 0; i < cprop; i++)
-					//{
-					//    sel.PropInfo(true, cprop - i - 1, out vsli[i].hvo, out vsli[i].tag, out vsli[i].ihvo,
-					//                 out vsli[i].cpropPrevious, out ps);
-					//}
-
-					// What non-word "choice" ie., translation text or note is on this line?
-					int tagTextProp = -1;
-					var noteLevel = new SelLevInfo();
-					switch (lines.Skip(tryAnnotationIndex).First().Flid)
-					{
-						case InterlinLineChoices.kflidFreeTrans:
-							tagTextProp = SegmentTags.kflidFreeTranslation;
-							break;
-						case InterlinLineChoices.kflidLitTrans:
-							tagTextProp = SegmentTags.kflidLiteralTranslation;
-							break;
-						case InterlinLineChoices.kflidNote:
-							tagTextProp = NoteTags.kflidContent;
-							cprop = 3;
-//							noteLevel.cpropPrevious = 0;
-							noteLevel.ihvo = 0;
-							noteLevel.tag = SegmentTags.kflidNotes;
-							break;
-						default:
-							break;
-					}
-					Debug.Assert(tagTextProp != -1, "In response to <Enter> FocusBoxControl found a new non-word line with flid = " + lines.Skip(tryAnnotationIndex).First().Flid);
-					var vsli = new SelLevInfo[cprop];
-					for (int i = 0; i < 2; i++)
-						vsli[i] = rgvsli[i];
-					if (tagTextProp == NoteTags.kflidContent)
-					{   // shift the indices
-						vsli[2] = vsli[1];
-						vsli[1] = vsli[0];
-						vsli[0] = noteLevel;
-					}
-					int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
-					InterlinDoc.RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
-														  0, 0, 0, false, -1, null, true);
-					InterlinDoc.Focus();
-					InterlinDoc.TryHideFocusBoxAndUninstall();
-					return;
-				}
-				if (nextWordform == null)
-					return; // no place to go
 			}
-			// Otherwise, continue on to the next wordform.
-			UpdateRealFromSandbox(undoRedoText, true, nextWordform);
-			// do the move.
-			InterlinDoc.SelectOccurrence(nextWordform);
+			if (nextWordform != null)
+			{
+				bool dealtWith = false;
+				if (nextWordform.Segment != SelectedOccurrence.Segment)
+				{   // Is there another segment before the next wordform?
+					// It would have no analyses or just punctuation.
+					// It could have "real" annotations.
+					AnalysisOccurrence realAnalysis;
+					ISegment nextSeg = InterlinDoc.GetNextSegment
+						(SelectedOccurrence.Segment.Owner.IndexInOwner,
+						 SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
+					if (nextSeg != null && nextSeg != nextWordform.Segment)
+					{   // This is a segment before the one contaning the next wordform.
+						if (nextSeg.AnalysesRS.Where(an => an.HasWordform).Count() > 0)
+						{   // Set it as the current segment and recurse
+							SelectedOccurrence = new AnalysisOccurrence(nextSeg, 0); // set to first analysis
+							dealtWith = ApproveAndMoveNextRecursive(undoRedoText);
+						}
+						else
+						{	// only has annotations: focus on it and set the IP there.
+							InterlinDoc.SelectFirstTranslationOrNote(nextSeg);
+							return true; // IP should now be on an annotation line.
+						}
+					}
+				}
+				if (!dealtWith)
+				{   // If not dealt with continue on to the next wordform.
+					UpdateRealFromSandbox(undoRedoText, true, nextWordform);
+					// do the move.
+					InterlinDoc.SelectOccurrence(nextWordform);
+				}
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -179,7 +140,6 @@ namespace SIL.FieldWorks.IText
 				InterlinDoc.SuspendResettingAnalysisCache = true;
 				UndoableUnitOfWorkHelper.Do(undoText, redoText,
 					Cache.ActionHandlerAccessor, () => ApproveAnalysisAndMove(fSaveGuess, nextWordform));
-
 			}
 			finally
 			{
@@ -188,10 +148,8 @@ namespace SIL.FieldWorks.IText
 			var newAnalysis = SelectedOccurrence.Analysis;
 			InterlinDoc.UpdatingOccurrence(oldAnalysis, newAnalysis);
 			var newWag = new AnalysisTree(origWordform.Analysis);
-			var wordforms = new HashSet<IWfiWordform>();
-			wordforms.Add(origWag.Wordform);
-			wordforms.Add(newWag.Wordform);
-			InterlinDoc.UpdateGuesses(InterlinDocRootSiteBase.HasMatchingWordformsNeedingAnalysis, wordforms);
+			var wordforms = new HashSet<IWfiWordform> { origWag.Wordform, newWag.Wordform };
+			InterlinDoc.UpdateGuesses(wordforms);
 		}
 
 		protected virtual bool ShouldCreateAnalysisFromSandbox(bool fSaveGuess)
@@ -351,7 +309,6 @@ namespace SIL.FieldWorks.IText
 			AnalysisOccurrence OccurrenceBeforeApproveAndMove { get; set; }
 			AnalysisOccurrence OccurrenceAfterApproveAndMove { get; set; }
 
-
 			private UndoRedoApproveAnalysis AddUndoRedoAction(AnalysisOccurrence currentAnnotation, AnalysisOccurrence newAnnotation)
 			{
 				if (Cache.ActionHandlerAccessor != null && currentAnnotation != newAnnotation)
@@ -377,11 +334,8 @@ namespace SIL.FieldWorks.IText
 				OccurrenceBeforeApproveAndMove = null;
 				OccurrenceAfterApproveAndMove = null;
 			}
-
-
-
-
 		}
+
 		/// <summary>
 		/// This class allows smarter UndoRedo for ApproveAnalysis, so that the FocusBox can move appropriately.
 		/// </summary>
@@ -545,7 +499,6 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 			}
-
 			return true; // If we can't find anything to complain about, it's fully analyzed.
 		}
 
@@ -567,9 +520,9 @@ namespace SIL.FieldWorks.IText
 		{
 			// Go through the entire text looking for matching analyses that can be set to the new
 			// value.
-			var oldWf = SelectedOccurrence.Analysis.Wordform;
 			if (SelectedOccurrence == null)
 				return;
+			var oldWf = SelectedOccurrence.Analysis.Wordform;
 			var stText = SelectedOccurrence.Paragraph.Owner as IStText;
 			if (stText == null || stText.ParagraphsOS.Count == 0)
 				return; // paranoia, we should be in one of its paragraphs.
@@ -689,6 +642,13 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
+		public bool OnDisplayApproveAll(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = CanNavigateBundles;
+			display.Visible = display.Enabled;
+			return true; //we've handled this
+		}
+
 		public bool OnDisplayBrowseMoveNextSameLine(object commandObject, ref UIItemDisplayProperties display)
 		{
 			return OnDisplayBrowseMoveNext(commandObject, ref display);
@@ -727,6 +687,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnApproveAndMoveNext(object cmd)
 		{
+
 			ApproveAndMoveNext(cmd as ICommandUndoRedoText);
 			return true;
 		}

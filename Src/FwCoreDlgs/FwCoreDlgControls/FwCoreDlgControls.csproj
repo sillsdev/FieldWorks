@@ -158,6 +158,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="Keyboarding, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Keyboarding.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<None Include="AssemblyInfo.cs" />

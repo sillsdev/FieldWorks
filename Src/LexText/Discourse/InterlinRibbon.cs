@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.Discourse
 			SetupAndOpenInnerPile(vwenv);
 			var frag = (m_ribbon.Decorator as InterlinRibbonDecorator).OccurrenceFromHvo(hvo)
 				as LocatedAnalysisOccurrence;
-			DisplayAnalysisAndCloseInnerPile(vwenv, frag);
+			DisplayAnalysisAndCloseInnerPile(vwenv, frag, false);
 		}
 
 		protected override void GetSegmentLevelTags(FdoCache cache)

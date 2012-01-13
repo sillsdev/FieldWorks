@@ -755,11 +755,11 @@ STDMETHODIMP VwNotifier::PropChanged(HVO hvo, int tag, int ivMin, int cvIns, int
 					// Use the view constructor one level up.
 					VwBox * pboxFirstProp;
 					int itssFirstProp;
-					int tag;
-					int iprop;
+					int tagTmp;
+					int ipropTmp;
 					Parent()->GetPropForSubNotifier(this, &pboxFirstProp,
-						&itssFirstProp, &tag, &iprop);
-					pvvc2 = Parent()->Constructors()[iprop];
+						&itssFirstProp, &tagTmp, &ipropTmp);
+					pvvc2 = Parent()->Constructors()[ipropTmp];
 				}
 				pvpbox->Source()->AddString(qtssNew, pzvps, pvvc2);
 				//MakeEmbeddedBoxes(pvpbox, qtssNew, pvvc2);
@@ -940,10 +940,18 @@ VwNotifier::UpdateType VwNotifier::UpdateLazyProp(VwBox * & pboxFirst, VwBox * &
 	HvoVec vhvoInsItems;
 	for (int ihvo = ihvoMin; ihvo < ihvoMin + chvoIns; ihvo++)
 	{
-		HVO hvoItem;
-		CheckHr(psda->get_VecItem(m_hvo, tag, ihvo, &hvoItem));
-		vhvoInsItems.Push(hvoItem);
+		int iDisplayIndex;
+		CheckHr(psda->GetDisplayIndex(m_hvo, tag, ihvo, &iDisplayIndex));
+		if (iDisplayIndex >= 0)
+		{
+			HVO hvoItem;
+			CheckHr(psda->get_VecItem(m_hvo, tag, iDisplayIndex, &hvoItem));
+			vhvoInsItems.Push(hvoItem);
+		}
+		else
+			return kutFail;	// item being updated is no longer displayed, will need to rebuild display
 	}
+
 	NotifierMap * pmmboxqnote;
 	prootb->GetNotifierMap(&pmmboxqnote);
 
@@ -1762,11 +1770,11 @@ void VwNotifier::GetPropForSubNotifier(VwNotifier * pnote, VwBox ** ppboxFirstPr
 			// notifier in the mpbox, and it knows which property.
 			if (pmpbox->Notifier() == this)
 			{
-				int iprop = pmpbox->ParentPropIndex();
-				*piprop = iprop;
-				*ppboxFirstProp = Boxes()[iprop];
-				*pitssFirstProp = StringIndexes()[iprop];
-				*ptag = Tags()[iprop];
+				int ipropTmp = pmpbox->ParentPropIndex();
+				*piprop = ipropTmp;
+				*ppboxFirstProp = Boxes()[ipropTmp];
+				*pitssFirstProp = StringIndexes()[ipropTmp];
+				*ptag = Tags()[ipropTmp];
 				return;
 			}
 		}
@@ -2618,15 +2626,15 @@ public:
 							cChildBoxesPrev++;
 					}
 					// Now find the index of the corresponding TsString.
-					for (int itss = 0; itss < pvpbox->Source()->CStrings(); itss++)
+					for (int i = 0; i < pvpbox->Source()->CStrings(); i++)
 					{
 						ITsStringPtr qtssT;
-						pvpbox->Source()->StringAtIndex(itss, &qtssT);
+						pvpbox->Source()->StringAtIndex(i, &qtssT);
 						if (!qtssT)
 						{
 							if (cChildBoxesPrev == 0)
 							{
-								itssLim = itss + 1;
+								itssLim = i + 1;
 								break;
 							}
 							cChildBoxesPrev--;

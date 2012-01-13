@@ -42,12 +42,7 @@ using std::max;
 //:>	Interfaces.
 //:>**********************************************************************************
 #include "FwKernelTlb.h"
-//#include "DbAccessTlb.h"		// Provides Database access for persistence.
-//#include "LanguageTlb.h"
-#include "FwCellarTlb.h"
-#ifdef LANG_MODEL
-#include "LanguageModelTlb.h"
-#endif // LANG_MODEL
+#include "CellarConstants.h"
 // Special interface mainly used for Graphite engine not defined in an IDH.
 #include "../Graphite/GrEngine/ITraceControl.h"
 #ifndef ITraceControlPtr // for portability I don't think this header defines this.

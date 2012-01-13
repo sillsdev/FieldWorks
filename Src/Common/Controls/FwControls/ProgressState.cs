@@ -36,13 +36,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary/>
 		protected IProgressDisplayer m_progressBar;
 
-		private Cursor m_previousCursor;
+		private WaitCursor m_wait;
 
 		/// <summary/>
 		public ProgressState(IProgressDisplayer progressBar)
 		{
-			m_previousCursor = Cursor.Current;
-			Cursor.Current = Cursors.WaitCursor;
+			m_wait = new WaitCursor(Form.ActiveForm);
 
 			m_percentDone = 0;
 			m_progressBar = progressBar;
@@ -133,8 +132,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_isDisposed)
 				return;
 
-			Cursor.Current = m_previousCursor;
-
 			if (disposing)
 			{
 				// Dispose managed resources here.
@@ -142,6 +139,11 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					m_progressBar.ClearStateProvider();
 					//m_progressBar.Dispose(); // We don't own this!! (JohnT)
+				}
+				if (m_wait != null)
+				{
+					m_wait.Dispose();
+					m_wait = null;
 				}
 			}
 

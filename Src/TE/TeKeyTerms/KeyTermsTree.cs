@@ -20,10 +20,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

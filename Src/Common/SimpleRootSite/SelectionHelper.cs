@@ -694,7 +694,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fStopAtFirstWs"><c>true</c> if caller only cares about the first ws
 		/// found; <c>false</c> if the caller wants a ws that represents the whole selection
 		/// (if any)</param>
-		/// <returns>The first writing system in the selection</returns>
+		/// <returns>The first writing system in the selection, or 0 if we can't find a writing
+		/// system or, if <paramref name="fStopAtFirstWs"/> is <c>false</c>, selection contains
+		/// more then one writing system.</returns>
 		/// <remarks>ENHANCE JohnT: Should this be a COM method for IVwSelection?</remarks>
 		/// -----------------------------------------------------------------------------------
 		private static int GetWsOfSelection(IVwSelection vwsel, bool fStopAtFirstWs)
@@ -1060,12 +1062,22 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// we want to pass fInstall=false to MakeTextSelection so that it doesn't notify
 			// the RootSite of the selection change.
-			IVwSelection vwSelAnchor = rootBox.MakeTextSelection(
-				m_selInfo[iAnchor].ihvoRoot, m_selInfo[iAnchor].rgvsli.Length,
-				m_selInfo[iAnchor].rgvsli, m_selInfo[iAnchor].tagTextProp,
-				m_selInfo[iAnchor].cpropPrevious, m_selInfo[iAnchor].ich, m_selInfo[iAnchor].ich,
-				m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev, m_selInfo[iAnchor].ihvoEnd,
-				null, false);
+			IVwSelection vwSelAnchor;
+			try
+			{
+				vwSelAnchor = rootBox.MakeTextSelection(
+					m_selInfo[iAnchor].ihvoRoot, m_selInfo[iAnchor].rgvsli.Length,
+					m_selInfo[iAnchor].rgvsli, m_selInfo[iAnchor].tagTextProp,
+					m_selInfo[iAnchor].cpropPrevious, m_selInfo[iAnchor].ich, m_selInfo[iAnchor].ich,
+					m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev, m_selInfo[iAnchor].ihvoEnd,
+					null, false);
+			}
+			catch (Exception)
+			{
+				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0,
+					"Making the anchor selection failed, this is probably an empty editable field.");
+				throw;
+			}
 			IVwSelection vwSelEnd;
 			try
 			{
@@ -1292,6 +1304,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void RestoreScrollPos()
 		{
 			IRootSite site = RootSite as IRootSite;
+			if (!Selection.IsValid)
+			{
+				SetSelection(false, false);
+				if (Selection == null || !Selection.IsValid)
+					return; // apparently we can't successfully make an equivalent selection.
+			}
 			if (site != null)
 				site.ScrollSelectionToLocation(Selection, m_dyIPTop);
 		}

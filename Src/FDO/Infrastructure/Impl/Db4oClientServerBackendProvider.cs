@@ -281,9 +281,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									 select cd).ToList();
 				if (unseenCommits.Count == 0)
 					return false;
-				m_lastWriteGenerationSeen = unseenCommits.Last().WriteGeneration;
 				var idFactory = m_cache.ServiceLocator.GetInstance<ICmObjectIdFactory>();
 				unseenCommits.Sort((x, y) => x.WriteGeneration - y.WriteGeneration);
+				m_lastWriteGenerationSeen = unseenCommits.Last().WriteGeneration; // after sorting, so the last one is truly the greatest
 				var newbies = new Dictionary<Guid, ICmObjectSurrogate>();
 				var dirtballs = new Dictionary<Guid, ICmObjectSurrogate>();
 				var goners = new HashSet<Guid>();

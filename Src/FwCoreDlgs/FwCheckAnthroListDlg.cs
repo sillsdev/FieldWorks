@@ -201,6 +201,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", m_helpTopic);
 		}
 
+		private void textBox4_Click(object sender, EventArgs e)
+		{
+			m_radioFRAME.Checked = true;
+			m_radioFRAME_CheckedChanged(sender, e);
+		}
+
+		private void textBox3_Click(object sender, EventArgs e)
+		{
+			m_radioOCM.Checked = true;
+			m_radioOCM_CheckedChanged(sender, e);
+		}
+
+		private void textBox2_Click(object sender, EventArgs e)
+		{
+			m_radioCustom.Checked = true;
+			m_radioCustom_CheckedChanged(sender, e);
+		}
 	}
 
 	/// <summary>

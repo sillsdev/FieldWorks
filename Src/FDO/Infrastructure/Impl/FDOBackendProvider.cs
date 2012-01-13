@@ -386,6 +386,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			HashSet<ICmObjectId> goners;
 			HashSet<ICmObjectOrSurrogate> dirtballs = DoMigrationBasics(currentDataStoreVersion, out goners, out newbies, progressDlg);
 			Commit(newbies, dirtballs, goners);
+			// In case there is a problem when we open it, we'd like to have a current database to try to repair.
+			CompleteAllCommits();
 		}
 
 		private HashSet<ICmObjectOrSurrogate> DoMigrationBasics(int currentDataStoreVersion,

@@ -33,6 +33,21 @@ namespace XCore
 	{
 	}
 
+	internal class TupleComparer : IComparer<Tuple<int, IxCoreColleague>>
+	{
+		#region IComparer<Tuple<int,IxCoreColleague>> Members
+
+		public int Compare(Tuple<int, IxCoreColleague> x, Tuple<int, IxCoreColleague> y)
+		{
+			int c = x.Item1 - y.Item1;
+			if (c != 0)
+				return c;
+			return x.Item1.GetHashCode() - y.Item2.GetHashCode();
+		}
+
+		#endregion
+	}
+
 	/// <summary></summary>
 	public sealed class Mediator : Component, IFWDisposable
 	{
@@ -145,7 +160,7 @@ namespace XCore
 		private PropertyTable m_propertyTable;
 		private CommandSet m_commandSet;
 //		private bool m_allowCommandsToExecute;
-		private Set<IxCoreColleague> m_colleagues = new Set<IxCoreColleague>();
+		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>(new TupleComparer());
 		private IxCoreColleague m_temporaryColleague;
 		private Dictionary<string, string> m_pathVariables = new Dictionary<string, string>();
 		private Dictionary<Type, Dictionary<string, MethodInfo>> m_TypeMethodInfo = new Dictionary<Type, Dictionary<string, MethodInfo>>();
@@ -318,7 +333,11 @@ namespace XCore
 				// Use a copy of the m_colleagues Set,
 				// since the Dispose methods on the colleague should remove itself from m_colleagues,
 				// which will cause an exception to be throw (list changed while spinning through it.
-				Set<IxCoreColleague> copyOfColleagues = new Set<IxCoreColleague>(m_colleagues.ToArray());
+				Set<IxCoreColleague> copyOfColleagues = new Set<IxCoreColleague>();
+				foreach (var key in m_colleagues.Keys)
+				{
+					copyOfColleagues.Add(key.Item2);
+				}
 				m_colleagues.Clear(); // Just get rid of them now.
 				foreach (IxCoreColleague icc in copyOfColleagues)
 				{
@@ -1101,7 +1120,7 @@ namespace XCore
 				//Debug.Assert(m_colleagues != null);
 				//we need to copy our list of colleagues because the list of colleagues may change while we are
 				//iterating over this list, which is not allowed if we simply use an enumerater.
-				IxCoreColleague[] targets = m_colleagues.ToArray();
+				IList<Tuple<int, IxCoreColleague>> targets = new List<Tuple<int, IxCoreColleague>>(m_colleagues.Keys);
 				//to catch infinite loops
 				var previous = new HashSet<object>(); // Set of IxCoreColleague targets we have tried to send the message to.
 
@@ -1113,15 +1132,15 @@ namespace XCore
 				// Followup note by RandyR: by the time we get to .Net 2.0, such time savings have become myths,
 				// at least for object arryas such as targets.
 				// The jury is still out on any performance penalty of foreach when using generics.
-				for (int index = 0; index < targets.Length; index++) // foreach (IxCoreColleague host in targets)
+				for (int index = 0; index < targets.Count; index++) // foreach (IxCoreColleague host in targets)
 				{
 					if (!ProcessMessages)
 						return true;
 
-					IxCoreColleague host = targets[index];
+					IxCoreColleague host = targets[index].Item2;
 					//colleagues can be removed when something (like the window) handles this event
 					//so make sure this guy is still legit!
-					if (!m_colleagues.Contains(host))
+					if (!m_colleagues.ContainsKey(targets[index]))
 						continue;
 
 					if (invokeSwitch.TraceVerbose)
@@ -1586,7 +1605,7 @@ namespace XCore
 			CheckDisposed();
 
 			StringBuilder sb = new StringBuilder("");
-			foreach (IxCoreColleague icc in m_colleagues)
+			foreach (Tuple<int, IxCoreColleague> icc in m_colleagues.Keys)
 			{
 				sb.AppendLine(icc.ToString());
 			}
@@ -1608,24 +1627,23 @@ namespace XCore
 		{
 			CheckDisposed();
 
-			// Note: m_colleagues is now a Set, so would ignore the attempt to add it again.
+			Tuple<int, IxCoreColleague> pair = new Tuple<int, IxCoreColleague>(colleague.Priority, colleague);
+			// Note: m_colleagues is now a Dictionary of Tuples, so would ignore the attempt to add it again.
 			// The problem with that is it is really a programming error to add them more than once.
 			// So, we will keep the exception.
-			if (m_colleagues.Contains(colleague))
+			if (m_colleagues.ContainsKey(pair))
 				throw new ApplicationException ("This object is already in the list of colleagues.");
 
-			m_colleagues.Add(colleague);
+			m_colleagues.Add(pair, true);
 		}
 
 		public void RemoveColleague(IxCoreColleague colleague)
 		{
 			CheckDisposed();
 			// No need to check if m_colleagues is null.
-			// if it hasn't been dispoded, as it will always be non-null.
-			// If it has been disposed, then the caller should be fixed to be better
-			// behaved about calling disposed objects.  (Read: it shouldn't ever call code on disposed objects.)
-			//if (m_colleagues != null)
-			m_colleagues.Remove(colleague);
+			// if it hasn't been disposed it will always be non-null.
+			// If it has been disposed, then the caller needs be fixed to prevent calling disposed objects.
+			m_colleagues.Remove(new Tuple<int, IxCoreColleague>(colleague.Priority, colleague));
 		}
 		#endregion
 

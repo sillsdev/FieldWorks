@@ -292,6 +292,22 @@ namespace XCore
 			group.PopulateNow();
 			CreateUIForChoiceGroup(group);
 
+			bool menuOK = false;
+			foreach (var menuItem in item.DropDown.Items)
+			{
+				if(menuItem is ToolStripMenuItem)
+				{
+					if(((ToolStripMenuItem) menuItem).Text == "Show in Word Analyses")
+					{
+						menuOK = true;
+						break;
+					}
+				}
+			}
+			if(!menuOK)
+			{
+				Debug.Print("Show in Word Analyses is missing: \r\n" +  m_mediator.GetColleaguesDumpString());
+			}
 			// NOTE: we intentionally leave contextMenu undisposed. If we dispose it after
 			// contextMenu.Show then the mouse clicks on the menu items don't get handled.
 			// We would have to add an Application.DoEvents() after the Show (which might

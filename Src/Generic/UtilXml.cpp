@@ -840,7 +840,7 @@ STDMETHODIMP XmlStringStream::Read(void * pv, UCOMINT32 cb, UCOMINT32 * pcbRead)
 		*pb++ = (byte)(n << 4 | nT);
 		--cb;
 	}
-	int cb = pb - (byte *)pv;
+	cb = pb - (byte *)pv;
 
 	// Nuke the part of the string we wrote out.
 	m_sta.Replace(0, cb << 1, (const char *)NULL);

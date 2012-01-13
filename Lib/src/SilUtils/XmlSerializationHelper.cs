@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Xml;
@@ -394,6 +395,25 @@ namespace SIL.Utils
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads a list of objects of the specified type by deserializing from the given file.
+		/// If the file does not exist or an error occurs during deserialization, a new list is
+		/// created.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static List<T> LoadOrCreateList<T>(string filename, bool reportErrorToUser)
+		{
+			List<T> list = null;
+			if (File.Exists(filename))
+			{
+				Exception e;
+				list = DeserializeFromFile<List<T>>(filename, out e);
+				if (e != null && reportErrorToUser)
+					MessageBox.Show(e.ToString());
+			}
+			return list ?? new List<T>();
+		}
 		#endregion
 	}
 }

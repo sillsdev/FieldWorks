@@ -82,7 +82,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return (context == ContextValues.Internal ||
 				context == ContextValues.InternalMappable ||
-				context == ContextValues.InternalConfigureView ||
 				context == ContextValues.Note);
 		}
 	}

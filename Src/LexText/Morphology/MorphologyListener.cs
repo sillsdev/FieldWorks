@@ -214,6 +214,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_wordformRepos = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			m_cache.DomainDataByFlid.AddNotification(this);
+			if (IsVernacularSpellingEnabled() && !EnchantHelper.DictionaryExists(m_cache.DefaultVernWs, m_cache.WritingSystemFactory))
+			{
+				OnAddWordsToSpellDict(null);
+			}
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -233,6 +237,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
 		#endregion IxCoreColleague implementation
 
@@ -285,7 +293,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public bool OnUseVernSpellingDictionary(object argument)
 		{
-			bool checking = !m_mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			bool checking = !IsVernacularSpellingEnabled();
 			if (checking)
 				OnEnableVernacularSpelling();
 			else
@@ -293,6 +301,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);
 			RestartSpellChecking();
 			return true;
+		}
+
+		private bool IsVernacularSpellingEnabled()
+		{
+			return m_mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
 		private void RestartSpellChecking()
@@ -354,7 +367,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (InFriendlyArea && m_mediator != null)
 			{
 				var clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-				if (clrk != null && clrk.Id == "concordanceWords")
+				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
 				{
 					display.Visible = true;
 

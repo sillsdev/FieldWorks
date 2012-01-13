@@ -32,8 +32,8 @@ namespace SIL.FieldWorks.IText
 		{
 			using (var dlg = new OpenFileDialog())
 			{
-				dlg.DefaultExt = "xml";
-				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.XML, FileFilterType.AllFiles);
+				dlg.DefaultExt = "flextext";
+				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);
 				dlg.FilterIndex = 1;
 				dlg.CheckFileExists = true;
 				dlg.Multiselect = false;

@@ -495,21 +495,22 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case DialogResult.OK:
 				{
-					Cursor = Cursors.WaitCursor;
-					if (m_tvMasterList.TerminalsUseCheckBoxes)
+					using (new WaitCursor(this))
 					{
-						UpdateAllCheckedItems(m_tvMasterList.Nodes);
-					}
-					else
-					{
-						MasterItem mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
-						if (mi != null)
+						if (m_tvMasterList.TerminalsUseCheckBoxes)
 						{
-							mi.AddToDatabase(m_cache);
-							m_selFeatDefn = mi.FeatureDefn;
+							UpdateAllCheckedItems(m_tvMasterList.Nodes);
+						}
+						else
+						{
+							MasterItem mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
+							if (mi != null)
+							{
+								mi.AddToDatabase(m_cache);
+								m_selFeatDefn = mi.FeatureDefn;
+							}
 						}
 					}
-					Cursor = Cursors.Default;
 					break;
 				}
 				case DialogResult.Yes:

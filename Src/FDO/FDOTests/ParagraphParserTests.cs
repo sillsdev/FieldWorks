@@ -128,13 +128,21 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// This abstract class can be used to validate any paragraph structure against an existing IStTxtPara structure.
 		/// </summary>
-		abstract internal class ParagraphValidator
+		abstract public class ParagraphValidator
 		{
-			internal ParagraphValidator()
+			/// <summary>
+			///
+			/// </summary>
+			protected ParagraphValidator()
 			{
 			}
 
-			virtual internal void ValidateParagraphs(XmlNode expectedParaInfo, IStTxtPara actualParaInfo)
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <param name="actualParaInfo"></param>
+			virtual public void ValidateParagraphs(XmlNode expectedParaInfo, IStTxtPara actualParaInfo)
 			{
 				string paraContext = String.Format("Para({0})", GetParagraphContext(expectedParaInfo));
 				ValidateParagraphSegments(expectedParaInfo, actualParaInfo, paraContext);
@@ -169,12 +177,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				}
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegment"></param>
+			/// <param name="actualSegment"></param>
+			/// <param name="segmentContext"></param>
 			virtual protected void ValidateSegmentOuterElements(object expectedSegment, ISegment actualSegment, string segmentContext)
 			{
 				// base override
 				return;
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegment"></param>
+			/// <param name="actualSegment"></param>
+			/// <param name="segmentContext"></param>
 			virtual protected void ValidateSegmentSegForms(object expectedSegment, ISegment actualSegment, string segmentContext)
 			{
 				ArrayList expectedSegForms = GetExpectedSegmentForms(expectedSegment);
@@ -197,24 +217,67 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				}
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegForm"></param>
+			/// <param name="actualSegForm"></param>
+			/// <param name="segFormContext"></param>
 			virtual protected void ValidateSegFormOuterElements(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
 			{
 				return;
 			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegForm"></param>
+			/// <param name="actualSegForm"></param>
+			/// <param name="segFormContext"></param>
 			virtual protected void ValidateSegForms(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
 			{
 				return;
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <returns></returns>
 			abstract protected string GetParagraphContext(object expectedParaInfo);
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <returns></returns>
 			abstract protected List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo);
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegment"></param>
+			/// <returns></returns>
 			abstract protected ArrayList GetExpectedSegmentForms(object expectedSegment);
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="actualSegment"></param>
+			/// <returns></returns>
 			abstract protected IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment);
 		}
 
-		internal class FdoValidator : ParagraphValidator
+		/// <summary>
+		///
+		/// </summary>
+		protected class FdoValidator : ParagraphValidator
 		{
+			/// <summary>
+			///
+			/// </summary>
 			protected FdoCache m_cache = null;
+			/// <summary>
+			///
+			/// </summary>
 			protected IStTxtPara m_para = null;
 
 			internal FdoValidator(IStTxtPara para)
@@ -252,21 +315,41 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return tssStringValue;
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <returns></returns>
 			protected override string GetParagraphContext(object expectedParaInfo)
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <returns></returns>
 			protected override List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo)
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegment"></param>
+			/// <returns></returns>
 			protected override ArrayList GetExpectedSegmentForms(object expectedSegment)
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="actualSegment"></param>
+			/// <returns></returns>
 			protected override IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment)
 			{
 				throw new Exception("The method or operation is not implemented.");
@@ -276,7 +359,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// This validates the actual IStTxtPara against an expected Xml paragraph structure that is based on the conceptual model.
 		/// </summary>
-		internal class ConceptualModelXmlParagraphValidator : FdoValidator
+		protected class ConceptualModelXmlParagraphValidator : FdoValidator
 		{
 			ParagraphBuilder m_pb = null;
 
@@ -285,6 +368,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				m_pb = pb;
 			}
 
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedParaInfo"></param>
+			/// <returns></returns>
 			override protected string GetParagraphContext(object expectedParaInfo)
 			{
 				XmlNode expectedParaDefn = expectedParaInfo as XmlNode;
@@ -305,10 +393,22 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				return ParagraphBuilder.SegmentNodes(expectedParaInfo);
 			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="expectedSegment"></param>
+			/// <returns></returns>
 			override protected ArrayList GetExpectedSegmentForms(object expectedSegment)
 			{
 				return new ArrayList(ParagraphBuilder.SegmentFormNodes(expectedSegment as XmlNode).ToArray());
 			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="actualSegment"></param>
+			/// <returns></returns>
 			override protected IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment)
 			{
 				return actualSegment.AnalysesRS.ToList();
@@ -368,16 +468,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+#pragma warning disable 1591
 		/// <summary>
 		/// This class allows annotating wordforms in a paragraph.
 		/// </summary>
-		internal class ParagraphAnnotator
+		public class ParagraphAnnotator
 		{
 			protected IStTxtPara m_para = null;
 			protected FdoCache m_cache = null;
 			protected bool m_fNeedReparseParagraph = false;
 
-			internal ParagraphAnnotator(IStTxtPara para)
+			public ParagraphAnnotator(IStTxtPara para)
 			{
 				m_para = para;
 				m_cache = m_para.Cache;
@@ -393,7 +494,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				set { m_fNeedReparseParagraph = value; }
 			}
 
-			internal void ReparseParagraph()
+			public void ReparseParagraph()
 			{
 				ParagraphParser.ParseParagraph(m_para, true, true);
 				NeedReparseParagraph = false;
@@ -408,7 +509,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="leMain"></param>
 			/// <param name="variantTypeRevAbbr"></param>
 			/// <returns>hvo of the resulting LexEntryRef</returns>
-			virtual internal ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, string variantTypeRevAbbr)
+			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, string variantTypeRevAbbr)
 			{
 				ILexEntryType variantType = null;
 				foreach (ILexEntryType let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
@@ -435,7 +536,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return null; // override
 			}
 
-			virtual internal IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
+			virtual public IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
 			{
 				// Get actual segment form.
 				var analysisActual = GetAnalysis(iSegment, iSegForm);
@@ -705,6 +806,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return segments[iSegment];
 			}
 		}
+#pragma warning restore 1591
 
 		internal class ParagraphAnnotatorForParagraphBuilder : ParagraphAnnotator
 		{
@@ -733,7 +835,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return SetDefaultWordGloss(iSegment, iSegForm, out gloss);
 			}
 
-			override internal IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
+			override public IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
 			{
 				IWfiWordform wfAlternateCase = base.SetAlternateCase(iSegment, iSegForm, targetState, out alternateCaseForm);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfAlternateCase.Hvo);
@@ -1371,7 +1473,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				string wsAbbr = XmlUtils.GetOptionalAttributeValue(strValue, "ws");
 				if (wsAbbr != null)
 				{
-					IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(wsAbbr);
+					IWritingSystem wsObj = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(wsAbbr);
 					ws = wsObj.Handle;
 					Debug.Assert(ws != 0, "Don't recognize ws (" + wsAbbr + ") for StringValue");
 					// add it to the vernacular writing system list, if it's not already there.

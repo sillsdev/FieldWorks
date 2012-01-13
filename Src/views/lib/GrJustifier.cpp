@@ -317,7 +317,7 @@ LMainLoop:
 				&dxStretchAchieved);
 			for (int iiiGlyph = 0; iiiGlyph < cStretchable; iiiGlyph++)
 			{
-				int iiGlyph = viiGlyphsRem[iiiGlyph];
+				iiGlyph = viiGlyphsRem[iiiGlyph];
 				vdxStretchLeft[iiGlyph] = vdxStretchRem[iiiGlyph];
 				vdxWidth[iiGlyph] = vdxWidthRem[iiiGlyph];
 			}

@@ -1646,15 +1646,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.ProcessFieldDefinition(
 			string tag, LiftMultiText description)
 		{
-			// We may need this information later, but don't do anything for now except save it.
-			m_dictFieldDef.Add(tag, MakeSafeLiftMultiText(description));
+			string key = tag;
 			//if the header field we are processing is a custom field, then create it.
 			int typeFlid;
 			if (IsCustomField(tag, description, out typeFlid))
 			{
 				Guid idk;
 				FindOrCreateCustomField(tag, description, typeFlid, out idk);
+				key = typeFlid + tag;
 			}
+			// We may need this information later, but don't do anything for now except save it.
+			m_dictFieldDef.Add(key, MakeSafeLiftMultiText(description));
 		}
 
 		/// <summary>
@@ -1678,7 +1680,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						try
 						{
-							typeFlid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(items[i + 1]);
+							typeFlid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(items[i + 1].Trim());
 							return true;
 						}
 						catch(Exception e)
@@ -2124,7 +2126,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int clid = cmo.ClassID;
 			LiftMultiText desc = null;
 			var sType = lt.Name;
-			if (!m_dictFieldDef.TryGetValue(lt.Name, out desc))
+			if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(cmo.ClassName) + lt.Name, out desc))
 			{
 				StoreTraitAsResidue(cmo, lt);
 				return;
@@ -6008,7 +6010,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			else
 			{
 				LiftMultiText desc = null;
-				if (!m_dictFieldDef.TryGetValue(sType, out desc))
+				if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(co.ClassName) + sType, out desc))
 				{
 					m_dictFieldDef.TryGetValue(sOldPrefix + sType, out desc);
 				}

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Hand crafted layouts for Morphology related classes. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="MoDerivAffMsa" type="detail" name="Normal">
 		<part ref="MainEdit" label="Category Info.">
 		<indent>

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2008, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2008' company='SIL International'>
-//		Copyright (c) 2008, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -14,7 +14,6 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using Microsoft.Win32;
 using System.Reflection;
 
 namespace SILUBS.SharedScrUtils
@@ -678,7 +677,7 @@ namespace SILUBS.SharedScrUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ParseChapterVerseNumberTests
+	public class BCVRef_ParseChapterVerseNumberTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

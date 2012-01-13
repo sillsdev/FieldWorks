@@ -21,6 +21,15 @@ namespace SILUBS.PhraseTranslationHelper
 	{
 		string Translation { get; }
 		string DebugInfo { get; }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the best rendering for this part in when used in the context of the given
+		/// phrase.
+		/// </summary>
+		/// <remarks>If this part occurs more than once in the phrase, it is not possible to
+		/// know which occurrence is which.</remarks>
+		/// ------------------------------------------------------------------------------------
+		string GetBestRenderingInContext(TranslatablePhrase phrase);
 	}
 
 	public sealed class Part : IPhrasePart
@@ -28,6 +37,7 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Data Members
 		internal readonly List<Word> m_words;
 		private readonly List<TranslatablePhrase> m_owningPhrases = new List<TranslatablePhrase>();
+		private string m_translation = string.Empty;
 		#endregion
 
 		#region Constructors
@@ -80,7 +90,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets or sets the translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Translation { get; internal set; }
+		public string Translation
+		{
+			get { return m_translation; }
+			internal set {  m_translation = value ?? string.Empty; }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -152,6 +166,19 @@ namespace SILUBS.PhraseTranslationHelper
 		public static implicit operator string(Part part)
 		{
 			return part == null ? null : part.Text;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the best rendering for this part in when used in the context of the given
+		/// phrase.
+		/// </summary>
+		/// <remarks>If this part occurs more than once in the phrase, it is not possible to
+		/// know which occurrence is which.</remarks>
+		/// ------------------------------------------------------------------------------------
+		public string GetBestRenderingInContext(TranslatablePhrase phrase)
+		{
+			return Translation;
 		}
 		#endregion
 	}

@@ -3485,9 +3485,7 @@ STDMETHODIMP VwCacheDa::InstallVirtual(IVwVirtualHandler * pvh)
 	if (m_qmdc)
 	{
 		// Add info to MDC.
-		int tag;
 		CheckHr(pvh->get_Tag(&tag));
-		SmartBstr sbstrClass, sbstrField;
 		CheckHr(pvh->get_ClassName(&sbstrClass));
 		CheckHr(pvh->get_FieldName(&sbstrField));
 		CheckHr(m_qmdc->AddVirtualProp(sbstrClass.Bstr(), sbstrField.Bstr(), (ULONG) tag, type));

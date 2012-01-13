@@ -140,7 +140,6 @@ namespace XCore
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
-			mediator.AddColleague(this);
 
 			areasLabel = m_mediator.StringTbl.LocalizeAttributeValue("Areas");
 
@@ -149,6 +148,8 @@ namespace XCore
 				//m_sidepane.GetType().Name;
 			m_sidepane.ItemClicked += SidePaneItemClickedHandler;
 			m_sidepane.TabClicked += SidePaneTabClickedHandler;
+
+			mediator.AddColleague(this);
 		}
 
 		/// <summary>
@@ -212,6 +213,12 @@ namespace XCore
 		{
 			get { return false; }
 		}
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#region IUIAdapter implementation
 
 		// Note: The Init method is handled by the superclass.

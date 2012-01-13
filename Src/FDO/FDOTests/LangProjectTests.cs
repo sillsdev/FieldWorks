@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ILgWritingSystemFactory factWs = Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>();
 			Assert.LessOrEqual(list.Count, factWs.NumberOfWs, "factory list is at least as large as AllWritingSystems");
 			Set<int> set = new Set<int>();
-			using (ArrayPtr rgwsT = MarshalEx.ArrayToNative(factWs.NumberOfWs, typeof(int)))
+			using (ArrayPtr rgwsT = MarshalEx.ArrayToNative<int>(factWs.NumberOfWs))
 			{
 				factWs.GetWritingSystems(rgwsT, factWs.NumberOfWs);
-				set.AddRange(MarshalEx.NativeToArray(rgwsT, factWs.NumberOfWs, typeof(int)));
+				set.AddRange(MarshalEx.NativeToArray<int>(rgwsT, factWs.NumberOfWs));
 			}
 			int wsEn = factWs.GetWsFromStr("en");
 			Assert.AreNotEqual(0, wsEn, "factory should contain English WS");

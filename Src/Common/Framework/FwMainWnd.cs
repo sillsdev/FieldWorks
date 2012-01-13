@@ -3980,6 +3980,12 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get { return IsDisposed; }
 		}
+
+		/// <summary>
+		/// window or control id, or hvo of composed object
+		/// </summary>
+		public abstract int Priority { get; }
+
 		#endregion
 
 		#region IFwMainWndSettings Members

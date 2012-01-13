@@ -2052,8 +2052,7 @@ void VwEnv::CloseObject()
 		// changes. So we want a notifier. First, check whether any of the properties
 		// actually produced some data; if not, we will use a special notifier.
 		bool fFoundOneBox = false;
-		int i;
-		for (i = 0; i < cprop; i++)
+		for (int i = 0; i < cprop; i++)
 		{
 			if (m_noterecvecCurr[i]->pbox)
 				fFoundOneBox = true;
@@ -2067,16 +2066,15 @@ void VwEnv::CloseObject()
 			qnote.Attach(VwNotifier::Create(m_chvoProp - 1, cprop));
 
 			// Assign it as the parent of an appropriate list of notifiers
-			int i;
 
 			// Making a real notifier, any embedded ones we have made now get this as
 			// their parent.
 			int inoteFirstIncompleteThis = m_nsivecStack[m_nsivecStack.Size() - 1]->inoteIncomplete;
 			while (m_vpanoteIncomplete.Size() > inoteFirstIncompleteThis)
 			{
-				VwAbstractNotifierPtr qanote;
-				m_vpanoteIncomplete.Pop(&qanote);
-				qanote->SetParent(qnote);
+				VwAbstractNotifierPtr qanoteTmp;
+				m_vpanoteIncomplete.Pop(&qanoteTmp);
+				qanoteTmp->SetParent(qnote);
 			}
 
 			VwBox ** rgpbox = qnote->Boxes();
@@ -2087,7 +2085,7 @@ void VwEnv::CloseObject()
 			VwPropertyStore ** prgpzvps = qnote->Styles();
 			VwNoteProps * rgvnp = qnote->Flags();
 
-			for (i = 0; i < cprop; i++)
+			for (int i = 0; i < cprop; i++)
 			{
 				rgpbox[i] = m_noterecvecCurr[i]->pbox;
 				rgtag[i] = m_noterecvecCurr[i]->tag;

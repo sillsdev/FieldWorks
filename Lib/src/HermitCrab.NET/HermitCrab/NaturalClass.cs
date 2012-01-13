@@ -360,12 +360,39 @@ namespace SIL.HermitCrab
 			if (other == null)
 				return false;
 
+			foreach (KeyValuePair<string, bool> varPolarity in m_variables)
+			{
+				Feature feat = m_alphaVars.GetFeature(varPolarity.Key);
+				bool found = false;
+				foreach (KeyValuePair<string, bool> otherVarPolarity in other.m_variables)
+				{
+					Feature otherFeat = other.m_alphaVars.GetFeature(otherVarPolarity.Key);
+					if (feat.Equals(otherFeat))
+					{
+						if (varPolarity.Value != otherVarPolarity.Value)
+							return false;
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+
 			return m_natClass == other.m_natClass;
 		}
 
 		public override int GetHashCode()
 		{
-			return m_natClass.GetHashCode();
+			int code = 0;
+			foreach (KeyValuePair<string, bool> varPolarity in m_variables)
+			{
+				Feature feat = m_alphaVars.GetFeature(varPolarity.Key);
+				code ^= feat.GetHashCode();
+				code ^= varPolarity.Value.GetHashCode();
+			}
+
+			return code ^ m_natClass.GetHashCode();
 		}
 
 		public override string ToString()

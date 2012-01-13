@@ -178,7 +178,7 @@
   </data>
   <data name="kstidCustomQuotationMarksName" xml:space="preserve">
 	<value>Custom</value>
-	<comment>Name of the custom entry in the list of quotation mark langauges.</comment>
+	<comment>Name of the custom entry in the list of quotation mark languages.</comment>
   </data>
   <data name="kstidQuotationPairFormat" xml:space="preserve">
 	<value>{0}…{1}</value>

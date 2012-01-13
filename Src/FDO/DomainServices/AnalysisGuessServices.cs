@@ -14,13 +14,10 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -120,7 +117,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
-		/// Informs the guess service that the indicated occurrence is being replace with the specified new
+		/// Informs the guess service that the indicated occurrence is being replaced with the specified new
 		/// analysis. If necessary clear the GuessTable. If possible update it. The most common and
 		/// performance-critical case is confirming a guess. Return true if the cache was changed.
 		/// </summary>
@@ -237,7 +234,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var dictionary = new Dictionary<IWfiAnalysis, ICmAgentEvaluation>();
 			foreach(var analysis in Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances())
 				foreach (var ae in analysis.EvaluationsRC)
-					if ((ae.Owner as ICmAgent).Human)
+					if (((ICmAgent) ae.Owner).Human)
 						dictionary[analysis] = ae;
 			AnalysisApprovalTable = dictionary;
 		}
@@ -287,14 +284,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		private struct EmptyWwfInfo
 		{
-			public ILexEntry Entry;
-			public IMoForm Form;
-			public IMoMorphSynAnalysis Msa;
-			public IPartOfSpeech Pos;
-			public ILexSense Sense;
-			public EmptyWwfInfo(ILexEntry entry, IMoForm form, IMoMorphSynAnalysis msa, IPartOfSpeech pos, ILexSense sense)
+			public readonly IMoForm Form;
+			public readonly IMoMorphSynAnalysis Msa;
+			public readonly IPartOfSpeech Pos;
+			public readonly ILexSense Sense;
+			public EmptyWwfInfo(IMoForm form, IMoMorphSynAnalysis msa, IPartOfSpeech pos, ILexSense sense)
 			{
-				Entry = entry;
 				Form = form;
 				Msa = msa;
 				Pos = pos;
@@ -375,7 +370,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				var bestMatchingMorph = matchingMorphs[tssWord];
 				if (bestMatchingMorph != null)
 				{
-					ILexEntry entryOrVariant = bestMatchingMorph.OwnerOfClass<ILexEntry>();
+					var entryOrVariant = bestMatchingMorph.OwnerOfClass<ILexEntry>();
 					ILexEntry mainEntry;
 					ILexSense sense;
 					GetMainEntryAndSense(entryOrVariant, out mainEntry, out sense);
@@ -388,11 +383,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					IPartOfSpeech pos = null;
 					if (sense != null)
 					{
-						msa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
+						msa = (IMoStemMsa) sense.MorphoSyntaxAnalysisRA;
 						pos = msa.PartOfSpeechRA;
 					}
 					// map the word to its best entry.
-					var entryInfo = new EmptyWwfInfo(mainEntry, bestMatchingMorph, msa, pos, sense);
+					var entryInfo = new EmptyWwfInfo(bestMatchingMorph, msa, pos, sense);
 					mapEmptyWfInfo.Add(word, entryInfo);
 				}
 
@@ -408,7 +403,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (entryRef != null)
 			{
 				// get the main entry or sense.
-				IVariantComponentLexeme component = entryRef.ComponentLexemesRS[0] as IVariantComponentLexeme;
+				var component = entryRef.ComponentLexemesRS[0] as IVariantComponentLexeme;
 				if (component is ILexSense)
 				{
 					sense = component as ILexSense;
@@ -429,18 +424,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private bool HasAnalysis(IWfiWordform word)
 		{
 			return word.AnalysesOC.Count > 0;
-		}
-
-		private bool HasHumanOrComputerOpinion(IWfiWordform word)
-		{
-			foreach (var wa in word.AnalysesOC)
-			{
-				if (AnalysisApprovalTable.Keys.Contains(wa))
-					return true;
-				if (ComputerApprovedTable.Contains(wa))
-					return true;
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -532,6 +515,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public void ClearGuessData()
 		{
 			GuessTable = null;
+			ParserApprovedTable = null;
+			ComputerApprovedTable = null;
+			AnalysisApprovalTable = null;
 		}
 
 		/// <summary>
@@ -670,7 +656,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (occurrence.Analysis is IWfiWordform && occurrence.Index == 0)
 			{
 				ITsString tssWfBaseline = occurrence.BaselineText;
-				CpeTracker tracker = new CpeTracker(Cache.WritingSystemFactory, tssWfBaseline);
+				var tracker = new CpeTracker(Cache.WritingSystemFactory, tssWfBaseline);
 				ILgCharacterPropertyEngine cpe = tracker.CharPropEngine(0);
 				string sLower = cpe.ToLower(tssWfBaseline.Text);
 				// don't bother looking up the lowercased wordform if the instanceOf is already in lowercase form.
@@ -686,6 +672,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 				}
 			}
+			if (occurrence.BaselineWs == -1)
+				return null; // happens with empty translation lines
 			return GetBestGuess(occurrence.Analysis, occurrence.BaselineWs);
 		}
 

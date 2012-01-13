@@ -2771,31 +2771,31 @@
 	<value>User_Interface/Field_Descriptions/Lists/Custom_Lists_fields_overview.htm</value>
 	<comment>Help topic for custom list and Scripture Note Categories fields</comment>
   </data>
-  <data name="khtpField-interlinearEdit-AnthroCodes" xml:space="preserve">
+  <data name="khtpField-AnthropologyCategories" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Anthropology_Categories_field_(Info).htm</value>
 	<comment>Anthropology Categories field in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Locations" xml:space="preserve">
+  <data name="khtpField-Locations" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Locations_field_(Info).htm</value>
 	<comment>Locations field in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Researchers" xml:space="preserve">
+  <data name="khtpField-Researchers" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Researchers_field_(Info).htm</value>
 	<comment>Researchers field in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Sources" xml:space="preserve">
+  <data name="khtpField-Sources" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Sources_field_(Info).htm</value>
 	<comment>Sources field in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Text-" xml:space="preserve">
+  <data name="khtpField-Text-" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Notebook_Record_(Info).htm</value>
 	<comment>Notebook Record field in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Text-DateCreated" xml:space="preserve">
+  <data name="khtpField-Text-DateCreated" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Date_Created_(Info).htm</value>
 	<comment>Date Created in Text's Info Tab</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Text-DateModified" xml:space="preserve">
+  <data name="khtpField-Text-DateModified" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Date_Modified_(Info).htm</value>
 	<comment>Date Modified in Text's Info Tab</comment>
   </data>
@@ -2807,7 +2807,7 @@
 	<value>User_Interface/Field_Descriptions/Notebook/Text_field_(Notebook).htm</value>
 	<comment>Text field in Notebook Edit (w/ contents)</comment>
   </data>
-  <data name="khtpField-interlinearEdit-Text-Participants" xml:space="preserve">
+  <data name="khtpField-Text-Participants" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Participants_field_(Info).htm</value>
 	<comment>Researchers field in Text's Info Tab (Empty)</comment>
   </data>
@@ -2834,5 +2834,27 @@
   <data name="khtpChoose-Sources" xml:space="preserve">
 	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_sources.htm</value>
 	<comment>Choose Sources help button for empty texts in the Info tab</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexicalRelationSubitem" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/lexical_relations_field.htm</value>
+	<comment>Lexical Relation Subentry</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-CrossReferenceSubitem" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/cross_references_field.htm</value>
+	<comment>Cross reference subentrry</comment>
+  </data>
+  <data name="khtpField-AnthroCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Anthropology_Categories_field_(Info).htm</value>
+	<comment>Anthropology Categories field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpBulkEditLocations" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpEntryNotPublished" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+	<comment>I had to hsardcode the path into the source rsather than the topic because of the way </comment>
+  </data>
+  <data name="khtpBulkEditShowAsHeadwordIn" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
   </data>
 </root>

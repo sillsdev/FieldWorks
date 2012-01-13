@@ -31,6 +31,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -57,7 +58,7 @@
 	<Compile Include="VwDrawRootBuffered.cs" />
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="BasicUtils, Version=7.2.0.24545, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
@@ -65,7 +66,14 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
 	<Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>

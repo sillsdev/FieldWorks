@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.PrintLayout

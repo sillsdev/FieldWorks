@@ -1018,7 +1018,7 @@ namespace SIL.FieldWorks.Common.FXT
 				int ws = m_mdc.GetFieldWs(flid);
 				if (ws < 0)
 				{
-					sb.AppendFormat("; WsSelector={0}", ((CellarModuleDefns)ws));
+					sb.AppendFormat("; WsSelector={0}", WritingSystemServices.GetMagicWsNameFromId(ws));
 				}
 				else if (ws > 0)
 				{
@@ -2280,7 +2280,9 @@ namespace SIL.FieldWorks.Common.FXT
 				}
 				else
 				{
-					throw new ConfigurationException("There is no field named '" + field + "' in " + currentObject.GetType().ToString() + ". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
+					throw new ConfigurationException("There is no field named '" + field + "' in " +
+						currentObject.GetType().ToString() +
+						". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
 				}
 			}
 			else
@@ -2288,10 +2290,10 @@ namespace SIL.FieldWorks.Common.FXT
 				if (m_mapFlids.ContainsKey(flid))
 					flid = m_mapFlids[flid];
 				int chvo = m_cache.DomainDataByFlid.get_VecSize(currentObject.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					m_cache.DomainDataByFlid.VecProp(currentObject.Hvo, flid, chvo, out chvo, arrayPtr);
-					hvos = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					hvos = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 			}
 			string property = XmlUtils.GetOptionalAttributeValue(node, "itemProperty");
@@ -2328,7 +2330,7 @@ namespace SIL.FieldWorks.Common.FXT
 					if (!String.IsNullOrEmpty(labelWs))
 						separator = "_";
 					string sTmp = String.Format("{4}\\{0}{1}{2} {3}", label, separator, labelWs, s, Environment.NewLine);
-				contentsStream.Write(sTmp);
+					contentsStream.Write(sTmp);
 				}
 				DumpObject(contentsStream, co, sClassTag);
 			}
@@ -2374,10 +2376,10 @@ namespace SIL.FieldWorks.Common.FXT
 			else
 			{
 				int chvo = m_cache.DomainDataByFlid.get_VecSize(currentObject.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					m_cache.DomainDataByFlid.VecProp(currentObject.Hvo, flid, chvo, out chvo, arrayPtr);
-					hvos = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					hvos = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 			}
 			string property = XmlUtils.GetOptionalAttributeValue(node, "itemProperty");
@@ -2631,10 +2633,10 @@ namespace SIL.FieldWorks.Common.FXT
 				else
 				{
 					int chvo = m_cache.DomainDataByFlid.get_VecSize(currentObject.Hvo, flid);
-					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 					{
 						m_cache.DomainDataByFlid.VecProp(currentObject.Hvo, flid, chvo, out chvo, arrayPtr);
-						rghvo = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+						rghvo = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 					}
 				}
 				ProcessSingleLexReferences(rghvo, currentObject, contentsStream, classNode);
@@ -2687,10 +2689,10 @@ namespace SIL.FieldWorks.Common.FXT
 				int hvoObject = currentObject.Hvo;
 				int chvo = sda.get_VecSize(hvoObject, flid);
 				int[] contents;
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					sda.VecProp(hvoObject, flid, chvo, out chvo, arrayPtr);
-					contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				}
 				if (fTryVirtual)
 				{

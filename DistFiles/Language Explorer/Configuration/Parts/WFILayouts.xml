@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Hand crafted layouts for Wordform inventory related classes. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="WfiWordform" type="detail" name="Normal">
 		<part ref="HeavySummary" param="WordformMainSummary" commandVisible="true" expansion="expanded" menu="mnuDataTree-MainWordform" hotlinks="mnuDataTree-MainWordform-Hotlinks"/>
 		<part ref="Spelling" menu="mnuDataTree-WordformSpelling"/>

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -57,7 +58,15 @@ namespace SIL.SilSidePane
 				return;
 
 			widget.PerformClick();
-			widget.Checked = true; // Needed for mono
+#if __MonoCS__
+			// We need to explicitly uncheck the previous selection.  See FWNX-661.
+			foreach (var button in widget.Owner.Items.OfType<ToolStripButton>())
+			{
+				if (button.Checked && button != widget)
+					button.Checked = false;
+			}
+			widget.Checked = true;
+#endif
 		}
 
 		public Control AsControl()

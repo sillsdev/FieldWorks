@@ -888,6 +888,14 @@ namespace SIL.FieldWorks.TE
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion
 
 		#region ILocationTracker Members
@@ -934,11 +942,11 @@ namespace SIL.FieldWorks.TE
 					// get the footnotes that are displayed in this smushed footnote
 					int nbrNotes = configurer.DataAccess.get_VecSize(hvo, configurer.DependentRootTag);
 					int[] footnoteHvos;
-					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(nbrNotes, typeof(int)))
+					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(nbrNotes))
 					{
 						configurer.DataAccess.VecProp(hvo, configurer.DependentRootTag,
 							nbrNotes, out nbrNotes, arrayPtr);
-						footnoteHvos = (int[])MarshalEx.NativeToArray(arrayPtr, nbrNotes, typeof(int));
+						footnoteHvos = MarshalEx.NativeToArray<int>(arrayPtr, nbrNotes);
 					}
 
 					// currently we don't have multiple books on the same page, so it doesn't

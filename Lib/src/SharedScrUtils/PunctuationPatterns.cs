@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using System.Windows.Forms;
 using SIL.Utils;
 
 namespace SILUBS.SharedScrUtils
@@ -51,7 +50,7 @@ namespace SILUBS.SharedScrUtils
 	[XmlType("PunctuationPatterns")]
 	public class PuncPatternsList : List<PuncPattern>
 	{
-		private static SortOrder s_currSortOrder = SortOrder.Ascending;
+		private static bool s_sortAscending = true;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -148,12 +147,12 @@ namespace SILUBS.SharedScrUtils
 		#region PuncPattern sorting methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Sort the list of punctuation patterns using the specified order and comparer
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Sort(SortOrder sortOrder, Comparison<PuncPattern> comparer)
+		public void Sort(bool sortAscending, Comparison<PuncPattern> comparer)
 		{
-			s_currSortOrder = sortOrder;
+			s_sortAscending = sortAscending;
 			Sort(comparer);
 		}
 
@@ -185,7 +184,7 @@ namespace SILUBS.SharedScrUtils
 			string xPtrn = x.Pattern.Trim();
 			string yPtrn = y.Pattern.Trim();
 
-			return (s_currSortOrder == SortOrder.Ascending ?
+			return (s_sortAscending ?
 				xPtrn.CompareTo(yPtrn) : yPtrn.CompareTo(xPtrn));
 		}
 
@@ -205,7 +204,7 @@ namespace SILUBS.SharedScrUtils
 			if (y == null)
 				return 1;
 
-			return (s_currSortOrder == SortOrder.Ascending ?
+			return (s_sortAscending ?
 				x.ContextPos.CompareTo(y.ContextPos) :
 				y.ContextPos.CompareTo(x.ContextPos));
 		}
@@ -226,7 +225,7 @@ namespace SILUBS.SharedScrUtils
 			if (y == null)
 				return 1;
 
-			return (s_currSortOrder == SortOrder.Ascending ?
+			return (s_sortAscending ?
 				x.Count.CompareTo(y.Count) :
 				y.Count.CompareTo(x.Count));
 		}
@@ -247,7 +246,7 @@ namespace SILUBS.SharedScrUtils
 			if (y == null)
 				return 1;
 
-			return (s_currSortOrder == SortOrder.Ascending ?
+			return (s_sortAscending ?
 				x.Status.CompareTo(y.Status) :
 				y.Status.CompareTo(x.Status));
 		}

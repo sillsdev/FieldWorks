@@ -1,3 +1,6 @@
+using System;
+using XCore;
+
 namespace SIL.FieldWorks.Discourse
 {
 	partial class ConstituentChart
@@ -44,6 +47,15 @@ namespace SIL.FieldWorks.Discourse
 			this.Name = "ConstituentChart";
 			this.ResumeLayout(false);
 
+		}
+
+		#endregion
+
+		#region Implementation of IxCoreColleague
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
 		}
 
 		#endregion

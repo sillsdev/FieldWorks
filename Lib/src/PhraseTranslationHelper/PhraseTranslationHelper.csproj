@@ -35,10 +35,13 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="SharedScrControls, Version=7.2.0.21689, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SharedScrUtils, Version=7.1.0.21011, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="SilUtils, Version=7.0.1.23997, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.2.0.29041, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
@@ -46,6 +49,10 @@
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.Drawing" />
+	<Reference Include="System.Drawing.Html, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Bin\System.Drawing.Html.dll</HintPath>
+	</Reference>
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml.Linq">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -57,7 +64,53 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="AddRenderingDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AddRenderingDlg.Designer.cs">
+	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="QuestionAlternativeOverrides.cs" />
+	<Compile Include="QuestionSections.cs" />
+	<Compile Include="Question.cs" />
+	<Compile Include="QuestionSfmFileAccessor.cs" />
+	<Compile Include="EditQuestionDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="EditQuestionDlg.Designer.cs">
+	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="PhraseCustomization.cs" />
+	<Compile Include="QuestionProvider.cs" />
+	<Compile Include="RulesWizardDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="RulesWizardDlg.Designer.cs">
+	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="RenderingSelectionRule.cs" />
+	<Compile Include="RenderingSelectionRulesDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="RenderingSelectionRulesDlg.Designer.cs">
+	  <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="KeyTermRenderingInfo.cs" />
+	<Compile Include="ITermRenderingInfo.cs" />
+	<Compile Include="ScrReferenceFilterDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ScrReferenceFilterDlg.Designer.cs">
+	  <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Substitution.cs" />
+	<Compile Include="PhraseSubstitutionsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="PhraseSubstitutionsDlg.Designer.cs">
+	  <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
+	</Compile>
 	<Compile Include="GenerateTemplateDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -73,17 +126,48 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="TermRenderingCtrl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="TermRenderingCtrl.Designer.cs">
+	  <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
+	</Compile>
 	<Compile Include="UNSQuestionsDialog.cs">
 	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="UNSQuestionsDialog.Designer.cs">
+	  <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Word.cs" />
 	<Compile Include="IKeyTerm.cs" />
 	<Compile Include="Part.cs" />
 	<Compile Include="PhraseTranslationHelper.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
 	<Compile Include="TranslatablePhrase.cs" />
+	<Compile Include="XmlTranslation.cs" />
   </ItemGroup>
   <ItemGroup>
+	<EmbeddedResource Include="AddRenderingDlg.resx">
+	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="EditQuestionDlg.resx">
+	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="RulesWizardDlg.resx">
+	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
+	  <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ScrReferenceFilterDlg.resx">
+	  <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PhraseSubstitutionsDlg.resx">
+	  <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
 	<EmbeddedResource Include="GenerateTemplateDlg.resx">
 	  <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
 	</EmbeddedResource>
@@ -92,10 +176,19 @@
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+	<EmbeddedResource Include="TermRenderingCtrl.resx">
+	  <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="UNSQuestionsDialog.resx">
 	  <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\check-circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Filtered.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

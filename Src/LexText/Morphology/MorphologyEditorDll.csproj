@@ -191,6 +191,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
 	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SimpleRootSite">
 	  <Name>SimpleRootSite</Name>
 	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -245,14 +248,30 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="AdhocCoProhibAtomicLauncher.cs" />
-	<Compile Include="AdhocCoProhibAtomicReferenceSlice.cs" />
-	<Compile Include="AdhocCoProhibVectorLauncher.cs" />
-	<Compile Include="AdhocCoProhibVectorReferenceSlice.cs" />
-	<Compile Include="AffixRuleFormulaControl.cs" />
-	<Compile Include="AffixRuleFormulaSlice.cs" />
-	<Compile Include="AnalysisInterlinearRS.cs" />
-	<Compile Include="BasicIPASymbolSlice.cs" />
+	<Compile Include="AdhocCoProhibAtomicLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AdhocCoProhibAtomicReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AdhocCoProhibVectorLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AdhocCoProhibVectorReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AffixRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AffixRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AnalysisInterlinearRS.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="BasicIPASymbolSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="ConcordanceDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -268,15 +287,21 @@
 	<Compile Include="ImageHolder.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="InflAffixTemplateControl.cs" />
+	<Compile Include="InflAffixTemplateControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="InflAffixTemplateEventArgs.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="InflAffixTemplateMenuHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="InflAffixTemplateSlice.cs" />
-	<Compile Include="InterlinearSlice.cs" />
+	<Compile Include="InflAffixTemplateSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinearSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="MasterCatDlgListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -288,19 +313,27 @@
 	<Compile Include="MEImages.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="MetaRuleFormulaControl.cs" />
-	<Compile Include="MetaRuleFormulaSlice.cs" />
+	<Compile Include="MetaRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MetaRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="MorphologyListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="OneAnalysisSandbox.cs" />
+	<Compile Include="OneAnalysisSandbox.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="OneAnalysisSandbox.Designer.cs">
 	  <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ParserAnalysisRemover.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="PhEnvStrRepresentationSlice.cs" />
+	<Compile Include="PhEnvStrRepresentationSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="MEStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
@@ -309,8 +342,12 @@
 	<Compile Include="PhonologicalFeatureChooserDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="RegRuleFormulaControl.cs" />
-	<Compile Include="RegRuleFormulaSlice.cs" />
+	<Compile Include="RegRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="RegRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="RespellerDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -318,13 +355,21 @@
 	  <DependentUpon>RespellerDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="RespellerDlgListener.cs" />
-	<Compile Include="RuleFormulaControl.cs" />
-	<Compile Include="RuleFormulaSlice.cs" />
-	<Compile Include="RuleFormulaView.cs" />
+	<Compile Include="RuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="RuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="RuleFormulaView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="RuleInsertionControl.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="WordformGoDlg.cs" />
+	<Compile Include="WordformGoDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<EmbeddedResource Include="AdhocCoProhibAtomicLauncher.resx">
 	  <DependentUpon>AdhocCoProhibAtomicLauncher.cs</DependentUpon>
 	  <SubType>Designer</SubType>

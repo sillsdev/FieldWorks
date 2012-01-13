@@ -21,9 +21,11 @@ class VwTextStore;
 DEFINE_COM_PTR(VwTextStore);
 
 #ifdef WIN32
-// TSF not supported on Linux yet.
 #undef ENABLE_TSF
 #define ENABLE_TSF
+#else /* ! WIN32 */
+#undef MANAGED_KEYBOARDING
+#define MANAGED_KEYBOARDING
 #endif
 
 /*----------------------------------------------------------------------------------------------
@@ -328,7 +330,15 @@ public:
 
 #ifdef ENABLE_TSF
 	VwTextStore * TextStore() {return m_qtxs;}
-#endif /*ENABLE_TSF*/
+#elif defined(MANAGED_KEYBOARDING)
+	IViewInputMgr * InputManager() { return m_qvim; }
+
+	void ClearSelectedAnchorPointerTo(VwParagraphBox * pvpbox)
+	{
+		if (m_pvpboxLastSelectedAnchor == pvpbox)
+			m_pvpboxLastSelectedAnchor = NULL;
+	}
+#endif /* ENABLE_TSF */
 
 	void MaximizeLaziness(VwBox * pboxMinKeep = NULL, VwBox * pboxLimKeep = NULL);
 	VwNotifier * NotifierWithKeyAndParent(VwBox * pbox, VwNotifier * pnoteParent);
@@ -409,6 +419,11 @@ protected:
 	VwSynchronizerPtr m_qsync; // If not null use this to synchronize object display heights.
 #ifdef ENABLE_TSF
 	VwTextStorePtr m_qtxs;
+#elif defined(MANAGED_KEYBOARDING)
+	// last selected paragraph box. See comment in VwRootBox::NotifySelChange.
+	VwParagraphBox * m_pvpboxLastSelectedAnchor;
+
+	IViewInputMgrPtr m_qvim;
 #endif /*ENABLE_TSF*/
 
 	// The top of rcDstRoot the last time DrawRoot was called.
@@ -469,6 +484,7 @@ protected:
 	bool m_fCompletedSpellCheck; // true when we reach the end.
 	HashMapStrUni<enchant::Dict *> m_hmDict;
 	void FindBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst, int ysStart, int * pysEnd);
+	bool OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me);
 
 public:
 	bool FixSelectionsForStringReplacement(VwTxtSrc * psrcModify, int itssMin, int itssLim,

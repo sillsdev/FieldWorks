@@ -18,6 +18,9 @@ ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
 	DEFINES  := $(DEFINES) -D_DEBUG -DDEBUG
 	DEBUG_INCLUDES = -I$(SRC)/DebugProcs
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
 endif
 
 FWKERNEL_SRC = $(SRC)/Kernel
@@ -48,7 +51,7 @@ LDLIBS := $(LDLIBS) \
 	-luuid -lexpat
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O3 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -D_FORTIFY_SOURCE=0
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic
 
 ARFLAGS  = -crs
 
@@ -57,6 +60,7 @@ DEFFILE = FwKernel.def
 
 LINK_LIBS := \
 	$(LINK_LIBS) \
+	$(COM_OUT_DIR)/libFwKernelTlb.a \
 	$(OUT_DIR)/libGeneric.a \
 	$(DEBUG_LIBS) \
 
@@ -72,7 +76,6 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/TextServ.o \
 	$(INT_DIR)/ActionHandler.o \
 	$(INT_DIR)/DebugReport.o \
-	$(COM_OUT_DIR)/libFwKernelTlb.a \
 
 OBJ_OTHER = \
 	$(GENERIC_OBJ)/ModuleEntry.o \
@@ -80,22 +83,24 @@ OBJ_OTHER = \
 	$(APPCORE_OBJ)/FwStyledText.o \
 	$(APPCORE_OBJ)/WriteXml.o \
 
-#	$(CELLAR_OBJ)/FwXml.o \
-
 # === Targets ===
 
 all: $(OUT_DIR)/libFwKernel.so $(COM_OUT_DIR)/libFwKernelTlb.a ComponentsMap link_check
 
 $(OUT_DIR)/libFwKernel.so: $(OBJ_FWKERNEL) $(OBJ_OTHER) $(LINK_LIBS) $(LIBRARIES)/Win32More/src/build$(ARCH)/libWin32More.a $(LIBRARIES)/Win32Base/src/build$(ARCH)/libWin32Base.a
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -shared -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(OBJ_FWKERNEL) $(OBJ_OTHER) $(LDLIBS)
+else
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
+endif
 
 $(COM_OUT_DIR)/libFwKernelTlb.a: $(INT_DIR)/FwKernel_GUIDs.o $(INT_DIR)/FwKernelExtra_GUIDs.o
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libFwKernel
+link_check: $(INT_DIR)/libFwKernel
 
-libFwKernel: $(OBJ_FWKERNEL) $(OBJ_OTHER) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
-	$(LINK.cc) -o $@ $^ $(LDLIBS)
+$(INT_DIR)/libFwKernel: $(OBJ_OTHER) $(OBJ_FWKERNEL) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJ)/main.o  $(OBJ_OTHER) $(OBJ_FWKERNEL) $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libFwKernel.so
 	(export PATH=$(PATH):$(COM_DIR)/bin$(ARCH) && cd $(OUT_DIR) && generate-map.sh libFwKernel.so > $(OUT_DIR)/libFwKernel.compmap)
@@ -114,10 +119,6 @@ $(GENERIC_OBJ)/ModuleEntry.o $(GENERIC_OBJ)/TextProps1.o:
 $(APPCORE_OBJ)/FwStyledText.o $(APPCORE_OBJ)/WriteXml.o:
 	@$(MAKE) -C $(SRC)/AppCore $@ -q || \
 	 $(MAKE) -C $(SRC)/AppCore $@
-
-#$(CELLAR_OBJ)/FwXml.o:
-#	@$(MAKE) -C $(SRC)/Cellar $@ -q || \
-#	 $(MAKE) -C $(SRC)/Cellar $@
 
 $(GENERIC_OBJ)/main.o:
 	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
@@ -150,4 +151,4 @@ $(LIBRARIES)/Win32Base/src/libWin32Base.a:
 -include $(PCHNAME:%.gch=%.d)
 
 clean:
-	$(RM) $(OUT_DIR)/libFwKernel.so $(COM_OUT_DIR)/libFwKernelTlb.a libFwKernel $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
+	$(RM) $(OUT_DIR)/libFwKernel.so $(COM_OUT_DIR)/libFwKernelTlb.a $(INT_DIR)/libFwKernel $(INT_DIR)/*.[od] $(INT_DIR)/*.gch

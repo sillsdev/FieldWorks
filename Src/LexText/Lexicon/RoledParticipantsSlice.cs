@@ -288,8 +288,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			if (toolName == "interlinearEdit")
+			string areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			if (areaName == "textsWords")
 				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
 			else
 				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -10,6 +10,10 @@
 	<RootNamespace>SIL.FieldWorks.Language</RootNamespace>
 	<AssemblyName>ManagedVwWindowTests</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -33,6 +37,10 @@
 	<Reference Include="Accessibility" />
 	<Reference Include="ManagedVwWindow, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\Output\Debug\ManagedVwWindow.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.22133, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="nunit.framework">
@@ -55,6 +63,7 @@
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="TestUtils, Version=6.1.1.19223, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
   </ItemGroup>
   <ItemGroup>

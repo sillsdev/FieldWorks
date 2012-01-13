@@ -166,9 +166,6 @@
 	<if test="${not property::exists('dir.safecopy')}" unless="${platform::is-unix()}">
 		<property name="dir.safecopy" value="${dir.SampleData}"/>
 	</if>
-	<if test="${not property::exists('modulenames')}">
-		<property name="modulenames" value="Cellar FeatSys Ling LangProj Notebk Scripture" />
-	</if>
 	<if test="${not property::exists('com_dir')}">
 		<!-- where to find the COM library on Linux -->
 		<property name="com_dir" value="${fwroot}/../COM" if="${platform::is-unix()}"/>

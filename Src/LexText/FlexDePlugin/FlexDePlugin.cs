@@ -108,7 +108,7 @@ namespace SIL.PublishingSolution
 		public void OnSelection()
 		{
 			Debug.Assert(exportDialog != null);
-			exportDialog.WhatDescription = "Enable output via XHTML to Open Office, Prince PDF, XeTeX, and other formats.";
+			exportDialog.WhatDescription = "Enable output via XHTML to Open/Libre Office, Prince PDF, XeTeX, and other formats.";
 			exportDialog.WhenDescription = "Preparing the configured dictionary or reversal for output.";
 			exportDialog.RedoDescription = "You may want to sort, filter and configure you the data before you use this Pathway tool to process it. You may want to process the main section and reversal section separately even though the tool allows them to be processed all at once.";
 		}

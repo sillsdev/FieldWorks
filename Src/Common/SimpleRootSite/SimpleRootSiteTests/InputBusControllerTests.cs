@@ -18,6 +18,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -30,15 +31,44 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	[Platform(Include = "Linux", Reason="InputBusController is Linux only")]
 	public class InputBusControllerTests: BaseTest
 	{
-		// some lparam values represting keypress that we use for testing.
-		const int lparamS = 0x40270001;
-		const int lparamT = 0x401C0001;
-		const int lparamU = 0x401E0001;
-		const int lparamSpace = 0x40410001;
-		const int lparamBackSpace = 0x40160001;
+		// some lparam values representing keypress that we use for testing.
+		Dictionary<char, uint> lparams = new Dictionary<char, uint>();
 		protected DummySimpleRootSite m_dummySimpleRootSite;
 		protected IIBusCommunicator m_dummyIBusCommunicator;
 		protected InputBusController m_inputBusController;
+
+		/// <summary/>
+		public InputBusControllerTests()
+		{
+			lparams.Add('A', 0x40260001);
+			lparams.Add('B', 0x40380001);
+			lparams.Add('C', 0x40360001);
+			lparams.Add('D', 0x40280001);
+			lparams.Add('E', 0x401A0001);
+			lparams.Add('F', 0x40290001);
+//			lparams.Add('G', );
+//			lparams.Add('H', );
+			lparams.Add('I', 0x401F0001);
+//			lparams.Add('J', );
+//			lparams.Add('K', );
+//			lparams.Add('L', );
+			lparams.Add('M', 0x403A0001);
+			lparams.Add('N', 0x40390001);
+			lparams.Add('O', 0x40200001);
+			lparams.Add('P', 0x40210001);
+			lparams.Add('Q', 0x40180001);
+			lparams.Add('R', 0x401B0001);
+			lparams.Add('S', 0x40270001);
+			lparams.Add('T', 0x401C0001);
+			lparams.Add('U', 0x401E0001);
+			lparams.Add('V', 0x40370001);
+			lparams.Add('W', 0x40190001);
+			lparams.Add('X', 0x40350001);
+			lparams.Add('Y', 0x401D0001);
+			lparams.Add('Z', 0x40340001);
+			lparams.Add(' ', 0x40410001); // space
+			lparams.Add('\b', 0x40160001); // backspace
+		}
 
 		/// <summary></summary>
 		[SetUp]
@@ -79,7 +109,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -99,8 +129,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('U', lparamU, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -121,7 +151,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
 
 			// Send a Control char Backspace; 0x0008
-			m_inputBusController.NotifyKeyPress('\b', lparamBackSpace, 0);
+			m_inputBusController.NotifyKeyPress('\b', lparams['\b'], 0);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -139,7 +169,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -158,8 +188,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('U', lparamU, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -178,9 +208,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('S', lparamS, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('U', lparamU, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('S', lparams['S'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -199,7 +229,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress((uint)'T', lparamT, Keys.Shift);
+			m_inputBusController.NotifyKeyPress((uint)'T', lparams['T'], Keys.Shift);
 
 			m_inputBusController.KillFocus();
 
@@ -219,15 +249,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('S', lparamS, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('S', lparams['S'], Keys.Shift);
 
 			m_inputBusController.KillFocus();
 
 			m_inputBusController.Focus();
 
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
 
-			m_inputBusController.NotifyKeyPress('U', lparamU, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], Keys.Shift);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -246,7 +276,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -264,8 +294,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -283,9 +313,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -303,12 +333,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
-			m_inputBusController.NotifyKeyPress('s', lparamS, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('s', lparams['S'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Don't commit
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
@@ -330,14 +360,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
-			m_inputBusController.NotifyKeyPress('s', lparamS, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('s', lparams['S'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -359,7 +389,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
 
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -379,8 +409,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Don't commit
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
@@ -401,10 +431,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -424,14 +454,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
-			m_inputBusController.NotifyKeyPress('s', lparamS, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('s', lparams['S'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -451,12 +481,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
 
-			m_inputBusController.NotifyKeyPress('t', lparamT, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress('t', lparams['T'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Commit by pressing space
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, Keys.None);
-			m_inputBusController.NotifyKeyPress('s', lparamS, Keys.None);
-			m_inputBusController.NotifyKeyPress('u', lparamU, Keys.None);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('s', lparams['S'], Keys.None);
+			m_inputBusController.NotifyKeyPress('u', lparams['U'], Keys.None);
 			// Don't commit
 
 			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
@@ -470,6 +500,105 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.That(preedit.Anchor, Is.EqualTo(1));
 			Assert.That(preedit.End, Is.EqualTo(3));
 		}
+
+		#region KeyboardWithGlyphSubstitution_ReplacingSelection
+		/// <summary>
+		/// Common helper.
+		/// </summary>
+		private void KeyboardWithGlyphSubstitution_CreateDocumentABC()
+		{
+			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
+
+			m_inputBusController.NotifyKeyPress('a', lparams['A'], Keys.None);
+			m_inputBusController.NotifyKeyPress('a', lparams['A'], Keys.None);
+			// Commit by pressing space
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('b', lparams['B'], Keys.None);
+			m_inputBusController.NotifyKeyPress('b', lparams['B'], Keys.None);
+			// Commit by pressing space
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+			m_inputBusController.NotifyKeyPress('c', lparams['C'], Keys.None);
+			m_inputBusController.NotifyKeyPress('c', lparams['C'], Keys.None);
+			// Commit by pressing space
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+		}
+
+		/// <summary>
+		/// Verify the common helper method works as expected.
+		/// </summary>
+		[Test]
+		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_CreatesDocument()
+		{
+			KeyboardWithGlyphSubstitution_CreateDocumentABC();
+
+			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+
+			var expectedDocument = "ABC";
+			var expectedPreedit = "";
+
+			Assert.That(document.Text, Is.EqualTo(expectedDocument));
+			Assert.That(preedit.SelectionText, Is.EqualTo(expectedPreedit));
+			Assert.That(preedit.Anchor, Is.EqualTo(3));
+			Assert.That(preedit.End, Is.EqualTo(3));
+		}
+
+		/// <summary>
+		/// FWNX-674
+		/// </summary>
+		[Test]
+		public void
+		NotifyKeyPress_KeyboardWithGlyphSubstitution_ReplaceForwardSelectedChar_Replaced()
+		{
+			KeyboardWithGlyphSubstitution_CreateDocumentABC();
+
+			// Select B, from left to right side.
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			preedit.Anchor = 1;
+			preedit.End = 2;
+
+			KeyboardWithGlyphSubstitution_ReplaceSelectionAndVerify();
+		}
+
+		/// <summary>
+		/// FWNX-674
+		/// </summary>
+		[Test]
+		public void
+		NotifyKeyPress_KeyboardWithGlyphSubstitution_ReplaceBackwardSelectedChar_Replaced()
+		{
+			KeyboardWithGlyphSubstitution_CreateDocumentABC();
+
+			// Select B, but from right side to left side
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+			preedit.Anchor = 2;
+			preedit.End = 1;
+
+			KeyboardWithGlyphSubstitution_ReplaceSelectionAndVerify();
+		}
+
+		/// <summary>
+		/// Common helper.
+		/// </summary>
+		private void KeyboardWithGlyphSubstitution_ReplaceSelectionAndVerify()
+		{
+			m_inputBusController.NotifyKeyPress('d', lparams['D'], Keys.None);
+			m_inputBusController.NotifyKeyPress('d', lparams['D'], Keys.None);
+			// Commit by pressing space
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], Keys.None);
+
+			var document = (DummyRootBox)m_dummySimpleRootSite.RootBox;
+			var preedit = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
+
+			var expectedDocument = "ADC";
+			var expectedPreedit = "";
+
+			Assert.That(document.Text, Is.EqualTo(expectedDocument));
+			Assert.That(preedit.SelectionText, Is.EqualTo(expectedPreedit));
+			Assert.That(preedit.Anchor, Is.EqualTo(2));
+			Assert.That(preedit.End, Is.EqualTo(2));
+		}
+		#endregion KeyboardWithGlyphSubstitution_ReplacingSelection
 		#endregion KeyboardWithGlyphSubstitution
 
 		/// <summary></summary>
@@ -478,11 +607,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator());
 
-			m_inputBusController.NotifyKeyPress('S', lparamS, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('T', lparamT, Keys.Shift);
-			m_inputBusController.NotifyKeyPress('U', lparamU, Keys.Shift);
+			m_inputBusController.NotifyKeyPress('S', lparams['S'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], Keys.Shift);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], Keys.Shift);
 			// Send a Space 0x0020
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, 0);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], 0);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -500,11 +629,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatSendsBackspacesAsForwardKeyEvents());
 
-			m_inputBusController.NotifyKeyPress('S', lparamS, 0);
-			m_inputBusController.NotifyKeyPress('T', lparamT, 0);
-			m_inputBusController.NotifyKeyPress('U', lparamU, 0);
+			m_inputBusController.NotifyKeyPress('S', lparams['S'], 0);
+			m_inputBusController.NotifyKeyPress('T', lparams['T'], 0);
+			m_inputBusController.NotifyKeyPress('U', lparams['U'], 0);
 			// Send a Space 0x0020
-			m_inputBusController.NotifyKeyPress(' ', lparamSpace, 0);
+			m_inputBusController.NotifyKeyPress(' ', lparams[' '], 0);
 
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
@@ -654,10 +783,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionText = _tss != null ? _tss.Text : String.Empty;
 			if (SelectionText == null)
 				SelectionText = String.Empty;
-			if (Anchor < m_rootBox.Text.Length)
-				m_rootBox.Text = m_rootBox.Text.Remove(Anchor, End - Anchor);
-			if (Anchor < m_rootBox.Text.Length)
-				m_rootBox.Text = m_rootBox.Text.Insert(Anchor, SelectionText);
+			var begin = Math.Min(Anchor, End);
+			var end = Math.Max(Anchor, End);
+			if (begin < m_rootBox.Text.Length)
+				m_rootBox.Text = m_rootBox.Text.Remove(begin, end - begin);
+			if (begin < m_rootBox.Text.Length)
+				m_rootBox.Text = m_rootBox.Text.Insert(begin, SelectionText);
 			else
 				m_rootBox.Text += SelectionText;
 		}
@@ -740,7 +871,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			get
 			{
-				throw new NotImplementedException();
+				if (End < Anchor)
+					return true;
+				return false;
 			}
 		}
 

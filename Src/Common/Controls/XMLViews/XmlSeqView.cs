@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -210,6 +211,16 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			InitXmlViewRootSpec(hvoRoot, flid, xnSpec, useSda);
 		}
+
+		/// <summary>
+		/// We need a smarter selection restorere here, to try to keep the selection on the same object.
+		/// </summary>
+		/// <returns></returns>
+		protected override SelectionRestorer CreateSelectionRestorer()
+		{
+			return new XmlSeqSelectionRestorer(this, Cache);
+		}
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -576,6 +587,135 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				base.Draw(e);
 			}
+		}
+	}
+
+	class XmlSeqSelectionRestorer: SelectionRestorer
+	{
+		private FdoCache Cache { get; set; }
+		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, FdoCache cache) : base(rootSite)
+		{
+			Cache = cache;
+		}
+
+		/// <summary>
+		/// We override the usual selection restoration to
+		/// (1) try to restore the full original selection even if read-only (e.g., document view)
+		/// (2) try to select a containing object if we can't select the exact same thing
+		/// (3) try to select a related object (for lexicon, at least) if we can't select the exact same one.
+		/// </summary>
+		/// <param name="fDisposing"></param>
+		protected override void Dispose(bool fDisposing)
+		{
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
+				return;
+
+			bool wasRange = m_savedSelection.IsRange; // may change during RestoreSelection (ugh!)
+			var oldLevels = m_savedSelection.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+
+			var originalRestore = RestoreSelection();
+			if (originalRestore != null && IsGoodRestore(originalRestore, wasRange))
+			{
+				return;
+			}
+			// This block is another idea for finding a related selection. In some cases it might get closer to the
+			// desired object. However because everything is index-based, it might also just find a corresponding
+			// position in a different object, rather randomly. Leaving it here in case it proves helpful.
+			//var numberOfLevels = m_savedSelection.GetNumberOfLevels(SelectionHelper.SelLimitType.Anchor);
+			//for (int count = numberOfLevels - 1; count >= 1; count--)
+			//{
+			//    // Grab the last count levels from the saved selection and try to select the whole object it indicates.
+			//    var rgvsli = new SelLevInfo[count];
+			//    var originalLevelInfo = m_savedSelection.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+			//    Array.Copy(originalLevelInfo, originalLevelInfo.Length - count, rgvsli, 0, count);
+			//    var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
+			//        m_savedSelection.IhvoRoot,
+			//        count,
+			//        rgvsli, count, rgvsli, true, false, true, true, true);
+			//    if (newSel != null)
+			//        return; // succeeded.
+			//}
+			// Try related objects.
+			if (oldLevels.Length == 0)
+				return; // paranoia
+			var rootLevelInfo = oldLevels[oldLevels.Length - 1];
+			var hvoTarget = rootLevelInfo.hvo;
+			ICmObject target;
+			var sda = m_savedSelection.RootSite.RootBox.DataAccess;
+			int rootHvo, frag;
+			IVwViewConstructor vc;
+			IVwStylesheet ss;
+			m_savedSelection.RootSite.RootBox.GetRootObject(out rootHvo, out vc, out frag, out ss);
+			var vsliTarget = new[] { rootLevelInfo };
+			int chvo = sda.get_VecSize(rootHvo, rootLevelInfo.tag);
+			if (Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoTarget, out target) && target is ILexEntry)
+			{
+				// maybe we can't see it because it has become a subentry.
+				var subentry = (ILexEntry) target;
+				var componentsEntryRef = subentry.EntryRefsOS.Where(se => se.RefType == LexEntryRefTags.krtComplexForm).FirstOrDefault();
+				if (componentsEntryRef != null)
+				{
+					var root = componentsEntryRef.PrimaryEntryRoots.FirstOrDefault();
+					if (root != null)
+					{
+						for (int i = 0; i < chvo; i++)
+						{
+							if (sda.get_VecItem(rootHvo, rootLevelInfo.tag, i) == root.Hvo)
+							{
+								vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
+								var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
+									m_savedSelection.IhvoRoot,
+									1,
+									vsliTarget, 1, vsliTarget, true, false, true, true, true);
+								if (newSel != null)
+									return;
+								break; // if we found it but for some reason can't select it give up.
+							}
+						}
+					}
+				}
+			}
+			// If all else fails try to make a nearby selection. First see if we can make a later one, or at the same index...
+			for (int i = rootLevelInfo.ihvo; i < chvo; i++)
+			{
+				vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
+				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
+					m_savedSelection.IhvoRoot,
+					1,
+					vsliTarget, 1, vsliTarget, true, false, true, true, true);
+				if (newSel != null)
+					return;
+			}
+			for (int i = rootLevelInfo.ihvo - 1; i > 0; i--)
+			{
+				vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
+				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
+					m_savedSelection.IhvoRoot,
+					1,
+					vsliTarget, 1, vsliTarget, true, false, true, true, true);
+				if (newSel != null)
+					return;
+			}
+		}
+
+		/// <summary>
+		/// Answer true if restored is a good restored selection for m_savedSelection.
+		/// Typically any selection derived from it is good, but if we started with a range and ended with an IP,
+		/// and the view is read-only, that's no so good. It will disappear in a read-only view.
+		/// </summary>
+		/// <param name="restored"></param>
+		/// <param name="wasRange">True if original selection was a range.</param>
+		/// <returns></returns>
+		private bool IsGoodRestore(IVwSelection restored, bool wasRange)
+		{
+			if (restored.IsRange)
+				return true; // can't be a problem
+			if (!wasRange)
+				return true; // original was an IP, we expect the restored one to be.
+			if (m_rootSite.ReadOnlyView)
+				return false; // for a read-only view we want a range if at all possible.
+			return true; // for an editable view an IP is a reasonable result.
 		}
 	}
 }

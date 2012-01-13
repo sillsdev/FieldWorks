@@ -8,6 +8,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -30,6 +31,11 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 			btnLinkNextWord.GotFocus += HandleFocusWrongButton;
 			btnMenu.GotFocus += HandleFocusWrongButton;
+		}
+
+		internal bool IsDirty
+		{
+			get { return m_sandbox.IsDirty; }
 		}
 
 		// There is no logical reason for other buttons ever to get the focus. But .NET helpfully focuses the link words button
@@ -337,6 +343,10 @@ namespace SIL.FieldWorks.IText
 				btnBreakPhrase.Enabled = false;
 			}
 			UpdateButtonState_Undo();
+			// LT-11406: Somehow JoinWords (and BreakPhrase) leaves the selection elsewhere,
+			// this should make it select the default location.
+			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, MakeDefaultSelection);
+
 		}
 
 		private void UpdateButtonState_Undo()
@@ -501,6 +511,7 @@ namespace SIL.FieldWorks.IText
 		bool SelectOnOrBeyondLine(int startLine, int increment);
 		void UpdateLineChoices(InterlinLineChoices choices);
 		int MultipleAnalysisColor { set; }
+		bool IsDirty { get; }
 	}
 
 	/// <summary>
@@ -535,6 +546,14 @@ namespace SIL.FieldWorks.IText
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
 		}
 
 		#endregion

@@ -1064,6 +1064,32 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Show dialog to report a bug in the system
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnHelpMakeSuggestion(object args)
+		{
+			ErrorReporter.MakeSuggestion(FwRegistryHelper.FieldWorksRegistryKey, "FLExDevteam@sil.org", this);
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Show dialog to report a bug in the system
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnHelpReportProblem(object args)
+		{
+			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, m_app.SupportEmailAddress, this);
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Show Help About dialog
 		/// </summary>
 		/// <param name="args"></param>

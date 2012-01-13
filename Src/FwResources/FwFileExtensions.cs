@@ -38,5 +38,7 @@ namespace SIL.FieldWorks.Resources
 		public const string ksLexiconInterchangeFormat = ".lift";
 		/// <summary>Default extension for FieldWorks TEMPORARY fallback data files (with the period).</summary>
 		public const string ksFwDataFallbackFileExtension = ".bak";
+		/// <summary>Default extension for FlexText format interlinear texts.</summary>
+		public const string ksFLexText = ".flextext";
 	}
 }

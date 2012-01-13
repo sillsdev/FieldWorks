@@ -3,14 +3,6 @@
 	<!-- NOTE: dir.outputBase is something like Output/Debug
 			   outputBase is something like Output -->
 	<pre-build>
-		<idlimp output="${dir.srcProj}/FwCellar.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
-			<sources>
-				<include name="${outputBase}/Common/FwCellarTlb.idl"/>
-			</sources>
-			<idhfiles>
-				<include name="${fwroot}/Src/Cellar/Cellar.idh"/>
-			</idhfiles>
-		</idlimp>
 		<idlimp output="${dir.srcProj}/FwKernel.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
 			<sources>
 				<include name="${outputBase}/Common/FwKernelTlb.idl"/>
@@ -57,7 +49,6 @@ Note that this means you have to cc mkfwk to get a new Language interface availa
 		</idlimp -->
 	</pre-build>
 	<post-clean>
-		<delete file="${dir.srcProj}/FwCellar.cs" verbose="true" failonerror="false"/>
 		<delete file="${dir.srcProj}/FwKernel.cs" verbose="true" failonerror="false"/>
 		<!-- delete file="${dir.srcProj}/Language.cs" verbose="true" failonerror="false"/ -->
 		<delete file="${dir.srcProj}/Views.cs" verbose="true" failonerror="false"/>
@@ -65,7 +56,6 @@ Note that this means you have to cc mkfwk to get a new Language interface availa
 
 		<delete verbose="false" failonerror="false">
 			<fileset basedir="${outputBase}/Common">
-				<include name="FwCellarTlb.iip"/>
 				<include name="FwKernelTlb.iip"/>
 				<include name="ViewsTlb.iip"/>
 			</fileset>

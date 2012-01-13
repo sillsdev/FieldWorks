@@ -11,7 +11,7 @@
 		</clerk>
 		<clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
 			<recordList class="WfiWordform" field="Occurrences">
-		<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences"/>
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>
@@ -55,7 +55,7 @@
 			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 			<parameters id="ITextControl" collapse="144000">
 			  <control>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMaster"/>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
 				<parameters id="ITextControl" editable="true" clerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
 			  </control>
 			</parameters>

@@ -252,6 +252,50 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return m_classesWithNewInstancesThisSession.Contains(classId);
 		}
 
+		private SimpleBag<ICmObject> m_focusedObjects;
+
+		/// <summary>
+		/// See interface defn.
+		/// </summary>
+		/// <param name="obj"></param>
+		public void AddFocusedObject(ICmObject obj)
+		{
+			if (obj == null)
+				return;
+			m_focusedObjects.Add(obj);
+		}
+
+		/// <summary>
+		/// See interface defn
+		/// </summary>
+		/// <param name="obj"></param>
+		public void RemoveFocusedObject(ICmObject obj)
+		{
+			if (obj == null)
+				return;
+			m_focusedObjects.Remove(obj);
+			if (m_focusedObjects.Occurrences(obj) == 0 && m_objectsToDeleteWhenNoLongerFocused.Contains(obj))
+			{
+				m_objectsToDeleteWhenNoLongerFocused.Remove(obj);
+				var wf = (WfiWordform) obj; // for now this is the only kind of object we put in the set.
+
+				NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor, wf.DeleteIfSpurious);
+			}
+		}
+
+		public bool IsFocused(ICmObject obj)
+		{
+			return m_focusedObjects.Occurrences(obj) > 0;
+		}
+
+		HashSet<ICmObject> m_objectsToDeleteWhenNoLongerFocused = new HashSet<ICmObject>();
+
+		public void DeleteFocusedObjectWhenNoLongerFocused(ICmObject obj)
+		{
+			m_objectsToDeleteWhenNoLongerFocused.Add(obj);
+		}
+
+
 		public void RegisterObjectAsCreated(ICmObject newby)
 		{
 			m_newInstancesThisSession.Add(newby);

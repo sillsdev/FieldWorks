@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CreatePOSXmlAttribute(doc, derivMsaNode, derivMsa.ToPartOfSpeechRA, "toCat");
 			CreateInflectionClassXmlAttribute(doc, derivMsaNode, derivMsa.FromInflectionClassRA, "fromInflClass");
 			CreateInflectionClassXmlAttribute(doc, derivMsaNode, derivMsa.ToInflectionClassRA, "toInflClass");
-			CreateRequiresInflectionXmlAttribute(doc, derivMsa.ToPartOfSpeechRA.Hvo, derivMsaNode);
+			CreateRequiresInflectionXmlAttribute(doc, derivMsa.ToPartOfSpeechRA, derivMsaNode);
 			CreateFeatureStructureNodes(doc, derivMsaNode, derivMsa.FromMsFeaturesOA, derivMsa.Hvo, "fromFS");
 			CreateFeatureStructureNodes(doc, derivMsaNode, derivMsa.ToMsFeaturesOA, derivMsa.Hvo, "toFS");
 			CreateProductivityRestrictionNodes(doc, derivMsaNode, derivMsa.FromProdRestrictRC, "fromProductivityRestriction");
@@ -312,10 +312,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				prName.InnerText = pr.Name.BestAnalysisAlternative.Text;
 			}
 		}
-		protected void CreateRequiresInflectionXmlAttribute(XmlDocument doc, int posHvo, XmlNode msaNode)
+		protected void CreateRequiresInflectionXmlAttribute(XmlDocument doc, IPartOfSpeech pos, XmlNode msaNode)
 		{
 			string sPlusMinus;
-			if (RequiresInflection(posHvo))
+			if (RequiresInflection(pos))
 				sPlusMinus = "+";
 			else
 				sPlusMinus = "-";
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			CreateInflectionClassXmlAttribute(doc, stemMsaNode, inflClass, "inflClass");
 			CreateRequiresInflectionXmlAttribute(doc,
-				stemMsa.PartOfSpeechRA == null ? 0 : stemMsa.PartOfSpeechRA.Hvo,
+				stemMsa.PartOfSpeechRA,
 				stemMsaNode);
 			CreateFeatureStructureNodes(doc, stemMsaNode, stemMsa.MsFeaturesOA, stemMsa.Hvo);
 			CreateProductivityRestrictionNodes(doc, stemMsaNode, stemMsa.ProdRestrictRC, "productivityRestriction");
@@ -424,18 +424,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Determine if a PartOfSpeech requires inflection.
 		/// If it or any of its parent POSes have a template, it requires inflection.
+		/// If it is null we default to not requiring inflection.
 		/// </summary>
-		/// <param name="posHvo">hvo of the Part of Speech</param>
+		/// <param name="pos">the Part of Speech</param>
 		/// <returns>true if it does, false otherwise</returns>
-		protected bool RequiresInflection(int posHvo)
+		protected bool RequiresInflection(IPartOfSpeech pos)
 		{
-			bool fResult = false;  // be pessimistic
-			if (posHvo > 0)
-			{
-				IPartOfSpeech pos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posHvo);
-				fResult = pos.RequiresInflection;
-			}
-			return fResult;
+			return pos != null && pos.RequiresInflection;
 		}
 		/// <summary>
 		/// Path to transforms

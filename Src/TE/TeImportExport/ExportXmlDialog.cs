@@ -15,18 +15,19 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 using SIL.CoreImpl;
+using SILUBS.SharedScrControls;
+using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="T:ExportXmlDialog"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ExportXmlDialog(FdoCache cache, FilteredScrBooks filter, ScrReference refBook,
+		public ExportXmlDialog(FdoCache cache, FilteredScrBooks filter, int defaultBookNum,
 			IVwStylesheet stylesheet, FileType exportType, IHelpTopicProvider helpTopicProvider)
 		{
 			//
@@ -158,15 +159,14 @@ namespace SIL.FieldWorks.TE
 
 			// Set the single book from the current one in use if possible, otherwise set
 			// it from the first available book, if any are available.
-			if (refBook == null)
+			if (defaultBookNum < 1 || defaultBookNum > BCVRef.LastBook)
 			{
-				refBook = new ScrReference();
-				refBook.BBCCCVVV = 1001001;
+				defaultBookNum = 1;
 				if (m_scr.ScriptureBooksOS.Count > 0)
-					refBook.Book = m_scr.ScriptureBooksOS[0].CanonicalNum;
+					defaultBookNum = m_scr.ScriptureBooksOS[0].CanonicalNum;
 			}
 
-			m_scrBook.Initialize(refBook, m_scr, true);
+			m_scrBook.Initialize(defaultBookNum, m_scr.ScriptureBooksOS.Select(b => b.CanonicalNum).ToArray());
 			m_scrBook.PassageChanged += m_scrBook_PassageChanged;
 
 			// Initialize the combo boxes, and then adjust their heights (and the locations
@@ -178,9 +178,9 @@ namespace SIL.FieldWorks.TE
 			cboFrom.Font = cboTo.Font = m_fntVern;
 
 			// Now that the sizes are fixed, load the combo box lists.
-			LoadSectionsForBook(refBook.Book);
+			LoadSectionsForBook(defaultBookNum);
 
-			m_nBookForSections = refBook.Book;
+			m_nBookForSections = defaultBookNum;
 			m_sRangeBookFmt = m_grpSectionRange.Text;
 			UpdateBookSectionGroupLabel();
 
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.TE
 			this.m_rdoFilteredBooks = new System.Windows.Forms.RadioButton();
 			this.m_rdoSingleBook = new System.Windows.Forms.RadioButton();
 			this.m_lblFilterList = new System.Windows.Forms.Label();
-			this.m_scrBook = new SIL.FieldWorks.Common.Controls.ScrBookControl();
+			this.m_scrBook = new SILUBS.SharedScrControls.ScrBookControl();
 			this.m_grpSectionRange = new System.Windows.Forms.GroupBox();
 			this.cboTo = new System.Windows.Forms.ComboBox();
 			this.cboFrom = new System.Windows.Forms.ComboBox();
@@ -571,6 +571,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		void m_scrBook_PassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("Book to export changed to {0}", newReference.AsString));
 			int nBook = newReference.Book;
 
 			// See TE-6945 (and ScrPassageControl.ResolveReference() invoked from LostFocus())

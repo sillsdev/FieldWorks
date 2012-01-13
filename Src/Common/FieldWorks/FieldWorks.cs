@@ -2282,9 +2282,9 @@ namespace SIL.FieldWorks
 						Int32.TryParse(keyFlex.GetValue("launches", "0") as string, out launchesFlex);
 				}
 			}
-			if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Translation Editor"))
+			if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, FwSubKey.TE))
 			{
-				using (var keyTe = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Translation Editor"))
+				using (var keyTe = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(FwSubKey.TE))
 				{
 					if (keyTe != null)
 						Int32.TryParse(keyTe.GetValue("launches", "0") as string, out launchesTe);
@@ -2881,6 +2881,7 @@ namespace SIL.FieldWorks
 			{
 				ProjectMatch isMyProject;
 				Func<ProjectId, FwAppArgs, ProjectMatch> invoker = requestor.HandleOpenProjectRequest;
+				var start = DateTime.Now;
 				do
 				{
 					IAsyncResult ar = invoker.BeginInvoke(project, args, null, null);
@@ -2906,9 +2907,16 @@ namespace SIL.FieldWorks
 						Logger.WriteEvent("WEIRD! Detected single FW process mode while this process is trying to open a project.");
 						Debug.Fail("We don't think this can happen, but it's no big deal.");
 						return true; // Should kill this process
-				}
-				}
-				while (isMyProject == ProjectMatch.DontKnowYet);
+					}
+					if (DateTime.Now - start > new TimeSpan(0, 0, 10))
+					{
+						// Some other process apparently keeps telling us it doesn't know. It's probably stuck in this same loop,
+						// waiting for us!
+						MessageBox.Show(Properties.Resources.kstidFieldWorksRespondedNotSure, Properties.Resources.kstidStartupProblem,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return true; // pretends some other process has the project opened and is handling the request; this process will quit
+					}
+				} while (isMyProject == ProjectMatch.DontKnowYet);
 
 				s_fWaitingForUserOrOtherFw = false;
 				return (isMyProject == ProjectMatch.ItsMyProject);
@@ -3407,6 +3415,7 @@ namespace SIL.FieldWorks
 			if (s_allowFinalShutdown)
 			{
 				Logger.ShutDown();
+				SingletonsContainer.Release();
 				Application.Exit();
 			}
 		}

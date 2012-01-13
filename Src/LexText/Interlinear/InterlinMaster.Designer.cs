@@ -62,7 +62,6 @@ namespace SIL.FieldWorks.IText
 			m_panelGloss = null;
 			m_panelTagging = null;
 			m_panelPrintView = null;
-			m_bookmark = null;
 
 			base.Dispose(disposing);
 		}
@@ -111,7 +110,7 @@ namespace SIL.FieldWorks.IText
 			this.m_tcPane.Group = null;
 			this.m_tcPane.IsTextBox = false;
 			this.m_tcPane.Mediator = null;
-			this.m_tcPane.MinimumSize = new System.Drawing.Size(0, 55);
+			this.m_tcPane.MinimumSize = new System.Drawing.Size(0, 0); // LT-12233
 			this.m_tcPane.Name = "m_tcPane";
 			this.m_tcPane.ReadOnlyView = false;
 			this.m_tcPane.ScrollMinSize = new System.Drawing.Size(0, 0);
@@ -339,8 +338,8 @@ namespace SIL.FieldWorks.IText
 
 		}
 
-		private TitleContentsPane m_tcPane;
-		private TabControl m_tabCtrl;
+		protected TitleContentsPane m_tcPane;
+		protected TabControl m_tabCtrl;
 		private TabPage m_tpInfo;
 		private TabPage m_tpRawText;
 		private RawTextPane m_rtPane;

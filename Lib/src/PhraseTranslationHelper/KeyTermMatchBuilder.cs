@@ -103,12 +103,12 @@ namespace SILUBS.PhraseTranslationHelper
 			// Initially, we add one empty list
 			m_list.Add(new KeyTermMatch(new Word[0], keyTerm, m_fMatchForRefOnly));
 			bool firstWordOfPhrase = true;
-			foreach (Word metaWord in phrase.Split(new []{' ', '\''}, StringSplitOptions.RemoveEmptyEntries))
+			foreach (Word metaWord in phrase.Split(new[]{' '}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
 			{
 				List<Word> allWords = AllWords(metaWord, firstWordOfPhrase);
-				firstWordOfPhrase = false;
 				if (allWords.Count > 0)
 					AddWordsToMatches(keyTerm, allWords, startOfListForPhrase);
+				firstWordOfPhrase = false;
 			}
 
 			if (m_fInOptionalPhrase)

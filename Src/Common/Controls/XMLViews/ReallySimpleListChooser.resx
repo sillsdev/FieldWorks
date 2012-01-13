@@ -229,6 +229,9 @@
   <data name="m_lblLink2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>None</value>
   </data>
+  <data name="m_lblLink2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="m_lblLink2.Location" type="System.Drawing.Point, System.Drawing">
 	<value>30, 0</value>
   </data>
@@ -347,6 +350,9 @@
   </data>
   <data name="m_lblLink1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>None</value>
+  </data>
+  <data name="m_lblLink1.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
   </data>
   <data name="m_lblLink1.Location" type="System.Drawing.Point, System.Drawing">
 	<value>30, 0</value>

@@ -73,6 +73,35 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// What it says.
+		/// </summary>
+		[Test]
+		public void FocusedObjectPostponesWordformDeletion()
+		{
+			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			Cache.LangProject.TextsOC.Add(text);
+			var sttext = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			text.ContentsOA = sttext;
+			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+			sttext.ParagraphsOS.Add(para);
+			para.Contents = Cache.TsStrFactory.MakeString("xyzhello", Cache.DefaultVernWs);
+			using (var pp = new ParagraphParser(Cache))
+					pp.Parse(para);
+			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs,
+				"xyzhello");
+			Cache.ServiceLocator.ObjectRepository.AddFocusedObject(wf);
+			para.Contents = Cache.TsStrFactory.MakeString("xyhello", Cache.DefaultVernWs);
+			m_actionHandler.EndUndoTask();
+
+			Assert.That(wf.IsValidObject, "the focused wordform should not have been deleted");
+			Cache.ServiceLocator.ObjectRepository.AddFocusedObject(wf); // count 2
+			Cache.ServiceLocator.ObjectRepository.RemoveFocusedObject(wf);
+			Assert.That(wf.IsValidObject, "the focused wordform should not have been deleted while some window still has it focused");
+			Cache.ServiceLocator.ObjectRepository.RemoveFocusedObject(wf);
+			Assert.That(wf.IsValidObject, Is.False, "the focused wordform should be deleted when focus moves");
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		[Test]

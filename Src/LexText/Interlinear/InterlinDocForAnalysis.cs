@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			int hvoNote;
-			if(CanDeleteNote(e.Selection, out hvoNote))
+			if (CanDeleteNote(e.Selection, out hvoNote))
 			{
 				if (menu.Items.Count > 0)
 				{
@@ -77,8 +77,8 @@ namespace SIL.FieldWorks.IText
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-			if (IsFocusBoxInstalled && tag == SegmentTags.kflidAnalyses && FocusBox.SelectedOccurrence != null
-				&& FocusBox.SelectedOccurrence.Segment.Hvo == hvo)
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null
+				&& tag == SegmentTags.kflidAnalyses && FocusBox.SelectedOccurrence.Segment.Hvo == hvo)
 			{
 				int index = FocusBox.SelectedOccurrence.Index;
 				var seg = FocusBox.SelectedOccurrence.Segment;
@@ -99,6 +99,18 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		protected override void UpdateWordforms(HashSet<IWfiWordform> wordforms)
+		{
+			base.UpdateWordforms(wordforms);
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform)
+				&& !FocusBox.IsDirty)
+			{
+				// update focus box to display new guess
+				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
+				MoveFocusBoxIntoPlace();
+			}
+		}
+
 		void OnDeleteNote(object sender, EventArgs e)
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
@@ -113,7 +125,7 @@ namespace SIL.FieldWorks.IText
 			if (!CanDeleteNote(sel, out hvoNote))
 				return;
 			var note = Cache.ServiceLocator.GetInstance<INoteRepository>().GetObject(hvoNote);
-			var segment = (ISegment) note.Owner;
+			var segment = (ISegment)note.Owner;
 			segment.NotesOS.Remove(note);
 		}
 		/// <summary>
@@ -165,16 +177,14 @@ namespace SIL.FieldWorks.IText
 		#region Overrides of RootSite
 
 		/// <summary>
-		/// see: InterlinDocChild.DestroyFocusBoxAndSetFocus()
+		/// If you lost focus while processing a key or click, it may be because you are
+		/// making a new selection before calling a method like TryHideFocusBoxAndUninstall().
+		/// Hide focus and uninstall first!
 		/// </summary>
-		private bool m_fSuppressLoseFocus = false;
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if (!m_fSuppressLoseFocus) // suppresses events while focusing self.
-			{
-				if (m_vc != null)
-					m_vc.SetActiveFreeform(0, 0, 0, 0);
-			}
+			if (m_vc != null)
+				m_vc.SetActiveFreeform(0, 0, 0, 0);
 			base.OnLostFocus(e);
 		}
 
@@ -248,6 +258,18 @@ namespace SIL.FieldWorks.IText
 		/// <param name="fMakeDefaultSelection">true to make the default selection within the new sandbox.</param>
 		public virtual void TriggerAnalysisSelected(AnalysisOccurrence target, bool fSaveGuess, bool fMakeDefaultSelection)
 		{
+			TriggerAnalysisSelected(target, fSaveGuess, fMakeDefaultSelection, true);
+		}
+
+		/// <summary>
+		/// Move the sandbox to the AnalysisOccurrence, (which may be a WfiWordform, WfiAnalysis, or WfiGloss).
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="fSaveGuess">if true, saves guesses; if false, skips guesses but still saves edits.</param>
+		/// <param name="fMakeDefaultSelection">true to make the default selection within the new sandbox.</param>
+		/// <param name="fShow">true makes the focusbox visible.</param>
+		public virtual void TriggerAnalysisSelected(AnalysisOccurrence target, bool fSaveGuess, bool fMakeDefaultSelection, bool fShow)
+		{
 			// This can happen, though it is rare...see LT-8193.
 			if (!target.IsValid)
 			{
@@ -261,21 +283,23 @@ namespace SIL.FieldWorks.IText
 			RootBox.DestroySelection();
 			FocusBox.SelectOccurrence(target);
 			SetFocusBoxSizeForVc();
-
 			SelectedOccurrence = target;
-			SimulateReplaceAnalysis(target);
-			MoveFocusBoxIntoPlace();
-			// Now it is the right size and place we can show it.
-			TryShowFocusBox();
-			// All this CAN hapen because we're editing in another window...for example,
-			// if we edit something that deletes the current wordform in a concordance view.
-			// In that case we don't want to steal the focus.
-			if (ParentForm == Form.ActiveForm)
-				FocusBox.Focus();
+
+			if (fShow)
+			{
+				SimulateReplaceAnalysis(target);
+				MoveFocusBoxIntoPlace();
+				// Now it is the right size and place we can show it.
+				TryShowFocusBox();
+				// All this CAN hapen because we're editing in another window...for example,
+				// if we edit something that deletes the current wordform in a concordance view.
+				// In that case we don't want to steal the focus.
+				if (ParentForm == Form.ActiveForm)
+					FocusBox.Focus();
+			}
 
 			if (fMakeDefaultSelection)
 				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
-			//}
 		}
 
 		// Set the VC size to match the FocusBox. Return true if it changed.
@@ -371,12 +395,19 @@ namespace SIL.FieldWorks.IText
 				// If you change this, be sure to test that in a several-page interlinear text, with the
 				// Sandbox near the bottom, you can turn 'show morphology' on and off and the sandbox
 				// ends up in the right place.
-				this.ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
-				Update();
 				if (sel == null)
 				{
 					Debug.WriteLine("could not select annotation");
 					return;
+				}
+				if (!fJustChecking)
+				{
+					// During paint we do NOT want to force another paint, still less to force the focus box
+					// into view when it may have been purposely scrolled off.
+					// At other times we need the part of the view that contains the focus box to be actually
+					// painted (and hence lazy stuff expanded) before we make our final determination of the position.
+					ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
+					Update();
 				}
 				var ptLoc = GetSandboxSelLocation(sel);
 				if (ExistingFocusBox != null && FocusBox.Location != ptLoc)
@@ -386,6 +417,19 @@ namespace SIL.FieldWorks.IText
 			{
 				m_fMovingSandbox = false;
 			}
+		}
+
+		/// <summary>
+		/// If we try to scroll to show the focus box before we are Created, our attempt to set the scroll position is ignored.
+		/// This is an attempt to recover and make sure that even the first time the view is being created, we are scrolled
+		/// to show the focus box if we have set one up.
+		/// </summary>
+		protected override void OnCreateControl()
+		{
+			base.OnCreateControl();
+			Debug.Assert(Created);
+			if (IsFocusBoxInstalled)
+				MoveFocusBoxIntoPlace(false);
 		}
 
 		/// <summary>
@@ -414,6 +458,244 @@ namespace SIL.FieldWorks.IText
 			if (m_hvoRoot == 0 || SelectedOccurrence == null)
 				return null;
 			return SelectOccurrenceInIText(SelectedOccurrence);
+		}
+
+		/// <summary>
+		/// Get the next segment with either a non-null annotation that is configured or
+		/// a non-punctuation analysis. Also skip segments that are Scripture labels (like
+		/// Chapter/Verse/Footnote numbers.
+		/// It tries the next one after the SelectedOccurrence.Segment
+		/// then tries the next paragraph, etc..
+		/// Use this version if the calling code already has the actual para/seg objects.
+		/// </summary>
+		/// <param name="currentPara"></param>
+		/// <param name="seg"></param>
+		/// <param name="upward">true if moving up and left, false otherwise</param>
+		/// <param name="realAnalysis">the first or last real analysis found in the next segment</param>
+		/// <returns>A segment meeting the criteria or null if not found.</returns>
+		private ISegment GetNextSegment(IStTxtPara currentPara, ISegment seg, bool upward,
+				out AnalysisOccurrence realAnalysis)
+		{
+			ISegment nextSeg = null;
+			realAnalysis = null;
+			var currentText = currentPara.Owner as IStText;
+			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
+			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var delta = upward ? -1 : 1;
+			var nextSegIndex = delta + seg.IndexInOwner;
+			do
+			{
+				if (0 <= nextSegIndex && nextSegIndex < currentPara.SegmentsOS.Count)
+				{
+					nextSeg = currentPara.SegmentsOS[nextSegIndex];
+					nextSegIndex += delta; // increment for next loop in case it doesn't check out
+				}
+				else
+				{   // try the first (last) segment in the next (previous) paragraph
+					int nextParaIndex = delta + currentPara.IndexInOwner;
+					nextSeg = null;
+					IStTxtPara nextPara = null;
+					if (0 <= nextParaIndex && nextParaIndex < currentText.ParagraphsOS.Count)
+					{   // try to find this paragraph's first (last) segment
+						currentPara = (IStTxtPara)currentText.ParagraphsOS[nextParaIndex];
+						nextSegIndex = upward ? currentPara.SegmentsOS.Count - 1 : 0;
+					}
+					else
+					{	// no more paragraphs in this text
+						break;
+					}
+				}
+				realAnalysis = FindRealAnalysisInSegment(nextSeg, !upward);
+			} while (nextSeg == null || (realAnalysis == null && !HasVisibleTranslationOrNote(nextSeg, lines)));
+			return nextSeg;
+		}
+
+		/// <summary>
+		/// Get the next segment with either a non-null annotation that is configured or
+		/// a non-punctuation analysis.
+		/// It tries the next one after the SelectedOccurrence.Segment
+		/// then tries the next paragraph, etc..
+		/// </summary>
+		/// <param name="paraIndex"></param>
+		/// <param name="segIndex"></param>
+		/// <param name="upward">true if moving up and left, false otherwise</param>
+		/// <param name="realAnalysis">the first or last real analysis found in the next segment</param>
+		/// <returns>A segment meeting the criteria or null if not found.</returns>
+		internal ISegment GetNextSegment(int paraIndex, int segIndex, bool upward, out AnalysisOccurrence realAnalysis)
+		{
+			var currentPara = (IStTxtPara)RootStText.ParagraphsOS[paraIndex];
+			Debug.Assert(currentPara != null, "Tried to use a null paragraph ind=" + paraIndex);
+			ISegment currentSeg = currentPara.SegmentsOS[segIndex];
+			Debug.Assert(currentSeg != null, "Tried to use a null segment ind=" + segIndex + " in para " + paraIndex);
+			return GetNextSegment(currentPara, currentSeg, upward, out realAnalysis);
+		}
+
+		/// <summary>
+		/// Gets the first visible (non-null and configured) translation or note line in the current segment.
+		/// </summary>
+		/// <param name="segment">The segment to get the translation or note flid from.</param>
+		/// <param name="ws">The returned writing system for the line needed to identify it or -1.</param>
+		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
+		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
+		{
+			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
+			var annotations = lines.SkipWhile(line => line.WordLevel);
+			int tryAnnotationIndex = lines.Count() - annotations.Count();
+			if (annotations.Count() > 0)
+			{   // We want to select at the start of this translation or note if it is not a null note.
+				bool isaNote = annotations.First().Flid == InterlinLineChoices.kflidNote;
+				if (isaNote && segment.NotesOS.Count == 0)
+				{   // this note is not visible - skip to the next non-note translation or note
+					var otherAnnotations = annotations.SkipWhile(line => line.Flid == InterlinLineChoices.kflidNote);
+					tryAnnotationIndex = lines.Count() - otherAnnotations.Count();
+					if (otherAnnotations.Count() == 0)
+						tryAnnotationIndex = -1; // no more translations or notes, go to an analysis in the next segment.
+				}
+			}
+			else // no translations or notes to go to
+				tryAnnotationIndex = -1;
+			int tryAnnotationFlid = 0;
+			ws = -1;
+			if (tryAnnotationIndex > -1)
+			{
+				var lineSpec = lines.Skip(tryAnnotationIndex).First();
+				tryAnnotationFlid = lineSpec.Flid;
+				ws = lineSpec.WritingSystem;
+			}
+			return tryAnnotationFlid;
+		}
+
+		/// <summary>
+		/// Select the first non-null translation or note in the current segment
+		/// of the current analysis occurance.
+		/// </summary>
+		/// <returns>true if successful, false if there is no real translation or note</returns>
+		internal bool SelectFirstTranslationOrNote()
+		{
+			int ws;
+			int annotationFlid = GetFirstVisibleTranslationOrNoteFlid(SelectedOccurrence.Segment, out ws);
+			if (annotationFlid == 0) return false;
+			var sel = MakeSandboxSel();
+			int clev = sel.CLevels(true);
+			clev--; // result it returns is one more than what the AllTextSelInfo routine wants.
+			SelLevInfo[] rgvsli;
+			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
+			{
+				int ihvoRoot;
+				int cpropPrevious;
+				int ichAnchor;
+				int ichEnd;
+				int ihvoEnd1;
+				int tag, ws1;
+				bool fAssocPrev;
+				ITsTextProps ttp;
+				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
+								   out ichAnchor, out ichEnd, out ws1, out fAssocPrev, out ihvoEnd1, out ttp);
+				rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
+			}
+			// What non-word "choice" ie., translation text or note is on this line?
+			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, SelectedOccurrence.Segment, ws);
+			int levels;
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel; // note or translation line
+			vsli[1] = rgvsli[0]; // segment
+			vsli[2] = rgvsli[1]; // para
+			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
+			TryHideFocusBoxAndUninstall();
+			RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
+									  0, 0, 0, false, -1, null, true);
+			Focus();
+			return true;
+		}
+
+		/// <summary>
+		/// Return the first non-null translation or note selection in the specified segment.
+		/// The segment does not need to be the current occurance.
+		/// </summary>
+		/// <param name="segment">A valid segment.</param>
+		/// <returns>The selection or null if there is no real translation or note.</returns>
+		internal IVwSelection SelectFirstTranslationOrNote(ISegment segment)
+		{
+			if (segment == null)
+				return null;
+			int ws;
+			int annotationFlid = GetFirstVisibleTranslationOrNoteFlid(segment, out ws);
+			if (annotationFlid == 0)
+				return null;
+			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, segment, ws);
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			// notes and translation lines have 3 levels: 2:para, 1:seg, 0:content or self property
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel;  // note or translation line
+			vsli[1].ihvo = segment.IndexInOwner; // specifies where segment is in para
+			vsli[1].tag = StTxtParaTags.kflidSegments;
+			vsli[2].ihvo = segment.Paragraph.IndexInOwner; // specifies where para is in IStText.
+			vsli[2].tag = StTextTags.kflidParagraphs;
+			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
+			var sel = RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
+												0, 0, 0, false, 0, null, true);
+			Focus();
+			TryHideFocusBoxAndUninstall();
+			return sel;
+		}
+
+		/// <summary>
+		/// Sets up the tags for the 0 level of a selection of a free translation or note.
+		/// This will be the level "inside" the ones that select the paragraph and segment.
+		/// For a note, we need to select the first note.
+		/// For a free translation, we need to insert the level for the 'self' property
+		/// which the VC inserts to isolate the free translations and make it easier to update them.
+		/// </summary>
+		/// <param name="tagTextProp">The segment or note tag of an annotation to be selected.</param>
+		private SelLevInfo MakeInnerLevelForFreeformSelection(int tagTextProp)
+		{
+			var noteLevel = new SelLevInfo();
+			noteLevel.ihvo = 0;
+			if (tagTextProp == NoteTags.kflidContent)
+			{
+				noteLevel.tag = SegmentTags.kflidNotes;
+			}
+			else
+			{
+				noteLevel.tag = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+			}
+			return noteLevel;
+		}
+
+		/// <summary>
+		/// Converts InterlinLineChoices flids to corresponding SegmentTags.
+		/// or NoteTags.
+		/// This is useful when making translation or note selections.
+		/// </summary>
+		/// <param name="annotationFlid">The translation or note Flid to be converted.</param>
+		/// <param name="segment">The segment the flid applies to.</param>
+		/// <param name="ws">The writing system of the text.</param>
+		/// <returns>A flid suitable for making translation or note selections or -1 if unknown.</returns>
+		internal int ConvertTranslationOrNoteFlidToSegmentFlid(int annotationFlid, ISegment segment, int ws)
+		{
+			int tagTextProp = -1;
+			switch (annotationFlid)
+			{
+				case InterlinLineChoices.kflidFreeTrans:
+					tagTextProp = SegmentTags.kflidFreeTranslation;
+					//if (segment.FreeTranslation.StringOrNull(ws) == null)
+					//    tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
+					break;
+				case InterlinLineChoices.kflidLitTrans:
+					tagTextProp = SegmentTags.kflidLiteralTranslation;
+					//if (segment.LiteralTranslation.StringOrNull(ws) == null)
+					//	tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
+					break;
+				case InterlinLineChoices.kflidNote:
+					tagTextProp = NoteTags.kflidContent;
+					break;
+				default:
+					Debug.Assert(false, "An annotation flid was not converted for selection - flid = " + annotationFlid);
+					break;
+			}
+			return tagTextProp;
 		}
 
 		/// summary>
@@ -485,11 +767,13 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				return (m_vc as InterlinDocForAnalysisVc).FocusBoxOccurrence;
+				return ((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence;
 			}
 			set
 			{
-				(m_vc as InterlinDocForAnalysisVc).FocusBoxOccurrence = value;
+				((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence = value;
+				m_mediator.PropertyTable.SetProperty("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
+				m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
 			}
 		}
 
@@ -576,287 +860,523 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
-			// LT-9570 for the Tree Translation line, Susanna wanted Enter to copy Word Glosses
+			// LT-9570 for the Tree Translation line, Susanna wanted Enter to copy Word Glsses
 			// into the Free Translation line. Note: DotNetBar is not handling shortcut="Enter"
 			// for the XML <command id="CmdAddWordGlossesToFreeTrans"...
 			if (RootBox != null && e.KeyCode == Keys.Enter)
 				OnAddWordGlossesToFreeTrans(null);
 
 			// LT-4029 Capture arrow keys from inside the translation lines and notes.
-			if (!HandleArrowKeys(e))
-				base.OnKeyDown(e);
+			var change = HandleArrowKeys(e);
+			// LT-12097 Right and left arrow keys from an empty translation line (part of the issue)
+			// The up and down arrows work, so here we changed the event appropriately to up or down.
+			if (change != ArrowChange.Handled)
+			{
+				KeyEventArgs e2;
+				switch (change)
+				{   // might need to change the key event so the base method will handle it right.
+					case ArrowChange.Down:
+						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Down);
+						break;
+					case ArrowChange.Up:
+						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Up);
+						break;
+					case ArrowChange.None:
+						e2 = e;
+						break;
+					default:
+						e2 = e;
+						break;
+				}
+				base.OnKeyDown(e2);
+			}
 		}
+
+		enum ArrowChange {None, Up, Down, Handled}
+
 		/// <summary>
-		/// Performs a change in IP when arrow keys should take the IP from an annotation
-		/// to an analysis.
+		/// Performs a change in IP when arrow keys should take the IP from a translation or note
+		/// to an analysis. Also handles right and left arrow for empty translation lines via the
+		/// output enum.
+		/// two directions of concern for Left to Right(LTR) and Right To Left(RTL):
+		/// 1: up from the first translation or note in a paragraph after a word line possibly
+		///  in another paragraph via up arrow or a left (right if RTL) arrow from the first (last)
+		///  character of the annotaton
+		/// 2: down from the last translation or note in a paragraph before a word line possibly
+		///  in another paragraph via down arrow or a right (left if RTL) arrow from the last (right)
+		///  character of the annotaton
+		/// The following logic accounts for the configured position of notes and whether the user added them.
+		/// The idea here is to eliminate as many default cases as possible as early as possible to be handled by
+		/// the old annotation OnKeyDown() method.
 		/// </summary>
 		/// <param name="e">The keyboard event</param>
-		/// <returns>true if it handled the situation, false if not.</returns>
-		private bool HandleArrowKeys(KeyEventArgs e)
+		/// <returns>handled if it handled the situation, None if not and Up or Down
+		/// when that is what's needed from the base method.</returns>
+		private ArrowChange HandleArrowKeys(KeyEventArgs e)
 		{
 			if (SelectedOccurrence == null &&
 				(e.KeyCode == Keys.Down || e.KeyCode == Keys.Up ||
 				 e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) &&
 				((e.KeyCode & Keys.Shift) != Keys.Shift) && ((e.KeyCode & Keys.Control) != Keys.Control))
 			{
-				// It's an arrow key, but are in a translation line or note?
-				// Get the current selection so we can get the actual annotation objects
-				var sel = EditingHelper.RootBoxSelection;
-				if (sel == null) return false;
-				// which "line choice" is active in this segment?
-				if (sel.SelType != VwSelType.kstText || !sel.IsEditable || !sel.IsValid) return false;
-				int clev = sel.CLevels(true);
-				ITsTextProps ttp;
+				//MessageBox.Show("Processing arrow keys!", "What's Going On Here??");
+				// It's an arrow key, but is it in a translation line or note?
+				// Get the current selection so we can obtain the actual translation or note objects
 				SelLevInfo[] rgvsli;
-				int tag;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				int cpropPrevious;
-				using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative(clev, typeof (SelLevInfo)))
-				{
-					int ihvoRoot;
-					int ihvoEnd1;
-					bool fAssocPrev;
-					sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
-									   out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
-					rgvsli = (SelLevInfo[]) MarshalEx.NativeToArray(rgvsliTemp, clev, typeof (SelLevInfo));
-				}
+				int clev, tag, ichAnchor, ichEnd, ws;
+				bool haveSelection = GetCurrentSelection(out clev, out rgvsli, out tag, out ichAnchor, out ichEnd, out ws);
+				if (!haveSelection)
+					return ArrowChange.None;
 
 				// get the text, paragraph, segment and note, if there is one
-				var rsText = RootStText; // The active text
-				var curParaIndex = rgvsli[clev - 2].ihvo;
-				var curPara = (IStTxtPara) rsText.ParagraphsOS[curParaIndex];
-				Debug.Assert(curPara != null, "Moving from a non-exisiting paragraph in interlinear Doc.");
-				var curSegIndex = rgvsli[clev - 3].ihvo;
-				ISegment curSeg = curPara.SegmentsOS[curSegIndex];
-				Debug.Assert(curSeg != null, "Moving from a non-exisiting segment in interlinear Doc.");
-				INote curNote = null;
-				var curNoteIndex = 0;
-				if (tag == NoteTags.kflidContent)
-				{
-					curNoteIndex = rgvsli[clev - 4].ihvo;
-					curNote = curSeg.NotesOS[curNoteIndex];
-				}
-				// what kind of line is it and where is the selection (ie., IP) in the text?
-				int id = 0;
-				WhichEnd where = WhichEnd.Niether;
-				switch (tag)
-				{
-					case SegmentTags.kflidFreeTranslation:
-						id = InterlinLineChoices.kflidFreeTrans;
-						where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.FreeTranslation.get_String(ws).Length);
-						break;
-					case SegmentTags.kflidLiteralTranslation:
-						id = InterlinLineChoices.kflidLitTrans;
-						where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.LiteralTranslation.get_String(ws).Length);
-						break;
-					case NoteTags.kflidContent:
-						Debug.Assert(curNote != null, "Moving from a non-exisiting note in interlinear Doc.");
-						id = InterlinLineChoices.kflidNote;
-						where = ExtremePositionInString(ichAnchor, ichEnd, curNote.Content.get_String(ws).Length);
-						break;
-					default: // not expected
-						return false;
-				}
+				int curSegIndex, curParaIndex, curNoteIndex;
+				ISegment curSeg;
+				INote curNote;
+				GetCurrentTextObjects(clev, rgvsli, tag,
+					out curParaIndex, out curSegIndex, out curNoteIndex, out curSeg, out curNote);
 
-				// is it the last choice before a word line or the first choice after a word line?
+				// what kind of line is it and where is the selection (ie., IP) in the text?
+				int id, lineNum;
+				WhichEnd where;
+				bool isRightToLeft;
+				bool hasPrompt;
+				bool haveLineInfo = GetLineInfo(curSeg, curNote, tag, ichAnchor, ichEnd, ws,
+					out id, out lineNum, out where, out isRightToLeft, out hasPrompt);
+				if (!haveLineInfo)
+					return ArrowChange.None;
+
 				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
-				// which line is it? if more than one spec matches, the user has done something unnatural
-				var lineNum = lines.TakeWhile(line => line.Flid != id || line.WritingSystem != ws).Count();
-				if (lineNum == LineChoices.Count)
-					return false; // undefined selection??
+				bool isUpNewSeg;
+				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
 
-				// two directions for concern ignoring Right To Left(RTL) default analysis ws:
-				// 1: up arrow from the first annotation in a paragraph after a word line possibly in another paragraph
-				//    can be an up arrow or a left (right if RTL) arrow from the first (last) character of the annotaton
-				// 2: down arrow from the last annotation in a paragraph before a word line possibly in another paragraph
-				//    can be a down arrow or a right (left if RTL) arrow from the last (right) character of the annotaton
-				// The following logic accounts for the configured position of notes and wether the user added them.
-				// Displayed empty notes only jump to other annotations.
-				// The idea is to eliminate as many default cases as possible as easily as possible to be handled by the
-				// old annotation OnKeyDown() method.
-
-				var linesBeforeRev = lines.Reverse().Skip(LineChoices.Count - lineNum); // reverse order
-				IEnumerable<InterlinLineSpec> linesBefore = linesBeforeRev;
-				IEnumerable<InterlinLineSpec> annotationsBefore = linesBeforeRev;
-				bool hasPreviousAnalysis = false;
-				if (linesBeforeRev.Any())
-				{
-					linesBefore = linesBeforeRev.Reverse(); // original order
-					annotationsBefore = linesBefore.SkipWhile(line => line.WordLevel);
-					hasPreviousAnalysis = linesBefore.Any(line => line.WordLevel);
-				}
-				bool noteIsFirstAnnotation = false;
-				bool hasNotesBefore = false;
-				bool hasPrevAnnotation = false;
-				if (annotationsBefore.Any())
-				{
-					noteIsFirstAnnotation = annotationsBefore.First().Flid == InterlinLineChoices.kflidNote;
-					hasNotesBefore = annotationsBefore.Any(line => line.Flid == InterlinLineChoices.kflidNote);
-					hasPrevAnnotation =
-						annotationsBefore.Any(line => line.Flid == InterlinLineChoices.kflidFreeTrans ||
-													  line.Flid == InterlinLineChoices.kflidLitTrans) ||
-						(curSeg.NotesOS.Count > 0 && hasNotesBefore);
-				}
-				bool hasNullNotesBefore = false;
-				if (!hasPrevAnnotation)
-				{   // only care about leading null notes if there is no previous annotation
-					hasNullNotesBefore = curSeg.NotesOS.Count == 0 && hasNotesBefore;
-				}
-				bool hasUpMotion = (e.KeyCode == Keys.Up) || (e.KeyCode == Keys.Left && where == WhichEnd.Left);
-				bool isUpMove = hasUpMotion && (lineNum == 0 || (noteIsFirstAnnotation && hasNullNotesBefore) || !hasPrevAnnotation);
-				bool isUpNewSeg = isUpMove && !hasPreviousAnalysis;
-
-				bool isDownMove = false;
 				bool isDownNewSeg = false;
 				if (!isUpMove)
 				{   // might be a downward move
-					var annotationsAfter = lines.Skip(lineNum + 1);
-					bool hasFollowingAnalysis = false;
-					bool hasNotesAfter = false;
-					bool hasFollowingAnnotation = false;
-					if (annotationsAfter.Any())
-					{
-						hasNotesAfter = annotationsAfter.Any(line => line.Flid == InterlinLineChoices.kflidNote);
-						hasFollowingAnnotation =
-							annotationsAfter.Any(line => line.Flid == InterlinLineChoices.kflidFreeTrans ||
-														 line.Flid == InterlinLineChoices.kflidLitTrans ||
-														 (curSeg.NotesOS.Count > 0 && hasNotesAfter));
-						hasFollowingAnalysis = annotationsAfter.Any(line => line.WordLevel); // should never happen ;-)
-					}
-					bool noteIsLastAnnotation = false;
-					bool hasNullNotesAfter = false;
-					if (!hasFollowingAnnotation)
-					{   // only care about null notes at end if there is no following annotation
-						noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
-						hasNullNotesAfter = curSeg.NotesOS.Count == 0 && hasNotesAfter;
-					}
-					bool hasDownMotion = (e.KeyCode == Keys.Down) || (e.KeyCode == Keys.Right && where == WhichEnd.Right);
-					isDownMove = hasDownMotion && (lineNum >= LineChoices.Count - 1 ||
-														(noteIsLastAnnotation && hasNullNotesAfter) || !hasFollowingAnnotation);
-					isDownNewSeg = isDownMove && !hasFollowingAnalysis;
-						// Should = isDownMove since hasFollowingAnalysis should be false
+					isDownNewSeg = DetectDownMove(e, lines, lineNum, curSeg, curNoteIndex, isRightToLeft, where);
+					// Should = isDownMove since hasFollowingAnalysis should be false
 				}
-				AnalysisOccurrence occurrence = null;
-				if (isUpNewSeg)
-				{   // needs to try a previous segment possibly in a previous paragraph
-					if (--curSegIndex < 0)  // previous segment
-					{
-						if (--curParaIndex < 0) // previous paragraph
-							return false; // no more paragraphs in this text
-						curSegIndex = ((IStTxtPara) rsText.ParagraphsOS[curParaIndex]).SegmentsOS.Count - 1;
-					}
-				}
-				else if (isDownNewSeg)
-				{   // needs to try a following segment possibly in a following paragraph
-					if (++curSegIndex >= curPara.SegmentsOS.Count)
-					{
-						if (++curParaIndex >= RootStText.ParagraphsOS.Count)
-							return false; // no more paragraphs in this text
-						curSegIndex = 0;
-					}
+				if (isUpNewSeg || isDownNewSeg)
+				{	// Get the next segment in direction with a real analysis or a real translation or note
+					if (IsTranslationOrNoteNext(curParaIndex, curSeg, isUpNewSeg))
+						if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans ||
+										  id == InterlinLineChoices.kflidLitTrans))
+						{   // moving from an empty translation line to another translation line
+							return isUpNewSeg ? ArrowChange.Up : ArrowChange.Down;
+						}
+						else return ArrowChange.None; // let default handle it
+					// a real analysis is next or no more segments
+					var occurrence = MoveVerticallyToNextAnalysis(curParaIndex, curSegIndex, isUpNewSeg);
+					if (occurrence == null)
+						return ArrowChange.None; // only a real translation or note, or it couldn't find a suitable segment
+					SelectOccurrence(occurrence); // only works for analyses, not annotations
+					return ArrowChange.Handled;
 				}
 				if (isUpMove)
-				{	// move target inside same segment or some previous paragraph's last segment?
-					// select the end of the previous line choice with a focus box
-					occurrence = MoveVerticallyToNextAnalysis(curParaIndex, curSegIndex, true);
+				{   // Need to move up to a real analysis in the same segment
+					IAnalysis nextAnalysis = null;
+					int index = 0;
+					foreach (var an in curSeg.AnalysesRS.Reverse())
+					{	// need to count because an.IndexInOwner == 0 for all an - go figure
+						index++;
+						if (!an.HasWordform) continue;
+						break; // found the last real analysis
+					}
+					SelectOccurrence(new AnalysisOccurrence(curSeg, curSeg.AnalysesRS.Count - index));
+					return ArrowChange.Handled;
 				}
-				else if (isDownMove)
-				{	// move target inside same segment or some later paragraph's first segment?
-					// select the start of the next line choice with a focus box
-					occurrence = MoveVerticallyToNextAnalysis(curParaIndex, curSegIndex, false);
-				}
-				if (isUpMove || isDownMove)
-				{
-					if (occurrence == null)
-						return false; // couldn't find a suitable place to go
-					SelectOccurrence(occurrence);
-					return true;
+				if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans ||
+								  id == InterlinLineChoices.kflidLitTrans)
+							  && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right))
+				{   // moving from an empty translation line to right or left
+					if (TextIsRightToLeft ? e.KeyCode == Keys.Right : e.KeyCode == Keys.Left)
+						return ArrowChange.Up;
+					return ArrowChange.Down;
 				}
 			}
-			return false;
+			return ArrowChange.None;
 		}
 
 		/// <summary>
-		/// Given a paragraph, one of its segements and a direction, step through the next segment
-		/// analyises from beginning to end trying to find one that can be focus boxed.
-		/// If there aren't any, try the next segment or the appropriate segment in the next paragraph.
-		/// Continue until a suitable analysis is found or there are no more to check.
-		/// Used to move from an annotation line to a word line.
+		/// Determines if a visible translation or note is the next line in the indicated direction (up or down).
 		/// </summary>
-		/// <param name="paragraphInd"></param>
-		/// <param name="segmentInd"></param>
-		/// <param name="moveUpward"></param>
-		/// <returns>A focusable analysis or null in the desired direction</returns>
+		/// <param name="paragraphInd">The index of the current paragraph in the text.</param>
+		/// <param name="seg">The current segment in the paragraph.</param>
+		/// <param name="moveUp">true if moving up and left, false otherwise</param>
+		/// <returns>true when an translation or note is the next line, false otherwise</returns>
+		private bool IsTranslationOrNoteNext(int paragraphInd, ISegment seg, bool moveUp)
+		{
+			var para = (IStTxtPara)RootStText.ParagraphsOS[paragraphInd];
+			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
+			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
+			// get the "next" segment with a real analysis or real translation or note
+			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			while (true)
+			{
+				AnalysisOccurrence realAnalysis;
+				seg = GetNextSegment(para, seg, moveUp, out realAnalysis);
+				if (seg == null)
+					return false;
+				bool hasVisibleAnnotations = HasVisibleTranslationOrNote(seg, lines);
+				bool hasRealAnalysis = realAnalysis != null;
+				if (moveUp)
+				{
+					if (hasVisibleAnnotations) // check translation or note first
+						return true;
+					if (hasRealAnalysis) // then analyses
+						return false; // if there is a real one, don't go to an annotation
+				}
+				else
+				{   // moving down
+					if (hasRealAnalysis) // check analyses first
+						return false; // if there is a real one, don't go to a translation or note
+					if (hasVisibleAnnotations) // then check translations and notes
+						return true;
+				}
+				// no translation or note, no real analyses, try the next segment
+			}
+		}
+
+		/// <summary>
+		/// Determines if there are visible translation or note - non null and configured.
+		/// </summary>
+		/// <param name="seg">The segment to check.</param>
+		/// <param name="lines">The configuration line specs.</param>
+		/// <returns>true if the segment has at least one visible translation or note.</returns>
+		private bool HasVisibleTranslationOrNote(ISegment seg, IEnumerable<InterlinLineSpec> lines)
+		{
+			return lines.Any(line =>
+							 line.Flid == InterlinLineChoices.kflidFreeTrans ||
+							 line.Flid == InterlinLineChoices.kflidLitTrans ||
+							 line.Flid == InterlinLineChoices.kflidNote && seg.NotesOS.Count > 0);
+		}
+
+		/// <summary>
+		/// Detect that upward movement out of this segment or to an analysis
+		/// in this same segment is needed.
+		/// Considerations:
+		/// Configured analysis lines preceed translation or note lines (currently).
+		/// Analyses are stored as a sequence in the segement.
+		/// Some analyses are punctuation that are skipped by the IP.
+		/// Only analyses that have a word in them are considered "real".
+		/// "Annotation" lines include translation lines (free and literal) and notes.
+		/// Each translation or note in a diffeerent ws is a different line.
+		/// Translations are stored in a segment as a multistring while notes are
+		/// in a sequence of multistrings.
+		/// Each note is repeated in each note line of a different ws.
+		/// So, the IP may be in the first configured note, but not in the first note.
+		/// </summary>
+		/// <param name="e">The keyboard event being handled.</param>
+		/// <param name="lines">The configured interlinear lines in display order.</param>
+		/// <param name="lineNum">The current line in lines that has the selection (or IP).</param>
+		/// <param name="curSeg">The segment that has the selection.</param>
+		/// <param name="curNoteIndex">The note that is selected in the sequence.</param>
+		/// <param name="where">Indicates where the IP is in the selected text if any.</param>
+		/// <param name="isRightToLeft">true if the current line is RTL</param>
+		/// <param name="isUpNewSeg">Output set to true if moving out of this segment.</param>
+		/// <returns>true if the IP should be moved upward to an analysis in this segment.</returns>
+		private bool DetectUpMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum,
+			ISegment curSeg, int curNoteIndex, WhichEnd where, bool isRightToLeft,
+			out bool isUpNewSeg)
+		{
+			var linesBefore = lines.Take(lineNum);
+			var annotationsBefore = linesBefore;
+			bool hasPreviousAnalysis = false;
+			if (linesBefore.Any()) // will have some lines if there are analyses
+			{
+				annotationsBefore = linesBefore.SkipWhile(line => line.WordLevel);
+				hasPreviousAnalysis = linesBefore.Any(line => line.WordLevel);
+			}
+			bool hasPrevAnnotation = false;
+			if (annotationsBefore.Any()) // if this is the first annotation, annotationsBefore is empty
+			{
+				bool hasNotesBefore = annotationsBefore.Any(line => line.Flid == InterlinLineChoices.kflidNote);
+				hasPrevAnnotation = HasVisibleTranslationOrNote(curSeg, annotationsBefore);
+			}
+			else
+			{	// this is the first translation or note and it can't be a null note because it was selected
+				bool noteIsFirstAnnotation = lines.ToArray()[lineNum].Flid == InterlinLineChoices.kflidNote;
+				hasPrevAnnotation = noteIsFirstAnnotation && curNoteIndex > 0; // can have notes or empty notes before it
+			}
+			bool hasUpMotion = (e.KeyCode == Keys.Up) ||
+				(TextIsRightToLeft ?
+					(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)) :
+					(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)));
+			bool isUpMove = hasUpMotion && !hasPrevAnnotation;
+			isUpNewSeg = isUpMove && !isThereRealAnalysisInSegment(curSeg); // no puctuation, or analysis ws
+			return isUpMove;
+		}
+
+		/// <summary>
+		/// Detect that downward movement out of this segment is needed.
+		/// Considerations:
+		/// Configured analysis lines preceed translation or note lines (currently).
+		/// "Annotation" lines include translation lines (free and literal) and notes.
+		/// Each translation or note in a diffeerent ws is a different line.
+		/// Translations are stored in a segment as a multistring while notes are
+		/// in a sequence of multistrings.
+		/// Each note is repeated in each note line of a different ws.
+		/// So, the IP may be in the last configured note, but not in the last note.
+		/// </summary>
+		/// <param name="e">The keyboard event being handled.</param>
+		/// <param name="lines">The configured interlinear lines in display order.</param>
+		/// <param name="lineNum">The current line in lines that has the selection (or IP).</param>
+		/// <param name="curSeg">The segment that has the selection.</param>
+		/// <param name="curNoteIndex">The note that is selected in the sequence.</param>
+		/// <param name="isRightToLeft"></param>
+		/// <param name="where">Indicates where the IP is in the selected text if any.</param>
+		/// <returns>true if the IP should be moved upward to an analysis in this segment.</returns>
+		private bool DetectDownMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum,
+			ISegment curSeg, int curNoteIndex, bool isRightToLeft, WhichEnd where)
+		{
+			var annotationsAfter = lines.Skip(lineNum + 1);
+			bool hasFollowingAnnotation = false;
+			if (annotationsAfter.Any()) // might not have any
+			{
+				bool hasNotesAfter = annotationsAfter.Any(line => line.Flid == InterlinLineChoices.kflidNote);
+				hasFollowingAnnotation = HasVisibleTranslationOrNote(curSeg, annotationsAfter);
+			}
+			else
+			{	// this is the last translation or note and it can't be a null note because it was selected
+				bool noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
+			}
+			bool hasDownMotion = (e.KeyCode == Keys.Down) ||
+								 (TextIsRightToLeft ?
+									(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)) :
+									(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)));
+			return hasDownMotion && !hasFollowingAnnotation;
+		}
+
+		/// <summary>
+		/// Assumes the selection data belongs to a translation or note!
+		/// Gets the InterlinLineChoices flid (id) and a meaningful interpretation of
+		/// where the IP is in the translation or note text.
+		/// If an empty translation note was selected, its tag is kTagUserPrompt.
+		/// </summary>
+		/// <param name="curSeg">The selected segment to get the translation or note text from.</param>
+		/// <param name="curNote">null or the selected note</param>
+		/// <param name="tag">The SegmentTags or NoteTags or kTagUserPrompt selected.</param>
+		/// <param name="ichAnchor">The start index of the text selection.</param>
+		/// <param name="ichEnd">The end index of the text selection.</param>
+		/// <param name="wid">Index of the writing system of the selection.</param>
+		/// <param name="id">The returned InterlinLineChoices flid.</param>
+		/// <param name="lineNum">Configured line number of the translation or note.</param>
+		/// <param name="where">The returned meaningful interpretation of where the IP is in the translation or note text.</param>
+		/// <param name="isRightToLeft">is set to <c>true</c> if the Configured line is right to left, false otherwise.</param>
+		/// <param name="hasPrompt">is set to <c>true</c> if the line is an empty translation.</param>
+		/// <returns>
+		/// true if the information was found, false otherwise.
+		/// </returns>
+		private bool GetLineInfo(ISegment curSeg, INote curNote, int tag, int ichAnchor, int ichEnd, int wid,
+						out int id, out int lineNum, out WhichEnd where, out bool isRightToLeft, out bool hasPrompt)
+		{
+			isRightToLeft = false;
+			hasPrompt = false;
+			var wsf = Cache.WritingSystemFactory;
+			var ws = wsf.get_EngineOrNull(wid);
+			if (ws != null)
+				isRightToLeft = ws.RightToLeftScript;
+
+			id = 0;
+			lineNum = -1;
+			where = WhichEnd.Neither;
+			switch (tag)
+			{
+				case SegmentTags.kflidFreeTranslation:
+					id = InterlinLineChoices.kflidFreeTrans;
+					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.FreeTranslation.get_String(wid).Length, isRightToLeft);
+					break;
+				case SegmentTags.kflidLiteralTranslation:
+					id = InterlinLineChoices.kflidLitTrans;
+					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.LiteralTranslation.get_String(wid).Length, isRightToLeft);
+					break;
+				case NoteTags.kflidContent:
+					Debug.Assert(curNote != null, "Moving from a non-exisiting note in interlinear Doc.");
+					id = InterlinLineChoices.kflidNote;
+					where = ExtremePositionInString(ichAnchor, ichEnd, curNote.Content.get_String(wid).Length, isRightToLeft);
+					break;
+				case kTagUserPrompt: // user prompt property for empty translation annotations
+					// Is this free or literal?
+					hasPrompt = true;
+					id = m_vc.ActiveFreeformFlid;
+					id = (id == SegmentTags.kflidLiteralTranslation) ?
+						InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
+					if (wid == 0)
+						wid = m_vc.ActiveFreeformWs;
+					where = WhichEnd.Both;
+					break;
+				default: // not expected
+					return false;
+			}
+			if (wid > 0)
+				lineNum = LineChoices.IndexOf(id, wid);
+			if (lineNum == -1)
+				lineNum = LineChoices.IndexOf(id);
+			return true;
+		}
+
+		/// <summary>
+		/// Retrieves the selected objects and data from the selection range.
+		/// </summary>
+		/// <param name="clev">The number of levels of selection range results.</param>
+		/// <param name="rgvsli">The selection range with clev levels of structure.</param>
+		/// <param name="tag">The property of the bottom-level [0] object that is of interest.</param>
+		/// <param name="curParaIndex">The index of the paragraph containing the selected text.</param>
+		/// <param name="curSegIndex">The index of the segment containing the selected text.</param>
+		/// <param name="curNoteIndex">if tag indicates a note, the note index in its segment sequence otherwise -1.</param>
+		/// <param name="curSeg">The selected segment object</param>
+		/// <param name="curNote">The selected note object or null if curNoteIndex is -1.</param>
+		private void GetCurrentTextObjects(int clev, SelLevInfo[] rgvsli, int tag, out int curParaIndex, out int curSegIndex, out int curNoteIndex, out ISegment curSeg, out INote curNote)
+		{
+			curParaIndex = rgvsli[clev - 2].ihvo;
+			var curPara = (IStTxtPara)RootStText.ParagraphsOS[curParaIndex];
+			Debug.Assert(curPara != null, "Moving from a non-exisiting paragraph in interlinear Doc.");
+			curSegIndex = rgvsli[clev - 3].ihvo;
+			curSeg = curPara.SegmentsOS[curSegIndex];
+			Debug.Assert(curSeg != null, "Moving from a non-exisiting segment in interlinear Doc.");
+			curNote = null;
+			curNoteIndex = -1;
+			if (tag == NoteTags.kflidContent)
+			{
+				curNoteIndex = rgvsli[clev - 4].ihvo;
+				curNote = curSeg.NotesOS[curNoteIndex];
+			}
+		}
+
+		/// <summary>
+		/// Gets the current selection and returns enough data to move the IP.
+		/// </summary>
+		/// <param name="clev">The number of levels of selection range results.</param>
+		/// <param name="rgvsli">The selection range with clev levels of structure.</param>
+		/// <param name="tag">The property of the bottom-level [0] object that is of interest.</param>
+		/// <param name="ichAnchor">The start index of the text selection.</param>
+		/// <param name="ichEnd">The end index of the text selection.</param>
+		/// <param name="ws">Index of the writing system of the selection.</param>
+		/// <returns>true if a selection was made, false if something prevented it.</returns>
+		private bool GetCurrentSelection(out int clev, out SelLevInfo[] rgvsli, out int tag, out int ichAnchor, out int ichEnd, out int ws)
+		{
+			clev = -1;
+			rgvsli = null;
+			tag = -1;
+			ichAnchor = -1;
+			ichEnd = -1;
+			ws = -1;
+			var sel = EditingHelper.RootBoxSelection;
+			if (sel == null)
+				return false;
+			// which "line choice" is active in this segment?
+			if (sel.SelType != VwSelType.kstText || !sel.IsValid || !sel.IsEditable)
+				return false;
+			clev = sel.CLevels(true);
+			ITsTextProps ttp;
+			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
+			{
+				int ihvoRoot;
+				int ihvoEnd1;
+				int cpropPrevious;
+				bool fAssocPrev;
+				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
+								   out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Moves from the current segment to the next that has a real word line or
+		/// a real translation or note depending on the direction.
+		/// If none, try the appropriate segment in the next paragraph.
+		/// Continue until a suitable analysis or translation or note is found or there are no more to check.
+		/// </summary>
+		/// <param name="paragraphInd">The index of the current paragraph in the text.</param>
+		/// <param name="segmentInd">The index of the current section in the paragraph.</param>
+		/// <param name="moveUpward">true if moving up and left, false otherwise</param>
+		/// <returns>A segment contatining an analysis or translation or note or null if none was found.</returns>
 		private AnalysisOccurrence MoveVerticallyToNextAnalysis(int paragraphInd, int segmentInd, bool moveUpward)
 		{
 			var para = (IStTxtPara)RootStText.ParagraphsOS[paragraphInd];
-			int paraInd = paragraphInd;
+			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			ISegment seg = para.SegmentsOS[segmentInd];
-			int segInd = segmentInd;
-			int delta = moveUpward ? -1 : 1; // step through analyses backward if up, forward if down
-			int index = moveUpward ? seg.AnalysesRS.Count : -1; // start at end if up, beginning if down
-			bool notSuitable = true;
-			do
-			{
-				index += delta;
-				if (index < 0 ||
-					(index == seg.AnalysesRS.Count-1 && !moveUpward) ||
-					index >= seg.AnalysesRS.Count)
-				{	// move to another segment
-					if (segInd < 0 || (segInd == 0 && moveUpward) ||
-						(segInd == para.SegmentsOS.Count - 1 && !moveUpward) ||
-						segInd >= para.SegmentsOS.Count)
-					{	// go to next paragraph, first or last segment
-						paraInd += delta;
-						if (0 < paraInd || paraInd >= RootStText.ParagraphsOS.Count)
-							return null; // no more paragraphs in the text
-						para = (IStTxtPara)RootStText.ParagraphsOS[paraInd];
-						segInd = moveUpward ? para.SegmentsOS.Count-1 : 0;
-						index = moveUpward ? seg.AnalysesRS.Count : -1;
-					}
-					else
-					{	// still in the same paragraph
-						segInd += delta;
-						index = moveUpward ? seg.AnalysesRS.Count - 2 : 1;
-					}
-					seg = para.SegmentsOS[segInd];
-				}
-				var occurrence = new AnalysisOccurrence(seg, index);
-				// if this is punctuation, get the next occurance - loop again.
-				if (occurrence.IsValid && occurrence.HasWordform)
-					return occurrence; // found a suitable place to focus
-				// this loop handles the case that there is no (non-punctuation) analysis
-				// by going to the next paragraph if there is one
-			} while (true);
+			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + segmentInd + " in para " + paragraphInd);
+			// get the "next" segment with a real analysis or real translation or note
+			AnalysisOccurrence realAnalysis;
+			GetNextSegment(para, seg, moveUpward, out realAnalysis);
+			return realAnalysis;
 		}
 
-		enum WhichEnd {Left, Niether, Right}
+		/// <summary>
+		/// Answers true if there is a "real" analysis in the segment.
+		/// </summary>
+		/// <param name="seg">The seg.</param>
+		/// <returns>True if a "real" analysis was found</returns>
+		private bool isThereRealAnalysisInSegment(ISegment seg)
+		{
+			return FindRealAnalysisInSegment(seg, true) != null;
+		}
 
 		/// <summary>
-		/// Determines if the selection is at the start (-1), end (1) or other position (0) in the string.
-		/// TBD (when callers are ready) switch around for RTL analysis ws.
+		/// Finds a real analysis in the segment from the indicated direction.
+		/// When used just to check if there is an analysis, the direction doesn't matter.
+		/// </summary>
+		/// <param name="seg">The seg.</param>
+		/// <param name="forward">if set to <c>true</c> find a real analysis looking forward.</param>
+		/// <returns>The analysis found or null</returns>
+		private AnalysisOccurrence FindRealAnalysisInSegment(ISegment seg, bool forward)
+		{
+			if (seg == null) return null;
+			int index = -1;
+			AnalysisOccurrence realAnalysis = null;
+			bool found = false;
+			for (int i = 0; i < seg.AnalysesRS.Count; i++)
+			{	// need to count to create occurances
+				index++;
+				int ind = forward ? index : seg.AnalysesRS.Count - index;
+				realAnalysis = new AnalysisOccurrence(seg, ind);
+				if (m_vc.CanBeAnalyzed(realAnalysis))
+				{
+					found = true;
+					break; // found the first or last real analysis
+				}
+			}
+			return found ? realAnalysis : null;
+		}
+
+		/// <summary>
+		/// {CC2D43FA-BBC4-448A-9D0B-7B57ADF2655C}
+		/// </summary>
+		enum WhichEnd { Left, Neither, Right, Both } // Both if the string is null or empty
+
+		/// <summary>
+		/// Determines if the selection is at the start, end or other position in the string.
+		/// Accounts for writing system direction based on the line spec.
 		/// </summary>
 		/// <param name="selStart">the starting position of the selection</param>
 		/// <param name="selEnd">the end position of the selection</param>
 		/// <param name="selLength">the length of the string the selection is in</param>
-		/// <returns>-1 if at the start, 0 if not extreme, 1 if at the end</returns>
-		private static WhichEnd ExtremePositionInString(int selStart, int selEnd, int selLength)
+		/// <param name="isRightToLeft">if set to <c>true</c> the writing system of this line is right to left, otherwise ltr.</param>
+		/// <returns>
+		/// An enum indicating where the selection is in the string.
+		/// </returns>
+		private static WhichEnd ExtremePositionInString(int selStart, int selEnd, int selLength, bool isRightToLeft)
 		{
+			if (0 == selLength)
+				return WhichEnd.Both;
+			//if (isRightToLeft ? selEnd >= selLength - 1 : selStart <= 0)
 			if (selStart <= 0)
 				return WhichEnd.Left;
+			//if (isRightToLeft ? selStart <= 0 : selEnd >= selLength - 1)
 			if (selEnd >= selLength - 1)
 				return WhichEnd.Right; // this happens with punctuation at end!
-			return WhichEnd.Niether;
+			return WhichEnd.Neither;
 		}
 
 		/// <summary>
 		/// Enable the 'insert word glosses' command
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
+		/// <param name="commandObject">The command object.</param>
+		/// <param name="display">The display properties.</param>
+		/// <returns>true if this command is enabled</returns>
 		public bool OnDisplayAddWordGlossesToFreeTrans(object commandObject, ref UIItemDisplayProperties display)
 		{
 			ISegment dummy1;
@@ -869,8 +1389,11 @@ namespace SIL.FieldWorks.IText
 		/// Answer whether the AddWordGlossesToFreeTranslation menu option should be enabled.
 		/// Also get the Segment to which they can be added.
 		/// </summary>
-		/// <param name="hvoSeg"></param>
-		/// <returns></returns>
+		/// <param name="seg">The seg.</param>
+		/// <param name="ws">The ws.</param>
+		/// <returns>
+		/// 	<c>true</c> if this instance [can add word glosses] the specified seg; otherwise, <c>false</c>.
+		/// </returns>
 		private bool CanAddWordGlosses(out ISegment seg, out int ws)
 		{
 			seg = null;
@@ -985,9 +1508,9 @@ namespace SIL.FieldWorks.IText
 				ITextStrings.ksRedoSetTransFromWordGlosses,
 				Cache.ActionHandlerAccessor,
 				() =>
-					{
-						RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, flid, ws, bldr.GetString());
-					});
+				{
+					RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, flid, ws, bldr.GetString());
+				});
 			helper.TextPropId = flid;
 			helper.SetTextPropId(SelectionHelper.SelLimitType.End, flid);
 			helper.IchAnchor = bldr.Length;
@@ -1136,7 +1659,7 @@ namespace SIL.FieldWorks.IText
 				//Sometimes AssocPrev gets set so that we read the (non-existent) flid of the literal string and miss the fact that on the other side
 				//of the insertion point is the field we're looking for. The following code will attempt to make a selection that associates in
 				//the other direction to see if the flid we want is on the other side. [LT-10568]
-				if(flid == -2)
+				if (flid == -2)
 				{
 					helper.AssocPrev = !helper.AssocPrev;
 					var newSel = helper.MakeRangeSelection(this.RootBox, false);
@@ -1212,7 +1735,7 @@ namespace SIL.FieldWorks.IText
 				sel = helper.MakeRangeSelection(m_rootb, true);
 				sel.ExtendToStringBoundaries();
 			}
-				// Prevent the crash described in LT-9399 by swallowing the exception.
+			// Prevent the crash described in LT-9399 by swallowing the exception.
 			catch (Exception exc)
 			{
 				if (exc != null)
@@ -1293,7 +1816,6 @@ namespace SIL.FieldWorks.IText
 			return new FocusBoxControllerForDisplay(m_mediator, m_styleSheet, LineChoices, m_vc.RightToLeft);
 		}
 
-
 		/// <summary>
 		/// Hides the sandbox and removes it from the controls.
 		/// </summary>
@@ -1301,7 +1823,10 @@ namespace SIL.FieldWorks.IText
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
 			if (!IsFocusBoxInstalled)
+			{
+				SelectedOccurrence = null;
 				return false;
+			}
 			var oldAnnotation = SelectedOccurrence;
 			SelectedOccurrence = null;
 			SimulateReplaceAnalysis(oldAnnotation);
@@ -1345,6 +1870,12 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		protected override void OnScroll(ScrollEventArgs se)
+		{
+			base.OnScroll(se);
+			Debug.WriteLine("scrolled interlinear view to " + AutoScrollPosition + " in range " + AutoScrollMinSize + " (focus box at " + FocusBox.Location + ")");
+		}
+
 		// If something changes the size of the focus box, we need to adjust the size of the
 		// box that takes up space for it in the view, so that other stuff moves.
 		void FocusBox_SizeChanged(object sender, EventArgs e)
@@ -1352,6 +1883,32 @@ namespace SIL.FieldWorks.IText
 			if (SetFocusBoxSizeForVc())
 				m_rootb.PropChanged(FocusBox.SelectedOccurrence.Segment.Hvo, SegmentTags.kflidAnalyses, FocusBox.SelectedOccurrence.Index, 1, 1);
 		}
+
+		private bool m_fEnableScrollControlIntoView;
+
+		/// <summary>
+		/// Windows.Forms is way too enthusiastic about trying to make the focused child control visible.
+		/// For example it does it any time we change AutoScrollMinSize, such as when scrolling up and expanding
+		/// lazy boxes. This has bad effects (LT-LT-11692). Returning the control's current location prevents
+		/// ScrollControlIntoView from making any changes. However, in some cases we may want to make it visible.
+		/// </summary>
+		/// <param name="activeControl"></param>
+		/// <returns></returns>
+		override protected Point ScrollToControl(Control activeControl)
+		{
+			if (m_fEnableScrollControlIntoView)
+				return base.ScrollToControl(activeControl);
+			else
+				return DisplayRectangle.Location; // various posts say to use this to disable autoscrolling the focus control
+		}
+
+		internal void ReallyScrollControlIntoView(Control c)
+		{
+			m_fEnableScrollControlIntoView = true;
+			ScrollControlIntoView(c);
+			m_fEnableScrollControlIntoView = false;
+		}
+
 
 		#endregion
 
@@ -1368,6 +1925,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			RemoveContextButtonIfPresent();
 			if (e.Button == MouseButtons.Right)
 			{
 				base.OnMouseDown(e);
@@ -1448,7 +2006,11 @@ namespace SIL.FieldWorks.IText
 				Rect selLoc = GetPrimarySelRect(vwselNew);
 				if (selLoc.top == oldSelLoc.top)
 					return false;
+				//The following line could quite possibly invalidate the selection as in the case where it creates
+				//a translation prompt.
 				vwselNew.Install();
+				//scroll the current selection into view (don't use vwselNew, it might be invalid now)
+				ScrollSelectionIntoView(this.RootBox.Selection, VwScrollSelOpts.kssoDefault);
 				return true;
 			}
 
@@ -1541,7 +2103,7 @@ namespace SIL.FieldWorks.IText
 			// eventually it might be part of a higher level structure. We want this to work
 			// no matter how much higher level structure there is.
 			int itagSegments = -1;
-			for (int i = rgvsli.Length; --i>=0; )
+			for (int i = rgvsli.Length; --i >= 0; )
 			{
 				if (rgvsli[i].tag == StTxtParaTags.kflidSegments)
 				{
@@ -1556,10 +2118,10 @@ namespace SIL.FieldWorks.IText
 			var seg = Cache.ServiceLocator.GetObject(hvoSeg) as ISegment;
 			UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, Cache.ActionHandlerAccessor,
 				() =>
-					{
-						var note = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-						seg.NotesOS.Add(note);
-					});
+				{
+					var note = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+					seg.NotesOS.Add(note);
+				});
 
 			TryHideFocusBoxAndUninstall();
 			if (m_vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
@@ -1567,7 +2129,6 @@ namespace SIL.FieldWorks.IText
 				m_vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
 			}
-
 
 			// Now try to make a new selection in the note we just made.
 			// The elements of rgvsli from itagSegments onwards form a path to the segment.
@@ -1604,11 +2165,116 @@ namespace SIL.FieldWorks.IText
 				FocusBox.UpdateRealFromSandbox(null, false, null);
 			return true;
 		}
+
+		public bool OnApproveAll(object cmd)
+		{
+			ApproveAllSuggestedAnalyses(cmd as Command);
+			return false;
+		}
+
+		/// <summary>
+		/// Approve all the suggested analyses in this text. See LT-4312.
+		/// </summary>
+		/// <param name="cmd">The command object from the selection event.</param>
+		public void ApproveAllSuggestedAnalyses(Command cmd)
+		{   // Go through the entire text looking for suggested analyses that can be approved.
+			// remember where the focus box or ip is
+			// might be on an analysis, labels or translation text
+			var helper = SelectionHelper.Create(RootBox.Site); // only helps restore translation and note line selections
+			AnalysisOccurrence focusedWf = SelectedOccurrence; // need to restore focus box if selected
+
+			// find the very first analysis
+			ISegment firstRealSeg = null;
+			IAnalysis firstRealOcc = null;
+			int occInd = 0;
+			foreach (IStPara p in RootStText.ParagraphsOS)
+			{
+				var para = (IStTxtPara) p;
+				foreach (ISegment seg in para.SegmentsOS)
+				{
+					firstRealSeg = seg;
+					occInd = 0;
+					foreach(IAnalysis an in seg.AnalysesRS)
+					{
+						if (an.HasWordform && an.IsValidObject)
+						{
+							firstRealOcc = an;
+							break;
+						}
+						occInd++;
+					}
+					if (firstRealOcc != null) break;
+				}
+				if (firstRealOcc != null) break;
+			}
+			// Set it as the current segment and recurse
+			if (firstRealOcc == null)
+				return; // punctuation only or nothing to analyze
+			AnalysisOccurrence ao = null;
+			if (focusedWf != null && focusedWf.Analysis == firstRealOcc)
+				ao = new AnalysisOccurrence(focusedWf.Segment, focusedWf.Index);
+			else
+				ao = new AnalysisOccurrence(firstRealSeg, occInd);
+			TriggerAnalysisSelected(ao, true, true, false);
+			var navigator = new SegmentServices.StTextAnnotationNavigator(ao);
+
+			// This needs to be outside the block for the UOW, since what we are suppressing
+			// happens at the completion of the UOW.
+			SuppressResettingGuesses(
+				() =>
+				{
+					// Needs to include GetRealAnalysis, since it might create a new one.
+					UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
+					() =>
+					{
+						var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
+						AnalysisOccurrence lastOccurrence;
+						var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
+						foreach (var occ in analyses)
+						{   // This could be punctuation or any kind of analysis.
+							IAnalysis occAn = occ.Analysis; // averts “Access to the modified closure” warning in resharper
+							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
+							{   // this is an analysis or a wordform
+								int hvo = m_vc.GetGuess(occAn);
+								if (occAn.Hvo != hvo)
+								{   // this is a guess, so approve it
+									// 1) A second occurence of a word that has had a lexicon entry or sense created for it.
+									// 2) A parser result - not sure which gets picked if multiple.
+									// #2 May take a while to "percolate" through to become a "guess".
+									var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+									if (guess != null && guess is IAnalysis)
+										occ.Segment.AnalysesRS[occ.Index] = (IAnalysis) guess;
+									else
+									{
+										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
+									}
+								}
+							/*	else if (occAn.HasWordform && occAn.Wordform.ParserCount > 0)
+								{   // this doesn't seem to be needed (and may not be correct) - always caught above
+									bool isHumanNoOpinion = occAn.Wordform.HumanNoOpinionParses.Cast<IWfiWordform>().Any(wf => wf.Hvo == occAn.Hvo);
+									if (isHumanNoOpinion)
+									{
+										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
+									}
+								} */
+							}
+						}
+					});
+				}
+			);
+			// MoveFocusBoxIntoPlace();
+			if (focusedWf != null)
+				SelectOccurrence(focusedWf);
+			else if (helper != null)
+				helper.SetSelection(true, true);
+			Update();
+		}
 	}
 
 	public class InterlinDocForAnalysisVc : InterlinVc
 	{
-		public InterlinDocForAnalysisVc(FdoCache cache) : base(cache)
+		public InterlinDocForAnalysisVc(FdoCache cache)
+			: base(cache)
 		{
 			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)
 		}
@@ -1638,7 +2304,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal Size FocusBoxSize
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
@@ -1660,9 +2327,9 @@ namespace SIL.FieldWorks.IText
 					// I can get wihtout a new API to get the exact ascent of the font.
 					int dympBaseline = Common.Widgets.FontHeightAdjuster.
 						GetFontHeightForStyle("Normal", m_stylesheet, m_wsVernForDisplay,
-						m_cache.LanguageWritingSystemFactoryAccessor)*9/10;
+						m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
-					vwenv.AddSimpleRect((int) transparent,
+					vwenv.AddSimpleRect((int)transparent,
 										FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - dympBaseline));
 					return;
 				}

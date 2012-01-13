@@ -22,11 +22,14 @@ TLB_SRC        = $(OUTPUT)/Common
 
 PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid enchant
 
-DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1 -DENABLE_TSF
+DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1
 
 ifeq ($(BUILD_CONFIG),Debug)
-	DEBUG_LIBS = -lDebugProcs
-	DEFINES  := $(DEFINES) -D_DEBUG
+	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
+	DEFINES  := $(DEFINES) -D_DEBUG -DDEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
 endif
 
 INCLUDES := \
@@ -41,16 +44,16 @@ INCLUDES := \
 
 
 LDLIBS := \
-	-L$(OUT_DIR) -lGeneric -lAppCore $(DEBUG_LIBS) \
 	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
 	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
 	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
+	-ldl \
 
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O3 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -D_FORTIFY_SOURCE=0
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic
 
 ARFLAGS  = -crs
 
@@ -59,21 +62,18 @@ DEFFILE   = Views.def
 
 PCHNAME = $(INT_DIR)/Main.h.gch
 
-LINK_LIBS = \
-	$(COM_OUT_DIR)/libFwKernelTlb.a
-
-#	VwAccessRoot.o
-
-#	$(AFCORE_SRC)/AfColorTable.o
-#	$(AFCORE_SRC)/AfGfx.o
-#	$(AFCORE_SRC)/FwStyledText.o
-#	$(AFCORE_SRC)/WriteXml.o
+LINK_LIBS := \
+	$(LINK_LIBS) \
+	$(COM_OUT_DIR)/libFwKernelTlb.a \
+	$(COM_OUT_DIR)/libViewsTlb.a \
+	$(OUT_DIR)/libGeneric.a \
+	$(OUT_DIR)/libAppCore.a \
+	$(DEBUG_LIBS) \
 
 # === Object Lists ===
 
 OBJS = \
 	$(INT_DIR)/ViewsGlobals.o \
-	$(INT_DIR)/VwTextStoreX11.o \
 	$(INT_DIR)/ExplicitInstantiation.o \
 	$(INT_DIR)/VwEnv.o \
 	$(INT_DIR)/VwLayoutStream.o \
@@ -102,33 +102,42 @@ OBJS = \
 	$(INT_DIR)/lib/VwUndo.o \
 	$(INT_DIR)/lib/Enchant.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
-	$(COM_OUT_DIR)/libViewsTlb.a \
 
 VWG_OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
 	$(INT_DIR)/lib/VwColor.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
-	$(COM_OUT_DIR)/libViewsTlb.a \
+
+OBJS_OTHER = \
+	$(INT_DIR)/ModuleEntry.o \
 
 # === Targets ===
 
 all: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so $(COM_OUT_DIR)/libViewsTlb.a ComponentsMap link_check
 
-$(OUT_DIR)/libViews.so: $(OBJS) $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a $(LIBRARIES)/Win32More/src/build$(ARCH)/libWin32More.a  $(LIBRARIES)/Win32Base/src/build$(ARCH)/libWin32Base.a $(OUT_DIR)/libAppCore.a $(LINK_LIBS)
+$(OUT_DIR)/libViews.so: $(OBJS) $(OBJS_OTHER) $(LINK_LIBS) $(LIBRARIES)/Win32More/src/build$(ARCH)/libWin32More.a  $(LIBRARIES)/Win32Base/src/build$(ARCH)/libWin32Base.a
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -shared -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(OBJS) $(OBJS_OTHER) $(LDLIBS)
+else
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
+endif
+	# TODO: this is a hack. Remove after implementing FWNX-823.
+	-cd $(OUT_DIR) && ln -s $(@F) oleaut32.dll
 
-$(OUT_DIR)/libVwGraphics.so: $(VWG_OBJS) $(LINK_LIBS) $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a
+$(OUT_DIR)/libVwGraphics.so: $(VWG_OBJS) $(OBJS_OTHER) $(LINK_LIBS)
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 
 $(COM_OUT_DIR)/libViewsTlb.a: $(INT_DIR)/Views_GUIDs.o $(INT_DIR)/ViewsExtra_GUIDs.o
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libViews libVwGraphics
+link_check: $(INT_DIR)/libViews $(INT_DIR)/libVwGraphics
 
-libViews: $(OBJS) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
+$(INT_DIR)/libViews: $(OBJS) $(OBJS_OTHER) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
-libVwGraphics: $(VWG_OBJS) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
+libVwGraphics: $(INT_DIR)/libVwGraphics
+
+$(INT_DIR)/libVwGraphics: $(VWG_OBJS) $(OBJS_OTHER) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
@@ -137,6 +146,10 @@ ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
 # === Rules ===
 
 $(OBJS): $(PCHNAME)
+
+$(INT_DIR)/%.o: $(GENERIC_SRC)/%.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	  -c $< -o $@ -MMD -MF $(@:%.o=%.d)
 
 $(OUT_DIR)/libAppCore.a:
 	@$(MAKE) -C $(SRC)/$(APPCORE_NAME)/ -q all || \
@@ -168,7 +181,7 @@ $(LIBRARIES)/Win32Base/src/libWin32Base.a:
 -include $(OBJ_ALL:%.o=%.d)
 
 clean:
-	$(RM) $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so $(COM_OUT_DIR)/libViewsTlb.a libViews libVwGraphics $(INT_DIR)/*.[od] $(INT_DIR)/*.gch $(INT_DIR)/lib/*.[od] $(PCHNAME)
+	$(RM) $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so $(COM_OUT_DIR)/libViewsTlb.a $(INT_DIR)/libViews $(INT_DIR)/libVwGraphics $(INT_DIR)/*.[od] $(INT_DIR)/*.gch $(INT_DIR)/lib/*.[od] $(PCHNAME)
 
 %.h.gch: %.h
 	$(COMPILE.cc) -o $@ $<

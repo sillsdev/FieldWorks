@@ -296,10 +296,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						Form frm = FindForm();
 						// frm may be null, if the record has been switched
+						WaitCursor wc = null;
 						try
 						{
 							if (frm != null)
-								frm.Cursor = Cursors.WaitCursor;
+								wc = new WaitCursor(frm);
 							ConstraintFailure failure;
 							m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
 							// This will make the record list update to the new value.
@@ -307,8 +308,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						}
 						finally
 						{
-							if (frm != null)
-								frm.Cursor = Cursors.Default;
+							if (wc != null)
+								wc.Dispose();
 						}
 					}
 				}

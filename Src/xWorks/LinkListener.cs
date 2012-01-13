@@ -207,6 +207,11 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
+		}
+
 		/// <summary>
 		/// Handle the specified link if it is local.
 		/// </summary>

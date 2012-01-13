@@ -73,12 +73,14 @@
 	<Compile Include="BCVRefTests.cs" />
 	<Compile Include="InterfacesTests.cs" />
 	<Compile Include="MatchedPairsTests.cs" />
+	<Compile Include="MultilingScrBooksTests.cs" />
 	<Compile Include="Properties\Resource.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Resource.resx</DependentUpon>
 	</Compile>
 	<Compile Include="QuotationMarksTests.cs" />
+	<Compile Include="ScrReferenceTests.cs" />
 	<Compile Include="VersificationTests.cs" />
   </ItemGroup>
   <ItemGroup>

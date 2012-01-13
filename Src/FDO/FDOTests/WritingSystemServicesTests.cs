@@ -42,6 +42,40 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// For LT-12274. x-unk should convert to qaa-x-unk.
+		/// </summary>
+		[Test]
+		public void FindOrCreateSomeWritingSystem_Converts_x_unk_To_qaa_x_unk()
+		{
+			IWritingSystem ws;
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "x-unk", true, false, out ws), Is.False);
+			Assert.That(ws.Id, Is.EqualTo("qaa-x-unk"));
+		}
+
+		/// <summary>
+		/// For LT-12274. "Fr-Tech 30Oct" should convert to qaa-x-Fr-Tech30Oc.
+		/// (Fr-x-Tech-30Oct or Fr-Qaaa-x-Tech-30Oct might be better, but this is last-resort handling for a code we don't really understand;
+		/// main thing is the result is a valid code that is recognizably derived from the original.
+		/// </summary>
+		[Test]
+		public void FindOrCreateSomeWritingSystem_Converts_Fr_Tech_30Oct_To_qaa_x_Fr_Tech_30Oct()
+		{
+			IWritingSystem ws;
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "Fr-Tech 30Oct", true, false, out ws), Is.False);
+			Assert.That(ws.Id, Is.EqualTo("qaa-x-Fr-Tech30Oc")); //8 characters is the maximum allowed for a part.
+		}
+
+		/// <summary>
+		/// Special case for a plain x.
+		/// </summary>
+		[Test]
+		public void FindOrCreateSomeWritingSystem_Converts_x_To_qaa_x_qaa()
+		{
+			IWritingSystem ws;
+			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "x", true, false, out ws), Is.False);
+			Assert.That(ws.Id, Is.EqualTo("qaa-x-qaa"));
+		}
+		/// <summary>
 		/// What it says
 		/// </summary>
 		[Test]

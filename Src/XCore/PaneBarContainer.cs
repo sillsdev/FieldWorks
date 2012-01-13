@@ -20,7 +20,7 @@ namespace XCore
 	/// The splitter between them will not be movable. in fact, it should not be noticable
 	/// </summary>
 	/// <remarks>
-	/// PaneBarContainer implements the IxCoreContentControl interface, which inludes its own mthods,
+	/// PaneBarContainer implements the IxCoreContentControl interface, which inludes its own methods,
 	/// as well as 'extending the IXCoreUserControl, and IxCoreColleague interfaces.
 	/// This 'extension' is really to ensure all of those interfaces are implemented,
 	/// particularly for m_mainControl.
@@ -36,6 +36,7 @@ namespace XCore
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
 		private string m_defaultPrintPaneId = "";
+		private int instanceID;
 
 		#endregion Data Members
 
@@ -216,6 +217,16 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Medium;
+			}
+		}
 
 		#endregion IxCoreColleague implementation
 

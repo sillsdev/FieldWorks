@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Need to set even if set previously. Otherwise it doesn't refresh properly.
 			//if (filter == m_filter)
-			//    return true;  // we're already set.
+			//	return true;  // we're already set.
 			if (m_combo == null)
 				return false; // probably can't happen, but play safe
 			foreach (FilterComboItem fci in m_combo.Items)
@@ -467,13 +467,13 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (m_items != null)
 				{
-					for (int i = 0; i < m_items.Count(); i++)
-				{
+					for (var i = 0; i < m_items.Count(); i++)
+					{
 						var fsi = m_items[i];
 						fsi.FilterChanged -= FilterChangedHandler;
-					fsi.Dispose();
+						fsi.Dispose();
+					}
 				}
-			}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -1086,6 +1086,21 @@ namespace SIL.FieldWorks.Common.Controls
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
 			m_pattern.Pattern = tsf.MakeString(str, ws);
+			return m_pattern;
+		}
+
+		internal IVwPattern MatchAnywherePattern(String str, int ws)
+		{
+			IVwPattern m_pattern = VwPatternClass.Create();
+			m_pattern.MatchOldWritingSystem = false;
+			m_pattern.MatchDiacritics = false;
+			m_pattern.MatchWholeWord = false;
+			m_pattern.MatchCase = false;
+			m_pattern.UseRegularExpressions = false;
+
+			ITsStrFactory tsf = m_cache.TsStrFactory;
+			m_pattern.Pattern = tsf.MakeString(str, ws);
+			m_pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			return m_pattern;
 		}
 
@@ -1902,7 +1917,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			int hvoRootObj = rowItem.RootObjectHvo;
 			XmlBrowseViewBaseVc.ItemsCollectorEnv collector =
-				new XmlBrowseViewBaseVc.ItemsCollectorEnv(null, m_cache, hvoRootObj);
+				new XmlBrowseViewBaseVc.ItemsCollectorEnv(null, m_cache, m_sda, hvoRootObj);
 			if (Vc != null && m_colSpec != null)
 				this.Vc.DisplayCell(rowItem, m_colSpec, hvoRootObj, collector);
 			return collector.HvosCollectedInCell.ToArray();

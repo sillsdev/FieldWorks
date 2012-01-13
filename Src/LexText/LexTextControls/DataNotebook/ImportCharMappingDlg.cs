@@ -254,5 +254,13 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				m_cbWritingSystem.Enabled = true;
 			}
 		}
+
+		private void m_tbBeginMkr_TextChanged(object sender, EventArgs e)
+		{
+			if (m_tbBeginMkr.Text.Length == 0)
+				m_btnOK.Enabled = false;
+			else
+				m_btnOK.Enabled = true;
+		}
 	}
 }

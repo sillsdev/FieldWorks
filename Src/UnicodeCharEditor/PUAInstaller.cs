@@ -846,6 +846,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 									// with this one If we are all done, push through the rest of the file.
 									if (++codeIndex >= puaDefinitions.Length)
 									{
+										// Write out the original top of the section if it hasn't been replaced.
+										if (fileCode != lastCode)
+										{
+											writer.WriteLine(line);
+										}
 										while ((line = reader.ReadLine()) != null)
 											writer.WriteLine(line);
 										break;

@@ -279,6 +279,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		void m_valuesCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (m_valuesCombo.SelectedIndex == -1)
+				return;
+
 			// make sure the dummy value reflects the selected value
 			int selectedRowIndex = m_bvList.SelectedIndex;
 			int hvoSel = m_bvList.AllItems[selectedRowIndex];
@@ -565,31 +568,31 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (DialogResult == DialogResult.OK)
 			{
-				Cursor = Cursors.WaitCursor;
-
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(MEStrings.ksUndoSelectionOfPhonologicalFeatures,
-					MEStrings.ksRedoSelectionOfPhonologicalFeatures, m_cache.ActionHandlerAccessor, () =>
+				using (new WaitCursor(this))
 				{
-					if (m_fs == null)
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(MEStrings.ksUndoSelectionOfPhonologicalFeatures,
+						MEStrings.ksRedoSelectionOfPhonologicalFeatures, m_cache.ActionHandlerAccessor, () =>
 					{
-						// Didn't have one to begin with. See whether we want to create one.
-						if (m_hvoOwner != 0 && CheckFeatureStructure())
+						if (m_fs == null)
 						{
-							// The last argument is meaningless since we expect this property to be owning
-							// or collection.
-							var hvoFs = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, -2);
-							m_fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
+							// Didn't have one to begin with. See whether we want to create one.
+							if (m_hvoOwner != 0 && CheckFeatureStructure())
+							{
+								// The last argument is meaningless since we expect this property to be owning
+								// or collection.
+								var hvoFs = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, -2);
+								m_fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
+							}
 						}
-					}
 
-					if (m_fs != null)
-					{
-						// clean out any extant features in the feature structure
-						m_fs.FeatureSpecsOC.Clear();
-						UpdateFeatureStructure();
-					}
-				});
-
+						if (m_fs != null)
+						{
+							// clean out any extant features in the feature structure
+							m_fs.FeatureSpecsOC.Clear();
+							UpdateFeatureStructure();
+						}
+					});
+				}
 			}
 
 			if (m_mediator != null)
@@ -597,7 +600,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_mediator.PropertyTable.SetProperty("phonFeatListDlgLocation", Location);
 				m_mediator.PropertyTable.SetProperty("phonFeatListDlgSize", Size);
 			}
-			Cursor = Cursors.Default;
 		}
 
 		/// <summary>

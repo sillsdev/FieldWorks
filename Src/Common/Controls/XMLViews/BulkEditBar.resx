@@ -423,6 +423,7 @@
   </data>
   <data name="m_listChoiceTab.Text" xml:space="preserve">
 	<value>List Choice</value>
+	<comment>Label for tab in Bulk Edit for choosing items from a list</comment>
   </data>
   <data name="&gt;&gt;m_listChoiceTab.Name" xml:space="preserve">
 	<value>m_listChoiceTab</value>

@@ -27,5 +27,13 @@ namespace SILUBS.SharedScrUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		ScrVers Versification { get;}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a string (typically a single character) that is used to separate the chapter
+		/// number from the verse number in a well-formed Scripture reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		string ChapterVerseSepr { get; }
 	}
 }

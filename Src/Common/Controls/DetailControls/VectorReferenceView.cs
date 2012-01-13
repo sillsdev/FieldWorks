@@ -346,8 +346,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ihvo--;
 			}
 			visibleItems.Insert(ihvo, move);
-			visibleItems.AddRange(GetHiddenItemList()); //add the parent (invisible) reference and any other invisibles back into the collection
+			AddHiddenItems(visibleItems);
 			return true;
+		}
+
+		/// <summary>
+		/// The default AddHiddenItems appends hidden items to the end.
+		/// </summary>
+		/// <param name="items"></param>
+		protected virtual void AddHiddenItems(List<ICmObject> items)
+		{
+			items.AddRange(GetHiddenItemList()); //add the parent (invisible) reference and any other invisibles back into the collection
 		}
 
 		/// <summary>

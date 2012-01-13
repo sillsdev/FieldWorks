@@ -396,6 +396,8 @@ namespace SIL.CoreImpl
 
 		private static string GetFileName(WritingSystemDefinition ws)
 		{
+			if (string.IsNullOrEmpty(ws.Language))
+				return "";
 			return GetFileName(((PalasoWritingSystem)ws).RFC5646);
 		}
 
@@ -405,5 +407,14 @@ namespace SIL.CoreImpl
 				return "";
 			return identifier + ".ldml";
 		}
+
+		/// <summary>
+		/// Gets the writing system compatibility.
+		/// </summary>
+		public WritingSystemCompatibility CompatibilityMode
+		{
+			get { return WritingSystemCompatibility.Strict; }
+		}
+
 	}
 }

@@ -23,7 +23,6 @@ using System.Windows.Forms;
 using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -322,18 +321,20 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				m_dataEntryForm.Show();
-				Cursor.Current = Cursors.WaitCursor;
-				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-				ICmObject obj = Clerk.CurrentObject;
-
-				if (m_showDescendantInRoot)
+				using (new WaitCursor(this))
 				{
-					// find the root object of the current object
-					while (obj.Owner != Clerk.OwningObject)
-						obj = obj.Owner;
-				}
+					// Enhance: Maybe do something here to allow changing the templates without the starting the application.
+					ICmObject obj = Clerk.CurrentObject;
 
-				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, rni.SuppressFocusChange);
+					if (m_showDescendantInRoot)
+					{
+						// find the root object of the current object
+						while (obj.Owner != Clerk.OwningObject)
+							obj = obj.Owner;
+					}
+
+					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, rni.SuppressFocusChange);
+				}
 			}
 			catch (Exception error)
 			{
@@ -344,10 +345,6 @@ namespace SIL.FieldWorks.XWorks
 				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
 				ErrorReporter.ReportException(error, app.SettingsKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress,
 					null, false);
-			}
-			finally
-			{
-				Cursor.Current = Cursors.Default;
 			}
 			int msEnd = Environment.TickCount;
 			Debug.WriteLineIf(RuntimeSwitches.RecordTimingSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", RuntimeSwitches.RecordTimingSwitch.DisplayName);

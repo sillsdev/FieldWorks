@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 				foreach (var morphtype in stem.MorphTypes.Where(morphtype => morphtype.IsStemType)) //for every stem
 				{
 					var allAllomorphs = stem.AllAllomorphs;
-					foreach(var allomorph in allAllomorphs.Where(allomorph => !allomorph.MorphTypeRA.IsBoundType)) //for every allomorph of the stem
+					foreach(var allomorph in allAllomorphs.Where(allomorph => (allomorph.MorphTypeRA != null && !allomorph.MorphTypeRA.IsBoundType))) //for every allomorph of the stem
 					{
 						var allomorphString = allomorph.Form.get_String(vernWs); //get the string for this form in the desired writing system
 						if(allomorphString != null && allomorphString.Length > 0) //if it is a valid word
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.IText
 			{
 				return;
 			}
-			string txt = tss.Text.Substring(start, limit > start && limit < tss.Length ? limit : tss.Length - 1);
+			string txt = tss.Text.Substring(start, limit > start && limit < tss.Length ? limit - start : tss.Length - start);
 			int offset = 0; // offset in tsb caused by previously introduced spaces.
 
 			//Attempt to handle the problem of invalid words being introduced accounting for punctuation
@@ -148,21 +148,21 @@ namespace SIL.FieldWorks.IText
 			{
 				//unless the word starts at the beginning of the input or the word starts right after the end of the last word we found
 				//insert a space before the word.
-				if (word.Start != start)
+				if (word.Start != 0)
 				{
 					//insert a space before the word.
-					if (!SpaceAt(bldr, word.Start + offset - 1)) //if there isn't already a space
+					if (!SpaceAt(bldr, start + word.Start + offset - 1)) //if there isn't already a space
 					{
-						InsertSpace(bldr, word.Start + offset);
+						InsertSpace(bldr, start + word.Start + offset);
 						++offset;
 					}
 				}
 				if (word.Start + word.Length != txt.Length) //unless the word ends at the end of our input
 				{
 
-					if (!SpaceAt(bldr, word.Start + word.Length + offset)) //if there isn't already a space
+					if (!SpaceAt(bldr, start + word.Start + word.Length + offset)) //if there isn't already a space
 					{
-						InsertSpace(bldr, word.Start + word.Length + offset); //insert a space at the end of the word
+						InsertSpace(bldr, start + word.Start + word.Length + offset); //insert a space at the end of the word
 						++offset;
 					}
 				}

@@ -216,7 +216,8 @@
 	<Compile Include="AddWordsToLexiconTests.cs">
 	</Compile>
 	<None Include="ConcordanceControlTests.cs" />
-	<None Include="InterlinearExporterTests.cs" />
+	<Compile Include="ImportInterlinearAnalysesTests.cs" />
+	<Compile Include="InterlinearExporterTests.cs" />
 	<Compile Include="BIRDFormatImportTests.cs" />
 	<Compile Include="InterlinDocForAnalysisTests.cs">
 	  <SubType>UserControl</SubType>
@@ -237,6 +238,7 @@
 	<None Include="TextEditingTests.cs" />
   </ItemGroup>
   <ItemGroup>
+	<None Include="FlexTextImport\FlexTextExportOutput.flextext" />
 	<Content Include="ParagraphParserTestTexts.xml" />
 	<Content Include="InterlinearExporterTests.xml" />
 	<Content Include="TextEditingTestsTexts.xml" />

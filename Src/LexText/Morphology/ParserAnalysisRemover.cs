@@ -15,13 +15,10 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -106,57 +103,34 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
-			var analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances();
-			if (analyses.Count() == 0)
+			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
+			if (analyses.Length == 0)
 				return;
-
-			var humanAgent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(new Guid("9303883A-AD5C-4CCF-97A5-4ADD391F8DCB"));
-			var humanApproves = humanAgent.ApprovesOA;
-			var humanDisapproves = humanAgent.DisapprovesOA;
 
 			// Set up progress bar.
 			m_dlg.ProgressBar.Minimum = 0;
-			m_dlg.ProgressBar.Maximum = analyses.Count();
+			m_dlg.ProgressBar.Maximum = analyses.Length;
 			m_dlg.ProgressBar.Step = 1;
 
 			// stop parser if it's running.
 			m_dlg.Mediator.SendMessage("StopParser", null);
 
-			var affectedWordforms = new HashSet<IWfiWordform>();
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
-				foreach (var currentAnalysis in analyses)
+				foreach (IWfiAnalysis analysis in analyses)
 				{
-					var parserEvals = new List<ICmAgentEvaluation>(currentAnalysis.EvaluationsRC
-						.Where(evaluation => evaluation != humanApproves && evaluation != humanDisapproves));
+					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+					foreach (ICmAgentEvaluation parserEval in parserEvals)
+						analysis.EvaluationsRC.Remove(parserEval);
 
-					foreach (var parserEval in parserEvals)
-						currentAnalysis.EvaluationsRC.Remove(parserEval);
+					IWfiWordform wordform = analysis.Wordform;
+					if (analysis.EvaluationsRC.Count == 0)
+						wordform.AnalysesOC.Remove(analysis);
 
-					// By this point the only eval(s) will be human, so don't zap the analysis.
-					// The wordform has been (will be) affected if parserEvals.Count > 0 or currentAnalysis.EvaluationsRC.Count == 0.
-					var wordformIsAffected = parserEvals.Count > 0 || currentAnalysis.EvaluationsRC.Count == 0;
-					var currentWordform = currentAnalysis.Wordform;
-					if (currentAnalysis.EvaluationsRC.Count == 0)
-						currentWordform.AnalysesOC.Remove(currentAnalysis);
-					if (wordformIsAffected)
-						affectedWordforms.Add(currentWordform);
+					if (parserEvals.Length > 0)
+						wordform.Checksum = 0;
 
-					m_dlg.ProgressBar.PerformStep();
-				}
-				// Reset progress bar for wordforms.
-				m_dlg.ProgressBar.Value = 0;
-				m_dlg.ProgressBar.Minimum = 0;
-				m_dlg.ProgressBar.Maximum = affectedWordforms.Count;
-				m_dlg.ProgressBar.Step = 1;
-				foreach (var affectedWordform in affectedWordforms)
-				{
-					affectedWordform.Checksum = 0;
-					using (var wfui = new WfiWordformUi(affectedWordform))
-					{
-						wfui.UpdateWordsToolDisplay(affectedWordform.Hvo, false, false, true, true);
-					}
 					m_dlg.ProgressBar.PerformStep();
 				}
 			});

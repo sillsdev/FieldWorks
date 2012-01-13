@@ -208,6 +208,8 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		public abstract int Priority { get; }
+
 		#endregion
 
 		public string GetToolTip(string id)

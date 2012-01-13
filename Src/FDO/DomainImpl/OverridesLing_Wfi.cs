@@ -448,6 +448,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// delete them automatically.
 			if (ReferringObjects.Count > 0)
 				return;
+			var repositoryInternal = ((ICmObjectRepositoryInternal)Services.ObjectRepository);
+			if (repositoryInternal.IsFocused(this))
+			{
+				repositoryInternal.DeleteFocusedObjectWhenNoLongerFocused(this);
+				return;
+			}
 			((ICmObjectInternal)this).DeleteObject();
 		}
 

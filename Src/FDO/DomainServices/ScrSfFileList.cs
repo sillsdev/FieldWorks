@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SILUBS.SharedScrUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices

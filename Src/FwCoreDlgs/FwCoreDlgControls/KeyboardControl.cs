@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Keyboarding;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -34,21 +35,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			InitializeComponent();
 			m_keyboardComboBox.DropDown += new EventHandler(m_keyboardComboBox_DropDown);
 			m_langIdComboBox.DropDown += new EventHandler(m_langIdComboBox_DropDown);
-
-			// FWNX-498 Different UI for IBus in Linux
-			// Just one keyboard combo box
-			if (MiscUtils.IsUnix)
-			{
-				m_keyboardLabel.Text = FwCoreDlgControls.kstidKeyboard;
-				// Move Keyboard combo box up
-				if (m_langIdLabel.Top < m_keyboardLabel.Top)
-				{
-					m_keyboardComboBox.Top -= m_langIdComboBox.Height + m_langIdLabel.Height;
-					m_keyboardLabel.Top -= m_langIdComboBox.Height + m_langIdLabel.Height;
-				}
-				Controls.Remove(m_langIdComboBox);
-				Controls.Remove(m_langIdLabel);
-			}
 		}
 
 		void m_langIdComboBox_DropDown(object sender, EventArgs e)
@@ -186,8 +172,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				return;
 
 			InitKeymanCombo();
-			if (!MiscUtils.IsUnix)
-				InitLanguageCombo();
+			InitLanguageCombo();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -223,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 
 		/// <summary>
-		/// Get available IBus (Linux) or Keyman (Windows) keyboards.
+		/// Get available Keyman (Windows) keyboards.
 		/// </summary>
 		/// <param name="doIfError">
 		/// Delegate to run if KeymanHandler.Init throws an exception. Takes the exception
@@ -262,14 +247,23 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			finally
 			{
 				keymanHandler.Close();
-			Marshal.ReleaseComObject(keymanHandler);
-		}
+				Marshal.ReleaseComObject(keymanHandler);
+			}
 		}
 
 		// Since InitLanguageCombo gets called from an OnGetFocus, and the message box causes a
 		// change in focus, we need to avoid an endless loop of error messages.
-		static bool errorMessage1Out;
-		static bool errorMessage2Out;
+		private static bool errorMessage1Out;
+		private static bool errorMessage2Out;
+
+		/// <summary>
+		/// Resets the error messages. This is needed for unit tests.
+		/// </summary>
+		public static void ResetErrorMessages()
+		{
+			errorMessage1Out = false;
+			errorMessage2Out = false;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -280,68 +274,38 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			CheckDisposed();
 
-			ILgLanguageEnumerator lenum = LgLanguageEnumeratorClass.Create();
 			m_langIdComboBox.Items.Clear(); // Clear out any old items.
-			lenum.Init();
-			int id = 0;
 			string selectedName = null;
 			int selectedId = m_ws.LCID;
-			var badLocales = new List<int>();
-			try
+			foreach (var item in KeyboardController.InstalledKeyboards.Where(
+				keyboard => keyboard.Type == KeyboardType.System))
 			{
-				for (; ; )
+				try
 				{
-					string name;
-					try
+					m_langIdComboBox.Items.Add(item);
+					// The 'if' below should make a 'fr-CAN' language choose a french keyboard, if installed.
+					if (item.Id == selectedId)
+						selectedName = item.Name;
+				}
+				catch
+				{
+					// Problem adding a language to the combo box. Notify user and continue.
+					if (errorMessage1Out == false)
 					{
-						lenum.Next(out id, out name);
-					}
-					catch (OutOfMemoryException)
-					{
-						throw;
-					}
-					catch
-					{ // if we fail to get a language, skip this one, but display once in error message.
-						badLocales.Add(id);
-						// Under certain conditions it can happen that lenum.Next() returns
-						// E_UNEXPECTED right away. We're then stuck in an inifinite loop.
-						if (badLocales.Count > 1000 || id == 0)
-							break;
-						continue;
-					}
-					if (id == 0)
-						break;
-					try
-					{
-						m_langIdComboBox.Items.Add(new LangIdComboItem(id, name));
-						// The 'if' below should make a 'fr-CAN' language choose a french keyboard, if installed.
-						if (id == selectedId)
-							selectedName = name;
-					}
-					catch
-					{
-						// Problem adding a language to the combo box. Notify user and continue.
-						if (errorMessage1Out == false)
-						{
-							errorMessage1Out = true;
-							MessageBoxUtils.Show(ParentForm, FwCoreDlgControls.kstidBadLanguageName,
+						errorMessage1Out = true;
+						MessageBoxUtils.Show(ParentForm, FwCoreDlgControls.kstidBadLanguageName,
 								FwCoreDlgControls.kstidError, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						}
-						break;
 					}
+					break;
 				}
 			}
-			finally
-			{
-				// LT-8465 when Windows and Language Options changes are made lenum does not always get
-				// updated correctly so we are ensuring the memory for this ComObject gets released.
-				Marshal.FinalReleaseComObject(lenum);
-			}
 
+			var badLocales = KeyboardController.ErrorKeyboards.Where(
+				keyboard => keyboard.Type == KeyboardType.System).ToList();
 			if (badLocales.Count > 0 && errorMessage2Out == false)
 			{
 				errorMessage2Out = true;
-				string strBadLocales = badLocales.Aggregate("", (current, loc) => current + (loc + ", "));
+				string strBadLocales = badLocales.Aggregate("", (current, loc) => current + (loc.Details + ", "));
 				strBadLocales = strBadLocales.Substring(0, strBadLocales.Length - 2);
 				string caption = FwCoreDlgControls.kstidError;
 				MessageBoxUtils.Show(ParentForm, String.Format(FwCoreDlgControls.kstidBadLocales,
@@ -364,7 +328,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					// The DefaultInputLanguage should already be in the control
 					if (selectedName == FwCoreDlgControls.kstidInvalidKeyboard)
 					{
-						m_langIdComboBox.Items.Add(new LangIdComboItem(selectedId, selectedName));
+						m_langIdComboBox.Items.Add(new KeyboardDescription(selectedId, selectedName, null));
 					}
 				}
 			}
@@ -376,7 +340,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (m_langIdComboBox.SelectedItem == null)
 				return;
-			m_ws.LCID = ((LangIdComboItem)m_langIdComboBox.SelectedItem).id;
+			m_ws.LCID = ((IKeyboardDescription)m_langIdComboBox.SelectedItem).Id;
 		}
 
 		private void m_cboKeyboard_SelectedIndexChanged(object sender, EventArgs e)
@@ -388,49 +352,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					str = null;
 				m_ws.Keyboard = str;
 			}
-		}
-	}
-
-	/// <summary></summary>
-	public class LangIdComboItem
-	{
-		private readonly string m_itemName;
-		private readonly int m_id;
-
-		/// <summary>
-		/// Create one.
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="name"></param>
-		public LangIdComboItem(int id, string name)
-		{
-			m_itemName = name;
-			m_id = id;
-		}
-
-		/// <summary>
-		/// Human-readable name of the language.
-		/// </summary>
-		public string Name
-		{
-			get {return m_itemName;}
-		}
-
-		/// <summary>
-		/// Langid, computationally identifies the language.
-		/// </summary>
-		public int id
-		{
-			get {return m_id;}
-		}
-
-		/// <summary>
-		/// Display name to show in the combo.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return m_itemName;
 		}
 	}
 }

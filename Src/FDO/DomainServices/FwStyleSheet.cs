@@ -912,9 +912,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, stylename);
 
 			// Make sure we handle the magic writing systems
-			if (ws == (int)CellarModuleDefns.kwsAnal)
+			if (ws == WritingSystemServices.kwsAnal)
 				ws = m_fdoCache.DefaultAnalWs;
-			else if (ws == (int)CellarModuleDefns.kwsVern)
+			else if (ws == WritingSystemServices.kwsVern)
 				ws = m_fdoCache.DefaultVernWs;
 
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);

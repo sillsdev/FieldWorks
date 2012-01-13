@@ -418,28 +418,28 @@ namespace SIL.FieldWorks.CacheLightTests
 
 			int[] ids;
 			var testFlidSize = flidSize - 1;
-			using (var flids = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
-				ids = (int[])MarshalEx.NativeToArray(flids, testFlidSize, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
 				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
 				foreach (var flid in ids)
 					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
 			}
 			testFlidSize = flidSize;
-			using (var flids = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
-				ids = (int[])MarshalEx.NativeToArray(flids, testFlidSize, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
 				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
 				foreach (var flid in ids)
 					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
 			}
 			testFlidSize = flidSize + 1;
-			using (var flids = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
-				ids = (int[])MarshalEx.NativeToArray(flids, testFlidSize, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
 				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
 				for (var iflid = 0; iflid < ids.Length; ++iflid)
 				{
@@ -663,18 +663,18 @@ namespace SIL.FieldWorks.CacheLightTests
 			// even though we know it will never be that high a number that can be returned.
 			int[] ids;
 			var countAllClasses = m_metaDataCache.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				m_metaDataCache.GetClassIds(countAllClasses, clids);
-				ids = (int[])MarshalEx.NativeToArray(clids, countAllClasses, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(clids, countAllClasses);
 				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
 			}
 			countAllClasses = 2;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check ClassL (all of its direct subclasses).
 				m_metaDataCache.GetClassIds(countAllClasses, clids);
-				ids = (int[])MarshalEx.NativeToArray(clids, 2, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(clids, 2);
 				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
 			}
 		}
@@ -686,20 +686,20 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldsTest()
 		{
 			int countAllFlidsOut;
-			using (var flids = MarshalEx.ArrayToNative(500, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, 0, flids);
 				var countAllFlids = countAllFlidsOut;
 				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
 				Assert.AreEqual(countAllFlids, countAllFlidsOut, "Wrong number of fields returned for BaseClass.");
 			}
-			using (var flids = MarshalEx.ArrayToNative(500, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, 0, flids);
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
 				Assert.AreEqual(8, countAllFlidsOut, "Wrong number of fields returned for 49.");
 			}
-			using (var flids = MarshalEx.ArrayToNative(500, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, 0, flids);
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, countAllFlidsOut, flids);
@@ -714,7 +714,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[ExpectedException(typeof(ArgumentException))]
 		public void GetFieldsBadTest()
 		{
-			using (var flids = MarshalEx.ArrayToNative(500, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				int countAllFlidsOut = 1;
 				m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetDirectSubclasses_None()
 		{
 			int countDirectSubclasses;
-			using (var clids = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassB.
 				m_metaDataCache.GetDirectSubclasses(45, 10, out countDirectSubclasses, clids);
@@ -851,12 +851,12 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetDirectSubclasses()
 		{
 			int countDirectSubclasses;
-			using (var clids = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassL (all of its direct subclasses).
 				m_metaDataCache.GetDirectSubclasses(35, 10, out countDirectSubclasses, clids);
 				Assert.AreEqual(2, countDirectSubclasses, "Wrong number of subclasses returned.");
-				var ids = (int[])MarshalEx.NativeToArray(clids, 10, typeof(int));
+				var ids = MarshalEx.NativeToArray<int>(clids, 10);
 				for (var i = 0; i < ids.Length; ++i)
 				{
 					var clid = ids[i];
@@ -885,7 +885,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetAllSubclasses_None()
 		{
-			using (var clids = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassC.
 				int countAllSubclasses;
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetAllSubclasses_ClassL()
 		{
-			using (var clids = MarshalEx.ArrayToNative(10, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassL (all of its direct subclasses).
 				int countAllSubclasses;
@@ -916,7 +916,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetAllSubclasses_ClassL_Limited()
 		{
-			using (var clids = MarshalEx.ArrayToNative(2, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(2))
 			{
 				// Check ClassL (but get it and only 1 of its subclasses).
 				int countAllSubclasses;
@@ -932,7 +932,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetAllSubclasses_BaseClass()
 		{
 			var countAllClasses = m_metaDataCache.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check BaseClass.
 				int countAllSubclasses;

@@ -198,7 +198,10 @@ namespace SIL.FieldWorks.IText
 					multipleAnalysisColor = value;
 					if (m_sandbox.m_rootb != null)
 					{
-						m_sandbox.m_rootb.Reconstruct();
+						SelectionHelper helper = SelectionHelper.Create(m_sandbox);
+						m_sandbox.m_rootb.Reconstruct(); //catestrophic redraw seems to be required to get colors to refresh
+						if(helper != null)
+							helper.RestoreSelectionAndScrollPos(); //retain the selection if possible
 					}
 				}
 			}

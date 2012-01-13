@@ -10,15 +10,8 @@
 //
 // File: CharacterMappingSettings.cs
 // Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
@@ -26,14 +19,10 @@ using System.Diagnostics;
 
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.TE;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 

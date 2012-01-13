@@ -3385,7 +3385,7 @@ namespace SIL.FieldWorks.TE
 					GotoClosestPrecedingRef(targetRef, bookToLookFor);
 				}
 
-				return true;
+				return CurrentSelection != null;
 			}
 		}
 
@@ -4821,7 +4821,6 @@ namespace SIL.FieldWorks.TE
 				return sBook;
 
 			MultilingScrBooks multiScrBooks = new MultilingScrBooks((IScrProjMetaDataProvider)m_scr);
-			multiScrBooks.InitializeWritingSystems(m_cache.WritingSystemFactory);
 			return multiScrBooks.GetBookName(book.CanonicalNum);
 		}
 

@@ -2115,7 +2115,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			// ** Dont change the order of the following two lines **
 			if (m_previousForm != null) // Somehow may not be, if no form is active when launched!
 				m_previousForm.Activate();
-			m_listForm.Visible = false;
+			if (m_listForm != null)
+				m_listForm.Visible = false;
 			// reset HighlightedItem to current selected.
 			HighlightedIndex = SelectedIndex;
 			if (m_comboMessageFilter != null)
@@ -2557,6 +2558,50 @@ namespace SIL.FieldWorks.Common.Widgets
 				// And, if not changed, it's background color is white.
 				BackColor = SystemColors.Window;
 			}
+		}
+
+		/// <summary>
+		/// Override to prevent scrolling in DropDownList mode.
+		/// </summary>
+		/// <param name="sel"></param>
+		/// <param name="scrollOption"></param>
+		/// <returns></returns>
+		public override bool ScrollSelectionIntoView(IVwSelection sel, VwScrollSelOpts scrollOption)
+		{
+			if (m_comboBox != null && m_comboBox.DropDownStyle == ComboBoxStyle.DropDownList)
+			{
+				// no meaningful selections are possible, no reason ever to scroll it.
+
+				// That's true as long as we always left-align.
+				// If we use right-alignment with a huge width to prevent wrapping, no scrolling means the text is invisible,
+				// somewhere way off to the right. We'd then need something like this, but better, because this doesn't
+				// work when the combo is resized, as when you change the size of a column and the filter bar combo resizes.
+				// See also what I did in OnSizeChanged.
+				if (Rtl)
+				{
+					// But, if it is RTL, we need to scroll, typically only once, to make it as visible as possible.
+					// Right alignment otherwise puts the string way off to the right.
+					var initialSel = m_rootb.MakeSimpleSel(true, false, false, false);
+					base.ScrollSelectionIntoView(initialSel, VwScrollSelOpts.kssoDefault);
+				}
+				return false;
+			}
+			return base.ScrollSelectionIntoView(sel, scrollOption);
+		}
+
+		/// <summary>
+		/// We need to kludge to make sure the content stays visible in RTL scripts.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			if (m_rootb == null || !Rtl)
+				return;
+			// To get the text aligned as well as we readily can, first scroll to show all of it,
+			// then if need be again to see the start.
+			BaseMakeSelectionVisible(m_rootb.MakeSimpleSel(true, false, true, false));
+			BaseMakeSelectionVisible(m_rootb.MakeSimpleSel(true, false, false, false));
 		}
 
 		internal override void RemoveNonRootNotifications()

@@ -111,12 +111,12 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public abstract class Allomorph : HCObject, IComparable<Allomorph>
 	{
-		protected Morpheme m_morpheme = null;
-		protected IEnumerable<Environment> m_requiredEnvs = null;
-		protected IEnumerable<Environment> m_excludedEnvs = null;
-		protected IEnumerable<MorphCoOccurrence> m_requiredAlloCoOccur = null;
-		protected IEnumerable<MorphCoOccurrence> m_excludedAlloCoOccur = null;
-		protected Dictionary<string, string> m_properties;
+		private Morpheme m_morpheme;
+		private Set<Environment> m_requiredEnvs;
+		private Set<Environment> m_excludedEnvs;
+		private IEnumerable<MorphCoOccurrence> m_requiredAlloCoOccur;
+		private IEnumerable<MorphCoOccurrence> m_excludedAlloCoOccur;
+		private readonly Dictionary<string, string> m_properties;
 		private int m_index = -1;
 
 		/// <summary>
@@ -178,7 +178,7 @@ namespace SIL.HermitCrab
 
 			set
 			{
-				m_requiredEnvs = value;
+				m_requiredEnvs = value == null ? null : new Set<Environment>(value);
 			}
 		}
 
@@ -195,7 +195,7 @@ namespace SIL.HermitCrab
 
 			set
 			{
-				m_excludedEnvs = value;
+				m_excludedEnvs = value == null ? null : new Set<Environment>(value);
 			}
 		}
 
@@ -266,6 +266,33 @@ namespace SIL.HermitCrab
 			if (m_properties.TryGetValue(name, out value))
 				return value;
 			return null;
+		}
+
+		public virtual bool ConstraintsEqual(Allomorph other)
+		{
+			if (m_requiredEnvs == null)
+			{
+				if (other.m_requiredEnvs != null)
+					return false;
+			}
+			else
+			{
+				if (!m_requiredEnvs.Equals(other.m_requiredEnvs))
+					return false;
+			}
+
+			if (m_excludedEnvs == null)
+			{
+				if (other.m_excludedEnvs != null)
+					return false;
+			}
+			else
+			{
+				if (!m_excludedEnvs.Equals(other.m_excludedEnvs))
+					return false;
+			}
+
+			return true;
 		}
 
 		public int CompareTo(Allomorph other)
@@ -403,21 +430,6 @@ namespace SIL.HermitCrab
 			m_nextPartition = morphs.m_nextPartition;
 			foreach (Morph mi in morphs)
 				base.InsertItem(Count, mi);
-		}
-
-		public bool SameMorphemes(Morphs other)
-		{
-			if (Count != other.Count)
-				return false;
-
-			IEnumerator<Morph> enum1 = GetEnumerator();
-			IEnumerator<Morph> enum2 = other.GetEnumerator();
-			while (enum1.MoveNext() && enum2.MoveNext())
-			{
-				if (enum1.Current.Allomorph.Morpheme != enum2.Current.Allomorph.Morpheme)
-					return false;
-			}
-			return true;
 		}
 
 		protected override void InsertItem(int index, Morph item)

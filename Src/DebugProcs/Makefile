@@ -18,6 +18,12 @@ TLB_SRC      = $(OUTPUT)/Common
 
 DEFINES  := $(DEFINES) -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
 
+ifeq ($(BUILD_CONFIG),Debug)
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
+
 PACKAGES := gtkmm-2.4
 
 INCLUDES := $(shell icu-config --cppflags) \
@@ -39,7 +45,7 @@ LDLIBS = \
 	-luuid -lexpat
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Wshadow
 
 ARFLAGS  = -crs
 
@@ -55,9 +61,9 @@ all: $(OUT_DIR)/libDebugProcs.a link_check
 $(OUT_DIR)/libDebugProcs.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libDebugProcs
+link_check: $(INT_DIR)/libDebugProcs
 
-libDebugProcs: $(OBJS) $(GENERIC_OBJ)/main.o
+$(INT_DIR)/libDebugProcs: $(OBJS) $(GENERIC_OBJ)/main.o
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 # === Rules ===
@@ -70,4 +76,4 @@ $(GENERIC_OBJ)/main.o:
 -include $(PCHNAME:%.gch=%.d)
 
 clean:
-	$(RM) $(OUT_DIR)/libDebugProcs.a libDebugProcs $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
+	$(RM) $(OUT_DIR)/libDebugProcs.a $(INT_DIR)/libDebugProcs $(INT_DIR)/*.[od] $(INT_DIR)/*.gch

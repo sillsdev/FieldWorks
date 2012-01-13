@@ -1034,6 +1034,14 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int) ColleaguePriority.Medium; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the specified mediator.

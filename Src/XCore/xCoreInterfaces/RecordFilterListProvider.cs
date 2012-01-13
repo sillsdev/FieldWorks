@@ -73,6 +73,8 @@ namespace XCore
 			get { return false; }
 		}
 
+		public virtual int Priority { get { return (int)ColleaguePriority.Medium; } }
+
 		/// <summary>
 		/// the list of filters.
 		/// </summary>

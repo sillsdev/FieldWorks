@@ -566,6 +566,11 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		int Length { get; }
 
+		/// <summary>
+		/// Reports true when there is a translation or non-null note.
+		/// </summary>
+		bool HasAnnotation { get; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this instance is a label segment (i.e. is defined

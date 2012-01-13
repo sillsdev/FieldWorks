@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
 										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_mediator.HelpTopicProvider.HelpFile,
-										HelpNavigator.Topic, "khtRootCannotHaveComponents") != DialogResult.Yes)
+										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 									{
 										return;
 									}

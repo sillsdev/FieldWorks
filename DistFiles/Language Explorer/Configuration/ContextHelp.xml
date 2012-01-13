@@ -103,6 +103,7 @@
 	<item id="CmdMoveFocusBoxRightNc">Leave the suggested analysis as a suggestion, and move to the word on the right.</item>
 	<item id="CmdMoveFocusBoxLeftNc">Leave the suggested analysis as a suggestion, and move to the word on the left.</item>
 	<!-- "CmdGoToEntry" now also under Edit menu -->
+	<item id="CmdApproveAll">Approve all the suggested analyses in this text.</item>
 
 	<!--
 		 Insert menu
@@ -143,10 +144,8 @@
 	<item id="CmdInsertSense">Insert a new sense.</item>
 	<item id="CmdInsertSubsense">Insert a new subsense.</item>
 	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
-	<item id="CmdAddFreeTrans">Insert a free translation.</item>
-	<item id="CmdAddLitTrans">Insert a literal translation.</item>
 	<item id="CmdAddNote">Insert a note.</item>
-	<item id="CmdAddTexts">Choose texts to display and use.</item>
+	<item id="CmdChooseTexts">Choose texts to display and use.</item>
 	<item id="CmdAddCustomList">Add a custom list.</item>
 	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
 	<item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>

@@ -34,12 +34,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			_mediator = mediator;
-			_mediator.AddColleague(this);
 			_mediator.PropertyTable.SetProperty("LiftBridgeListener", this);
 			_mediator.PropertyTable.SetPropertyPersistence("LiftBridgeListener", false);
 			_cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
 			_databaseName = _cache.ProjectId.Name;
 			_parentForm = (Form)_mediator.PropertyTable.GetValue("window");
+			_mediator.AddColleague(this);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -50,6 +50,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool ShouldNotCall
 		{
 			get { return false; }
+		}
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
 		}
 
 		#endregion
@@ -85,6 +90,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				try
 				{
+					// Send LangProj Guid to Lift Bridge.
+					var liftBridgeAsNewInterface = liftBridge as ILiftBridge3;
+					if (liftBridgeAsNewInterface != null)
+						liftBridgeAsNewInterface.LanguageProjectGuid = _cache.LanguageProject.Guid;
+
 					liftBridge.DoSendReceiveForLanguageProject(_parentForm, _databaseName);
 				}
 				finally
@@ -218,8 +228,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			NonUndoableUnitOfWorkHelper.Do(_cache.ActionHandlerAccessor, () =>
 			{
-				try
-				{
 					string sFilename;
 					var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 					if (fMigrationNeeded)
@@ -257,29 +265,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					progressDialog.Message = ResourceHelper.GetResourceString("kstidFixingRelationLinks");
 					flexImporter.ProcessPendingRelations(progressDialog);
 					sLogFile = flexImporter.DisplayNewListItems(liftPathname, cEntries);
-				}
-				catch (Exception error)
-				{
-					// TODO: SteveMc (RandyR): JohnH isn't excited about this approach to reporting an import error. It appears to be an analyst issue to sort out.
-					//var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-					//                         liftPathname);
-					//try
-					//{
-					//    var bldr = new StringBuilder();
-					//    bldr.AppendFormat(Resources.kProblem, liftPathname);
-					//    bldr.AppendLine();
-					//    bldr.AppendLine(error.Message);
-					//    bldr.AppendLine();
-					//    bldr.AppendLine(error.StackTrace);
-					//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-					//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
-					//}
-					//catch
-					//{
-					//}
-					//MessageBox.Show(sMsg, Resources.kProblemMerging,
-					//                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
 			});
 			m_fRefreshNeeded = true;
 			return sLogFile;
@@ -314,11 +299,33 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
-						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, new object[] { _liftPathname, mergeStyle });
+						var logFile = (string) progressDlg.RunTask(true, ImportLexicon, new object[] {_liftPathname, mergeStyle});
 						return logFile != null;
 					}
-					catch
+					catch (WorkerThreadException error)
 					{
+						// It appears to be an analyst issue to sort out how we should report this.
+						// LT-12340 however says we must report it somehow.
+						var sMsg = String.Format(LexEdStrings.kProblemImportWhileMerging, _liftPathname, error.InnerException.Message);
+						// RandyR says JohnH isn't excited about this approach to reporting an import error, that is, copy it to the
+						// clipboard (and presumably say something about it in kProblemImportWhileMerging).
+						// But it would be nice to get the details if it is a crash.
+						//try
+						//{
+						//    var bldr = new StringBuilder();
+						//    bldr.AppendFormat(Resources.kProblem, _liftPathname);
+						//    bldr.AppendLine();
+						//    bldr.AppendLine(error.Message);
+						//    bldr.AppendLine();
+						//    bldr.AppendLine(error.StackTrace);
+						//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+						//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
+						//}
+						//catch
+						//{
+						//}
+						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return false;
 					}
 					finally

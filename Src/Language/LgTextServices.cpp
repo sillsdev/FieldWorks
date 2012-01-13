@@ -22,11 +22,11 @@ Description:
 #if WIN32
 DEFINE_COM_PTR(ITfInputProcessorProfiles);
 DEFINE_COM_PTR(IEnumTfLanguageProfiles);
-#endif
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
+// we use a managed implementation on Linux
 #undef ENABLE_TSF
 #define ENABLE_TSF
 
@@ -35,12 +35,6 @@ DEFINE_THIS_FILE
 
 #undef TRACING_KEYMAN
 //#define TRACING_KEYMAN
-
-#ifndef WIN32
-static const GUID KeyboardSwitcher_guid("4ED1E8bC-DAdE-11DE-B350-0019DBf4566E");
-
-#define CLSID_KeyboardSwitcher KeyboardSwitcher_guid
-#endif
 
 //:>********************************************************************************************
 //:>	Forward declarations.
@@ -112,16 +106,8 @@ STDMETHODIMP LgTextServices::QueryInterface(REFIID riid, void ** ppv)
 //:>	ILgTextServices methods.
 //:>********************************************************************************************
 
-#if WIN32
 const CLSID kclsidKMTipTextService = { 0x7ba04432, 0x8609, 0x4fe6, {0xbf,
 	0xf7, 0x97, 0x10, 0x91, 0xde, 0x09, 0x33} };
-#else
-int textServicesArray4[] = {0xbf, 0xf7, 0x97, 0x10, 0x91, 0xde, 0x09, 0x33};
-int textServicesArray[] = {0x7ba04432, 0x8609, 0x4fe6, *textServicesArray4};
-const CLSID kclsidKMTipTextService(*textServicesArray);
-#endif
-
-#if WIN32
 static INT8 s_WinVersion = -1;
 
 /*----------------------------------------------------------------------------------------------
@@ -150,51 +136,39 @@ bool IsWin2kOrHigher()
 
 	return s_WinVersion >= 5;
 }
-#else
-	// TODO-Linux: does this need porting?
-#endif
 
 /*----------------------------------------------------------------------------------------------
-	Returns true if the current keyman keyboard is different from the desired keyman keyboard.
+	Returns true if the current keyman/other keyboard is different from the desired
+	keyman/other keyboard.
 ----------------------------------------------------------------------------------------------*/
 bool IsKeyboardDifferent(BSTR bstrDesiredKeymanKbd, BSTR bstrActiveKeymanKbd)
 {
-#if WIN32
 	return wcscmp(bstrActiveKeymanKbd ? bstrActiveKeymanKbd : L"",
 		bstrDesiredKeymanKbd ? bstrDesiredKeymanKbd : L"") != 0;
-#else
-	// TODO-Linux: does this need porting?
-	return false;
-#endif
 }
 
 /*----------------------------------------------------------------------------------------------
 	Turn off the keyman keyboard
 ----------------------------------------------------------------------------------------------*/
-void TurnOffKeymanKbd(BSTR * pbstrActiveKeymanKbd)
+void TurnOffKeymanKbd(BSTR * pbstrActiveOtherImKbd)
 {
-#if WIN32
 	// It seems sometimes to be necessary to explicitly turn Keyman off, though it's not
 	// supposed to be. One reason is that on loss of focus, C# code loses track of the
-	// current keyboard, so *pbstrActiveKeymanKbd cannot be relied on.
-	//if (BstrLen(*pbstrActiveKeymanKbd))
+	// current keyboard, so *pbstrActiveOtherImKbd cannot be relied on.
+	//if (BstrLen(*pbstrActiveOtherImKbd))
 	ILgKeymanHandlerPtr qkh;
 	qkh.CreateInstance(CLSID_LgKeymanHandler);
 	CheckHr(qkh->put_ActiveKeyboardName(NULL));
-	if (*pbstrActiveKeymanKbd)
-		::SysFreeString(*pbstrActiveKeymanKbd);
-	*pbstrActiveKeymanKbd = NULL;
-#else
-	// TODO-Linux: does this need porting?
-#endif
+	if (*pbstrActiveOtherImKbd)
+		::SysFreeString(*pbstrActiveOtherImKbd);
+	*pbstrActiveOtherImKbd = NULL;
 }
 
 /*----------------------------------------------------------------------------------------------
-	Set the keyboard the Windows API way
+	Set the system keyboard (Windows API/X11 API way)
 ----------------------------------------------------------------------------------------------*/
-void SetKeyboard_Windows(int lcid)
+void SetKeyboard_System(int lcid)
 {
-#if WIN32
 #ifdef Tracing_KeybdSelection
 	StrAnsi sta;
 	sta.Format("LgTextServices::SetKeyboard(%d) [not Keyman]%n", lcid);
@@ -241,18 +215,14 @@ void SetKeyboard_Windows(int lcid)
 		::ActivateKeyboardLayout(hkl, flags);
 		Assert(sizeof(int) >= sizeof(hkl));
 	}
-#else
-	// TODO-Linux: does this need porting?
-#endif
 }
 
 #ifdef ENABLE_TSF
 /*----------------------------------------------------------------------------------------------
 	Set the keyboard through TSF
 ----------------------------------------------------------------------------------------------*/
-bool SetKeyboard_TSF(bool fDoingKeyman, int lcid, int * pnActiveLangId)
+bool SetKeyboard_TSF(bool fDoingOtherIm, int lcid, int * pnActiveLangId)
 {
-#if WIN32
 #ifdef Tracing_KeybdSelection
 	StrAnsi sta;
 	sta.Format("LgTextServices::SetKeyboard(%d) [making TSF calls]%n", lcid);
@@ -295,7 +265,7 @@ bool SetKeyboard_TSF(bool fDoingKeyman, int lcid, int * pnActiveLangId)
 		{
 			Warn("failed to change language\n");
 		}
-		else if (fDoingKeyman)
+		else if (fDoingOtherIm)
 		{
 			// Make sure the Keyman text service is turned on. For some bizarre reason there is
 			// no API to just ask for the service to turn on for the langid, we have to do our
@@ -367,25 +337,20 @@ bool SetKeyboard_TSF(bool fDoingKeyman, int lcid, int * pnActiveLangId)
 			// TODO (DamienD): we could use the TSF interface ITfInputProcessorProfileMgr to change
 			// the keyboard, but it is only available on Vista and higher. Is there a benefit to
 			// using that interface?
-			SetKeyboard_Windows(lcid);
+			SetKeyboard_System(lcid);
 			fSetInputLang = true;
 		}
 	}
 	return fSetInputLang;
-#else
-	// TODO-Linux: does this need porting?
-	return false;
-#endif
 }
 #endif /*ENABLE_TSF*/
 
 /*----------------------------------------------------------------------------------------------
-	Set a keyman keyboard
+	Set a keyman keyboard (or other input method)
 ----------------------------------------------------------------------------------------------*/
-HRESULT SetKeyboard_Keyman(int lcid, BSTR bstrKeymanKbd, BSTR * pbstrActiveKeymanKbd,
+HRESULT SetKeyboard_OtherIM(int lcid, BSTR bstrOtherImKbd, BSTR * pbstrActiveOtherImKbd,
 	ComBool * pfSelectLangPending)
 {
-#if WIN32
 #ifdef Tracing_KeybdSelection
 	StrAnsi sta;
 	sta.Format("LgTextServices::SetKeyboard(%d) [setting Keyman kbd]%n", lcid);
@@ -396,7 +361,7 @@ HRESULT SetKeyboard_Keyman(int lcid, BSTR bstrKeymanKbd, BSTR * pbstrActiveKeyma
 	ILgKeymanHandlerPtr qkh;
 	qkh.CreateInstance(CLSID_LgKeymanHandler);
 	// Tell Keyman about the particular keyboard (but only if it changed).
-	if (IsKeyboardDifferent(bstrKeymanKbd, *pbstrActiveKeymanKbd))
+	if (IsKeyboardDifferent(bstrOtherImKbd, *pbstrActiveOtherImKbd))
 	{
 		// Activate the particular layout we want.
 		// John Durdin says this next step is necessary.
@@ -417,16 +382,16 @@ HRESULT SetKeyboard_Keyman(int lcid, BSTR bstrKeymanKbd, BSTR * pbstrActiveKeyma
 
 		try
 		{
-			CheckHr(qkh->put_ActiveKeyboardName(bstrKeymanKbd));
+			CheckHr(qkh->put_ActiveKeyboardName(bstrOtherImKbd));
 #ifdef TRACING_KEYMAN
 			StrUni stuMsg;
 			stuMsg.Format(L"%b is now the active Keyman keyboard.\n",
-				bstrKeymanKbd);
+				bstrOtherImKbd);
 			::OutputDebugStringW(stuMsg.Chars());
 #endif
-			if (*pbstrActiveKeymanKbd)
-				::SysFreeString(*pbstrActiveKeymanKbd);
-			CopyBstr(pbstrActiveKeymanKbd, bstrKeymanKbd);
+			if (*pbstrActiveOtherImKbd)
+				::SysFreeString(*pbstrActiveOtherImKbd);
+			CopyBstr(pbstrActiveOtherImKbd, bstrOtherImKbd);
 			*pfSelectLangPending = true;
 		}
 		catch (Throwable& thr)
@@ -435,69 +400,58 @@ HRESULT SetKeyboard_Keyman(int lcid, BSTR bstrKeymanKbd, BSTR * pbstrActiveKeyma
 #ifdef TRACING_KEYMAN
 			StrAnsi staMsg;
 			staMsg.Format("Cannot make %B the active Keyman keyboard!?\n",
-				bstrKeymanKbd);
+				bstrOtherImKbd);
 			::OutputDebugStringA(staMsg.Chars());
 #endif
-			if (BstrLen(*pbstrActiveKeymanKbd))
+			if (BstrLen(*pbstrActiveOtherImKbd))
 			{
 				// We failed, so ensure it's turned off.
-				TurnOffKeymanKbd(pbstrActiveKeymanKbd);
+				TurnOffKeymanKbd(pbstrActiveOtherImKbd);
 				*pfSelectLangPending = true;
 			}
 		}
 	}
 	return hr;
-#else
-	// TODO-Linux: does this need porting?
-	return S_OK;
-#endif
 }
 
 /*----------------------------------------------------------------------------------------------
 	Set the system keyboard and TSF language.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgTextServices::SetKeyboard(int lcid, BSTR bstrKeymanKbd, int * pnActiveLangId,
-	BSTR * pbstrActiveKeymanKbd, ComBool * pfSelectLangPending)
+STDMETHODIMP LgTextServices::SetKeyboard(int lcid, BSTR bstrOtherImKbd, int * pnActiveLangId,
+	BSTR * pbstrActiveOtherImKbd, ComBool * pfSelectLangPending)
 {
 	BEGIN_COM_METHOD;
-	ChkComBstrArgN(bstrKeymanKbd);
+	ChkComBstrArgN(bstrOtherImKbd);
 	ChkComArgPtr(pnActiveLangId);
-	ChkComArgPtr(pbstrActiveKeymanKbd);
+	ChkComArgPtr(pbstrActiveOtherImKbd);
 	ChkComArgPtr(pfSelectLangPending);
-#if WIN32
 
 	HRESULT hr;
 	int nLangId = LANGIDFROMLCID(lcid);
 
-	bool fDoingKeyman = BstrLen(bstrKeymanKbd) > 0;
+	bool fDoingOtherIm = BstrLen(bstrOtherImKbd) > 0;
 	bool fSetInputLang = false;
 #ifdef ENABLE_TSF
-	if (IsKeyboardDifferent(bstrKeymanKbd, *pbstrActiveKeymanKbd) ||
+	if (IsKeyboardDifferent(bstrOtherImKbd, *pbstrActiveOtherImKbd) ||
 		(LANGID)nLangId != (LANGID)*pnActiveLangId)
 	{
-		fSetInputLang = SetKeyboard_TSF(fDoingKeyman, lcid, pnActiveLangId);
+		fSetInputLang = SetKeyboard_TSF(fDoingOtherIm, lcid, pnActiveLangId);
 	}
 #endif /*ENABLE_TSF*/
 
-	if (fDoingKeyman)
+	if (fDoingOtherIm)
 	{
-		hr = SetKeyboard_Keyman(lcid, bstrKeymanKbd, pbstrActiveKeymanKbd, pfSelectLangPending);
+		hr = SetKeyboard_OtherIM(lcid, bstrOtherImKbd, pbstrActiveOtherImKbd, pfSelectLangPending);
 	}
 	else // no keyman keyboard wanted.
 	{
 		if (!fSetInputLang)
-			SetKeyboard_Windows(lcid);
+			SetKeyboard_System(lcid);
 
-		TurnOffKeymanKbd(pbstrActiveKeymanKbd);
+		TurnOffKeymanKbd(pbstrActiveOtherImKbd);
 		*pfSelectLangPending = true;
 	}
-#else
-	// C# COM object that switches keyboards.
-	IIMEKeyboardSwitcherPtr qkbs;
-	qkbs.CreateInstance(CLSID_KeyboardSwitcher);
-	qkbs->put_IMEKeyboard(bstrKeymanKbd);
-	qkbs->Close();
-#endif //WIN32
 
 	END_COM_METHOD(g_fact, IID_ILgTextServices);
 }
+#endif // WIN32

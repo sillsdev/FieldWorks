@@ -207,7 +207,7 @@ namespace SIL.HermitCrab
 				{
 					// this was the last node in the pattern, so we have a match
 					List<Match> matches = new List<Match>();
-					matches.Add(new Match(instantiatedVars));
+					matches.Add(new Match(Owner, instantiatedVars));
 					return matches;
 				}
 				else

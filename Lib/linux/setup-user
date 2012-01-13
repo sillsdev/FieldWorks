@@ -5,40 +5,24 @@
 XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 
+script_location="$(dirname "$0")"
+# TODO: readlink -e doesn't work on Mac.
+prefix=$(readlink -en "${script_location}/../..")
 FW_DATA="${XDG_DATA_HOME}/fieldworks"
 FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
 FW_SAMPLES=${FW_SAMPLES:-/usr/share/fieldworks-examples}
+FW_LIB=$prefix/lib/fieldworks
+FW_SHARE=$script_location
 
-if [ ! -d "${FW_CONFIG}/" ]; then
-	(
+(
+	if [ ! -d "${FW_CONFIG}/" ]; then
 		echo "# Finishing user specific setup"
-		script_location="$(dirname "$0")"
 		mkdir -p "${FW_CONFIG}/Icu40/"
-		cp -R "${script_location}/Icu40/icudt40l" "${FW_CONFIG}/Icu40/"
-		cp -R "${script_location}/Icu40/data" "${FW_CONFIG}/Icu40/"
-		cp -R "${script_location}/Languages" "${FW_CONFIG}/"
-		cp -R "${script_location}/SIL" "${FW_CONFIG}/"
+		cp -R "${FW_SHARE}/Icu40/icudt40l" "${FW_CONFIG}/Icu40/"
+		cp -R "${FW_SHARE}/Icu40/data" "${FW_CONFIG}/Icu40/"
+		cp -R "${FW_SHARE}/SIL" "${FW_CONFIG}/"
 		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 		mkdir -p "${FW_DATA}/Projects"
-
-
-		# TODO it would be nice to abs ${script_location} before writing it into the registry.
-		export MONO_REGISTRY_PATH="${FW_CONFIG}/registry"
-		WRITEKEY="${script_location}/../../lib/fieldworks/WriteKey.exe"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40DataDir" "${FW_CONFIG}/Icu40/icudt40l"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${script_location}"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40Dir" "${FW_CONFIG}/Icu40"
-
-
-		# REVIEW these were taken from nant setup registry may not be correct for an install.
-		mono "${WRITEKEY}" LM "SOFTWARE/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
-		mono "${WRITEKEY}" LM "SOFTWARE/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
-		mono "${WRITEKEY}" LM "SOFTWARE/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${script_location}/../../lib/fieldworks"
-		mono "${WRITEKEY}" LM "SOFTWARE/SIL" "InitIcu" "1"
-		mono "${WRITEKEY}" LM "SOFTWARE/SIL/FieldWorks" "InstallLanguageUseLog" "False"
-		mono "${WRITEKEY}" LM "SOFTWARE/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
-
 
 		# copy sample databases
 		if [ -d ${FW_SAMPLES}/ReleaseData ]; then
@@ -49,10 +33,29 @@ if [ ! -d "${FW_CONFIG}/" ]; then
 				chmod -R gu+w "${FW_DATA}/Projects/$dbname"
 			done
 		fi
-	) |
-	zenity --progress \
-	  --title="User specific setup" \
-	  --percentage=0 \
-	  --pulsate \
-	  --auto-close
-fi
+	fi
+
+	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
+		echo "# Updating configuration"
+
+		cd "$FW_LIB"; RUNMODE="INSTALLED" source environ; cd "$OLDPWD"
+
+		WRITEKEY="${FW_LIB}/WriteKey.exe"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu40DataDir" "${FW_CONFIG}/Icu40/icudt40l"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${FW_SHARE}"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu40Dir" "${FW_CONFIG}/Icu40"
+
+		# REVIEW these were taken from nant setup registry may not be correct for an install.
+		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
+		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+		mono "${WRITEKEY}" LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
+		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
+	fi
+) | zenity --progress \
+	--title="User specific setup" \
+	--percentage=0 \
+	--pulsate \
+	--auto-close

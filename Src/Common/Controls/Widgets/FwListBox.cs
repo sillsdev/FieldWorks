@@ -34,6 +34,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <value></value>
 		ISilDataAccess DataAccess { get; }
+
+		/// <summary>
+		///
+		/// </summary>
+		int SelectedIndex { get; set; }
 	}
 
 	/// <summary>
@@ -365,7 +370,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					m_HighlightedIndex = value;
 					// Simulate replacing the old and new item with themselves, to produce
 					// the different visual effect.
-					if (oldSelIndex != -1)
+					if (oldSelIndex != -1 && oldSelIndex < m_items.Count)
 					{
 						m_innerFwListBox.DataAccess.PropChanged(null,
 							(int)PropChangeType.kpctNotifyAll,
@@ -730,7 +735,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// on the control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public class ObjectCollection : IList, ICollection, IEnumerable, IFWDisposable
+		public class ObjectCollection : IList, IEnumerable, IFWDisposable
 		{
 			private ArrayList m_list;
 			private IFwListBox m_owner;
@@ -979,7 +984,7 @@ namespace SIL.FieldWorks.Common.Widgets
 						disposable.Dispose();
 				}
 				m_list.Clear();
-				IVwCacheDa cda = m_owner.DataAccess as IVwCacheDa;
+				var cda = m_owner.DataAccess as IVwCacheDa;
 				if (cda == null)
 					return; // This can happen, when this is called when 'disposing' is false.
 				cda.CacheVecProp(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, new int[0], 0);
@@ -987,6 +992,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					(int)PropChangeType.kpctNotifyAll,
 					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
 					0, 0, citems);
+
+				m_owner.SelectedIndex = -1;
 
 				Debug.Assert(m_owner.DataAccess.get_VecSize(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems) == 0);
 			}
@@ -1012,7 +1019,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// <param name="dest"></param>
 			/// <param name="arrayIndex"></param>
 			/// ------------------------------------------------------------------------------------
-			void System.Collections.ICollection.CopyTo(System.Array dest, int arrayIndex)
+			void ICollection.CopyTo(Array dest, int arrayIndex)
 			{
 				CheckDisposed();
 
@@ -1024,7 +1031,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// Syncrhonization is not supported.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			object System.Collections.ICollection.SyncRoot
+			object ICollection.SyncRoot
 			{
 				get
 				{
@@ -1038,7 +1045,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// Synchronization is not supported.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			bool System.Collections.ICollection.IsSynchronized
+			bool ICollection.IsSynchronized
 			{
 				get
 				{
@@ -1106,6 +1113,9 @@ namespace SIL.FieldWorks.Common.Widgets
 					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
 					index, 1, 0);
 
+				if (m_owner.SelectedIndex >= index)
+					m_owner.SelectedIndex = m_owner.SelectedIndex + 1;
+
 				Debug.Assert(m_owner.DataAccess.get_VecSize(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems) == m_list.Count);
 			}
 
@@ -1143,6 +1153,9 @@ namespace SIL.FieldWorks.Common.Widgets
 					(int)PropChangeType.kpctNotifyAll,
 					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
 					index, 0, 1);
+
+				if (m_owner.SelectedIndex >= index)
+					m_owner.SelectedIndex = m_owner.SelectedIndex - 1;
 			}
 		}
 

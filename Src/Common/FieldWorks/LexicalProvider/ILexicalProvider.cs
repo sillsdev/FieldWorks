@@ -79,6 +79,14 @@ namespace SIL.FieldWorks.LexicalProvider
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Displays the related words using the application with the lexical data.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[OperationContract]
+		void ShowRelatedWords(string entry, EntryType entryType);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets all lexemes in the Lexicon
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

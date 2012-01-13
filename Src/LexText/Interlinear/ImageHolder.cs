@@ -129,6 +129,7 @@ namespace SIL.FieldWorks.IText
 			this.buttonImages.Images.SetKeyName(10, "BrowseAndMoveNext.ico");
 			this.buttonImages.Images.SetKeyName(11, "ME.ico");
 			this.buttonImages.Images.SetKeyName(12, "ZeroWidth.ico");
+			this.buttonImages.Images.SetKeyName(13, "ApproveAll.ico");
 			//
 			// ImageHolder
 			//

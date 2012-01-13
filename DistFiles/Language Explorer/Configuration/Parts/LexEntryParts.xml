@@ -124,6 +124,9 @@
 		<part id="LexEntry-Jt-MLHeadWord" type="jtview">
 			<string field="MLHeadWord"  ws="$ws=vernacular"/>
 		</part>
+		<part id="LexEntry-Jt-SensesForComplexFormSmartDefn" type="jtview">
+			<seq field="Senses" layout="publishMinorComplexFormDefn" inheritSeps="true" />
+		</part>
 		<part id="LexEntry-Jt-SensesEachInPara" type="jtview">
 			<seq field="Senses" layout="DefAnalysisInPara" />
 		</part>
@@ -600,6 +603,9 @@
 		<part id="LexEntry-Jt-SummaryDefinitionPub">
 			<configureMlString field="SummaryDefinition" />
 		</part>
+		<part id="LexEntry-Jt-RestrictionsEntryPub">
+			<configureMlString field="Restrictions" />
+		</part>
 		<part id="LexEntry-Jt-BibliographyPub">
 			<configureMlString field="Bibliography" />
 		</part>
@@ -974,6 +980,9 @@
 		<part id="LexEntryRef-Jt-ComplexFormGramInfoConfig" type="jtview">
 			<seq field="MorphoSyntaxAnalyses" targetclass="MoMorphSynAnalysis" layout="publishStemComplexFormGramInfo" inheritSeps="true"/>
 		</part>
+		<part id="LexEntryRef-Jt-ComplexFormMinorSmartDefinitionConfig" type="jtview">
+			<obj class="LexEntryRef" field="OwningEntry" targetclass="LexEntry"/>
+		</part>
 		<part id="LexEntryRef-Jt-EntryTypesConfig" type="jtview">
 			<seq field="ComplexEntryTypes" layout="publishStemEntryType" inheritSeps="true" targetclass="LexEntryType"/>
 			<seq field="VariantEntryTypes" layout="publishStemEntryType" inheritSeps="true" targetclass="LexEntryType"/>
@@ -1159,6 +1168,9 @@
 		<part id="LexEntry-Jt-ComplexFormsNotSubentries">
 			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
 		</part>
+		<part id="LexEntry-Jt-RootComplexFormsConfig">
+			<seq field="VisibleComplexFormBackRefs" layout="publishRootComplexFormRef" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+		</part>
 		<part id="LexEntry-Jt-RootSubentriesConfig">
 			<seq field="Subentries" layout="publishRootSubentry" targetclass="LexEntry"/>
 		</part>
@@ -1170,6 +1182,9 @@
 		</part>
 		<part id="LexEntry-Jt-SummaryDefinitionPub" type="jtview">
 			<configureMlString class="LexEntry" field="SummaryDefinition"/>
+		</part>
+		<part id="LexEntry-Jt-RestrictionsEntryPub" type="jtview">
+			<configureMlString class="LexEntry" field="Restrictions"/>
 		</part>
 
 		<part id="LexEntry-Jt-LexEntryRefsConfig" type="jtview">

@@ -95,7 +95,11 @@ namespace SIL.FieldWorks.IText
 					base.SetObjProp(hvo, tag, hvoObj);
 					break;
 				case ktagMostApprovedAnalysis:
-					m_guessCache[new HvoFlidKey(hvo, tag)] = hvoObj;
+					var key = new HvoFlidKey(hvo, tag);
+					if (hvoObj == 0)
+						m_guessCache.Remove(key);
+					else
+						m_guessCache[key] = hvoObj;
 					break;
 			}
 		}

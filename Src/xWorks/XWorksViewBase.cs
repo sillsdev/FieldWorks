@@ -299,6 +299,8 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
+		public abstract int Priority { get; }
+
 		#endregion // IxCoreColleague implementation
 
 		#region IxCoreContentControl implementation
@@ -576,11 +578,12 @@ namespace SIL.FieldWorks.XWorks
 			//uncomment the following line if we need to turn on or off the Export menu item
 			//for specific tools in the various areas of the application.
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
 			bool inFriendlyTerritory = (areaChoice == "lexicon"
 				|| areaChoice == "notebook"
 				|| clerk.Id == "concordanceWords"
 				|| areaChoice == "grammar"
-				|| areaChoice == "lists" );
+				|| areaChoice == "lists");
 			if (inFriendlyTerritory)
 				display.Enabled = display.Visible = true;
 			else

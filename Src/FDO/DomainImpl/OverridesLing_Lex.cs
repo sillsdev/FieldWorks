@@ -3839,12 +3839,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 		/// <summary>
-		/// Gets the lexical entry that owns this entry.
+		/// Gets the lexical entry that owns this entry. This is redundant; sometime we should refactor it out.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexEntry")]
 		public ILexEntry OwningEntry
 		{
-			get { return OwnerOfClass<ILexEntry>(); }
+			get { return Entry; }
 		}
 
 		/// <summary>
@@ -4106,7 +4106,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public ILexEntry Entry
 		{
-			get { return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(EntryID); }
+			get { return OwnerOfClass<ILexEntry>(); }
 		}
 
 		/// <summary>
@@ -4631,21 +4631,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public int EntryID
 		{
-			get
-			{
-				int entryHvo = 0;
-				var obj = Owner;
-				while (true)
-				{
-					if (obj is ILexEntry)
-					{
-						entryHvo = obj.Hvo;
-						break;
-					}
-					obj = obj.Owner;
-				}
-				return entryHvo;
-			}
+			get { return Entry.Hvo; }
 		}
 
 		/// <summary>
@@ -6516,7 +6502,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (Owner.ClassID == PhSegRuleRHSTags.kClassId)
 				{
 					var rhs = (IPhSegRuleRHS) Owner;
-					if (rhs.LeftContextOA.Hvo == this.Hvo)
+					if (rhs.LeftContextOA != null && rhs.LeftContextOA.Hvo == Hvo)
 						rhs.LeftContextOA = null;
 					else
 						rhs.RightContextOA = null;
@@ -6828,10 +6814,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				switch (ws)
 				{
 
-					case (int)CellarModuleDefns.kwsAnal:
+					case WritingSystemServices.kwsAnal:
 						wsCode = SpecialWritingSystemCodes.DefaultAnalysis;
 						break;
-					case (int)CellarModuleDefns.kwsVern:
+					case WritingSystemServices.kwsVern:
 						wsCode = SpecialWritingSystemCodes.DefaultVernacular;
 						break;
 					default:

@@ -174,6 +174,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		protected void OnViewSizeChanged(object sender, FwViewSizeEventArgs e)
 		{
+			// When height is more than one line (e.g., long definition without gloss),
+			// this can get called initially before it has a parent.
+			if (ContainingDataTree == null)
+				return;
 			// For now, just handle changes in the height.
 			var arl = (AtomicReferenceLauncher)Control;
 			var view = (AtomicReferenceView)arl.MainControl;

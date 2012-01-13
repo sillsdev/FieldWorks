@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2005, SIL International. All Rights Reserved.
-// <copyright from='2005' to='2005' company='SIL International'>
-//		Copyright (c) 2005, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2005' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -18,7 +18,6 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml.Serialization;
@@ -69,13 +68,13 @@ namespace SIL.FieldWorks.TE
 		#region Overidden properties
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
-		/// Required implementation of abstract property to get the relative path to stylesheet
-		/// configuration file from the FieldWorks install folder.
+		/// Required implementation of abstract property to get the relative path to key terms
+		/// file from the FieldWorks install folder.
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return ResourceFileName; }
+			get { return Path.Combine(DirectoryFinder.ksTeFolderName, ResourceFileName); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -268,13 +267,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public static void CreateKeyTerms(IProgress dlg, ICmPossibilityList keyTermsList, FwApp app)
 		{
-			FdoCache cache = keyTermsList.Cache;
-
-			BiblicalTermsList list = DeserializeBiblicalTermsFile(
-				Path.Combine(DirectoryFinder.FWCodeDirectory, "BiblicalTerms.xml"));
-
-			new TeKeyTermsInit(cache.LangProject.TranslatedScriptureOA, app).LoadKeyTerms(
-					dlg, null, keyTermsList, list);
+			new TeKeyTermsInit(keyTermsList.Cache.LangProject.TranslatedScriptureOA, app).LoadKeyTerms(
+				dlg, keyTermsList);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -372,6 +366,18 @@ namespace SIL.FieldWorks.TE
 		#region Main methods that process the biblical terms
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Loads the key terms from the bilical terms file.
+		/// </summary>
+		/// <param name="dlg">The DLG.</param>
+		/// <param name="biblicalTermsPossList">The biblical terms poss list.</param>
+		/// ------------------------------------------------------------------------------------
+		protected void LoadKeyTerms(IProgress dlg, ICmPossibilityList biblicalTermsPossList)
+		{
+			LoadKeyTerms(dlg, null, biblicalTermsPossList, LoadDoc());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Load the key terms from the given list
 		/// </summary>
 		/// <param name="dlg">Progress dialog box</param>
@@ -384,7 +390,9 @@ namespace SIL.FieldWorks.TE
 			ICmPossibilityList biblicalTermsPossList, BiblicalTermsList list)
 		{
 			if (list.Version != new Guid("00FEA689-3B63-4bd4-B640-7262A274D1A8"))
-				ReportInvalidInstallation("This version of Translation Editor only supports BiblicalTerms.xml version '00FEA689-3B63-4bd4-B640-7262A274D1A8' (see TE-2901).");
+				ReportInvalidInstallation(String.Format(
+					"This version of Translation Editor only supports {0} version '00FEA689-3B63-4bd4-B640-7262A274D1A8' (see TE-2901).",
+					TeResourceHelper.BiblicalTermsResourceName));
 			List<BiblicalTermsLocalization> localizations = GetLocalizations();
 			LoadKeyTerms(dlg, oldKtPossList, biblicalTermsPossList, list, localizations);
 		}
@@ -627,14 +635,13 @@ namespace SIL.FieldWorks.TE
 			if (!fFoundDefaultLoc || localizations.Count == 0)
 			{
 				string icuLocale = m_wsf.GetStrFromWs(defaultUserWs);
-				Debug.Fail(String.Format("File BiblicalTerms-{0}.xml is missing", icuLocale));
+				string message = String.Format("File {0} is missing", DirectoryFinder.GetKeyTermsLocFilename(icuLocale));
+				Debug.Fail(message);
+				Logger.WriteEvent(message);
 				if (icuLocale == "en" || localizations.Count == 0)
 				{
-#if DEBUG
-					string message = String.Format("File BiblicalTerms-{0}.xml is missing",
-						m_wsf.GetStrFromWs(defaultUserWs));
-#else
-					string message = TeResourceHelper.GetResourceString("kstidInvalidInstallation");
+#if !DEBUG
+					message = TeResourceHelper.GetResourceString("kstidInvalidInstallation");
 #endif
 					throw new InstallationException(message, null);
 				}

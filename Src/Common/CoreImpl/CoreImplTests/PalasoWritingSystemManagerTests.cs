@@ -402,6 +402,22 @@ namespace SIL.CoreImpl
 			wsManager.Save();
 		}
 
+		[Test]
+		public void GetOrSetWorksRepeatedlyOnIdNeedingModification()
+		{
+			var wsManager = new PalasoWritingSystemManager();
+			IWritingSystem ws;
+			Assert.That(wsManager.GetOrSet("x-kal", out ws), Is.False);
+			Assert.That(ws.Id, Is.EqualTo("qaa-x-kal"));
+			IWritingSystem ws2;
+			Assert.That(wsManager.GetOrSet("x-kal", out ws2), Is.True);
+			Assert.That(ws2, Is.EqualTo(ws));
+
+			// By the way it should work the same for one where it does not have to modify the ID.
+			Assert.That(wsManager.GetOrSet("fr", out ws), Is.False);
+			Assert.That(wsManager.GetOrSet("fr", out ws), Is.True);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetValidLangCodeForNewLang method
@@ -440,6 +456,52 @@ namespace SIL.CoreImpl
 
 			// ENHANCE: Ideally, we would want to test incrementing the middle and first character,
 			// but that would require at least 677 (26^2 + 1) writing systems be created.
+		}
+
+		[Test]
+		public void CreateAudioWritingSystemScriptFirst()
+		{
+			string storePath = PrepareTempStore("Store");
+			string globalStorePath = PrepareTempStore("GlobalStore");
+
+			EnsureDirectoryIsEmpty(storePath);
+			EnsureDirectoryIsEmpty(globalStorePath);
+
+			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
+			var wsManager = new PalasoWritingSystemManager(
+				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
+
+			IWritingSystem newWs = wsManager.Create(new LanguageSubtag("qaa", "Unknown", true, null), null, null, null);
+
+			Assert.DoesNotThrow(()=>
+			{
+				newWs.ScriptSubtag = new ScriptSubtag("Zxxx", "Audio", false);
+				newWs.VariantSubtag = new VariantSubtag("x-audio", "Audio", false, null);
+			});
+		}
+
+		[Test]
+		[Ignore("If the system changed so that this and the test above could both work we could remove a lot of complexity")]
+		public void CreateAudioWritingSystemVariantFirst()
+		{
+
+			string storePath = PrepareTempStore("Store");
+			string globalStorePath = PrepareTempStore("GlobalStore");
+
+			EnsureDirectoryIsEmpty(storePath);
+			EnsureDirectoryIsEmpty(globalStorePath);
+
+			var globalStore = new GlobalFileWritingSystemStore(globalStorePath);
+			var wsManager = new PalasoWritingSystemManager(
+				new LocalFileWritingSystemStore(storePath, globalStore), globalStore);
+
+			IWritingSystem newWs = wsManager.Create(new LanguageSubtag("qaa", "Unknown", true, null), null, null, null);
+
+			Assert.DoesNotThrow(() =>
+			{
+				newWs.VariantSubtag = new VariantSubtag("x-audio", "Audio", false, null);
+				newWs.ScriptSubtag = new ScriptSubtag("Zxxx", "Audio", false);
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------

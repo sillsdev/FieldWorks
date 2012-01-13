@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -19,7 +19,7 @@ using SIL.Utils;
 
 namespace SILUBS.PhraseTranslationHelper
 {
-	public enum TypeOfPhrase
+	public enum TypeOfPhrase : byte
 	{
 		Unknown,
 		Question,
@@ -29,8 +29,11 @@ namespace SILUBS.PhraseTranslationHelper
 	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>
 	{
 		#region Data Members
-		private readonly string m_sOrigPhrase;
 		private readonly string m_sReference;
+		private readonly string m_sOrigPhrase;
+		private string m_sModifiedPhrase;
+		private HashSet<string> m_alternateForms;
+		private bool m_fExclude;
 		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
@@ -40,6 +43,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly object[] m_additionalInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
+		private bool m_allTermsMatch;
 		internal static PhraseTranslationHelper s_helper;
 		#endregion
 
@@ -117,9 +121,54 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the original phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string OriginalPhrase
+		internal string OriginalPhrase
 		{
 			get { return m_sOrigPhrase; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the phrase as it is being presented to the user (either the original phrase or
+		/// a modified form of it).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string PhraseInUse
+		{
+			get { return m_sModifiedPhrase ?? m_sOrigPhrase; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a modified version of the phrase to use in place of the original.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ModifiedPhrase
+		{
+			get { return m_sModifiedPhrase; }
+			internal set { m_sModifiedPhrase = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether this phrase is excluded (not available for
+		/// translation).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsExcluded
+		{
+			get { return m_fExclude; }
+			internal set { m_fExclude = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether this instance is customized (modified, deleted or
+		/// user-supplied).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool IsCustomized
+		{
+			get { return m_fExclude || m_sModifiedPhrase != null; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -155,22 +204,16 @@ namespace SILUBS.PhraseTranslationHelper
 					return m_sTranslation;
 				if (!string.IsNullOrEmpty(m_sTranslation))
 					return String.Format(m_sTranslation, KeyTermRenderings);
-				bool fOmitKeyTermTranslations = TranslatableParts.Any(p => p.Translation != null && p.Translation.Contains('{'));
 				return s_helper.InitialPunctuationForType(TypeOfPhrase) +
-					m_parts.ToString(true, " ", p => p.Translation == null || (p is KeyTermMatch && fOmitKeyTermTranslations) ?
-					String.Empty : string.Format(p.Translation, KeyTermRenderings)) +
+					m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this)) +
 					s_helper.FinalPunctuationForType(TypeOfPhrase);
 			}
 			set
 			{
-				m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormD);
-				if (!string.IsNullOrEmpty(m_sTranslation))
-				{
-					m_fHasUserTranslation = true;
-					s_helper.ProcessTranslation(this);
-				}
-				else
-					m_fHasUserTranslation = false;
+				if (IsExcluded)
+					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
+				m_fHasUserTranslation = !string.IsNullOrEmpty(value);
+				SetTranslationInternal(value);
 			}
 		}
 
@@ -202,7 +245,40 @@ namespace SILUBS.PhraseTranslationHelper
 				{
 					m_sTranslation = null;
 					m_fHasUserTranslation = false;
+
+					Part firstPart = TranslatableParts.FirstOrDefault();
+					if (firstPart != null)
+					{
+						foreach (TranslatablePhrase similarPhrase in firstPart.OwningPhrases.Where(phrase => phrase.HasUserTranslation && phrase.PartPatternMatches(this)))
+						{
+							if (similarPhrase.PhraseInUse == PhraseInUse)
+							{
+								m_sTranslation = similarPhrase.Translation;
+								return;
+							}
+							if (similarPhrase.m_allTermsMatch)
+							{
+								SetProvisionalTranslation(similarPhrase.GetTranslationTemplate());
+								return;
+							}
+						}
+					}
 				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether the user-supplied translation contains a known
+		/// rendering for each of the key terms in the original phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool AllTermsMatch
+		{
+			get
+			{
+				Debug.Assert(m_fHasUserTranslation);
+				return m_allTermsMatch;
 			}
 		}
 
@@ -244,7 +320,14 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public object[] KeyTermRenderings
 		{
-			get { return m_parts.OfType<KeyTermMatch>().Select(kt => kt.Translation).ToArray(); }
+			get
+			{
+				object[] retArray = new object[m_parts.OfType<KeyTermMatch>().Count()];
+				int i = 0;
+				foreach (KeyTermMatch kt in m_parts.OfType<KeyTermMatch>())
+					retArray[i++] = kt.GetBestRenderingInContext(this);
+				return retArray;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -304,9 +387,24 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			get { return m_type; }
 		}
+
+		public IEnumerable<string> AlternateForms
+		{
+			get { return m_alternateForms; }
+		}
 		#endregion
 
-		#region Public methods (and the indexer which is really more like a property, but Tim wants it in this region)
+		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents this instance.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override string ToString()
+		{
+			return Reference + "-" + PhraseInUse;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all the parts, including the key terms (maybe never needed?).
@@ -328,7 +426,6 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			get { return m_parts[index]; }
 		}
-		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -378,7 +475,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (compare != 0)
 				return compare;
 			// 5)
-			return m_sOrigPhrase.CompareTo(other.m_sOrigPhrase);
+			return PhraseInUse.CompareTo(other.PhraseInUse);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -419,5 +516,122 @@ namespace SILUBS.PhraseTranslationHelper
 					return true;
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the translation template with placeholders for each of the key terms for which
+		/// a matching rendering is found in the translation. As a side-effect,this also sets
+		/// m_allTermsMatch.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal string GetTranslationTemplate()
+		{
+			Debug.Assert(m_fHasUserTranslation);
+			int iKeyTerm = 0;
+			string translation = Translation;
+			m_allTermsMatch = true;
+			foreach (KeyTermMatch term in GetParts().Where(p => p is KeyTermMatch))
+			{
+				int ich = -1;
+				foreach (string ktTrans in term.Renderings.OrderBy(r => r, new StrLengthComparer(false)))
+				{
+					ich = translation.IndexOf(ktTrans, StringComparison.Ordinal);
+					if (ich >= 0)
+					{
+						translation = translation.Remove(ich, ktTrans.Length);
+						translation = translation.Insert(ich, "{" + iKeyTerm++ + "}");
+						break;
+					}
+				}
+				if (ich == -1)
+					m_allTermsMatch = false;
+			}
+			return translation;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the term rendering (from the known ones in the renderingInfo) in use in
+		/// the current translation.
+		/// </summary>
+		/// <param name="renderingInfo">The information about a single occurrence of a key
+		/// biblical term and its rendering in a string in the target language.</param>
+		/// <returns>An object that indicates where in the translation string the match was
+		/// found (offset and length)</returns>
+		/// ------------------------------------------------------------------------------------
+		public SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo)
+		{
+			// This will almost always be 0, but if a term occurs more than once, this
+			// will be the character offset following the occurrence of the rendering of
+			// the preceding term in the translation.
+			int ichStart = renderingInfo.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm;
+			int indexOfMatch = Int32.MaxValue;
+			int lengthOfMatch = 0;
+			foreach (string rendering in renderingInfo.Renderings)
+			{
+				int ich = Translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
+				if (ich >= 0 && (ich < indexOfMatch || (ich == indexOfMatch && rendering.Length > lengthOfMatch)))
+				{
+					// Found an earlier or longer match.
+					indexOfMatch = ich;
+					lengthOfMatch = rendering.Length;
+				}
+			}
+			if (lengthOfMatch == 0)
+				return null;
+
+			return new SubstringDescriptor(indexOfMatch, lengthOfMatch);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Replaces the key term.
+		/// </summary>
+		/// <param name="sd">object that indicates what part of the translation represents the
+		/// original key term rendering to replace.</param>
+		/// <param name="newRendering">To string.</param>
+		/// ------------------------------------------------------------------------------------
+		internal void ReplaceKeyTermRendering(SubstringDescriptor sd, string newRendering)
+		{
+			if (sd == null)
+			{
+				// Caller probably couldn't find an existing rendering to replace,
+				// so we'll just stick it at the end.
+				sd = new SubstringDescriptor(Translation.Length, 0);
+			}
+			SetTranslationInternal(Translation.Remove(sd.Offset, sd.Length).Insert(sd.Offset, newRendering));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds an alternate form of the phrase/question.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal void AddAlternateForm(string form)
+		{
+			if (m_alternateForms == null)
+				m_alternateForms = new HashSet<string>();
+			m_alternateForms.Add(form);
+		}
+		#endregion
+
+		#region Private Helper methods
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the translation and processes it if it is a user translation.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// ------------------------------------------------------------------------------------
+		private void SetTranslationInternal(string value)
+		{
+			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormD);
+			if (m_fHasUserTranslation)
+			{
+				m_allTermsMatch = false; // This will usually get updated in ProcessTranslation
+				s_helper.ProcessTranslation(this);
+			}
+
+		}
+		#endregion
 	}
 }

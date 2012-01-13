@@ -1054,7 +1054,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (IMoInflAffixSlot slot in pos.AffixSlotsOC)
 				{
 					if (slot.Name.AnalysisDefaultWritingSystem == null ||
-						slot.Name.AnalysisDefaultWritingSystem.Text.StartsWith(m_sUnnamedSlotName))
+						slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
 					{
 						string sValue = m_sUnnamedSlotName;
 						int i;
@@ -1081,17 +1081,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// ------------------------------------------------------------------------------------
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if (AllSlotNamesOk)
-				return;
-			UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoChangeSlotName, MEStrings.ksRedoChangeSlotName,
-				Cache.ActionHandlerAccessor,
-				() =>
+			if (!AllSlotNamesOk)
+			{
+				UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoChangeSlotName, MEStrings.ksRedoChangeSlotName,
+					Cache.ActionHandlerAccessor,
+					() =>
 					{
 						foreach (var slot in m_template.PrefixSlotsRS)
 							FixSlotName(slot);
 						foreach (var slot in m_template.SuffixSlotsRS)
 							FixSlotName(slot);
 					});
+			}
 			base.OnLostFocus(e);
 		}
 

@@ -669,7 +669,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal ICmObject SubitemClicked(Point where, int clsid)
 		{
-			return SubitemClicked(where, clsid, m_mainView, Cache);
+			var adjuster = (m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")) ?
+				(IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster() :
+				new NullTargetAdjuster();
+			return SubitemClicked(where, clsid, m_mainView, Cache, Clerk.SortItemProvider, adjuster);
 		}
 
 		private ToolTip m_tooltip;
@@ -679,7 +682,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.OnMouseMove(e);
 			// don't try to update the tooltip by getting a selection while painting the view; leads to recursive expansion of lazy boxes.
-			if (m_mainView.MouseMoveSuppressed)
+			// also don't try and update the tooltip if we don't have a Clerk yet
+			if (m_mainView.MouseMoveSuppressed || Clerk == null)
 				return;
 			var item = SubitemClicked(e.Location, Clerk.ListItemsClass);
 			if (item == null || item.Hvo == Clerk.CurrentObjectHvo)
@@ -732,7 +736,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Return an item of the specified class that is indicated by a click at the specified position,
 		/// but only if it is part of a different object also of that class.
 		/// </summary>
-		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, FdoCache cache)
+		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, FdoCache cache, ISortItemProvider sortItemProvider,
+			IPreferedTargetAdjuster adjuster)
 		{
 			var sel = view.GetSelectionAtPoint(where, false);
 			if (sel == null)
@@ -759,8 +764,20 @@ namespace SIL.FieldWorks.XWorks
 				if (firstMatch == null)
 					firstMatch = target; // first one we've seen
 			}
-			if (firstMatch != lastMatch)
-				return firstMatch;
+			firstMatch = adjuster.AdjustTarget(firstMatch);
+			if (firstMatch == lastMatch)
+				return null; // the only object we can find to jump to is the top-level one we clicked inside. A jump would go nowhere.
+			if (sortItemProvider.IndexOf(firstMatch.Hvo) != -1)
+				return firstMatch;  // it's a link to a top-level item in the list, we can jump
+			// Enhance JohnT: we'd like to be able to jump to the parent entry, if target is a subentry.
+			// That's tricky, because this is generic code, and finding the right object requires domain knowledge.
+			// For now I'm putting a special case in. At some point we could move this into a helper that could be configured by XML.
+			if(firstMatch is ILexSense)
+			{
+				firstMatch = ((ILexSense) firstMatch).Entry;
+				if (sortItemProvider.IndexOf(firstMatch.Hvo) != -1)
+					return firstMatch;  // it's a link to a top-level item in the list, we can jump
+			}
 			return null;
 		}
 
@@ -908,7 +925,7 @@ namespace SIL.FieldWorks.XWorks
 				case ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
-					shlpTopic = "khtpEntryNotPublished";
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
 					break;
 				case ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
@@ -1104,66 +1121,67 @@ namespace SIL.FieldWorks.XWorks
 		protected override void SetupDataContext()
 		{
 			TriggerMessageBoxIfAppropriate();
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
-
-			//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
-			RecordClerk clerk = Clerk;
-			clerk.ActivateUI(false);
-			// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
-			if (clerk.RequestedLoadWhileSuppressed)
-				clerk.UpdateList(false);
-			m_fakeFlid = clerk.VirtualFlid;
-			m_hvoOwner = clerk.OwningObject.Hvo;
-			if (!clerk.SetCurrentFromRelatedClerk())
+			using (new WaitCursor(this))
 			{
-				// retrieve persisted clerk index and set it.
-				int idx = m_mediator.PropertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
-					PropertyTable.SettingsGroup.LocalSettings);
-				if (idx >= 0 && !clerk.HasEmptyList)
+				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
+				RecordClerk clerk = Clerk;
+				clerk.ActivateUI(false);
+				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
+				if (clerk.RequestedLoadWhileSuppressed)
+					clerk.UpdateList(false);
+				m_fakeFlid = clerk.VirtualFlid;
+				m_hvoOwner = clerk.OwningObject.Hvo;
+				if (!clerk.SetCurrentFromRelatedClerk())
 				{
-					int idxOld = clerk.CurrentIndex;
-					try
+					// retrieve persisted clerk index and set it.
+					int idx = m_mediator.PropertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
+						PropertyTable.SettingsGroup.LocalSettings);
+					if (idx >= 0 && !clerk.HasEmptyList)
 					{
-						clerk.JumpToIndex(idx);
+						int idxOld = clerk.CurrentIndex;
+						try
+						{
+							clerk.JumpToIndex(idx);
+						}
+						catch
+						{
+							clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
+						}
 					}
-					catch
-					{
-						clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
-					}
+					clerk.SelectedRecordChanged(false);
 				}
-				clerk.SelectedRecordChanged(false);
+
+				clerk.IsDefaultSort = false;
+
+				// Create the main view
+
+				// Review JohnT: should it be m_configurationParameters or .FirstChild?
+				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
+					Publication);
+				m_mainView.Init(m_mediator, m_configurationParameters); // Required call to xCore.Colleague.
+				m_mainView.Dock = DockStyle.Fill;
+				m_mainView.Cache = Cache;
+				m_mainView.SelectionChangedEvent +=
+					new FwSelectionChangedEventHandler(OnSelectionChanged);
+				m_mainView.MouseClick += m_mainView_MouseClick;
+				m_mainView.MouseMove += m_mainView_MouseMove;
+				m_mainView.MouseLeave += m_mainView_MouseLeave;
+				m_mainView.ShowRangeSelAfterLostFocus = true;	// This makes selections visible.
+				// If the rootsite doesn't have a rootbox, we can't display the record!
+				// Calling ShowRecord() from InitBase() sets the state to appear that we have
+				// displayed (and scrolled), even though we haven't.  See LT-7588 for the effect.
+				m_mainView.MakeRoot();
+				SetupStylesheet();
+				Controls.Add(m_mainView);
+				if (Controls.Count == 2)
+				{
+					Controls.SetChildIndex(m_mainView, 1);
+					m_mainView.BringToFront();
+				}
+
+				m_fullyInitialized = true; // Review JohnT: was this really the crucial last step?
 			}
-
-			clerk.IsDefaultSort = false;
-
-			// Create the main view
-
-			// Review JohnT: should it be m_configurationParameters or .FirstChild?
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-			m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
-				Publication);
-			m_mainView.Init(m_mediator, m_configurationParameters); // Required call to xCore.Colleague.
-			m_mainView.Dock = DockStyle.Fill;
-			m_mainView.Cache = Cache;
-			m_mainView.SelectionChangedEvent +=
-				new FwSelectionChangedEventHandler(OnSelectionChanged);
-			m_mainView.MouseClick += m_mainView_MouseClick;
-			m_mainView.MouseMove += m_mainView_MouseMove;
-			m_mainView.MouseLeave += m_mainView_MouseLeave;
-			m_mainView.ShowRangeSelAfterLostFocus = true;	// This makes selections visible.
-			// If the rootsite doesn't have a rootbox, we can't display the record!
-			// Calling ShowRecord() from InitBase() sets the state to appear that we have
-			// displayed (and scrolled), even though we haven't.  See LT-7588 for the effect.
-			m_mainView.MakeRoot();
-			SetupStylesheet();
-			Controls.Add(m_mainView);
-			if (Controls.Count == 2)
-			{
-				Controls.SetChildIndex(m_mainView, 1);
-				m_mainView.BringToFront();
-			}
-
-			m_fullyInitialized = true; // Review JohnT: was this really the crucial last step?
 		}
 
 		void m_mainView_MouseLeave(object sender, EventArgs e)
@@ -1329,6 +1347,11 @@ namespace SIL.FieldWorks.XWorks
 			collector.Add(m_mainView);
 		}
 
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion // IxCoreColleague implementation
 
 		#region Component Designer generated code
@@ -1434,6 +1457,46 @@ namespace SIL.FieldWorks.XWorks
 		public string FindTabHelpId
 		{
 			get { return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "findHelpId", null); }
+		}
+	}
+
+	/// <summary>
+	/// Interface that may be implemented to adjust the object that we will try to jump to when it
+	/// is clicked in the view.
+	/// </summary>
+	public interface IPreferedTargetAdjuster
+	{
+		ICmObject AdjustTarget(ICmObject target);
+	}
+
+	/// <summary>
+	/// If the initial target is a subentry replace it with the appropriate top-level entry.
+	/// </summary>
+	internal class MainEntryFromSubEntryTargetAdjuster : IPreferedTargetAdjuster
+	{
+		public ICmObject AdjustTarget(ICmObject firstMatch)
+		{
+			if (firstMatch is ILexEntry)
+			{
+				var subentry = (ILexEntry)firstMatch;
+				var componentsEntryRef =
+					subentry.EntryRefsOS.Where(se => se.RefType == LexEntryRefTags.krtComplexForm).FirstOrDefault();
+				if (componentsEntryRef != null)
+				{
+					var root = componentsEntryRef.PrimaryEntryRoots.FirstOrDefault();
+					if (root != null)
+						return root;
+				}
+			}
+			return firstMatch; // by default change nothing.
+		}
+	}
+
+	public class NullTargetAdjuster : IPreferedTargetAdjuster
+	{
+		public ICmObject AdjustTarget(ICmObject target)
+		{
+			return target;
 		}
 	}
 }

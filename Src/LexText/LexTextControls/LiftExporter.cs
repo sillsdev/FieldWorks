@@ -24,6 +24,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using System.Text;
@@ -150,10 +151,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			var hvoObject = m_cache.LangProject.LexDbOA.Hvo;
 			var chvo = sda.get_VecSize(hvoObject, flid);
 			int[] contents;
-			using (var arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				sda.VecProp(hvoObject, flid, chvo, out chvo, arrayPtr);
-				contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 			var entries = FilterVirtualFlidVector(contents);
 			ExportLift(w, folderPath, entries, entries.Count);
@@ -222,7 +223,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var dateCreated = entry.DateCreated.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
 			var dateModified = entry.DateModified.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
 			var sGuid = entry.Guid.ToString();
-			var sId = entry.LIFTid;
+			var sId = XmlUtils.MakeSafeXmlAttribute(entry.LIFTid);
 			if (entry.HomographNumber != 0)
 			{
 				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\" order=\"{4}\">",
@@ -294,6 +295,17 @@ namespace SIL.FieldWorks.LexText.Controls
 							for (var i = 0; i < tssMultiString.StringCount; ++i)
 							{
 								tssString = tssMultiString.GetStringFromIndex(i, out ws);
+								if (IsVoiceWritingSystem(ws))
+								{
+									// The alternative contains a file path. We need to adjust and export and copy the file.
+									var internalPath = tssString.Text;
+									// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
+									var exportedForm = ExportFile(internalPath,
+										Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+										"audio");
+									if (internalPath != exportedForm)
+										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
+								}
 								WriteFormElement(w, ws, tssString);
 							}
 							w.WriteLine("</field>");
@@ -547,7 +559,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				WriteLiftDates(w, lref);
 				w.Write(" type=\"{0}\"",
 						slr.TypeName((int)SpecialWritingSystemCodes.BestAnalysisOrVernacular, lexItem.Hvo));
-				w.Write(" ref=\"{0}\"", slr.RefLIFTid);
+				w.Write(" ref=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(slr.RefLIFTid));
 				var refOrder = slr.RefOrder;
 				if (!String.IsNullOrEmpty(refOrder))
 					w.Write(" order=\"{0}\"", refOrder);
@@ -691,9 +703,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void WriteLexSense(TextWriter w, ILexSense sense, bool fOrder)
 		{
 			if (sense.Owner is ILexEntry)
-				w.Write("<sense id=\"{0}\"", sense.LIFTid);
+				w.Write("<sense id=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sense.LIFTid));
 			else
-				w.Write("<subsense id=\"{0}\"", sense.LIFTid);
+				w.Write("<subsense id=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sense.LIFTid));
 			WriteLiftDates(w, sense);
 			if (fOrder)
 				w.Write(" order=\"{0}\"", sense.IndexInOwner);
@@ -1203,6 +1215,33 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
+		/// This method was written for LT-12275 because WritingSystemServices.GetMagicWsNameFromId(ws);
+		/// does not return the desired strings for LIFT export.
+		/// Must be consistent with FlexLiftMerger.GetLiftExportMagicWsIdFromName
+		/// </summary>
+		/// <param name="ws">This should be between -1 and -6.</param>
+		/// <returns></returns>
+		private string GetLiftExportMagicWsNameFromId(int ws)
+		{
+			switch (ws)
+			{
+				case WritingSystemServices.kwsAnal:
+					return "kwsAnal";
+				case WritingSystemServices.kwsVern:
+					return "kwsVern";
+				case WritingSystemServices.kwsAnals:
+					return "kwsAnals";
+				case WritingSystemServices.kwsVerns:
+					return "kwsVerns";
+				case WritingSystemServices.kwsAnalVerns:
+					return "kwsAnalVerns";
+				case WritingSystemServices.kwsVernAnals:
+					return "kwsVernAnals";
+			}
+			return "";
+		}
+
+		/// <summary>
 		/// This is a temporary (I HOPE!) hack to get something out to the LIFT file until
 		/// the LIFT spec allows a better form of field definition.
 		/// </summary>
@@ -1214,7 +1253,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			sb.AppendFormat("Class={0}; Type={1}", className, sType);
 			var ws = m_mdc.GetFieldWs(flid);
 			if (ws < 0)
-				sb.AppendFormat("; WsSelector={0}", ((CellarModuleDefns)ws));
+			{
+				var wsInternalName = GetLiftExportMagicWsNameFromId(ws);
+				Debug.Assert(!String.IsNullOrEmpty(wsInternalName), "There is an invalid magic writing system value being exported. It should be between -1 and -6. ");
+				sb.AppendFormat("; WsSelector={0}", wsInternalName);
+			}
 			else if (ws > 0)
 				sb.AppendFormat("; WsSelector={0}", m_cache.WritingSystemFactory.GetStrFromWs(ws));
 			var clidDst = m_mdc.GetDstClsId(flid);
@@ -1269,6 +1312,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					continue;
 
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+				if (IsVoiceWritingSystem(ws))
+				{
+					// The alternative contains a file path. We need to adjust and export and copy the file.
+					var internalPath = sForm;
+					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
+					sForm = ExportFile(internalPath,
+						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						"audio");
+				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
 					XmlUtils.MakeSafeXmlAttribute(sLang),
 					XmlUtils.MakeSafeXml(sForm.Replace("\x2028", Environment.NewLine)));

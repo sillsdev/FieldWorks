@@ -23,53 +23,14 @@
 		</copy>
 	</target>
 
-	<target name="processLanguages"
-		description="Main loop for processing all .po files">
+	<target name="processLanguages" description="Main target for processing all .po files">
 		<tstamp/>
-		<foreach item="File" property="poFile"
-				 unless="${property::exists('fw-build-error') or property::exists('fw-test-error')}">
-			<in>
-				<items>
-					<include name = "${fwroot}/Localizations/messages.*.po"/>
-				</items>
-			</in>
-			<do>
-				<!--********* Start of a simple test over the po data -->
-				<!-- make sure the tmp output file doesn't currently exist - if so delete it -->
-				<delete file="${fwroot}/Localizations/poMistakes.out" failonerror="false"/>
-				<!-- search through the po file for known issues and common errors -->
-				<!-- note the "& ver > null" at the end of the command line - I (EberhardB) added
-					this so that we don't get an irritating message that findstr failed if it
-					didn't find any errors -->
-				<exec program="cmd.exe"
-					commandline='/c findstr.exe/N "{o} {O} {l} {L} {i} {0{ {1{ }0} }1}" ${poFile} &amp; ver > null'
-					output="${fwroot}/Localizations/poMistakes.out"
-					failonerror="false" verbose="${verbose}"/>
-				<!-- if we have created an output file from the above search ... -->
-				<if test="${file::exists(path::combine(fwroot, 'Localizations/poMistakes.out'))}">
-					<echo message="--------------------------------------------------------------------"/>
-					<exec program="cmd.exe"
-						commandline='/c cat.exe "${fwroot}/Localizations/poMistakes.out"'
-						failonerror="false" verbose="false"/>
-					<echo message="Found invalid strings (shown above) in the ${poFile} PO data - stopping build."/>
-					<delete file="${fwroot}/Localizations/poMistakes.out" failonerror="false"/>
-					<echo message="--------------------------------------------------------------------"/>
-					<fail message="Bad strings were found in the ${poFile} PO file... Build stopped" />
-				</if>
-				<!--********* End of a simple test over the po data -->
-
-				<regex pattern="^.*\.(?'language'(\w|-)+)\.po$" input="${poFile}" />
-				<exec program="${fwroot}/Bld/po2xml.bat"
-					commandline="${poFile} ${dir.fwoutput}/${language}.xml"/>
-				<call target="buildLocalizedDlls"/>
-				<!-- create the localized strings-xx.xml file as well -->
-				<echo message="${fwroot}/Bin/LocaleStrings.exe --root ${fwroot} --store ${poFile}"/>
-				<exec program="${fwroot}/Bin/LocaleStrings.exe"
-					commandline="--root ${fwroot} --store ${poFile}"/>
-			</do>
-		</foreach>
+		<exec program="ProcessLanguagesBld.exe"
+			commandline='${fwroot} ${dir.fwoutput}'
+			failonerror="true" verbose="${verbose}"/>
 		<tstamp/>
 	</target>
+
 	<target name="buildLocalizedDlls"
 		description="Executes all of the command files built for a language">
 		<mkdir dir="${dir.outputBase}/${language}"/>
@@ -171,7 +132,7 @@
 								<exec program="java.exe"
 									  commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
 								<echo file="${dir.fwoutput}/${language}/${projDir}/${projName}.include" append="true">${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resources
-</echo>
+								</echo>
 							</do>
 						</foreach>
 

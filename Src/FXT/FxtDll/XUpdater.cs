@@ -637,11 +637,11 @@ namespace SIL.FieldWorks.Common.FXT
 			int[] flids = new int[0];
 			int countFoundFlids = m_mdc.GetFields(classId, true, (int)CellarPropertyTypeFilter.AllOwning,
 				0, ArrayPtr.Null);
-			using (ArrayPtr flidsPtr = MarshalEx.ArrayToNative(countFoundFlids, typeof(int)))
+			using (ArrayPtr flidsPtr = MarshalEx.ArrayToNative<int>(countFoundFlids))
 			{
 				countFoundFlids = m_mdc.GetFields(classId, true, (int)CellarPropertyTypeFilter.AllOwning,
 					countFoundFlids, flidsPtr);
-				flids = (int[])MarshalEx.NativeToArray(flidsPtr, countFoundFlids, typeof(int));
+				flids = MarshalEx.NativeToArray<int>(flidsPtr, countFoundFlids);
 			}
 			if (flids.Length > 0)
 				listOfFlids.Add(flids);
@@ -656,21 +656,21 @@ namespace SIL.FieldWorks.Common.FXT
 			if (directSubclassCount == 0)
 				return;
 			int[] uSubclassIds;
-			using (ArrayPtr clids = MarshalEx.ArrayToNative(directSubclassCount, typeof(int)))
+			using (ArrayPtr clids = MarshalEx.ArrayToNative<int>(directSubclassCount))
 			{
 				m_mdc.GetDirectSubclasses(classId, directSubclassCount, out directSubclassCount, clids);
-				uSubclassIds = (int[])MarshalEx.NativeToArray(clids, directSubclassCount, typeof(int));
+				uSubclassIds = MarshalEx.NativeToArray<int>(clids, directSubclassCount);
 			}
 			foreach (int uClassId in uSubclassIds)
 			{
 				int[] subclassFlids = new int[0];
 				int countFoundFlids = m_mdc.GetFields(uClassId, true, (int)CellarPropertyTypeFilter.AllOwning,
 					0, ArrayPtr.Null);
-				using (ArrayPtr flidsPtr = MarshalEx.ArrayToNative(countFoundFlids, typeof(int)))
+				using (ArrayPtr flidsPtr = MarshalEx.ArrayToNative<int>(countFoundFlids))
 				{
 					countFoundFlids = m_mdc.GetFields(uClassId, true, (int)CellarPropertyTypeFilter.AllOwning,
 						countFoundFlids, flidsPtr);
-					subclassFlids = (int[])MarshalEx.NativeToArray(flidsPtr, countFoundFlids, typeof(int));
+					subclassFlids = MarshalEx.NativeToArray<int>(flidsPtr, countFoundFlids);
 				}
 				if (subclassFlids.Length > 0)
 					listOfFlids.Add(subclassFlids);
@@ -884,10 +884,10 @@ namespace SIL.FieldWorks.Common.FXT
 			if (directSubclassCount == 0)
 				return;
 			int[] uSubclassIds;
-			using (ArrayPtr clids = MarshalEx.ArrayToNative(directSubclassCount, typeof (int)))
+			using (ArrayPtr clids = MarshalEx.ArrayToNative<int>(directSubclassCount))
 			{
 				m_mdc.GetDirectSubclasses(destClassId, directSubclassCount, out directSubclassCount, clids);
-				uSubclassIds = (int[]) MarshalEx.NativeToArray(clids, directSubclassCount, typeof (int));
+				uSubclassIds = MarshalEx.NativeToArray<int>(clids, directSubclassCount);
 			}
 			foreach (int uClassId in uSubclassIds)
 			{

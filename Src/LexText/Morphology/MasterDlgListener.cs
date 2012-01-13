@@ -46,10 +46,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Optional configuration parameters.
 		/// </summary>
 		protected XmlNode m_configurationParameters;
-		/// <summary>
-		/// used to store the size and location of dialogs
-		/// </summary>
-		//protected IPersistenceProvider m_persistProvider;
 
 		#endregion Data members
 
@@ -208,6 +204,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
 		#endregion IxCoreColleague implementation
 

@@ -8,9 +8,9 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class NestedPhoneticPattern : PhoneticPatternNode
 	{
-		int m_minOccur;
-		int m_maxOccur;
-		PhoneticPattern m_pattern;
+		private readonly int m_minOccur;
+		private readonly int m_maxOccur;
+		private readonly PhoneticPattern m_pattern;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NestedPhoneticPattern"/> class.
@@ -200,7 +200,7 @@ namespace SIL.HermitCrab
 			{
 				PhoneticPatternNode n = GetNext(dir);
 				if (n == null)
-					matches.Add(new Match(instantiatedVars));
+					matches.Add(new Match(Owner, instantiatedVars));
 				else
 					matches.AddRange(n.Match(node, dir, mode, instantiatedVars));
 			}

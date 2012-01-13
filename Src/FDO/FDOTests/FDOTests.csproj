@@ -185,10 +185,6 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="ScrUtilsInterfacesTests, Version=5.3.0.25008, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfacesTests.dll</HintPath>
-	</Reference>
 	<Reference Include="SharedScrUtilsTests">
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\Output\Debug\SharedScrUtilsTests.dll</HintPath>
@@ -244,6 +240,7 @@
 	<Compile Include="AnalysisGuessServicesTests.cs" />
 	<Compile Include="AnalysisOccurrenceTests.cs" />
 	<Compile Include="AndIFilterTests.cs" />
+	<Compile Include="AtomicPropertyTests.cs" />
 	<Compile Include="BackupRestore\BackupFileRepositoryTests.cs" />
 	<Compile Include="BackupRestore\BackupRestoreSettingsTests.cs" />
 	<Compile Include="BackupRestore\ProjectBackupServiceTestForLinkedFiles.cs" />
@@ -283,6 +280,7 @@
 	<Compile Include="DataMigrationTests\DataMigration7000041Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000042Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000044Tests.cs" />
+	<Compile Include="DataSortingServiceTests.cs" />
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />
 	<Compile Include="DummyProgressDlg.cs" />
@@ -359,6 +357,7 @@
 	<Compile Include="StTxtParaBldrTests.cs" />
 	<Compile Include="StTxtParaTests.cs" />
 	<Compile Include="StyleInfoTableTests.cs" />
+	<Compile Include="UowHelperTests.cs" />
 	<Compile Include="ValidationTests.cs" />
 	<Compile Include="ValidCharactersTests.cs" />
 	<Compile Include="FwStyleSheetTests.cs" />

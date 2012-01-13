@@ -118,7 +118,7 @@
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ks_Ok" xml:space="preserve">
-	<value>&amp;Ok</value>
+	<value>&amp;OK</value>
   </data>
   <data name="ksPleaseEMailThisTo0WithThisExactSubject12" xml:space="preserve">
 	<value>Please email this to {0} with this exact subject:  {1}
@@ -137,5 +137,62 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="cc" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>Resources/cc.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksHideDetails" xml:space="preserve">
+	<value>Hide Details</value>
+	<comment>Replaces "View Details" when showing.</comment>
+  </data>
+  <data name="ksSampleProblemReport" xml:space="preserve">
+	<value>Example:
+The Morph Type field cannot be set to Normally Hidden
+
+Steps to reproduce:
+1. Go to Lexicon Edit
+2. Turn off Show Hidden Fields
+3. In the Morph Type field, click the blue arrow, and select Field Visibility &gt; Normally Hidden
+
+Expected result: the morph type field is no longer shown
+Actual result: nothing happens.</value>
+  </data>
+  <data name="kstidGoalAndSuggestion" xml:space="preserve">
+	<value>Please describe what you want to accomplish as well as how you would like the program changed:</value>
+  </data>
+  <data name="kstidMakeSuggestionCaption" xml:space="preserve">
+	<value>Make a Suggestion</value>
+  </data>
+  <data name="kstidMakeSuggestionNotification" xml:space="preserve">
+	<value>Thank you for making a suggestion. A detailed description will help us to improve the program</value>
+  </data>
+  <data name="kstidPleaseEmailThisTo0WithASuitableSubject" xml:space="preserve">
+	<value>Please email this report to {0} with a suitable subject:
+
+{1}</value>
+	<comment>{1} will be a long string...don't leave it out.</comment>
+  </data>
+  <data name="kstidProblemAndSteps" xml:space="preserve">
+	<value>Please describe the problem and the steps necessary to make it appear:</value>
+	<comment>Replaces the second paragraph in the crash report dialog when used for the "Report Problem" menu option.</comment>
+  </data>
+  <data name="kstidReportProblemCaption" xml:space="preserve">
+	<value>Report a Problem</value>
+  </data>
+  <data name="kstidReportProblemNotification" xml:space="preserve">
+	<value>Thank you for reporting a problem. A detailed description will help us to improve the program.</value>
+	<comment>Replaces the top line of the crash report dialog when used for the "Report Problem" menu option. </comment>
+  </data>
+  <data name="kstidSampleSuggestion" xml:space="preserve">
+	<value>Example:
+Please make interlinear suggestions pay attention to context
+
+Goal:
+I want to be able to interlinearize texts faster without having to make choices that I think the program should be able to guess if it considered surrounding words.
+
+Suggestion: Add a field to Word Analyses view in which a regular expression can be specified. If the pattern matches the context in which the word appears, that analysis will be chosen as a suggestion. The pattern should include a special marker for where the word itself must appear.</value>
+  </data>
+  <data name="kstidSendFailed" xml:space="preserve">
+	<value>FieldWorks was not able to send your message automatically. Please try copying it to the clipboard and sending it yourself.</value>
+  </data>
+  <data name="kstidSendFailedCaption" xml:space="preserve">
+	<value>Send Message Failed</value>
   </data>
 </root>

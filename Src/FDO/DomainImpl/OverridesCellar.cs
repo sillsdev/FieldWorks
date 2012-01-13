@@ -328,7 +328,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return Name.get_String(Cache.WritingSystemFactory.GetWsFromStr("en")).Text; }
 		}
 
-		private static List<Guid> temp_reportedProblems;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the renderings for the term in the target language.
@@ -338,26 +337,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				foreach (IChkRendering rendering in RenderingsOC)
-				{
-					if (rendering.SurfaceFormRA == null)
-					{
-						if (temp_reportedProblems == null)
-						{
-							temp_reportedProblems = new List<Guid>();
-						}
-						if (!temp_reportedProblems.Contains(m_guid.Guid))
-						{
-							string errorMsg = "SurfaceFormRA is null for one of the renderings of term " +
-								((IChkTerm)this).Name.UserDefaultWritingSystem.Text + ". GUID of rendering: " + rendering.Guid;
-							Debug.Fail(errorMsg);
-							Logger.WriteEvent(errorMsg);
-							temp_reportedProblems.Add(m_guid.Guid);
-						}
-					}
-					else
-						yield return rendering.SurfaceFormRA.Wordform.Form.VernacularDefaultWritingSystem.Text;
-				}
+				return RenderingsOC.Select(r => r.SurfaceFormRA.Wordform.Form.VernacularDefaultWritingSystem.Text);
 			}
 		}
 
@@ -1877,11 +1857,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </returns>
 		public IFsSymFeatVal GetOrCreateSymbolicValueFromXml(XmlNode feature, XmlNode item)
 		{
-
-			// TODO-Linux: Workaround for mono bug https://bugzilla.novell.com/show_bug.cgi?id=497017
-			var id = MiscUtils.IsUnix ?
-					feature.SelectSingleNode("ancestor::item[@id][position()=last()]/@id") :
-					feature.SelectSingleNode("ancestor::item[@id][position()=1]/@id");
+			var id = feature.SelectSingleNode("ancestor::item[@id][position()=1]/@id");
 			if (id == null)
 				return null;
 
@@ -4281,6 +4257,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public List<LocatedAnalysisOccurrence> GetOccurrencesOfAnalysis(IAnalysis analysis, int count, bool includeChildren)
 		{
 			return new ParsedParagraphOffsetsMethod(this).GetOccurrencesOfAnalysis(analysis, count, includeChildren);
+		}
+
+		/// <summary>
+		/// Reports true when there is a translation or non-null note.
+		/// </summary>
+		public bool HasAnnotation
+		{
+			get { return LiteralTranslation != null || FreeTranslation != null || NotesOS.Count > 0; }
 		}
 
 		/// ------------------------------------------------------------------------------------

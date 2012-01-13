@@ -636,11 +636,34 @@ namespace SIL.FieldWorks.Common.Controls
 			// If we're seeking nodes having either state (i.e., GreyChecked), then add them to
 			// the list unconditionally. (Currently, this is only needed for a test and is not
 			// likely to have any practical application.)
-			if (state == CheckState.GreyChecked || GetChecked(node) == state)
+			BuildCheckedNodeList(node, state, true, list);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Build a list of all of the checked nodes.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void BuildCheckedNodeList(TreeNode node, CheckState state, bool useGrey, List<TreeNode> list)
+		{
+			if ((useGrey && state == CheckState.GreyChecked) || GetChecked(node) == state)
 				list.Add(node);
 
 			foreach (TreeNode child in node.Nodes)
 				BuildCheckedNodeList(child, state, list);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Build a list of all of the checked nodes.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public List<TreeNode> GetCheckedNodeList()
+		{
+			var list = new List<TreeNode>();
+			foreach (TreeNode node in Nodes)
+				BuildCheckedNodeList(node, CheckState.Checked, false, list);
+			return list;
 		}
 
 		/// ------------------------------------------------------------------------------------

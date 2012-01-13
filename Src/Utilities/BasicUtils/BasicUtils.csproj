@@ -63,6 +63,9 @@
   <ItemGroup>
 	<Reference Include="Accessibility">
 	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.29041, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Configuration" />
 	<Reference Include="System.Core">
@@ -126,7 +129,6 @@
 	<Compile Include="TreeDictionary.cs" />
 	<Compile Include="RegistryRedirect.cs" />
 	<Compile Include="RomanNumerals.cs" />
-	<Compile Include="ScreenUtils.cs" />
 	<Compile Include="ScriptMaker.cs" />
 	<Compile Include="Set.cs" />
 	<Compile Include="SimpleBag.cs" />
@@ -135,11 +137,10 @@
 	<Compile Include="Unicode.cs" />
 	<Compile Include="Utils.cs" />
 	<Compile Include="ViewSizeEvents.cs" />
-	<Compile Include="WaitCursor.cs" />
 	<Compile Include="Tuple.cs" />
-	<Compile Include="Win32Wrappers.cs" />
 	<Compile Include="LinuxPackageUtils.cs" />
 	<Compile Include="DirectoryUtils.cs" />
+	<Compile Include="StopClock.cs" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="ColorStrings.resx">

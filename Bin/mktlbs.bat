@@ -16,7 +16,4 @@ call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_ROOT%\Output\Common\FwKernelTlb.tl
 set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Views\Views.mak
 call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_ROOT%\Output\Common\ViewsTlb.tlb
 
-set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Cellar\FwCellar.mak
-call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_ROOT%\Output\Common\FwCellarTlb.tlb
-
 set BUILD_MAKEFILE=

@@ -55,16 +55,16 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			this.m_lblEndMarker = new System.Windows.Forms.Label();
 			this.m_lblBeginMkr = new System.Windows.Forms.Label();
 			this.m_groupDest = new System.Windows.Forms.GroupBox();
+			this.m_lblStyle = new System.Windows.Forms.Label();
+			this.m_lblWritingSystem = new System.Windows.Forms.Label();
 			this.m_chkIgnore = new System.Windows.Forms.CheckBox();
 			this.m_btnStyles = new System.Windows.Forms.Button();
 			this.m_cbStyle = new System.Windows.Forms.ComboBox();
+			this.m_btnAddWS = new SIL.FieldWorks.LexText.Controls.AddWritingSystemButton(this.components);
 			this.m_cbWritingSystem = new System.Windows.Forms.ComboBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.m_lblWritingSystem = new System.Windows.Forms.Label();
-			this.m_lblStyle = new System.Windows.Forms.Label();
-			this.m_btnAddWS = new SIL.FieldWorks.LexText.Controls.AddWritingSystemButton(this.components);
 			this.m_groupStdFmt.SuspendLayout();
 			this.m_groupDest.SuspendLayout();
 			this.SuspendLayout();
@@ -106,6 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			//
 			resources.ApplyResources(this.m_tbBeginMkr, "m_tbBeginMkr");
 			this.m_tbBeginMkr.Name = "m_tbBeginMkr";
+			this.m_tbBeginMkr.TextChanged += new System.EventHandler(this.m_tbBeginMkr_TextChanged);
 			//
 			// m_lblEndMarker
 			//
@@ -130,6 +131,16 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			this.m_groupDest.Name = "m_groupDest";
 			this.m_groupDest.TabStop = false;
 			//
+			// m_lblStyle
+			//
+			resources.ApplyResources(this.m_lblStyle, "m_lblStyle");
+			this.m_lblStyle.Name = "m_lblStyle";
+			//
+			// m_lblWritingSystem
+			//
+			resources.ApplyResources(this.m_lblWritingSystem, "m_lblWritingSystem");
+			this.m_lblWritingSystem.Name = "m_lblWritingSystem";
+			//
 			// m_chkIgnore
 			//
 			resources.ApplyResources(this.m_chkIgnore, "m_chkIgnore");
@@ -149,6 +160,13 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			resources.ApplyResources(this.m_cbStyle, "m_cbStyle");
 			this.m_cbStyle.FormattingEnabled = true;
 			this.m_cbStyle.Name = "m_cbStyle";
+			//
+			// m_btnAddWS
+			//
+			resources.ApplyResources(this.m_btnAddWS, "m_btnAddWS");
+			this.m_btnAddWS.Name = "m_btnAddWS";
+			this.m_btnAddWS.UseVisualStyleBackColor = true;
+			this.m_btnAddWS.WritingSystemAdded += new System.EventHandler(this.m_btnAddWS_WritingSystemAdded);
 			//
 			// m_cbWritingSystem
 			//
@@ -176,23 +194,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
-			//
-			// m_lblWritingSystem
-			//
-			resources.ApplyResources(this.m_lblWritingSystem, "m_lblWritingSystem");
-			this.m_lblWritingSystem.Name = "m_lblWritingSystem";
-			//
-			// m_lblStyle
-			//
-			resources.ApplyResources(this.m_lblStyle, "m_lblStyle");
-			this.m_lblStyle.Name = "m_lblStyle";
-			//
-			// m_btnAddWS
-			//
-			resources.ApplyResources(this.m_btnAddWS, "m_btnAddWS");
-			this.m_btnAddWS.Name = "m_btnAddWS";
-			this.m_btnAddWS.UseVisualStyleBackColor = true;
-			this.m_btnAddWS.WritingSystemAdded += new System.EventHandler(this.m_btnAddWS_WritingSystemAdded);
 			//
 			// ImportCharMappingDlg
 			//

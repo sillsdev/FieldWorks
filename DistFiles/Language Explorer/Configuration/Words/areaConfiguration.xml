@@ -14,10 +14,10 @@
 		<command id="CmdReparseAllWords" label="_Reparse all words" message="ReparseAllWords"/>
 		<command id="CmdTryAWord" label="_Try a Word..." icon="tryAWord" message="TryAWord"/>
 		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
-	<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
-	<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
-	<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
-	<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
+		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
+		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
+		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
+		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
 		</command>
@@ -29,10 +29,8 @@
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
 		</command>
-		<command id="CmdAddTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
+		<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
 		<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary"/>
-		<command id="CmdAddFreeTrans" label="_Free Translation" message="AddFreeTrans" icon="addFreeTranslation"/>
-		<command id="CmdAddLitTrans" label="_Literal Translation" message="AddLitTrans" shortcut="Ctrl+L" icon="addLiteralTranslation"/>
 		<command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote"/>
 
 		<!--Note: -->
@@ -44,6 +42,7 @@
 		<command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks"/>
 		<command id="CmdParse" label="_Parse" message="ReParse"/>
 
+		<command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll"/>
 		<command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S"/>
 		<!--command id="CmdApproveAndStayPut" label="Stay Put" tooltip="Approve (and do not move)" message="ApproveAndStayPut" shortcut="Ctrl+S" /-->
 		<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext"/>
@@ -279,7 +278,7 @@
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
 		</menu>
 		<menu id="View">
-			<item command="CmdAddTexts" defaultVisible="false"/>
+			<item command="CmdChooseTexts" defaultVisible="false"/>
 			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
 			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
 		</menu>
@@ -309,13 +308,12 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
 			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+			<item command="CmdApproveAll" defaultVisible="false"/>
 		</menu>
 
 		<menu id="Insert">
 			<item command="CmdInsertText" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdAddFreeTrans" defaultVisible="false"/>
-			<item command="CmdAddLitTrans" defaultVisible="false"/>
 			<item command="CmdAddNote" defaultVisible="false"/>
 			<item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false"/>
 			<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/>
@@ -342,6 +340,7 @@
 	<contextMenus>
 		<menu id="PaneBar-ITextContent" label="">
 			<item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local"/>
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local"/>
 		</menu>
 		<menu id="mnuIText-FreeTrans">
 			<item command="CmdDeleteFreeTrans"/>
@@ -358,8 +357,8 @@
 			<item command="CmdPaste"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdLexiconLookup"/>
-			<item command="CmdWordformJumpToAnalyses"/>
-			<item command="CmdWordformJumpToConcordance"/>
+			<item command="CmdWordformJumpToAnalyses" defaultVisible="false"/>
+			<item command="CmdWordformJumpToConcordance" defaultVisible="false"/>
 			<!-- multiple change spelling is also wanted...see LT-4014-->
 		</menu>
 		<menu id="mnuFocusBox">
@@ -367,7 +366,7 @@
 			<item command="CmdApproveForWholeTextAndMoveNext"/>
 			<item command="CmdNextIncompleteBundle"/>
 			<item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
-			/>
+
 			<menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
 				<!--item command="CmdApproveAndStayPut" /-->
 				<item command="CmdApproveAndMoveNextSameLine"/>
@@ -386,6 +385,7 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
 			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+			<item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
 		</menu>
 
 		<menu id="mnuDataTree-MainWordform">
@@ -501,23 +501,20 @@
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
-		<toolbar id="Edit">
-			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
-			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
-			<item command="CmdBreakPhrase" defaultVisible="false"/>
-		</toolbar>
 		<toolbar id="View">
-			<item command="CmdAddTexts" defaultVisible="false"/>
+			<item command="CmdChooseTexts" defaultVisible="false"/>
 		</toolbar>
 		<toolbar id="Insert">
 			<item command="CmdInsertText" defaultVisible="false"/>
 			<!--item command="CmdLexiconLookup" defaultVisible="false"/-->
 			<item label="-" translate="do not translate"/>
-			<item command="CmdAddFreeTrans" defaultVisible="false"/>
-			<item command="CmdAddLitTrans" defaultVisible="false"/>
 			<item command="CmdAddNote" defaultVisible="false"/>
+			<item command="CmdApproveAll" defaultVisible="false"/>
 
 			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
+			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
+			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
+			<item command="CmdBreakPhrase" defaultVisible="false"/>
 		</toolbar>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
 	</toolbarsAddOn>
@@ -526,7 +523,7 @@
 	<!-- ********************************************************** -->
 	<resources>
 		<imageList assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ImageHolder" field="buttonImages" size="small"
-			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth"/>
+			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth, approveAll"/>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
 	</resources>
 	<!-- ********************************************************** -->
@@ -540,7 +537,6 @@
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserListener"/>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserParametersListener"/>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener"/>
-		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.TryAWordDialogLauncher"/>
 		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener">
 			<parameters>
 				<clerks>
@@ -599,21 +595,22 @@
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
 				<clerk id="interlinearTexts">
 					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
-		  <recordList owner="LangProject" property="InterestingTexts">
-			<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
-		  </recordList>
+					<recordList owner="LangProject" property="InterestingTexts">
+					<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+					<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+					</recordList>
 					<filterMethods/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="concordanceWords">
 					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="Wordforms">
-			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
-		  </recordList>
-		  <filters>
-			<filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter"/>
-		  </filters>
+						<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceWordList"/>
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+					</recordList>
+					<filters>
+						<filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter"/>
+					</filters>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
 					</sortMethods>

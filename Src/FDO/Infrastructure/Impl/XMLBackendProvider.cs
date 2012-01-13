@@ -16,6 +16,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -34,7 +35,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			public CommitWork(HashSet<ICmObjectOrSurrogate> newbies,
 				HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners, IEnumerable<CustomFieldInfo> customFields)
 			{
-				Newbies = new Dictionary<Guid, byte[]>(newbies.Count);
+				Newbies = new SortedDictionary<Guid, byte[]>();
 				foreach (ICmObjectOrSurrogate newby in newbies)
 					Newbies.Add(newby.Id.Guid, newby.XMLBytes);
 				Dirtballs = new Dictionary<Guid, byte[]>(dirtballs.Count);
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				CustomFields = customFields.ToList();
 			}
 
-			public Dictionary<Guid, byte[]> Newbies
+			public SortedDictionary<Guid, byte[]> Newbies
 			{
 				get; private set;
 			}
@@ -116,6 +117,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private ConsumerThread<int, CommitWork> m_thread;
 		private FileStream m_lockFile;
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
+		private int m_startupVersionNumber;
+
 		#endregion
 
 		/// <summary>
@@ -159,15 +162,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		protected override int StartupInternal(int currentModelVersion)
 		{
-			int currentDataStoreVersion;
 			BasicInit();
 			for (; ; ) // Loop is used to retry if we get a corrupt file and restore backup.
 			{
-				long fileSize = new FileInfo(ProjectId.Path).Length;
+				var fileSize = new FileInfo(ProjectId.Path).Length;
 				// This arbitrary length is based on two large databases, one 360M with 474 bytes/object, and one 180M with 541.
 				// It's probably not perfect, but we're mainly trying to prevent fragmenting the large object heap
 				// by growing it MANY times.
-				int estimatedObjectCount = (int) (fileSize/400);
+				var estimatedObjectCount = (int)(fileSize/400);
 				m_identityMap.ExpectAdditionalObjects(estimatedObjectCount);
 
 				if (!FileUtils.FileExists(ProjectId.Path))
@@ -175,12 +177,46 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 				try
 				{
-					using (XmlReader reader = FdoXmlServices.CreateReader(ProjectId.Path))
+					// We need to reorder the entire file to be nice to Mercurial,
+					// but only if the current version is less than "7000048".
+
+					// Step 0: Get the version number.
+					m_startupVersionNumber = GetActualModelVersionNumber(ProjectId.Path);
+					var useLocalTempFile = !IsLocalDrive(ProjectId.Path);
+
+					// Step 1:
+					if (m_startupVersionNumber < 7000048)
+					{
+#if DEBUG
+						var reorderWatch = new Stopwatch();
+						reorderWatch.Start();
+#endif
+						var tempPathname = useLocalTempFile ? Path.GetTempFileName() : Path.ChangeExtension(ProjectId.Path, "tmp");
+						// Rewrite the file in the prescribed order.
+						using (var writer = FdoXmlServices.CreateWriter(tempPathname))
+						{
+							FdoXmlServices.WriteStartElement(writer, m_startupVersionNumber); // Use version from old file, so DM can be done, if needed.
+
+							DataSortingService.SortEntireFile(m_mdcInternal.GetSortableProperties(), writer, ProjectId.Path);
+
+							writer.WriteEndElement(); // 'languageproject'
+							writer.Close();
+						}
+
+#if DEBUG
+						reorderWatch.Stop();
+						Debug.WriteLine("Reordering entire file took " + reorderWatch.ElapsedMilliseconds + " ms.");
+						//Debug.Assert(false, "Force a stop.");
+#endif
+						// Copy reordered file to ProjectId.Path.
+						CopyTempFileToOriginal(useLocalTempFile, ProjectId.Path, tempPathname);
+					}
+
+					// Step 2: Go on one's merry way....
+					using (var reader = FdoXmlServices.CreateReader(ProjectId.Path))
 					{
 						reader.MoveToContent();
-						// Get the model version number;
-						currentDataStoreVersion = FdoXmlServices.GetVersionNumber(reader);
-						m_needConversion = (currentDataStoreVersion != currentModelVersion);
+						m_needConversion = (m_startupVersionNumber != currentModelVersion);
 
 						// Optional AdditionalFields element.
 						if (reader.Read() && reader.LocalName == "AdditionalFields")
@@ -188,28 +224,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							var cfiList = new List<CustomFieldInfo>();
 							while (reader.Read() && reader.LocalName == "CustomField")
 							{
-								if (reader.IsStartElement())
-								{
-									var cfi = new CustomFieldInfo();
-									reader.MoveToAttribute("name");
-									cfi.m_fieldname = reader.Value;
-									reader.MoveToAttribute("class");
-									cfi.m_classname = reader.Value;
-									if (reader.MoveToAttribute("destclass"))
-										cfi.m_destinationClass = Int32.Parse(reader.Value);
-									reader.MoveToAttribute("type");
-									cfi.m_fieldType = GetFlidTypeFromString(reader.Value);
-									if (reader.MoveToAttribute("wsSelector"))
-										cfi.m_fieldWs = Int32.Parse(reader.Value);
-									if (reader.MoveToAttribute("helpString"))
-										cfi.m_fieldHelp = reader.Value;
-									if (reader.MoveToAttribute("listRoot"))
-										cfi.m_fieldListRoot = new Guid(reader.Value);
-									if (reader.MoveToAttribute("label"))
-										cfi.Label = reader.Value;
-									reader.MoveToElement();
-									cfiList.Add(cfi);
-								}
+								if (!reader.IsStartElement())
+									continue;
+
+								var cfi = new CustomFieldInfo();
+								reader.MoveToAttribute("class");
+								cfi.m_classname = reader.Value;
+								if (reader.MoveToAttribute("destclass"))
+									cfi.m_destinationClass = Int32.Parse(reader.Value);
+								if (reader.MoveToAttribute("helpString"))
+									cfi.m_fieldHelp = reader.Value;
+								if (reader.MoveToAttribute("label"))
+									cfi.Label = reader.Value;
+								if (reader.MoveToAttribute("listRoot"))
+									cfi.m_fieldListRoot = new Guid(reader.Value);
+								reader.MoveToAttribute("name");
+								cfi.m_fieldname = reader.Value;
+								reader.MoveToAttribute("type");
+								cfi.m_fieldType = GetFlidTypeFromString(reader.Value);
+								if (reader.MoveToAttribute("wsSelector"))
+									cfi.m_fieldWs = Int32.Parse(reader.Value);
+								reader.MoveToElement();
+								cfiList.Add(cfi);
 							}
 							RegisterOriginalCustomProperties(cfiList);
 						}
@@ -237,8 +273,34 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					OfferToRestore(e.Message);
 					continue; // backup restored, if previous call returns.
 				}
-				return currentDataStoreVersion;
+				return m_startupVersionNumber;
 			}
+		}
+
+		private static int GetActualModelVersionNumber(string path)
+		{
+			using (var reader = File.OpenText(path))
+			{
+				var foundStart = false;
+				var line = reader.ReadLine();
+				while (line != null)
+				{
+					if (line.Contains("<languageproject"))
+					{
+						foundStart = true;
+					}
+					else
+					{
+						line = reader.ReadLine();
+						continue;
+					}
+					var idx = line.IndexOf("version");
+					if (idx > -1)
+						return Int32.Parse(line.Substring(idx + 9, 7));
+					line = reader.ReadLine();
+				}
+			}
+			throw new ArgumentException("Version not found in file.");
 		}
 
 		/// <summary>
@@ -254,7 +316,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (File.Exists(backupFilePath))
 			{
 				if (ThreadHelper.ShowMessageBox(null,
-					string.Format(Properties.Resources.kstidOfferToRestore, ProjectId.Path, File.GetLastWriteTime(ProjectId.Path),
+					String.Format(Properties.Resources.kstidOfferToRestore, ProjectId.Path, File.GetLastWriteTime(ProjectId.Path),
 					backupFilePath, File.GetLastWriteTime(backupFilePath)),
 					Properties.Resources.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
 					MessageBoxIcon.Error) == DialogResult.Yes)
@@ -282,7 +344,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (IOException e)
 			{
-				throw new FwStartupException(string.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
+				throw new FwStartupException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), e, true);
 			}
 		}
 
@@ -339,7 +401,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		protected override void CreateInternal()
 		{
 			// Make sure the directory exists
-			if (!string.IsNullOrEmpty(ProjectId.ProjectFolder) && !Directory.Exists(ProjectId.ProjectFolder))
+			if (!String.IsNullOrEmpty(ProjectId.ProjectFolder) && !Directory.Exists(ProjectId.ProjectFolder))
 				Directory.CreateDirectory(ProjectId.ProjectFolder);
 			BasicInit();
 
@@ -363,7 +425,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public override bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners)
 		{
 			IEnumerable<CustomFieldInfo> cfiList;
-			if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList))
+			if (!HaveAnythingToCommit(newbies, dirtballs, goners, out cfiList) && (m_startupVersionNumber == ModelVersion))
 				return true;
 
 			if (m_thread == null || !m_thread.WaitForNextRequest())
@@ -434,7 +496,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var currentWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 			if (m_lastWriteTime != currentWriteTime)
 			{
-				var msg = string.Format(Strings.ksFileModifiedByOther, m_lastWriteTime, currentWriteTime);
+				var msg = String.Format(Strings.ksFileModifiedByOther, m_lastWriteTime, currentWriteTime);
 				ReportProblem(msg, null);
 				return;
 			}
@@ -459,30 +521,27 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							throw new ArgumentException("XML not recognized.");
 
 						FdoXmlServices.WriteStartElement(writer, m_modelVersionOverride);
-						// Write out optional custom fields
 						if (workItem.CustomFields.Count > 0)
 						{
-							writer.WriteStartElement("AdditionalFields");
-							foreach (CustomFieldInfo customFieldInfo in workItem.CustomFields)
+							// Write out optional custom fields
+							var customPropertyDeclarations = new XElement("AdditionalFields");
+							foreach (var customFieldInfo in workItem.CustomFields)
 							{
-								writer.WriteStartElement("CustomField");
-								writer.WriteAttributeString("name", customFieldInfo.m_fieldname);
-								writer.WriteAttributeString("class", customFieldInfo.m_classname);
-								if (customFieldInfo.m_destinationClass != 0)
-									writer.WriteAttributeString("destclass", customFieldInfo.m_destinationClass.ToString());
-								writer.WriteAttributeString("type", GetFlidTypeAsString(customFieldInfo.m_fieldType));
-								if (customFieldInfo.m_fieldWs != 0)
-									writer.WriteAttributeString("wsSelector", customFieldInfo.m_fieldWs.ToString());
-								if (!String.IsNullOrEmpty(customFieldInfo.m_fieldHelp))
-									writer.WriteAttributeString("helpString", customFieldInfo.m_fieldHelp);
-								if (customFieldInfo.m_fieldListRoot != Guid.Empty)
-									writer.WriteAttributeString("listRoot", customFieldInfo.m_fieldListRoot.ToString());
-								if (customFieldInfo.Label != customFieldInfo.m_fieldname)
-									writer.WriteAttributeString("label", customFieldInfo.Label);
-								writer.WriteEndElement();
+								customPropertyDeclarations.Add(new XElement("CustomField",
+									new XAttribute("name", customFieldInfo.m_fieldname),
+									new XAttribute("class", customFieldInfo.m_classname),
+									new XAttribute("type", GetFlidTypeAsString(customFieldInfo.m_fieldType)),
+									(customFieldInfo.m_destinationClass != 0) ? new XAttribute("destclass", customFieldInfo.m_destinationClass.ToString()) : null,
+									(customFieldInfo.m_fieldWs != 0) ? new XAttribute("wsSelector", customFieldInfo.m_fieldWs.ToString()) : null,
+									(!String.IsNullOrEmpty(customFieldInfo.m_fieldHelp)) ? new XAttribute("helpString", customFieldInfo.m_fieldHelp) : null,
+									(customFieldInfo.m_fieldListRoot != Guid.Empty) ? new XAttribute("listRoot", customFieldInfo.m_fieldListRoot.ToString()) : null,
+									(customFieldInfo.Label != customFieldInfo.m_fieldname) ? new XAttribute("label", customFieldInfo.Label) : null));
 							}
-							writer.WriteEndElement();
+							DataSortingService.SortCustomPropertiesRecord(customPropertyDeclarations);
+							DataSortingService.WriteElement(writer, reader.Settings, customPropertyDeclarations);
 						}
+
+						var sortableProperties = m_mdcInternal.GetSortableProperties();
 
 						if (reader.IsEmptyElement)
 						{
@@ -492,8 +551,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							if (workItem.Goners.Count > 0)
 								throw new InvalidOperationException("There are deleted objects in a new DB system.");
 							// Add all new objects.
-							foreach (byte[] newbyXml in workItem.Newbies.Values)
-								writer.WriteRaw(Encoding.UTF8.GetString(newbyXml));
+							foreach (var newbyXml in workItem.Newbies.Values)
+							{
+								DataSortingService.WriteElement(writer,
+									reader.Settings,
+									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbyXml)));
+							}
 						}
 						else
 						{
@@ -517,6 +580,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 								// of the modified/deleted dictionaries.
 								var transferUntouched = true;
 								var currentGuid = new Guid(reader.GetAttribute("guid"));
+
+								// Add new items before 'currentGuid', if their guids come before 'currentGuid'.
+								// NB: workItem.Newbies will no longer contain items returned by GetLessorNewbies.
+								foreach (var newbieXml in DataSortingService.GetLessorNewbies(currentGuid, workItem.Newbies))
+								{
+									DataSortingService.WriteElement(writer,
+										reader.Settings,
+										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
+								}
+
 								if (workItem.Goners.Contains(currentGuid))
 								{
 									// Skip this record, since it has been deleted.
@@ -531,20 +604,27 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									reader.ReadOuterXml();
 									//reader.Skip();
 									keepReading = reader.IsStartElement();
-									// But, add new data for the modified record.
-									writer.WriteRaw(Encoding.UTF8.GetString(dirtballXml));
+									// But, add updated data for the modified record.
+									DataSortingService.WriteElement(writer,
+										reader.Settings,
+										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(dirtballXml)));
 									workItem.Dirtballs.Remove(currentGuid);
 									transferUntouched = false;
 								}
 								if (!transferUntouched) continue;
 
-								writer.WriteNode(reader, false);
+								// Copy old data into new file, since it has not changed.
+								writer.WriteNode(reader, true);
 								keepReading = reader.IsStartElement();
 							}
 
-							// Add all new records.
-							foreach (byte[] newbyXml in workItem.Newbies.Values)
-								writer.WriteRaw(Encoding.UTF8.GetString(newbyXml));
+							// Add all remaining new records to end of file, since they couldn't be added earlier.
+							foreach (var newbieXml in workItem.Newbies.Values)
+							{
+								DataSortingService.WriteElement(writer,
+									reader.Settings,
+									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
+							}
 						}
 
 						writer.WriteEndElement(); // 'languageproject'
@@ -554,13 +634,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (Exception e)
 			{
-				ReportProblem(string.Format(Strings.ksCannotSave, ProjectId.Path, e.Message), tempPathname);
+				ReportProblem(String.Format(Strings.ksCannotSave, ProjectId.Path, e.Message), tempPathname);
 			}
+			CopyTempFileToOriginal(fUseLocalTempFile, ProjectId.Path, tempPathname);
+			m_startupVersionNumber = m_modelVersionOverride;
+		}
+
+		private void CopyTempFileToOriginal(bool fUseLocalTempFile, string mainPathname, string tempPathname)
+		{
 			try
 			{
 				if (fUseLocalTempFile)
 				{
-					var tempCopyPathname = Path.ChangeExtension(ProjectId.Path, "tmp");
+					var tempCopyPathname = Path.ChangeExtension(mainPathname, "tmp");
 					if (File.Exists(tempCopyPathname))
 						File.Delete(tempCopyPathname);
 					// Use copy rather than move so that permissions get created according to destination
@@ -569,26 +655,26 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					File.Delete(tempPathname);
 					tempPathname = tempCopyPathname;
 				}
-				string backPathName = Path.ChangeExtension(ProjectId.Path, "bak");
+				var backPathName = Path.ChangeExtension(mainPathname, "bak");
 				if (File.Exists(backPathName))
 					File.Delete(backPathName);
 				File.Move(ProjectId.Path, backPathName);
-				File.Move(tempPathname, ProjectId.Path);
+				File.Move(tempPathname, mainPathname);
 			}
 			catch (Exception e)
 			{
 				// Here we keep the temp file...we got far enough that it may be useful.
-				ReportProblem(string.Format(Strings.ksCannotWriteBackup, ProjectId.Path, e.Message), null);
+				ReportProblem(String.Format(Strings.ksCannotWriteBackup, ProjectId.Path, e.Message), null);
 				return;
 			}
-			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
+			m_lastWriteTime = File.GetLastWriteTimeUtc(mainPathname);
 			// This seems as though it should do nothing, and maybe it does. However .NET says the LastWriteTime can be
 			// unreliable depending on the underlying OS. We've had some problems with it apparently being inaccurate (FWR-3190).
 			// What I'm trying to do here is guard against the possibility that the system hasn't actually finished all the
 			// write operations yet and the last write time will change again when it has.
 			// I'm hoping that explicitly setting it as the last thing we do will ensure that the time we set (which is the
 			// one we just read) will indeed be the time that is written.
-			File.SetLastWriteTimeUtc(ProjectId.Path, m_lastWriteTime);
+			File.SetLastWriteTimeUtc(mainPathname, m_lastWriteTime);
 		}
 
 		private bool IsLocalDrive(string path)

@@ -50,8 +50,8 @@ namespace SIL.FieldWorks.TE
 			this.grpScrRange = new System.Windows.Forms.GroupBox();
 			this.lblScrTo = new System.Windows.Forms.Label();
 			this.lblScrFrom = new System.Windows.Forms.Label();
-			this.scrBookTo = new SIL.FieldWorks.Common.Controls.ScrPassageControl();
-			this.scrBookFrom = new SIL.FieldWorks.Common.Controls.ScrPassageControl();
+			this.scrBookTo = new SILUBS.SharedScrControls.ScrBookControl();
+			this.scrBookFrom = new SILUBS.SharedScrControls.ScrBookControl();
 			this.chkScrRange = new System.Windows.Forms.CheckBox();
 			this.grpStatus.SuspendLayout();
 			this.grpType.SuspendLayout();
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrBookTo, "scrBookTo");
 			this.scrBookTo.Name = "scrBookTo";
 			this.scrBookTo.Reference = "textBox1";
-			this.scrBookTo.PassageChanged += new SIL.FieldWorks.Common.Controls.ScrPassageControl.PassageChangedHandler(this.scrBookTo_PassageChanged);
+			this.scrBookTo.PassageChanged += new SILUBS.SharedScrControls.ScrBookControl.PassageChangedHandler(this.scrBookTo_PassageChanged);
 			//
 			// scrBookFrom
 			//
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrBookFrom, "scrBookFrom");
 			this.scrBookFrom.Name = "scrBookFrom";
 			this.scrBookFrom.Reference = "textBox1";
-			this.scrBookFrom.PassageChanged += new SIL.FieldWorks.Common.Controls.ScrPassageControl.PassageChangedHandler(this.scrBookFrom_PassageChanged);
+			this.scrBookFrom.PassageChanged += new SILUBS.SharedScrControls.ScrBookControl.PassageChangedHandler(this.scrBookFrom_PassageChanged);
 			//
 			// chkScrRange
 			//
@@ -253,8 +253,8 @@ namespace SIL.FieldWorks.TE
 		private System.Windows.Forms.GroupBox grpCategory;
 		private System.Windows.Forms.GroupBox grpScrRange;
 		private System.Windows.Forms.CheckBox chkScrRange;
-		private SIL.FieldWorks.Common.Controls.ScrPassageControl scrBookFrom;
-		private SIL.FieldWorks.Common.Controls.ScrPassageControl scrBookTo;
+		private SILUBS.SharedScrControls.ScrPassageControl scrBookFrom;
+		private SILUBS.SharedScrControls.ScrBookControl scrBookTo;
 		private System.Windows.Forms.Label lblScrTo;
 		private System.Windows.Forms.Label lblScrFrom;
 	}

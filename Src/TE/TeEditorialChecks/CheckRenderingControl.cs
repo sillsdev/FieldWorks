@@ -10,9 +10,6 @@
 //
 // File: CheckRenderingControl.cs
 // Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -108,8 +105,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			if (m.Msg != (int)Win32.WinMsgs.WM_SYSKEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN)
 				return false;
 
-			// Ignore the message if the Alt key isn't down.
-			if ((ModifierKeys & Keys.Alt) != Keys.Alt)
+			// Ignore the message if the Alt key isn't down or the containing EditorialChecksViewWrapper doesn't contain focus.
+			if ((ModifierKeys & Keys.Alt) != Keys.Alt || !Parent.Parent.Parent.ContainsFocus)
 				return false;
 
 			Keys key = ((Keys)(int)m.WParam & Keys.KeyCode);
@@ -261,6 +258,17 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			get { return "{0}"; }
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the current zoom factor
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected float ZoomFactor
+		{
+			get { return m_zoomFactor.Value; }
+			private set { m_zoomFactor.Value = value; }
+		}
+
 		#endregion
 
 		#region Events
@@ -290,7 +298,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			if (Visible && m_persistence != null && m_persistence.SettingsKey != null)
 			{
 				ChangeZoomPercent(e.OldZoomFactor.Height, e.NewZoomFactor.Height);
-				m_zoomFactor.Value = e.NewZoomFactor.Height;
+				ZoomFactor = e.NewZoomFactor.Height;
 			}
 		}
 
@@ -304,32 +312,20 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Font oldFont = m_dataGridView.DefaultCellStyle.Font;
 			m_dataGridView.DefaultCellStyle.Font = new Font(oldFont.FontFamily,
 				m_szOfFontAt100Pcnt * newFactor, oldFont.Style, GraphicsUnit.Point);
+			oldFont.Dispose();
 
-			Font fnt;
 			int newRowHeight = 0;
 
 			foreach (DataGridViewColumn col in m_dataGridView.Columns)
 			{
-				if (col is FwTextBoxColumn)
+				if (col is DataGridViewTextBoxColumn || col is FwTextBoxColumn)
 				{
-					FwTextBoxColumn fwtbc = col as FwTextBoxColumn;
-					fwtbc.SetZoomFactor(newFactor);
+					var textBoxColumn = col as FwTextBoxColumn;
+					if (textBoxColumn != null)
+						textBoxColumn.SetZoomFactor(newFactor);
 
-					var fontFamily = fwtbc.Font != null ? fwtbc.Font.FontFamily : m_dataGridView.DefaultCellStyle.Font.FontFamily;
-					var fontStyle = fwtbc.Font != null ? fwtbc.Font.Style : m_dataGridView.DefaultCellStyle.Font.Style;
-
-					using (fnt = new Font(fontFamily,
-						m_szOfFontAt100Pcnt * newFactor, fontStyle, GraphicsUnit.Point))
-					{
-						newRowHeight = Math.Max(fnt.Height + 4, newRowHeight);
-					}
-				}
-				else if (col is DataGridViewTextBoxColumn)
-				{
-					fnt = (col.DefaultCellStyle.Font ??
-						m_dataGridView.DefaultCellStyle.Font);
-
-					newRowHeight = Math.Max(fnt.Height + 4, newRowHeight);
+					var font = col.DefaultCellStyle.Font ?? m_dataGridView.DefaultCellStyle.Font;
+					newRowHeight = Math.Max(font.Height + 4, newRowHeight);
 				}
 			}
 
@@ -453,7 +449,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 				if (m_zoomFactor != null)
 					m_zoomFactor.Dispose();
 				m_zoomFactor = new RegistryFloatSetting(key, "ZoomFactor" + Name, 1.5f);
-				ChangeZoomPercent(1.0f, m_zoomFactor.Value);
+				ChangeZoomPercent(1.0f, ZoomFactor);
 			}
 
 			// Set the display order of columns.

@@ -82,10 +82,23 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void Swap(IScrBook bookOld, IScrBook bookNew, FwMainWnd mainWnd)
 		{
-			FilteredScrBooks filter = (FilteredScrBooks)ReflectionHelper.GetProperty(mainWnd, "BookFilter");
+			FilteredScrBooks filter = null;
+			try
+			{
+				filter = (FilteredScrBooks)ReflectionHelper.GetProperty(mainWnd, "BookFilter");
+			}
+			catch (System.MissingMethodException e)
+			{
+				Logger.WriteEvent(e.Message + " Main window: " + mainWnd.ToString());
+			}
 
 			if (filter != null)
+			{
+				Logger.WriteEvent("Replacing book " +
+					(bookOld != null ? bookOld.BookId : bookNew.BookId) +
+					" in Book Filter for main window: " + mainWnd.ToString());
 				filter.SwapBooks(bookOld, bookNew);
+			}
 		}
 
 		#region IUndoAction Members

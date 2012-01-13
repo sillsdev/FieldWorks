@@ -19,9 +19,7 @@ Last reviewed:
 #include "common.h"
 
 //#define kwsLim 0xfffffff9
-#define CMCG_SQL_DEFNS 1
-#include "../Cellar/lib/CmTypes.h"
-#undef CMCG_SQL_DEFNS
+#include "CellarConstants.h"
 
 using std::min;
 using std::max;

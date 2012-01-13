@@ -153,7 +153,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// Atomic property.
 			var lpGuid = lp.Guid;
 			// Owning collection property.
-			var aaGuid = lp.AnalyzingAgentsOC.ToArray()[0].Guid;
+			var aaGuids = new HashSet<Guid>();
+			foreach (var aa in lp.AnalyzingAgentsOC)
+				aaGuids.Add(aa.Guid);
 			// Owning sequence property.
 			var pssGuid = lp.TranslationTagsOA.PossibilitiesOS[0].Guid;
 
@@ -248,7 +250,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Assert.IsTrue(lpGuid == lpGuidRestored, "Object Guid not saved/restored properly.");
 
 			// Owning collection property.
-			Assert.IsTrue(lp.AnalyzingAgentsOC.ToArray()[0].Guid == aaGuid, "AnalyzingAgent Guid not the same.");
+			Assert.AreEqual(aaGuids.Count, lp.AnalyzingAgentsOC.Count, "Wrong number of analyzing agents.");
+			foreach (var aa in lp.AnalyzingAgentsOC)
+				Assert.IsTrue(aaGuids.Contains(aa.Guid), "Analyzing Agent not found.");
 
 			// Owning sequence property.
 			Assert.IsTrue(lp.TranslationTagsOA.PossibilitiesOS[0].Guid == pssGuid, "Translation type Guid not the same.");

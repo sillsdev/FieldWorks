@@ -179,6 +179,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
 		#endregion IxCoreColleague implementation
 
@@ -371,6 +375,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium;  }
 		}
 
 		#endregion IxCoreColleague implementation

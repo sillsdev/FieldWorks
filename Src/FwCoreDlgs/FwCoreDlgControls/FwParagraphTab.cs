@@ -307,6 +307,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			CheckDisposed();
 
+			if (styleInfo.IsCharacterStyle)
+			{
+				Debug.Assert(false, "Somehow, the Paragraph tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
+				return;
+			}
+
 			// direction
 			bool newInherit = IsInherited(m_cboDirection);
 			if (styleInfo.IRightToLeftStyle.Save(newInherit, (TriStateBool)m_cboDirection.SelectedIndex))

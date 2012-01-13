@@ -44,12 +44,11 @@ INCLUDES := \
 #`	-L$(FWKERNEL_SRC) -lFwKernel
 
 LDLIBS = \
-	$(shell icu-config --ldflags) \
-	-L$(FWINCLUDE) \
 	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
 	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
 	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
+	-L$(LIB_UNIT) -lunit++ \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 	-luuid -lexpat
@@ -60,10 +59,13 @@ CXXFLAGS = -g -O0 -fvisibility=hidden -Werror
 
 RCFILE = $(LANGUAGE_SRC)/FwLanguage.rc
 DEFFILE = $(LANGUAGE_SRC)/FwLanguage.def
-LINK_LIBS := $(LIB_UNIT)/libunit++.a $(OUT_DIR)/libGeneric.a \
-	$(OUT_DIR)/libAppCore.a $(OUT_DIR)/libDebugProcs.a \
-	$(COM_OUT_DIR)/libGraphiteTlb.a $(COM_OUT_DIR)/libViewsTlb.a $(COM_OUT_DIR)/libFwKernelTlb.a
-COMS = $(OUT_DIR)/libLanguage.so
+LINK_LIBS := \
+	$(OUT_DIR)/libGeneric.a \
+	$(OUT_DIR)/libAppCore.a \
+	$(OUT_DIR)/libDebugProcs.a \
+	$(COM_OUT_DIR)/libGraphiteTlb.a \
+	$(COM_OUT_DIR)/libViewsTlb.a \
+	$(COM_OUT_DIR)/libFwKernelTlb.a
 
 all: $(OUT_DIR)/testLanguage
 
@@ -76,28 +78,24 @@ FWLANG_OBJ := \
 	$(LANGUAGE_OBJ)/LgIcuCharPropEngine.o \
 	$(LANGUAGE_OBJ)/LgFontManager.o \
 	$(LANGUAGE_OBJ)/LgInputMethodEditor.o \
-	$(LANGUAGE_OBJ)/LgTextServices.o \
 	$(LANGUAGE_OBJ)/LocaleIndex.o \
 	$(LANGUAGE_OBJ)/LanguageGlobals.o \
-	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
-	$(APPCORE_OBJ)/FwStyledText.o \
-	$(APPCORE_OBJ)/WriteXml.o \
 	$(GR_LIB_OBJ)/GrUtil.o \
 	$(LANGUAGE_OBJ)/FwXml.o \
-
-#	$(KERNEL_SRC)/TsStrFactory.o \
-#	$(KERNEL_SRC)/TsString.o \
-#	$(KERNEL_SRC)/TsTextProps.o \
-#	$(KERNEL_SRC)/TextServ.o \
+	$(GENERIC_OBJ)/ModuleEntry.o \
 
 #Run make in the directory of each library
-$(LINK_LIBS) $(COMS) $(FWLANG_OBJ)::
+$(LINK_LIBS) $(FWLANG_OBJ)::
 	@$(MAKE) -C $(@D) $(@F) -q || \
 	 $(MAKE) -C $(@D) $(@F)
 
-$(OUT_DIR)/testLanguage: $(INT_DIR)/testLanguage.o $(INT_DIR)/Collection.o $(FWLANG_OBJ) $(LINK_LIBS) $(COMS)
-	$(LINK.cc) -o $@ $(INT_DIR)/testLanguage.o $(INT_DIR)/Collection.o $(FWLANG_OBJ) $(LINK_LIBS) $(LDLIBS)
+$(OUT_DIR)/testLanguage: $(INT_DIR)/testLanguage.o $(INT_DIR)/Collection.o $(FWLANG_OBJ) $(LINK_LIBS)
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(INT_DIR)/testLanguage.o $(INT_DIR)/Collection.o $(FWLANG_OBJ) $(LDLIBS)
+else
+	$(LINK.cc) -o $@ $^ $(LDLIBS)
+endif
 
 clean:
 	$(RM) $(OUT_DIR)/testLanguage $(INT_DIR)/*.[od] $(INT_DIR)/Collection.cpp *.[od] *.gch

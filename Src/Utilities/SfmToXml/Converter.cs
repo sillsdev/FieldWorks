@@ -2547,12 +2547,17 @@ namespace Sfm2Xml
 					// don't bump the pos as we need to process the new char at this position
 				}
 			}
+			ClsFieldDescription cfd = m_FieldDescriptionsTable[currentSfm] as ClsFieldDescription;
 
 			if (strTemp.Length > 0)
-			{
 				Log.AddSFMWithData(currentSfm);
+			else
+				Log.AddSFMNoData(currentSfm);
+			// Per LT-11134 we want to generate the element for the main lex field even if it is empty.
+			// This allows us to import an entry with no form and keep POS information.
+			if (strTemp.Length > 0 || cfd.MeaningID == "lex")
+			{
 				// use the xml safe name
-				ClsFieldDescription cfd = m_FieldDescriptionsTable[currentSfm] as ClsFieldDescription;
 				xmlOutput.WriteStartElement(cfd.SFMxmlSafe);
 				xmlOutput.WriteAttributeString("srcLine", lineNumber.ToString());
 				string sForm = strTemp.ToString();
@@ -2599,10 +2604,6 @@ namespace Sfm2Xml
 				}
 				xmlOutput.WriteRaw(sForm);
 				xmlOutput.WriteEndElement();
-			}
-			else
-			{
-				Log.AddSFMNoData(currentSfm);
 			}
 
 			// add to the help output file even if there is no data for the element

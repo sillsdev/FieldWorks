@@ -155,12 +155,12 @@ namespace SIL.FieldWorks.CacheLight
 			var countAllFlidsOut = MetaDataCache.GetFields(clid, true,
 				(int)CellarPropertyTypeFilter.All, 0, null);
 			// Now get them for real.
-			using (var flids = MarshalEx.ArrayToNative(countAllFlidsOut, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(countAllFlidsOut))
 			{
 				var foundFlid = false;
 				countAllFlidsOut = MetaDataCache.GetFields(clid, true,
 					(int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
-				var flids1 = (int[])MarshalEx.NativeToArray(flids, countAllFlidsOut, typeof(int));
+				var flids1 = MarshalEx.NativeToArray<int>(flids, countAllFlidsOut);
 				for (var i = 0; i < flids1.Length; ++i)
 				{
 					var flid = flids1[i];
@@ -234,10 +234,10 @@ namespace SIL.FieldWorks.CacheLight
 						if (m_clids.Count == 0)
 						{
 							var countAllClasses = MetaDataCache.ClassCount;
-							using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+							using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 							{
 								MetaDataCache.GetClassIds(countAllClasses, clids);
-								var uIds = (int[])MarshalEx.NativeToArray(clids, countAllClasses, typeof(int));
+								var uIds = MarshalEx.NativeToArray<int>(clids, countAllClasses);
 								m_clids.AddRange(uIds);
 							}
 						}

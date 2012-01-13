@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private int ApplyFilterToSequence(ref int[] rghvo)
 		{
-			rghvo = m_viewConstructor.FilterAndSortListByGuidMap(rghvo, m_hvo);
+			rghvo = m_viewConstructor.FilterAndSortListByComplexFormType(rghvo, m_hvo);
 			var chvo = rghvo.Length;
 			if (chvo == 0)
 			{
@@ -618,10 +618,10 @@ namespace SIL.FieldWorks.Common.Controls
 		private static int[] GetVector(ISilDataAccess sda, int hvo, int tag)
 		{
 			var chvo = sda.get_VecSize(hvo, tag);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				sda.VecProp(hvo, tag, chvo, out chvo, arrayPtr);
-				return (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				return MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 		}
 

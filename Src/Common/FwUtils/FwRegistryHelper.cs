@@ -70,6 +70,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void SetValueAsAdmin(this RegistryKey key, string name, string value)
 		{
 			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\")) == "HKEY_LOCAL_MACHINE", "SetValueAsAdmin should only be used for writing hklm values.");
+
+			if (MiscUtils.IsUnix)
+			{
+				key.SetValue(name, value);
+				return;
+			}
+
 			int startOfKey = key.Name.IndexOf("\\") + "\\".Length;
 			string location = key.Name.Substring(startOfKey, key.Name.Length - startOfKey);
 			location = location.Trim('\\');
@@ -81,35 +88,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Interpreted as 3 args: 1)"Software\\SIL\\FieldWorks\"7.0"  2)"Projects\\\\Dir\" I:\""  3)"e:\\"
 			// We'll hack the final value here to put in an extra \ for final \. "c:\\" will come through as c:\.
 			string path = value;
-			if (!MiscUtils.IsUnix && value.EndsWith("\\"))
+			if (value.EndsWith("\\"))
 				path = value + "\\";
 
 			using (var process = new Process())
 			{
-			// Have to show window to get UAC message to allow admin action.
-			//process.StartInfo.CreateNoWindow = true;
-			process.StartInfo.FileName = "WriteKey.exe";
-			process.StartInfo.Arguments = String.Format("LM \"{0}\" \"{1}\" \"{2}\"", location, name, path);
-			// NOTE: According to information I found, these last 2 values have to be set as they are
-			// (Verb='runas' and UseShellExecute=true) in order to get the UAC dialog to show.
-			// On Xp (Verb='runas' and UseShellExecute=true) causes crash.
-			if (MiscUtils.IsWinVistaOrNewer)
-			{
-				process.StartInfo.Verb = "runas";
-				process.StartInfo.UseShellExecute = true;
-			}
-			else
-			{
-				process.StartInfo.UseShellExecute = false;
-			}
-			// Make sure the shell window is not shown (FWR-3361)
-			process.StartInfo.CreateNoWindow = true;
-			process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				// Have to show window to get UAC message to allow admin action.
+				//process.StartInfo.CreateNoWindow = true;
+				process.StartInfo.FileName = "WriteKey.exe";
+				process.StartInfo.Arguments = String.Format("LM \"{0}\" \"{1}\" \"{2}\"", location, name, path);
+				// NOTE: According to information I found, these last 2 values have to be set as they are
+				// (Verb='runas' and UseShellExecute=true) in order to get the UAC dialog to show.
+				// On Xp (Verb='runas' and UseShellExecute=true) causes crash.
+				if (MiscUtils.IsWinVistaOrNewer)
+				{
+					process.StartInfo.Verb = "runas";
+					process.StartInfo.UseShellExecute = true;
+				}
+				else
+				{
+					process.StartInfo.UseShellExecute = false;
+				}
+				// Make sure the shell window is not shown (FWR-3361)
+				process.StartInfo.CreateNoWindow = true;
+				process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-			// Can throw a SecurityException.
-			process.Start();
-			process.WaitForExit();
-		}
+				// Can throw a SecurityException.
+				process.Start();
+				process.WaitForExit();
+			}
 		}
 
 

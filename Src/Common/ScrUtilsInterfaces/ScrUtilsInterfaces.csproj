@@ -129,7 +129,6 @@
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="IMultilingScrBooks.cs" />
 	<Compile Include="ISCScriptureText.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -141,7 +140,6 @@
 	</Compile>
 	<Compile Include="ParatextLoadException.cs" />
 	<Compile Include="ScriptureUtilsException.cs" />
-	<Compile Include="ScrReference.cs" />
 	<Compile Include="ScrStyleNames.cs" />
   </ItemGroup>
   <ItemGroup>

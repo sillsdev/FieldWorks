@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="KeyboardSwitcherTests.cs" />
+	<Compile Include="IBusDotNetTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -174,9 +174,9 @@ protected:
 	bool IsNfdIMEActive();
 	void GetCurrentWritingSystem();
 
-public:
 	VwParagraphBox * m_pvpboxCurrent;
 
+public:
 	static ITfThreadMgrPtr s_qttmThreadMgr;
 	static TfClientId s_tfClientID;
 	static ITfCategoryMgrPtr s_qtfCategoryMgr;

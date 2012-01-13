@@ -1,0 +1,129 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhraseTranslationHelper", "PhraseTranslationHelper.csproj", "{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhraseTranslationHelperTests", "PhraseTranslationHelperTests\PhraseTranslationHelperTests.csproj", "{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtils", "..\SilUtils\SilUtils.csproj", "{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScrUtils", "..\SharedScrUtils\SharedScrUtils.csproj", "{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScrUtilsTests", "..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj", "{4528287F-BA86-49D8-AFBB-1250A60CE7EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScrControls", "..\SharedScrControls\SharedScrControls.csproj", "{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScrControlsTests", "..\SharedScrControls\SharedScrControlsTests\SharedScrControlsTests.csproj", "{CCF34218-52D9-4092-ADB8-1893BBE5ED31}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1366DFF7-B9EC-4ED4-9D6E-CD66F1425D06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtilsTests", "..\SilUtils\SilUtilsTests\SilUtilsTests.csproj", "{F023F83B-EC39-48D4-A98C-F65E43609B20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeDll", "..\..\..\Src\TeDll\TeDll.csproj", "{51EAA922-78D0-4A97-91DC-CDC15FB5B144}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeKeyTerms", "..\..\..\Src\TE\TeKeyTerms\TeKeyTerms.csproj", "{A0F77159-8444-4615-970D-61821B6D0AF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reporting", "..\..\..\Src\Utilities\Reporting\Reporting.csproj", "{9CCBECEC-513C-4DA4-A4CE-F5361B633760}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDOTests", "..\..\..\Src\FDO\FDOTests\FDOTests.csproj", "{5B119AEF-2895-44AB-BB28-6C1071A9B62B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDO", "..\..\..\Src\FDO\FDO.csproj", "{E5E9DDC7-2855-4D92-AD46-960AC4C46457}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 14
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = PhraseTranslationHelper.csproj
+		SccLocalPath1 = .
+		SccProjectUniqueName2 = PhraseTranslationHelperTests\\PhraseTranslationHelperTests.csproj
+		SccLocalPath2 = PhraseTranslationHelperTests
+		SccProjectUniqueName3 = ..\\SilUtils\\SilUtils.csproj
+		SccLocalPath3 = ..\\SilUtils
+		SccProjectUniqueName4 = ..\\SharedScrUtils\\SharedScrUtils.csproj
+		SccLocalPath4 = ..\\SharedScrUtils
+		SccProjectUniqueName5 = ..\\SharedScrUtils\\SharedScrUtilsTests\\SharedScrUtilsTests.csproj
+		SccLocalPath5 = ..\\SharedScrUtils\\SharedScrUtilsTests
+		SccProjectUniqueName6 = ..\\SharedScrControls\\SharedScrControlsTests\\SharedScrControlsTests.csproj
+		SccLocalPath6 = ..\\SharedScrControls\\SharedScrControlsTests
+		SccProjectUniqueName7 = ..\\SharedScrControls\\SharedScrControls.csproj
+		SccLocalPath7 = ..\\SharedScrControls
+		SccProjectUniqueName8 = ..\\SilUtils\\SilUtilsTests\\SilUtilsTests.csproj
+		SccLocalPath8 = ..\\SilUtils\\SilUtilsTests
+		SccProjectUniqueName9 = ..\\..\\..\\Src\\TeDll\\TeDll.csproj
+		SccLocalPath9 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection9 = Src\\TeDll\\
+		SccProjectUniqueName10 = ..\\..\\..\\Src\\TE\\TeKeyTerms\\TeKeyTerms.csproj
+		SccLocalPath10 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection10 = Src\\TE\\TeKeyTerms\\
+		SccProjectUniqueName11 = ..\\..\\..\\Src\\Utilities\\Reporting\\Reporting.csproj
+		SccLocalPath11 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection11 = Src\\Utilities\\Reporting\\
+		SccProjectUniqueName12 = ..\\..\\..\\Src\\FDO\\FDOTests\\FDOTests.csproj
+		SccLocalPath12 = ..\\..\\..\\Src
+		SccProjectFilePathRelativizedFromConnection12 = FDO\\FDOTests\\
+		SccProjectUniqueName13 = ..\\..\\..\\Src\\FDO\\FDO.csproj
+		SccLocalPath13 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection13 = Src\\FDO\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4528287F-BA86-49D8-AFBB-1250A60CE7EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4528287F-BA86-49D8-AFBB-1250A60CE7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4528287F-BA86-49D8-AFBB-1250A60CE7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4528287F-BA86-49D8-AFBB-1250A60CE7EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCF34218-52D9-4092-ADB8-1893BBE5ED31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCF34218-52D9-4092-ADB8-1893BBE5ED31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCF34218-52D9-4092-ADB8-1893BBE5ED31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCF34218-52D9-4092-ADB8-1893BBE5ED31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51EAA922-78D0-4A97-91DC-CDC15FB5B144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51EAA922-78D0-4A97-91DC-CDC15FB5B144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51EAA922-78D0-4A97-91DC-CDC15FB5B144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51EAA922-78D0-4A97-91DC-CDC15FB5B144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0F77159-8444-4615-970D-61821B6D0AF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F77159-8444-4615-970D-61821B6D0AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F77159-8444-4615-970D-61821B6D0AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F77159-8444-4615-970D-61821B6D0AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CCBECEC-513C-4DA4-A4CE-F5361B633760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CCBECEC-513C-4DA4-A4CE-F5361B633760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CCBECEC-513C-4DA4-A4CE-F5361B633760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CCBECEC-513C-4DA4-A4CE-F5361B633760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B119AEF-2895-44AB-BB28-6C1071A9B62B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B119AEF-2895-44AB-BB28-6C1071A9B62B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B119AEF-2895-44AB-BB28-6C1071A9B62B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B119AEF-2895-44AB-BB28-6C1071A9B62B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

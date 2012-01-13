@@ -419,10 +419,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				// What if it's the dummy built-in graphite feature that we ignore?
 				// Get the list of features (only 1).
-				using (ArrayPtr idsM = MarshalEx.ArrayToNative(cfid, typeof(int)))
+				using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
 				{
 					m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-					int [] ids = (int[])MarshalEx.NativeToArray(idsM, cfid, typeof(int));
+					int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 					if (ids[0] == kGrLangFeature)
 					{
 						Enabled = false;
@@ -704,10 +704,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_featureEngine.GetFeatureIDs(0, null, out cfid);
 
 			// Get the list of features.
-			using (ArrayPtr idsM = MarshalEx.ArrayToNative(cfid, typeof(int)))
+			using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
 			{
 				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-				m_ids = (int[])MarshalEx.NativeToArray(idsM, cfid, typeof(int));
+				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 			}
 			m_values = ParseFeatureString(m_ids, m_fontFeatures);
 			Debug.Assert(m_ids.Length == m_values.Length);
@@ -727,11 +727,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				int cValueIds;
 				int nDefault;
 				int [] valueIds = new int[0];
-				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative(kMaxValPerFeat, typeof(int)))
+				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
 				{
 					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM,
 						out cValueIds, out nDefault);
-					valueIds = (int[])MarshalEx.NativeToArray(valueIdsM, cValueIds, typeof(int));
+					valueIds = MarshalEx.NativeToArray<int>(valueIdsM, cValueIds);
 				}
 				// If we know a value for this feature, use it. Otherwise init to default.
 				int featureValue = nDefault;

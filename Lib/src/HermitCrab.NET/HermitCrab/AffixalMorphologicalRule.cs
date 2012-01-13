@@ -48,7 +48,10 @@ namespace SIL.HermitCrab
 				m_lhsTemp.Add(new MarginContext(Direction.LEFT));
 				int partition = 0;
 				foreach (PhoneticPattern pat in lhs)
-					m_lhsTemp.AddPartition(pat, partition++);
+				{
+					m_lhsTemp.AddPartition(pat, partition, m_transform.IsGreedy(partition));
+					partition++;
+				}
 				m_lhsTemp.Add(new MarginContext(Direction.RIGHT));
 			}
 
@@ -203,6 +206,35 @@ namespace SIL.HermitCrab
 				foreach (MorphologicalOutput outputMember in m_transform.RHS)
 					outputMember.Apply(match, input, output, this);
 				output.Shape.Add(new Margin(Direction.RIGHT));
+			}
+
+			public override bool ConstraintsEqual(Allomorph other)
+			{
+				Subrule otherSubrule = (Subrule) other;
+
+				if (m_requiredMPRFeatures == null)
+				{
+					if (otherSubrule.m_requiredMPRFeatures != null)
+						return false;
+				}
+				else
+				{
+					if (!m_requiredMPRFeatures.Equals(otherSubrule.m_requiredMPRFeatures))
+						return false;
+				}
+
+				if (m_excludedMPRFeatures == null)
+				{
+					if (otherSubrule.m_excludedMPRFeatures != null)
+						return false;
+				}
+				else
+				{
+					if (!m_excludedMPRFeatures.Equals(otherSubrule.m_excludedMPRFeatures))
+						return false;
+				}
+
+				return m_lhsTemp.Equals(otherSubrule.m_lhsTemp) && base.ConstraintsEqual(other);
 			}
 		}
 
@@ -517,19 +549,11 @@ namespace SIL.HermitCrab
 			if (!m_requiredFootFeatures.UnifyDefaults(input.FootFeatures, out footFeatures))
 				return false;
 
-			MorphologicalRuleSynthesisTrace trace = null;
-			if (TraceSynthesis)
-			{
-				// create morphological rule synthesis trace record
-				trace = new MorphologicalRuleSynthesisTrace(this, input.Clone());
-				input.CurrentTrace.AddChild(trace);
-			}
-
 			output = new List<WordSynthesis>();
-			foreach (Subrule sr in m_subrules)
+			for (int i = 0; i < m_subrules.Count; i++)
 			{
 				WordSynthesis ws;
-				if (sr.Apply(input, out ws))
+				if (m_subrules[i].Apply(input, out ws))
 				{
 					if (m_outPOS != null)
 						ws.POS = m_outPOS;
@@ -554,14 +578,16 @@ namespace SIL.HermitCrab
 
 					ws = CheckBlocking(ws);
 
-					if (trace != null)
+					if (TraceSynthesis)
 					{
+						MorphologicalRuleSynthesisTrace trace = new MorphologicalRuleSynthesisTrace(this, input.Clone());
+						// add output to morphological rule trace record
+						trace.RuleAllomorph = m_subrules[i];
+						trace.Output = ws.Clone();
+						ws.CurrentTrace.AddChild(trace);
 						// set current trace record to the morphological rule trace record for each
 						// output analysis
 						ws.CurrentTrace = trace;
-						// add output to morphological rule trace record
-						trace.RuleAllomorph = sr;
-						trace.Output = ws.Clone();
 					}
 
 					output.Add(ws);
@@ -569,12 +595,19 @@ namespace SIL.HermitCrab
 					// HC violates the disjunctive property of allomorphs here because it cannot check the
 					// environmental constraints until it has a surface form, we will enforce the disjunctive
 					// property of allomorphs at that time
-					if (sr.RequiredEnvironments == null && sr.ExcludedEnvironments == null)
+
+					// HC also checks for free fluctuation, if the next subrule has the same constraints, we
+					// do not treat them as disjunctive
+					if ((i != m_subrules.Count - 1 && !m_subrules[i].ConstraintsEqual(m_subrules[i + 1]))
+						&& m_subrules[i].RequiredEnvironments == null && m_subrules[i].ExcludedEnvironments == null)
 					{
 						break;
 					}
 				}
 			}
+
+			if (TraceSynthesis && output.Count == 0)
+				input.CurrentTrace.AddChild(new MorphologicalRuleSynthesisTrace(this, input.Clone()));
 
 			return output.Count > 0;
 		}

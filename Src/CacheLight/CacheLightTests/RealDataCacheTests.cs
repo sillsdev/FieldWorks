@@ -476,13 +476,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidAnal);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassH", "BinaryProp8", false);
 
-			using (var arrayPtr = MarshalEx.ArrayToNative(3, typeof(int)))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(3))
 			{
 				int chvo;
 				var prgb = new byte[] { 3, 4, 5 };
 				SilDataAccess.SetBinary(hvo, tag, prgb, prgb.Length);
 				SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 3, out chvo);
-				var prgbNew = (byte[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(byte));
+				var prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb.Length, prgbNew.Length);
 				for (var i = 0; i < prgbNew.Length; i++)
 					Assert.AreEqual(prgb[i], prgbNew[i]);
@@ -516,7 +516,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassI");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
-			using (var arrayPtr = MarshalEx.ArrayToNative(2, typeof(int)))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
 				var prgb = new byte[] { 3, 4, 5 };
 				int chvo;

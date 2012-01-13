@@ -1,4 +1,5 @@
 ﻿#if !NET_4_0
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -46,7 +47,7 @@ namespace System
 	/// <typeparam name="T1">The type of the first item.</typeparam>
 	/// <typeparam name="T2">The type of the second item.</typeparam>
 	[DebuggerDisplay("({Item1}, {Item2})")]
-	public class Tuple<T1, T2>
+	public class Tuple<T1, T2> : IComparable<Tuple<T1, T2>>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Tuple&lt;T1, T2&gt;"/> class.
@@ -109,6 +110,37 @@ namespace System
 		public override int GetHashCode()
 		{
 			return (Item1 == null ? 0 : Item1.GetHashCode()) ^ (Item2 == null ? 0 : Item2.GetHashCode());
+		}
+
+		/// <summary>
+		/// Compares the current object with another object of the same type.
+		/// </summary>
+		/// <returns>
+		/// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>.
+		/// </returns>
+		/// <param name="other">An object to compare with this object.</param>
+		public int CompareTo(Tuple<T1, T2> other)
+		{
+			if(EqualityComparer<T1>.Default.Equals(Item1, other.Item1)) //first part of the pair is equal
+			{
+				if(Item2 is IComparable) //use the comparer if the second part of our pair is valid for Comparer
+					return Comparer<T2>.Default.Compare(Item2, other.Item2);
+
+				if(other.Item2 != null) //if the other item 2 is not null, and this Item2 is not comparable, hash and subtract
+				{
+					//There is a very small chance of hash collision causing this to go wrong, but this method will
+					//go away when we upgrade to the next version of C#, and I don't feel like writing the code required to do a
+					//better job.
+					return Item2.GetHashCode() - other.Item2.GetHashCode();
+				}
+			}
+			else if(Item1 is IComparable) //if the first part of the pair differs, and it is comparable, compare it
+				return Comparer<T1>.Default.Compare(Item1, other.Item1);
+			if(other.Item1 != null) //the first part of this tuple is not comparable, hash and subtract.
+			{
+				return Item1.GetHashCode() - other.Item1.GetHashCode();
+			}
+			return 1; //Some part of other is null, so we must be better, we'll say that means greater
 		}
 
 		/// <summary>

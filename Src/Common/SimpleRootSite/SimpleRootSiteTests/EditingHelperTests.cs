@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Text;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -459,6 +460,26 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var newDataObj = ClipboardUtils.GetDataObject();
 			Assert.IsNotNull(newDataObj, "Couldn't get DataObject from clipboard");
 			Assert.AreEqual("Gogomer cucumber", newDataObj.GetData("Text"));
+		}
+		/// <summary>
+		/// Verifies that data is normalized NFC when placed on clipboard.
+		/// </summary>
+		[Test]
+		public void SetTsStringOnClipboard_UsesNFC()
+		{
+			var wsManager = new PalasoWritingSystemManager();
+			IWritingSystem enWs;
+			wsManager.GetOrSet("en", out enWs);
+			int wsEng = enWs.Handle;
+			var strFactory = TsStrFactoryClass.Create();
+			var originalInput = "\x7a7a\x60f3\x79d1\x5b78\x0020\xd558";
+			var input = originalInput.Normalize(NormalizationForm.FormD);
+			Assert.That(originalInput, Is.Not.EqualTo(input)); // make sure input is NOT NFC
+			var tss = strFactory.MakeString(input, wsEng);
+			EditingHelper.SetTsStringOnClipboard(tss, false, wsManager);
+			var newDataObj = ClipboardUtils.GetDataObject();
+			Assert.IsNotNull(newDataObj, "Couldn't get DataObject from clipboard");
+			Assert.AreEqual(originalInput, newDataObj.GetData("Text"));
 		}
 	}
 

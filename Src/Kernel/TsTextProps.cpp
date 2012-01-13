@@ -314,8 +314,6 @@ STDMETHODIMP_(UCOMINT32) TsTextProps::Release(void)
 
 		if (m_cref == 0) // safe to remove and delete object
 		{
-			TsPropsHolder * ptph = TsPropsHolder::GetPropsHolder();
-			AssertPtr(ptph);
 			ptph->Remove(this);
 			m_cref = -9999; // make it clear that this object has been deleted.
 			delete this;
@@ -1071,10 +1069,10 @@ void TsTextProps::BuildDebugInfo()
 						{
 							if (pch >= pchLim)
 								break;
-							int tpt = *pch++;
+							int tptLocal = *pch++;
 							int cch = *pch++;
 							StrUni stuP(pch, cch);
-							stu.FormatAppend(L"{%d:%s}", tpt, stuP.Chars());
+							stu.FormatAppend(L"{%d:%s}", tptLocal, stuP.Chars());
 							pch += cch;
 						}
 						if (pch >= pchLim)
@@ -1097,11 +1095,11 @@ void TsTextProps::BuildDebugInfo()
 							++pch;	// ensure greater than.
 							break;
 						}
-						int tpt = *pch++;
+						int tptLocal = *pch++;
 						int ttv = *pch++;
-						int nVal = *pch | (*(pch + 1)) << 16;
+						int nValLocal = *pch | (*(pch + 1)) << 16;
 						pch += 2;
-						StrUni stuT = AddIntPropToDebugInfo(tpt, ttv, nVal);
+						StrUni stuT = AddIntPropToDebugInfo(tptLocal, ttv, nValLocal);
 						stu.Append(stuT.Chars());
 					}
 					if (pch > pchLim)

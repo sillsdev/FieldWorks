@@ -290,8 +290,7 @@ namespace SIL.FieldWorks.Discourse
 						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
 							out rcSec, out fSplit, out fEndBeforeAnchor);
 					}
-					m_hoverButton.Location = new Point(m_chart.ColumnPositions[cell.ColIndex + 2] - 4 - m_hoverButton.Width,
-						rcPrimary.top);
+					SetHoverButtonLocation(rcPrimary, cell.ColIndex);
 					if (!Controls.Contains(m_hoverButton))
 						Controls.Add(m_hoverButton);
 				}
@@ -301,6 +300,24 @@ namespace SIL.FieldWorks.Discourse
 				Controls.Remove(m_hoverButton);
 			}
 			base.OnMouseMove(e);
+		}
+
+		private void SetHoverButtonLocation(Rect cellRect, int columnIndex)
+		{
+			var horizPosition = CalculateHoverButtonHorizPosition(columnIndex, m_chart.ChartIsRtL);
+			var result = new Point(horizPosition, cellRect.top);
+			m_hoverButton.Location = result;
+		}
+
+		private int CalculateHoverButtonHorizPosition(int columnIndex, bool fRtl)
+		{
+			const int extraColumnLeft = 1;
+			const int margin = 4;
+			// If chart is Left to Right, we start with right border of cell and subtract button width and margin.
+			// If chart is Right to Left, we start with left border of cell and add margin.
+			var fudgeFactor = fRtl ? margin : -margin - m_hoverButton.Width;
+			var horizPosition = m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? 0 : 1)] + fudgeFactor;
+			return horizPosition;
 		}
 
 		public void SetColWidths(int[] widths)
@@ -878,7 +895,7 @@ namespace SIL.FieldWorks.Discourse
 			var wordGrpFlidArray = new[] { ConstChartWordGroupTags.kflidBeginSegment,
 				ConstChartWordGroupTags.kflidEndSegment,
 				ConstChartWordGroupTags.kflidBeginAnalysisIndex,
-				ConstChartWordGroupTags.kflidEndAnalysisIndex };
+				ConstChartWordGroupTags.kflidEndAnalysisIndex};
 			NoteWordGroupDependencies(vwenv, hvoWordGrp, wordGrpFlidArray);
 
 			var wordGrp = m_wordGrpRepo.GetObject(hvoWordGrp);
@@ -886,7 +903,7 @@ namespace SIL.FieldWorks.Discourse
 			foreach (var point in wordGrp.GetOccurrences())
 			{
 				SetupAndOpenInnerPile(vwenv);
-				DisplayAnalysisAndCloseInnerPile(vwenv, point);
+				DisplayAnalysisAndCloseInnerPile(vwenv, point, false);
 			}
 		}
 
@@ -915,7 +932,7 @@ namespace SIL.FieldWorks.Discourse
 			int index;
 			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
-			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence);
+			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, false);
 		}
 
 		/// <summary>
@@ -1388,15 +1405,8 @@ namespace SIL.FieldWorks.Discourse
 			m_row = m_rowRepo.GetObject(m_hvoRow);
 		}
 
-		private void SetupMissingMarker(bool fRtL)
+		private void SetupMissingMarker()
 		{
-			//var sformat = "{0}";
-			//if (fRtL)
-			//{
-			//    sformat = Convert.ToString(m_chart.RLE) + sformat;
-			//    m_vwenv.m_fRtLFormattingActive = true;
-			//}
-			//var mkrStr = String.Format(sformat, DiscourseStrings.ksMissingMarker);
 			m_missMkr = m_cache.TsStrFactory.MakeString(DiscourseStrings.ksMissingMarker, m_cache.DefaultAnalWs);
 		}
 
@@ -1405,7 +1415,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		public void Run(bool fRtL)
 		{
-			SetupMissingMarker(fRtL);
+			SetupMissingMarker();
 			// If the CellsOS of the row changes, we need to regenerate.
 			var rowFlidArray = new[] { ConstChartRowTags.kflidCells,
 				ConstChartRowTags.kflidClauseType,

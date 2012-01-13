@@ -48,28 +48,28 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// suitable to be passed as array to a COM method.
 		/// </summary>
 		/// <param name="nMaxSize">Max. number of elements in the array</param>
-		/// <param name="elementType">Type of the elements in the array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// <returns>Pointer to array</returns>
 		/// <remarks>Use this method for an empty array that is passed by
 		/// reference.</remarks>
 		/// -----------------------------------------------------------------------------------
-		static public ArrayPtr ArrayToNative(int nMaxSize, Type elementType)
+		static public ArrayPtr ArrayToNative<T>(int nMaxSize)
 		{
-			return new ArrayPtr(nMaxSize * SizeOf(elementType));
+			return new ArrayPtr(nMaxSize * SizeOf(typeof(T)));
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Re-Allocates memory for <paramref name="nMaxSize"/> elements and returns a pointer suitable to be
-		/// passed as array to a COM method.
+		/// Re-Allocates memory for <paramref name="nMaxSize"/> elements and returns a pointer
+		/// suitable to be passed as array to a COM method.
 		/// </summary>
 		/// <param name="arrayPtr">Pointer with previously allocated memory</param>
 		/// <param name="nMaxSize">Max. number of elements in the array</param>
-		/// <param name="elementType">Type of the elements in the array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// -----------------------------------------------------------------------------------
-		static public void ArrayToNative(ref ArrayPtr arrayPtr, int nMaxSize, Type elementType)
+		static public void ArrayToNative<T>(ref ArrayPtr arrayPtr, int nMaxSize)
 		{
-			arrayPtr.Resize(nMaxSize * SizeOf(elementType));
+			arrayPtr.Resize(nMaxSize * SizeOf(typeof(T)));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -78,14 +78,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// be passed to a COM method.
 		/// </summary>
 		/// <param name="array">Managed array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// <returns>Pointer to unmanaged array</returns>
 		/// <remarks>This method is only necessary for [out] or [in,out] arrays. For
 		/// [in] arrays the .NET marshalling works.</remarks>
 		/// -----------------------------------------------------------------------------------
-		static public ArrayPtr ArrayToNative(Array array)
+		static public ArrayPtr ArrayToNative<T>(T[] array)
 		{
-			Type elementType = array.GetType().GetElementType();
-			int elemSize = SizeOf(elementType);
+			int elemSize = SizeOf(typeof(T));
 			ArrayPtr unmanagedObj = new ArrayPtr(array.Length * elemSize);
 			CopyElements(unmanagedObj, array);
 
@@ -100,10 +100,11 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <param name="unmanagedObj">Unamanged array pointer</param>
 		/// <param name="nMaxSize">Maximum size of the array</param>
 		/// <param name="array">Managed array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// <remarks>This method is only necessary for [out] or [in,out] arrays. For
 		/// [in] arrays the .NET marshalling works.</remarks>
 		/// -----------------------------------------------------------------------------------
-		static public void ArrayToNative(ArrayPtr unmanagedObj, int nMaxSize, Array array)
+		static public void ArrayToNative<T>(ArrayPtr unmanagedObj, int nMaxSize, T[] array)
 		{
 			Debug.Assert(array.Length <= nMaxSize);
 			CopyElements(unmanagedObj, array);
@@ -115,10 +116,11 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="unmanagedObj">Unmanaged array pointer</param>
 		/// <param name="array">Managed array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// ------------------------------------------------------------------------------------
-		static private void CopyElements(ArrayPtr unmanagedObj, Array array)
+		static private void CopyElements<T>(ArrayPtr unmanagedObj, T[] array)
 		{
-			Type elementType = array.GetType().GetElementType();
+			Type elementType = typeof(T);
 			int elemSize = SizeOf(elementType);
 
 			IntPtr current = (IntPtr)unmanagedObj;
@@ -150,68 +152,57 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="nativeData">Pointer to unmanaged array</param>
 		/// <param name="cElem">Number of elements in unmanaged array</param>
-		/// <param name="elementType">Type of elements in array</param>
+		/// <typeparam name="T">Type of elements in array</typeparam>
 		/// <returns>Managed array</returns>
 		/// <remarks>This method is only necessary for [out] or [in,out] arrays. For
 		/// [in] arrays the .NET marshalling works.</remarks>
 		/// -----------------------------------------------------------------------------------
-		static public Array NativeToArray(ArrayPtr nativeData, int cElem, Type elementType)
+		static public T[] NativeToArray<T>(ArrayPtr nativeData, int cElem)
 		{
-			int elemSize = SizeOf(elementType);
+			var type = typeof(T);
+			int elemSize = SizeOf(type);
 			IntPtr current = (IntPtr)nativeData;
+			T[] array = new T[cElem];
 
-			if (elementType.IsValueType)
+			if (type.IsValueType)
 			{
-				// For value types, we want to use Array, so that there won't be boxing
-				// of IntPtr
-				Array array = Array.CreateInstance(elementType, cElem);
-
 				for (int i = 0; i < cElem; i++)
 				{
 					// for a value type array, the C++ type is type*
 					try
 					{
-						array.SetValue(Marshal.PtrToStructure(current, elementType), i);
+						array[i] = (T)Marshal.PtrToStructure(current, type);
 					}
 					catch (Exception ex)
 					{
 						// We've had bizarre reports of a null reference inside PtrToStructure.
 						// Report everything that remotely might be relevant.
-						if (elementType == null)
-							throw new Exception("PtrToStructure threw an exception. elementType is null.", ex);
 						if (array == null)
 							throw new Exception("PtrToStructure threw an exception. array is null.", ex);
 						throw new Exception(
-							"PtrToStructure threw an exception. elementType = " + elementType
+							"PtrToStructure threw an exception. type = " + type
 							+ " current = " + current + " cElem = " + cElem + " i = " + i,
 							ex);
 					}
 					current = (IntPtr)((ulong)current + (ulong)elemSize);
 				}
-
-				return array;
 			}
 			else
 			{
-				// For reference types, we can't use Array, because there we have
-				// problems with calling SetValue() with an interface
-				object[] array = (object[])Array.CreateInstance(elementType, cElem);
-
 				for (int i = 0; i < cElem; i++)
 				{
 					// for a reference type array the C++ type is type**
 					IntPtr punk = Marshal.ReadIntPtr(current, i * elemSize);
 					if (punk == IntPtr.Zero)
-						array[i] = null;
+						array[i] = default(T);
 					else
 					{
-						array[i] = Marshal.GetObjectForIUnknown(punk);
+						array[i] = (T)Marshal.GetObjectForIUnknown(punk);
 						Marshal.Release(punk);
 					}
 				}
-
-				return array;
 			}
+			return array;
 		}
 
 		/// -----------------------------------------------------------------------------------

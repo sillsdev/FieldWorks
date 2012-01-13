@@ -110,17 +110,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			set { m_wsDefault = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a default image that indicates a missing or invalid image (similar to the red X
-		/// in Internet Excplorer).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected static Image ImageNotFoundX
-		{
-			get { return Properties.Resources.ImageNotFoundX; }
-		}
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the main interesting method of displaying objects and fragments of them. Most

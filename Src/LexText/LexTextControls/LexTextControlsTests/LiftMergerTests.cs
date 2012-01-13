@@ -24,6 +24,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using System.IO;
@@ -1035,6 +1036,9 @@ namespace LexTextControlsTests
 					"<field type=\"CustomFldEntry\">",
 					"<form lang=\"en\"><text>Entry custom field</text></form>",
 					"</field>",
+					"<field type=\"UndefinedCustom\">",
+					"<form lang=\"en\"><text>Undefined custom field</text></form>",
+					"</field>",
 
 					"<field type=\"CustomFldEntryMulti\">",
 					"<form lang=\"fr\"><text>Entry Multi Frn</text></form>",
@@ -1072,6 +1076,19 @@ namespace LexTextControlsTests
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
+			// One custom field is defined in FW but not in the file
+			var fdNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.MultiUnicode,
+				Class = LexEntryTags.kClassId,
+				Name = "UndefinedCustom",
+				Userlabel = "UndefinedCustom",
+				HelpString = "some help",
+				WsSelector = WritingSystemServices.kwsAnalVerns,
+				DstCls = 0,
+				ListRootId = Guid.Empty
+			};
+			fdNew.UpdateCustomField();
 
 			var sOrigFile = CreateInputFile(s_LiftData5);
 
@@ -1112,11 +1129,20 @@ namespace LexTextControlsTests
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
 							{
-								CustomFieldname = "CustomFldEntry",
-								CustomFieldType = CellarPropertyType.String,
-								StringFieldText = "Entry custom field",
-								StringFieldWs = "en"
+								CustomFieldname = "UndefinedCustom",
+								CustomFieldType = CellarPropertyType.MultiUnicode,
 							};
+			customData.MultiUnicodeStrings.Add("Undefined custom field");
+			customData.MultiUnicodeWss.Add("en");
+			VerifyCustomField(entry, customData, m_customFieldEntryIds["UndefinedCustom"]);
+
+			customData = new CustomFieldData()
+			{
+				CustomFieldname = "CustomFldEntry",
+				CustomFieldType = CellarPropertyType.String,
+				StringFieldText = "Entry custom field",
+				StringFieldWs = "en"
+			};
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFldEntry"]);
 
 			//"<field type=\"CustomFldEntryMulti\">",
@@ -1229,6 +1255,10 @@ namespace LexTextControlsTests
 					"<field tag=\"CustomFldEntry MultiString\">",
 					"<form lang=\"en\"><text>This one Palaso handles as of May24/2011</text></form>",
 					"<form lang=\"qaa-x-spec\"><text>Class= LexEntry; Type=MultiUnicode; WsSelector=kwsAnalVerns</text></form>",
+					"</field>",
+					"<field tag=\"CustomFldEntry String\">",
+					"<form lang=\"en\"><text>Check this out</text></form>",
+					"<form lang=\"qaa-x-spec\"><text>Class= LexEntry; Type=String; WsSelector=kwsVern</text></form>",
 					"</field>",
 
 					"<field tag=\"CustmFldSense Int\">",
@@ -1351,6 +1381,11 @@ namespace LexTextControlsTests
 				GenDateLiftFormat = "201105232"
 			};
 			VerifyCustomField(obj, customData, m_customFieldEntryIds["CustomFldEntry GenDate"]);
+
+			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+			var stringFlid = m_customFieldEntryIds["CustomFldEntry String"];
+			var wsSpec = mdc.GetFieldWs(stringFlid);
+			Assert.That(wsSpec, Is.EqualTo(WritingSystemServices.kwsVern));
 		}
 
 		private void VerifyCustomFieldsSense(ICmObject obj)
@@ -1441,6 +1476,7 @@ namespace LexTextControlsTests
 							Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
 							Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
 						}
+						Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
 					break;
 				case CellarPropertyType.MultiBigString:
 				case CellarPropertyType.MultiBigUnicode:

@@ -14,10 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -35,9 +32,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// If the dialog is being used for exporting multiple texts at a time,
 		/// then the tree must be pruned to show only those texts (and scripture books)
 		/// that were previously selected for interlinearization. The following
-		/// two variables allow this pruning to take place at the appropriate time.
+		/// three variables allow this pruning to take place at the appropriate time.
+		/// The m_selectedText variable indicates which text should be intially checked,
+		/// as per LT-12177.
 		/// </summary>
-		private IStText m_text;
+		private IEnumerable<IStText> m_textsToShow;
+		private IStText m_selectedText;
 		private bool m_fPruneToSelectedSections;
 
 		#region Constructor/Destructor
@@ -88,8 +88,50 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			base.OnHandleCreated(e);
 			if (m_fPruneToSelectedSections)
-				PruneToSelectedSections();
+				PruneToRequestedSectionsAndSelect();
 		}
+
+		/// <summary>
+		/// OK event handler. Checks the text list and warns about situations
+		/// where no texts are selected.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="e"></param>
+		protected void OnOk(Object obj, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			bool showWarning = false;
+			string message = FwControls.kOkbtnEmptySelection;
+			var checkedList = m_treeTexts.GetCheckedNodeList();
+			var own = Owner as XWindow;
+			if (own != null && OnlyGenresChecked(checkedList))
+			{
+				message = FwControls.kOkbtnGenreSelection;
+				own.Mediator.PropertyTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList);
+				showWarning = true;
+			}
+			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)
+				showWarning = true;
+			if (showWarning)
+			{
+				DialogResult result;
+				MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
+				result = MessageBox.Show(message, FwControls.kOkbtnNoTextSelection, buttons);
+				if (result == DialogResult.Cancel) DialogResult = DialogResult.None;
+			}
+		}
+
+		/// <summary>
+		/// Are only genres checked?
+		/// </summary>
+		/// <param name="checkedList">A list of TreeNodes that are also ICmPossibility(s)</param>
+		/// <returns>true if not empty and all genres, false otherwise.</returns>
+		private bool OnlyGenresChecked(List<TreeNode> checkedList)
+		{
+			if (checkedList.Count == 0) return false;
+			return checkedList.All(node => node.Name == "Genre");
+		}
+
 		#endregion
 
 		#region Public Methods
@@ -97,61 +139,72 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Save the information needed to prune the tree later.
 		/// </summary>
+		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
+		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
 		/// ------------------------------------------------------------------------------------
-		public void PruneToSelectedTexts(IStText text)
+		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
 		{
 			m_fPruneToSelectedSections = true;
-			m_text = text;
+			m_textsToShow = interestingTexts;
+			m_selectedText = selectedText;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Remove all unchecked nodes from the tree.
+		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
+		/// Initially select the one specified (m_selectedText).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void PruneToSelectedSections()
+		private void PruneToRequestedSectionsAndSelect()
 		{
-			var unused = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild);
-			foreach (TreeNode tn in unused)
-				m_treeTexts.Nodes.Remove(tn);
+			// ToList() is absolutely necessary to keep from changing node collection while looping!
+			var unusedNodes = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
+			foreach (var treeNode in unusedNodes)
+				m_treeTexts.Nodes.Remove(treeNode);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prune all of this node's children, then return true if this node should be removed.
-		/// If this node is to stay, set its CheckState properly.
+		/// If this node is to be selected, set its CheckState properly, otherwise uncheck it.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private bool PruneChild(TreeNode node)
 		{
 			if (node.Nodes.Count > 0)
 			{
-				List<TreeNode> unused = node.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
-				foreach (TreeNode tn in unused)
-					node.Nodes.Remove(tn);
+				// ToList() is absolutely necessary to keep from changing node collection while looping!
+				var unused = node.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
+				foreach (var subTreeNode in unused)
+					node.Nodes.Remove(subTreeNode);
 			}
 			if (node.Tag != null)
 			{
-				if (m_treeTexts.GetChecked(node) != TriStateTreeView.CheckState.Checked)
+				if (node.Tag is IStText)
 				{
-					if (node.Nodes.Count == 0)
+					if (!m_textsToShow.Contains(node.Tag as IStText))
 						return true;
-				}
-				else if (node.Tag is IStText && node.Tag != m_text)
-				{
-					m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Unchecked);
+					if (node.Tag == m_selectedText)
+					{
+						m_treeTexts.SelectedNode = node;
+						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Checked);
+					}
+					else
+						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Unchecked);
 				}
 				else
 				{
-					m_treeTexts.SelectedNode = node;
+					if (node.Nodes.Count == 0)
+						return true; // Delete Genres and Books with no texts
 				}
 			}
 			else
 			{
+				// Usually this condition means 'No Genre', but could also be Testament node
 				if (node.Nodes.Count == 0)
 					return true;
 			}
-			return false;
+			return false; // Keep this node!
 		}
 
 		/// <summary>
@@ -190,6 +243,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.Name = "FilterTextsDialog";
 			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.Controls.SetChildIndex(this.m_btnOK, 0);
+			this.m_btnOK.Click += this.OnOk;
 			this.Controls.SetChildIndex(this.m_treeViewLabel, 0);
 			this.Controls.SetChildIndex(this.m_treeTexts, 0);
 			this.ResumeLayout(false);

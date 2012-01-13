@@ -126,7 +126,7 @@
 	<value>8, 8</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>856, 23</value>
+	<value>941, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
@@ -232,7 +232,7 @@
 	<value>432, 312</value>
   </data>
   <data name="wsCombo.Size" type="System.Drawing.Size, System.Drawing">
-	<value>120, 21</value>
+	<value>205, 21</value>
   </data>
   <data name="wsCombo.TabIndex" type="System.Int32, mscorlib">
 	<value>24</value>
@@ -241,7 +241,7 @@
 	<value>wsCombo</value>
   </data>
   <data name="&gt;&gt;wsCombo.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.14525, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.2.0.21052, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;wsCombo.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -255,15 +255,15 @@
   <data name="moveDownButton.ImageIndex" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
-  <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing">
 	<value>17, 17</value>
-  </metadata>
+  </data>
   <data name="imageList1.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
 	<value>
 		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
 		LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
 		ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAABi
-		CQAAAk1TRnQBSQFMAgEBAgEAAQQBAAEEAQABIAEAASABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+		CQAAAk1TRnQBSQFMAgEBAgEAAQwBAAEMAQABIAEAASABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
 		AwABgAMAASADAAEBAQABCAYAARAYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
 		AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
 		AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
@@ -307,7 +307,7 @@
 </value>
   </data>
   <data name="moveDownButton.Location" type="System.Drawing.Point, System.Drawing">
-	<value>568, 184</value>
+	<value>664, 175</value>
   </data>
   <data name="moveDownButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>32, 32</value>
@@ -334,7 +334,7 @@
 	<value>0</value>
   </data>
   <data name="moveUpButton.Location" type="System.Drawing.Point, System.Drawing">
-	<value>568, 136</value>
+	<value>664, 134</value>
   </data>
   <data name="moveUpButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>32, 32</value>
@@ -409,7 +409,7 @@
 	<value>Bottom, Right</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-	<value>520, 352</value>
+	<value>605, 352</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -439,7 +439,7 @@
 	<value>Bottom, Right</value>
   </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-	<value>432, 352</value>
+	<value>517, 352</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -475,13 +475,13 @@
 	<value>Writing System</value>
   </data>
   <data name="InfoColumn.Width" type="System.Int32, mscorlib">
-	<value>136</value>
+	<value>225</value>
   </data>
   <data name="currentList.Location" type="System.Drawing.Point, System.Drawing">
 	<value>296, 56</value>
   </data>
   <data name="currentList.Size" type="System.Drawing.Size, System.Drawing">
-	<value>256, 248</value>
+	<value>362, 248</value>
   </data>
   <data name="currentList.TabIndex" type="System.Int32, mscorlib">
 	<value>16</value>
@@ -529,7 +529,7 @@
 	<value>Bottom, Right</value>
   </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-	<value>344, 352</value>
+	<value>429, 352</value>
   </data>
   <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -552,14 +552,14 @@
   <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
 	<value>10</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
 	<value>True</value>
-  </metadata>
+  </data>
   <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
 	<value>5, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>616, 390</value>
+	<value>701, 390</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
 	<value>Configure Interlinear Lines</value>

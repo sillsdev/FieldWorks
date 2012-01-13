@@ -19,7 +19,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

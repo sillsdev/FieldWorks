@@ -571,10 +571,10 @@ namespace SIL.HermitCrab
 
 			entry.MPRFeatures = LoadMPRFeatures(entryNode.GetAttribute("ruleFeatures"));
 
-			entry.HeadFeatures = LoadSynFeats(entryNode.SelectSingleNode("HeadFeatures"),
+			entry.HeadFeatures = LoadSynFeats(entryNode.SelectSingleNode("AssignedHeadFeatures"),
 				m_curMorpher.HeadFeatureSystem);
 
-			entry.FootFeatures = LoadSynFeats(entryNode.SelectSingleNode("FootFeatures"),
+			entry.FootFeatures = LoadSynFeats(entryNode.SelectSingleNode("AssignedFootFeatures"),
 				m_curMorpher.FootFeatureSystem);
 
 			Stratum stratum = GetStratum(entryNode.GetAttribute("stratum"));

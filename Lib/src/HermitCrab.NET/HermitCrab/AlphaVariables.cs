@@ -104,22 +104,18 @@ namespace SIL.HermitCrab
 		{
 			foreach (KeyValuePair<string, bool> varPolarity in variables)
 			{
-				bool match = false;
+				List<FeatureValue> valuesToAdd = new List<FeatureValue>();
 				foreach (FeatureValue value in GetVarFeatValue(varPolarity.Key, varPolarity.Value, instantiatedVars))
 				{
 					if (seg.FeatureValues.Get(value))
-					{
-						ICollection<FeatureValue> values = instantiatedVars.GetValues(varPolarity.Key);
-						if (values.Contains(value))
-						{
-							instantiatedVars.Add(varPolarity.Key, value);
-						}
-						match = true;
-					}
+						valuesToAdd.Add(value);
 				}
 
-				if (!match)
+				if (valuesToAdd.Count == 0)
 					return false;
+
+				foreach (FeatureValue value in valuesToAdd)
+					instantiatedVars.Add(varPolarity.Key, value);
 			}
 
 			return true;

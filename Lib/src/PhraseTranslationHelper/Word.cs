@@ -21,6 +21,7 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Data Members
 		private readonly string m_sText;
 		private static readonly Dictionary<string, Word> s_words = new Dictionary<string, Word>(1000);
+		private static readonly Dictionary<Word, HashSet<Word>> s_inflectedWords = new Dictionary<Word, HashSet<Word>>();
 		#endregion
 
 		#region Constructors
@@ -48,9 +49,47 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			get { return m_sText; }
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Enumerates all "known" words (i.e., those found in the English questions).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal static IEnumerable<string> AllWords
+		{
+			get { return s_words.Keys; }
+		}
 		#endregion
 
 		#region Public methods
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds the given alternate (inflected) form of this word to the collection of words
+		/// that will be considered as equivalent words.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void AddAlternateForm(Word inflectedForm)
+		{
+			HashSet<Word> inflectedForms;
+			if (!s_inflectedWords.TryGetValue(this, out inflectedForms))
+				s_inflectedWords[this] = inflectedForms = new HashSet<Word>();
+			inflectedForms.Add(inflectedForm);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified other word is equivalent to this word (either the
+		/// same word or an inflected form of it).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsEquivalent(Word otherWord)
+		{
+			if (this == otherWord)
+				return true;
+			HashSet<Word> inflectedForms;
+			return (s_inflectedWords.TryGetValue(this, out inflectedForms) && inflectedForms.Contains(otherWord));
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns whether or not a Word for the specified text exists.

@@ -68,26 +68,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private IEncConverter m_prevDataEncoding = null;
 		#endregion
 
-		#region IComparer classes
-		/// -----------------------------------------------------------------------------------------
-		/// <summary>
-		/// Class to compare strings and sort by length (longest first)
-		/// </summary>
-		/// -----------------------------------------------------------------------------------------
-		private class LengthComparer : IComparer<string>
-		{
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Comparison method
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public int Compare(string obj1, string obj2)
-			{
-				return (obj2.Length - obj1.Length);
-			}
-		}
-		#endregion
-
 		#region constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -124,7 +104,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 
-			m_InlineBeginAndEndMarkers.Sort(new LengthComparer());
+			m_InlineBeginAndEndMarkers.Sort(new StrLengthComparer(false));
 
 			// Build a list of all of the characters that inline markers start with
 			Set<char> tempCharList = new Set<char>();

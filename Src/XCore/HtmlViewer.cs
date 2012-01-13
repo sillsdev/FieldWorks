@@ -144,6 +144,14 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion // IxCoreColleague implementation
 
 		#region IxCoreContentControl implementation

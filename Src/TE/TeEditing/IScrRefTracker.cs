@@ -11,7 +11,7 @@
 // File: IScrRefTracker.cs
 // Responsibility: DavidO
 // ---------------------------------------------------------------------------------------------
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

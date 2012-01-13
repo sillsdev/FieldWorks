@@ -367,7 +367,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			m_para = para;
 			m_tssPara = para.Contents;
-			m_paraWs = TsStringUtils.GetWsAtOffset(m_tssPara, 0);
+
+			// must prevent a first para.seg.word in an analysis ws from corrupting the parse
+			// only word forms in this ws will have analyses, the rest are turned into punctuation! LT-12304
+			// Until a model change is made to store the user's preffered vernacular ws,
+			// the user will always be able to defeat whatever vern ws we use here.
+			// For now, look for the first vern ws in the baseline text
+			m_paraWs = TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, m_para.Contents);
 			if (m_paraWs <= 0)
 				m_paraWs = m_cache.DefaultVernWs;
 			m_wordMaker = new WordMaker(m_tssPara, para.Cache.WritingSystemFactory);

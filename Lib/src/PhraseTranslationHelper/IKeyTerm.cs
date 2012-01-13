@@ -23,7 +23,8 @@ namespace SILUBS.PhraseTranslationHelper
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the term in the source language.
+		/// Gets the term in the "source" language (i.e., the source of the UNS questions list,
+		/// which is in English).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		string Term { get; }

@@ -1147,18 +1147,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="flid">The property to set.</param>
 		/// <param name="newValue">The new value.</param>
+		/// <param name="useAccessor">true to add information to UOW, false to just set it. (Name is strange, but USUALLY
+		/// this is achieved by using or bypassing the accessor for a property, so this is the common name
+		/// for this argument.)</param>
 		/// <remarks>
 		/// There will be exceptions thrown, if there is no such property.
 		/// </remarks>
-		internal void SetNonModelPropertyForSDA(int flid, object newValue)
+		internal void SetNonModelPropertyForSDA(int flid, object newValue, bool useAccessor)
 		{
 			CheckLegalFlidForObject(flid);
 			try
 			{
 				if (m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>().IsCustom(flid))
-					SetCustomPropertyForSDA(flid, newValue, true);
+					SetCustomPropertyForSDA(flid, newValue, useAccessor);
 				else
-					SetVirtualPropertyForSDA(flid, newValue, true);
+					SetVirtualPropertyForSDA(flid, newValue, useAccessor);
 			}
 			catch (FDOInvalidFieldException)
 			{
@@ -1497,8 +1500,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Now actually change it. It's important to do this after RemoveOwnee, because side effects of
 			// remove may require it to still know its old owner (e.g., to figure its old OwningFlid).
 			m_owner = owner; // Maybe be null.
-
 			// Caller is expected to have added 'this' to the actual new owning property.
+
+			if (oldOwner == null || oldOwner == owner)
+				return;
+			// We need to register the added object as changed, even though the only thing that has
+			// changed in it is the link to its owner.  Registering the Owner field as changed
+			// doesn't work, because a later Undo / Redo will fail.  (Those operations don't recognize
+			// the flid for Owner, and probably shouldn't do anything with it anyway.)
+			// If the object is not registered as changed, its original XML (including the old, possibly
+			// deleted, owner's guid) will be written out.  This results in interesting (and almost
+			// unfixable) crashes the next time the project is opened.
+			Cache.ServiceLocator.GetInstance<IUnitOfWorkService>().RegisterObjectOwnershipChange(this, oldOwner.Guid, oldOwningFlid, owningFlid);
+
 		}
 
 		/// <summary>
@@ -1580,6 +1594,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// Use SetProperty/Replace to remove it, which will come back into
 				// this method with hvoOwner being kFDOFrameworkDeletingObjectHvo.
 				int tag = OwningFlid;
+				if(tag == 0)
+				{
+					throw new FDOInvalidFieldException(String.Format("Error when deleting object of class {0}, we were not found in our owner {1}.", goner.GetType().FullName, owner.GetType().FullName));
+				}
 				switch ((CellarPropertyType)Services.MetaDataCache.GetFieldType(tag))
 				{
 					default:
@@ -2090,7 +2108,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, ICmObject newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2216,7 +2234,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, int newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 			// Don't set these properties.
 			//case (int)CmObjectFields.kflidCmObject_Class:
 			//case (int)CmObjectFields.kflidCmObject_OwnFlid:
@@ -2240,7 +2258,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, bool newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2266,7 +2284,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, Guid newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 			// Don't set these properties.
 			//case (int)CmObjectFields.kflidCmObject_Guid:
 		}
@@ -2288,7 +2306,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, DateTime newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2309,7 +2327,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, byte[] newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2330,7 +2348,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, ITsString newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2361,7 +2379,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, string newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2382,7 +2400,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, ITsTextProps newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		/// <summary>
@@ -2402,7 +2420,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="useAccessor"></param>
 		protected virtual void SetPropertyInternal(int flid, GenDate newValue, bool useAccessor)
 		{
-			SetNonModelPropertyForSDA(flid, newValue);
+			SetNonModelPropertyForSDA(flid, newValue, useAccessor);
 		}
 
 		#endregion ISilDataAccess related methods
@@ -2491,6 +2509,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected virtual void ClearIncomingRefsOnOutgoingRefsInternal()
 		{
+			if (Cache == null) // guard which may help with LT-12331. SHOULD never be called on already deleted object.
+			{
+				Debug.Fail("Clearing incoming refs on outgoing refs for an object already deleted");
+				return;
+			}
 			var mdc = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			foreach (var flid in mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.AllReference))
 			{
@@ -2873,8 +2896,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							// The new value was created using new Foo().
 							obj.InitializeNewCmObject(m_cache, this, flid, 0);
 						else
-							// The new value is already owned by some other object.
-							obj.SetOwner(this, flid, 0);
+						{
+							// The new value is already owned by some other object. (or we're doing an Undo/Redo)
+							if (useAccessor)
+								obj.SetOwner(this, flid, 0);
+							else
+								((CmObject) obj).m_owner = this;
+						}
 					}
 					break;
 				case CellarPropertyType.ReferenceAtomic:
@@ -2924,13 +2952,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						obj.AddIncomingRef(this);
 					}
 				}
-			}
-
-			if (dataType == CellarPropertyType.OwningAtomic && oldValue != null)
-			{
-				// delete the old owned object
-				var obj = GetRealObject(oldValue);
-				obj.DeleteObject();
+				if (dataType == CellarPropertyType.OwningAtomic && oldValue != null)
+				{
+					// delete the old owned object
+					var obj = GetRealObject(oldValue);
+					obj.DeleteObject();
+				}
 			}
 		}
 

@@ -277,7 +277,7 @@ namespace XCore
 			//then it needs to implement the corresponding Display method
 			//and disable it from there.
 			bool hasReceiver = mediator.HasReceiver(command.MessageString);
-			UIItemDisplayProperties display = new UIItemDisplayProperties(group, label, hasReceiver, command.IconName, defaultVisible);
+			UIItemDisplayProperties display = new UIItemDisplayProperties(group, label, hasReceiver && defaultVisible, command.IconName, defaultVisible);
 
 			//OK, this is a little non-obvious
 			//first we allow anyone who knows about this specific command to influence how it is displayed
@@ -400,7 +400,12 @@ namespace XCore
 			UIItemDisplayProperties display =new UIItemDisplayProperties(m_parent, this.Label,
 				this.m_defaultVisible, ImageName, this.m_defaultVisible);
 			display.Checked = this.Checked;
-			m_mediator.SendMessage("Display"+this.BoolPropertyName, null, ref display);
+			// The OnDisplay method name is usually just made up of the property name. However in a few cases
+			// we've used property names with hyphens in them that are inconvenient to change (the only current
+			// known group are those starting with ShowHiddenFields-), partly because they occur in settings
+			// files as well as the program. So we change any hyphens to underscore so that it's actually possible
+			// to implement the method that this code is looking for.
+			m_mediator.SendMessage("Display"+this.BoolPropertyName.Replace('-', '_'), null, ref display);
 			if (display.Text.StartsWith("$"))
 			{
 				int iOfEquals = display.Text.IndexOf("=");
@@ -508,7 +513,7 @@ namespace XCore
 		/// <returns></returns>
 		override public UIItemDisplayProperties GetDisplayProperties()
 		{
-			UIItemDisplayProperties display =new UIItemDisplayProperties(m_parent, this.Label, true, ImageName, this.m_defaultVisible);
+			UIItemDisplayProperties display =new UIItemDisplayProperties(m_parent, this.Label, m_defaultVisible, ImageName, m_defaultVisible);
 			display.Checked = this.Checked;
 			m_mediator.SendMessage("Display"+this.PropertyName, null, ref display);
 

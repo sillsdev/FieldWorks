@@ -25,13 +25,21 @@ DEFINE_THIS_FILE
 
 
 #ifdef WIN32
-// TSF not supported on Linux yet.
 #undef ENABLE_TSF
 #define ENABLE_TSF
-#endif
+#else /* ! WIN32 */
+#undef MANAGED_KEYBOARDING
+#define MANAGED_KEYBOARDING
+#endif /* ! WIN32 */
 
 #undef Tracing_KeybdSelection
 //#define Tracing_KeybdSelection
+
+#ifndef WIN32
+static const GUID ViewInputManager_guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E");
+
+#define CLSID_ViewInputManager ViewInputManager_guid
+#endif
 
 //:>********************************************************************************************
 //:>	Forward declarations
@@ -62,6 +70,8 @@ VwRootBox::VwRootBox(VwPropertyStore * pzvps)
 
 #ifdef ENABLE_TSF
 	m_qtxs.Attach(NewObj VwTextStore(this));
+#elif defined(MANAGED_KEYBOARDING)
+	m_qvim.CreateInstance(CLSID_ViewInputManager);
 #endif /*ENABLE_TSF*/
 }
 
@@ -80,6 +90,8 @@ VwRootBox::VwRootBox()
 
 #ifdef ENABLE_TSF
 	m_qtxs.Attach(NewObj VwTextStore(this));
+#elif defined(MANAGED_KEYBOARDING)
+	m_qvim.CreateInstance(CLSID_ViewInputManager);
 #endif /*ENABLE_TSF*/
 }
 
@@ -88,6 +100,8 @@ VwRootBox::~VwRootBox()
 {
 #ifdef ENABLE_TSF
 	Assert(!m_qtxs); // Make sure the Close method was called before it gets destroyed.
+#elif defined(MANAGED_KEYBOARDING)
+	Assert(!m_qvim); // Make sure the Close method was called before it gets destroyed.
 #endif /*ENABLE_TSF*/
 	Assert(!m_qsda); // Make sure the Close method was called before it gets destroyed.
 	// Any selections that may still be around (e.g., saved in the Find dialog), cannot be
@@ -264,13 +278,14 @@ STDMETHODIMP VwRootBox::SetSite(IVwRootSite * pvrs)
 
 	m_qvrs = pvrs;
 
-#if WIN32 // TODO-Linux: Not yet ported
 #ifdef ENABLE_TSF
 	// Initialize for interaction with Text Services.
 	if (m_qtxs)
 		m_qtxs->Init();
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+		CheckHr(m_qvim->Init(this));
 #endif /*ENABLE_TSF*/
-#endif
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
@@ -666,6 +681,11 @@ STDMETHODIMP VwRootBox::DestroySelection()
 	// and we get errors because our VwTextStore doesn't work right when there's no selection.
 	if (m_qtxs)
 		m_qtxs->TerminateAllCompositions();
+#elif defined(MANAGED_KEYBOARDING)
+	// If we don't do this the text service keeps trying to do things
+	// and we get errors because our VwTextStore doesn't work right when there's no selection.
+	if (m_qvim)
+		CheckHr(m_qvim->TerminateAllCompositions());
 #endif /*ENABLE_TSF*/
 	m_qvwsel->Hide();
 	m_qvwsel = NULL;
@@ -924,10 +944,11 @@ HRESULT VwRootBox::MakeSimpleSelAt(VwBox * pboxStart, int itssStart,
 	if (ppsel == NULL)
 		ppsel = &qselT;
 
-	VwBox * pbox = pboxStart;
 	if (fInitial)
 	{
-		for (; pbox; pbox = NextCandidate(pbox->NextInRootSeq(), pboxStart, fContinueToParents))
+		for (VwBox * pbox = pboxStart;
+			pbox;
+			pbox = NextCandidate(pbox->NextInRootSeq(), pboxStart, fContinueToParents))
 		{
 			// For now we can only make selections in paragraph boxes
 			pvpbox = dynamic_cast<VwParagraphBox *>(pbox);
@@ -976,7 +997,9 @@ HRESULT VwRootBox::MakeSimpleSelAt(VwBox * pboxStart, int itssStart,
 	{
 		// Make selection near end
 		fAssocPrev = true;
-		for (; pbox; pbox = NextCandidate(pbox->NextInReverseRootSeq(), pboxStart, fContinueToParents))
+		for (VwBox * pbox = pboxStart;
+			pbox;
+			pbox = NextCandidate(pbox->NextInReverseRootSeq(), pboxStart, fContinueToParents))
 		{
 			// For now we can only make selections in paragraph boxes
 			pvpbox = dynamic_cast<VwParagraphBox *>(pbox);
@@ -1264,6 +1287,16 @@ STDMETHODIMP VwRootBox::MakeTextSelInObj(int ihvoRoot, int cvsli, VwSelLevInfo *
 			qselRet = qselFirst;
 			pselRet = dynamic_cast<VwTextSelection *>(qselRet.Ptr());
 			pselRet->ExtendEndTo(pselLast);
+			// pathologically, when trying to select a whole object, it may have no content...
+			// for example, trying to select a whole object, where the whole object is an empty division.
+			// We then find typically that the first selection we can make after the start of the object is
+			// in the next object, while the last thing we can select before its end is at the end of the previous
+			// object. This is not a valid selection of the target object. One way to detect it is that the
+			// end-points of the selection are not in the expected order. Return a null selection in this case to indicate failure.
+			ComBool fResultHasEndBeforeAnchor;
+			CheckHr(pselRet->get_EndBeforeAnchor(&fResultHasEndBeforeAnchor));
+			if (fResultHasEndBeforeAnchor)
+				return S_OK;
 		}
 		if (fInstall)
 		{
@@ -1739,9 +1772,9 @@ STDMETHODIMP VwRootBox::OnExtendedKey(int chw, VwShiftStatus ss, int nFlags)
 					fNeedShow = true;
 
 					// Insert a hard line break
-					wchar chw = kchwHardLineBreak;
+					wchar chwHardLineBreak = kchwHardLineBreak;
 					int encPending = -1;	// bogus
-					m_qvwsel->OnTyping(pvg, &chw, 1, ss, &encPending);
+					m_qvwsel->OnTyping(pvg, &chwHardLineBreak, 1, ss, &encPending);
 					break;
 				}
 			case kfssNone:
@@ -2137,10 +2170,8 @@ STDMETHODIMP VwRootBox::MouseDown(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 	m_fInDrag = false;
 	m_fNewSelection = false;
 
-#ifdef ENABLE_TSF
-	if (m_qtxs && m_qtxs->MouseEvent(xd, yd, rcSrc1, rcDst1, kmeDown))
+	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeDown))
 		return S_OK;
-#endif /*ENABLE_TSF*/
 
 	HoldScreenGraphics hg(this);
 	IVwGraphics * pvg = hg.m_qvg;
@@ -2253,10 +2284,8 @@ STDMETHODIMP VwRootBox::MouseDblClk(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 	Rect rcDstBox;
 	m_fNewSelection = false;
 	m_fInDrag = false;
-#ifdef ENABLE_TSF
-	if (m_qtxs && m_qtxs->MouseEvent(xd, yd, rcSrc1, rcDst1, kmeDblClick))
+	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeDblClick))
 		return S_OK;
-#endif /*ENABLE_TSF*/
 
 	HoldScreenGraphics hg(this);
 	IVwGraphics * pvg = hg.m_qvg;
@@ -2308,10 +2337,8 @@ STDMETHODIMP VwRootBox::MouseDblClk(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 STDMETHODIMP VwRootBox::MouseMoveDrag(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 {
 	BEGIN_COM_METHOD;
-#ifdef ENABLE_TSF
-	if (m_qtxs && m_qtxs->MouseEvent(xd, yd, rcSrc1, rcDst1, kmeMoveDrag))
+	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeMoveDrag))
 		return S_OK;
-#endif /*ENABLE_TSF*/
 
 	if (m_fNewSelection)
 	{
@@ -2336,10 +2363,8 @@ STDMETHODIMP VwRootBox::MouseDownExtended(int xd, int yd, RECT rcSrc1, RECT rcDs
 	Rect rcDstRoot(rcDst1);
 	Rect rcSrcBox;
 	Rect rcDstBox;
-#ifdef ENABLE_TSF
-	if (m_qtxs && m_qtxs->MouseEvent(xd, yd, rcSrc1, rcDst1, kmeExtend))
+	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeExtend))
 		return S_OK;
-#endif /*ENABLE_TSF*/
 
 	HoldScreenGraphics hg(this);
 	IVwGraphics * pvg = hg.m_qvg;
@@ -2387,10 +2412,8 @@ STDMETHODIMP VwRootBox::MouseUp(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 	Rect rcDstBox;
 
 
-#ifdef ENABLE_TSF
-	if (m_qtxs && m_qtxs->MouseEvent(xd, yd, rcSrc1, rcDst1, kmeUp))
+	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeUp))
 		return S_OK;
-#endif /*ENABLE_TSF*/
 
 	// Don't try to do a hotlink action if there is a range selection.
 	ComBool rangeSel(FALSE);
@@ -2501,6 +2524,9 @@ void VwRootBox::HandleActivate(VwSelectionState vss, bool fSetFocus)
 #ifdef ENABLE_TSF
 	if (vss == vssEnabled && fSetFocus && m_qtxs)
 		m_qtxs->SetFocus();
+#elif defined(MANAGED_KEYBOARDING)
+	if (vss == vssEnabled && fSetFocus && m_qvim)
+		CheckHr(m_qvim->SetFocus());
 #endif /*ENABLE_TSF*/
 	// Do nothing (else) if we are already in the right state. (This could produce flicker.)
 	if (m_vss == vss)
@@ -2508,6 +2534,9 @@ void VwRootBox::HandleActivate(VwSelectionState vss, bool fSetFocus)
 #ifdef ENABLE_TSF
 	if (vss != vssEnabled && m_qtxs)
 		m_qtxs->OnLoseFocus();
+#elif defined(MANAGED_KEYBOARDING)
+	if (vss != vssEnabled && m_qvim)
+		CheckHr(m_qvim->KillFocus());
 #endif /*ENABLE_TSF*/
 
 	m_vss = vss;
@@ -2551,7 +2580,13 @@ STDMETHODIMP VwRootBox::get_IsCompositionInProgress(ComBool * pfInProgress)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pfInProgress);
 
+#ifdef ENABLE_TSF
 	*pfInProgress = m_qtxs->IsCompositionActive();
+#elif defined(MANAGED_KEYBOARDING)
+	CheckHr(m_qvim->get_IsCompositionActive(pfInProgress));
+#else
+	*pfInProgress = FALSE;
+#endif
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
@@ -2962,7 +2997,11 @@ STDMETHODIMP VwRootBox::SetKeyboardForWs(ILgWritingSystem * pws, BSTR * pbstrAct
 	OutputDebugStringA(sta.Chars());
 #endif
 	ILgTextServicesPtr qlts;
+#ifdef WIN32
 	qlts.CreateInstance(CLSID_LgTextServices);
+#else
+	CheckHr(m_qvim->QueryInterface(IID_ILgTextServices, (void **) &qlts));
+#endif
 	CheckHr(qlts->SetKeyboard(nLangId, sbstrKeymanKbd, pnActiveLangId, pbstrActiveKeymanKbd,
 		pfSelectLangPending));
 #if ENABLE_INPUT_METHODS
@@ -2994,6 +3033,9 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 #ifdef ENABLE_TSF
 	if (m_qtxs)
 		m_qtxs->OnLayoutChange();
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
@@ -3682,6 +3724,15 @@ STDMETHODIMP VwRootBox::Close()
 		m_qtxs->Close();	// Clear out any internal smart pointers.
 		m_qtxs.Clear();
 	}
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)		// In case this method is called twice (which can happen).
+	{
+		// m_qvim gets created in the c'tor, so one could think of destroying it in the d'tor.
+		// However, because the view manager holds a smart pointer to us (VwRootBox) this would
+		// result in the RootBox not being deleted because the reference count is one off.
+		CheckHr(m_qvim->Close());	// Clear out any internal smart pointers.
+		m_qvim.Clear();
+	}
 #endif /*ENABLE_TSF*/
 	// All our selections become invalid (and therefore no longer hold a reference count to
 	// this).
@@ -3973,6 +4024,20 @@ void VwRootBox::NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite)
 #ifdef ENABLE_TSF
 	if (m_qtxs)
 		m_qtxs->OnSelChange(nHow);
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+	{
+		// I'm not sure if it is really necessary to store m_pvpboxLastSelectedAnchor or if we
+		// could get it dynamically when we need it. But I'm trying to reimplement
+		// VwTextStore::OnSelChange as close as possible.
+		if (nHow != ksctSamePara)
+		{
+			VwTextSelection * psel = dynamic_cast<VwTextSelection *>(Selection());
+			m_pvpboxLastSelectedAnchor = psel ? psel->AnchorBox() : NULL;
+		}
+
+		CheckHr(m_qvim->OnSelectionChange(nHow));
+	}
 #endif /*ENABLE_TSF*/
 }
 
@@ -4006,6 +4071,9 @@ void VwRootBox::LayoutFull()
 #ifdef ENABLE_TSF
 	if (m_qtxs)
 		m_qtxs->OnLayoutChange();
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
 }
 
@@ -4297,6 +4365,9 @@ bool VwRootBox::RelayoutCore(IVwGraphics * pvg, int dxpAvailWidth, VwRootBox * p
 #ifdef ENABLE_TSF
 	if (m_qtxs)
 		m_qtxs->OnLayoutChange();
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
 	return result;
 }
@@ -4880,6 +4951,9 @@ void VwRootBox::MaximizeLaziness(VwBox * pboxMinKeep, VwBox * pboxLimKeep)
 #ifdef ENABLE_TSF
 	if (m_qtxs)
 		m_qtxs->AddToKeepList(&li);
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_pvpboxLastSelectedAnchor)
+		li.KeepSequence(m_pvpboxLastSelectedAnchor, m_pvpboxLastSelectedAnchor->NextOrLazy());
 #endif /*ENABLE_TSF*/
 	li.ConvertAsMuchAsPossible();
 }
@@ -5429,4 +5503,20 @@ STDMETHODIMP VwRootBox::get_Synchronizer(IVwSynchronizer ** ppsync)
 		(*ppsync)->AddRef();
 
 	END_COM_METHOD(g_fact, IID_IVwSynchronizer);
+}
+
+inline bool VwRootBox::OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me)
+{
+#ifdef ENABLE_TSF
+	if (m_qtxs)
+		return m_qtxs->MouseEvent(xd, yd, rcSrc, rcDst, me);
+#elif defined(MANAGED_KEYBOARDING)
+	if (m_qvim)
+	{
+		ComBool fHandled;
+		CheckHr(m_qvim->OnMouseEvent(xd, yd, rcSrc, rcDst, me, &fHandled));
+		return fHandled;
+	}
+#endif /* ENABLE_TSF */
+	return false;
 }

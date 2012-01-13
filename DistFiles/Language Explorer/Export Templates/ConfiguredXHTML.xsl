@@ -89,10 +89,28 @@ display/printout!
   <!-- convert <LexEntry id="xyz"> to <div class="entry" id="xyz"> -->
 
   <xsl:template match="LexEntry">
-	<div class="entry">
-	  <xsl:copy-of select="@*"/><xsl:text>&#13;&#10;</xsl:text>
-	  <xsl:apply-templates/><xsl:text>&#13;&#10;</xsl:text>
-	</div><xsl:text>&#13;&#10;</xsl:text>
+		<!-- For minor entries, we need to make sure the minorentry css class is invoked (LT-12119).
+		It seems the only way of detecting this is to look for a grandchild Paragraph style of Dictionary-Minor. -->
+		<xsl:choose>
+			<xsl:when test="*/Paragraph[@style='Dictionary-Minor']">
+				<div class="minorentry">
+					<xsl:copy-of select="@*"/>
+					<xsl:text>&#13;&#10;</xsl:text>
+					<xsl:apply-templates/>
+					<xsl:text>&#13;&#10;</xsl:text>
+				</div>
+				<xsl:text>&#13;&#10;</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="entry">
+					<xsl:copy-of select="@*"/>
+					<xsl:text>&#13;&#10;</xsl:text>
+					<xsl:apply-templates/>
+					<xsl:text>&#13;&#10;</xsl:text>
+				</div>
+				<xsl:text>&#13;&#10;</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
   </xsl:template>
 
   <!-- process the pictures first so that they can float inside this entry instead of after (in Firefox) -->
@@ -108,13 +126,12 @@ display/printout!
   <xsl:template match="_PicturesOfSenses">
   </xsl:template>
 
-  <!-- ignore some unwanted levels -->
+	<!-- ignore some unwanted levels -->
 	<xsl:template match="Paragraph[@style='Dictionary-Subentry']">
-		<div class="Dictionary-Subentry">
-		<xsl:choose> <!-- If our parent is a LexEntryLink we should add an anchor. It must be added inside the div for valid XHTML so do it here rather in the LexEntryLink template -->
-			<xsl:when test="parent::LexEntryLink"><a href="#{../@target}"><xsl:apply-templates/></a></xsl:when>
-			<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
-		</xsl:choose>
+		<div class="subentry">
+			<!-- If our parent is a LexEntryLink we should add an id as an anchor. We want it on the div element so add it here rather than in the LexEntryLink  itself -->
+			<xsl:if test="parent::LexEntryLink[@target]"><xsl:attribute name="id"><xsl:value-of select="../@target"/></xsl:attribute></xsl:if>
+			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 
@@ -586,6 +603,7 @@ display/printout!
 
   <xsl:template match="LexEntryLink">
 	  <xsl:choose>
+	  <xsl:when test="parent::_Subentries"><xsl:apply-templates/></xsl:when> <!-- If the parent is "subentries" this is a subentry and there isn't another one to jump to. -->
 	  <xsl:when test="Paragraph/LexEntryLink_Hvo"><div class="subentry"><a href="#{@target}"><xsl:apply-templates/></a></div><xsl:text>&#13;&#10;</xsl:text></xsl:when>
 	  <xsl:when test="count(../LexEntryLink)+count(../LexSenseLink) > 1"><span class="xitem"><a href="#{@target}"><xsl:apply-templates/></a></span></xsl:when>
 	  <xsl:when test="child::span"><a href="#{@target}"><xsl:apply-templates/></a></xsl:when> <!-- if there is a span child the anchor should always be added (I think) naylor Jul 2011 -->
@@ -651,10 +669,15 @@ display/printout!
 
   <xsl:template match="LexSense">
 	<xsl:choose>
-	  <xsl:when test="Paragraph">
+			<!-- If there is a Paragraph style indicated, put that in: -->
+	  <xsl:when test="../../Paragraph">
 		<div class="sensepara">
-		  <xsl:copy-of select="@id"/>
-		  <xsl:if test="Paragraph/@style"><xsl:attribute name="style"><xsl:value-of select="Paragraph/@style"/></xsl:attribute></xsl:if>
+					<xsl:copy-of select="@id"/>
+					<xsl:if test="../../Paragraph/@style"><xsl:attribute name="style"><xsl:value-of select="../../Paragraph/@style"/></xsl:attribute></xsl:if>
+					<!-- If there is a sense number indicated, this will precede the current LexSense (LT-12119), so we have to hunt for it: -->
+					<xsl:if test="preceding-sibling::ItemNumber[1]/@class='xsensenumber'">
+						<span class="xsensenumber"><xsl:value-of select="../ItemNumber/Str/Run"/></span>
+					</xsl:if>
 		  <xsl:apply-templates/>
 		</div>
 	  </xsl:when>
@@ -673,10 +696,13 @@ display/printout!
   </xsl:template>
 
 	<xsl:template match="ItemNumber">
-		<span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
-	</xsl:template>
+		<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
+		<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
+	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
+		</xsl:if>
+  </xsl:template>
 
-  <!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
+	<!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
 
   <xsl:template match="MoMorphSynAnalysisLink_MLPartOfSpeech">
 	<xsl:call-template name="ProcessMultiString"></xsl:call-template>

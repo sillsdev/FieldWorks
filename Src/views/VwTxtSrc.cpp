@@ -859,9 +859,9 @@ void VwMappedTxtSrc::AddString(ITsMutString * ptms, VwPropertyStore * pzvps,
 				{
 					ITsStrBldrPtr qtsb;
 					CheckHr(ptms->GetBldr(&qtsb));
-					int cch;
-					CheckHr(qtsb->get_Length(&cch));
-					CheckHr(qtsb->ReplaceRgch(0, cch, pch, 1, qttp));
+					int cchTmp;
+					CheckHr(qtsb->get_Length(&cchTmp));
+					CheckHr(qtsb->ReplaceRgch(0, cchTmp, pch, 1, qttp));
 					CheckHr(qtsb->GetString(&qtss));
 				}
 				else
@@ -1301,9 +1301,9 @@ public:
 					}
 					// The last character index in the overall source covered by the
 					// current chunk. The chunk we are proposing to copy, if we want it
-					// all, runs from ichren to ichrenLim. This will also be the new
+					// all, runs from ichren to ichrenLimTmp. This will also be the new
 					// value of ichren, after processing this chunk of output.
-					int ichrenLim = ichren + ichLimSource - ichMinSource;
+					int ichrenLimTmp = ichren + ichLimSource - ichMinSource;
 					if (ichren < ichrenMin)
 					{
 						// we don't want characters before ichrenMin. This addition
@@ -1311,7 +1311,7 @@ public:
 						// copies nothing.
 						ichMinSource += ichrenMin - ichren; // skip ones not wanted
 					}
-					ichren = ichrenLim; // done with old value
+					ichren = ichrenLimTmp; // done with old value
 					// Don't copy more than will fit.
 					// (If it does not all fit, ichlog may have been advanced too far,
 					// but it does not matter because if we fill the buffer all loops exit.)
@@ -1437,8 +1437,7 @@ void VwMappedTxtSrc::ReplaceContents(int itssMin, int itssLim, VwTxtSrc * pts)
 
 	// Figure the lengths of those strings, and use to compute cchrenOld
 	int cchrenOld = cchlogOld;
-	int itmi;
-	for (itmi = itmiMin; itmi < itmiLim; itmi++)
+	for (int itmi = itmiMin; itmi < itmiLim; itmi++)
 	{
 		// We could figure this from the various ich values, but there are all
 		// kinds of special cases at the start and end of the vector...
@@ -1493,7 +1492,7 @@ void VwMappedTxtSrc::ReplaceContents(int itssMin, int itssLim, VwTxtSrc * pts)
 	// the old and new logical/render discrepancies at the end of the replaced string,
 	// plus the actual difference in logical characters.
 	int dichren = dichRenLogNew - dichRenLogOld + dichlog;
-	for (itmi = itmiLim; itmi < vtmi.Size(); itmi++)
+	for (int itmi = itmiLim; itmi < vtmi.Size(); itmi++)
 	{
 		vtmi[itmi].ichlog += dichlog;
 		vtmi[itmi].ichren += dichren;

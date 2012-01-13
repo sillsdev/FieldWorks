@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Diagnostics;
@@ -18,33 +17,6 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 	{
 		/// <summary></summary>
 		object GetPropValue(string propName);
-	}
-
-	#endregion
-
-	#region GenericComparer class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Implements a generic comparing class in which the two objects being compared must
-	/// derive from IComparable to be of much use.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class GenericComparer : IComparer
-	{
-		#region IComparer Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int Compare(object x, object y)
-		{
-			IComparable xc = x as IComparable;
-			IComparable yc = y as IComparable;
-			return (xc == null || yc == null ? 0 : xc.CompareTo(yc));
-		}
-
-		#endregion
 	}
 
 	#endregion

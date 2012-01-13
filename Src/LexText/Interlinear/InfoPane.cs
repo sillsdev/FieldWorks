@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.IText
 			m_xrev = new InterlinearTextsRecordEditView(this);
 			if (clerk.GetType().Name == "InterlinearTextsRecordClerk")
 				m_xrev.Clerk = clerk;
-			m_xrev.Init(m_mediator, xnControl);
+			m_xrev.Init(m_mediator, xnControl); // <-- This call will change the ActiveClerk
 			DisplayCurrentRoot();
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -79,6 +79,7 @@ namespace SIL.FieldWorks.IText
 			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
 			{
 				m_mediator.PropertyTable.SetProperty("ActiveClerk", activeClerk);
+				activeClerk.ActivateUI(true);
 			}
 		}
 

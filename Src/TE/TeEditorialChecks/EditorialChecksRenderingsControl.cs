@@ -914,6 +914,14 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			// not used in TE.
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		#endregion
 	}
 
@@ -1314,10 +1322,17 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 						// Use the restore window icon character from Marlett as the
 						// footnote reference indicator.
 						float fontSize = e.CellStyle.Font.SizeInPoints;
-						using (Font marFont = new Font("Marlett", fontSize))
+#if __MonoCS__
+						string fontname = "OpenSymbol";
+						string symbol = "\u2042";	// ASTERISM
+#else
+						string fontname = "Marlett";
+						string symbol = "\u0032";	// restore window icon
+#endif
+						using (Font marFont = new Font(fontname, fontSize))
 						{
-							e.Graphics.DrawString("\u0032", marFont, brush, rect.X, rect.Y);
-							Size charSize = TextRenderer.MeasureText(e.Graphics, "\u0032", marFont,
+							e.Graphics.DrawString(symbol, marFont, brush, rect.X, rect.Y);
+							Size charSize = TextRenderer.MeasureText(e.Graphics, symbol, marFont,
 								Size.Empty, TextFormatFlags.NoPadding);
 							rect.X += charSize.Width;
 							rect.Width -= charSize.Width;

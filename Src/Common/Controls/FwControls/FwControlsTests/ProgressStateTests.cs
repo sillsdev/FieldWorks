@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void ProgressState_changesAndResetsCursor()
 		{
+			Assert.That(Application.UseWaitCursor == false, "Not using wait cursor");
 			Cursor.Current = Cursors.Default;
 			using (var statusBar = new StatusBar())
 			{
@@ -26,9 +27,9 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					using (new ProgressState(panel))
 					{
-						Assert.That(Cursor.Current == Cursors.WaitCursor, "Change cursor");
+						Assert.That(Application.UseWaitCursor, "Changed to using wait cursor");
 					}
-					Assert.That(Cursor.Current == Cursors.Default, "Reset cursor");
+					Assert.That(Application.UseWaitCursor == false, "Back to not using wait cursor");
 				}
 			}
 		}

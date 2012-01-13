@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2009' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2009' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,7 +16,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -36,7 +35,8 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// ---------------------------------------------------------------------------------------
 	/// <remarks>
-	/// StVc is  a standard view constructor for displaying StText's.
+	/// FwBaseVc is the base view constructor with low-level FW-specific methods that other
+	/// view constructors can use as a base.
 	/// </remarks>
 	/// ---------------------------------------------------------------------------------------
 	public abstract class FwBaseVc : VwBaseVc
@@ -201,48 +201,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
 				(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 
-			Image image = null;
-			try
-			{
-				try
-				{
-					image = Image.FromFile(FileUtils.ActualFilePath(path));
-				}
-				catch
-				{
-					// unable to read image. set to default image that indicates an invalid image.
-					image = ImageNotFoundX;
-				}
-				IPicture picture;
-				try
-				{
-					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
-				}
-				catch
-				{
-					// conversion to OLE format from current image format is not supported (e.g. WMF file)
-					// try to convert it to a bitmap and convert it to OLE format again.
-					// TODO: deal with transparency
-					// We could just do the following line (creating a new bitmap) instead of going
-					// through a memory stream, but then we end up with an image that is too big.
-					//image = new Bitmap(image, image.Size);
-					using (MemoryStream imageStream = new MemoryStream())
-					{
-						image.Save(imageStream, ImageFormat.Png);
-						image.Dispose();
-						image = Image.FromStream(imageStream, true);
-					}
-					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
-				}
-				// -1 is ktagNotAnAttr. 0 width & height mean use natural width/height.
-				vwenv.AddPictureWithCaption(picture, -1, CaptionProps, hvoFile, m_wsDefault, 0, 0, this);
-			}
-			finally
-			{
-				// REVIEW (EberhardB): isn't it bad to dispose the image in the case where we use ImageNotFoundX?
-				if (image != null)
-					image.Dispose();
-			}
+			IPicture picture = new PictureWrapper(path);
+			// -1 is ktagNotAnAttr. 0 width & height mean use natural width/height.
+			vwenv.AddPictureWithCaption(picture, -1, CaptionProps, hvoFile, m_wsDefault, 0, 0, this);
 		}
 
 		/// -----------------------------------------------------------------------------------

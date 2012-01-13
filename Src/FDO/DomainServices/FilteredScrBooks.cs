@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -491,6 +492,33 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					// (i.e. None of the books could be found).
 				}
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the start and ending Scripture references that cover the entire range of books
+		/// represented by this filter if the set of filtered books is contiguous books in the
+		/// canon of Scripture. If the set of filtered books is not contiguous or there are no
+		/// books in the filter, then "Empty" references are returned.
+		/// </summary>
+		/// <param name="start">The start reference.</param>
+		/// <param name="end">The end reference.</param>
+		/// ------------------------------------------------------------------------------------
+		public void GetRefRangeForContiguousBooks(out ScrReference start, out ScrReference end)
+		{
+			start = new ScrReference(0, m_scr.Versification);
+			end = new ScrReference(0, m_scr.Versification);
+			if (BookCount == 0)
+				return;
+
+			List<int> bookIds = BookIds;
+			for (int book = 0; book < bookIds.Count - 1; book++)
+			{
+				if (bookIds[book] + 1 != bookIds[book + 1])
+					return;
+			}
+			start = new ScrReference(bookIds[0], 1, 1, m_scr.Versification);
+			end = new ScrReference(bookIds.Last(), 1, 1, m_scr.Versification).LastReferenceForBook;
 		}
 		#endregion
 

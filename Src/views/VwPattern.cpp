@@ -434,9 +434,9 @@ STDMETHODIMP VwPattern::get_ReplacementText(ITsString ** pptssText)
 								CheckHr(qttp->GetIntPropValues(ktptWs, &nvar, &ws));
 								ITsStrBldrPtr qtsb;
 								CheckHr(qtssGroup->GetBldr(&qtsb));
-								int cch;
-								CheckHr(qtssGroup->get_Length(&cch));
-								CheckHr(qtsb->SetIntPropValues(0, cch, ktptWs, ktpvDefault, ws));
+								int len;
+								CheckHr(qtssGroup->get_Length(&len));
+								CheckHr(qtsb->SetIntPropValues(0, len, ktptWs, ktpvDefault, ws));
 								CheckHr(qtsb->GetString(&qtssGroup));
 							}
 							// If the $ character has a named style, force the output to match.
@@ -446,9 +446,9 @@ STDMETHODIMP VwPattern::get_ReplacementText(ITsString ** pptssText)
 							{
 								ITsStrBldrPtr qtsb;
 								CheckHr(qtssGroup->GetBldr(&qtsb));
-								int cch;
-								CheckHr(qtssGroup->get_Length(&cch));
-								CheckHr(qtsb->SetStrPropValue(0, cch, ktptNamedStyle, sbstrStyle));
+								int len;
+								CheckHr(qtssGroup->get_Length(&len));
+								CheckHr(qtsb->SetStrPropValue(0, len, ktptNamedStyle, sbstrStyle));
 								CheckHr(qtsb->GetString(&qtssGroup));
 							}
 							CheckHr(qtisb->AppendTsString(qtssGroup));
@@ -852,7 +852,6 @@ STDMETHODIMP VwPattern::put_SearchWindow(DWORD hwnd)
 {
 	BEGIN_COM_METHOD;
 	m_hwndSearch = hwnd;
-	return S_OK;
 	END_COM_METHOD(g_fact, IID_IVwPattern);
 }
 
@@ -2583,7 +2582,12 @@ STDMETHODIMP VwSearchKiller::put_Window(int hwnd)
 {
 	BEGIN_COM_METHOD;
 
+#if WIN32
 	m_hwnd = (HWND)hwnd;
+#else
+	// TODO-Linux: Handle this if neccessary - problem on 64bit
+	Assert(!"VwSearchKiller::put_Window shouldn't be called on Linux");
+#endif
 
 	END_COM_METHOD(g_fact, IID_IVwSearchKiller);
 }

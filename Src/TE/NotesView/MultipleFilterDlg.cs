@@ -21,6 +21,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl;
 using XCore;
@@ -78,11 +79,8 @@ namespace SIL.FieldWorks.TE
 				lastBook = m_scr.ScriptureBooksOS[m_scr.ScriptureBooksOS.Count - 1].CanonicalNum;
 			}
 
-			scrBookFrom.Initialize(new ScrReference(firstBook,
-				1, 1, m_scr.Versification),	m_scr, false);
-
-			scrBookTo.Initialize(new ScrReference(lastBook,
-				1, 0, m_scr.Versification).LastReferenceForBook, m_scr, false);
+			scrBookFrom.Initialize(new ScrReference(firstBook, 1, 1, m_scr.Versification));
+			scrBookTo.Initialize(new ScrReference(lastBook, 1, 0, m_scr.Versification).LastReferenceForBook);
 
 			// Update the controls from the filter in the database.
 			InitializeFromFilter();
@@ -290,6 +288,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void scrBookFrom_PassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("New MultipleFilterDlg.scrBookFrom reference is {0}", newReference.AsString));
 			if (newReference > scrBookTo.ScReference)
 				scrBookTo.ScReference = newReference;
 		}
@@ -303,6 +302,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void scrBookTo_PassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("New MultipleFilterDlg.scrBookTo reference is {0}", newReference.AsString));
 			if (newReference != ScrReference.Empty && newReference < scrBookFrom.ScReference)
 				scrBookFrom.ScReference = newReference;
 		}

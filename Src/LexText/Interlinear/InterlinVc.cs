@@ -58,6 +58,11 @@ namespace SIL.FieldWorks.IText
 		internal const int kfragPossibiltyAnalysisName = 100032;
 		//internal const int kfragEmptyFreeTransPrompt = 100033;
 		public const int kfragSingleInterlinearAnalysisWithLabelsLeftAlign = 100034;
+		/// <summary>
+		/// Bundle of all the freeform annotations, displayed as a fake property of 'this' to reduce
+		/// what we have to regenerate when doing special prompts (Press Enter to ...).
+		/// </summary>
+		private const int kfragFreeformBundle = 100035;
 		// These ones are special: we select one ws by adding its index in to this constant.
 		// So a good-sized range of kfrags after this must be unused for each one.
 		// This one is used for isolated wordforms (e.g., in Words area) using the current list of
@@ -692,9 +697,16 @@ namespace SIL.FieldWorks.IText
 				// from removing it.
 				//vwenv.NoteDependency(new int[] { hvo }, new int[] { ktagSegmentForms }, 1);
 				vwenv.CloseParagraph();
-				// This puts 3 points of margin on the first FF annotation, if any.
-				AddFreeformAnnotations(vwenv, hvo);
+				// We'd get the same visual effect from just calling AddFreeformAnnotations here. But then a regenerate
+				// such as happens when hiding or showing a prompt has to redisplay the whole segment. This initially
+				// makes it lazy, then the lazy stuff gets expanded. In the process we may get undesired scrolling (LT-12248).
+				// So we insert another layer of object, allowing just the freeforms to be regenerated.
+				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				vwenv.AddObjProp(flidSelf, this, kfragFreeformBundle);
 				vwenv.CloseDiv();
+				break;
+			case kfragFreeformBundle:
+				AddFreeformAnnotations(vwenv, hvo);
 				break;
 			case kfragBundle: // One annotated word bundle; hvo is the IAnalysis object.
 				// checking AllowLayout (especially in context of Undo/Redo make/break phrase)
@@ -891,10 +903,18 @@ namespace SIL.FieldWorks.IText
 			int index;
 			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
-			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence);
+			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, true);
 		}
 
-		protected void DisplayAnalysisAndCloseInnerPile(IVwEnv vwenv, AnalysisOccurrence analysisOccurrence)
+		/// <summary>
+		/// Displays Analysis using DisplayWordBundleMethod and closes the views Inner Pile.
+		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="analysisOccurrence"></param>
+		/// <param name="showMultipleAnalyses">Tells DisplayWordBundleMethod whether or not to show
+		/// the colored highlighting if a word has multiple analyses</param>
+		protected void DisplayAnalysisAndCloseInnerPile(IVwEnv vwenv, AnalysisOccurrence analysisOccurrence,
+			bool showMultipleAnalyses)
 		{
 			// if it is just a punctuation annotation, we just insert the form.
 			var analysis = analysisOccurrence.Analysis;
@@ -905,7 +925,7 @@ namespace SIL.FieldWorks.IText
 			else
 			{
 				// It's a full wordform-possessing annotation, display the full bundle.
-				new DisplayWordBundleMethod(vwenv, analysisOccurrence, this).Run();
+				new DisplayWordBundleMethod(vwenv, analysisOccurrence, this).Run(showMultipleAnalyses);
 			}
 			AddExtraBundleRows(vwenv, analysisOccurrence);
 			vwenv.CloseInnerPile();
@@ -967,6 +987,9 @@ namespace SIL.FieldWorks.IText
 			ITsString tssLabel = MakeUiElementString(label, m_cache.DefaultUserWs,
 				propsBldr => propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn));
+			ITsStrBldr labelBldr = tssLabel.GetBldr();
+			AddLineIndexProperty(labelBldr, lineChoiceIndex);
+			tssLabel = labelBldr.GetString();
 			int labelWidth = 0;
 			int labelHeight; // unused
 			if (wssAnalysis.Length > 1)
@@ -1183,7 +1206,10 @@ namespace SIL.FieldWorks.IText
 
 		private int m_hvoActiveFreeform;
 		internal int ActiveFreeformFlid { get; private set; }
-		private int m_wsActiveFreeform;
+		/// <summary>
+		/// LT-12230: Needed in InterlinDocForAnalysis.GetLineInfo().
+		/// </summary>
+		internal int ActiveFreeformWs { get; private set; }
 		internal int m_cpropActiveFreeform;
 
 		internal void SetActiveFreeform(int hvo, int flid, int ws, int cpropPrevious)
@@ -1193,7 +1219,7 @@ namespace SIL.FieldWorks.IText
 			int flidOld = ActiveFreeformFlid;
 			m_hvoActiveFreeform = hvo;
 			ActiveFreeformFlid = flid;
-			m_wsActiveFreeform = ws;
+			ActiveFreeformWs = ws;
 			// The cpropPrevious we get from the selection may be one off, if a previous line is displaying
 			// the prompt for another WS of the same object.
 			if (hvoOld == hvo && m_cpropActiveFreeform <= cpropPrevious)
@@ -1206,13 +1232,10 @@ namespace SIL.FieldWorks.IText
 				m_rootsite.RootBox.PropChanged(hvoOld, flidOld, 0, 0, 0);
 			if (m_hvoActiveFreeform != 0)
 			{
-				var seg = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(m_hvoActiveFreeform);
-				var para = (IStTxtPara) seg.Owner;
-				int hvoPara = para.Hvo;
-				int index = para.SegmentsOS.IndexOf(seg);
-				// Pretend the segment affected has been deleted and re-inserted.
+				// Pretend the 'Self' property of the segment has been changed.
 				// This will force it to be re-displayed, with different results now m_hvoActiveFreeform etc are set.
-				m_rootsite.RootBox.PropChanged(hvoPara, StTxtParaTags.kflidSegments, index, 1, 1);
+				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				m_rootsite.RootBox.PropChanged(m_hvoActiveFreeform, flidSelf, 0, 1, 1);
 			}
 			if (helper != null)
 			{
@@ -1223,7 +1246,7 @@ namespace SIL.FieldWorks.IText
 
 		private void AddFreeformComment(IVwEnv vwenv, int hvo, int ws, int flidTarget)
 		{
-			if (flidTarget != ActiveFreeformFlid || hvo != m_hvoActiveFreeform || ws != m_wsActiveFreeform)
+			if (flidTarget != ActiveFreeformFlid || hvo != m_hvoActiveFreeform || ws != ActiveFreeformWs)
 			{
 				vwenv.AddStringAltMember(flidTarget, ws, this); // display normally, not the current prop
 				return;
@@ -1379,7 +1402,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		///
+		/// Displays a MorphBundle, setting the colors of its parts.
 		/// </summary>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo">WfiMorphBundle</param>
@@ -1536,6 +1559,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 
 			int wsUI = cache.DefaultUserWs;
+			var spaceStr = TsStringUtils.MakeTss(" ", wsUI);
 			// int wsAnalysis = cache.DefaultAnalWs; // CS0219
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 				(int)FwTextPropVar.ktpvMilliPoint, 10000);
@@ -1546,27 +1570,39 @@ namespace SIL.FieldWorks.IText
 				(int)FwTextPropVar.ktpvMilliPoint,
 				5000); // default spacing is fine for all embedded paragraphs.
 			vwenv.OpenInnerPile();
-			foreach (InterlinLineSpec spec in m_lineChoices)
+			for (var i = 0; i < m_lineChoices.Count; i++)
 			{
+				InterlinLineSpec spec = m_lineChoices[i];
 				if (!spec.WordLevel)
 					break;
 				SetColor(vwenv, LabelRGBFor(spec));
 				ITsString tss = MakeUiElementString(m_lineChoices.LabelFor(spec.Flid), wsUI, null);
+				var bldr = tss.GetBldr();
 				if (m_lineChoices.RepetitionsOfFlid(spec.Flid) > 1)
 				{
+					bldr.Append(spaceStr);
+					bldr.Append(spec.WsLabel(cache));
+					AddLineIndexProperty(bldr, i);
+					// Enhance GJM: Might be able to do without paragraph now?
 					vwenv.OpenParagraph();
-					vwenv.AddString(tss);
-					vwenv.AddString(TsStringUtils.MakeTss(" ", m_cache.DefaultUserWs));
-					vwenv.AddString(spec.WsLabel(m_cache));
+					vwenv.AddString(bldr.GetString());
 					vwenv.CloseParagraph();
 				}
 				else
 				{
-					vwenv.AddString(tss);
+					AddLineIndexProperty(bldr, i);
+					vwenv.AddString(bldr.GetString());
 				}
 
 			}
 			vwenv.CloseInnerPile();
+		}
+
+		private static void AddLineIndexProperty(ITsStrBldr bldr, int i)
+		{
+			// BulletNumStartAt is a kludge because ktptObjData is ALSO ktptFontSize!
+			bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptBulNumStartAt,
+								  (int) FwTextPropVar.ktpvDefault, i);
 		}
 
 
@@ -1605,6 +1641,7 @@ namespace SIL.FieldWorks.IText
 			readonly InterlinVc m_this;
 			readonly FdoCache m_cache;
 			readonly InterlinLineChoices m_choices;
+			private bool m_fshowMultipleAnalyses;
 
 			private DisplayWordBundleMethod(IVwEnv vwenv1, int hvoWordBundleAnalysis, InterlinVc owner)
 			{
@@ -1621,8 +1658,9 @@ namespace SIL.FieldWorks.IText
 				m_analysisOccurrence = analysisOccurrence;
 			}
 
-			public void Run()
+			public void Run(bool showMultipleAnalyses)
 			{
+				m_fshowMultipleAnalyses = showMultipleAnalyses;
 				var coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 				var wag = coRepository.GetObject(m_hvoWordBundleAnalysis) as IAnalysis;
 				switch (wag.ClassID)
@@ -1700,15 +1738,19 @@ namespace SIL.FieldWorks.IText
 				if (tssRealForm != null && tssRealForm.Length > 0)
 				{
 					m_this.IsDoingRealWordForm = true;
-					//identify those words the user has yet to approve which have multiple possible
-					//guesses user or machine, and set the background to a special color
-					var word = wag as IWfiWordform;
-					if(word != null)
+					// LT-12203 Text chart doesn't want multiple analyses highlighting
+					if (m_fshowMultipleAnalyses)
 					{
-						//test if there are multiple analyses that a user might choose from
-						if (SandboxBase.GetHasMultipleRelevantAnalyses(word))
+						//identify those words the user has yet to approve which have multiple possible
+						//guesses user or machine, and set the background to a special color
+						var word = wag as IWfiWordform;
+						if (word != null)
 						{
-							m_this.SetGuessing(m_vwenv, MultipleApprovedGuessColor); //There are multiple options, set the color
+							//test if there are multiple analyses that a user might choose from
+							if (SandboxBase.GetHasMultipleRelevantAnalyses(word))
+							{
+								m_this.SetGuessing(m_vwenv, MultipleApprovedGuessColor); //There are multiple options, set the color
+							}
 						}
 					}
 					m_vwenv.AddString(tssRealForm);
@@ -2007,6 +2049,12 @@ namespace SIL.FieldWorks.IText
 		//	return tssVal;
 		//}
 
+		// A small sample indicates that each character of input results in about 20 pixels of width in an interlinear display.
+		// May want to adjust down for views without morphology.
+		private const int kPixelsPerChar = 20;
+		private const int kPixelsForRowLabels = 30; // very rough; may want to omit for views without them.
+		private const int kPixelsPerLine = 16;
+
 		/// <summary>
 		/// Estimate the height of things we display lazily.
 		/// </summary>
@@ -2018,29 +2066,62 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			switch(frag)
+			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+
+			switch (frag)
 			{
-					// a paragraph might really be smaller than this, but if it's much BIGGER, which is
-					// very possible, we do a LOT of extra work loading and laying out multiple paragraphs
-					// that we don't need. Best to make an estimate bigger than a screen, so it always does
-					// them one at a time. Conceivably we could improve this by actually using info about
-					// the paragraph contents, but do so with care: this gets called for EVERY paragraph in
-					// the text, it needs to run fast.
-			case kfragInterlinPara:
-				return 1200;
-			case kfragTxtSection: // well-and-truly likely to fill a window.
-				return 2000;
-			default:
-				if (frag == kfragParaSegment)
-				{
-					// Can't be a case because it isn't constant.
-					// A paragraph segment should at least be smaller than a paragraph. We want to guess on the
-					// high side, because the cost of laying out a segment we don't need is much higher than
-					// the cost of an extra iteration of generating segments.
-					return 400;
-				}
-				return 500; // large makes for over-long scroll bars but avoids excess layout work.
+					// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations
+					// to fill the screen, and the thumb on the scroll bar is a bit small. But if it is too SMALL,
+					// we will expand more objects than we need, which is much more expensive.
+					// Also remember: this gets called for EVERY paragraph and segment in
+					// the text, it needs to run pretty fast.
+				case kfragInterlinPara:
+					var para = obj as IStTxtPara;
+					if (para == null)
+					{
+						Debug.Assert(obj is IStTxtPara);
+						return 1200;
+					}
+					return EstimateParaHeight(para, dxAvailWidth);
+				case kfragTxtSection: // Is this even used??
+					var section = obj as IScrSection;
+					if (section == null)
+					{
+						Debug.Assert(obj is IScrSection);
+						return 2000;
+					}
+					return EstimateStTextHeight(section.HeadingOA, dxAvailWidth) +
+						EstimateStTextHeight(section.ContentOA, dxAvailWidth);
+				case kfragParaSegment:
+					var seg = obj as ISegment;
+					if (seg == null)
+					{
+						Debug.Assert(obj is ISegment);
+						return 400;
+					}
+					return EstimateSegmentHeight(seg, dxAvailWidth);
+				default:
+					return 500;
+					// Not possible AFAIK; in case we missed one, large makes for over-long scroll bars but avoids excess layout work.
 			}
+		}
+
+		private int EstimateStTextHeight(IStText text, int dxAvailWidth)
+		{
+			return text.ParagraphsOS.Sum(p => EstimateParaHeight((IStTxtPara)p, dxAvailWidth));
+		}
+
+		private int EstimateParaHeight(IStTxtPara para, int dxAvailWidth)
+		{
+			return para.SegmentsOS.Sum(s => EstimateSegmentHeight(s, dxAvailWidth));
+		}
+
+		private int EstimateSegmentHeight(ISegment seg, int dxAvailWidth)
+		{
+			var length = seg.BaselineText.Length;
+			int width = length*kPixelsPerChar + kPixelsForRowLabels;
+			var rows = dxAvailWidth/width + 1;
+			return rows*m_lineChoices.Count*kPixelsPerLine;
 		}
 
 		/// <summary>
@@ -2264,7 +2345,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (para.SegmentsOS.Count == 0)
 				return;
-			LoadAnalysisData(para);
+			LoadAnalysisData(para, null);
 		}
 
 		#endregion
@@ -2278,15 +2359,20 @@ namespace SIL.FieldWorks.IText
 		/// Load guesses for the paragraph.
 		/// </summary>
 		/// <param name="para"></param>
-		internal void LoadAnalysisData(IStTxtPara para)
+		/// <param name="wordforms"></param>
+		internal void LoadAnalysisData(IStTxtPara para, HashSet<IWfiWordform> wordforms)
 		{
 			if (para.SegmentsOS.Count == 0 || para.SegmentsOS[0].AnalysesRS.Count == 0)
 				return;
 			// TODO: reload decorator at the appropriate time.
 			foreach (var occurrence in SegmentServices.StTextAnnotationNavigator.GetWordformOccurrencesAdvancingInPara(para))
 			{
-				NoteCurrentAnnotation(occurrence);
-				RecordGuessIfAvailable(occurrence);
+				var wag = new AnalysisTree(occurrence.Analysis);
+				if (wordforms == null || wordforms.Contains(wag.Wordform))
+				{
+					NoteCurrentAnnotation(occurrence);
+					RecordGuessIfAvailable(occurrence);
+				}
 			}
 		}
 
@@ -2301,9 +2387,8 @@ namespace SIL.FieldWorks.IText
 			for (int i = 0; i < seg.AnalysesRS.Count; i++)
 			{
 				var occurrence = new AnalysisOccurrence(seg, i);
-				if (!occurrence.HasWordform)
-					continue;
-				RecordGuessIfAvailable(occurrence);
+				if (occurrence.HasWordform)
+					RecordGuessIfAvailable(occurrence);
 			}
 		}
 
@@ -2316,14 +2401,18 @@ namespace SIL.FieldWorks.IText
 				return;
 			// next get the best guess for wordform or analysis
 
+			IAnalysis wag = occurrence.Analysis;
 			IAnalysis wagGuess;
 			// now record the guess in the decorator.
 			// Todo JohnT: if occurrence.Indx is 0, record using DefaultStartSentenceFlid.
 			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess))
 			{
-				IAnalysis wag = occurrence.Analysis;
 				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));
+			}
+			else
+			{
+				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 			}
 		}
 

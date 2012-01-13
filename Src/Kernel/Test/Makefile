@@ -49,12 +49,16 @@ LDLIBS := \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g -O0 -fvisibility=hidden -Werror
+LDFLAGS = -g -z muldefs
 
 RCFILE = $(KERNEL_SRC)/FwKernel.rc
 DEFFILE = $(KERNEL_SRC)/FwKernel.def
-LINK_LIBS := $(LIB_UNIT)/libunit++.a $(OUT_DIR)/libGeneric.a \
-	$(OUT_DIR)/libDebugProcs.a $(OUT_DIR)/libAppCore.a $(COM_OUT_DIR)/libLanguageTlb.a
-COMS := $(OUT_DIR)/libFwKernel.so
+LINK_LIBS := \
+	$(LIB_UNIT)/libunit++.a \
+	$(OUT_DIR)/libGeneric.a \
+	$(OUT_DIR)/libDebugProcs.a \
+	$(OUT_DIR)/libAppCore.a \
+	$(COM_OUT_DIR)/libFwKernelTlb.a
 
 all: $(OUT_DIR)/testFwKernel
 
@@ -69,22 +73,20 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/ActionHandler.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
-	$(APPCORE_OBJ)/FwStyledText.o \
-	$(APPCORE_OBJ)/WriteXml.o \
-	$(KERNEL_OBJ)/FwKernel_GUIDs.o \
-	$(KERNEL_OBJ)/FwKernelExtra_GUIDs.o \
-
-#	$(CELLAR_OBJ)/FwXml.o \
 
 #Run make in the directory of each library
-$(LINK_LIBS) $(COMS) $(FWKERNEL_OBJ)::
+$(LINK_LIBS) $(FWKERNEL_OBJ)::
 	@$(MAKE) -C $(@D) $(@F) -q || \
 	 $(MAKE) -C $(@D) $(@F)
 
 
 
-$(OUT_DIR)/testFwKernel: $(INT_DIR)/testFwKernel.o $(INT_DIR)/Collection.o $(FWKERNEL_OBJ) $(LINK_LIBS) $(COMS)
-	$(LINK.cc) -o $@ $(INT_DIR)/testFwKernel.o $(INT_DIR)/Collection.o $(FWKERNEL_OBJ) $(LINK_LIBS) $(LDLIBS)
+$(OUT_DIR)/testFwKernel: $(FWKERNEL_OBJ) $(INT_DIR)/testFwKernel.o $(INT_DIR)/Collection.o $(LINK_LIBS)
+ifeq "$(GCC46)" "1"
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(FWKERNEL_OBJ) $(INT_DIR)/testFwKernel.o $(INT_DIR)/Collection.o $(LDLIBS)
+else
+	$(LINK.cc) -o $@ $^ $(LDLIBS)
+endif
 
 clean:
 	$(RM) $(OUT_DIR)/testFwKernel $(INT_DIR)/testFwKernel.o $(INT_DIR)/Collection.cpp $(INT_DIR)/*.[od] *.gch

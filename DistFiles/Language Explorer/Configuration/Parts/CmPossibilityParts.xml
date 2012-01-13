@@ -5,6 +5,9 @@
 	<part id="CmPossibility-Detail-NameAllA" type="Detail">
 		<slice field="Name" label="Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
 	</part>
+	  <part id="CmPossibility-Detail-NameAllV" type="Detail">
+		  <slice field="Name" label="Name" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+	  </part>
 	<part id="CmPossibility-Detail-NameSubcategory" type="Detail">
 		<slice field="Name" label="Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help" helpTopicID="hkhtpField-PartOfSpeech-Subcategory"/>
 	</part>
@@ -17,15 +20,30 @@
 	<part id="CmPossibility-Detail-NameRDEV" type="Detail">
 		<slice field="Name" label="Vernacular" editor="string" ws="vernacular"  menu="mnuDataTree-Help"/>
 	</part>
-	<part id="CmPossibility-Detail-AbbreviationAllA" type="Detail">
-		<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
-	</part>
-	<part id="CmPossibility-Detail-AbbreviationAllVA" type="Detail">
-		<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
-	</part>
-	<part id="CmPossibility-Detail-DescriptionAllA" type="Detail">
-		<slice field="Description" label="Description" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
-	</part>
+	  <part id="CmPossibility-Detail-AbbreviationAllA" type="Detail">
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-AbbreviationAllV" type="Detail">
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-AbbreviationAllVA" type="Detail">
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-AbbreviationAllAV" type="Detail">
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="analysis vernacular"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-DescriptionAllA" type="Detail">
+		  <slice field="Description" label="Description" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-DescriptionAllV" type="Detail">
+		  <slice field="Description" label="Description" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-DescriptionAllAV" type="Detail">
+		  <slice field="Description" label="Description" editor="multistring" ws="analysis vernacular"  menu="mnuDataTree-Help"/>
+	  </part>
+	  <part id="CmPossibility-Detail-DescriptionAllVA" type="Detail">
+		  <slice field="Description" label="Description" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
+	  </part>
 	<part id="CmPossibility-Detail-Status" type="Detail">
 		<slice id="CmPossibilityStatus" field="Status" label="Status" editor="defaultAtomicReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analorvern"/>

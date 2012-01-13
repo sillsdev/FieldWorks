@@ -211,7 +211,7 @@
 	</target>
 	<!-- -->
 	<target name="FwControls" description="Build FwControls project."
-		depends="Design,BasicUtils,COMInterfaces,CoreImpl,XMLUtils,FwUtils,FDO,ScrUtilsInterfaces,SharedScrUtils,TestUtils">
+		depends="Design,BasicUtils,COMInterfaces,CoreImpl,XMLUtils,FwUtils,FDO,ScrUtilsInterfaces,SharedScrUtils,TestUtils,xCore">
 		<call target="FwControls-nodep" cascade="false"/>
 	</target>
 	<target name="FwControls-nodep">
@@ -252,7 +252,7 @@
 		<call target="vsconvert-convert"/>
 	</target>
 	<!-- -->
-	<target name="PhraseTranslationHelper" description="Build PhraseTranslationHelper project." depends="SilUtils">
+	<target name="PhraseTranslationHelper" description="Build PhraseTranslationHelper project." depends="SilUtils,SharedScrUtils,SharedScrControls">
 		<call target="PhraseTranslationHelper-nodep" cascade="false"/>
 	</target>
 	<target name="PhraseTranslationHelper-nodep" description="Build PhraseTranslationHelper project.">
@@ -316,6 +316,15 @@
 		<property name="dir.srcProj" value="${fwroot}/Lib/src/SharedScrUtils"/>
 		<call target="vsconvert-convert"/>
 	</target>
+	<!-- -->
+	<target name="SharedScrControls" description="Build SharedScrControls project."
+			depends="SilUtils,SharedScrUtils">
+		<call target="SharedScrControls-nodep" cascade="false"/>
+	</target>
+	<target name="SharedScrControls-nodep">
+		<property name="dir.srcProj" value="${fwroot}/Lib/src/SharedScrControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
 	<target name="AllFDO" description="Build all the FDO projects." depends="FDO"/>
 	<!-- ,UtilsTests,FwUtilsTests,ScrUtilsInterfacesTests -->
 	<target name="FDO" description="Build FDO project."
@@ -355,17 +364,19 @@
 	</target>
 	<!--FwCoreDlgControls,FwCoreDlgs-->
 	<target name="FwCoreDlgControls" description="Build FwCoreDlgControls project."
-			depends="FwResources,COMInterfaces,CoreImpl,BasicUtils,FwUtils,FDO,FwControls,RootSite,SilUtils,xCoreInterfaces">
+		depends="FwResources,COMInterfaces,CoreImpl,BasicUtils,FwUtils,FDO,FwControls,
+			RootSite,SilUtils,xCoreInterfaces,Keyboarding">
 		<call target="FwCoreDlgControls-nodep" cascade="false"/>
 	</target>
 	<target name="FwCoreDlgControls-nodep">
 		<property name="dir.srcProj" value="${fwroot}/Src/FwCoreDlgs/FwCoreDlgControls"/>
 		<call target="vsconvert-convert"/>
 	</target>
-	<target name="FwCoreDlgs" description="Build FwCoreDlgs project." depends="RootSite,FwResources,COMInterfaces,FDO,
-		CoreImpl,FwControls,BasicUtils,FwUtils,SimpleRootSite,copy-nmockDll,mkgre,
-		FwCoreDlgControls,Widgets,xCoreInterfaces,TestUtils,ensureDistFilesDataFolder,EncConvertersDlls,Filters,
-		XMLUtils,FwControls,SharedScrUtils,ScrUtilsInterfaces">
+	<target name="FwCoreDlgs" description="Build FwCoreDlgs project."
+		depends="RootSite,FwResources,COMInterfaces,FDO,CoreImpl,FwControls,BasicUtils,
+			FwUtils,SimpleRootSite,copy-nmockDll,mkgre,
+			FwCoreDlgControls,Widgets,xCoreInterfaces,TestUtils,ensureDistFilesDataFolder,
+			EncConvertersDlls,Filters,XMLUtils,FwControls,SharedScrUtils,ScrUtilsInterfaces">
 		<!-- TestUtils,ScrUtilsInterfaces are only for tests. -->
 		<call target="FwCoreDlgs-nodep" cascade="false"/>
 	</target>
@@ -373,15 +384,18 @@
 		<property name="dir.srcProj" value="${fwroot}/Src/FwCoreDlgs"/>
 		<call target="vsconvert-convert"/>
 	</target>
-	<target name="SimpleRootSite" description="Build SimpleRootSite project." depends="COMInterfaces,CoreImpl,BasicUtils,
+	<target name="SimpleRootSite" description="Build SimpleRootSite project."
+		depends="COMInterfaces,CoreImpl,BasicUtils,
 				xCoreInterfaces,UIAdapterInterfaces,TestUtils,CacheLight,SilUtils,
-				Reporting,ManagedVwDrawRootBuffered,copy-uiAutomation">
+				Reporting,ManagedVwDrawRootBuffered,copy-uiAutomation,Keyboarding">
 		<!-- Uses TestUtils and CacheLight needed for tests. -->
 		<call target="SimpleRootSite-nodep" cascade="false"/>
 	</target>
 	<target name="SimpleRootSite-nodep">
 		<property name="dir.srcProj" value="${fwroot}/Src/Common/SimpleRootSite"/>
 		<call target="vsconvert-convert"/>
+		<!-- adding interfaces to compmap is done in SimpleRootSite's buildinclude.xml
+			because we need them for SimpleRootSiteTests -->
 	</target>
 	<!-- -->
 	<target name="zook" depends="EncConvertersDlls">
@@ -519,6 +533,8 @@
 			<include name="Infrastructure/Impl/Generated*.cs"/>
 			<include name="InOC/Generated*.cs"/>
 			<include name="${dir.fwoutputCommon}/CellarConstants.h"/>
+			<include name="${dir.fwoutputCommon}/CellarBaseConstants.h"/>
+			<include name="${fwroot}/Src/Common/CoreImpl/CellarPropertyType.cs"/>
 		</fileset>
 	</target>
 	<target name="GenerateFilesFromModel-build" depends="GenerateFilesFromModel-common" unless="${clean}">
@@ -533,25 +549,75 @@
 				<include name="FDOTests/buildinclude.xml"/>
 				<include name="MasterFieldWorksModel.xml"/>
 				<include name="FDOGenerate/*"/>
+				<include name="CmTypes.txt"/>
 			</sourcefiles>
 			<targetfiles refid="GeneratedFiles"/>
 		</uptodate>
 		<echo message="Generating FDO files" unless="${uptodate}"/>
 		<echo message="Generated FDO files up to date" if="${uptodate}" />
-		<!-- generate C# files used in FDO -->
-		<fdogenerate
-				  xml="${dir.srcProj}/MasterFieldWorksModel.xml"
-				  outdir="${dir.srcProj}"
-				  outputfile="DomainImpl/FDOGenerated.cs"
-				  template="${dir.srcProj}/FDOGenerate/main.vm.cs"
-				  unless="${uptodate}"/>
-		<!-- generate constants for C++ code -->
-		<fdogenerate
-				  xml="${dir.srcProj}/MasterFieldWorksModel.xml"
-				  outdir="${dir.fwoutputCommon}"
-				  outputfile="CellarConstants.h"
-				  template="${dir.srcProj}/FDOGenerate/CellarConstants.vm.h"
-				  unless="${uptodate}"/>
+		<if test="${not uptodate}">
+			<!-- generate C# files used in FDO -->
+			<fdogenerate
+					xml="${dir.srcProj}/MasterFieldWorksModel.xml"
+					outdir="${dir.srcProj}"
+					outputfile="DomainImpl/FDOGenerated.cs"
+					template="${dir.srcProj}/FDOGenerate/main.vm.cs"/>
+			<!-- generate constants for C++ code -->
+			<fdogenerate
+					xml="${dir.srcProj}/MasterFieldWorksModel.xml"
+					outdir="${dir.fwoutputCommon}"
+					outputfile="CellarConstants.h"
+					template="${dir.srcProj}/FDOGenerate/CellarConstants.vm.h"/>
+			<!-- generate base type files -->
+			<echo append="false" file="${dir.fwoutputCommon}/CellarBaseConstants.h"
+>// Generated by target '${target::get-current-target()}' from CmTypes.txt
+// *** DO NOT EDIT ***
+#ifdef _MSC_VER
+#pragma once
+#endif
+#ifndef CELLARBASECONSTANTS_H
+#define CELLARBASECONSTANTS_H 1
+
+typedef enum CellarModuleDefns
+{
+</echo>
+
+			<echo append="false" file="${fwroot}/Src/Common/CoreImpl/CellarPropertyType.cs"
+>// Generated by target '${target::get-current-target()}' from CmTypes.txt
+// *** DO NOT EDIT ***
+namespace SIL.CoreImpl
+{
+	/// &lt;summary&gt;Types of properties in "Cellar" database. &lt;/summary&gt;
+	public enum CellarPropertyType : int
+	{
+</echo>
+			<property name="value" value=""/>
+			<foreach item="Line" in="${dir.srcProj}/CmTypes.txt" delim="=" property="name,value">
+				<property name="value" value="${string::substring(value, 0, string::index-of(value, ' '))}"
+					if="${string::contains(value, ' ')}"/>
+				<echo append="true" file="${dir.fwoutputCommon}/CellarBaseConstants.h"
+					unless="${string::starts-with(name, '//') or string::get-length(name) == 0}"
+>	kcpt${name} = ${value},
+</echo>
+				<echo append="true" file="${fwroot}/Src/Common/CoreImpl/CellarPropertyType.cs"
+					unless="${string::starts-with(name, '//') or string::get-length(name) == 0}"
+>		/// &lt;summary/&gt;
+		${name} = ${value},
+</echo>
+			</foreach>
+
+			<echo append="true" file="${dir.fwoutputCommon}/CellarBaseConstants.h"
+>} CellarModuleDefns;
+#endif</echo>
+			<echo append="true" file="${fwroot}/Src/Common/CoreImpl/CellarPropertyType.cs"
+>		/// &lt;summary/&gt;
+		OwningAtomic = OwningAtom,
+		/// &lt;summary/&gt;
+		ReferenceAtomic = ReferenceAtom,
+	}
+}
+</echo>
+		</if>
 	</target>
 	<target name="GenerateFilesFromModel-clean" depends="GenerateFilesFromModel-common" if="${clean}">
 		<delete verbose="true">

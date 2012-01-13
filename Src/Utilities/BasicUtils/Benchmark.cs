@@ -116,6 +116,7 @@ namespace SIL.Utils
 	///	...somewhere it's appropriate to make the report
 	///	TimeRecorder.Report();
 	/// </summary>
+	/// <seealso cref="StopClock"/>
 	public class TimeRecorder
 	{
 		static Dictionary<string, TimeVal> s_dict = new Dictionary<string, TimeVal>();

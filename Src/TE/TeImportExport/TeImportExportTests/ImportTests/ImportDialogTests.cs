@@ -13,8 +13,8 @@
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
+using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			get
 			{
 				CheckDisposed();
-				return this.scrPsgFrom;
+				return scrPsgFrom;
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			get
 			{
 				CheckDisposed();
-				return this.scrPsgTo;
+				return scrPsgTo;
 			}
 		}
 	}
@@ -182,8 +182,12 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_dlg = new DummyImportDialog(null, Cache, m_settings);
 			m_dlg.ImportEntireProject = false;
 
-			Assert.AreEqual("EXO 8:20", m_dlg.StartRef.AsString);
-			Assert.AreEqual("RUT 2:4", m_dlg.EndRef.AsString);
+			Assert.AreEqual("EXO 1:1", m_dlg.StartRef.AsString);
+			Assert.AreEqual("RUT 1:1", m_dlg.EndRef.AsString);
+
+			// If we ever support partial-book imports, use these assertions instead:
+			//Assert.AreEqual("EXO 8:20", m_dlg.StartRef.AsString);
+			//Assert.AreEqual("RUT 2:4", m_dlg.EndRef.AsString);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -206,11 +210,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			// Change the From ref. to MAT 2:5
 			m_dlg.FromRefCtrl.Focus();
-			m_dlg.FromRefCtrl.Reference = "MAT 2:5";
+			m_dlg.FromRefCtrl.Reference = "REV 2:5";
 			m_dlg.ToRefCtrl.Focus();
 
-			Assert.AreEqual(40, m_dlg.FromRefCtrl.ScReference.Book);
-			Assert.AreEqual(40, m_dlg.ToRefCtrl.ScReference.Book);
+			Assert.AreEqual(66, m_dlg.FromRefCtrl.ScReference.Book);
+			Assert.AreEqual(66, m_dlg.ToRefCtrl.ScReference.Book);
 
 			// Use following asserts when we support partial import of books.
 //			Assert.AreEqual("MAT 2:5", m_dlg.FromRefCtrl.ScReference.AsString);

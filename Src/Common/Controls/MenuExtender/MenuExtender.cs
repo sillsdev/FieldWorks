@@ -100,8 +100,15 @@ namespace SIL.FieldWorks.Common.Controls
 	public class MenuExtender : Component, IFWDisposable, IExtenderProvider, ISupportInitialize
 	{
 		// Used in the IMenuDrawingHelper classes.
+#if __MonoCS__
+		// Linux doesn't have the Marlett font.  (This whole assembly doesn't appear to be used
+		// in FieldWorks -- maybe it should be removed?)
+		internal static Font CheckFont = new Font("OpenSymbol", 12);
+		internal static string CheckMarkGlyph = "\u2713";
+#else
 		internal static Font CheckFont = new Font("Marlett", 12);
 		internal static string CheckMarkGlyph = "a";
+#endif
 
 		#region Private fields
 		/// <summary>Dictionary used to store <c>MenuItem</c> image lists.</summary>

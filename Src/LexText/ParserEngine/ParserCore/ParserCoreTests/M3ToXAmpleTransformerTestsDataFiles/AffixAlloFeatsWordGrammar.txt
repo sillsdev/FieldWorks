@@ -118,25 +118,25 @@ rule {Fully analyzed stem with a final inflectional template 15004}
   <Stem exception>       = <15005_0 fromException>
   <Stem inflectionClass> = <15005_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15005_0 morphoSyntax>
-		 <Full envMorphoSyntaxInfo name> = <15005_0 envMorphoSyntax name>
+		  <Full envMorphoSyntaxInfo> = <15005_0 envMorphoSyntax>
 
-		<Full envMorphoSyntaxInfo morphoSyntax> = <Full morphoSyntax>
+		<Full envMorphoSyntaxInfo fullMorphoSyntax> = <Full morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Full envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Fully analyzed stem with a final inflectional template 15331}
   Full =  (15332_0) Stem (15333_0)
 														 | percolation
@@ -152,32 +152,32 @@ rule {Fully analyzed stem with a final inflectional template 15331}
   <Stem exception>       = <15332_0 fromException>
   <Stem inflectionClass> = <15332_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15332_0 morphoSyntax>
-		 <Full envMorphoSyntaxInfo name> = <15332_0 envMorphoSyntax name>
+		  <Full envMorphoSyntaxInfo> = <15332_0 envMorphoSyntax>
 
   <Stem morphoSyntax>    = <15333_0 morphoSyntax>
   <Stem synCat>          = <15333_0 envCat>   | allomorph
   <Stem exception>       = <15333_0 fromException>
   <Stem inflectionClass> = <15333_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15333_0 morphoSyntax>
-		 <Full envMorphoSyntaxInfo name> = <15333_0 envMorphoSyntax name>
+		  <Full envMorphoSyntaxInfo> = <15333_0 envMorphoSyntax>
 
-		<Full envMorphoSyntaxInfo morphoSyntax> = <Full morphoSyntax>
+		<Full envMorphoSyntaxInfo fullMorphoSyntax> = <Full morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Full envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 | ------------------------------------------------------------
 |                STEM
 | ------------------------------------------------------------
@@ -230,25 +230,25 @@ rule {Stem with a derivational prefix}
 }
 
 	  }
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivPfx envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivPfx envMorphoSyntax>
 
-		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
+		<Stem_2 envMorphoSyntaxInfo fullMorphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 
 rule {Stem with a derivational suffix}
   Stem_1 =          Stem_2 derivSfx
@@ -285,25 +285,25 @@ rule {Stem with a derivational suffix}
 }
 
 	  }
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivSfx envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivSfx envMorphoSyntax>
 
-		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
+		<Stem_2 envMorphoSyntaxInfo fullMorphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Stem with a derivational circumfix}
 		 Stem_1 = derivCircumPfx Stem_2 derivCircumSfx
 		 | percolation
@@ -354,27 +354,27 @@ rule {Stem with a derivational circumfix}
 
 	  }
 
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivCircumPfx envMorphoSyntax>
 
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumSfx envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivCircumSfx envMorphoSyntax>
 
-		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
+		<Stem_2 envMorphoSyntaxInfo fullMorphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
 		 | percolation
@@ -427,27 +427,27 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 
 	  }
 
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx_1 envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivCircumPfx_1 envMorphoSyntax>
 
-		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx_2 envMorphoSyntax name>
+		  <Stem_2 envMorphoSyntaxInfo> = <derivCircumPfx_2 envMorphoSyntax>
 
-		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
+		<Stem_2 envMorphoSyntaxInfo fullMorphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
-		 ([name:15045] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15227] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:15238] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-	 & ( ([name:15233] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-	 & ( ([name:15244] -> [morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
-	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
-	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
-	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
-	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
-	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
+		 ([name15045:15045] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15227:15227] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([name15238:15238] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+	 & ( ([name15233:15233] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+	 & ( ([name15244:15244] -> [fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] )
+	 & ( ([name15354:15354] -> [fullMorphoSyntax:[ 15351:15353]] )
+	 & ( ([name15039:15039] -> [fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+	 & ( ([nameNot15045Not15039:Not15045Not15039] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+	 & ( ([nameNot15227Not15233:Not15227Not15233] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+	 & ( ([nameNot15238Not15244:Not15238Not15244] -> ( (~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
+		  & ((~[fullMorphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+	 & ( ([nameNot15354:Not15354] -> ( (~[fullMorphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
 | ------------------------------------------------------------
@@ -939,17 +939,17 @@ Let ToPOS262 be [toCat:262
 	requiresInflection : +]
 Let CliticPOS262 be {[rootCat:262]}
 Let CFP262 be {[fromCat:262]}
-Let MSEnvFS15045 be [ envMorphoSyntax:[name:15045 morphoSyntax:[14997 : [ 14998:14999 15001:15003]] ]]
-Let MSEnvFS15227 be [ envMorphoSyntax:[name:15227 morphoSyntax:[14997 : [ 14998:14999 15001:15002]] ]]
-Let MSEnvFS15238 be [ envMorphoSyntax:[name:15238 morphoSyntax:[14997 : [ 14998:15000 15001:15003]] ]]
-Let MSEnvFS15233 be [ envMorphoSyntax:[name:15233 morphoSyntax:[14997 : [ 14998:14999 15001:15003]] ]]
-Let MSEnvFS15244 be [ envMorphoSyntax:[name:15244 morphoSyntax:[14997 : [ 14998:15000 15001:15002]] ]]
-Let MSEnvFS15354 be [ envMorphoSyntax:[name:15354 morphoSyntax:[ 15351:15353] ]]
-Let MSEnvFS15039 be [ envMorphoSyntax:[name:15039 morphoSyntax:[14997 : [ 14998:14999 15001:15002]] ]]
-Let MSEnvFSNot15045Not15039 be [ envMorphoSyntax : [name:Not15045Not15039]]
-Let MSEnvFSNot15227Not15233 be [ envMorphoSyntax : [name:Not15227Not15233]]
-Let MSEnvFSNot15238Not15244 be [ envMorphoSyntax : [name:Not15238Not15244]]
-Let MSEnvFSNot15354 be [ envMorphoSyntax : [name:Not15354]]
+Let MSEnvFS15045 be [ envMorphoSyntax:[name15045:15045 morphoSyntax:[14997 : [ 14998:14999 15001:15003]] ]]
+Let MSEnvFS15227 be [ envMorphoSyntax:[name15227:15227 morphoSyntax:[14997 : [ 14998:14999 15001:15002]] ]]
+Let MSEnvFS15238 be [ envMorphoSyntax:[name15238:15238 morphoSyntax:[14997 : [ 14998:15000 15001:15003]] ]]
+Let MSEnvFS15233 be [ envMorphoSyntax:[name15233:15233 morphoSyntax:[14997 : [ 14998:14999 15001:15003]] ]]
+Let MSEnvFS15244 be [ envMorphoSyntax:[name15244:15244 morphoSyntax:[14997 : [ 14998:15000 15001:15002]] ]]
+Let MSEnvFS15354 be [ envMorphoSyntax:[name15354:15354 morphoSyntax:[ 15351:15353] ]]
+Let MSEnvFS15039 be [ envMorphoSyntax:[name15039:15039 morphoSyntax:[14997 : [ 14998:14999 15001:15002]] ]]
+Let MSEnvFSNot15045Not15039 be [ envMorphoSyntax : [nameNot15045Not15039:Not15045Not15039]]
+Let MSEnvFSNot15227Not15233 be [ envMorphoSyntax : [nameNot15227Not15233:Not15227Not15233]]
+Let MSEnvFSNot15238Not15244 be [ envMorphoSyntax : [nameNot15238Not15244:Not15238Not15244]]
+Let MSEnvFSNot15354 be [ envMorphoSyntax : [nameNot15354:Not15354]]
 Let MSFS15015 be [ morphoSyntax : [14997 : [ 14998:14999 15001:15003]] ]
 Let MSFS15024 be [ morphoSyntax : [14997 : [ 14998:15000 15001:15002]] ]
 Let MSFS15034 be [ morphoSyntax : [14997 : [ 14998:15000 15001:15003]] ]

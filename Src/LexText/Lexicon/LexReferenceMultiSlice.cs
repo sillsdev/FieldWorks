@@ -784,8 +784,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-					var mainWindow = (Form) Mediator.PropertyTable.GetValue("window");
-					mainWindow.Cursor = Cursors.WaitCursor;
+				var mainWindow = (Form) Mediator.PropertyTable.GetValue("window");
+				using (new WaitCursor(mainWindow))
+				{
 					using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
 					{
 
@@ -845,15 +846,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							});
 							//Update the display because we have removed this slice from the Lexical entry.
 							UpdateForDelete(lr);
-
-							mainWindow.Cursor = Cursors.Default;
-						}
-						else  //If the user selected Cancel in the delete dialog do nothing
-						{
-							mainWindow.Cursor = Cursors.Default;
-							return;
-						}
+						 }
 					}
+				}
 			}
 		}
 
@@ -873,50 +868,44 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			else
 			{
 				var mainWindow = Mediator.PropertyTable.GetValue("window") as Form;
-				mainWindow.Cursor = Cursors.WaitCursor;
-				using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+				using (new WaitCursor(mainWindow))
 				{
-					var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
-
-					//We need this to determine which kind of relation we are deleting
-					var lrtOwner = lr.Owner as ILexRefType;
-
-					var userWs = m_cache.WritingSystemFactory.UserWs;
-					var tisb = TsIncStrBldrClass.Create();
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-
-					switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
+					using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
 					{
-					case LexRefTypeTags.MappingTypes.kmtSenseTree:
-					case LexRefTypeTags.MappingTypes.kmtEntryTree:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
+
+						//We need this to determine which kind of relation we are deleting
+						var lrtOwner = lr.Owner as ILexRefType;
+
+						var userWs = m_cache.WritingSystemFactory.UserWs;
+						var tisb = TsIncStrBldrClass.Create();
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-						tisb.Append(String.Format(LexEdStrings.ksDeleteLexTree, StringUtils.kChHardLB));
-						dlg.SetDlgInfo(ui, m_cache, Mediator, tisb.GetString() );
-						break;
-					default:
-						dlg.SetDlgInfo(ui, m_cache, Mediator);
-						break;
-					}
 
-					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-					{
-						UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
+						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
 						{
-							m_cache.DomainDataByFlid.DeleteObj(lr.Hvo);
-						});
-						//Update the display because we have removed this slice from the Lexical entry.
-						UpdateForDelete(lr);
+						case LexRefTypeTags.MappingTypes.kmtSenseTree:
+						case LexRefTypeTags.MappingTypes.kmtEntryTree:
+						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
+							tisb.Append(String.Format(LexEdStrings.ksDeleteLexTree, StringUtils.kChHardLB));
+							dlg.SetDlgInfo(ui, m_cache, Mediator, tisb.GetString() );
+							break;
+						default:
+							dlg.SetDlgInfo(ui, m_cache, Mediator);
+							break;
+						}
 
-						mainWindow.Cursor = Cursors.Default;
-					}
-					else //If the user selected Cancel in the delete dialog do nothing
-					{
-						mainWindow.Cursor = Cursors.Default;
-						return;
+						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
+						{
+							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
+							{
+								m_cache.DomainDataByFlid.DeleteObj(lr.Hvo);
+							});
+							//Update the display because we have removed this slice from the Lexical entry.
+							UpdateForDelete(lr);
+						}
 					}
 				}
-
 			}
 		}
 

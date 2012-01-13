@@ -433,7 +433,7 @@
 	<value>scrPsgFrom</value>
   </data>
   <data name="&gt;&gt;scrPsgFrom.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ScrBookControl, ScrControls, Version=5.5.0.28310, Culture=neutral, PublicKeyToken=null</value>
+	<value>SILUBS.SharedScrControls.ScrBookControl, ScrControls, Version=5.5.0.28310, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrPsgFrom.Parent" xml:space="preserve">
 	<value>grpImportWhat</value>
@@ -487,7 +487,7 @@
 	<value>scrPsgTo</value>
   </data>
   <data name="&gt;&gt;scrPsgTo.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ScrBookControl, ScrControls, Version=5.5.0.28310, Culture=neutral, PublicKeyToken=null</value>
+	<value>SILUBS.SharedScrControls.ScrBookControl, ScrControls, Version=5.5.0.28310, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrPsgTo.Parent" xml:space="preserve">
 	<value>grpImportWhat</value>

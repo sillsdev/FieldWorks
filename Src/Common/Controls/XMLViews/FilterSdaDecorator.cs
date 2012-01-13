@@ -30,10 +30,10 @@ namespace SIL.FieldWorks.Common.Controls
 			m_mainFlid = mainFlid;
 			m_hvoRoot = hvoRoot;
 			int chvoReal = BaseSda.get_VecSize(m_hvoRoot, m_mainFlid);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoReal, typeof (int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(m_hvoRoot, m_mainFlid, chvoReal, out chvoReal, arrayPtr);
-				m_validHvos = new Set<int>((int[])MarshalEx.NativeToArray(arrayPtr, chvoReal, typeof(int)));
+				m_validHvos = new Set<int>(MarshalEx.NativeToArray<int>(arrayPtr, chvoReal));
 			}
 		}
 
@@ -72,10 +72,10 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!m_filterFlids.TryGetValue(tag, out tester))
 				return base.get_VecItem(hvo, tag, index);
 			int chvoReal = BaseSda.get_VecSize(hvo, tag);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoReal, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(hvo, tag, chvoReal, out chvoReal, arrayPtr);
-				int[] candidates = (int[])MarshalEx.NativeToArray(arrayPtr, chvoReal, typeof(int));
+				int[] candidates = MarshalEx.NativeToArray<int>(arrayPtr, chvoReal);
 				int iresult = 0;
 				for (int icandidate = 0; icandidate < candidates.Length; icandidate++)
 				{
@@ -100,10 +100,10 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!m_filterFlids.TryGetValue(tag, out tester))
 				return base.get_VecSize(hvo, tag);
 			int chvoReal = BaseSda.get_VecSize(hvo, tag);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoReal, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(hvo, tag, chvoReal, out chvoReal, arrayPtr);
-				int[] candidates = (int[])MarshalEx.NativeToArray(arrayPtr, chvoReal, typeof(int));
+				int[] candidates = MarshalEx.NativeToArray<int>(arrayPtr, chvoReal);
 				int iresult = 0;
 				for (int icandidate = 0; icandidate < candidates.Length; icandidate++)
 				{
@@ -126,10 +126,10 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 			int chvoReal = BaseSda.get_VecSize(hvo, tag);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoReal, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(hvo, tag, chvoReal, out chvoReal, arrayPtr);
-				int[] candidates = (int[])MarshalEx.NativeToArray(arrayPtr, chvoReal, typeof(int));
+				int[] candidates = MarshalEx.NativeToArray<int>(arrayPtr, chvoReal);
 				int[] results = new int[chvoMax];
 				int iresult = 0;
 				for (int icandidate = 0; icandidate < candidates.Length; icandidate++)

@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<assembly manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" xmlns="urn:schemas-microsoft-com:asm.v1">
-	<assemblyIdentity name="ScriptureTextFile.dll.fragment" type="win32" />
-	<file name="ScriptureTextFile.dll" asmv2:size="86096">
-		<typelib tlbid="{29a2afe3-a8ee-11d4-8900-00c0dfec0b1a}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE" />
-		<comClass clsid="{29a2aff0-a8ee-11d4-8900-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{29a2afe3-a8ee-11d4-8900-00c0dfec0b1a}" progid="ScriptureTextFile.SCTextFile.1" />
-	</file>
-</assembly>

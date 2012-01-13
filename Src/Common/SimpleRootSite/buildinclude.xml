@@ -11,4 +11,19 @@
 	</copy>
 	</if>
   </pre-build>
+  <post-build>
+		<echo message="830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E libManagedComBridge.so SimpleRootSite.dll SIL.FieldWorks.Common.RootSites.ViewInputManager
+"
+			file="${dir.outputBase}/SimpleRootSite.compmap" append="false"
+			if="${platform::is-unix()}"/> <!-- ViewInputManager class -->
+		<echo message="5B6303DE-E635-4DD7-A7FC-345BEEF352D8 libManagedComBridge.so
+"
+			file="${dir.outputBase}/SimpleRootSite.compmap" append="true"
+			if="${platform::is-unix()}"/> <!-- ILgTextServices interface -->
+		<echo message="E41668F7-D506-4C8A-A5D7-FEAE5630797E libManagedComBridge.so
+"
+			file="${dir.outputBase}/SimpleRootSite.compmap" append="true"
+			if="${platform::is-unix()}"/> <!-- IViewInputMgr interface -->
+		<call target="rebuild-compmap" cascade="true" if="${platform::is-unix()}"/>
+  </post-build>
 </include>

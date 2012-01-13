@@ -62,6 +62,7 @@
 			// m_writingSystemCombo
 			//
 			resources.ApplyResources(this.m_writingSystemCombo, "m_writingSystemCombo");
+			this.m_writingSystemCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_writingSystemCombo.FormattingEnabled = true;
 			this.m_writingSystemCombo.Name = "m_writingSystemCombo";
 			//
@@ -79,6 +80,7 @@
 			// m_converterCombo
 			//
 			resources.ApplyResources(this.m_converterCombo, "m_converterCombo");
+			this.m_converterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_converterCombo.FormattingEnabled = true;
 			this.m_converterCombo.Name = "m_converterCombo";
 			//

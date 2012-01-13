@@ -293,7 +293,7 @@ color lighter.-->
 	  <xsl:apply-templates mode="glosses" />
 	</w:tc>
   </xsl:template>
-  <xsl:template match="main" mode="glosses"></xsl:template>
+  <xsl:template match="main" mode="glosses"> </xsl:template>
   <xsl:template match="main">
 	<w:p>
 	  <w:pPr>
@@ -316,7 +316,7 @@ color lighter.-->
 		  <w:pStyle w:val="Discourse Title2" />
 		</xsl:if>
 		<!-- Todo: for RTL we need to be smarter.-->
-		<xsl:if test="parent::cell[@reversed='true']">
+		<xsl:if test="//languages/language[@vernacular='true' and @RightToLeft='true']">
 		  <w:jc w:val="right" />
 		</xsl:if>
 	  </w:pPr>
@@ -375,8 +375,8 @@ color lighter.-->
 	  <w:pPr>
 		<w:pStyle w:val="Discourse Gloss" />
 		<!-- Todo: for RTL we need to be smarter.-->
-		<xsl:if test="parent::cell[@reversed='true']">
-		  <w:jc w:val="right" />
+		<xsl:if test="//languages/language[@vernacular='true' and @RightToLeft='true']">
+			<w:jc w:val="right" />
 		</xsl:if>
 	  </w:pPr>
 	  <xsl:apply-templates />

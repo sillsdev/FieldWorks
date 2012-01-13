@@ -117,424 +117,355 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_wordToTryLabel.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_lblWordToTry.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_wordToTryLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_lblWordToTry.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 20</value>
+  <data name="m_wordToTryLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 16</value>
   </data>
-  <data name="m_lblWordToTry.Size" type="System.Drawing.Size, System.Drawing">
-	<value>80, 16</value>
+  <data name="m_wordToTryLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>62, 13</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_lblWordToTry.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_wordToTryLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <data name="m_lblWordToTry.Text" xml:space="preserve">
+  <data name="m_wordToTryLabel.Text" xml:space="preserve">
 	<value>&amp;Word to try:</value>
   </data>
-  <data name="&gt;&gt;m_lblWordToTry.Name" xml:space="preserve">
-	<value>m_lblWordToTry</value>
+  <data name="&gt;&gt;m_wordToTryLabel.Name" xml:space="preserve">
+	<value>m_wordToTryLabel</value>
   </data>
-  <data name="&gt;&gt;m_lblWordToTry.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_wordToTryLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_lblWordToTry.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
+  <data name="&gt;&gt;m_wordToTryLabel.Parent" xml:space="preserve">
+	<value>m_wordPanel</value>
   </data>
-  <data name="&gt;&gt;m_lblWordToTry.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_wordToTryLabel.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <data name="m_btnClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="m_closeButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
   </data>
-  <data name="m_btnClose.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_closeButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>361, 8</value>
   </data>
-  <data name="m_btnClose.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_closeButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
-  <data name="m_btnClose.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_closeButton.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <data name="m_btnClose.Text" xml:space="preserve">
+  <data name="m_closeButton.Text" xml:space="preserve">
 	<value>&amp;Close</value>
   </data>
-  <data name="&gt;&gt;m_btnClose.Name" xml:space="preserve">
-	<value>m_btnClose</value>
+  <data name="&gt;&gt;m_closeButton.Name" xml:space="preserve">
+	<value>m_closeButton</value>
   </data>
-  <data name="&gt;&gt;m_btnClose.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_closeButton.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_btnClose.Parent" xml:space="preserve">
-	<value>m_pnlClose</value>
+  <data name="&gt;&gt;m_closeButton.Parent" xml:space="preserve">
+	<value>m_closePanel</value>
   </data>
-  <data name="&gt;&gt;m_btnClose.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_closeButton.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="m_btnTryIt.Enabled" type="System.Boolean, mscorlib">
+  <data name="m_tryItButton.Enabled" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_btnTryIt.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_tryItButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>408, 16</value>
   </data>
-  <data name="m_btnTryIt.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_tryItButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>96, 24</value>
   </data>
-  <data name="m_btnTryIt.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_tryItButton.TabIndex" type="System.Int32, mscorlib">
 	<value>2</value>
   </data>
-  <data name="m_btnTryIt.Text" xml:space="preserve">
+  <data name="m_tryItButton.Text" xml:space="preserve">
 	<value>&amp;Try it</value>
   </data>
-  <data name="&gt;&gt;m_btnTryIt.Name" xml:space="preserve">
-	<value>m_btnTryIt</value>
+  <data name="&gt;&gt;m_tryItButton.Name" xml:space="preserve">
+	<value>m_tryItButton</value>
   </data>
-  <data name="&gt;&gt;m_btnTryIt.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_tryItButton.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_btnTryIt.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
+  <data name="&gt;&gt;m_tryItButton.Parent" xml:space="preserve">
+	<value>m_wordPanel</value>
   </data>
-  <data name="&gt;&gt;m_btnTryIt.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_tryItButton.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="&gt;&gt;m_lblResults.Name" xml:space="preserve">
-	<value>m_lblResults</value>
-  </data>
-  <data name="&gt;&gt;m_lblResults.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblResults.Parent" xml:space="preserve">
-	<value>m_pnlResults</value>
-  </data>
-  <data name="&gt;&gt;m_lblResults.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_pnlResults.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_pnlResults.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 176</value>
-  </data>
-  <data name="m_pnlResults.Size" type="System.Drawing.Size, System.Drawing">
-	<value>537, 297</value>
-  </data>
-  <data name="m_pnlResults.TabIndex" type="System.Int32, mscorlib">
-	<value>2</value>
-  </data>
-  <data name="&gt;&gt;m_pnlResults.Name" xml:space="preserve">
-	<value>m_pnlResults</value>
-  </data>
-  <data name="&gt;&gt;m_pnlResults.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlResults.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_pnlResults.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_lblResults.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_resultsLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="m_lblResults.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_resultsLabel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 0</value>
   </data>
-  <data name="m_lblResults.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_resultsLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>517, 16</value>
   </data>
-  <data name="m_lblResults.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_resultsLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <data name="m_lblResults.Text" xml:space="preserve">
+  <data name="m_resultsLabel.Text" xml:space="preserve">
 	<value>  Results:</value>
   </data>
-  <data name="&gt;&gt;m_lblResults.Name" xml:space="preserve">
-	<value>m_lblResults</value>
+  <data name="&gt;&gt;m_resultsLabel.Name" xml:space="preserve">
+	<value>m_resultsLabel</value>
   </data>
-  <data name="&gt;&gt;m_lblResults.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_resultsLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_lblResults.Parent" xml:space="preserve">
-	<value>m_pnlResults</value>
+  <data name="&gt;&gt;m_resultsLabel.Parent" xml:space="preserve">
+	<value>m_resultsPanel</value>
   </data>
-  <data name="&gt;&gt;m_lblResults.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_resultsLabel.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Name" xml:space="preserve">
-	<value>m_lblStatus</value>
+  <data name="m_resultsPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="m_resultsPanel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 176</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Parent" xml:space="preserve">
-	<value>m_pnlClose</value>
+  <data name="m_resultsPanel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>537, 297</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonHelp.Name" xml:space="preserve">
-	<value>buttonHelp</value>
-  </data>
-  <data name="&gt;&gt;buttonHelp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonHelp.Parent" xml:space="preserve">
-	<value>m_pnlClose</value>
-  </data>
-  <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="m_pnlClose.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Bottom</value>
-  </data>
-  <data name="m_pnlClose.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 473</value>
-  </data>
-  <data name="m_pnlClose.Size" type="System.Drawing.Size, System.Drawing">
-	<value>537, 36</value>
-  </data>
-  <data name="m_pnlClose.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_resultsPanel.TabIndex" type="System.Int32, mscorlib">
 	<value>2</value>
   </data>
-  <data name="&gt;&gt;m_pnlClose.Name" xml:space="preserve">
-	<value>m_pnlClose</value>
+  <data name="&gt;&gt;m_resultsPanel.Name" xml:space="preserve">
+	<value>m_resultsPanel</value>
   </data>
-  <data name="&gt;&gt;m_pnlClose.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_resultsPanel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_pnlClose.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_resultsPanel.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;m_pnlClose.ZOrder" xml:space="preserve">
-	<value>3</value>
+  <data name="&gt;&gt;m_resultsPanel.ZOrder" xml:space="preserve">
+	<value>0</value>
   </data>
-  <data name="m_lblStatus.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_statusLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="m_lblStatus.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_statusLabel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 5</value>
   </data>
-  <data name="m_lblStatus.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_statusLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>338, 28</value>
   </data>
-  <data name="m_lblStatus.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_statusLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <data name="m_lblStatus.Text" xml:space="preserve">
+  <data name="m_statusLabel.Text" xml:space="preserve">
 	<value>  Parser Status:</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Name" xml:space="preserve">
-	<value>m_lblStatus</value>
+  <data name="&gt;&gt;m_statusLabel.Name" xml:space="preserve">
+	<value>m_statusLabel</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_statusLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.Parent" xml:space="preserve">
-	<value>m_pnlClose</value>
+  <data name="&gt;&gt;m_statusLabel.Parent" xml:space="preserve">
+	<value>m_closePanel</value>
   </data>
-  <data name="&gt;&gt;m_lblStatus.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_statusLabel.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="m_helpButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
   </data>
-  <data name="buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_helpButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>449, 8</value>
   </data>
-  <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_helpButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
-  <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_helpButton.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
-  <data name="buttonHelp.Text" xml:space="preserve">
+  <data name="m_helpButton.Text" xml:space="preserve">
 	<value>Help</value>
   </data>
-  <data name="&gt;&gt;buttonHelp.Name" xml:space="preserve">
-	<value>buttonHelp</value>
+  <data name="&gt;&gt;m_helpButton.Name" xml:space="preserve">
+	<value>m_helpButton</value>
   </data>
-  <data name="&gt;&gt;buttonHelp.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_helpButton.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonHelp.Parent" xml:space="preserve">
-	<value>m_pnlClose</value>
+  <data name="&gt;&gt;m_helpButton.Parent" xml:space="preserve">
+	<value>m_closePanel</value>
   </data>
-  <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_helpButton.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Name" xml:space="preserve">
-	<value>m_cbDoSelectMorphs</value>
+  <data name="m_closePanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Bottom</value>
   </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="m_closePanel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 473</value>
   </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
+  <data name="m_closePanel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>537, 36</value>
   </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoTrace.Name" xml:space="preserve">
-	<value>m_cbDoTrace</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoTrace.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoTrace.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoTrace.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_tbWordForm.Name" xml:space="preserve">
-	<value>m_tbWordForm</value>
-  </data>
-  <data name="&gt;&gt;m_tbWordForm.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25444, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_tbWordForm.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
-  </data>
-  <data name="&gt;&gt;m_tbWordForm.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="m_pnlWord.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Top</value>
-  </data>
-  <data name="m_pnlWord.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
-  </data>
-  <data name="m_pnlWord.Size" type="System.Drawing.Size, System.Drawing">
-	<value>537, 86</value>
-  </data>
-  <data name="m_pnlWord.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_pnlWord.Name" xml:space="preserve">
-	<value>m_pnlWord</value>
-  </data>
-  <data name="&gt;&gt;m_pnlWord.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlWord.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_pnlWord.ZOrder" xml:space="preserve">
+  <data name="m_closePanel.TabIndex" type="System.Int32, mscorlib">
 	<value>2</value>
   </data>
-  <data name="m_cbDoSelectMorphs.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
+  <data name="&gt;&gt;m_closePanel.Name" xml:space="preserve">
+	<value>m_closePanel</value>
   </data>
-  <data name="m_cbDoSelectMorphs.Enabled" type="System.Boolean, mscorlib">
-	<value>False</value>
+  <data name="&gt;&gt;m_closePanel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="m_cbDoSelectMorphs.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 65</value>
+  <data name="&gt;&gt;m_closePanel.Parent" xml:space="preserve">
+	<value>$this</value>
   </data>
-  <data name="m_cbDoSelectMorphs.Size" type="System.Drawing.Size, System.Drawing">
-	<value>352, 17</value>
-  </data>
-  <data name="m_cbDoSelectMorphs.TabIndex" type="System.Int32, mscorlib">
-	<value>4</value>
-  </data>
-  <data name="m_cbDoSelectMorphs.Text" xml:space="preserve">
-	<value>Let me &amp;break the word into its morphemes (this can make it run faster)</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Name" xml:space="preserve">
-	<value>m_cbDoSelectMorphs</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
-  </data>
-  <data name="&gt;&gt;m_cbDoSelectMorphs.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_cbDoTrace.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_cbDoTrace.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 46</value>
-  </data>
-  <data name="m_cbDoTrace.Size" type="System.Drawing.Size, System.Drawing">
-	<value>485, 17</value>
-  </data>
-  <data name="m_cbDoTrace.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;m_closePanel.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <data name="m_cbDoTrace.Text" xml:space="preserve">
-	<value>&amp;Let me see all the detailed steps the parser tried (this may take a very long time in some instances)</value>
+  <data name="m_doSelectMorphsCheckBox.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
   </data>
-  <data name="&gt;&gt;m_cbDoTrace.Name" xml:space="preserve">
-	<value>m_cbDoTrace</value>
+  <data name="m_doSelectMorphsCheckBox.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
   </data>
-  <data name="&gt;&gt;m_cbDoTrace.Type" xml:space="preserve">
+  <data name="m_doSelectMorphsCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 65</value>
+  </data>
+  <data name="m_doSelectMorphsCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>352, 17</value>
+  </data>
+  <data name="m_doSelectMorphsCheckBox.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_doSelectMorphsCheckBox.Text" xml:space="preserve">
+	<value>Let me &amp;break the word into its morphemes (this can make it run faster)</value>
+  </data>
+  <data name="&gt;&gt;m_doSelectMorphsCheckBox.Name" xml:space="preserve">
+	<value>m_doSelectMorphsCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_doSelectMorphsCheckBox.Type" xml:space="preserve">
 	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_cbDoTrace.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
+  <data name="&gt;&gt;m_doSelectMorphsCheckBox.Parent" xml:space="preserve">
+	<value>m_wordPanel</value>
   </data>
-  <data name="&gt;&gt;m_cbDoTrace.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_doSelectMorphsCheckBox.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_doTraceCheckBox.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_doTraceCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 46</value>
+  </data>
+  <data name="m_doTraceCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>485, 17</value>
+  </data>
+  <data name="m_doTraceCheckBox.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_doTraceCheckBox.Text" xml:space="preserve">
+	<value>&amp;Let me see all the detailed steps the parser tried (this may take a very long time in some instances)</value>
+  </data>
+  <data name="&gt;&gt;m_doTraceCheckBox.Name" xml:space="preserve">
+	<value>m_doTraceCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_doTraceCheckBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_doTraceCheckBox.Parent" xml:space="preserve">
+	<value>m_wordPanel</value>
+  </data>
+  <data name="&gt;&gt;m_doTraceCheckBox.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="m_tbWordForm.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="m_wordformTextBox.Font" type="System.Drawing.Font, System.Drawing">
 	<value>Microsoft Sans Serif, 100pt</value>
   </data>
-  <data name="m_tbWordForm.Location" type="System.Drawing.Point, System.Drawing">
-	<value>104, 16</value>
+  <data name="m_wordformTextBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>91, 16</value>
   </data>
-  <data name="m_tbWordForm.Size" type="System.Drawing.Size, System.Drawing">
-	<value>288, 20</value>
+  <data name="m_wordformTextBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>311, 20</value>
   </data>
-  <data name="m_tbWordForm.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_wordformTextBox.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
-  <data name="&gt;&gt;m_tbWordForm.Name" xml:space="preserve">
-	<value>m_tbWordForm</value>
+  <data name="&gt;&gt;m_wordformTextBox.Name" xml:space="preserve">
+	<value>m_wordformTextBox</value>
   </data>
-  <data name="&gt;&gt;m_tbWordForm.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25444, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;m_wordformTextBox.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.2.0.27953, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;m_tbWordForm.Parent" xml:space="preserve">
-	<value>m_pnlWord</value>
+  <data name="&gt;&gt;m_wordformTextBox.Parent" xml:space="preserve">
+	<value>m_wordPanel</value>
   </data>
-  <data name="&gt;&gt;m_tbWordForm.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_wordformTextBox.ZOrder" xml:space="preserve">
 	<value>4</value>
+  </data>
+  <data name="m_wordPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Top</value>
+  </data>
+  <data name="m_wordPanel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_wordPanel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>537, 86</value>
+  </data>
+  <data name="m_wordPanel.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_wordPanel.Name" xml:space="preserve">
+	<value>m_wordPanel</value>
+  </data>
+  <data name="&gt;&gt;m_wordPanel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_wordPanel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_wordPanel.ZOrder" xml:space="preserve">
+	<value>2</value>
   </data>
   <metadata name="m_timer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>17, 17</value>
   </metadata>
-  <data name="m_pnlSandbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="m_sandboxPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>Top</value>
   </data>
-  <data name="m_pnlSandbox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_sandboxPanel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 86</value>
   </data>
-  <data name="m_pnlSandbox.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_sandboxPanel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>537, 90</value>
   </data>
-  <data name="m_pnlSandbox.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_sandboxPanel.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
-  <data name="m_pnlSandbox.Visible" type="System.Boolean, mscorlib">
+  <data name="m_sandboxPanel.Visible" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="&gt;&gt;m_pnlSandbox.Name" xml:space="preserve">
-	<value>m_pnlSandbox</value>
+  <data name="&gt;&gt;m_sandboxPanel.Name" xml:space="preserve">
+	<value>m_sandboxPanel</value>
   </data>
-  <data name="&gt;&gt;m_pnlSandbox.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_sandboxPanel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_pnlSandbox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_sandboxPanel.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;m_pnlSandbox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_sandboxPanel.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

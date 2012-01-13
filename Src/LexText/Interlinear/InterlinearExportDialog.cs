@@ -114,8 +114,11 @@ namespace SIL.FieldWorks.IText
 				{
 					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_mediator.HelpTopicProvider);
 				}
-				dlg.PruneToSelectedTexts((IStText)m_objRoot);
-				dlg.Text = ITextStrings.ksExportInterlinearizedTexts;
+				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
+				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
+				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
+				// LT-12140 Dialog name shouldn't change from Choose Texts
+				//dlg.Text = ITextStrings.ksExportInterlinearizedTexts;
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
@@ -264,9 +267,9 @@ namespace SIL.FieldWorks.IText
 			this.Close();
 		}
 
-		protected int NodeIndex(string tag)
+		protected int NodeIndex(string pathname)
 		{
-			string file = tag.Substring(tag.LastIndexOf('\\') + 1);
+			string file = Path.GetFileName(pathname);
 			for (int i = 0; i < m_ddNodes.Count; i++)
 			{
 				string fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);

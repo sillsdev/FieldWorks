@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{3365F220-B39D-423D-8A99-FDD0588970CE}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Common.Keyboarding</RootNamespace>
+	<AssemblyName>Keyboarding</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\Output\Debug</OutputPath>
+	<DefineConstants>DEBUG</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<ConsolePause>false</ConsolePause>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<GenerateDocumentation>true</GenerateDocumentation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>none</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\Output\Release</OutputPath>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="COMInterfaces, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Core" />
+	<Reference Include="KeyboardSwitcher, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\KeyboardSwitcher.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="KeyboardController.cs" />
+	<Compile Include="KeyboardDescription.cs" />
+	<Compile Include="KeyboardDescriptionNull.cs" />
+	<Compile Include="KeyboardDescriptionWrapper.cs" />
+	<Compile Include="KeyboardErrorDescription.cs" />
+	<Compile Include="Interfaces\IKeyboardAdaptor.cs" />
+	<Compile Include="Interfaces\IKeyboardCallback.cs" />
+	<Compile Include="Interfaces\IKeyboardDescription.cs" />
+	<Compile Include="Interfaces\IKeyboardErrorDescription.cs" />
+	<Compile Include="Interfaces\IKeyboardEventHandler.cs" />
+	<Compile Include="Interfaces\IKeyboardMethods.cs" />
+	<Compile Include="Linux\IbusKeyboardAdaptor.cs" />
+	<Compile Include="Linux\IcuLocale.cs" />
+	<Compile Include="Linux\LinuxKeyboardHelper.cs" />
+	<Compile Include="Linux\X11.cs" />
+	<Compile Include="Linux\XklConfigRegistry.cs" />
+	<Compile Include="Linux\XklEngine.cs" />
+	<Compile Include="Linux\XkbKeyboardAdaptor.cs" />
+	<Compile Include="Linux\XkbKeyboardDescription.cs" />
+	<Compile Include="Windows\WinKeyboardAdaptor.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

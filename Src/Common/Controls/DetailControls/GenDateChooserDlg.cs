@@ -430,8 +430,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//
 			// m_cancelButton
 			//
-			this.m_cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			resources.ApplyResources(this.m_cancelButton, "m_cancelButton");
+			this.m_cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.m_cancelButton.Name = "m_cancelButton";
 			this.m_cancelButton.UseVisualStyleBackColor = true;
 			//
@@ -469,6 +469,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			resources.GetString("m_eraComboBox.Items1")});
 			resources.ApplyResources(this.m_eraComboBox, "m_eraComboBox");
 			this.m_eraComboBox.Name = "m_eraComboBox";
+			this.m_helpProvider.SetShowHelp(this.m_eraComboBox, ((bool)(resources.GetObject("m_eraComboBox.ShowHelp"))));
 			this.m_eraComboBox.SelectedIndexChanged += new System.EventHandler(this.m_eraComboBox_SelectedIndexChanged);
 			//
 			// m_emptyCalendar
@@ -501,6 +502,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "GenDateChooserDlg";
+			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			((System.ComponentModel.ISupportInitialize)(this.m_yearUpDown)).EndInit();
@@ -508,6 +510,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.m_emptyCalendar.PerformLayout();
 			this.ResumeLayout(false);
 
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+			//Here we want to make sure the size of the dialog is reasonable so that the buttons are not hidden
+			//by the calendar when the dialog is loaded in 120 dpi
+			if (m_calendar.Bottom > m_okButton.Top)
+			{
+				this.Height = 337;
+				m_calendar.Left = 43;
+			}
 		}
 	}
 }

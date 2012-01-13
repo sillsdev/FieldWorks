@@ -468,6 +468,11 @@ namespace SIL.HermitCrab
 			}
 		}
 
+		public bool IsGreedy(int partition)
+		{
+			return m_modifyFromCtxts.ContainsKey(partition);
+		}
+
 		/// <summary>
 		/// Determines which morphological output records result in a reduplicated affix. It
 		/// makes educated guesses.

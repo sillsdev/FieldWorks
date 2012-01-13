@@ -75,8 +75,8 @@ namespace SIL.FieldWorks.XWorks
 		List<StyleComboItem> m_rgParaStyles;
 		// The original distance from the bottom of panel1 to the top of m_lblContext.
 		int m_dyContextOffset;
-		// The original top of m_lblContext.
-		private int m_yOriginalTopOfContext;
+		// The original distance from the top of m_lblContext to the bottom of the dialog.
+		private int m_dyOriginalTopOfContext;
 		private string m_helpTopicID; // should we store the helpID or the configObject
 		bool m_fDeleteCustomFiles;
 		string m_configObjectName;
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			internal XmlNode Layout
-		{
+			{
 				get { return m_xnLayout; }
 			}
 
@@ -140,12 +140,12 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_fHidden; }
 			}
 		}
-			/// <summary>
+		/// <summary>
 		/// This class provides a stack of nodes that represent a level (possibly hidden) in
 		/// displaying the configuration tree.
-			/// </summary>
+		/// </summary>
 		protected class LayoutLevels
-			{
+		{
 			private readonly List<PartCaller> m_stackCallers = new List<PartCaller>();
 
 			/// <summary>
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 						retval.Insert(0, m_stackCallers[i]);
 					}
 					return retval;
-		}
+				}
 			}
 		}
 
@@ -965,11 +965,14 @@ namespace SIL.FieldWorks.XWorks
 			ltn.EntryTypeList[index].Name = m_noVariantTypeLabel;
 		}
 
-		private static List<ICmPossibility> FlattenPossibilityList(IEnumerable<ICmPossibility> sequence)
+		internal static List<ICmPossibility> FlattenPossibilityList(IEnumerable<ICmPossibility> sequence)
 		{
 			var list = sequence.ToList();
 			foreach (var poss in sequence)
-				list.AddRange(poss.SubPossibilitiesOS);
+			{
+				// Need to get all nested items
+				list.AddRange(FlattenPossibilityList(poss.SubPossibilitiesOS));
+			}
 			return list;
 		}
 
@@ -1012,7 +1015,13 @@ namespace SIL.FieldWorks.XWorks
 		private void StoreChildNodeInfo(XmlNode xn, string className, LayoutTreeNode ltn)
 		{
 			string sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
-			if (!ltn.IsTopLevel)
+			XmlNode xnCaller = m_levels.PartRef;
+			if (xnCaller == null)
+				xnCaller = ltn.Configuration;
+			bool hideConfig = xnCaller == null ? false : XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
+			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
+			// we don't want to configure it at all.
+			if (!ltn.IsTopLevel && !hideConfig)
 			{
 				if (sField == "Senses" && (ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense"))
 				{
@@ -1042,9 +1051,6 @@ namespace SIL.FieldWorks.XWorks
 				ltn.UseParentConfig = true;
 				return;
 			}
-			XmlNode xnCaller = m_levels.PartRef;
-			if (xnCaller == null)
-				xnCaller = ltn.Configuration;
 			string sLayout = XmlVc.GetLayoutName(xn, xnCaller);
 			int clidDst = 0;
 			string sClass = null;
@@ -1124,7 +1130,7 @@ namespace SIL.FieldWorks.XWorks
 					Debug.Assert(subLayout != null, msg);
 					//Debug.WriteLine(msg);
 				}
-		}
+			}
 		}
 
 		#endregion // Constructor, Initialization, etc.
@@ -1153,56 +1159,6 @@ namespace SIL.FieldWorks.XWorks
 			//    RemoveDictTypeComboBox();
 			//}
 		}
-
-		///// <summary>
-		///// When the combobox for "dictionary type" may offer only one choice, there's no
-		///// reason to display it.  This means that section of the dialog box can go away
-		///// entirely.  (See FWR-736.)
-		///// </summary>
-		//private void RemoveDictTypeComboBox()
-		//{
-		//    m_lblViewType.Visible = false;
-		//    m_cbDictType.Visible = false;
-		//    label2.Visible = false;
-		//    groupBox1.Visible = false;
-		//    int diff = m_tvParts.Location.Y - m_lblViewType.Location.Y;
-		//    // Moving things and shrinking the dialog is a bit tricky, because shrinking
-		//    // the dialog can move or resize controls based on how they are anchored.
-		//    // Being anchored to the top and not to the bottom is the only safe setting
-		//    // when changing the height of the entire dialog after repositioning all the
-		//    // controls vertically.
-		//    List<Control> anchoredBottom = new List<Control>();
-		//    List<Control> anchoredTop = new List<Control>();
-		//    foreach (Control ctl in Controls)
-		//    {
-		//        if (ctl.Location.Y > diff)
-		//        {
-		//            int height = ctl.Height;
-		//            Point loc = ctl.Location;
-		//            AnchorStyles anchor = ctl.Anchor;
-		//            if ((ctl.Anchor & AnchorStyles.Top) == AnchorStyles.Top)
-		//                anchoredTop.Add(ctl);
-		//            if ((ctl.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)
-		//            {
-		//                anchoredBottom.Add(ctl);
-		//                ctl.Anchor &= ~AnchorStyles.Bottom;
-		//                ctl.Anchor |= AnchorStyles.Top;
-		//            }
-		//            ctl.Location = new Point(loc.X, loc.Y - diff);
-		//            ctl.Height = height;
-		//        }
-		//    }
-		//    if (MinimumSize.Height > diff)
-		//        MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - diff);
-		//    Height = Height - diff;
-		//    foreach (Control ctl in anchoredBottom)
-		//    {
-		//        ctl.Anchor |= AnchorStyles.Bottom;
-		//        ctl.Anchor &= ~AnchorStyles.Top;
-		//    }
-		//    foreach (Control ctl in anchoredTop)
-		//        ctl.Anchor |= AnchorStyles.Top;
-		//}
 
 		/// <summary>
 		/// Save the location and size for next time.
@@ -1738,7 +1694,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the name of the style the user would like to select (null or empty if canceled).
 		/// </summary>
 		private void HandleStylesBtn(ComboBox combo, Action fixCombo, string defaultStyle)
-			{
+		{
 			FwStylesDlg.RunStylesDialogForCombo(combo,
 				() => {
 					// Reload the lists for the styles combo boxes, and redisplay the controls.
@@ -2288,10 +2244,16 @@ namespace SIL.FieldWorks.XWorks
 			ltn.ContentVisible = ltn.Checked;
 			if (m_tbBefore.Visible && m_tbBefore.Enabled)
 				ltn.Before = m_tbBefore.Text;
+			else
+				ltn.Before = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbBetween.Visible && m_tbBetween.Enabled)
 				ltn.Between = m_tbBetween.Text;
+			else
+				ltn.Between = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_tbAfter.Visible && m_tbAfter.Enabled)
 				ltn.After = m_tbAfter.Text;
+			else
+				ltn.After = ""; // if it's invisible don't let any non-empty value be saved.
 			if (m_chkDisplayWsAbbrs.Visible)
 				ltn.ShowWsLabels = m_chkDisplayWsAbbrs.Checked && m_chkDisplayWsAbbrs.Enabled;
 			if (m_cfgSenses.Visible)
@@ -2302,7 +2264,7 @@ namespace SIL.FieldWorks.XWorks
 				StoreComplexFormData(ltn);
 			if (m_cbCharStyle.Visible && m_cbCharStyle.Enabled)
 			{
-				StyleComboItem sci = m_cbCharStyle.SelectedItem as StyleComboItem;
+				var sci = m_cbCharStyle.SelectedItem as StyleComboItem;
 				if (sci != null && sci.Style != null)
 					ltn.StyleName = sci.Style.Name;
 				else
@@ -2383,13 +2345,8 @@ namespace SIL.FieldWorks.XWorks
 				if (lvi.Tag is int)
 				{
 					int ws = (int)lvi.Tag;
-					switch (ws)
-					{
-						case (int)CellarModuleDefns.kwsAnal:	sWs = "analysis";		break;
-						case (int)CellarModuleDefns.kwsVern:	sWs = "vernacular";		break;
-						case WritingSystemServices.kwsPronunciation: sWs = "pronunciation"; break;
-						case WritingSystemServices.kwsReversalIndex: sWs = "reversal"; break;
-					}
+					WritingSystemServices.SmartMagicWsToSimpleMagicWs(ws);
+					sWs = WritingSystemServices.GetMagicWsNameFromId(ws);
 				}
 				else if (lvi.Tag is IWritingSystem)
 				{
@@ -2561,7 +2518,8 @@ namespace SIL.FieldWorks.XWorks
 				DisplayStyleControls(fEnabled);
 
 			string sMoreDetail = String.Format(xWorksStrings.ksUsesTheSameConfigurationAs,
-				m_current.Text, m_current.Parent.Text);
+				m_current.Text, m_current.Configuration.Attributes["recurseConfigLabel"] != null ? m_current.Configuration.Attributes["recurseConfigLabel"].Value
+																								  : m_current.Parent.Text);
 			m_cfgParentNode.Visible = true;
 			m_cfgParentNode.SetDetails(sMoreDetail, m_chkDisplayData.Checked && fEnabled, false);
 		}
@@ -2690,26 +2648,26 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void PlaceContextControls(Control belowThis)
 		{
-			if (m_yOriginalTopOfContext == 0)
+			if (m_dyOriginalTopOfContext == 0)
 			{
 				// This method gets called very early in initialization; the first call is a good time to
 				// record the original placement of things.
 				// The 8 is rather arbitrary. It would be nice to take a distance from some pre-positioned control,
 				// but it is too difficult to know which one with so many overlapping options.
 				m_dyContextOffset = 8;
-				m_yOriginalTopOfContext = m_lblContext.Top;
+				m_dyOriginalTopOfContext = this.Bottom - m_lblContext.Top;
 			}
-			int desiredTop = belowThis == null ? m_yOriginalTopOfContext : belowThis.Bottom + m_dyContextOffset;
+			int desiredTop = belowThis == null ? this.Bottom - m_dyOriginalTopOfContext : belowThis.Bottom + m_dyContextOffset;
 			int diff = desiredTop - m_lblContext.Top;
+			var contextControls = new Control[] {m_lblContext, m_lblBefore, m_lblBetween, m_lblAfter, m_tbBefore, m_tbBetween, m_tbAfter};
+			// If we're putting it below something fixed, it should not move if the dialog resizes.
+			// If we're putting it the original distance from the bottom, it should.
+			foreach (var control in contextControls)
+				control.Anchor = AnchorStyles.Left | (belowThis == null ? AnchorStyles.Bottom : AnchorStyles.Top);
 			if (diff == 0)
 				return;
-			MoveControlVertically(m_lblContext, diff);
-			MoveControlVertically(m_lblBefore, diff);
-			MoveControlVertically(m_lblBetween, diff);
-			MoveControlVertically(m_lblAfter, diff);
-			MoveControlVertically(m_tbBefore, diff);
-			MoveControlVertically(m_tbBetween, diff);
-			MoveControlVertically(m_tbAfter, diff);
+			foreach (var control in contextControls)
+				MoveControlVertically(control, diff);
 		}
 
 		private void DisplayGramInfoConfigControls(bool fEnabled)
@@ -2854,7 +2812,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "analysis":
 					lvi = new ListViewItem(xWorksStrings.ksDefaultAnalysis);
-					wsDefault = (int)CellarModuleDefns.kwsAnal;
+					wsDefault = WritingSystemServices.kwsAnal;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
 					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
@@ -2862,7 +2820,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "vernacular":
 					lvi = new ListViewItem(xWorksStrings.ksDefaultVernacular);
-					wsDefault = (int)CellarModuleDefns.kwsVern;
+					wsDefault = WritingSystemServices.kwsVern;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
 					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
@@ -2886,11 +2844,11 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "analysis vernacular":
 					lvi = new ListViewItem(xWorksStrings.ksDefaultAnalysis);
-					wsDefault = (int) CellarModuleDefns.kwsAnal;
+					wsDefault = WritingSystemServices.kwsAnal;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
 					lvi = new ListViewItem(xWorksStrings.ksDefaultVernacular);
-					wsDefault2 = (int) CellarModuleDefns.kwsVern;
+					wsDefault2 = WritingSystemServices.kwsVern;
 					lvi.Tag = wsDefault2;
 					m_lvItems.Items.Add(lvi);
 					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
@@ -2900,11 +2858,11 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				default:	// "vernacular analysis"
 					lvi = new ListViewItem(xWorksStrings.ksDefaultVernacular);
-					wsDefault = (int) CellarModuleDefns.kwsVern;
+					wsDefault = WritingSystemServices.kwsVern;
 					lvi.Tag = wsDefault;
 					m_lvItems.Items.Add(lvi);
 					lvi = new ListViewItem(xWorksStrings.ksDefaultAnalysis);
-					wsDefault2 = (int) CellarModuleDefns.kwsAnal;
+					wsDefault2 = WritingSystemServices.kwsAnal;
 					lvi.Tag = wsDefault2;
 					m_lvItems.Items.Add(lvi);
 					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
@@ -2913,74 +2871,49 @@ namespace SIL.FieldWorks.XWorks
 						m_lvItems.Items.Add(new ListViewItem(ws.DisplayLabel) {Tag = ws});
 					break;
 			}
-			switch (m_current.WsLabel)
+			var wsId = WritingSystemServices.GetMagicWsIdFromName(m_current.WsLabel);
+			if (wsId != 0)
 			{
-				case "":
-					// it used to be possible to get in a situation where WsLabel is (persisted) empty, e.g. if
-					// the user hides/unselects writing systems in the Setup Writing Systems dialog
-					// and the revisits this dialog tree node leaving no items selected.
-					// In that case, we want to go ahead and select a reasonable default to
-					// restore this node to a sensible state. (LT-9862)
-					SelectDefaultWss(wsDefault, wsDefault2);
-					break;
-				case "analysis":
-					SetDefaultWritingSystem((int)CellarModuleDefns.kwsAnal);
-					break;
-				case "vernacular":
-					SetDefaultWritingSystem((int)CellarModuleDefns.kwsVern);
-					break;
-				case "pronunciation":
-					SetDefaultWritingSystem(WritingSystemServices.kwsPronunciation);
-					break;
-				case "reversal":
-					SetDefaultWritingSystem(WritingSystemServices.kwsReversalIndex);
-					break;
-				case "all reversal":
-				case "all analysis":
-				case "all vernacular":
-					for (int i = 0; i < m_lvItems.Items.Count; ++i)
+				wsId = WritingSystemServices.SmartMagicWsToSimpleMagicWs(wsId);
+				SetDefaultWritingSystem(wsId);
+			}
+			else
+			{
+				// Handle non-Magic wss here, must be explicit ws tags.
+				string[] rgws = m_current.WsLabel.Split(new[] { ',' });
+				int indexTarget = 0;
+				for (int i = 0; i < m_lvItems.Items.Count; ++i)
+				{
+					if (!(m_lvItems.Items[i].Tag is int))
 					{
-						var lws = m_lvItems.Items[i].Tag as ILgWritingSystem;
-						if (lws != null)
-							m_lvItems.Items[i].Checked = true;
+						indexTarget = i;
+						break;
 					}
-					break;
-				default:	// must be explicit ws tags.
-					string[] rgws = m_current.WsLabel.Split(new[] { ',' });
-					int indexTarget = 0;
-					for (int i = 0; i < m_lvItems.Items.Count; ++i)
+				}
+				for (int i = 0; i < rgws.Length; ++i)
+				{
+					string sLabel = rgws[i];
+					bool fChecked = false;
+					for (int iws = 0; iws < m_lvItems.Items.Count; ++iws)
 					{
-						if (!(m_lvItems.Items[i].Tag is int))
+						var ws = m_lvItems.Items[iws].Tag as IWritingSystem;
+						if (ws != null && ws.Id == sLabel)
 						{
-							indexTarget = i;
+							m_lvItems.Items[iws].Checked = true;
+							MoveListItem(iws, indexTarget++);
+							fChecked = true;
 							break;
 						}
 					}
-					for (int i = 0; i < rgws.Length; ++i)
+					if (!fChecked)
 					{
-						string sLabel = rgws[i];
-						bool fChecked = false;
-						for (int iws = 0; iws < m_lvItems.Items.Count; ++iws)
-						{
-							var ws = m_lvItems.Items[iws].Tag as IWritingSystem;
-							if (ws != null && ws.Id == sLabel)
-							{
-								m_lvItems.Items[iws].Checked = true;
-								MoveListItem(iws, indexTarget++);
-								fChecked = true;
-								break;
-							}
-						}
-						if (!fChecked)
-						{
-							// Add this to the list of writing systems, since the user must have
-							// wanted it at some time.
-							IWritingSystem ws;
-							if (m_cache.ServiceLocator.WritingSystemManager.TryGet(sLabel, out ws))
-								m_lvItems.Items.Insert(indexTarget++, new ListViewItem(ws.DisplayLabel) {Tag = ws, Checked = true});
-						}
+						// Add this to the list of writing systems, since the user must have
+						// wanted it at some time.
+						IWritingSystem ws;
+						if (m_cache.ServiceLocator.WritingSystemManager.TryGet(sLabel, out ws))
+							m_lvItems.Items.Insert(indexTarget++, new ListViewItem(ws.DisplayLabel) { Tag = ws, Checked = true });
 					}
-					break;
+				}
 			}
 			// if for some reason nothing was selected, try to select a default.
 			if (m_lvItems.CheckedItems.Count == 0)
@@ -3524,16 +3457,16 @@ namespace SIL.FieldWorks.XWorks
 								+ "and we couldn't compute something reasonable from @ws='{1}' "
 								+ "so we're setting @wsType to 'vernacular analysis'",
 								refValue, wsValue));
-					}
-						// store the wsType attribute on the node, so that if 'ws' changes to something
-						// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
-						if (config.OwnerDocument != null)
-						{
-						XmlAttribute xa = config.OwnerDocument.CreateAttribute("wsType");
-						xa.Value = m_sWsType;
-							if (config.Attributes != null)
-						config.Attributes.Append(xa);
-					}
+						}
+							// store the wsType attribute on the node, so that if 'ws' changes to something
+							// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
+							if (config.OwnerDocument != null)
+							{
+							XmlAttribute xa = config.OwnerDocument.CreateAttribute("wsType");
+							xa.Value = m_sWsType;
+								if (config.Attributes != null)
+							config.Attributes.Append(xa);
+						}
 					}
 					m_sWsType = StringServices.GetWsSpecWithoutPrefix(m_sWsType);
 					if (m_sWsType != null && m_sWsLabel == null)
@@ -3617,7 +3550,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var sRelTypes = XmlUtils.GetOptionalAttributeValue(config, "reltypeseq");
 						RelTypeList = LexReferenceInfo.CreateListFromStorageString(sRelTypes);
-				}
+					}
 					EntryType = XmlUtils.GetOptionalAttributeValue(config, "entrytype");
 					if (!String.IsNullOrEmpty(EntryType))
 					{
@@ -3921,7 +3854,30 @@ namespace SIL.FieldWorks.XWorks
 			public string WsLabel
 			{
 				get { return m_sWsLabel; }
-				set { m_sWsLabel = value; }
+				set
+				{
+					var temp = value;
+					if (!NewValueIsCompatibleWithMagic(m_sWsLabel, temp))
+					{
+						m_sWsLabel = temp;
+					}
+				}
+			}
+
+			private static bool NewValueIsCompatibleWithMagic(string possibleMagicLabel, string newValue)
+			{
+				if (String.IsNullOrEmpty(possibleMagicLabel) || String.IsNullOrEmpty(newValue))
+					return false;
+
+				var magicId = WritingSystemServices.GetMagicWsIdFromName(possibleMagicLabel);
+				if (magicId == 0)
+					return false;
+
+				var newId = WritingSystemServices.GetMagicWsIdFromName(newValue);
+				if (newId == 0)
+					return false;
+
+				return newId == WritingSystemServices.SmartMagicWsToSimpleMagicWs(magicId);
 			}
 
 			public string WsType
@@ -4752,7 +4708,7 @@ namespace SIL.FieldWorks.XWorks
 			if (DialogResult != DialogResult.OK)
 			{
 				if (m_fDeleteCustomFiles)
-		{
+				{
 					Inventory.RemoveInventory("layouts", null);
 					Inventory.RemoveInventory("parts", null);
 				}
@@ -4760,26 +4716,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private void m_btnSetAll_Click(object sender, EventArgs e)
-			{
+		{
 			if (m_tvParts == null || m_tvParts.Nodes.Count == 0)
 				return;
 			foreach (TreeNode node in m_tvParts.Nodes)
 				CheckNodeAndChildren(node, m_fValueForSetAll);
 			m_fValueForSetAll = !m_fValueForSetAll;
 			m_btnSetAll.Text = m_fValueForSetAll ? "DEBUG: Set All" : "DEBUG: Clear All";
-			}
+		}
 
 		private static void CheckNodeAndChildren(TreeNode node, bool val)
-			{
+		{
 			node.Checked = val;
 			foreach (TreeNode tn in node.Nodes)
 				CheckNodeAndChildren(tn, val);
-			}
+		}
 
 		void m_cfgSenses_SensesBtnClicked(object sender, EventArgs e)
-			{
-			HandleStylesBtn(m_cfgSenses.SenseStyleCombo, () => m_cfgSenses.FillStylesCombo(m_rgParaStyles), m_current.StyleName);
-			}
+		{
+			HandleStylesBtn(m_cfgSenses.SenseStyleCombo,
+				() => m_cfgSenses.FillStylesCombo(m_rgParaStyles), m_current.StyleName);
+		}
 		// ReSharper restore InconsistentNaming
 
 		#region Manage Views methods
@@ -4844,7 +4801,7 @@ namespace SIL.FieldWorks.XWorks
 				mapLayoutToConfigBase.Add(sLayout, xn);
 			}
 			foreach ( var viewSpec in newViewsToCreate)
-		{
+			{
 				var code = viewSpec.Item1;
 				var baseLayout = viewSpec.Item2;
 				var label = viewSpec.Item3;
@@ -4854,13 +4811,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/*
-		 * Configuration nodes look like this:
-		"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
-			"<configure class=\"LexEntry\" label=\"Main Entry\" layout=\"publishStemEntry\"/>" +
-			"<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
-		"</layoutType>" +
-		 */
+		//
+		// *** Configuration nodes look like this:
+		//"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
+		//    "<configure class=\"LexEntry\" label=\"Main Entry\" layout=\"publishStemEntry\"/>" +
+		//    "<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
+		//"</layoutType>" +
+		//
 		private void CopyConfiguration(XmlNode xnBaseConfig, string code, string label)
 		{
 			var xnNewConfig = xnBaseConfig.CloneNode(true);
@@ -4925,7 +4882,7 @@ namespace SIL.FieldWorks.XWorks
 				ltn.IsNew = true;
 				MarkLayoutTreeNodesAsNew(ltn.Nodes.OfType<LayoutTreeNode>());
 			}
-			}
+		}
 
 		private void CopyAndRenameLayout(string className, string layoutName, string suffixCode)
 		{

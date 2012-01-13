@@ -29,6 +29,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -295,7 +296,7 @@ namespace SIL.FieldWorks.TE
 					m_cache.ServiceLocator.GetInstance<IActionHandler>()))
 				{
 					using (ImportWizard importWizard = new ImportWizard(m_cache.ProjectId.Name,
-						scr, m_styleSheet, m_cache, m_helpTopicProvider, m_app))
+						scr, m_styleSheet, m_helpTopicProvider, m_app))
 					{
 						if (importWizard.ShowDialog() == DialogResult.Cancel)
 							return null;
@@ -329,8 +330,7 @@ namespace SIL.FieldWorks.TE
 									m_cache.ServiceLocator.GetInstance<IActionHandler>()))
 								{
 									using (ImportWizard importWizard = new ImportWizard(
-										m_cache.ProjectId.Name, scr, m_styleSheet, m_cache,
-										m_helpTopicProvider, m_app))
+										m_cache.ProjectId.Name, scr, m_styleSheet, m_helpTopicProvider, m_app))
 									{
 										if (importWizard.ShowDialog() == DialogResult.Cancel)
 											return null;

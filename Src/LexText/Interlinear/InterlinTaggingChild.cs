@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.IText
 			// Get the info about the other end of the selection.
 			int cvsli = vwselNew.CLevels(fEndPoint) - 1;
 			SelLevInfo[] rgvsliEnd;
-			using (ArrayPtr prgvsli = MarshalEx.ArrayToNative(cvsli, typeof(SelLevInfo)))
+			using (ArrayPtr prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
 				int ihvoRoot, tagTextProp, cpropPrevious, ich, ws;
 				bool fAssocPrev;
@@ -176,8 +176,7 @@ namespace SIL.FieldWorks.IText
 				vwselNew.AllSelEndInfo(fEndPoint, out ihvoRoot, cvsli, prgvsli,
 					out tagTextProp, out cpropPrevious, out ich,
 					out ws, out fAssocPrev, out ttpSelProps);
-				rgvsliEnd = (SelLevInfo[])MarshalEx.NativeToArray(prgvsli, cvsli,
-						typeof(SelLevInfo));
+				rgvsliEnd = MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
 			}
 			return rgvsliEnd;
 		}
@@ -368,25 +367,24 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			// (LT-9415) if the user has right-clicked in a selected occurrence, bring
-			// up context menu for those selected ocurrences.
-			// otherwise, bring up the context menu for any newly selected occurrence.
-			if (SelectedWordforms != null && SelectedWordforms.Count > 0
-				&& e.Button == MouseButtons.Right)
+			if (e.Button == MouseButtons.Right)
 			{
-				IVwSelection selTest = null;
-				try
+				var selTest = GrabMousePtSelectionToTest(e);
+
+				// Could be the user right-clicked on the labels?
+				// If so, activate the base class method
+				int dummy;
+				if (UserClickedOnLabels(selTest, out dummy))
 				{
-					Point pt;
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					using (new HoldGraphics(this))
-					{
-						pt = PixelToView(new Point(e.X, e.Y));
-						GetCoordRects(out rcSrcRoot, out rcDstRoot);
-					}
-					// Make an invisible selection to see if we are in editable text.
-					selTest = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+					base.OnMouseDown(e);
+					return;
+				}
+
+				// (LT-9415) if the user has right-clicked in a selected occurrence, bring
+				// up context menu for those selected ocurrences.
+				// otherwise, bring up the context menu for any newly selected occurrence.
+				if (SelectedWordforms != null && SelectedWordforms.Count > 0)
+				{
 					var newSelectedOccurrences = GetSelectedOccurrences(selTest);
 					// if we don't overlap with an existing occurrence selection then
 					// make a new occurrence selection. (Otherwise, just make the context
@@ -400,18 +398,6 @@ namespace SIL.FieldWorks.IText
 						selTest.Install();
 					}
 				}
-				catch
-				{
-
-				}
-
-			}
-			else
-			{
-				base.OnMouseDown(e);
-			}
-			if (e.Button == MouseButtons.Right)
-			{
 				// Make a context menu and show it, if I'm not just closing one!
 				// This time test seems to be the only way to find out whether this click closed the last one.
 				if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
@@ -420,8 +406,11 @@ namespace SIL.FieldWorks.IText
 					m_taggingContextMenu.Closed += m_taggingContextMenu_Closed;
 					m_taggingContextMenu.Show(this, e.X, e.Y);
 				}
+			} // end right mouse button handler
+			else
+			{
+				base.OnMouseDown(e);
 			}
-
 		}
 
 		void m_taggingContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -437,7 +426,7 @@ namespace SIL.FieldWorks.IText
 			// If we have not selected any Wordforms, don't put tags in the context menu.
 			if (SelectedWordforms != null && SelectedWordforms.Count > 0)
 			{
-				var tagList = GetTaggingLists();
+				var tagList = GetTaggingLists(Cache.LangProject);
 				MakeContextMenu_AvailableTags(menu, tagList);
 			}
 			return menu;
@@ -474,9 +463,7 @@ namespace SIL.FieldWorks.IText
 		private bool DoSelectedOccurrencesHaveTag(ICmPossibility poss)
 		{
 			var dummyTag = FindFirstTagOfSpecifiedTypeOnSelection(poss);
-			if (dummyTag == null)
-				return false;
-			return true;
+			return dummyTag != null;
 		}
 
 		/// <summary>
@@ -488,25 +475,19 @@ namespace SIL.FieldWorks.IText
 		private ITextTag FindFirstTagOfSpecifiedTypeOnSelection(ICmPossibility poss)
 		{
 			var tagList = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
-			foreach (var textTag in tagList)
-			{
-				if (textTag.TagRA == poss)
-					return textTag;
-			}
-			return null;
+			return tagList.FirstOrDefault(textTag => textTag.TagRA == poss);
 		}
 
-		internal ICmPossibilityList GetTaggingLists()
+		internal static ICmPossibilityList GetTaggingLists(ILangProject langProj)
 		{
-			Debug.Assert(Cache != null, "No Cache available!");
-			Debug.Assert(Cache.LangProject != null, "No LangProject available!");
-			ICmPossibilityList result = Cache.LangProject.TextMarkupTagsOA;
+			Debug.Assert(langProj != null, "No LangProject available!");
+			var result = langProj.TextMarkupTagsOA;
 
 			if (result == null) // Just trying to be careful.
 			{
 				// Create the containing object and lists.
-				result = Cache.LangProject.GetDefaultTextTagList();
-				Cache.LangProject.TextMarkupTagsOA = result;
+				result = langProj.GetDefaultTextTagList();
+				langProj.TextMarkupTagsOA = result;
 			}
 			return result;
 		}

@@ -213,6 +213,11 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region ImportWizard Construction, Initialization, and Disposal
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes the <see cref="ImportWizard"/> class.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		static ImportWizard()
 		{
 			s_noneProject = new ScrText();
@@ -241,12 +246,11 @@ namespace SIL.FieldWorks.TE
 		/// <param name="langProjName">Name of the lang proj.</param>
 		/// <param name="scr">The Scripture object.</param>
 		/// <param name="styleSheet">The styleSheet</param>
-		/// <param name="cache">The cache</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
 		public ImportWizard(string langProjName, IScripture scr, FwStyleSheet styleSheet,
-			FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_LangProjName = langProjName;
 			m_scr = scr;
@@ -254,7 +258,7 @@ namespace SIL.FieldWorks.TE
 			m_app = app;
 			m_StyleSheet = styleSheet;
 			m_resolver = new ConfirmOverlappingFileReplaceDialog(helpTopicProvider);
-			m_cache = cache;
+			m_cache = scr.Cache;
 
 			// Attempt to get the default import settings.
 			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
@@ -280,8 +284,8 @@ namespace SIL.FieldWorks.TE
 				m_btnHelp.Visible = false;
 			if (m_app != null)
 			{
-				m_LatestImportFolder = new RegistryStringSetting(FwSubKey.TE, cache.ProjectId.Name,
-				"LatestImportDirectory", string.Empty);
+				m_LatestImportFolder = new RegistryStringSetting(FwSubKey.TE, m_scr.Cache.ProjectId.Name,
+					"LatestImportDirectory", string.Empty);
 				sfFileListBuilder.LatestImportFolder = m_LatestImportFolder.Value;
 			}
 			sfFileListBuilder.Initialize(m_helpTopicProvider, m_app);
@@ -341,7 +345,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -1461,7 +1465,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		protected void m_btnModify_Click(object sender, System.EventArgs e)
+		protected void m_btnModify_Click(object sender, EventArgs e)
 		{
 			if (m_lvCurrentMappingList.SelectedIndices.Count == 0)
 				return;
@@ -1542,7 +1546,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender">Not used</param>
 		/// <param name="e">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		protected void btnDelete_Click(object sender, System.EventArgs e)
+		protected void btnDelete_Click(object sender, EventArgs e)
 		{
 			// save the index of the first selected item so we can place the selection close
 			// to there after deleting.
@@ -1574,7 +1578,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		protected void btnAdd_Click(object sender, System.EventArgs e)
+		protected void btnAdd_Click(object sender, EventArgs e)
 		{
 			Debug.Assert(m_projectType != ProjectTypes.Paratext);
 
@@ -1612,7 +1616,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void lvMappings_DoubleClick(object sender, System.EventArgs e)
+		private void lvMappings_DoubleClick(object sender, EventArgs e)
 		{
 			//PerformClick is called instead of directly calling m_btnMappings_Click
 			// because PerformClick takes into account buttons being disabled.
@@ -1626,7 +1630,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void m_cmMappings_Popup(object sender, System.EventArgs e)
+		private void m_cmMappings_Popup(object sender, EventArgs e)
 		{
 			// Uncheck all the menu items (currently only one).
 			foreach (MenuItem menu in m_cmMappings.MenuItems)
@@ -1711,8 +1715,7 @@ namespace SIL.FieldWorks.TE
 			{
 				m_inlineMappingDialog = new CharacterMappingSettings(mapping, m_StyleSheet, m_cache,
 					tabCtrlMappings.SelectedIndex == kiAnnotationMappingTab, m_helpTopicProvider, m_app);
-				m_inlineMappingDialog.IsDuplicateMapping +=
-					new CharacterMappingSettings.IsDuplicateMappingHandler(IsDup);
+				m_inlineMappingDialog.IsDuplicateMapping += IsDup;
 			}
 			else
 			{
@@ -1814,11 +1817,10 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		private void UpdateStepLabel()
 		{
-			lblSteps.Text = String.Format(m_stepIndicatorFormat,
-				(m_currentStep + 1).ToString(),
-				stepsPanel.StepText.Length.ToString());
+			lblSteps.Text = String.Format(m_stepIndicatorFormat, (m_currentStep + 1),
+				stepsPanel.StepText.Length);
 
-			lblSteps.Left = this.ClientSize.Width - (lblSteps.Width + 9);
+			lblSteps.Left = ClientSize.Width - (lblSteps.Width + 9);
 			stepsPanel.CurrentStepNumber = m_currentStep;
 		}
 
@@ -1833,7 +1835,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender">Not used</param>
 		/// <param name="e">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		protected void lvMappings_SelectedIndexChanged(object sender, System.EventArgs e)
+		protected void lvMappings_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			m_btnCurrentModifyButton.Enabled = (m_lvCurrentMappingList.SelectedItems.Count == 1 &&
 				m_lvCurrentMappingList.SelectedItems[0].Text != "\\c" &&
@@ -1870,7 +1872,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void panStep1_VisibleChanged(object sender, System.EventArgs e)
+		private void panStep1_VisibleChanged(object sender, EventArgs e)
 		{
 			if (!((Panel)sender).Visible)
 			{
@@ -1899,7 +1901,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void panStep2_Other_VisibleChanged(object sender, System.EventArgs e)
+		private void panStep2_Other_VisibleChanged(object sender, EventArgs e)
 		{
 			if (((Panel)sender).Visible)
 			{
@@ -1933,7 +1935,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void panStep3_VisibleChanged(object sender, System.EventArgs e)
+		private void panStep3_VisibleChanged(object sender, EventArgs e)
 		{
 			// If leaving the step then do nothing.
 			if (!((Panel)sender).Visible)
@@ -1949,10 +1951,10 @@ namespace SIL.FieldWorks.TE
 		/// Handles the Click event of the m_btnNext control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void m_btnNext_Click(object sender, System.EventArgs e)
+		protected void m_btnNext_Click(object sender, EventArgs e)
 		{
 			if (!ValidToGoForward())
 				return;
@@ -1991,10 +1993,10 @@ namespace SIL.FieldWorks.TE
 		/// Handles the Click event of the m_btnBack control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void m_btnBack_Click(object sender, System.EventArgs e)
+		protected void m_btnBack_Click(object sender, EventArgs e)
 		{
 			panSteps[m_currentStep--].Visible = false;
 			panSteps[m_currentStep].Visible = true;
@@ -2013,7 +2015,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		private void m_btnHelp_Click(object sender, System.EventArgs e)
+		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			// Show help appropriate to the selected step of the wizard.
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, (string)panSteps[m_currentStep].Tag);
@@ -2111,7 +2113,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbParatext6 control (Paratext 6 radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbParatext6_CheckedChanged(object sender, EventArgs e)
@@ -2125,7 +2127,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbParatext5 control (Paratext 5 radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbParatext5_CheckedChanged(object sender, EventArgs e)
@@ -2139,7 +2141,7 @@ namespace SIL.FieldWorks.TE
 		/// Handles the CheckedChanged event of the rbOther control (Other USFM radio button).
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
+		/// <param name="e">The <see cref="T:EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void rbOther_CheckedChanged(object sender, EventArgs e)

@@ -147,10 +147,8 @@
 		<concatex destfile="${dir.fwoutput}/idhfiles" useunixnewline="true" verbose="${verbose}">
 			<fileset basedir="${fwroot}/Src">
 				<include name="**/*.idh" />
-				<exclude name="**/WorldPad.idh" />
 				<include name="Kernel/FwKernelTlb.idl" />
 				<include name="Language/LanguageTlb.idl" />
-				<include name="Cellar/FwCellarTlb.idl" />
 				<include name="views/ViewsTlb.idl" />
 			</fileset>
 		</concatex>
@@ -186,14 +184,12 @@
 				</fileset>
 			</copy>
 			<echo message="Extracting iids for use on Linux..."/>
-			<exec program="cmd.exe" commandline="/c ${fwroot}\BldSys\extract_iids.cmd FwKernelTlb.h"
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd FwKernelTlb.h"
 				  workingdir="${dir.fwoutputCommon}" output="${fwroot}/Src/Kernel/FwKernel_GUIDs.cpp" verbose="${verbose}"/>
-			<exec program="cmd.exe" commandline="/c ${fwroot}\BldSys\extract_iids.cmd LanguageTlb.h"
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd LanguageTlb.h"
 				  workingdir="${dir.fwoutputCommon}" output="${fwroot}/Src/Language/Language_GUIDs.cpp" verbose="${verbose}"/>
-			<exec program="cmd.exe" commandline="/c ${fwroot}\BldSys\extract_iids.cmd FwCellarTlb.h"
-				  workingdir="${dir.fwoutputCommon}" output="${fwroot}/Src/Cellar/Cellar_GUIDs.cpp" verbose="${verbose}"/>
 			<echo message='#include "FwKernelTlb.h"' file="${dir.outputBase}/views.tmp" verbose="${verbose}"/>
-			<exec program="cmd.exe" commandline="/c ${fwroot}\BldSys\extract_iids.cmd ViewsTlb.h"
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd ViewsTlb.h"
 				  workingdir="${dir.fwoutputCommon}" output="${dir.outputBase}/Views_GUIDs.cpp" verbose="${verbose}"/>
 			<concatex destfile="${fwroot}/Src/views/Views_GUIDs.cpp" useunixnewline="true" verbose="${verbose}">
 				<fileset basedir="${dir.outputBase}">

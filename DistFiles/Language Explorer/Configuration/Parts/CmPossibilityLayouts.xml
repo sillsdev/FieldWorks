@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Nonstandard layouts for CmPossibility and its subclasses. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 
   <layout class="CmPossibility" type="detail" name="default">
 	<part ref="NameAllA">
@@ -22,6 +23,111 @@
 	<part ref="SubPossibilities" param="nested">
 	</part>
   </layout>
+
+	<layout class="CmCustomItem" type="detail" name="CmPossibility">
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="Status">
+		</part>
+		<part ref="Discussion">
+		</part>
+		<part ref="Confidence">
+		</part>
+		<part ref="Researchers">
+		</part>
+		<part ref="Restrictions">
+		</part>
+		<part ref="SubPossibilities" param="nested">
+		</part>
+	</layout>
+
+	<layout class="CmCustomItem" type="detail" name="CmPossibilityA">
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="Status">
+		</part>
+		<part ref="Discussion">
+		</part>
+		<part ref="Confidence">
+		</part>
+		<part ref="Researchers">
+		</part>
+		<part ref="Restrictions">
+		</part>
+		<part ref="SubPossibilities" param="nested">
+		</part>
+	</layout>
+
+	<layout class="CmCustomItem" type="detail" name="CmPossibilityAV">
+		<part ref="NameAllAV">
+		</part>
+		<part ref="AbbreviationAllAV">
+		</part>
+		<part ref="DescriptionAllAV">
+		</part>
+		<part ref="Status">
+		</part>
+		<part ref="Discussion">
+		</part>
+		<part ref="Confidence">
+		</part>
+		<part ref="Researchers">
+		</part>
+		<part ref="Restrictions">
+		</part>
+		<part ref="SubPossibilities" param="nested">
+		</part>
+	</layout>
+
+	<layout class="CmCustomItem" type="detail" name="CmPossibilityV">
+		<part ref="NameAllV">
+		</part>
+		<part ref="AbbreviationAllV">
+		</part>
+		<part ref="DescriptionAllV">
+		</part>
+		<part ref="Status">
+		</part>
+		<part ref="Discussion">
+		</part>
+		<part ref="Confidence">
+		</part>
+		<part ref="Researchers">
+		</part>
+		<part ref="Restrictions">
+		</part>
+		<part ref="SubPossibilities" param="nested">
+		</part>
+	</layout>
+
+	<layout class="CmCustomItem" type="detail" name="CmPossibilityVA">
+		<part ref="NameAllVA">
+		</part>
+		<part ref="AbbreviationAllVA">
+		</part>
+		<part ref="DescriptionAllVA">
+		</part>
+		<part ref="Status">
+		</part>
+		<part ref="Discussion">
+		</part>
+		<part ref="Confidence">
+		</part>
+		<part ref="Researchers">
+		</part>
+		<part ref="Restrictions">
+		</part>
+		<part ref="SubPossibilities" param="nested">
+		</part>
+	</layout>
 
   <layout class="CmSemanticDomain" type="detail" name="default">
 	<part ref="NameAllAV">

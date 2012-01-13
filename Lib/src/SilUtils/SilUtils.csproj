@@ -72,6 +72,11 @@
 	<Compile Include="ColorHelper.cs" />
 	<Compile Include="ComponentsExtensionMethods.cs" />
 	<Compile Include="ContinuableErrorException.cs" />
+	<Compile Include="CustomDropDown.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="PorterStemmer.cs" />
+	<Compile Include="ScreenUtils.cs" />
 	<Compile Include="StringUtils.cs" />
 	<Compile Include="PaintingHelper.cs" />
 	<Compile Include="PathwayUtils.cs" />
@@ -82,6 +87,9 @@
 	<Compile Include="SilSubKey.cs" />
 	<Compile Include="ListUtils.cs" />
 	<Compile Include="Surrogates.cs" />
+	<Compile Include="TextBoxExtensions.cs" />
+	<Compile Include="WaitCursor.cs" />
+	<Compile Include="Win32Wrappers.cs" />
 	<Compile Include="XmlSerializationHelper.cs" />
   </ItemGroup>
   <ItemGroup>

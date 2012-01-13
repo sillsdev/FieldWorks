@@ -182,4 +182,10 @@
 	<value>You do not have permission to change the setting "{0}". Administrator privileges are required to make changes affecting all users of this computer.</value>
 	<comment>Error message when writing a registry setting for "local machine" fails.</comment>
   </data>
+  <data name="kstIdCantDoDictExists" xml:space="preserve">
+	<value>FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug.</value>
+  </data>
+  <data name="kstidCantDoDictExistsCaption" xml:space="preserve">
+	<value>Spelling Dictionary Problem</value>
+  </data>
 </root>

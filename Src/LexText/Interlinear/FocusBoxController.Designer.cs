@@ -73,6 +73,7 @@ namespace SIL.FieldWorks.IText
 			this.btnLinkNextWord.Name = "btnLinkNextWord";
 			this.btnLinkNextWord.Size = new System.Drawing.Size(20, 16);
 			this.btnLinkNextWord.TabIndex = 0;
+			this.btnLinkNextWord.TabStop = false;
 			this.btnLinkNextWord.UseVisualStyleBackColor = true;
 			this.btnLinkNextWord.Visible = false;
 			this.btnLinkNextWord.Click += new System.EventHandler(this.btnLinkNextWord_Click);
@@ -108,6 +109,7 @@ namespace SIL.FieldWorks.IText
 			this.btnConfirmChangesForWholeText.Name = "btnConfirmChangesForWholeText";
 			this.btnConfirmChangesForWholeText.Size = new System.Drawing.Size(16, 16);
 			this.btnConfirmChangesForWholeText.TabIndex = 4;
+			this.btnConfirmChangesForWholeText.TabStop = false;
 			this.btnConfirmChangesForWholeText.UseVisualStyleBackColor = true;
 			this.btnConfirmChangesForWholeText.Click += new System.EventHandler(this.btnConfirmChangesForWholeText_Click);
 			//
@@ -125,6 +127,7 @@ namespace SIL.FieldWorks.IText
 			this.btnUndoChanges.Name = "btnUndoChanges";
 			this.btnUndoChanges.Size = new System.Drawing.Size(16, 16);
 			this.btnUndoChanges.TabIndex = 1;
+			this.btnUndoChanges.TabStop = false;
 			this.btnUndoChanges.UseVisualStyleBackColor = true;
 			this.btnUndoChanges.Visible = false;
 			this.btnUndoChanges.Click += new System.EventHandler(this.btnUndoChanges_Click);
@@ -141,6 +144,7 @@ namespace SIL.FieldWorks.IText
 			this.btnBreakPhrase.Name = "btnBreakPhrase";
 			this.btnBreakPhrase.Size = new System.Drawing.Size(16, 16);
 			this.btnBreakPhrase.TabIndex = 3;
+			this.btnBreakPhrase.TabStop = false;
 			this.btnBreakPhrase.UseVisualStyleBackColor = true;
 			this.btnBreakPhrase.Visible = false;
 			this.btnBreakPhrase.Click += new System.EventHandler(this.btnBreakPhrase_Click);
@@ -156,6 +160,7 @@ namespace SIL.FieldWorks.IText
 			this.btnMenu.Name = "btnMenu";
 			this.btnMenu.Size = new System.Drawing.Size(16, 16);
 			this.btnMenu.TabIndex = 0;
+			this.btnMenu.TabStop = false;
 			this.btnMenu.UseVisualStyleBackColor = true;
 			this.btnMenu.Click += new System.EventHandler(this.btnMenu_Click);
 			//
@@ -171,6 +176,7 @@ namespace SIL.FieldWorks.IText
 			this.btnConfirmChanges.Name = "btnConfirmChanges";
 			this.btnConfirmChanges.Size = new System.Drawing.Size(16, 16);
 			this.btnConfirmChanges.TabIndex = 2;
+			this.btnConfirmChanges.TabStop = false;
 			this.btnConfirmChanges.UseVisualStyleBackColor = true;
 			this.btnConfirmChanges.Click += new System.EventHandler(this.btnConfirmChanges_Click);
 			//

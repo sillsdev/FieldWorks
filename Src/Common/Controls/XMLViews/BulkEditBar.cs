@@ -181,6 +181,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_mediator = mediator;
 			m_bv = bv;
+			m_bv.FilterChanged += BrowseViewFilterChanged;
+			m_bv.RefreshCompleted += BrowseViewSorterChanged;
 			m_cache = cache;
 			m_configurationNode = spec;
 			// (EricP) we should probably try find someway to get these classes from the RecordClerk/List
@@ -264,6 +266,16 @@ namespace SIL.FieldWorks.Common.Controls
 			m_ApplyButton.Click += new EventHandler(m_ApplyButton_Click);
 			m_closeButton.Click += new EventHandler(m_closeButton_Click);
 
+		}
+
+		private void BrowseViewSorterChanged(object sender, EventArgs e)
+		{
+			ResumeRecordListRowChanges();
+		}
+
+		void BrowseViewFilterChanged(object sender, FilterChangeEventArgs e)
+		{
+			ResumeRecordListRowChanges();
 		}
 
 		void m_operationsTabControl_Deselecting(object sender, TabControlCancelEventArgs e)
@@ -397,6 +409,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// make sure you can Undo a click copy.)
 			m_operationsTabControl_SelectedIndexChanged(this, new EventArgs());
 			m_hvoSelected = oldSelected;
+			ResumeRecordListRowChanges();
 		}
 
 		/// <summary>
@@ -656,6 +669,12 @@ namespace SIL.FieldWorks.Common.Controls
 				case "atomicFlatListItem":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					hvoList = GetNamedListHvo(colSpec, "list");
+					var list = (ICmPossibilityList) m_cache.ServiceLocator.GetObject(hvoList);
+					if (RequiresDialogChooser(list))
+					{
+						besc = new ComplexListChooserBEditControl(m_cache, m_mediator, colSpec);
+						break;
+					}
 					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
 					besc = new FlatListChooserBEditControl(flid, hvoList, ws, false);
 					break;
@@ -722,6 +741,27 @@ namespace SIL.FieldWorks.Common.Controls
 			besc.ValueChanged += new FwSelectionChangedEventHandler(besc_ValueChanged);
 			BulkEditItem bei = new BulkEditItem(besc);
 			return bei;
+		}
+
+		/// <summary>
+		/// Return true if the specified list requires us to use a chooser dialog rather than putting a simple combo box
+		/// in the bulk edit bar. Currently we do this if the list is (actually, not just potentially) hierarchical,
+		/// or if it has more than 25 items.
+		/// Note that at least one unit test will break if this method causes the default Locations list to be treated
+		/// as hierarchical.
+		/// </summary>
+		/// <param name="list"></param>
+		/// <returns></returns>
+		private bool RequiresDialogChooser(ICmPossibilityList list)
+		{
+			if (list.PossibilitiesOS.Count > 25)
+				return true;
+			foreach (var item in list.PossibilitiesOS)
+			{
+				if (item.SubPossibilitiesOS.Count > 0)
+					return true;
+			}
+			return false;
 		}
 
 
@@ -1279,6 +1319,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_bv.BrowseView.RootBox != null)
 					m_bv.BrowseView.RootBox.Reconstruct();
 			}
+			//ResumeRecordListRowChanges();
 		}
 
 		/// <summary>
@@ -1776,6 +1817,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="e"></param>
 		protected void m_ApplyButton_Click(object sender, EventArgs e)
 		{
+
+			//we don't want the RecordList to call ReloadList() on an apply, that would prevent the user from seeing the results if the items
+			//which the filter might now exclude. So apply any pending row changes and suspend any other row replacement until further notice
+			SuspendRecordlistRowChanges();
 			using (new ReconstructPreservingBVScrollPosition(m_bv))
 			{
 				// Both of these need manual disposing.
@@ -1810,6 +1855,7 @@ namespace SIL.FieldWorks.Common.Controls
 							BulkCopyMethod method = MakeBulkCopyMethod(out newCol);
 							if (method == null)
 								return;
+
 							method.Doit(ItemsToChange(true), state);
 							FixReplacedItems(method);
 						}
@@ -1863,6 +1909,19 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				PreviewOn = false;
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
+		}
+
+		private void SuspendRecordlistRowChanges()
+		{
+			m_bv.SetListModificationInProgress(true);
+		}
+		/// <summary>
+		/// Only use in BulkEditBar. This method should be private, the coupling with BrowseViewer is too high if
+		/// the bulkedit code is refactored out of BrowseViewer make this private.
+		/// </summary>
+		internal void ResumeRecordListRowChanges()
+		{
+			m_bv.SetListModificationInProgress(false);
 		}
 
 		private void FixReplacedItems(object doItObject)
@@ -1938,6 +1997,7 @@ namespace SIL.FieldWorks.Common.Controls
 													}
 												});
 				m_bv.SetListModificationInProgress(false);
+				ResumeRecordListRowChanges(); // need to show the updated list of rows!
 				state.PercentDone = 100;
 				state.Breath();
 			}
@@ -3831,12 +3891,14 @@ namespace SIL.FieldWorks.Common.Controls
 					selectedItem.ColumnIndex, m_expectedListItemsClassId, flid))
 				{
 					var args = new TargetColumnChangedEventArgs(targetFieldItem);
+					//REFACTOR: the BrowseView should not know about BulkEdit - They appear to be too highly coupled.
 					m_bv.BulkEditTargetComboSelectedIndexChanged(args); // may set ForceReload flag on args.
 					if (TargetComboSelectedIndexChanged != null)
 						TargetComboSelectedIndexChanged(this, args);
 				}
 			}
 		}
+
 		int GetExpectedListItemsClassFromSelectedItem(FieldComboItem selectedItem)
 		{
 			int field;
@@ -5832,7 +5894,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public ComplexListChooserBEditControl(FdoCache cache, Mediator mediator,  XmlNode colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
-			XmlUtils.GetManditoryAttributeValue(colSpec, "displayNameProperty"),
+			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
 			BulkEditBar.GetColumnLabel(mediator, colSpec),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayWs", "best analorvern"),
 			BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec))
@@ -5878,6 +5940,7 @@ namespace SIL.FieldWorks.Common.Controls
 				using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(persistProvider,
 					labels, m_fieldName, m_cache, m_chosenObjs, m_mediator.HelpTopicProvider))
 				{
+					chooser.Atomic = Atomic;
 					chooser.Cache = m_cache;
 					chooser.SetObjectAndFlid(0, m_flid);
 					chooser.ShowFuncButtons();
@@ -5931,8 +5994,11 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				m_cache = value;
+				Atomic = (CellarPropertyType)m_cache.MetaDataCacheAccessor.GetFieldType(m_flid) == CellarPropertyType.ReferenceAtom;
 			}
 		}
+
+		private bool Atomic { get; set; }
 		/// <summary>
 		/// The special cache that can handle the preview and check-box properties.
 		/// </summary>
@@ -6005,7 +6071,15 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						realTarget = m_ghostParentHelper.FindOrCreateOwnerOfTargetProp(hvoItem, m_flid);
 					}
-					sda.Replace(realTarget, m_flid, 0, oldVals.Count, newHvos, newHvos.Length);
+					if (Atomic)
+					{
+						var newHvo = newHvos.Length > 0 ? newHvos[0] : 0;
+						sda.SetObjProp(realTarget, m_flid, newHvo);
+					}
+					else
+					{
+						sda.Replace(realTarget, m_flid, 0, oldVals.Count, newHvos, newHvos.Length);
+					}
 				}
 			});
 		}
@@ -6066,6 +6140,14 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (hvoReal == 0)
 				return new List<ICmObject>();
+			if (Atomic)
+			{
+				var result = new List<ICmObject>();
+				int val = m_cache.DomainDataByFlid.get_ObjectProp(hvoReal, m_flid);
+				if (val != 0)
+					result.Add(m_cache.ServiceLocator.GetObject(val));
+				return result;
+			}
 			return (from hvo in (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(hvoReal, m_flid)
 					   select m_cache.ServiceLocator.GetObject(hvo)).ToList();
 		}
@@ -6119,13 +6201,18 @@ namespace SIL.FieldWorks.Common.Controls
 			else if (!m_fReplace && oldVals.Count != 0)
 			{
 				// Need to handle as append.
-				var newValues = new List<ICmObject>(oldVals);
-				foreach (ICmObject obj in chosenObjs)
+				if (Atomic)
+					newVal = oldVals; // can't append to non-empty atomic value
+				else
 				{
-					if (!newValues.Contains(obj))
-						newValues.Add(obj);
+					var newValues = new List<ICmObject>(oldVals);
+					foreach (ICmObject obj in chosenObjs)
+					{
+						if (!newValues.Contains(obj))
+							newValues.Add(obj);
+					}
+					newVal = newValues;
 				}
-				newVal = newValues;
 			}
 		}
 

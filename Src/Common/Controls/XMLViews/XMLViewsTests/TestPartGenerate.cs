@@ -5,6 +5,7 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using NUnit.Framework;
@@ -33,7 +34,7 @@ namespace XMLViewsTests
 				custom.Class = LexEntryTags.kClassId;
 				custom.Name = "MyRestrictions";
 				custom.Type = CellarPropertyType.MultiBigString;
-				custom.WsSelector = (int)CellarModuleDefns.kwsAnalVerns;
+				custom.WsSelector = (int)WritingSystemServices.kwsAnalVerns;
 				custom.Userlabel = "MyRestrictions";
 				custom.UpdateCustomField();
 			});

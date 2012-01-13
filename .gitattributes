@@ -2,6 +2,12 @@
 *.cpp	diff=cpp
 *.h	diff=cpp
 *.idh	diff=cpp
+
 *.csproj -whitespace
 *.resx -whitespace
 *.Designer.cs -whitespace
+*.vdproj -whitespace
+*.config -whitespace
+*.settings -whitespace
+*.ReSharper -whitespace
+*.vcxproj -whitespace

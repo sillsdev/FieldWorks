@@ -520,6 +520,17 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Medium;
+			}
+		}
+
 		#endregion // IxCoreColleague implementation
 
 		//protected override void OnParentChanged(EventArgs e)

@@ -119,10 +119,11 @@ namespace XCore
 
 		private void PanelButton_Click(object sender, EventArgs e)
 		{
-			Cursor.Current = Cursors.WaitCursor;
-			XCore.ChoiceBase c = (XCore.ChoiceBase )this.Tag;
-			c.OnClick(this, null);
-			Cursor.Current = Cursors.Default;
+			using (new WaitCursor(Form.ActiveForm))
+			{
+				XCore.ChoiceBase c = (XCore.ChoiceBase )this.Tag;
+				c.OnClick(this, null);
+			}
 		}
 
 		private void panelButton_MouseEnter(object sender, EventArgs e)

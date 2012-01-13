@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
-
+using System.Xml;
 using NUnit.Framework;
-
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace XCore
@@ -12,7 +12,7 @@ namespace XCore
 	/// TestMessageSequencer.
 	/// </summary>
 	[TestFixture]
-	public class TestMessageSequencer: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestMessageSequencer: BaseTest
 	{
 		private class DummyForm : Form
 		{
@@ -223,6 +223,25 @@ namespace XCore
 		}
 	}
 
+	public class TestMessagePriority : BaseTest
+	{
+		/// <summary>
+		/// Checks to make sure the priority of colleagues is being handled properly in the mediator.
+		/// </summary>
+		[Test]
+		public void Prioritize()
+		{
+			Mediator mediator = new Mediator();
+			mediator.AddColleague(new LowColleague());
+			mediator.AddColleague(new HighColleague());
+			mediator.AddColleague(new MedColleague());
+
+			ArrayList testList = new ArrayList();
+			ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
+			mediator.SendMessage("AddTestItem", testList);
+			CollectionAssert.AreEqual(testList, expectedResult, "Mediator message Prioritization is broken.");
+		}
+	}
 	/// <summary>
 	/// This adds an extra set of numbers, 900..909, whenever we grow.
 	/// </summary>
@@ -456,5 +475,94 @@ namespace XCore
 				WndProc(ref m_setFocus);
 			}
 		}
+	}
+
+	public abstract class TestColleague : IxCoreColleague
+	{
+		#region Implementation of IxCoreColleague
+
+		public void Init(Mediator mediator, XmlNode configurationParameters)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// In OnInvokeRecursive in the mediator this list will determine order.
+		/// </summary>
+		/// <returns></returns>
+		public IxCoreColleague[] GetMessageTargets()
+		{
+			return new [] { this };
+		}
+
+		public bool ShouldNotCall
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// When Colleagues are added to the mediator this priority will determine the order that they are called
+		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
+		///
+		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
+		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
+		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
+		/// </summary>
+		public abstract int Priority { get; }
+
+		#endregion
+	}
+
+	public class LowColleague : TestColleague
+	{
+		#region Overrides of TestColleague
+
+		public override int Priority
+		{
+			get { return (int) ColleaguePriority.Low; }
+		}
+
+		public bool OnAddTestItem(object item)
+		{
+			((ArrayList)item).Add("Low");
+			return false;
+		}
+
+		#endregion
+	}
+
+	public class MedColleague : TestColleague
+	{
+		public bool OnAddTestItem(object item)
+		{
+			((ArrayList)item).Add("Medium");
+			return false;
+		}
+
+		#region Overrides of TestColleague
+
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
+		#endregion
+	}
+	public class HighColleague : TestColleague
+	{
+		public bool OnAddTestItem(object item)
+		{
+			((ArrayList)item).Add("High");
+			return false;
+		}
+
+		#region Overrides of TestColleague
+
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
+		}
+
+		#endregion
 	}
 }

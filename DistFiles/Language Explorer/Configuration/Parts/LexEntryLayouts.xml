@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Nonstandard layouts for LexEntry and related classes. -->
-<LayoutInventory>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
   <layout class="LexEntry" type="detail" name="Normal">
 	<part label="Lexeme Form" ref="LexemeForm"/>
 	<part label="Citation Form" ref="CitationFormAllV"/>
@@ -180,6 +181,7 @@
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishStemEntry" css="crossrefs" lexreltype="entry"/>
 		<part ref="StemMainEntryConfig" label="Component References" param="publishStemEntryRefs" visibility="ifdata" before="(" after=") " sep=", " css="primaryrefs"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry"/>
 		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishStem" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true" />
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
@@ -240,6 +242,7 @@
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="never" sep="; " after=". " param="publishStemMinorEntry" css="crossrefs-minor" lexreltype="entry"/>
 		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishStemMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="summarydef-minor"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry-minor"/>
 		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishStemMinor" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
@@ -302,6 +305,7 @@
 		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " param="publishRootEtymology" css="etymology"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootEntry" css="crossrefs" lexreltype="entry"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry"/>
 		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRoot" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
@@ -344,7 +348,7 @@
 				<obj field="$fieldName" layout="publishFullTextInParas"/>
 			</part>
 		</generate>
-		<part ref="ComplexFormsNotSubentries" label="Other Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootComplexFormRef" css="sense-complexformrefs"/>
+		<part ref="ComplexFormsNotSubentries" label="Other Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootComplexFormRef" css="complexformrefs"/>
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishRootMinorEntry">
@@ -363,6 +367,7 @@
 		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishRootMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
 		<part ref="StemMinorComponentsConfig" label="Components" param="publishRootComponentRefs" visibility="ifdata" before=" (" after=")" sep=", " entrytype="complex" css="components-minor"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="summarydef-minor"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry-minor"/>
 		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishRootMinor" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
@@ -417,6 +422,7 @@
 		<sublayout name="publishRootSubentryPara" group="para"/>
 		<part ref="RootSubentriesConfig" flowType="div" label="Subsubentries" parastyle="Dictionary-Subentry" css="subsubentries" recurseConfig="false" param="publishRootSubentry" entrytype="complex" indent="true"/>
 	</layout>
+
 	<layout class="LexEntry" type="jtview" name="publishRootSubentryPara" css="$fwstyle=Dictionary-Subentry">
 		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword"  css="headword-sub" visibility="ifdata"
 				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
@@ -430,7 +436,7 @@
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootSubEntry" css="crossrefs-sub" lexreltype="entry"/>
 		<!-- the next part is not wanted according to LT-9566 -->
 		<!--part ref="RootSubMainEntryConfig" label="Primary Entry References" visibility="ifdata" before="" after=" " sep=", " css="primaryrefs-sub"/-->
-		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRootSub" css="senses-sub" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="SensesConfig" label="Senses" sep=" " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRootSub" css="senses-sub" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
@@ -680,7 +686,8 @@
 	<layout class="LexEntryRef" type="jtview" name="publishStemMinorComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
 		<part ref="ComplexFormHeadwordConfig" param="publishStemMinorComplexFormHeadword" hideConfig="true"/>
-		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before="" after=" " sep=", " param="publishStemMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishStemMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormMinorSmartDefinitionConfig" param="publishStemMinorComplexFormDefinition" hideConfig="true"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorComplexFormSummaryDef" hideConfig="true"/>
 		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemMinorComplexFormExample" visibility="never" css="complexform-examples-minor"/>
@@ -703,7 +710,8 @@
 	<layout class="LexEntryRef" type="jtview" name="publishRootMinorComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
 		<part ref="ComplexFormHeadwordConfig" param="publishRootMinorComplexFormHeadword" hideConfig="true"/>
-		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before="" after=" " sep=", " param="publishRootMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishRootMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormMinorSmartDefinitionConfig" param="publishRootMinorComplexFormDefinition" hideConfig="true"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorComplexFormSummaryDef" hideConfig="true"/>
 		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorComplexFormExample" visibility="never" css="complexform-examples-minor"/>
@@ -741,6 +749,12 @@
 		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootSubSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-sub"/>
 	</layout>
 
+	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormDefinition">
+		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormDefinition">
+		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
+	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after=" " ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form"/>
 	</layout>
@@ -748,13 +762,13 @@
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormHeadword">
-		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="complexform-form-minor"/>
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemMinorSenseComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormHeadword">
-		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="complexform-form-minor"/>
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootMinorSubComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="complexform-form-minor"/>

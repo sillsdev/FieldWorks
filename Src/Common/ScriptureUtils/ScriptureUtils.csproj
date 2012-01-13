@@ -142,7 +142,6 @@
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="MultilingScrBooks.cs" />
 	<Compile Include="ScriptureReferenceComparer.cs" />
 	<Compile Include="ScrReferencePositionComparer.cs" />
 	<Compile Include="SCTextSegment.cs">

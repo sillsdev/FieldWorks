@@ -1,5 +1,5 @@
 #include "FwKernelTlb.h"
-// Automatically generated from ViewsTlb.h by D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\BldSys\extract_iids.cmd
+// Automatically generated from ViewsTlb.h by D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\Bin\extract_iids.cmd
 #include "ViewsTlb.h"
 
 template<> const GUID __uuidof(IVwNotifyChange)("6C456541-C2B6-11d3-8078-0000C0FB81B5");

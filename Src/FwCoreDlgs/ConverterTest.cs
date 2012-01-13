@@ -282,23 +282,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_mapname != null && m_mapname != "")
 			{
-				Cursor curSave = Cursor.Current;
-				Cursor.Current = Cursors.WaitCursor;
-				try
+				using (new WaitCursor(this))
 				{
-					DoFileConvert((IEncConverter)m_encConverters[m_mapname], ofDlg.FileName);
-				}
-				catch
-				{
-					ResourceManager resourceStrings = new ResourceManager(
-						"SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings",
-						Assembly.GetExecutingAssembly());
-					MessageBox.Show(this, resourceStrings.GetString("kstidErrorConvertingTestFile"),
-						resourceStrings.GetString("kstidConversionError"));
-				}
-				finally
-				{
-					Cursor.Current = curSave;
+					try
+					{
+						DoFileConvert((IEncConverter)m_encConverters[m_mapname], ofDlg.FileName);
+					}
+					catch
+					{
+						ResourceManager resourceStrings = new ResourceManager(
+							"SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings",
+							Assembly.GetExecutingAssembly());
+						MessageBox.Show(this, resourceStrings.GetString("kstidErrorConvertingTestFile"),
+							resourceStrings.GetString("kstidConversionError"));
+					}
 				}
 				saveFileButton.Enabled = m_fHasOutput;
 				m_svOutput.Enabled = m_fHasOutput;
@@ -363,52 +360,49 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 
 			// start hour glass
-			Cursor cursorBefore = Cursor.Current;
-			Cursor.Current = Cursors.WaitCursor;
-
-			// open the input and output files using the given encoding formats
-			// 28591 is a 'magic' code page that stuffs each input byte into
-			// the low byte of the unicode character, leaving the top byte zero.
-			// This is a good code page to use because it is simple and fully reversible
-			// for any input.
-			using (StreamReader reader = new StreamReader(inputFilename,
-				Encoding.GetEncoding(EncodingConstants.kMagicCodePage), true))
+			using (new WaitCursor(this))
 			{
-				// This tells the converter that the input will be 16-bit characters
-				// produced by converting the bytes of the file using CP28591.
-				ec.CodePageInput = EncodingConstants.kMagicCodePage;
-				ec.EncodingIn = ECInterfaces.EncodingForm.LegacyString;
-
-				reader.BaseStream.Seek(0, SeekOrigin.Begin);
-
-				// read the lines of the input file, (optionally convert,) and write them out.
-				string sOutput = string.Empty;
-				string sInput;
-				m_savedOutput = new StringBuilder();
-
-				m_svOutput.Clear(false);
-				m_fHasOutput = false;
-
-				// Read the lines of the input file, convert them, and display them
-				// in the view.
-				while (reader.Peek() > -1)
+				// open the input and output files using the given encoding formats
+				// 28591 is a 'magic' code page that stuffs each input byte into
+				// the low byte of the unicode character, leaving the top byte zero.
+				// This is a good code page to use because it is simple and fully reversible
+				// for any input.
+				using (StreamReader reader = new StreamReader(inputFilename,
+					Encoding.GetEncoding(EncodingConstants.kMagicCodePage), true))
 				{
-					sInput = reader.ReadLine();
+					// This tells the converter that the input will be 16-bit characters
+					// produced by converting the bytes of the file using CP28591.
+					ec.CodePageInput = EncodingConstants.kMagicCodePage;
+					ec.EncodingIn = ECInterfaces.EncodingForm.LegacyString;
 
-				if (sInput == string.Empty || sInput.StartsWith(@"\_sh ") || sInput.StartsWith(@"\id "))
-						sOutput = sInput;
-					else
+					reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+					// read the lines of the input file, (optionally convert,) and write them out.
+					string sOutput = string.Empty;
+					string sInput;
+					m_savedOutput = new StringBuilder();
+
+					m_svOutput.Clear(false);
+					m_fHasOutput = false;
+
+					// Read the lines of the input file, convert them, and display them
+					// in the view.
+					while (reader.Peek() > -1)
 					{
-						sOutput = ConvertOneLine(ec, sInput);
-					}
-					m_svOutput.AddPara(sOutput);
-					m_savedOutput.AppendLine(sOutput);
-					m_fHasOutput = true;
-				}
+						sInput = reader.ReadLine();
 
-				reader.Close();
-				m_svOutput.CompleteSetText();
-				Cursor.Current = cursorBefore;
+						if (sInput == string.Empty || sInput.StartsWith(@"\_sh ") || sInput.StartsWith(@"\id "))
+							sOutput = sInput;
+						else
+							sOutput = ConvertOneLine(ec, sInput);
+						m_svOutput.AddPara(sOutput);
+						m_savedOutput.AppendLine(sOutput);
+						m_fHasOutput = true;
+					}
+
+					reader.Close();
+					m_svOutput.CompleteSetText();
+				}
 			}
 		}
 

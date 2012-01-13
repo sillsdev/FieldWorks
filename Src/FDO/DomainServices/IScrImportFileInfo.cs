@@ -116,6 +116,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the starting reference for the file
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		SIL.FieldWorks.Common.ScriptureUtils.ScrReference StartRef { get; }
+		SILUBS.SharedScrUtils.ScrReference StartRef { get; }
 	}
 }

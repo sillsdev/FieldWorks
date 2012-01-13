@@ -716,7 +716,7 @@ namespace XCore
 						m_OneAtATimeSet.Add(keyString);
 						addedToSet = true;
 					}
-					using (new BusyIndicator())
+					using (new WaitCursor(Form.ActiveForm))
 					{
 						Logger.WriteEvent("Start: " + msgString);
 						m_mediator.SendMessage("ProgressReset", this);
@@ -740,116 +740,5 @@ namespace XCore
 				Trace.WriteLineIf(m_traceCMDSwitch.TraceInfo, BuildDebugMsg("InvokeCommand-  End"), m_traceCMDSwitch.DisplayName);
 			}
 		}
-	}
-
-	// REVIEW (EberhardB): this class is very similar to WaitCursor in BasicUtils. The only
-	// relevant difference is that here we set Cursor.Current whereas in WaitCursor we use
-	// 'Application.UseWaitCursor = true' which changes the wait cursor on all open forms.
-	// It almost looks like we could/should get rid of this class and use WaitCursor instead.
-	public class BusyIndicator : IFWDisposable
-	{
-		private System.Windows.Forms.Cursor m_old;
-
-		public BusyIndicator()
-		{
-			m_old = System.Windows.Forms.Cursor.Current;
-			System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
-		}
-
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~BusyIndicator()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected virtual void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				Cursor.Current = m_old;
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-
-			m_isDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
 	}
 }

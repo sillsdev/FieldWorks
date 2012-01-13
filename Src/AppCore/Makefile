@@ -51,8 +51,14 @@ LDLIBS = \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 
+ifeq ($(BUILD_CONFIG),Debug)
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
+
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Wshadow
 
 ARFLAGS = -crs
 
@@ -78,10 +84,10 @@ all: $(OUT_DIR)/libAppCore.a link_check
 $(OUT_DIR)/libAppCore.a: $(OBJ_ALL)
 	$(AR) $(ARFLAGS) $@ $^
 
-link_check: libAppCore
+link_check: $(INT_DIR)/libAppCore
 
-libAppCore: $(OBJ_ALL) $(LINK_LIBS) $(GENERIC_OBJ)/main.o
-	$(LINK.cc) -o $@ $^ $(LDLIBS)
+$(INT_DIR)/libAppCore: $(OBJ_ALL) $(LINK_LIBS) $(GENERIC_OBJ)/main.o
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJ)/main.o 	$(GENERIC_OBJ)/ModuleEntry.o $(LDLIBS)
 
 # === Rules ===
 
@@ -93,7 +99,7 @@ $(GENERIC_OBJ)/main.o:
 	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
 
 clean:
-	$(RM) $(OUT_DIR)/libAppCore.a $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
+	$(RM) $(OUT_DIR)/libAppCore.a $(INT_DIR)/libAppCore $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
 
 %.h.gch: %.h
 	$(COMPILE.cc) -o $@ $<

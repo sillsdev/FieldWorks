@@ -12,6 +12,7 @@ Last reviewed: Not yet.
 #ifndef LgTextServices_H
 #define LgTextServices_H
 
+#ifdef WIN32
 /*----------------------------------------------------------------------------------------------
 	Provide access to TSF functionality wrapped in easy-to-call methods.
 
@@ -66,5 +67,6 @@ protected:
 };
 
 DEFINE_COM_PTR(LgTextServices);
+#endif // WIN32
 
 #endif //!LgTextServices_H

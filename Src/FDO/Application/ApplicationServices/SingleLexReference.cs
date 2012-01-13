@@ -190,10 +190,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				switch (ws)
 				{
 
-					case (int)CellarModuleDefns.kwsAnal:
+					case WritingSystemServices.kwsAnal:
 						wsCode = SpecialWritingSystemCodes.DefaultAnalysis;
 						break;
-					case (int)CellarModuleDefns.kwsVern:
+					case WritingSystemServices.kwsVern:
 						wsCode = SpecialWritingSystemCodes.DefaultVernacular;
 						break;
 					default:

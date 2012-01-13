@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	{
 		/// <summary>String representing the type of the LexicalProvider</summary>
 		public const string kLexicalProviderType = "LexicalProvider";
-		private const int kSupportedLexicalProviderVersion = 2;
+		private const int kSupportedLexicalProviderVersion = 3;
 
 		private FdoCache m_cache;
 

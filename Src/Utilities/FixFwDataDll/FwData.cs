@@ -384,6 +384,43 @@ namespace SIL.FieldWorks.FixData
 						}
 					}
 					break;
+				case "RnGenericRec":
+					FixGenericDate("DateOfEvent", rt, className, guid);
+					break;
+				case "CmPerson":
+					FixGenericDate("DateOfBirth", rt, className, guid);
+					FixGenericDate("DateOfDeath", rt, className, guid);
+					break;
+			}
+		}
+
+		private void FixGenericDate(string fieldName, XElement rt, string className, Guid guid)
+		{
+			foreach (var xeGenDate in rt.Descendants(fieldName).ToList()) // ToList because we may modify things and mess up iterator.
+			{
+				var genDateAttr = xeGenDate.Attribute("val");
+				if (genDateAttr == null)
+					continue;
+				var genDateStr = genDateAttr.Value;
+				GenDate someDate;
+				if (GenDate.TryParse(genDateStr, out someDate))
+					continue; // all is well, valid GenDate
+				xeGenDate.Remove();
+				m_errors.Add(string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
+				// possible enhancement: take it apart like this and see whether swapping month and day makes it valid.
+				//var ad = true;
+				//if (genDateStr.StartsWith("-"))
+				//{
+				//    ad = false;
+				//    genDateStr = genDateStr.Substring(1);
+				//}
+				//genDateStr = genDateStr.PadLeft(9, '0');
+				//var year = Convert.ToInt32(genDateStr.Substring(0, 4));
+				//var month = Convert.ToInt32(genDateStr.Substring(4, 2));
+				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
+				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
+				//return new GenDate(precision, month, day, year, ad);
+
 			}
 		}
 
@@ -463,6 +500,8 @@ namespace SIL.FieldWorks.FixData
 			}
 			if (wsVal.StartsWith("pes"))
 				return wsVal.Remove(0, 3).Insert(0, "fa");
+			if (wsVal.StartsWith("zlm"))
+				return wsVal.Remove(0, 3).Insert(0, "ms");
 			if (wsVal.StartsWith("arb"))
 				return wsVal.Remove(2, 1);	// change arb to ar
 			return wsVal;

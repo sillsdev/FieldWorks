@@ -821,7 +821,7 @@ Main template
 
 	<xsl:template match="text()" mode="Run">
 		 <xsl:choose>
-			<xsl:when test="string-length(.)='0'">    <!-- Dont put out a run for an empty string -->
+			<xsl:when test="string-length(normalize-space(.))='0'">    <!-- Dont put out a run for an empty string -->
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:element name="Run">

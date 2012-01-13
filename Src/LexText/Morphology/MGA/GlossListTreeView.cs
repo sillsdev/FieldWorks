@@ -484,16 +484,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				XmlAttribute idAttr = dom.CreateAttribute("id");
 				idAttr.Value = sTarget;
 				idAttr.Value = sTarget;
-#if !__MonoCS__
 				currentNode.Attributes.Append(idAttr);
-#else
-				// TODO-Linux: work around for Mono bug 508296 https://bugzilla.novell.com/show_bug.cgi?id=508296
-				try
-				{
-					currentNode.Attributes.Append(idAttr);
-				}
-				catch { }
-#endif
 				XmlAttribute typeAttr = (XmlAttribute)xn.SelectSingleNode("@type");
 				if (typeAttr != null)
 					currentNode.Attributes.Append((XmlAttribute)typeAttr.Clone());

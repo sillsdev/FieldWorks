@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,19 +9,30 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class Match : IComparable<Match>
 	{
-		List<PhoneticShapeNode> m_entireMatch;
-		Dictionary<int, List<PhoneticShapeNode>> m_partitions;
-		VariableValues m_instantiatedVars;
+		private readonly List<PhoneticShapeNode> m_entireMatch;
+		private readonly Dictionary<int, List<PhoneticShapeNode>> m_partitions;
+		private VariableValues m_instantiatedVars;
+		private readonly PhoneticPattern m_pattern;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Match"/> class.
 		/// </summary>
+		/// <param name="pattern"></param>
 		/// <param name="vars">The instantiated variables.</param>
-		internal Match(VariableValues vars)
+		internal Match(PhoneticPattern pattern, VariableValues vars)
 		{
+			m_pattern = pattern;
 			m_partitions = new Dictionary<int, List<PhoneticShapeNode>>();
 			m_entireMatch = new List<PhoneticShapeNode>();
 			m_instantiatedVars = vars.Clone();
+		}
+
+		/// <summary>
+		/// Gets the pattern.
+		/// </summary>
+		public PhoneticPattern Pattern
+		{
+			get { return m_pattern; }
 		}
 
 		/// <summary>
@@ -106,22 +116,36 @@ namespace SIL.HermitCrab
 		public int CompareTo(Match other)
 		{
 			if (m_entireMatch.Count > other.m_entireMatch.Count)
-			{
 				return -1;
-			}
-			else if (m_entireMatch.Count < other.m_entireMatch.Count)
-			{
+			if (m_entireMatch.Count < other.m_entireMatch.Count)
 				return 1;
-			}
-			else
+
+			if (m_partitions.Count > other.m_partitions.Count)
+				return -1;
+			if (m_partitions.Count < other.m_partitions.Count)
+				return 1;
+
+			foreach (int partition in m_pattern.Partitions)
 			{
-				if (m_partitions.Count > other.m_partitions.Count)
-					return -1;
-				else if (m_partitions.Count < other.m_partitions.Count)
-					return 1;
-				else
-					return 0;
+				if (m_pattern.IsPartitionGreedy(partition))
+				{
+					int partitionCount = 0;
+					List<PhoneticShapeNode> nodes;
+					if (m_partitions.TryGetValue(partition, out nodes))
+						partitionCount = nodes.Count;
+					int otherPartitionCount = 0;
+					List<PhoneticShapeNode> otherNodes;
+					if (other.m_partitions.TryGetValue(partition, out otherNodes))
+						otherPartitionCount = otherNodes.Count;
+
+					if (partitionCount > otherPartitionCount)
+						return -1;
+					if (partitionCount < otherPartitionCount)
+						return 1;
+				}
 			}
+
+			return 0;
 		}
 
 		public override string ToString()
@@ -213,7 +237,7 @@ namespace SIL.HermitCrab
 			if (n == null)
 			{
 				// we are at the end of the pattern, so we have a match
-				matches.Add(new Match(instantiatedVars));
+				matches.Add(new Match(Owner, instantiatedVars));
 			}
 			else
 			{
@@ -241,7 +265,8 @@ namespace SIL.HermitCrab
 	/// </summary>
 	public class PhoneticPattern : HCLinkedList<PhoneticPatternNode, PhoneticPattern>, ICloneable
 	{
-		bool m_isTarget = false;
+		private readonly bool m_isTarget;
+		private readonly Dictionary<int, bool> m_partitions = new Dictionary<int, bool>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PhoneticPattern"/> class.
@@ -315,6 +340,22 @@ namespace SIL.HermitCrab
 			return false;
 		}
 
+		public IEnumerable<int> Partitions
+		{
+			get { return m_partitions.Keys; }
+		}
+
+		public bool IsPartitionGreedy(int partition)
+		{
+			return m_partitions[partition];
+		}
+
+		public void AddPartition(IEnumerable<PhoneticPatternNode> nodes, int partition, bool greedy)
+		{
+			AddPartition(nodes, partition);
+			m_partitions[partition] = greedy;
+		}
+
 		public bool IsMatch(PhoneticShapeNode node, Direction dir, ModeType mode, out IList<Match> matches)
 		{
 			return IsMatch(node, dir, mode, new VariableValues(), out matches);
@@ -357,7 +398,7 @@ namespace SIL.HermitCrab
 			if (n == null)
 			{
 				// we are at the end of the pattern, so it is a match
-				matchesList.Add(new Match(instantiatedVars));
+				matchesList.Add(new Match(this, instantiatedVars));
 			}
 			else
 			{
@@ -527,6 +568,46 @@ namespace SIL.HermitCrab
 
 			instantiatedVars.ReplaceValues(temp);
 			return true;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj != null && Equals(obj as Environment);
+		}
+
+		public bool Equals(Environment other)
+		{
+			if (other == null)
+				return false;
+
+			if (m_leftEnv == null)
+			{
+				if (other.m_leftEnv != null)
+					return false;
+			}
+			else
+			{
+				if (!m_leftEnv.Equals(other.m_leftEnv))
+					return false;
+			}
+
+			if (m_rightEnv == null)
+			{
+				if (other.m_rightEnv != null)
+					return false;
+			}
+			else
+			{
+				if (!m_rightEnv.Equals(other.m_rightEnv))
+					return false;
+			}
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return (m_leftEnv == null ? 0 : m_leftEnv.GetHashCode()) ^ (m_rightEnv == null ? 0 : m_rightEnv.GetHashCode());
 		}
 	}
 }

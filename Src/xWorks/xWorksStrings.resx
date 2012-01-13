@@ -513,10 +513,10 @@ Are you SURE you want to delete the field {2}?.</value>
 	<value>Redo Show Subentry for this Component</value>
   </data>
   <data name="ksUndoVisibleComplexForm" xml:space="preserve">
-	<value>Undo Visible Complex Form</value>
+	<value>Undo Referenced Complex Forms</value>
   </data>
   <data name="ksRedoVisibleComplexForm" xml:space="preserve">
-	<value>Redo Visible Complex Form</value>
+	<value>Redo Referenced Complex Forms</value>
   </data>
   <data name="ksConfigureList" xml:space="preserve">
 	<value>Configure List</value>
@@ -737,5 +737,8 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksReferencedComplexForm" xml:space="preserve">
 	<value>Referenced Complex Form</value>
+  </data>
+  <data name="ksInvalidFieldInFilterOrSorter" xml:space="preserve">
+	<value>FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence.</value>
   </data>
 </root>

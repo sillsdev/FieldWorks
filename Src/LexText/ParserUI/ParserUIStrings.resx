@@ -191,9 +191,6 @@
 	<value>Queue: ({0}/{1}/{2})</value>
 	<comment>{0}, {1}, and {2} are numbers (or value of ksDash)</comment>
   </data>
-  <data name="ksSelectWordFirst" xml:space="preserve">
-	<value>Please select a word first.</value>
-  </data>
   <data name="ksUnknown" xml:space="preserve">
 	<value>Unknown</value>
   </data>

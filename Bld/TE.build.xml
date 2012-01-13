@@ -20,7 +20,7 @@
 	<!-- Add individual project targets below this point. -->
 	<!-- -->
 	<target name="ScrControls" description="Build ScrControls project."
-		depends="FwControls,FwUtils,copy-nmockDll,ScrUtilsInterfaces,ScriptureUtils,FDO,SharedScrUtils,TeScrInitializer,XMLUtils">
+		depends="FwControls,FwUtils,copy-nmockDll,ScrUtilsInterfaces,ScriptureUtils,FDO,SharedScrUtils,SharedScrControls,TeScrInitializer,XMLUtils">
 		<call target="ScrControls-nodep" cascade="false"/>
 	</target>
 	<target name="ScrControls-nodep" description="Build ScrControls project.">
@@ -193,7 +193,7 @@
 	</target>
 	<!-- -->
 	<target name="TeEditing" description="Build TE Editing helpers project."
-		depends="COMInterfaces,CoreImpl,SimpleRootSite,copy-uiAutomation,FDO,TeResources,FwUtils,FwCoreDlgs,FwCoreDlgControls,TeRegistrySettings,TeViewConstructors">
+		depends="SharedScrUtils,SharedScrControls,COMInterfaces,CoreImpl,SimpleRootSite,copy-uiAutomation,FDO,TeResources,FwUtils,FwCoreDlgs,FwCoreDlgControls,TeRegistrySettings,TeViewConstructors">
 		<call target="TeEditing-nodep" cascade="false"/>
 	</target>
 	<target name="TeEditing-nodep" description="Build TE Editing helpers project.">

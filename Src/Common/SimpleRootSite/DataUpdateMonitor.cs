@@ -72,8 +72,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		// Keys are ISilDataAccess objects, values are UpdateSemaphore objects
 		private static UpdateSemaphore s_updateSemaphore;
-		private Cursor m_oldCursor;
-		private Control m_owner;
+		private WaitCursor m_wait;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -95,13 +94,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				s_updateSemaphore.fDataUpdateInProgress = true;
 				s_updateSemaphore.sDescr = updateDescription;
 			}
-			m_owner = owner;
 
 			// Set wait cursor
 			if (owner != null)
 			{
-				m_oldCursor = owner.Cursor;
-				owner.Cursor = Cursors.WaitCursor;
+				m_wait = new WaitCursor(owner);
 			}
 		}
 
@@ -199,17 +196,16 @@ namespace SIL.FieldWorks.Common.RootSites
 				finally
 				{
 					// end Wait Cursor
-					// Since it needs m_Owner, this must be done when 'disposing' is true,
+					// Since it needs m_wait, this must be done when 'disposing' is true,
 					// as that is a disposable object, which may be gone in
 					// Finalizer mode.
-					if (m_owner != null)
-						m_owner.Cursor = m_oldCursor;
+					if (m_wait != null)
+						m_wait.Dispose();
 				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_owner = null;
-			m_oldCursor = null;
+			m_wait = null;
 
 			m_isDisposed = true;
 		}

@@ -26,11 +26,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		// a language project has a list of one or more analysis encodings. kwsAnal would
 		// tell the program to use the first writing system in this list.
 
-		// ****** IMPORTANT ******
-		// These constants are mirrored in CmTypes.h and need to be kept syncd.
-		// On 8/24 the value of kwsLim in CmTypes.h is -7 and the value here is -16.
-		// ****** IMPORTANT ******
-
 		/// <summary>(-1) The first analysis writing system.</summary>
 		public const int kwsAnal = -1;
 		/// <summary>(-2) The first vernacular writing system.</summary>
@@ -1374,10 +1369,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var parts = from s in newIdentifier.Split('-') where s.Length > 0 select s.Length <= 40 ? s : s.Substring(0, 40);
 			// Ensure that the first part is "x" or "X" to make it private use.
 			if (parts.First().ToLower() != "x")
-				parts = new[] {"qaa", "x"}.Concat(parts);
+				parts = new[] {"x"}.Concat(parts);
 			// If the result now has nothing left except the x, add something arbitrary.
-			if (parts.Count() == 2)
-				parts = parts.Concat(new [] {"qaa"});
+			if (parts.Count() == 1)
+				parts = new[] {"qaa", "x", "qaa"};
+			else
+				parts = new [] {"qaa"}.Concat(parts); // Can't start with x, we always use qaa for unknown WS.
 			newIdentifier = parts.Aggregate((first, second) => first + "-" + second);
 			// This should now qualify as a private-use writing system identifier.
 			return FindOrCreateWritingSystem(cache, newIdentifier, addAnalWss, addVernWss, out ws);

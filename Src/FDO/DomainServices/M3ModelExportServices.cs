@@ -474,6 +474,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						new XAttribute("Direction", phonRule.Direction),
 						ExportBestAnalysis(phonRule.Name, "Name", mode),
 						ExportBestAnalysis(phonRule.Description, "Description", mode),
+						new XElement("StrucDesc",
+							ExportContextList(phonRule.StrucDescOS)),
 						new XElement("StrucChange", asMetathesisRule.StrucChange.Text));
 					break;
 				case "PhRegularRule":

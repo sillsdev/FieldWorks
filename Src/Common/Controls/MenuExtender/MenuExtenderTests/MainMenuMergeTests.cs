@@ -384,6 +384,11 @@ namespace SIL.FieldWorks.Common.Controls
 				get { return false; }
 			}
 
+			public int Priority
+			{
+				get { return (int)ColleaguePriority.Low; }
+			}
+
 			#endregion
 
 			internal int m_nFirstOneClicked = 0;

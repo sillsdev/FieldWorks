@@ -29,6 +29,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

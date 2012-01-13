@@ -557,6 +557,11 @@ namespace SIL.FieldWorks.FdoUi
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
+
 		#endregion IxCoreColleague implementation
 
 		#region Jumping
@@ -896,8 +901,7 @@ namespace SIL.FieldWorks.FdoUi
 			else
 			{
 				Form mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
-				mainWindow.Cursor = Cursors.WaitCursor;
-				try
+				using (new WaitCursor(mainWindow))
 				{
 					using (ConfirmDeleteObjectDlg dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
 					{
@@ -908,10 +912,6 @@ namespace SIL.FieldWorks.FdoUi
 							return true; // deleted it
 						}
 					}
-				}
-				finally
-				{
-					mainWindow.Cursor = Cursors.Default;
 				}
 			}
 			return false; // didn't delete it.
@@ -941,19 +941,20 @@ namespace SIL.FieldWorks.FdoUi
 			CheckDisposed();
 
 			Form mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
-			mainWindow.Cursor = Cursors.WaitCursor;
-			using (MergeObjectDlg dlg = new MergeObjectDlg(m_mediator.HelpTopicProvider))
+			using (new WaitCursor(mainWindow))
 			{
-				WindowParams wp = new WindowParams();
-				List<DummyCmObject> mergeCandidates = new List<DummyCmObject>();
-				string guiControl, helpTopic;
-				DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
-				mergeCandidates.Sort();
-				dlg.SetDlgInfo(m_cache, m_mediator, wp, dObj, mergeCandidates, guiControl, helpTopic);
-				if (DialogResult.OK == dlg.ShowDialog(mainWindow))
-					ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
+				using (MergeObjectDlg dlg = new MergeObjectDlg(m_mediator.HelpTopicProvider))
+				{
+					WindowParams wp = new WindowParams();
+					List<DummyCmObject> mergeCandidates = new List<DummyCmObject>();
+					string guiControl, helpTopic;
+					DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
+					mergeCandidates.Sort();
+					dlg.SetDlgInfo(m_cache, m_mediator, wp, dObj, mergeCandidates, guiControl, helpTopic);
+					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
+				}
 			}
-			mainWindow.Cursor = Cursors.Default;
 		}
 
 		/// <summary>
@@ -1944,10 +1945,10 @@ namespace SIL.FieldWorks.FdoUi
 		internal int[] ToHvoArray()
 		{
 			int chvo = Count;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				m_cache.DomainDataByFlid.VecProp(m_hvo, m_flid, chvo, out chvo, arrayPtr);
-				return (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+				return MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 		}
 

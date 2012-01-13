@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE.ExportTests
 {

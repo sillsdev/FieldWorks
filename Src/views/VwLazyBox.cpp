@@ -334,7 +334,7 @@ VwNotifier * VwLazyBox::FindMyNotifier(int & ipropBest, int & tag)
 			{
 				if (pbox == this)
 				{
-					PropTag tag = pnote->Tags()[iprop];
+					tag = pnote->Tags()[iprop];
 					if (tag == ktagGapInAttrs || tag == ktagNotAnAttr)
 						continue; // can't regenerate using this
 
@@ -611,7 +611,7 @@ VwBox * VwLazyBox::ExpandItemsNoLayout(int ihvoMin, int ihvoLim, VwNotifier * pn
 				// Fortunately, only VwNotifiers (not any of the other types) point at
 				// Lazy boxes. A further simplification is that we don't have to worry about
 				// string indexes; a lazy box is never inside a paragraph.
-				NotifierVec vpanoteDel; // Ones to delete (because lazy box was only contents).
+				NotifierVec vpanoteDelLocal; // Ones to delete (because lazy box was only contents).
 				int cnote = vpanote.Size();
 				int inote; // used in two loops
 				for (inote=0; inote < cnote; inote++)
@@ -660,7 +660,7 @@ VwBox * VwLazyBox::ExpandItemsNoLayout(int ihvoMin, int ihvoLim, VwNotifier * pn
 									// The notifier will go away later.
 									// We mustn't delete it now because it may show up in a child's
 									// list of parents later in this loop.
-									vpanoteDel.Push(pnote);
+									vpanoteDelLocal.Push(pnote);
 									// Also remove it from the list of notifiers we will
 									// try to fix key boxes on.
 									vpanote.Delete(inote);
@@ -720,18 +720,17 @@ VwBox * VwLazyBox::ExpandItemsNoLayout(int ihvoMin, int ihvoLim, VwNotifier * pn
 						// VwNotifier::_SetLastBox, except that when we find a previous
 						// box and work forward from there, we have to stop before pboxNext,
 						// rather than at the end of the chain. Also we can ignore string indexes.
-						VwBox ** ppbox = pnote->Boxes();
 
 						// We already found the last non-null property. The last box is it,
 						// or the last in its chain, or the one in its chain before this.
-						VwBox * pboxLast = ppbox[ipropLast];
+						VwBox * pboxLast = pnote->Boxes()[ipropLast];
 						while (pboxLast->NextOrLazy() && pboxLast->NextOrLazy() != this)
 							pboxLast = pboxLast->NextOrLazy();
 						pnote->SetLastBox(pboxLast);
 					}
 				}
 				// Now we're done with the list of notifiers, we can delete any we decided to.
-				prootb->DeleteNotifierVec(vpanoteDel);
+				prootb->DeleteNotifierVec(vpanoteDelLocal);
 			}
 
 			pboxFirstLayout = pboxFirstNew ? pboxFirstNew : pboxRet;

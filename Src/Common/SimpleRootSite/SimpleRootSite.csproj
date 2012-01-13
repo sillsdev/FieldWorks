@@ -176,6 +176,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\KeyboardSwitcher.dll</HintPath>
 	</Reference>
+	<Reference Include="Keyboarding, Version=7.0.5.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Keyboarding.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AccessibilityWrapper.cs">
@@ -249,6 +253,7 @@
 	</EmbeddedResource>
 	<Compile Include="IIBusCommunicator.cs" />
 	<Compile Include="IBusCommunicator.cs" />
+	<Compile Include="ViewInputManager.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="Resources\HORIZONTAL_IBEAM.CUR" />

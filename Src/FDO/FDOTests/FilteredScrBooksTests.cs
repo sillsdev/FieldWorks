@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2004, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2004' company='SIL International'>
-//		Copyright (c) 2004, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,17 +10,10 @@
 //
 // File: FilteredScrBooksTests.cs
 // Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -205,6 +198,53 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// try to add one that already exists
 			m_filter.Add(bookLev);
 			Assert.AreEqual(3, m_filter.BookCount);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test verifies that filter is correctly updated and that accessor methods work.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetRefRangeForContiguousBooks_SingleBook()
+		{
+			m_filter.FilteredBooks = new[] { m_scr.ScriptureBooksOS[1] };
+			ScrReference start, end;
+			m_filter.GetRefRangeForContiguousBooks(out start, out end);
+			Assert.AreEqual(02001001, start);
+			Assert.AreEqual(02040038, end);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test verifies that filter is correctly updated and that accessor methods work.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetRefRangeForContiguousBooks_ContiguousBooks()
+		{
+			m_filter.FilteredBooks = new[] { m_scr.ScriptureBooksOS[1], m_scr.ScriptureBooksOS[2] };
+			ScrReference start, end;
+			m_filter.GetRefRangeForContiguousBooks(out start, out end);
+			Assert.AreEqual(02001001, start);
+			Assert.AreEqual(03027034, end);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test verifies that filter is correctly updated and that accessor methods work.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetRefRangeForContiguousBooks_DisjointBooks()
+		{
+			m_filter.FilteredBooks = new[] { m_scr.ScriptureBooksOS[0], m_scr.ScriptureBooksOS[2] };
+			ScrReference start, end;
+			m_filter.GetRefRangeForContiguousBooks(out start, out end);
+			Assert.AreEqual(0, start.BBCCCVVV);
+			Assert.AreEqual(m_scr.Versification, start.Versification);
+			Assert.AreEqual(0, end.BBCCCVVV);
+			Assert.AreEqual(m_scr.Versification, end.Versification);
 		}
 	}
 }

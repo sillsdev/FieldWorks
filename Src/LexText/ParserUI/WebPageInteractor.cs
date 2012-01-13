@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using XCore;
@@ -16,20 +17,15 @@ namespace SIL.FieldWorks.LexText.Controls
 	[System.Runtime.InteropServices.ComVisible(true)]
 	public class WebPageInteractor
 	{
-		private HtmlControl m_htmlControl;
-		private ParserTrace m_parserTrace;
-		private Mediator m_mediator;
-		private FdoCache m_cache;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_tbWordForm;
+		private readonly HtmlControl m_htmlControl;
+		private readonly Mediator m_mediator;
+		private readonly FdoCache m_cache;
+		private readonly FwTextBox m_tbWordForm;
 
-		/// <summary>
-		/// Requires a language object
-		/// </summary>
-		/// <param name="lang"></param>
-		public WebPageInteractor(HtmlControl htmlControl, ParserTrace parserTrace, Mediator mediator, SIL.FieldWorks.Common.Widgets.FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, ParserTrace parserTrace, Mediator mediator, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
-			m_parserTrace = parserTrace;
+			ParserTrace = parserTrace;
 			m_mediator = mediator;
 			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_tbWordForm = tbWordForm;
@@ -109,13 +105,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set the current parser to use when tracing
 		/// </summary>
-		public ParserTrace ParserTrace
-		{
-			set
-			{
-				m_parserTrace = value;
-			}
-		}
+		public ParserTrace ParserTrace { get; set; }
+
 		/// <summary>
 		/// Have the main FLEx window jump to the appropriate item
 		/// </summary>
@@ -184,7 +175,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ShowWordGrammarDetail(string sNodeId)
 		{
 			string sForm = AdjustForm(m_tbWordForm.Text);
-			m_htmlControl.URL = m_parserTrace.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
+			m_htmlControl.URL = ParserTrace.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
 		/// Try another pass in the Word Grammar Debugger
@@ -193,7 +184,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void TryWordGrammarAgain(string sNodeId)
 		{
 			string sForm = AdjustForm(m_tbWordForm.Text);
-			m_htmlControl.URL = m_parserTrace.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
+			m_htmlControl.URL = ParserTrace.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
 		/// Back up a page in the Word Grammar Debugger
@@ -205,7 +196,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </remarks>
 		public void GoToPreviousWordGrammarPage()
 		{
-			m_htmlControl.URL = m_parserTrace.PopWordGrammarStack();
+			m_htmlControl.URL = ParserTrace.PopWordGrammarStack();
 		}
 		/// <summary>
 		/// Modify the content of the form to use entities when needed

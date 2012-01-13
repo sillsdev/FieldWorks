@@ -13,7 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.Utils;
@@ -27,10 +26,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FieldDescriptionTests : BaseTest
+	public class FieldDescriptionTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		/// <summary>The FDO cache</summary>
-		protected FdoCache m_fdoCache;
 		/// <summary>the metadata cache</summary>
 		protected IFwMetaDataCacheManaged m_mdc;
 
@@ -44,9 +41,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.FixtureSetup();
 
-			m_fdoCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new ThreadHelper());
-			m_mdc = (IFwMetaDataCacheManaged)m_fdoCache.MetaDataCache;
+			m_mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCache;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -58,9 +53,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
-			m_fdoCache.ThreadHelper.Dispose();
-			m_fdoCache.Dispose();
-			m_fdoCache = null;
 			m_mdc = null;
 		}
 
@@ -86,7 +78,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void AddModifyDeleteFieldDescription()
 		{
-			FieldDescription fd = new FieldDescription(m_fdoCache)
+			FieldDescription fd = new FieldDescription(Cache)
 			{	Class = 1,
 				Name = "TESTJUNK___NotPresent",
 				Type = CellarPropertyType.Boolean
@@ -143,7 +135,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var customField1 = CreateCustomFieldAndRelabel(origName, newName);
 			var firstFlid = m_mdc.GetFieldId2(1, origName, true);
 			var secondUserLabel = "unrelatedUserLabel";
-			var customField2 = new FieldDescription(m_fdoCache)
+			var customField2 = new FieldDescription(Cache)
 			{
 				Class = 1,
 				Name = origName,
@@ -171,7 +163,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private FieldDescription CreateCustomFieldAndRelabel(string fieldname, string ultimateUserLabel)
 		{
 			// Phase 1: Create 1st Custom Field with original name
-			var fd = new FieldDescription(m_fdoCache)
+			var fd = new FieldDescription(Cache)
 			{
 				Class = 1,
 				Name = fieldname,

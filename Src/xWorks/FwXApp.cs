@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks

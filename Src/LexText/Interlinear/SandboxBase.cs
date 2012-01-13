@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.IText
 		// The original Gloss we started with. ReviewP: Can we get rid of this?
 		private int m_hvoWordGloss;
 
-		private bool m_fSuppressShowCombo = false; // set temporarily to prevent SelectionChanged displaying combo.
+		private bool m_fSuppressShowCombo = true; // set to prevent SelectionChanged displaying combo.
 		private bool m_fShowAnalysisCombo = true; // false to hide Wordform-line combo (if no analyses).
 
 		internal IComboHandler m_ComboHandler; // handles most kinds of combo box.
@@ -446,10 +446,10 @@ namespace SIL.FieldWorks.IText
 
 				// ISilDataAccess sda = m_caches.DataAccess; // CS0219
 				int chvo = MorphCount;
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvo, typeof(int)))
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					Caches.DataAccess.VecProp(kSbWord, ktagSbWordMorphs, chvo, out chvo, arrayPtr);
-					int[] morphsHvoList = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+					int[] morphsHvoList = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 					List<int> msas = new List<int>(morphsHvoList.Length);
 					for (int i = 0; i < morphsHvoList.Length; i++)
 					{
@@ -1539,7 +1539,7 @@ namespace SIL.FieldWorks.IText
 		{
 			analysis = null; // default
 			gloss = null;
-			if (wordform == null)
+			if (wordform == null || !wordform.IsValidObject)
 				return;
 
 			if (InterlinDoc == null) //when running some tests this is null
@@ -1704,16 +1704,11 @@ namespace SIL.FieldWorks.IText
 			IVwSelection sel = null;
 			try
 			{
-				m_fSuppressShowCombo = true;
 				sel = RootBox.MakeSelInObj(0, rgvsli.Length, rgvsli, tag, fInstall);
 			}
 			catch (Exception)
 			{
 				// Ignore any problems
-			}
-			finally
-			{
-				m_fSuppressShowCombo = false;
 			}
 			return sel;
 		}
@@ -1762,17 +1757,12 @@ namespace SIL.FieldWorks.IText
 			bool fSuccessful;
 			try
 			{
-				m_fSuppressShowCombo = true;
 				RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, cpropPrevious, ichAnchor, ichEnd, 0, false, -1, null, true);
 				fSuccessful = true;
 			}
 			catch (Exception)
 			{
 				fSuccessful = false;
-			}
-			finally
-			{
-				m_fSuppressShowCombo = false;
 			}
 			return fSuccessful;
 		}
@@ -2191,7 +2181,7 @@ namespace SIL.FieldWorks.IText
 				// Ensure the sandbox is visible so the menu displays in a meaningful
 				// position.  See LT-7671.
 				if (InterlinDoc != null)
-					InterlinDoc.ScrollControlIntoView(this);
+					InterlinDoc.ReallyScrollControlIntoView(this);
 				// Simulate a mouse down on the arrow.
 				ShowComboForSelection(selArrow, true);
 			}
@@ -3507,6 +3497,11 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private int m_multipleAnalysisColor = NoGuessColor;
 
+		protected override void Select(bool directed, bool forward)
+		{
+			MakeDefaultSelection();
+		}
+
 		internal void SetWordform(ITsString form, bool fLookForDefaults)
 		{
 			CheckDisposed();
@@ -4197,6 +4192,7 @@ namespace SIL.FieldWorks.IText
 			int clid = 0;
 			if (CurrentGuess != null)
 				clid = CurrentGuess.ClassID;
+			int hvoMsa;
 			switch (className)
 			{
 				case "WfiWordform":
@@ -4225,7 +4221,7 @@ namespace SIL.FieldWorks.IText
 				case "LexSense":
 					return GetObjectFromRightClickMorph(ktagSbMorphGloss);
 				case "PartOfSpeech":
-					int hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
+					hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
 					if (hvoMsa == 0)
 						return 0;
 					// TODO: We really want the guid, and it's usually just as accessible as
@@ -4239,7 +4235,14 @@ namespace SIL.FieldWorks.IText
 						else
 							return Cache.ServiceLocator.GetObject(guid).Hvo;
 					}
+				//LT-12195 Change Show Concordance of Category right click menu item for Lex Gram. Info. line of Interlinear.
+				case "PartOfSpeechGramInfo":
+					hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
+					return hvoMsa;
 				case "WordPartOfSpeech":
+					hvoMsa = GetObjectFromRightClickMorph(ktagSbWordPos);
+					if (hvoMsa != 0)
+						return hvoMsa;
 					IWfiAnalysis realAnalysis = null;
 					if (clid == WfiAnalysisTags.kClassId)
 						realAnalysis = CurrentGuess as IWfiAnalysis;
@@ -4302,6 +4305,8 @@ namespace SIL.FieldWorks.IText
 			XCore.Command cmd = (XCore.Command)commandObject;
 			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string concordOn = SIL.Utils.XmlUtils.GetOptionalAttributeValue(cmd.Parameters[0], "concordOn", "");
+
 			if (CurrentAnalysisTree.Analysis != null)
 			{
 				// If the user selects a concordance on gloss or analysis, we want the current one,
@@ -4317,7 +4322,11 @@ namespace SIL.FieldWorks.IText
 				{
 					FdoCache cache = m_caches.MainCache;
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, co.Guid));
+					var fwLink = new FwLinkArgs(tool, co.Guid);
+					List<Property> additionalProps = fwLink.PropertyTableEntries;
+					if (!String.IsNullOrEmpty(concordOn))
+						additionalProps.Add(new Property("ConcordOn", concordOn));
+					m_mediator.PostMessage("FollowLink", fwLink);
 					return true;
 				}
 			}
@@ -4355,7 +4364,9 @@ namespace SIL.FieldWorks.IText
 				m_wsPending = -1;
 				try
 				{
+					m_fSuppressShowCombo = false;
 					m_rootb.MakeSelAt(point.X, point.Y, rcSrcRoot, rcDstRoot, true);
+					m_fSuppressShowCombo = true;
 				}
 				catch (Exception)
 				{

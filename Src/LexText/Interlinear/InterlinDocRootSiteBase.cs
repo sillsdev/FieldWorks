@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -8,6 +9,8 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
 using System.Linq;
 
@@ -24,8 +27,32 @@ namespace SIL.FieldWorks.IText
 		protected InterlinVc m_vc;
 		protected ICmObjectRepository m_objRepo;
 
+		/// <summary>
+		/// Context menu for use when user right-clicks on Interlinear segment labels.
+		/// </summary>
+		private ContextMenuStrip m_labelContextMenu;
+
+		/// <summary>
+		/// Blue circle button to alert user to the presence of the Configure Interlinear context menu.
+		/// </summary>
+		private Button m_contextButton;
+
+		/// <summary>
+		/// Index of Interlinear line clicked on to generate above blue button.
+		/// Allows context menu to be context-sensitive.
+		/// </summary>
+		private int m_iLineChoice;
+
+		/// <summary>
+		/// Helps determine if a rt-click is opening or closing the context menu.
+		/// </summary>
+		private long m_ticksWhenContextMenuClosed = 0;
+
+		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
+
 		public InterlinDocRootSiteBase()
 		{
+			m_wordformsToUpdate = new HashSet<IWfiWordform>();
 			InitializeComponent();
 		}
 
@@ -316,6 +343,407 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			m_contextButton = new Button();
+			var pullDown = ResourceHelper.BlueCircleDownArrowForView;
+			m_contextButton.Image = pullDown;
+			m_contextButton.Height = pullDown.Height + 4;
+			m_contextButton.Width = pullDown.Width + 4;
+			m_contextButton.FlatStyle = FlatStyle.Flat;
+			m_contextButton.ForeColor = BackColor;
+			m_contextButton.BackColor = BackColor;
+			m_contextButton.Click += new EventHandler(m_contextButton_Click);
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			var ilineChoice = -1;
+			var sel = GrabMousePtSelectionToTest(e);
+			if (UserClickedOnLabels(sel, out ilineChoice))
+			{
+				SetContextButtonPosition(sel, ilineChoice);
+			}
+			if (e.Button == MouseButtons.Right)
+			{
+				ilineChoice = GetIndexOfLineChoice(sel);
+				if (ilineChoice < 0)
+				{
+					base.OnMouseDown(e);
+					return;
+				}
+				ShowContextMenuIfNotClosing(new Point(e.X, e.Y), ilineChoice);
+			}
+			base.OnMouseDown(e);
+		}
+
+		private void ShowContextMenuIfNotClosing(Point menuLocation, int ilineChoice)
+		{
+			// LT-4622 Make Configure Interlinear more accessible
+			// User clicked on interlinear labels, so I need to
+			// make a context menu and show it, if I'm not just closing one!
+			// This time test seems to be the only way to find out whether this click closed the last one.
+			if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
+			{
+				m_labelContextMenu = MakeContextMenu(ilineChoice);
+				m_labelContextMenu.Closed += m_labelContextMenu_Closed;
+				m_labelContextMenu.Show(this, menuLocation.X, menuLocation.Y);
+			}
+		}
+
+		private void SetContextButtonPosition(IVwSelection sel, int ilineChoice)
+		{
+			Debug.Assert(sel != null || !sel.IsValid, "No selection!");
+			//sel.GrowToWord();
+			Rect rcPrimary;
+			Rectangle rcSrcRoot;
+			using (new HoldGraphics(this))
+			{
+				Rect rcSec;
+				bool fSplit, fEndBeforeAnchor;
+				Rectangle rcDstRoot;
+				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
+					out rcSec, out fSplit, out fEndBeforeAnchor);
+			}
+			CalculateHorizContextButtonPosition(rcPrimary, rcSrcRoot);
+			m_iLineChoice = ilineChoice;
+			if (!Controls.Contains(m_contextButton))
+				Controls.Add(m_contextButton);
+		}
+
+		private void CalculateHorizContextButtonPosition(Rect rcPrimary, Rect rcSrcRoot)
+		{
+			// Enhance GJM: Not perfect for RTL script, but I can't figure out how to
+			// do it right just now.
+			var horizPosition = TextIsRightToLeft ? rcPrimary.left : rcSrcRoot.left;
+			m_contextButton.Location = new Point(horizPosition, rcPrimary.top);
+		}
+
+		protected bool TextIsRightToLeft
+		{
+			get
+			{
+				var rootWs = RootStText.MainWritingSystem;
+				var wsEngine = Cache.LanguageWritingSystemFactoryAccessor.get_EngineOrNull(rootWs);
+				return wsEngine != null && wsEngine.RightToLeftScript;
+			}
+		}
+
+		internal void RemoveContextButtonIfPresent()
+		{
+			m_iLineChoice = -1;
+			if (Controls.Contains(m_contextButton))
+			{
+				Controls.Remove(m_contextButton);
+			}
+		}
+
+		protected bool UserClickedOnLabels(IVwSelection selTest, out int ilineChoice)
+		{
+			ilineChoice = GetIndexOfLineChoice(selTest);
+			return ilineChoice > -1;
+		}
+
+		/// <summary>
+		/// Takes a mouse click point and makes an invisible selection for testing.
+		/// Exceptions caused by selection problems are caught, but not dealt with.
+		/// In case of an exception, the selection returned will be null.
+		/// </summary>
+		/// <param name="e"></param>
+		/// <returns></returns>
+		protected IVwSelection GrabMousePtSelectionToTest(MouseEventArgs e)
+		{
+			IVwSelection selTest = null;
+			try
+			{
+				Point pt;
+				Rectangle rcSrcRoot;
+				Rectangle rcDstRoot;
+				using (new HoldGraphics(this))
+				{
+					pt = PixelToView(new Point(e.X, e.Y));
+					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				}
+				// Make an invisible selection to see if we are in editable text.
+				selTest = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+			}
+			catch
+			{
+
+			}
+			return selTest;
+		}
+
+		protected int GetIndexOfLineChoice(IVwSelection selTest)
+		{
+			var helper = SelectionHelper.Create(selTest, this);
+			if (helper == null)
+				return -1;
+
+			var props = helper.SelProps;
+			int dummyvar;
+			return props.GetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, out dummyvar);
+		}
+
+		#region Label Context Menu stuff
+
+		void m_contextButton_Click(object sender, EventArgs e)
+		{
+			Debug.Assert(m_iLineChoice > -1, "Why isn't this variable set?");
+			if (m_iLineChoice > -1)
+			{
+				ShowContextMenuIfNotClosing(((Button)sender).Location, m_iLineChoice);
+			}
+		}
+
+		private ContextMenuStrip MakeContextMenu(int ilineChoice)
+		{
+			var menu = new ContextMenuStrip();
+			// Menu items:
+			// 1) Hide [name of clicked line]
+			// 2) Add Writing System > (submenu of other wss for this line)
+			// 3) Move Up
+			// 4) Move Down
+			// (separator)
+			// 5) Add Line > (submenu of currently hidden lines)
+			// 6) Configure Interlinear...
+
+			if (m_vc != null && m_vc.LineChoices != null) // just to be safe; shouldn't happen
+			{
+				var curLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+				if (curLineChoices == null)
+					return menu;
+
+				// 1) Hide [name of clicked line]
+				if (curLineChoices.OkToRemove(ilineChoice))
+					AddHideLineMenuItem(menu, curLineChoices, ilineChoice);
+
+				// 2) Add Writing System > (submenu of other wss for this line)
+				var addWsSubMenu = new ToolStripMenuItem(ITextStrings.ksAddWS);
+				AddAdditionalWsMenuItem(addWsSubMenu, curLineChoices, ilineChoice);
+				if (addWsSubMenu.DropDownItems.Count > 0)
+					menu.Items.Add(addWsSubMenu);
+
+				// 3) Move Up
+				if (curLineChoices.OkToMoveUp(ilineChoice))
+					AddMoveUpMenuItem(menu, ilineChoice);
+
+				// 4) Move Down
+				if (curLineChoices.OkToMoveDown(ilineChoice))
+					AddMoveDownMenuItem(menu, ilineChoice);
+
+				// Add menu separator here
+				menu.Items.Add(new ToolStripSeparator());
+
+				// 5) Add Line > (submenu of currently hidden lines)
+				var addLineSubMenu = new ToolStripMenuItem(ITextStrings.ksAddLine);
+				AddNewLineMenuItem(addLineSubMenu, curLineChoices);
+				if (addLineSubMenu.DropDownItems.Count > 0)
+					menu.Items.Add(addLineSubMenu);
+			}
+
+			// 6) Last, but not least, add a link to the Configure Interlinear dialog
+			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
+			configLink.Click += new EventHandler(configLink_Click);
+			menu.Items.Add(configLink);
+
+			return menu;
+		}
+
+		private void AddHideLineMenuItem(ContextMenuStrip menu,
+			InterlinLineChoices curLineChoices, int ilineChoice)
+		{
+			var lineLabel = GetAppropriateLineLabel(curLineChoices, ilineChoice);
+			var hideItem = new ToolStripMenuItem(String.Format(ITextStrings.ksHideLine, lineLabel));
+			hideItem.Click += new EventHandler(hideItem_Click);
+			hideItem.Tag = ilineChoice;
+			menu.Items.Add(hideItem);
+		}
+
+		private string GetAppropriateLineLabel(InterlinLineChoices curLineChoices, int ilineChoice)
+		{
+			var curSpec = curLineChoices[ilineChoice];
+			var result = curLineChoices.LabelFor(curSpec.Flid);
+			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
+				result += "(" + curSpec.WsLabel(Cache).Text + ")";
+			return result;
+		}
+
+		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
+			InterlinLineChoices curLineChoices, int ilineChoice)
+		{
+			var curSpec = curLineChoices[ilineChoice];
+			var choices = GetWsComboItems(curSpec);
+			var curFlidDisplayedWss = curLineChoices.OtherWritingSystemsForFlid(curSpec.Flid, 0);
+			var curRealWs = GetRealWsFromSpec(curSpec);
+			if (!curFlidDisplayedWss.Contains(curRealWs))
+				curFlidDisplayedWss.Add(curRealWs);
+			var lgWsAcc = Cache.LanguageWritingSystemFactoryAccessor;
+			foreach (var item in choices)
+			{
+				var itemRealWs = lgWsAcc.GetWsFromStr(item.Id);
+				// Skip 'Magic' wss and ones that are already displayed
+				if (itemRealWs == 0 || curFlidDisplayedWss.Contains(itemRealWs))
+					continue;
+				var menuItem = new AddWritingSystemMenuItem(curSpec.Flid, itemRealWs);
+				menuItem.Text = item.ToString();
+				menuItem.Click += new EventHandler(addWsToFlidItem_Click);
+				addSubMenu.DropDownItems.Add(menuItem);
+			}
+		}
+
+		private IEnumerable<WsComboItem> GetWsComboItems(InterlinLineSpec curSpec)
+		{
+			var dummyCombobox = new ComboBox();
+			var dummyCachedBoxes = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
+			var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(
+				Cache, dummyCombobox, dummyCachedBoxes, curSpec.ComboContent);
+			var choices = new WsComboItem[comboObjects.Count];
+			comboObjects.CopyTo(choices, 0);
+			return choices;
+		}
+
+		private int GetRealWsFromSpec(InterlinLineSpec spec)
+		{
+			if (!spec.IsMagicWritingSystem)
+			{
+				return spec.WritingSystem;
+			}
+			// special case, the only few we support so far (and only for a few fields).
+			if (spec.WritingSystem == WritingSystemServices.kwsFirstAnal)
+				return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+			if (spec.WritingSystem == WritingSystemServices.kwsVernInParagraph)
+				return Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+			int ws = -50;
+			try
+			{
+				ws = WritingSystemServices.InterpretWsLabel(Cache, spec.WsLabel(Cache).Text, null, 0, 0, null);
+			}
+			catch
+			{
+				Debug.Assert(ws != -50, "InterpretWsLabel was not able to interpret the Ws Label.  The most likely cause for this is that a magic ws was passed in.");
+			}
+			return ws;
+		}
+
+		private void AddMoveUpMenuItem(ContextMenuStrip menu, int ilineChoice)
+		{
+			var moveUpItem = new ToolStripMenuItem(ITextStrings.ksMoveUp) { Tag = ilineChoice };
+			moveUpItem.Click += moveUpItem_Click;
+			menu.Items.Add(moveUpItem);
+		}
+
+		private void AddMoveDownMenuItem(ContextMenuStrip menu, int ilineChoice)
+		{
+			var moveDownItem = new ToolStripMenuItem(ITextStrings.ksMoveDown) { Tag = ilineChoice };
+			moveDownItem.Click += moveDownItem_Click;
+			menu.Items.Add(moveDownItem);
+		}
+
+		private void AddNewLineMenuItem(ToolStripMenuItem addLineSubMenu, InterlinLineChoices curLineChoices)
+		{
+			// Add menu options to add lines of flids that are in default list, but don't currently appear.
+			var unusedSpecs = GetUnusedSpecs(curLineChoices);
+			foreach (var specToAdd in unusedSpecs)
+			{
+				var menuItem = new AddLineMenuItem(specToAdd.Flid) { Text = specToAdd.ToString() };
+				menuItem.Click += addLineItem_Click;
+				addLineSubMenu.DropDownItems.Add(menuItem);
+			}
+		}
+
+		private static IEnumerable<LineOption> GetUnusedSpecs(InterlinLineChoices curLineChoices)
+		{
+			var allOptions = curLineChoices.LineOptions();
+			var optionsUsed = curLineChoices.ItemsWithFlids(
+				allOptions.Select(lineOption => lineOption.Flid).ToArray());
+			return allOptions.Where(option => !optionsUsed.Any(
+				spec => spec.Flid == option.Flid)).ToList();
+		}
+
+		#region Menu Event Handlers
+
+		private void hideItem_Click(object sender, EventArgs e)
+		{
+			var ilineToHide = (int) (((ToolStripMenuItem) sender).Tag);
+			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			if (newLineChoices != null)
+			{
+				newLineChoices.Remove(newLineChoices[ilineToHide]);
+				UpdateForNewLineChoices(newLineChoices);
+			}
+			RemoveContextButtonIfPresent(); // it will still have a spurious choice to hide the line we just hid; clicking may crash.
+		}
+
+		private void addWsToFlidItem_Click(object sender, EventArgs e)
+		{
+			var menuItem = sender as AddWritingSystemMenuItem;
+			if (menuItem == null)
+				return; // Impossible?
+
+			var flid = menuItem.Flid;
+			var wsToAdd = menuItem.Ws;
+			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			if (newLineChoices != null)
+			{
+				newLineChoices.Add(flid, wsToAdd);
+				UpdateForNewLineChoices(newLineChoices);
+			}
+		}
+
+		private void moveUpItem_Click(object sender, EventArgs e)
+		{
+			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
+			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			if (newLineChoices != null)
+			{
+				newLineChoices.MoveUp(ilineToHide);
+				UpdateForNewLineChoices(newLineChoices);
+			}
+		}
+
+		private void moveDownItem_Click(object sender, EventArgs e)
+		{
+			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
+			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			if (newLineChoices != null)
+			{
+				newLineChoices.MoveDown(ilineToHide);
+				UpdateForNewLineChoices(newLineChoices);
+			}
+		}
+
+		private void addLineItem_Click(object sender, EventArgs e)
+		{
+			var menuItem = sender as AddLineMenuItem;
+			if (menuItem == null)
+				return; // Impossible?
+
+			var flid = menuItem.Flid;
+			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			if (newLineChoices != null)
+			{
+				newLineChoices.Add(flid);
+				UpdateForNewLineChoices(newLineChoices);
+			}
+		}
+
+		private void configLink_Click(object sender, EventArgs e)
+		{
+			OnConfigureInterlinear(null);
+		}
+
+		private void m_labelContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		{
+			m_ticksWhenContextMenuClosed = DateTime.Now.Ticks;
+		}
+
+		#endregion
+
+		#endregion
+
 		/// <summary>
 		/// True if we will be doing editing (display sandbox, restrict field order choices, etc.).
 		/// </summary>
@@ -448,23 +876,18 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Update any necessary guesses when the specified wordforms change.
 		/// </summary>
-		/// <param name="NeedsGuessesUpdated"></param>
 		/// <param name="wordforms"></param>
-		internal virtual void UpdateGuesses(UpdateGuessesCondition NeedsGuessesUpdated, HashSet<IWfiWordform> wordforms)
+		internal virtual void UpdateGuesses(HashSet<IWfiWordform> wordforms)
 		{
-			UpdateGuesses(NeedsGuessesUpdated, wordforms, true);
+			UpdateGuesses(wordforms, true);
 		}
 
-		private void UpdateGuesses(UpdateGuessesCondition NeedsGuessesUpdated, HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
+		private void UpdateGuesses(HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
 		{
 			// now update the guesses for the paragraphs.
-			ParaDataUpdateTracker pdut = new ParaDataUpdateTracker(m_vc.GuessServices, m_vc.Decorator);
+			var pdut = new ParaDataUpdateTracker(m_vc.GuessServices, m_vc.Decorator);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
-			{
-				if (NeedsGuessesUpdated(para, wordforms))
-					pdut.LoadAnalysisData(para);
-				//pdut.LoadParaData(hvoPara); //This also loads all annotations which never affect guesses and take 3 times the number of queries
-			}
+				pdut.LoadAnalysisData(para, wordforms);
 			if (fUpdateDisplayWhereNeeded)
 			{
 				// now update the display with the affected annotations.
@@ -474,18 +897,11 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Indicates whether we need to reload the guess cache. (after ResetAnalysisCache)
-		/// </summary>
-		internal bool GuessDataNeedsReload = false;
-
-		/// <summary>
 		/// Update all the guesses in the interlinear doc.
 		/// </summary>
 		internal virtual void UpdateGuessData()
 		{
-			if (!GuessDataNeedsReload)
-				return;
-			UpdateGuesses(ForceUpdate, null, false);
+			UpdateGuesses(null, false);
 		}
 
 		protected void UpdateDisplayForOccurrence(AnalysisOccurrence occurrence)
@@ -499,35 +915,9 @@ namespace SIL.FieldWorks.IText
 			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
-		internal static bool ForceUpdate(IStTxtPara para, HashSet<IWfiWordform> wordforms)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Return true if the specified paragraph needs its guesses updated when we've changed something about the analyses
-		/// or occurrenes of analyses of one of the specified wordforms.
-		/// </summary>
-		internal static bool HasMatchingWordformsNeedingAnalysis(IStTxtPara para, HashSet<IWfiWordform> wordforms)
-		{
-			// If we haven't already figured the segments of a paragraph, we don't need to update it; the guesses will
-			// get made when scrolling makes the paragraph visible.
-			if (para.SegmentsOS.Count == 0)
-				return false;
-			foreach (var occurrence in SegmentServices.StTextAnnotationNavigator.GetWordformOccurrencesAdvancingInPara(para))
-			{
-				var wag = new AnalysisTree(occurrence.Analysis);
-				if (wag.Gloss != null)
-					continue; // fully glossed, no need to update.
-				if (wordforms.Contains(wag.Wordform))
-					return true; // This paragraph IS linked to one of the interesting wordforms; needs guesses updated
-			}
-			return false; // no Wordforms that might be affected.
-		}
-
 		internal InterlinMaster GetMaster()
 		{
-			for (Control parentControl = this.Parent; parentControl != null; parentControl = parentControl.Parent)
+			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
 			{
 				if (parentControl is InterlinMaster)
 					return parentControl as InterlinMaster;
@@ -546,6 +936,16 @@ namespace SIL.FieldWorks.IText
 			AddDecorator();
 		}
 
+		/// <summary>
+		/// Returns the rootbox of this object, or null if not applicable
+		/// </summary>
+		/// <returns></returns>
+		public IVwRootBox GetRootBox()
+		{
+			return RootBox;
+		}
+
+		#endregion
 		/// <summary>
 		/// Allows InterlinTaggingChild to add a DomainDataByFlid decorator to the rootbox.
 		/// </summary>
@@ -575,29 +975,15 @@ namespace SIL.FieldWorks.IText
 				// case only parse paragraphs that need it?
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 						InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
+				// Sync Guesses data before we redraw anything.
+				UpdateGuessData();
 			}
-			// Sync Guesses data before we redraw anything.
-			UpdateGuessData();
 			// FWR-191: we don't need to reconstruct the display if we didn't need to reload annotations
 			// but until we detect that condition, we need to redisplay just in case, to keep things in sync.
 			// especially if someone edited the baseline.
 			ChangeOrMakeRoot(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
 			m_vc.RootSite = this;
-			RootBoxNeedsUpdate = false;
 		}
-
-		/// <summary>
-		/// Do this to force a change/update of the rootbox, even if the root text object is the same.
-		/// This is important to do when we edit the text in one (Edit) tab and switch to the next tab.
-		/// </summary>
-		internal void InvalidateRootBox()
-		{
-			RootBoxNeedsUpdate = true;
-		}
-
-		private bool RootBoxNeedsUpdate { get; set; }
-
-		#endregion IChangeRootObject
 
 		#region IVwNotifyChange Members
 
@@ -607,25 +993,48 @@ namespace SIL.FieldWorks.IText
 		{
 			if (SuspendResettingAnalysisCache)
 				return;
-			//if (tag == CmAnnotationTags.kflidInstanceOf
-			//	|| tag == CmAgentEvaluationTags.kflidTarget
-			//	|| tag == CmAgentEvaluationTags.kflidAccepted
-			//	|| tag == CmAgentTags.kflidEvaluations)
-			// Review JohnT: not sure exactly what we're doing here; seems we want to catch changes
-			// in what analyses are used or how they are evaluated. The two below would cover this.
-			if (tag == WfiAnalysisTags.kflidEvaluations
-				|| tag == SegmentTags.kflidAnalyses)
+
+			switch (tag)
 			{
-				m_vc.ResetAnalysisCache();
-				GuessDataNeedsReload = true;
+				case WfiAnalysisTags.kflidEvaluations:
+					IWfiAnalysis analysis = m_fdoCache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
+					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
+					{
+						m_wordformsToUpdate.Add(analysis.Wordform);
+						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+					}
+					break;
+				case WfiWordformTags.kflidAnalyses:
+					IWfiWordform wordform = m_fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
+					if (RootStText.UniqueWordforms().Contains(wordform))
+					{
+						m_wordformsToUpdate.Add(wordform);
+						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+					}
+					break;
 			}
+		}
+
+		private bool PostponedUpdateWordforms(object parameter)
+		{
+			if (IsDisposed)
+				return true;
+
+			m_vc.GuessServices.ClearGuessData();
+			UpdateWordforms(m_wordformsToUpdate);
+			m_wordformsToUpdate.Clear();
+			return true;
+		}
+
+		protected virtual void UpdateWordforms(HashSet<IWfiWordform> wordforms)
+		{
+			UpdateGuesses(wordforms, true);
 		}
 
 		#endregion
 		public void UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis)
 		{
-			if (m_vc.UpdatingOccurrence(oldAnalysis, newAnalysis))
-				GuessDataNeedsReload = true;
+			m_vc.UpdatingOccurrence(oldAnalysis, newAnalysis);
 		}
 
 		protected internal IStText RootStText
@@ -689,6 +1098,68 @@ namespace SIL.FieldWorks.IText
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Used for Interlinear context menu items to Add a new WritingSystem
+	/// for a flid that is already visible.
+	/// </summary>
+	public class AddWritingSystemMenuItem : ToolStripMenuItem
+	{
+		private readonly int m_flid;
+		private readonly int m_ws;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AddWritingSystemMenuItem"/> class
+		/// used for context (right-click) menus.
+		/// </summary>
+		/// <param name="flid">
+		/// 	The flid of the InterlinLineSpec we might add.
+		/// </param>
+		/// <param name="ws">
+		/// 	The writing system int id of the InterlinLineSpec we might add.
+		/// </param>
+		public AddWritingSystemMenuItem(int flid, int ws)
+		{
+			m_flid = flid;
+			m_ws = ws;
+		}
+
+		public int Flid
+		{
+			get { return m_flid; }
+		}
+
+		public int Ws
+		{
+			get { return m_ws; }
+		}
+	}
+
+	/// <summary>
+	/// Used for Interlinear context menu items to Add a new InterlinLineSpec
+	/// for a flid that is currently hidden.
+	/// </summary>
+	public class AddLineMenuItem : ToolStripMenuItem
+	{
+		private readonly int m_flid;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AddLineMenuItem"/> class
+		/// used for context (right-click) menus.
+		/// </summary>
+		/// <param name="flid">
+		/// 	The flid of the InterlinLineSpec we might add.
+		/// </param>
+		public AddLineMenuItem(int flid)
+		{
+			m_flid = flid;
+		}
+
+		public int Flid
+		{
+			get { return m_flid; }
+		}
 	}
 
 	public interface ISelectOccurrence

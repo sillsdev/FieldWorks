@@ -154,7 +154,7 @@
 	<value>85, 20</value>
   </data>
   <data name="m_tbFilename.Size" type="System.Drawing.Size, System.Drawing">
-	<value>305, 10</value>
+	<value>305, 20</value>
   </data>
   <data name="m_tbFilename.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
@@ -205,7 +205,7 @@
 	<value>False</value>
   </data>
   <data name="m_btnImport.Location" type="System.Drawing.Point, System.Drawing">
-	<value>123, 100</value>
+	<value>123, 109</value>
   </data>
   <data name="m_btnImport.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -232,7 +232,7 @@
 	<value>Bottom</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>213, 100</value>
+	<value>213, 109</value>
   </data>
   <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -259,7 +259,7 @@
 	<value>Bottom</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>303, 100</value>
+	<value>303, 109</value>
   </data>
   <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -313,16 +313,16 @@
 	<value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-	<value>6, 13</value>
+	<value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>492, 123</value>
+	<value>492, 145</value>
   </data>
   <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
-	<value>800, 150</value>
+	<value>800, 180</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-	<value>400, 150</value>
+	<value>400, 180</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
 	<value>Import Open XML for Editing Scripture</value>

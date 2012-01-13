@@ -98,6 +98,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected Slice m_parentSlice;
 		private SplitContainer m_splitter;
+
 		#endregion Data members
 
 		#region Properties
@@ -1365,30 +1366,58 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			templabelName = getAlphaNumeric(templabelName);
-			if (String.IsNullOrEmpty(tempfieldName))
+			String areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			int parentHvo = System.Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
+
+			if (tempfieldName == "Targets" && parentHvo != 0)
+				// Ceoss Reference (entry level) or lexical relation (sense level) subitems
 			{
-				// try to use the slice label, without spaces.
-				tempfieldName = templabelName;
+				var repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				ILexEntry lex;
+				repo.TryGetObject(parentHvo, out lex);
+
+				if (lex != null) // It must be the entry level
+				{
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-CrossReferenceSubitem";
+				}
+				else // It must be the sense level
+				{
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-LexicalRelationSubitem";
+
+				}
 			}
-			generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, tempfieldName);
-			if (!helpTopicIsValid(generatedHelpTopicID))
+			else
 			{
-				// try to use the slice label, without spaces if the helpTopicID does not work for the field xml attribute.
-				generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, templabelName);
+				templabelName = getAlphaNumeric(templabelName);
+				if (String.IsNullOrEmpty(tempfieldName))
+				{
+					// try to use the slice label, without spaces.
+					tempfieldName = templabelName;
+				}
+				generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, tempfieldName);
 				if (!helpTopicIsValid(generatedHelpTopicID))
 				{
-					if (helpTopicPrefix.Equals("khtpChoose"))
-						generatedHelpTopicID = "khtpChoose-CmPossibility";
-					else
+					// try to use the slice label, without spaces if the helpTopicID does not work for the field xml attribute.
+					generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, templabelName);
+					if (!helpTopicIsValid(generatedHelpTopicID))
 					{
-						generatedHelpTopicID = "khtp-CustomListField";   // If the list isn't defined, use the generic list help topic
-						//generatedHelpTopicID = "khtpNoHelpTopic";
+						if (helpTopicPrefix.Equals("khtpChoose"))
+							generatedHelpTopicID = "khtpChoose-CmPossibility";
+						else if (areaName == "lists")
+						{
+							generatedHelpTopicID = "khtp-CustomListField"; // If the list isn't defined, use the generic list help topic
+
+						}
+						else
+						{
+							generatedHelpTopicID = "khtpNoHelpTopic"; // else use the generic no help topic
+						}
 					}
 				}
 			}
 
-			return generatedHelpTopicID;
+		return generatedHelpTopicID;
 		}
 
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
@@ -2529,10 +2558,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// since only objects of the same class can be merged.
 			int[] contents;
 			int chvoMax = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoMax, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 			{
 				Cache.DomainDataByFlid.VecProp(owner.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-				contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvoMax, typeof(int));
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 			}
 			foreach (int hvoInner in contents)
 			{
@@ -2720,6 +2749,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Medium;
+			}
 		}
 
 		#endregion IxCoreColleague implementation

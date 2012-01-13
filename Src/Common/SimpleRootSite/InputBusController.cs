@@ -561,8 +561,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.Selection.ReplaceWithTsString(str);
 
 				// make the selection fit the new text
-				selHelper.SetIch(SelectionHelper.SelLimitType.Anchor, selHelper.IchAnchor);
-				selHelper.SetIch(SelectionHelper.SelLimitType.End, selHelper.IchAnchor + str.Length);
+				selHelper.SetIch(SelectionHelper.SelLimitType.Anchor,
+					selHelper.GetIch(SelectionHelper.SelLimitType.Top));
+				selHelper.SetIch(SelectionHelper.SelLimitType.End,
+					selHelper.IchAnchor + str.Length);
 
 				// make the selection visible
 				selHelper.SetSelection(true);

@@ -292,7 +292,7 @@
 	<value>m_treeTexts</value>
   </data>
   <data name="&gt;&gt;m_treeTexts.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.TextsTriStateTreeView, FwControls, Version=7.2.0.18020, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.TextsTriStateTreeView, FwControls, Version=7.2.0.23646, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_treeTexts.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -329,7 +329,7 @@
 </value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-	<value>350, 362</value>
+	<value>376, 389</value>
   </data>
   <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
 	<value>False</value>

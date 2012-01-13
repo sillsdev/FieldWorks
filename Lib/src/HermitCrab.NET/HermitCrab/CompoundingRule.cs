@@ -236,7 +236,7 @@ namespace SIL.HermitCrab
 						curMatch = nonHeadMatch;
 						curInput = input.NonHead;
 					}
-					outputMember.Apply(curMatch, curInput, output, m_morpheme.Gloss != null ? this : null);
+					outputMember.Apply(curMatch, curInput, output, Morpheme.Gloss != null ? this : null);
 				}
 				output.Shape.Add(new Margin(Direction.RIGHT));
 			}

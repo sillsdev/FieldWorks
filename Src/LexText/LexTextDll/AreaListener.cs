@@ -199,6 +199,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
+		}
+
 		public bool OnDisplayLexicalToolsList(object parameters, ref UIListDisplayProperties display)
 		{
 			CheckDisposed();
@@ -694,7 +699,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			doc.LoadXml(
 				"<menu id=\"PaneBar-ShowHiddenFields-" + toolName + "\" label=\"\">"
 				+ "<item label=\"Show Hidden Fields\" boolProperty=\"ShowHiddenFields-" + toolName + "\""
-				+ " defaultVisible=\"false\" settingsGroup=\"local\"/>"
+				+ " defaultVisible=\"true\" settingsGroup=\"local\"/>"
 				+ "</menu>");
 			return doc.DocumentElement;
 		}

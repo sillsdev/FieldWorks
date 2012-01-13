@@ -31,21 +31,21 @@ INCLUDES := \
 
 
 LDLIBS := \
-	$(shell icu-config --ldflags) \
 	-L$(OUT_DIR) -lDebugProcs \
-	-L$(FWINCLUDE) \
 	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
 	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
 	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
+	$(shell icu-config --ldflags) \
 	-lexpat\
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
 CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror
+LDFLAGS = -g -z muldefs
 
 PRECOMPS = $(GENERIC_OBJ)/Main.h.gch
 
-LINK_LIBS := $(LIB_UNIT)/libunit++.a $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a
+LINK_LIBS := $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a
 #COMS :=
 
 PROGS = $(OUT_DIR)/TestUnicodeConverter $(OUT_DIR)/TestOleStringLiteral $(OUT_DIR)/TestCOMBase \
@@ -67,8 +67,8 @@ DEPS = $(PRECOMPS:%.gch=%.d)
 
 all: $(OUT_DIR)/testGenericLib $(PROGS)
 
-$(OUT_DIR)/testGenericLib: $(INT_DIR)/testGeneric.o $(INT_DIR)/Collection.o $(GENERIC_OBJS) $(LINK_LIBS) $(COMS)
-	$(LINK.cc) -o $@ $(INT_DIR)/testGeneric.o $(INT_DIR)/Collection.o $(GENERIC_OBJS) $(LINK_LIBS) $(LDLIBS)
+$(OUT_DIR)/testGenericLib: $(INT_DIR)/testGeneric.o $(INT_DIR)/Collection.o $(GENERIC_OBJS) $(LINK_LIBS) $(LIB_UNIT)/libunit++.a $(COMS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive  $(LIB_UNIT)/libunit++.a $(INT_DIR)/testGeneric.o $(INT_DIR)/Collection.o $(GENERIC_OBJS) $(LDLIBS)
 
 $(OUT_DIR)/TestUnicodeConverter: $(INT_DIR)/TestUnicodeConverter.o $(GENERIC_OBJ)/UnicodeConverter.o
 
@@ -76,13 +76,17 @@ $(OUT_DIR)/TestOleStringLiteral: $(INT_DIR)/TestOleStringLiteral.o $(GENERIC_OBJ
 
 $(OUT_DIR)/TestCOMBase: $(INT_DIR)/TestCOMBase.o $(LINK_LIBS)
 
-$(OUT_DIR)/TestHashMap: $(INT_DIR)/TestHashMap.o $(LINK_LIBS)
+$(OUT_DIR)/TestHashMap: $(INT_DIR)/TestHashMap.o $(GENERIC_OBJS) $(LINK_LIBS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJS) $(INT_DIR)/TestHashMap.o $(LDLIBS)
 
 $(OUT_DIR)/TestSmartBstr: $(INT_DIR)/TestSmartBstr.o $(LINK_LIBS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJS) $(INT_DIR)/TestSmartBstr.o $(LDLIBS)
 
 $(OUT_DIR)/TestGenericFactory: $(INT_DIR)/TestGenericFactory.o $(LINK_LIBS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJS) $(INT_DIR)/TestGenericFactory.o $(LDLIBS)
 
 $(OUT_DIR)/TestStringTable: $(INT_DIR)/TestStringTable.o $(LINK_LIBS)
+	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJS) $(INT_DIR)/TestStringTable.o $(LDLIBS)
 
 test: $(PROGS)
 	cd $(OUT_DIR) && \

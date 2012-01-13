@@ -987,9 +987,9 @@ namespace SIL.HermitCrab
 			foreach (WordSynthesis cur in sortedSyntheses)
 			{
 				// enforce the disjunctive property of allomorphs by ensuring that this word synthesis
-				// has the highest order of precedence for its allomorphs, also check that the phonetic
-				// shape matches the original input word
-				if ((prevValidSynthesis == null || !cur.Morphs.SameMorphemes(prevValidSynthesis.Morphs))
+				// has the highest order of precedence for its allomorphs while also allowing for free
+				// fluctuation, also check that the phonetic shape matches the original input word
+				if ((prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
 					&& SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
 				{
 					if (m_traceSuccess)
@@ -1013,6 +1013,33 @@ namespace SIL.HermitCrab
 				prevValidSynthesis = cur;
 			}
 			return results;
+		}
+
+		/// <summary>
+		/// Determines if the allomorphs in the two syntheses are not disjunctive.
+		/// </summary>
+		/// <param name="synthesis1">The first synthesis.</param>
+		/// <param name="synthesis2">The second synthesis.</param>
+		/// <returns></returns>
+		private bool AreAllomorphsNondisjunctive(WordSynthesis synthesis1, WordSynthesis synthesis2)
+		{
+			if (synthesis1.Morphs.Count != synthesis2.Morphs.Count)
+				return true;
+
+			IEnumerator<Morph> enum1 = synthesis1.Morphs.GetEnumerator();
+			IEnumerator<Morph> enum2 = synthesis2.Morphs.GetEnumerator();
+			while (enum1.MoveNext() && enum2.MoveNext())
+			{
+				// if they have different morphemes then these allomorphs are not disjunctive
+				if (enum1.Current.Allomorph.Morpheme != enum2.Current.Allomorph.Morpheme)
+					return true;
+
+				// morphemes are the same, so check if they have the same constraints,
+				// if they do then these allomorphs are not disjunctive
+				if (enum1.Current.Allomorph.ConstraintsEqual(enum2.Current.Allomorph))
+					return true;
+			}
+			return false;
 		}
 	}
 }

@@ -3,15 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Utils;
-using System.Diagnostics;
-#if FirstByLINQXML
-using System.Xml.Linq;
-#endif
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -497,7 +495,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							((ICmObjectInternal)m_object).LoadFromDataStore(
 								m_cache,
 								rtElement,
-								((IServiceLocatorInternal) m_cache.ServiceLocator).LoadingServices);
+								((IServiceLocatorInternal)m_cache.ServiceLocator).LoadingServices);
 							// Have to set m_objectWasAttached to false, before the registration,
 							// since RegisterActivatedSurrogate calls this' Object prop,
 							// and it would result in a stack overflow, with it still being true,
@@ -517,6 +515,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// Also, throwing an unhandled exception in a background thread can abort the process
 					// possibly without ever showing a message.
 					var msg = string.Format(Strings.ksBadData, e.Message, sXml);
+					// limit length of message so that message box is more likely to fit on the screen.
+					var lines = msg.Split('\n');
+					const int nLines = 40;
+					if (lines.Length > nLines)
+						msg = String.Join("\n", lines.Take(nLines).ToArray()) + "\n...";
 					// It would be nice to Invoke this on the ActiveForm if any, but I've run into at least
 					// one case where that window doesn't have a handle yet, making Invoke improper.
 					MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);

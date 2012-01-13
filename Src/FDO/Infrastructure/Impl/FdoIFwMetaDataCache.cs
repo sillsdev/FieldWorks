@@ -1158,6 +1158,44 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return retval;
 		}
 
+		/// <summary>
+		/// Get properties that can be sorted (e.g., collection and multi str/uni properties).
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<string, Dictionary<string, HashSet<string>>> GetSortableProperties()
+		{
+			var result = new Dictionary<string, Dictionary<string, HashSet<string>>>(300, StringComparer.OrdinalIgnoreCase);
+			foreach (var concreteClassId in GetClassIds().Where(concreteClassId => !GetAbstract(concreteClassId)))
+			{
+				var propData = new Dictionary<string, HashSet<string>>(3, StringComparer.OrdinalIgnoreCase);
+				result.Add(GetClassName(concreteClassId), propData);
+
+				var collData = new HashSet<string>();
+				propData.Add("Collections", collData);
+				var multiAltData = new HashSet<string>();
+				propData.Add("MultiAlt", multiAltData);
+
+				foreach (var propId in GetFields(concreteClassId, true, (int)CellarPropertyTypeFilter.All))
+				{
+					var fieldType = (CellarPropertyType)GetFieldType(propId);
+					switch (fieldType)
+					{
+						case CellarPropertyType.OwningCollection:
+						case CellarPropertyType.ReferenceCollection:
+							collData.Add(GetFieldName(propId));
+							break;
+						case CellarPropertyType.MultiBigString:
+						case CellarPropertyType.MultiString:
+						case CellarPropertyType.MultiBigUnicode:
+						case CellarPropertyType.MultiUnicode:
+							multiAltData.Add(GetFieldName(propId));
+							break;
+					}
+				}
+			}
+			return result;
+		}
+
 		#endregion
 
 		#region Helper classes, enums, and methods

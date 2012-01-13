@@ -490,7 +490,10 @@ namespace SIL.FieldWorks.IText
 				// Revisit (EricP): we could reimplement m_sandbox.HandleComboSelChange
 				// here, but I suppose duplicating the logic here isn't necessary.
 				// For now just use that one.
-				m_sandbox.HandleComboSelChange(sender, ea);
+				// Assuming it's not disposed, which it might be apparently on switching tools.
+				// (See LT-12350)
+				if (!m_sandbox.IsDisposed)
+					m_sandbox.HandleComboSelChange(sender, ea);
 				// Alternative re-implementation:
 				//	if (m_fUnderConstruction)
 				//		return;
@@ -528,7 +531,6 @@ namespace SIL.FieldWorks.IText
 			public virtual void HandleSelect(int index)
 			{
 				CheckDisposed();
-
 			}
 
 			/// <summary>
@@ -2347,6 +2349,9 @@ namespace SIL.FieldWorks.IText
 			public override void HandleSelect(int index)
 			{
 				CheckDisposed();
+				if (index < 0 || index >= m_comboList.Items.Count)
+					return;
+
 				int morphIndex = GetMorphIndex();
 				// NOTE: m_comboList.SelectedItem does not get automatically set in (some) tests.
 				// so we use index here.
@@ -3161,8 +3166,8 @@ namespace SIL.FieldWorks.IText
 					m_caches.DataAccess.SetObjProp(m_hvoSbWord, ktagSbWordPos, hvoPos);
 					m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord,
 						ktagSbWordPos, 0, 1, WasReal());
+					m_sandbox.SelectIcon(ktagWordPosIcon);
 				}
-				m_sandbox.SelectIcon(ktagWordPosIcon);
 			}
 		}
 

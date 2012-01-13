@@ -38,6 +38,19 @@ namespace SIL.Utils
 			Assert.AreEqual("ab", StringUtils.StripWhitespace("a " + Environment.NewLine + " b"));
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that we get a valid filename when the filename contains invalid characters.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestFilterForFileName()
+		{
+			Assert.AreEqual("My__File__Dude_____.'[];funny()___",
+				StringUtils.FilterForFileName(@"My?|File<>Dude\?*:/.'[];funny()" + "\n\t" + '"',
+				"?|<>\\?*:/\n\t\""));
+		}
+
 		#region FindStringDifference tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

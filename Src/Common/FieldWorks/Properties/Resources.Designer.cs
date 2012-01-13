@@ -329,6 +329,15 @@ namespace SIL.FieldWorks.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Another instance of FieldWorks appears to be starting up at the same time as this one, and things have gotten confused. We recommend letting one project open fully before you try to open another one. If you get this message repeatedly or when not trying to open two projects at once, you may have encountered a bug; please report it. It may help to restart your computer..
+		/// </summary>
+		internal static string kstidFieldWorksRespondedNotSure {
+			get {
+				return ResourceManager.GetString("kstidFieldWorksRespondedNotSure", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to File does not exist:
 		///{0}.
 		/// </summary>

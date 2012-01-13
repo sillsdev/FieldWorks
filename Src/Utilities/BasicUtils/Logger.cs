@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright © 2002-2007, SIL International. All Rights Reserved.
+#region // Copyright (c) 2002-2007, SIL International. All Rights Reserved.
 // <copyright from='2002' to='2007' company='SIL International'>
-//		Copyright © 2002-2007, SIL International. All Rights Reserved.
+//		Copyright (c) 2002-2007, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using System.Windows.Forms;
 
 namespace SIL.Utils
@@ -311,15 +312,26 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static void WriteError(Exception e)
 		{
+			WriteError(null, e);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Writes <paramref name="msg"/> and an exception and its stack trace to the log.
+		/// This method will do nothing if Init() is not called first.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static void WriteError(string msg, Exception e)
+		{
 			Exception dummy;
-			Debug.WriteLine(ExceptionHelper.GetHiearchicalExceptionInfo(e, out dummy));
+			var bldr = new StringBuilder(msg);
+			if (bldr.Length > 0)
+				bldr.AppendLine();
+			bldr.Append(ExceptionHelper.GetHiearchicalExceptionInfo(e, out dummy));
+			Debug.WriteLine(bldr.ToString());
 
 			if (s_theOne != null)
-			{
-#if !__MonoCS__
-				s_theOne.WriteEventInternal(ExceptionHelper.GetHiearchicalExceptionInfo(e, out dummy));
-#endif
-			}
+				s_theOne.WriteEventInternal(bldr.ToString());
 		}
 		#endregion
 

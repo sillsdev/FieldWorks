@@ -9,16 +9,16 @@
 #endregion
 //
 // File: ResolveKeyTermRenderingImportConflictDlg.cs
-// Responsibility: Bogle
+// Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -30,7 +30,6 @@ namespace SIL.FieldWorks.TE
 	public partial class ResolveKeyTermRenderingImportConflictDlg : Form
 	{
 		private IWin32Window m_owner;
-//		private FwMultiParaTextBox m_textBox;
 		private FwLabel m_verseTextLabel;
 
 		/// ------------------------------------------------------------------------------------

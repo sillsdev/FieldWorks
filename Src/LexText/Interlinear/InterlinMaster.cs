@@ -5,9 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using Paratext;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -17,7 +14,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
 
@@ -34,10 +30,10 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinMaster : InterlinMasterBase
 	{
 		// Controls
-		IVwStylesheet m_styleSheet;
+		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 
-		public InterAreaBookmark m_bookmark;
+		static public Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
 		private bool m_fParsedTextDuringSave = false;
 		//private bool m_fSkipNextParse = false;
 
@@ -53,6 +49,14 @@ namespace SIL.FieldWorks.IText
 		// true (typically used as concordance 3rd pane) to suppress autocreating a text if the
 		// clerk has no current object.
 		protected bool m_fSuppressAutoCreate;
+
+		private string m_currentTool = "";
+
+		public string CurrentTool
+		{
+			get { return m_currentTool; }
+		}
+
 		/// <summary>
 		/// Numbers identifying the main tabs in the interlinear text.
 		/// </summary>
@@ -80,6 +84,11 @@ namespace SIL.FieldWorks.IText
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+		}
+
+		internal string BookmarkId
+		{
+			get { return m_vectorName ?? ""; }
 		}
 
 		/// <summary>
@@ -255,33 +264,8 @@ namespace SIL.FieldWorks.IText
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 		}
 
-		#region IxCoreCtrlTabProvider implementation
-
-		//public override Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
-		//{
-		//	if (targetCandidates == null)
-		//		throw new ArgumentNullException("'targetCandidates' is null.");
-
-		//	Control ctrlHasFocus = this;
-		//	if (m_tcPane != null && m_tcPane.Visible && !m_tcPane.ReadOnlyView)
-		//	{
-		//		targetCandidates.Add(m_tcPane);
-		//		if (m_tcPane.ContainsFocus)
-		//			ctrlHasFocus = m_tcPane;
-		//	}
-		//	if (m_tabCtrl != null)
-		//	{
-		//		if (m_tabCtrl.ContainsFocus)
-		//			ctrlHasFocus = m_tabCtrl;
-		//		targetCandidates.Add(m_tabCtrl);
-		//	}
-		//	return ContainsFocus ? ctrlHasFocus : null;
-		//}
-
-		#endregion  IxCoreCtrlTabProvider implementation
-
 		/// <summary>
-		/// Sets m_bookmark to what is currently selected and persists it.
+		/// Sets m_bookmarks to what is currently selected and persists it.
 		/// </summary>
 		internal void SaveBookMark()
 		{
@@ -292,8 +276,6 @@ namespace SIL.FieldWorks.IText
 
 			if (RootStText == null)
 			{
-				// No text active, so nothing to save here, just reset.
-				m_bookmark.Reset();
 				return;
 			}
 
@@ -344,7 +326,20 @@ namespace SIL.FieldWorks.IText
 			}
 
 			if (!fSaved)
-				m_bookmark.Save(curAnalysis, true);
+			{
+				InterAreaBookmark mark;
+				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
+				{
+					//We only want to persist the save if we are in the interlinear edit, not the concordance view
+					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord, m_mediator);
+				}
+				else
+				{
+					mark = new InterAreaBookmark(this, m_mediator, Cache);
+					mark.Restore(IndexOfTextRecord, m_mediator);
+					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
+				}
+			}
 		}
 
 		/// <summary>
@@ -403,25 +398,28 @@ namespace SIL.FieldWorks.IText
 			}
 			if (hvoParaAnchor != 0)
 			{
-				var para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvoParaAnchor);
-				iPara = para.IndexInOwner;
-				if (hvoParaAnchor != hvoParaEnd)
-					ichEnd = ichAnchor;
-				if (ichAnchor == -1)
-					ichAnchor = 0;
-				if (ichEnd == -1)
-					ichEnd = 0;
-				if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
+				IStTxtPara para = null;
+				if (Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().TryGetObject(hvoParaAnchor, out para))
 				{
-					// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
-					// FWR-723.
-					iPara = 0;
-					ichAnchor = ichEnd = 0;
+					iPara = para.IndexInOwner;
+					if (hvoParaAnchor != hvoParaEnd)
+						ichEnd = ichAnchor;
+					if (ichAnchor == -1)
+						ichAnchor = 0;
+					if (ichEnd == -1)
+						ichEnd = 0;
+					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
+					{
+						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
+						// FWR-723.
+						iPara = 0;
+						ichAnchor = ichEnd = 0;
+					}
 				}
 			}
 			if (iPara >= 0)
 			{
-				m_bookmark.Save(iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
+				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true, m_mediator);
 				return true;
 			}
 			return false;
@@ -579,11 +577,11 @@ namespace SIL.FieldWorks.IText
 							m_constChartPane.Focus();
 						break;
 					case ktpsInfo:
-						if (!m_infoPane.IsInitialized)
-						{
-							m_infoPane.Initialize(Cache, m_mediator, Clerk);
-							m_infoPane.Dock = DockStyle.Fill;
-						}
+						//We may already be initialized, but this is not very expensive and sometimes
+						//the infoPane was initialized with no data and should be re-initialized here
+						m_infoPane.Initialize(Cache, m_mediator, Clerk);
+						m_infoPane.Dock = DockStyle.Fill;
+
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
 						if (m_infoPane.Enabled)
 						{
@@ -730,6 +728,7 @@ namespace SIL.FieldWorks.IText
 			}
 			FinishInitTabPages(configurationParameters);
 			SetInitialTabPage();
+			m_currentTool = configurationParameters.Attributes["clerk"].Value;
 			// Do NOT do this, it raises an exception.
 			//base.Init (mediator, configurationParameters);
 			// Instead do this.
@@ -765,12 +764,7 @@ namespace SIL.FieldWorks.IText
 		public override bool PrepareToGoAway()
 		{
 			CheckDisposed();
-
-			// let's save our position before going further. Otherwise we might loose our annotation/analysis information altogether.
-			// even if PrepareToGoAway creates a new analysis or annotation, it still should be at the same location.
-			//LT-6904 : exposed this case where the m_bookmark is null
-			if (m_bookmark != null)
-				m_bookmark.Save();
+			SaveBookMark();
 			if (!SaveWorkInProgress()) return false;
 			return base.PrepareToGoAway();
 		}
@@ -794,29 +788,12 @@ namespace SIL.FieldWorks.IText
 			return false; // other things may wish to prepare too.
 		}
 
-		/// <summary>
-		/// Determine if this is the correct place for handling the 'New Text' command.
-		/// NOTE: in PrepareToGoAway(), the mediator may have been switched to a new area.
-		/// </summary>
-		internal bool InTextsArea
-		{
-			get
-			{
-				CheckDisposed();
-
-				const string desiredArea = "textsWords";
-				var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice",
-					null);
-				return areaChoice != null && areaChoice == desiredArea;
-			}
-		}
-
 		protected override void SetupDataContext()
 		{
 			base.SetupDataContext();
 			InitializeInterlinearTabControl(m_tcPane);
 			InitializeInterlinearTabControl(CurrentInterlinearTabControl);
-			}
+		}
 
 
 		private void InitializeInterlinearTabControl(IInterlinearTabControl site)
@@ -879,14 +856,27 @@ namespace SIL.FieldWorks.IText
 				this.Focus();
 		}
 
+		/// <summary>
+		/// This is an attempt to improve scrolling by mouse wheel, by passing on focus when the interlin master gets it.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnGotFocus(EventArgs e)
+		{
+			if (m_tabCtrl.SelectedTab != null && m_tabCtrl.SelectedTab.Controls[0].CanFocus)
+				m_tabCtrl.SelectedTab.Controls[0].Focus();
+		}
+
 		protected override void ShowRecord()
 		{
 			SaveWorkInProgress();
 			base.ShowRecord();
 			if (Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
-			if (m_bookmark == null)
-				m_bookmark = new InterAreaBookmark(this, m_mediator, Cache);
+			//This is our very first time trying to show a text, if possible we would like to show the stored text.
+			if (m_bookmarks == null)
+			{
+				m_bookmarks = new Dictionary<Tuple<string, Guid>, InterAreaBookmark>();
+			}
 
 			// It's important not to do this if there is a filter, as there's a good chance the new
 			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
@@ -896,6 +886,9 @@ namespace SIL.FieldWorks.IText
 				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !Clerk.ShouldNotModifyList
 				&& Clerk.Filter == null)
 			{
+				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
+				// We'll get a chance to do it later.
+				Clerk.SuppressSaveOnChangeRecord = true;
 				// first clear the views of their knowledge of the previous text.
 				// otherwise they could crash trying to access information that is no longer valid. (LT-10024)
 				SwitchText(0);
@@ -925,18 +918,7 @@ namespace SIL.FieldWorks.IText
 				// This pane, as well as knowing how to work with a record list of Texts, knows
 				// how to work with one of fake objects in a concordance, that is, a list of occurrences of
 				// a word.
-				if (Clerk is IAnalysisOccurrenceFromHvo)
-				{
-					var occurrenceFromHvo = (Clerk as IAnalysisOccurrenceFromHvo).OccurrenceFromHvo(Clerk.CurrentObjectHvo);
-					var point = occurrenceFromHvo != null ? occurrenceFromHvo.BestOccurrence : null;
-					if (!m_fRefreshOccurred)
-						m_bookmark.Save(point, false);
-					if (point != null && point.IsValid)
-					{
-						var para = point.Segment.Paragraph;
-						hvoRoot = para.Owner.Hvo;
-					}
-				}
+				hvoRoot = SetConcordanceBookmarkAndReturnRoot(hvoRoot);
 			}
 			else
 			{
@@ -955,15 +937,10 @@ namespace SIL.FieldWorks.IText
 					if (ParentForm == Form.ActiveForm)
 						m_rtPane.Focus();
 				}
-				if (RootStText == null)
+				if (RootStText == null || RootStText.Hvo != hvoRoot)
 				{
 					// we've just now entered the area, so try to restore a bookmark.
-					m_bookmark.Restore();
-				}
-				else if (RootStText.Hvo != hvoRoot)
-				{
-					// we've switched texts, so reset our bookmark.
-					m_bookmark.Reset();
+					CreateOrRestoreBookmark(stText);
 				}
 			}
 
@@ -989,20 +966,66 @@ namespace SIL.FieldWorks.IText
 			m_fRefreshOccurred = false;	// reset our flag that a refresh occurred.
 		}
 
+		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
+		{
+			if (!CurrentTool.Equals("interlinearTexts"))
+			{
+				var occurrenceFromHvo = (Clerk as IAnalysisOccurrenceFromHvo).OccurrenceFromHvo(Clerk.CurrentObjectHvo);
+				var point = occurrenceFromHvo != null ? occurrenceFromHvo.BestOccurrence : null;
+				if (point != null && point.IsValid)
+				{
+					var para = point.Segment.Paragraph;
+					hvoRoot = para.Owner.Hvo;
+				}
+				var text = Cache.ServiceLocator.GetObject(hvoRoot);
+				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
+				{
+					InterAreaBookmark mark;
+					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
+					{
+						mark = new InterAreaBookmark(this, m_mediator, Cache);
+						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
+					}
+
+					mark.Save(point, false, IndexOfTextRecord, m_mediator);
+				}
+			}
+			return hvoRoot;
+		}
+
+		/// <summary>
+		/// Restore the bookmark, or create a new one, but only if we are in the correct area
+		/// </summary>
+		/// <param name="stText"></param>
+		private void CreateOrRestoreBookmark(IStText stText)
+		{
+			if (stText != null)
+			{
+				InterAreaBookmark mark;
+				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
+				{
+					mark.Restore(IndexOfTextRecord, m_mediator);
+				}
+				else
+				{
+					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, m_mediator, Cache));
+				}
+			}
+		}
+
 		private void SwitchText(int hvoRoot)
 		{
 			// We've switched text, so clear the Undo stack redisplay it.
 			// This method will clear the Undo stack UNLESS we're changing record
 			// because we inserted or deleted one, which ought to be undoable.
 			Clerk.SaveOnChangeRecord();
+			SaveBookMark();
 			if (hvoRoot != 0)
 				RootStText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoRoot);
 			else
 				RootStText = null;
 			// one way or another it's the Text by now.
-			if (RootStText == null)
-				m_bookmark.Reset();
-			else if (m_tcPane != null)
+			if (m_tcPane != null)
 				SetupInterlinearTabControlForStText(m_tcPane);
 			ShowTabView();
 		}
@@ -1014,8 +1037,11 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.CurrentObjectHvo == 0 || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			// Use a bookmark, if we've set one.
-			if (m_bookmark.IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
-				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmark);
+			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
+				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
+			{
+				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)]);
+			}
 		}
 
 		/// <summary>
@@ -1050,7 +1076,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 
 			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
-			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InTextsArea
+			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea
 				&& toolName != "wordListConcordance";
 			display.Visible = fVisible;
 
@@ -1280,6 +1306,29 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+
+		/// <summary>
+		/// ShowHiddenFields for Info tab. We use the suffix interlinearEdit here because it is
+		/// the toolName when the data tree is initializing the info tab. The name actually applies to
+		/// the whole interlinear view, but fortunately so far only the Info tab contains a data tree.
+		/// </summary>
+		/// <note>This handles enabling the 'menu item' deffined in the menu PaneBar-ITextContent in the interlinear area configuration file.
+		/// The property name is actually ShowHiddenFields-interlinearEdit but a trick in Choice.GetDisplayProperties allows us
+		/// to have a valid method name with an underscore in it.
+		/// If you are thinking of cleaning up this hack, note that various code in DataTree is aware of a multitude of properties
+		/// starting with "ShowHiddenFields-", and they are persisted in settings.</note>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;
+			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
+			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
+			return true;
+		}
+
 		/// <summary>
 		/// handle the message to see if the menu item should be displayed
 		/// </summary>
@@ -1333,399 +1382,14 @@ namespace SIL.FieldWorks.IText
 			// Is this where we need to hook in reparsing of segments/paras, etc. if RawTextPane is deselected?
 			// No. See DomainImpl.AnalysisAdjuster.
 
-			if (m_bookmark != null) // This is out here to save bookmarks set in Chart, Print and Edit views too.
+			if (m_bookmarks != null) // This is out here to save bookmarks set in Chart, Print and Edit views too.
 			{
 				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
 				//we are leaving.
-				m_bookmark.Save();
+				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)))
+					SaveBookMark();
 			}
 		}
-		}
-
-	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
-	{
-		private FwStyleSheet m_stylesheet = null;
-
-		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
-		private int m_wsPrevText = 0;
-		public int PrevTextWs
-		{
-			get { return m_wsPrevText; }
-			set { m_wsPrevText = value; }
-		}
-
-		/// <summary>
-		/// Get the list of currently selected Scripture section ids.
-		/// </summary>
-		/// <returns></returns>
-		public List<int> GetScriptureIds()
-		{
-			return (from st in GetInterestingTextList().ScriptureTexts select st.Hvo).ToList();
-		}
-
-		/// <summary>
-		/// The current object in this view is either a WfiWordform or an StText, and if we can delete
-		/// an StText at all, we want to delete its owning Text.
-		/// </summary>
-		/// <param name="currentObject"></param>
-		/// <returns></returns>
-		protected override ICmObject GetObjectToDelete(ICmObject currentObject)
-		{
-			if (currentObject is IWfiWordform)
-				return currentObject;
-			return currentObject.Owner;
-		}
-
-		/// <summary>
-		/// We can only delete Texts in this view, not scripture sections.
-		/// </summary>
-		/// <returns></returns>
-		protected override bool CanDelete()
-		{
-			if (CurrentObject is IWfiWordform)
-				return true;
-			return CurrentObject.Owner is FDO.IText;
-		}
-
-		protected override void ReportCannotDelete()
-		{
-			if (CurrentObject is IWfiWordform)
-				MessageBox.Show(Form.ActiveForm, ITextStrings.ksCannotDeleteWordform, ITextStrings.ksError,
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-			else
-				MessageBox.Show(Form.ActiveForm, ITextStrings.ksCannotDeleteScripture, ITextStrings.ksError,
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-		}
-
-		protected override bool AddItemToList(int hvoItem)
-		{
-
-			IStText stText;
-			if (!Cache.ServiceLocator.GetInstance<IStTextRepository>().TryGetObject(hvoItem, out stText))
-			{
-				// Not an StText; we have no idea how to add it (possibly a WfiWordform?).
-				return base.AddItemToList(hvoItem);
-			}
-			var interestingTexts = GetInterestingTextList();
-			return interestingTexts.AddChapterToInterestingTexts(stText);
-		}
-
-		/// <summary>
-		/// This toolbar option no longer applies only to Scripture.
-		/// Any scripture related control function is handled in the IFilterTextsDialog implementation.
-		/// Simply test that there is an active clerk before enabling.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayAddTexts(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-			display.Enabled = IsActiveClerk;
-			display.Visible = display.Enabled;
-			return true;
-		}
-
-		protected internal bool OnAddTexts(object args)
-		{
-			CheckDisposed();
-			// get saved scripture choices
-			var interestingTextsList = GetInterestingTextList();
-			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
-
-			IFilterTextsDialog<IStText> dlg = null;
-			try
-			{
-				if (FwUtils.IsTEInstalled)
-				{
-					dlg = (IFilterTextsDialog<IStText>)DynamicLoader.CreateObject(
-					"ScrControls.dll", "SIL.FieldWorks.Common.Controls.FilterTextsDialogTE",
-					Cache, interestingTexts, m_mediator.HelpTopicProvider, (IBookImporter)this);
-				}
-				else
-				{
-					dlg = new FilterTextsDialog(Cache, interestingTexts, m_mediator.HelpTopicProvider);
-				}
-				if (dlg.ShowDialog(((IApp)m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow) == DialogResult.OK)
-					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
-			}
-			finally
-			{
-				if (dlg != null)
-					((IDisposable)dlg).Dispose();
-			}
-
-			return true;
-		}
-
-		private InterestingTextList GetInterestingTextList()
-		{
-			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, Cache.ServiceLocator);
-		}
-
-		/// <summary>
-		/// Always enable the 'InsertInterlinText' command by default for this class, but allow
-		/// subclasses to override this behavior.
-		/// </summary>
-		public virtual bool OnDisplayInsertInterlinText(object commandObject,
-														ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Visible = IsActiveClerk && InDesiredArea("textsWords");
-			if (!display.Visible)
-			{
-				display.Enabled = false;
-				return true; // or should we just say, we don't know? But this command definitely should only be possible when this IS active.
-			}
-
-			RecordClerk clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-			if (clrk != null && clrk.Id == "interlinearTexts")
-			{
-				display.Enabled = true;
-				return true;
-			}
-			display.Enabled = false;
-			return true;
-		}
-
-		/// <summary>
-		/// We use a unique method name for inserting a text, which could otherwise be handled simply
-		/// by letting the Clerk handle InsertItemInVector, because after it is inserted we may
-		/// want to switch tools.
-		/// The argument should be the XmlNode for <parameters className="Text"/>.
-		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public bool OnInsertInterlinText(object argument)
-		{
-			if (!IsActiveClerk || !InDesiredArea("textsWords"))
-				return false;
-			return AddNewText(argument as Command);
-		}
-
-		/// <summary>
-		/// Add a new text (but don't make it undoable)
-		/// </summary>
-		/// <returns></returns>
-		internal bool AddNewTextNonUndoable()
-		{
-			return AddNewText(null);
-		}
-
-		private bool AddNewText(Command command)
-		{
-			// Get the default writing system for the new text.  See LT-6692.
-			m_wsPrevText = Cache.DefaultVernWs;
-			if (CurrentObject != null && Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
-			{
-				m_wsPrevText = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph,
-													 CurrentObject.Hvo, StTextTags.kflidParagraphs);
-			}
-			if (m_list.Filter != null)
-			{
-				// Tell the user we're turning off the filter, and then do it.
-				MessageBox.Show(ITextStrings.ksTurningOffFilter, ITextStrings.ksNote, MessageBoxButtons.OK);
-				m_mediator.SendMessage("RemoveFilters", this);
-				m_activeMenuBarFilter = null;
-			}
-			SaveOnChangeRecord(); // commit any changes before we create a new text.
-			RecordList.ICreateAndInsert<IStText> createAndInsertMethodObj;
-			if (command != null)
-				createAndInsertMethodObj = new UndoableCreateAndInsertStText(Cache, command, this);
-			else
-				createAndInsertMethodObj = new NonUndoableCreateAndInsertStText(Cache, this);
-			m_list.DoCreateAndInsert(createAndInsertMethodObj);
-			if (CurrentObject == null || CurrentObject.Hvo == 0)
-				return false;
-			if (!InDesiredTool("interlinearEdit"))
-				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
-			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
-			//(FwXApp.App as FwXApp).OnIncomingLink(link);
-			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app
-			// to return to its message loop, but it never does, because it is the same app that is trying to send the link, so it is busy
-			// waiting for 'Activate' to return!
-			//link.Activate();
-			return true;
-		}
-
-		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>
-		{
-			internal CreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
-			{
-				Cache = cache;
-				Clerk = clerk;
-			}
-
-			protected InterlinearTextsRecordClerk Clerk;
-			protected FdoCache Cache;
-			protected IStText NewStText;
-
-			#region ICreateAndInsert<IStText> Members
-
-			public abstract IStText Create();
-
-			/// <summary>
-			/// updates NewStText
-			/// </summary>
-			protected void CreateNewTextWithEmptyParagraph(int wsText)
-			{
-				var newText =
-					Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				Cache.LangProject.TextsOC.Add(newText);
-				NewStText =
-					Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				newText.ContentsOA = NewStText;
-				Clerk.CreateFirstParagraph(NewStText, wsText);
-				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
-			}
-
-			#endregion
-		}
-
-		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
-		{
-			internal UndoableCreateAndInsertStText(FdoCache cache, Command command, InterlinearTextsRecordClerk clerk)
-				: base(cache, clerk)
-			{
-				CommandArgs = command;
-			}
-			private Command CommandArgs;
-
-			public override IStText Create()
-			{
-				// don't inline this, it launches a dialog and should be done BEFORE starting the UOW.
-				int wsText = Clerk.GetWsForNewText();
-
-				UndoableUnitOfWorkHelper.Do(CommandArgs.UndoText, CommandArgs.RedoText, Cache.ActionHandlerAccessor,
-											()=> CreateNewTextWithEmptyParagraph(wsText));
-				return NewStText;
-			}
-		}
-
-		internal class NonUndoableCreateAndInsertStText : CreateAndInsertStText
-		{
-			internal NonUndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
-				: base(cache, clerk)
-			{
-			}
-
-			public override IStText Create()
-			{
-				// don't inline this, it launches a dialog and should be done BEFORE starting the UOW.
-				int wsText = Clerk.GetWsForNewText();
-
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-											() => CreateNewTextWithEmptyParagraph(wsText));
-				return NewStText;
-			}
-		}
-
-		/// <summary>
-		/// Establish the writing system of the new text by filling its first paragraph with
-		/// an empty string in the proper writing system.
-		/// </summary>
-		/// <param name="stText"></param>
-		internal void CreateFirstParagraph(IStText stText, int wsText)
-		{
-			var txtPara = stText.AddNewTextPara(null);
-			txtPara.Contents = TsStringUtils.MakeTss(string.Empty, wsText);
-		}
-
-		private int GetWsForNewText()
-		{
-			int wsText = PrevTextWs;
-			if (wsText != 0)
-			{
-				if (Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
-				{
-					using (var dlg = new ChooseTextWritingSystemDlg())
-					{
-						dlg.Initialize(Cache, m_mediator.HelpTopicProvider, wsText);
-						dlg.ShowDialog(Form.ActiveForm);
-						wsText = dlg.TextWs;
-					}
-				}
-				PrevTextWs = 0;
-			}
-			else
-			{
-				wsText = Cache.DefaultVernWs;
-			}
-			return wsText;
-		}
-
-		#region IBookImporter Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Imports the specified book.
-		/// </summary>
-		/// <param name="bookNum">The canonical book number.</param>
-		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
-		/// message boxes.</param>
-		/// <param name="importBt">True to import only the back translation, false to import
-		/// only the main translation</param>
-		/// <returns>
-		/// The ScrBook created to hold the imported data
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
-		{
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
-				ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-				importSettings.ParatextScrProj = paratextProj.Name;
-				importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);
-				if (!importBt)
-				{
-					importSettings.ImportTranslation = true;
-					importSettings.ImportBackTranslation = false;
-				}
-				else
-				{
-					List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-					if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-						!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-					{
-						importSettings.ParatextBTProj = btProjects[0].Name;
-					}
-					if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-						return false;
-					importSettings.ImportTranslation = false;
-					importSettings.ImportBackTranslation = true;
-				}
-				return true;
-			});
-
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
-				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				(FwApp)m_mediator.PropertyTable.GetValue("App")))
-			{
-				return scr.FindBook(bookNum);
-			}
-			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Scripture stylesheet.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private FwStyleSheet ScriptureStylesheet
-		{
-			get
-			{
-				if (m_stylesheet == null)
-				{
-					m_stylesheet = new FwStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-				}
-				return m_stylesheet;
-			}
-		}
-		#endregion
 	}
 
 	public interface IHandleBookmark
@@ -1746,196 +1410,5 @@ namespace SIL.FieldWorks.IText
 		int IndexOfParagraph { get; }
 		int BeginCharOffset { get; }
 		int EndCharOffset { get; }
-	}
-
-
-	/// <summary>
-	/// Helper for keeping track of our location in the text when switching from and back to the
-	/// Texts area (cf. LT-1543).  It also serves to keep our place when switching between
-	/// RawTextPane (Baseline), GlossPane, AnalyzePane(Interlinearizer), TaggingPane, PrintPane and ConstChartPane.
-	/// </summary>
-	public class InterAreaBookmark : IStTextBookmark
-	{
-		InterlinMaster m_interlinMaster;
-		XCore.Mediator m_mediator;
-		FdoCache m_cache = null;
-		bool m_fInTextsArea = false;
-		int m_iParagraph = -1;
-		int m_BeginOffset = -1;
-		int m_EndOffset = -1;
-
-		internal InterAreaBookmark()
-		{
-		}
-
-		internal InterAreaBookmark(InterlinMaster interlinMaster, Mediator mediator, FdoCache cache)	// For restoring
-		{
-			Init(interlinMaster, mediator, cache);
-			this.Restore();
-		}
-
-		internal void Init(InterlinMaster interlinMaster, Mediator mediator, FdoCache cache)
-		{
-			Debug.Assert(interlinMaster != null);
-			Debug.Assert(mediator != null);
-			Debug.Assert(cache != null);
-			m_interlinMaster = interlinMaster;
-			m_mediator = mediator;
-			m_cache = cache;
-			m_fInTextsArea = m_interlinMaster.InTextsArea;
-			if (m_fInTextsArea)
-				return;
-			// We may be switching areas to the Texts from somewhere else, which isn't yet
-			// reflected in the value of "areaChoice", but is reflected in the value of
-			// "currentContentControlParameters" if we dig a little bit.
-			var x = m_mediator.PropertyTable.GetValue("currentContentControlParameters", null) as XmlElement;
-			if (x == null)
-				return;
-			var xnl = x.GetElementsByTagName("parameters");
-			foreach (var xn in xnl)
-			{
-				var xe = xn as XmlElement;
-				if (xe == null)
-					continue;
-				var sVal = xe.GetAttribute("area");
-				if (sVal == null || sVal != "textsWords")
-					continue;
-					m_fInTextsArea = true;
-					break;
-				}
-			}
-
-		/// <summary>
-		/// Saves and persists the current selected annotation (or string) in the InterlinMaster.
-		/// </summary>
-		public void Save()
-		{
-			m_interlinMaster.SaveBookMark();
-		}
-
-		/// <summary>
-		/// Saves the given AnalysisOccurrence in the InterlinMaster.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="fPersistNow">if true, this annotation will persist.</param>
-		public void Save(AnalysisOccurrence point, bool fPersistNow)
-		{
-			if (point == null || !point.IsValid)
-			{
-				Reset(); // let's just reset for an empty location.
-				return;
-			}
-			var iParaInText = point.Segment.Paragraph.IndexInOwner;
-			var begOffset = point.Segment.GetAnalysisBeginOffset(point.Index);
-			var endOffset = point.HasWordform ? begOffset + point.BaselineText.Length : begOffset;
-
-			Save(iParaInText, begOffset, endOffset, fPersistNow);
-		}
-
-		/// <summary>
-		/// Saves the current selected annotation in the InterlinMaster.
-		/// </summary>
-		/// <param name="fPersistNow">if true, this annotation will persist.</param>
-		public void Save(bool fPersistNow)
-		{
-			if (fPersistNow)
-				this.SavePersisted();
-		}
-
-		internal void Save(int paragraphIndex, int beginCharOffset, int endCharOffset, bool fPersistNow)
-		{
-			m_iParagraph = paragraphIndex;
-			m_BeginOffset = beginCharOffset;
-			m_EndOffset = endCharOffset;
-
-			this.Save(fPersistNow);
-		}
-
-		private string BookmarkNamePrefix
-		{
-			get
-			{
-				return "ITexts-Bookmark-";
-			}
-		}
-
-		internal string RecordIndexBookmarkName
-		{
-			get
-			{
-				return BookmarkPropertyName("IndexOfRecord");
-			}
-		}
-
-		private string BookmarkPropertyName(string attribute)
-		{
-			return BookmarkNamePrefix + attribute;
-		}
-
-		private void SavePersisted()
-		{
-			// Currently, we only support persistence for the Texts area, since the Words
-			// area Record Clerk keeps track of the current CmBaseAnnotation for us.
-			// This will help prevent us from saving over or loading something persisted
-			// for another area.  We should make this class inherit from IPersistAsXml if we want
-			// to store information for identifying which record clerk we are saving for.
-			if (!m_fInTextsArea)
-				return;
-			Debug.Assert(m_mediator != null);
-			// TODO: store clerk identifier in property. For now, just do the index.
-			// to make this more strict, we could match on the title, but let's do that later.
-			int recordIndex = m_interlinMaster.IndexOfTextRecord;
-			// string recordTitle = m_interlinMaster.TitleOfTextRecord;
-			// m_mediator.PropertyTable.SetProperty(pfx + "Title", recordTitle, false);
-			m_mediator.PropertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(RecordIndexBookmarkName, true, PropertyTable.SettingsGroup.LocalSettings);
-			// m_mediator.PropertyTable.SetPropertyPersistence(pfx + "Title", true);
-			m_mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("IndexOfParagraph"), true, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("CharBeginOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(BookmarkPropertyName("CharEndOffset"), true, PropertyTable.SettingsGroup.LocalSettings);
-		}
-
-		/// <summary>
-		/// Restore the InterlinMaster bookmark to its previously saved state.
-		/// </summary>
-		public void Restore()
-		{
-			// Currently, we only support persistence for the Texts area, since the Words
-			// area Record Clerk keeps track of the current CmBaseAnnotation for us.
-			// This will help prevent us from us from saving over or loading something persisted
-			// for another area.  We should make this class inherit from IPersistAsXml if we want
-			// to store information for identifying which record clerk we are saving for.
-			if (!m_fInTextsArea)
-				return;
-			Debug.Assert(m_mediator != null);
-			// verify we're restoring to the right text. Is there a better way to verify this?
-			int restoredRecordIndex = m_mediator.PropertyTable.GetIntProperty(RecordIndexBookmarkName, -1, PropertyTable.SettingsGroup.LocalSettings);
-			if (m_interlinMaster.IndexOfTextRecord != restoredRecordIndex)
-				return;
-			m_iParagraph = m_mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("IndexOfParagraph"), -1, PropertyTable.SettingsGroup.LocalSettings);
-			m_BeginOffset = m_mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("CharBeginOffset"), -1, PropertyTable.SettingsGroup.LocalSettings);
-			m_EndOffset = m_mediator.PropertyTable.GetIntProperty(BookmarkPropertyName("CharEndOffset"), -1, PropertyTable.SettingsGroup.LocalSettings);
-		}
-
-		/// <summary>
-		/// Reset the bookmark to its default values.
-		/// </summary>
-		public void Reset()
-		{
-			m_iParagraph = -1;
-			m_BeginOffset = -1;
-			m_EndOffset = -1;
-
-			this.SavePersisted();
-		}
-
-		#region IStTextBookmark
-		public int IndexOfParagraph { get { return m_iParagraph; } }
-		public int BeginCharOffset { get { return m_BeginOffset; } }
-		public int EndCharOffset { get { return m_EndOffset; } }
-		#endregion
 	}
 }

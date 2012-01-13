@@ -35,6 +35,8 @@ namespace SIL.SilSidePane
 			base.SmallImageList = _smallImageList;
 			base.LargeImageList = _largeImageList;
 			base.HideSelection = false;
+			if (SIL.Utils.MiscUtils.IsUnix)
+				base.LabelWrap = false;		// Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
 		}
 
 		protected override void Dispose(bool disposing)

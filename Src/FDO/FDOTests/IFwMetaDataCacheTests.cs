@@ -153,20 +153,20 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			int[] uIds;
 			var testFlidSize = flidSize - 1;
 
-			using (var flidsPtr = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flidsPtr = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_mdc.GetFieldIds(testFlidSize, flidsPtr);
-				uIds = (int[])MarshalEx.NativeToArray(flidsPtr, testFlidSize, typeof(int));
+				uIds = MarshalEx.NativeToArray<int>(flidsPtr, testFlidSize);
 				Assert.AreEqual(testFlidSize, uIds.Length, "Wrong size of fields returned.");
 				foreach (var flid in uIds)
 					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
 			}
 
 			testFlidSize = flidSize;
-			using (var flidsPtr = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flidsPtr = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_mdc.GetFieldIds(testFlidSize, flidsPtr);
-				uIds = (int[])MarshalEx.NativeToArray(flidsPtr, testFlidSize, typeof(int));
+				uIds = MarshalEx.NativeToArray<int>(flidsPtr, testFlidSize);
 				var uIdsNonCOM = m_mdc.GetFieldIds();
 				Assert.AreEqual(uIds.Length, uIdsNonCOM.Length, "COM non-COM GetFieldIds different sizes.");
 				for (var i = 0; i < uIdsNonCOM.Length; ++i)
@@ -178,10 +178,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 
 
 			testFlidSize = flidSize + 1;
-			using (var flidsPtr = MarshalEx.ArrayToNative(testFlidSize, typeof(int)))
+			using (var flidsPtr = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_mdc.GetFieldIds(testFlidSize, flidsPtr);
-				uIds = (int[])MarshalEx.NativeToArray(flidsPtr, testFlidSize, typeof(int));
+				uIds = MarshalEx.NativeToArray<int>(flidsPtr, testFlidSize);
 				Assert.AreEqual(testFlidSize, uIds.Length, "Wrong size of fields returned.");
 				for (var iflid = 0; iflid < uIds.Length; ++iflid)
 				{
@@ -569,19 +569,19 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			var countAllClasses = m_mdc.ClassCount;
 
 			int[] ids;
-			using (var clidsPtr = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clidsPtr = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				m_mdc.GetClassIds(countAllClasses, clidsPtr);
-				ids = (int[])MarshalEx.NativeToArray(clidsPtr, countAllClasses, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(clidsPtr, countAllClasses);
 				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
 			}
 
 			countAllClasses = 2;
 			// Check MoForm (all of its direct subclasses).
-			using (var clidsPtr = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clidsPtr = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				m_mdc.GetClassIds(countAllClasses, clidsPtr);
-				ids = (int[])MarshalEx.NativeToArray(clidsPtr, countAllClasses, typeof(int));
+				ids = MarshalEx.NativeToArray<int>(clidsPtr, countAllClasses);
 				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
 			}
 		}
@@ -592,12 +592,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 		[Test]
 		public void GetFieldsTest()
 		{
-			using (var flids = MarshalEx.ArrayToNative(500, typeof(int)))
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				var countAllFlidsOut = m_mdc.GetFields(0, true, (int)CellarPropertyTypeFilter.All, 0, flids);
 				countAllFlidsOut = m_mdc.GetFields(0, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
 
-				MarshalEx.NativeToArray(flids, countAllFlidsOut, typeof(int));
+				MarshalEx.NativeToArray<int>(flids, countAllFlidsOut);
 				Assert.AreEqual(7, countAllFlidsOut, "Wrong number of fields returned for CmObject.");
 			}
 		}
@@ -725,19 +725,19 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			int countDirectSubclasses;
 			//int[] clids = new int[countAllClasses];
 			// Check PartOfSpeech.
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check PartOfSpeech.
 				m_mdc.GetDirectSubclasses(5049, countAllClasses, out countDirectSubclasses, clids);
 				Assert.AreEqual(0, countDirectSubclasses, "Wrong number of subclasses returned.");
 			}
 
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check MoForm (all of its direct subclasses).
 				m_mdc.GetDirectSubclasses(5035, countAllClasses, out countDirectSubclasses, clids);
 				Assert.AreEqual(2, countDirectSubclasses, "Wrong number of subclasses returned.");
-				var uIds = (int[])MarshalEx.NativeToArray(clids, countAllClasses, typeof(int));
+				var uIds = MarshalEx.NativeToArray<int>(clids, countAllClasses);
 				for (var i = 0; i < uIds.Length; ++i)
 				{
 					var clid = uIds[i];
@@ -780,7 +780,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			// Just use the count for all classes,
 			// even though we know it will never be that high a number that can be returned.
 			var countAllClasses = m_mdc.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check PartOfSpeech.
 				int countAllSubclasses;
@@ -798,7 +798,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			// Just use the count for all classes,
 			// even though we know it will never be that high a number that can be returned.
 			var countAllClasses = m_mdc.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check MoForm (all of its direct subclasses).
 				int countAllSubclasses;
@@ -816,7 +816,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			// Just use the count for all classes,
 			// even though we know it will never be that high a number that can be returned.
 			var countAllClasses = m_mdc.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check MoForm (but get it and only 1 of its subclasses).
 				int countAllSubclasses;
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			// Just use the count for all classes,
 			// even though we know it will never be that high a number that can be returned.
 			var countAllClasses = m_mdc.ClassCount;
-			using (var clids = MarshalEx.ArrayToNative(countAllClasses, typeof(int)))
+			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check CmObject.
 				int countAllSubclasses;

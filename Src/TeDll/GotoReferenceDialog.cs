@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,12 +16,11 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SILUBS.SharedScrControls;
+using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -72,7 +71,7 @@ namespace SIL.FieldWorks.TE
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-			scrPassageControl = new ScrPassageControl(reference, m_scripture, true);
+			scrPassageControl = new DbScrPassageControl(reference, m_scripture);
 			scrPassageControl.Location = new System.Drawing.Point(16, 16);
 			scrPassageControl.Name = "scrPassageControl";
 			scrPassageControl.Size = new System.Drawing.Size(Width - 36, 24);

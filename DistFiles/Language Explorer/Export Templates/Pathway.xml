@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template format="xhtml" type="pathway" datatype="html" xslt="ConfiguredXHTML.xsl">
-	<FxtDocumentDescription dataLabel="Dictionary, Reversal Index" formatLabel="Pathway (various outputs)" defaultExtension="xhtml" filter="XHTML files (*.xhtml)|*.xhtml|All files (*.*)|*.*">Using Pathway, export configured dictionary and/or reversal index to Open Office, Prince PDF, XeTeX, and other formats.</FxtDocumentDescription>
+	<FxtDocumentDescription dataLabel="Dictionary, Reversal Index" formatLabel="Pathway (various outputs)" defaultExtension="xhtml" filter="XHTML files (*.xhtml)|*.xhtml|All files (*.*)|*.*">Using Pathway, export configured dictionary and/or reversal index to Open/Libre Office, Prince PDF, XeTeX, and other formats.</FxtDocumentDescription>
 </template>

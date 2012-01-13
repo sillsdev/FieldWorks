@@ -171,6 +171,9 @@ namespace SIL.FieldWorks.Common.Controls
 						break;
 				}
 			}
+			// OnKeyDown may move us to a new record, and the associated DataTree will try hard to steal the focus.
+			// This should not happen following a key stroke, so work hard to keep the focus here. (LT-11792).
+			FocusMe();
 		}
 
 		/// <summary>
@@ -274,8 +277,7 @@ namespace SIL.FieldWorks.Common.Controls
 					if (finalSel != null && SelectionHelper.IsEditable(finalSel))
 					{
 						finalSel.Install();
-						Focus();
-						Application.Idle += FocusMe;
+						FocusMe();
 					}
 				}
 			}
@@ -286,22 +288,28 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		void FocusMe(object sender, EventArgs e)
+		void FocusMe()
 		{
-			Application.Idle -= FocusMe;
 			if (!IsDisposed)
 				Focus();
 			// Typically we get one idle event before the one in which the DataTree tries to focus its first
 			// possible slice. We need to do it one more time for it to stick.
-			Application.Idle += FocusMeAgain;
+			// Try five times to really get the focus!
+			m_idleFocusCount = 5;
+			m_mediator.IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
 		}
 
+		private int m_idleFocusCount;
 
-		void FocusMeAgain(object sender, EventArgs e)
+		bool FocusMeAgain(object arg)
 		{
-			Application.Idle -= FocusMeAgain;
-			if (!IsDisposed)
-				Focus();
+			if (IsDisposed)
+				return true; // all done trying to focus this!
+			Focus();
+			if (m_idleFocusCount == 0)
+				return true; // idle task complete
+			m_idleFocusCount--;
+			return false;
 		}
 
 		/// <summary>

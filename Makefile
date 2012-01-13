@@ -95,9 +95,7 @@ alltargets: \
 	FwCoreDlgs-FwCoreDlgControlsGTK \
 	FwCoreDlgs \
 	DbAccess \
-	WorldPadGTK \
 	LangInst \
-	WorldPad \
 	ComponentsMap \
 	IcuDataFiles \
 	install-strings \
@@ -200,12 +198,10 @@ clean: \
 	FwCoreDlgs-FwCoreDlgControls-clean \
 	FwCoreDlgs-FwCoreDlgControlsGTK-clean \
 	FwCoreDlgs-clean \
-	WorldPadGTK-clean \
 	DbAccess-clean \
 	XCore-Interfaces-clean \
 	XCore-clean \
 	LangInst-clean \
-	WorldPad-clean \
 	ComponentsMap-clean \
 	generic-Test-clean \
 	tlbs-clean \
@@ -628,18 +624,6 @@ FwCoreDlgs:
 	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs all
 FwCoreDlgs-clean:
 	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs clean
-
-WorldPadGTK:
-	$(MAKE) -C$(BUILD_ROOT)/Src/WorldPadGTK all
-WorldPadGTK-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/WorldPadGTK clean
-
-WorldPad-all: WorldPadGTK
-
-WorldPad:
-	$(MAKE) -C$(BUILD_ROOT)/Src/WorldPad all
-WorldPad-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/WorldPad clean
 
 LangInst:
 	$(MAKE) -C$(BUILD_ROOT)/Src/LangInst all

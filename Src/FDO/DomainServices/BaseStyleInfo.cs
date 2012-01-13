@@ -931,7 +931,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				int iProp = styleProps.GetIntProp(i, out tpt, out nVar);
 
 				if (!SetExplicitFontIntProp(tpt, iProp))
-					SetExplicitParaIntProp(tpt, nVar, iProp);
+				{
+					if (IsParagraphStyle)
+						SetExplicitParaIntProp(tpt, nVar, iProp);
+					// If IsParagraphStyle is false then we have corrupt data whereby paragraph-based
+					// data has previously been written to a character-based style. See LT-12119.
+				}
 			}
 		}
 

@@ -172,6 +172,14 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
+
 
 		public bool OnShowMockupDialog (object parameter)
 		{

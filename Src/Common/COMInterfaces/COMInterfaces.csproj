@@ -126,9 +126,6 @@
 	</Compile>
 	<Compile Include="INormalizationCharacterFactory.cs" />
 	<Compile Include="IBidiCharacterFactory.cs" />
-	<Compile Include="FwCellar.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="FwKernel.cs">
 	  <SubType>Code</SubType>
 	</Compile>

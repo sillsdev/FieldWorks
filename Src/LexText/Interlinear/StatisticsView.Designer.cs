@@ -28,44 +28,34 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.statisticsTable = new System.Windows.Forms.TableLayoutPanel();
-			this.statisticsDescription = new System.Windows.Forms.Label();
+			this.statisticsBox = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			//
-			// statisticsTable
+			// statisticsBox
 			//
-			this.statisticsTable.AutoSize = true;
-			this.statisticsTable.Location = new System.Drawing.Point(3, 28);
-			this.statisticsTable.Name = "statisticsTable";
-			this.statisticsTable.Size = new System.Drawing.Size(50, 29);
-			this.statisticsTable.TabIndex = 5;
-			//
-			// statisticsDescription
-			//
-			this.statisticsDescription.AutoSize = true;
-			this.statisticsDescription.Location = new System.Drawing.Point(3, 0);
-			this.statisticsDescription.Name = "statisticsDescription";
-			this.statisticsDescription.Size = new System.Drawing.Size(357, 13);
-			this.statisticsDescription.TabIndex = 6;
-			this.statisticsDescription.Text = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+			this.statisticsBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.statisticsBox.Location = new System.Drawing.Point(0, 0);
+			this.statisticsBox.Name = "statisticsBox";
+			this.statisticsBox.ReadOnly = true;
+			this.statisticsBox.Size = new System.Drawing.Size(522, 478);
+			this.statisticsBox.TabIndex = 0;
+			this.statisticsBox.Text = "";
 			//
 			// StatisticsView
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.Controls.Add(this.statisticsDescription);
-			this.Controls.Add(this.statisticsTable);
+			this.Controls.Add(this.statisticsBox);
 			this.Name = "StatisticsView";
 			this.Size = new System.Drawing.Size(522, 478);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.TableLayoutPanel statisticsTable;
-		private System.Windows.Forms.Label statisticsDescription;
+		private System.Windows.Forms.RichTextBox statisticsBox;
+
 	}
 }

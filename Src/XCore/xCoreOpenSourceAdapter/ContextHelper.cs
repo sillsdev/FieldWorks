@@ -46,5 +46,10 @@ using System;
 			{
 			}
 		}
+
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.Low; }
+		}
 	}
   }

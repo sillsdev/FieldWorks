@@ -62,7 +62,6 @@ namespace SIL.FieldWorks.XWorks
 		public RecordBrowseView()
 		{
 			InitializeComponent();
-
 			AccNameDefault = "RecordBrowseView";	// default accessibility name
 			Name = "RecordBrowseView";
 		}
@@ -139,35 +138,9 @@ namespace SIL.FieldWorks.XWorks
 			m_fHandlingFilterChangedByClerk = false;
 		}
 
-		internal sealed class WaitCursorHelper : IDisposable
-		{
-			private readonly Cursor m_OldCursor;
-			private readonly RecordBrowseView m_RecordBrowseView;
-
-			internal WaitCursorHelper(RecordBrowseView rbv)
-			{
-				m_OldCursor = rbv.Cursor;
-				m_RecordBrowseView = rbv;
-				m_RecordBrowseView.Cursor = Cursors.WaitCursor;
-			}
-
-			#region IDisposable Members
-
-			public void Dispose()
-			{
-				if (m_RecordBrowseView != null && !m_RecordBrowseView.IsDisposed)
-				{
-					m_RecordBrowseView.Cursor = m_OldCursor;
-				}
-				GC.SuppressFinalize(this);
-			}
-
-			#endregion
-		}
-
 		private void SortChangedHandler(object sender, EventArgs args)
 		{
-			using (new WaitCursorHelper(this))
+			using (new WaitCursor(this))
 			{
 				HandleSortChange();
 			}
@@ -191,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (e.ExpectedListItemsClass == 0)
 				return;	// no target column selected, so it shouldn't matter what the class of the clerk's list items are.
-			using (new WaitCursorHelper(this))
+			using (new WaitCursor(this))
 			{
 				// we're changing the class of our list items.
 				// use ListUpdateHelper to suspend reloading the list until we've changed the class
@@ -683,7 +656,7 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.BrowseView.RootBox.Selection != null)
 			{
 				//Debug.Fail("Not sure how/why we have a RootBox.Selection at this point in initialization. " +
-				//    "Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
+				//	"Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
 
 				m_browseViewer.BrowseView.RootBox.DestroySelection();
 			}
@@ -722,6 +695,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region IxCoreContentControl implementation
+
+		public override int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Medium;
+			}
+		}
 
 		public override bool PrepareToGoAway()
 		{

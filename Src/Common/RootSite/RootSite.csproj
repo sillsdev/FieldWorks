@@ -189,6 +189,7 @@
 	  <SubType>Code</SubType>
 	</None>
 	<Compile Include="CollectorEnv.cs" />
+	<Compile Include="PictureWrapper.cs" />
 	<Compile Include="FwBaseVc.cs" />
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>

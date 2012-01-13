@@ -66,16 +66,16 @@
 	<column layout="DateModifiedForEntry" label="Date Modified" sortType="date" blankPossible="false" visibility="dialog"/>
 	<column layout="Pronunciation" label="Pronunciations" multipara="true" editable="false" ws="$ws=vernacular"
 			transduce="LexPronunciation.Form" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
-	<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="pronunciation"
+	<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="$ws=pronunciation"
 			transduce="LexPronunciation.CVPattern" ghostListField="LexDb.AllPossiblePronunciations"  cansortbylength="true" visibility="dialog"/>
-	<column layout="Tone" label="Tones" multipara="true" editable="false" ws="pronunciation"
+	<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
 			transduce="LexPronunciation.Tone" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
 	<column layout="Location" label="Locations" multipara="true" visibility="dialog"
 			bulkEdit="atomicFlatListItem" field="LexPronunciation.Location" ghostListField="LexDb.AllPossiblePronunciations" list="LangProject.Locations"/>
 	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
 	<column layout="PictureFileNameForSense" label="Picture-FileName"  multipara="true" editable="false" visibility="dialog" />
-	<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="analysis" transduce="LexSense.ScientificName" visibility="dialog" />
+	<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
 	<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
 	<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />
 	<column layout="BibliographyForSense" label="Bibliography (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Bibliography" visibility="dialog" />
@@ -86,7 +86,7 @@
 	<column layout="RestrictionsForSense" label="Restrictions (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Restrictions" visibility="dialog" />
 	<column layout="SemanticsNoteForSense"  label="Semantics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SemanticsNote" visibility="dialog" />
 	<column layout="SociolinguisticsNoteForSense"  label="Sociolinguistics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SocioLinguisticsNote" visibility="dialog" />
-	<column layout="SourceForSense"  label="Sources" ws="analysis" multipara="true" transduce="LexSense.Source" visibility="dialog" />
+	<column layout="SourceForSense"  label="Sources" ws="$ws=analysis" multipara="true" transduce="LexSense.Source" visibility="dialog" />
 	<column layout="UsagesForSense" label="Usages" multipara="true"
 			bulkEdit="complexListMultiple" field="LexSense.UsageTypes" list="LexDb.UsageTypes" displayWs="best analysis" displayNameProperty="ShortNameTSS"
 			visibility="dialog" />
@@ -197,7 +197,7 @@
 	</generate>
 	<generate class="LexEntry" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForEntry_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexEntry.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexEntry.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- LexSense customs -->
 	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
@@ -223,7 +223,7 @@
 	</generate>
 	<generate class="LexSense" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForSense_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexSense.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexSense.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- MoForm customs -->
 	<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
@@ -251,7 +251,7 @@
 	</generate>
 	<generate class="MoForm" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForAllomorph_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="MoForm.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="MoForm.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- LexExampleSentence customs -->
 	<generate class="LexExampleSentence" fieldType="mlstring" restrictions="customOnly">
@@ -279,7 +279,7 @@
 	</generate>
 	<generate class="LexExampleSentence" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForExample_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexExampleSentence.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexExampleSentence.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 </browseColumns>
 </doc>

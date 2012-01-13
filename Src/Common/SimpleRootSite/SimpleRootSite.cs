@@ -2159,6 +2159,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Receives the xcore broadcast message "PropertyChanged"
@@ -4706,7 +4714,19 @@ namespace SIL.FieldWorks.Common.RootSites
 					dxdPosNew += dxdSize;
 			}
 
-			return UpdateScrollRange(dxdRangeNew, dxdPosNew, dydRangeNew, dydPosNew);
+			// We don't want to change the location of any child controls (e.g., a focus box).
+			// Changing the scroll position will unfortunately do so. Best we can do is restore them afterwards.
+			var oldLocations = new List<Tuple<Control, Point>>();
+			foreach (Control c in Controls)
+			{
+				oldLocations.Add(new Tuple<Control, Point>(c, c.Location));
+			}
+			var result = UpdateScrollRange(dxdRangeNew, dxdPosNew, dydRangeNew, dydPosNew);
+			foreach (var t in oldLocations)
+			{
+				t.Item1.Location = t.Item2;
+			}
+			return result;
 		}
 
 		/// -----------------------------------------------------------------------------------

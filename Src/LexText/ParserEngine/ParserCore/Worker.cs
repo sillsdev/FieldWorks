@@ -148,24 +148,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckDisposed();
 
 			uint crcWordform = 0;
-			string form = null;
+			ITsString form = null;
 			int hvo = 0;
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				if (wordform.IsValidObject)
 				{
 					crcWordform = (uint) wordform.Checksum;
-					form = wordform.Form.BestVernacularAlternative.Text.Replace(' ', '.'); // LT-7334 to allow for phrases
+					form = wordform.Form.VernacularDefaultWritingSystem;
 					hvo = wordform.Hvo;
 				}
 			}
 			// 'form' will now be null, if it could not find the wordform for whatever reason.
 			// uiCRCWordform will also now be 0, if 'form' is null.
-			if (form == null)
+			if (form == null || string.IsNullOrEmpty(form.Text))
 				return false;
 
 			CheckNeedsUpdate();
-			string result = GetOneWordformResult(hvo, form);
+			string result = GetOneWordformResult(hvo, form.Text.Replace(' ', '.')); // LT-7334 to allow for phrases
 			uint crc = CrcStream.GetCrc(result);
 			if (crcWordform == crc)
 				return false;

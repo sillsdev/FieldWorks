@@ -604,7 +604,7 @@ bool VwLayoutStream::RelayoutCore(IVwGraphics * pvg, int dxpAvailWidth, VwRootBo
 	// of the last boxes. (TE-6383)
 	if (fLastBoxChanged)
 	{
-		VwGroupBox * pgrpBox = dynamic_cast<VwGroupBox *>(m_pboxLast);
+		pgrpBox = dynamic_cast<VwGroupBox *>(m_pboxLast);
 		while (pgrpBox)
 		{
 			pgrpBox = dynamic_cast<VwGroupBox *>(pgrpBox->LastBox());

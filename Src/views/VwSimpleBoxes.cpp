@@ -759,10 +759,10 @@ void VwBox::DrawBorder(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 
 void VwBox::DebugDrawBorder(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 {
-	int Left = rcSrc.MapXTo(m_xsLeft, rcDst);
-	int Top = rcSrc.MapYTo(m_ysTop, rcDst);
-	int Right = rcSrc.MapXTo(m_xsLeft + m_dxsWidth, rcDst);
-	int Bottom = rcSrc.MapYTo(m_ysTop + m_dysHeight, rcDst);
+	int left = rcSrc.MapXTo(m_xsLeft, rcDst);
+	int top = rcSrc.MapYTo(m_ysTop, rcDst);
+	int right = rcSrc.MapXTo(m_xsLeft + m_dxsWidth, rcDst);
+	int bottom = rcSrc.MapYTo(m_ysTop + m_dysHeight, rcDst);
 
 	VwBox * pboxContainer;
 	int iDepth=0;
@@ -810,19 +810,19 @@ void VwBox::DebugDrawBorder(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 			break;
 	}
 
-	CheckHr(pvg->DrawRectangle(Left, Top, Right, Bottom));
+	CheckHr(pvg->DrawRectangle(left, top, right, bottom));
 
 	CheckHr(pvg->put_BackColor(kclrBlack));
 	// Left
-	CheckHr(pvg->DrawRectangle(Left, Top, Left+1, Bottom));
+	CheckHr(pvg->DrawRectangle(left, top, left+1, bottom));
 	// Right
-	if (Left != Right)
-		CheckHr(pvg->DrawRectangle(Right-1, Top, Right, Bottom));
+	if (left != right)
+		CheckHr(pvg->DrawRectangle(right-1, top, right, bottom));
 	// Top
-	CheckHr(pvg->DrawRectangle(Left, Top, Right, Top+1));
+	CheckHr(pvg->DrawRectangle(left, top, right, top+1));
 	// Bottom
-	if (Top != Bottom)
-		CheckHr(pvg->DrawRectangle(Left, Bottom-1, Right, Bottom));
+	if (top != bottom)
+		CheckHr(pvg->DrawRectangle(left, bottom-1, right, bottom));
 }
 
 
@@ -3506,8 +3506,6 @@ void VwPictureBox::DoHotLink(VwPictureSelection * pPicSel)
 			// Find the higher level view constructor
 			VwBox * pboxFirstProp;
 			int itssFirstProp;
-			int tag;
-			int iprop;
 			Assert(qanote->Parent());
 			VwNotifier * pnote = dynamic_cast<VwNotifier *>(qanote.Ptr());
 			if (pnote)

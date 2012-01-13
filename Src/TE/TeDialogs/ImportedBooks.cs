@@ -546,6 +546,8 @@ namespace SIL.FieldWorks.TE
 		{
 			if (bookCurr != null)
 			{
+				Logger.WriteEvent("Performing full Overwrite of book: " + bookCurr.BookId);
+
 				// Set up undo action
 				if (m_cache.ActionHandlerAccessor != null)
 				{
@@ -1060,6 +1062,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual void PartialOverwrite(BookMerger bookMerger,
 			List<IScrSection> sectionsToRemove)
 		{
+			Logger.WriteEvent("Performing partial Overwrite of book: " + bookMerger.BookCurr.BookId);
 			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
 			{
 				progress.Title = DlgResources.ResourceString("kstidOverwriteCaption");

@@ -479,11 +479,9 @@ public:
 		}
 		else
 		{
-			int dydAscent;
-
 			CheckHr(uri.pvg->get_FontAscent(&dydAscent));
 
-			int ydTop = m_ydTop + m_dydAscent - dydAscent -
+			ydTop = m_ydTop + m_dydAscent - dydAscent -
 					MulDiv(uri.pchrp->dympOffset, uri.rcDst.Height(), kdzmpInch);
 
 			SCRIPT_CACHE sc = uri.sc = UniscribeSegment::FindScriptCache(/**uri.pchrp*/uri);
@@ -1615,7 +1613,7 @@ STDMETHODIMP UniscribeSegment::PositionOfRange(int ichBase, IVwGraphics* pvg,
 		xdLeft = rcSrc.MapXTo(0, rcDst);
 		int dx, dy;
 #pragma warning(disable: 4428)
-		static OleStringLiteral paraMark(L"\u00B6"); // L"¶"
+		static OleStringLiteral paraMark(L"\u00B6");
 #pragma warning(default: 4428)
 		CheckHr(pvg->GetTextExtent(1, paraMark, &dx, &dy));
 		if (m_fParaRTL)
@@ -1813,7 +1811,7 @@ public:
 			// This is a slightly awkward way to get the info we want, but it makes the special-case
 			// logic most like the normal case below.
 			int glyphWidth = uri.dxdWidth / uri.cglyph;
-			int offset = m_xdClick - uri.xd;
+			offset = m_xdClick - uri.xd;
 			int iglyph = offset / glyphWidth;
 			bool fTrailing = offset - (iglyph * glyphWidth) > glyphWidth / 2;
 			// ichChar is normally iglyph. But if there are surrogate pairs we have to adjust.

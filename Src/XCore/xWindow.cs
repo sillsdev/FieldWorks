@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Xml;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using System.Globalization;
 using System.Windows.Forms.VisualStyles;
 
@@ -1822,23 +1823,14 @@ namespace XCore
 			if (m_cSuspendIdle > 0)
 				return;
 
-#if __MonoCS__
-			// This works more reliably than ContainsFocus
-			// Review: Consider switching non Linux code this instead of ContainsFocus (which
-			//can return true, even if window is not active)
-			if (this.FindForm() != Form.ActiveForm)
+			if (ActiveForm != this && OwnedForms.All(f => ActiveForm != f))
 				return;
-#else
-			//review: there seems like there should be a more directly to say am I in the background?
-			if (!this.ContainsFocus)
-				return;
-#endif
 
 			// The sidebar and toolbar have special needs because things need to become disabled now and then.
 			if(m_rebarAdapter!=null)
-				((IUIAdapter)m_rebarAdapter).OnIdle();
+				m_rebarAdapter.OnIdle();
 			if(m_sidebarAdapter!=null)
-				((IUIAdapter)m_sidebarAdapter).OnIdle();
+				m_sidebarAdapter.OnIdle();
 
 			// call OnIdle () on any colleagues that implement it.
 			m_mediator.SendMessage("Idle", null);
@@ -1879,6 +1871,13 @@ namespace XCore
 			get { return IsDisposed; }
 		}
 
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
 		#endregion IxCoreColleague implementation
 
@@ -1898,7 +1897,7 @@ namespace XCore
 				//named currentContentControlParameters. It would perhaps be better named
 				//'currentContentControlConfiguration' or something.
 				case "currentContentControl":
-					using(new BusyIndicator())
+					using(new WaitCursor(this))
 					{
 						XmlNode controlNode = (XmlNode)this.Mediator.PropertyTable.GetValue("currentContentControlParameters");
 						if (controlNode != null)

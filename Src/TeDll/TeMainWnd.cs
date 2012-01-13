@@ -37,6 +37,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.TE.TeEditorialChecks;
+using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 using XCore;
 using SIL.CoreImpl;
@@ -417,7 +418,7 @@ namespace SIL.FieldWorks.TE
 		protected FilteredScrBooks m_bookFilter;
 
 		/// <summary></summary>
-		protected ScrPassageControl m_gotoRefCtrl;
+		protected DbScrPassageControl m_gotoRefCtrl;
 
 		/// <summary>The default writing system used for newly created BT views</summary>
 		private int m_defaultBackTranslationWs;
@@ -436,6 +437,8 @@ namespace SIL.FieldWorks.TE
 
 		private DockableUsfmBrowser m_usfmBrowser;
 		private bool m_fUsfmBrowserEnabled = true;
+		static private UNSQuestionsDialog m_transceleratorWindow;
+
 		private RegistryFloatSetting m_draftViewZoomSettingAlternate;
 		private RegistryFloatSetting m_footnoteViewZoomSettingAlternate;
 		private const string kComprehensionCheckingToolSubKey = "ComprehensionCheckingTool";
@@ -461,7 +464,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected TeMainWnd(FdoCache cache) : base(cache)
 		{
-			Application.AddMessageFilter(this);
 			Init();
 		}
 
@@ -474,7 +476,6 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		public TeMainWnd(FwApp app, Form wndCopyFrom) : base(app, wndCopyFrom)
 		{
-			Application.AddMessageFilter(this);
 			Init();
 		}
 
@@ -583,6 +584,7 @@ namespace SIL.FieldWorks.TE
 						m_defaultBackTranslationWs = Cache.DefaultAnalWs;
 				}
 			}
+			Application.AddMessageFilter(this);
 
 			if (TMAdapter != null)
 				InitializeInsertBookMenus(); // must do after menus are created in InitializeComponent()
@@ -593,8 +595,7 @@ namespace SIL.FieldWorks.TE
 
 			Debug.Assert(m_scr != null);
 			// Initialize the scripture passage control object.
-			GotoReferenceControl.Initialize(ScrReference.StartOfBible(m_scr.Versification),
-				m_scr, true);
+			GotoReferenceControl.Initialize(ScrReference.StartOfBible(m_scr.Versification));
 
 			UpdateCaptionBar();
 
@@ -605,6 +606,14 @@ namespace SIL.FieldWorks.TE
 				"ZoomFactor" + kDraftViewName, 1.5f);
 			m_footnoteViewZoomSettingAlternate = new RegistryFloatSetting(MainWndSettingsKey,
 				"ZoomFactor" + kDraftFootnoteViewName, 1.5f);
+		}
+
+		/// <summary>
+		/// Message handling priority
+		/// </summary>
+		public override int Priority
+		{
+			get { return (int)ColleaguePriority.High; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1609,8 +1618,10 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void OnPassageChanged(ScrReference newReference)
 		{
+			Logger.WriteEvent(string.Format("TeMainWnd: New reference is {0}", newReference.AsString));
+
 			if (!newReference.IsEmpty)
-				GotoVerse(GotoReferenceControl.ScReference);
+				GotoVerse(newReference);
 
 			UserControl ctrl = ActiveView as UserControl;
 			if (ctrl != null)
@@ -1745,7 +1756,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the goto reference toolbar control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrPassageControl GotoReferenceControl
+		public DbScrPassageControl GotoReferenceControl
 		{
 			get
 			{
@@ -1753,7 +1764,8 @@ namespace SIL.FieldWorks.TE
 
 				if (m_gotoRefCtrl == null)
 				{
-					m_gotoRefCtrl = new ScrPassageControl(ScrReference.Empty, null, true);
+					m_gotoRefCtrl = new DbScrPassageControl(ScrReference.Empty, Cache.LangProject.TranslatedScriptureOA);
+					m_gotoRefCtrl.ErrorCaption = FwUtils.ksTeAppName;
 					m_gotoRefCtrl.AccessibleName = "GotoScrCtrl";
 					m_gotoRefCtrl.Width = 150; // REVIEW: does this need to be localizable?
 				}
@@ -4350,8 +4362,7 @@ namespace SIL.FieldWorks.TE
 		protected bool OnFileExportXml(object args)
 		{
 			AdjustScriptureAnnotations();
-			ScrReference refBook = GetReferenceToCurrentBook();
-			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, m_bookFilter, refBook,
+			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, m_bookFilter, GetReferenceToCurrentBook().Book,
 				m_StyleSheet, FileType.OXES, m_app))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -4401,8 +4412,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFileExportXhtml(object args)
 		{
-			ScrReference refBook = GetReferenceToCurrentBook();
-			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, m_bookFilter, refBook,
+			using (ExportXmlDialog dlg = new ExportXmlDialog(m_cache, m_bookFilter, GetReferenceToCurrentBook().Book,
 				m_StyleSheet, FileType.XHTML, m_app))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -5351,66 +5361,74 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected bool OnUnsQuestions(object args)
 		{
-			List<IKeyTerm> keyTerms = new List<IKeyTerm>();
-			foreach (ICmPossibility keyTerm in Cache.LanguageProject.KeyTermsList.PossibilitiesOS)
-				AddKtLeafNodes(keyTerms, keyTerm);
-
-			IWritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			ComprehensionCheckingSettings ccSettings;
-			try
+			if (m_transceleratorWindow != null)
 			{
-				using (RegistryKey key = m_app.ProjectSpecificSettingsKey.OpenSubKey(kComprehensionCheckingToolSubKey))
+				m_transceleratorWindow.Activate();
+				return true;
+			}
+
+			using (new WaitCursor(this))
+			{
+				List<IKeyTerm> keyTerms = new List<IKeyTerm>();
+				foreach (ICmPossibility keyTerm in Cache.LanguageProject.KeyTermsList.PossibilitiesOS)
+					AddKtLeafNodes(keyTerms, keyTerm);
+
+				IWritingSystem vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				IWritingSystem defaultWs = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+
+				ComprehensionCheckingSettings ccSettings;
+				try
 				{
-					ccSettings = ComprehensionCheckingSettings.LoadFromString(
-						(string)key.GetValue(kCCSettings, string.Empty));
+					using (RegistryKey key = m_app.ProjectSpecificSettingsKey.OpenSubKey(kComprehensionCheckingToolSubKey))
+					{
+						ccSettings = ComprehensionCheckingSettings.LoadFromString(
+							(string)key.GetValue(kCCSettings, string.Empty));
+					}
+					if (string.IsNullOrEmpty(ccSettings.QuestionsFile))
+						ccSettings.QuestionsFile = Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm");
 				}
-				if (string.IsNullOrEmpty(ccSettings.QuestionsFile))
-					ccSettings.QuestionsFile = Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm");
-			}
-			catch
-			{
-				ccSettings = new ComprehensionCheckingSettings(Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm"));
-			}
+				catch
+				{
+					ccSettings = new ComprehensionCheckingSettings(Path.Combine(DirectoryFinder.TeFolder, "QTTallBooks.sfm"));
+				}
+				ScrReference start, end;
+				m_bookFilter.GetRefRangeForContiguousBooks(out start, out end);
 
-			var teSpecificFilterMenus = new List<KeyValuePair<string, Func<int, int, string, bool>>>(1);
-			teSpecificFilterMenus.Add(new KeyValuePair<string, Func<int, int, string, bool>>(
-				TeResourceHelper.GetTmResourceString("kstidApplyBookFilter"),
-				(start, end, sref) => m_bookFilter.BookIds.Contains(BCVRef.GetBookFromBcv(start))));
-			UNSQuestionsDialog dlg = new UNSQuestionsDialog(Cache.ProjectId.Name, keyTerms,
-				m_StyleSheet.GetUiFontForWritingSystem(Cache.DefaultVernWs, 0), vernWs.IcuLocale,
-				vernWs.RightToLeftScript, @"c:\My Paratext Projects\cms", ccSettings,
-				App.ApplicationName, teSpecificFilterMenus,
-				() => KeyboardHelper.ActivateKeyboard(vernWs.LCID),
-				() => ShowHelp.ShowHelpTopic(m_app, "khptBookProperties")); // TODO: Come up with a Help topic
+				m_transceleratorWindow = new UNSQuestionsDialog(Cache.ProjectId.Name, keyTerms,
+					m_StyleSheet.GetUiFontForWritingSystem(Cache.DefaultVernWs, 0), vernWs.IcuLocale,
+					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
+					App.ApplicationName, start, end,
+					vern => KeyboardHelper.ActivateKeyboard(vern ? vernWs.LCID : defaultWs.LCID),
+					() => ShowHelp.ShowHelpTopic(m_app, "khptBookProperties")); // TODO: Come up with a Help topic
 
-			dlg.GetAvailableBooks = () => m_bookFilter.BookIds;
-			dlg.Closed += SaveComprehensionCheckingSettings;
-			dlg.UpdateCustomMenu += EnableOrDisableApplyBookFilterMenu;
-			dlg.Show();
+				m_transceleratorWindow.GetAvailableBooks = () => m_bookFilter.BookIds;
+				m_transceleratorWindow.Closed += SaveComprehensionCheckingSettings;
+			}
+			m_transceleratorWindow.Show();
 
 			return true;
 		}
 
-		private void EnableOrDisableApplyBookFilterMenu(object sender, EventArgs e)
-		{
-			ToolStripMenuItem menu = (ToolStripMenuItem)sender;
-			menu.Enabled = !m_bookFilter.AllBooks;
-		}
-
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Saves the Transcelerator settings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		void SaveComprehensionCheckingSettings(object sender, EventArgs e)
 		{
-			UNSQuestionsDialog dlg = (UNSQuestionsDialog)sender;
+			Debug.Assert(sender == m_transceleratorWindow);
 			try
 			{
 				using (RegistryKey key = m_app.ProjectSpecificSettingsKey.CreateSubKey(kComprehensionCheckingToolSubKey))
 				{
-					key.SetValue(kCCSettings, dlg.Settings.ToString());
+					key.SetValue(kCCSettings, m_transceleratorWindow.Settings.ToString());
 				}
 			}
 			catch (Exception error)
 			{
 				Logger.WriteError(error);
 			}
+			m_transceleratorWindow = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

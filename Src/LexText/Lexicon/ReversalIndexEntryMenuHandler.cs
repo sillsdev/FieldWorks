@@ -164,7 +164,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
+				Debug.Assert(m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null, "Current slice information is null, how can this menu be drawing?");
+				// ReSharper disable HeuristicUnreachableCode
+				// ReSharper disable ConditionIsAlwaysTrueOrFalse
+				//ReSharper lies.
+				if (m_dataEntryForm == null || m_dataEntryForm.CurrentSlice == null)
+				{
+					return false; //merge is not possible if all is not right with the world
+				}
+				// ReSharper restore ConditionIsAlwaysTrueOrFalse
+				// ReSharper restore HeuristicUnreachableCode
 				IReversalIndexEntry rie = m_dataEntryForm.CurrentSlice.Object as IReversalIndexEntry;
+				if(rie == null)
+					return false;
 				// Merge and move are possible if we have more than one entry.
 				if (rie.ReversalIndex.EntriesOC.Count > 1)
 					return true;

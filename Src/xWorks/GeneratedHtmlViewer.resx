@@ -154,66 +154,10 @@
 	<value>m_panelTop</value>
   </data>
   <data name="&gt;&gt;m_GenerateBtn.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>2</value>
   </data>
   <data name="m_panelTop.AccessibleName" xml:space="preserve">
 	<value>panelTop</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.AccessibleName" xml:space="preserve">
-	<value>btnSaveAsHtml</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-	<value>
-		Qk0mBQAAAAAAADYEAAAoAAAAEAAAAA8AAAABAAgAAAAAAAAAAADEDgAAxA4AAAABAAAAAQAAAAAA/wAA
-		gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP/A3MD/8Mik/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA
-		AP8AAAD/AAAA/wAAAP8AAAD/8Pv//6SgoP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////wcH
-		AAAAAAAAAAAAAAAAAAcHAAMDAAAAAAAABwcAAwAHBwADAwAAAAAAAAcHAAMABwcAAwMAAAAAAAAHBwAD
-		AAcHAAMDAAAAAAAAAAAAAwAHBwADAwMDAwMDAwMDAwMABwcAAwMAAAAAAAAAAAMDAAcHAAMABwcHBwcH
-		BwcAAwAHBwADAAcHBwcHBwcHAAMABwcAAwAHBwcHBwcHBwADAAcHAAMABwcHBwcHBwcAAwAHBwADAAcH
-		BwcHBwcHAAAABwcAAwAHBwcHBwcHBwAHAAcHAAAAAAAAAAAAAAAAAAAHBwcHBwcHBwcHBwcHBwcHBw==
-</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.Location" type="System.Drawing.Point, System.Drawing">
-	<value>288, 8</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.Size" type="System.Drawing.Size, System.Drawing">
-	<value>32, 24</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.TabIndex" type="System.Int32, mscorlib">
-	<value>4</value>
-  </data>
-  <data name="m_SaveAsHtmlBtn.ToolTip" xml:space="preserve">
-	<value>Save As Webpage</value>
-  </data>
-  <data name="&gt;&gt;m_SaveAsHtmlBtn.Name" xml:space="preserve">
-	<value>m_SaveAsHtmlBtn</value>
-  </data>
-  <data name="&gt;&gt;m_SaveAsHtmlBtn.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_SaveAsHtmlBtn.Parent" xml:space="preserve">
-	<value>m_panelTop</value>
-  </data>
-  <data name="&gt;&gt;m_SaveAsHtmlBtn.ZOrder" xml:space="preserve">
-	<value>0</value>
   </data>
   <data name="m_ForwardBtn.AccessibleName" xml:space="preserve">
 	<value>btnForward</value>
@@ -293,7 +237,7 @@
 	<value>m_panelTop</value>
   </data>
   <data name="&gt;&gt;m_ForwardBtn.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>0</value>
   </data>
   <data name="m_BackBtn.AccessibleName" xml:space="preserve">
 	<value>btnBack</value>
@@ -326,7 +270,7 @@
 	<value>m_panelTop</value>
   </data>
   <data name="&gt;&gt;m_BackBtn.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>1</value>
   </data>
   <data name="m_panelTop.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>Top</value>

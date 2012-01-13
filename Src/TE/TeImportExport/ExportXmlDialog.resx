@@ -670,7 +670,7 @@
 	<value>m_scrBook</value>
   </data>
   <data name="&gt;&gt;m_scrBook.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ScrBookControl, ScrControls, Version=7.1.0.31473, Culture=neutral, PublicKeyToken=null</value>
+	<value>SILUBS.SharedScrControls.ScrBookControl, ScrControls, Version=7.1.0.31473, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_scrBook.Parent" xml:space="preserve">
 	<value>$this</value>

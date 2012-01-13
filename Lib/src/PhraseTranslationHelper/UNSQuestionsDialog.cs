@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -9,17 +9,18 @@
 #endregion
 //
 // File: UNSQuestionsDialog.cs
-// Responsibility: Tom Bogle
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using SIL.Utils;
+using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.PhraseTranslationHelper
@@ -30,58 +31,51 @@ namespace SILUBS.PhraseTranslationHelper
 	/// UNSQuestionsDialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class UNSQuestionsDialog : Form
+	public partial class UNSQuestionsDialog : Form
 	{
 		#region Member Data
 		private readonly string m_projectName;
+		private readonly IEnumerable<IKeyTerm> m_keyTerms;
+		private readonly Font m_vernFont;
 		private readonly string m_vernIcuLocale;
-		private readonly Action m_selectVernacularKeyboard;
+		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action m_helpDelegate;
-		private readonly PhraseTranslationHelper m_helper;
+		private PhraseTranslationHelper m_helper;
 		private readonly string m_translationsFile;
-		private readonly string m_unsDataFolder;
+		private readonly string m_phraseCustomizationsFile;
+		private readonly string m_phraseSubstitutionsFile;
+		private static readonly string s_unsDataFolder;
 		private readonly string m_defaultLcfFolder;
 		private readonly string m_appName;
-		private readonly IDictionary<string, string> m_sectionHeadText;
-		private readonly int m_gridRowHeight;
+		private ScrReference m_startRef;
+		private ScrReference m_endRef;
+		private IDictionary<string, string> m_sectionHeadText;
+		private int[] m_availableBookIds;
+		private readonly string m_questionsFilename;
+		private readonly string m_keyTermRulesFilename;
 		private DateTime m_lastSaveTime;
-
-		private DataGridView dataGridUns;
-		private DataGridViewTextBoxColumn m_colReference;
-		private DataGridViewTextBoxColumn m_colEnglish;
-		private DataGridViewTextBoxColumn m_colTranslation;
-		private DataGridViewCheckBoxColumn m_colUserTranslated;
-		private DataGridViewTextBoxColumn m_colDebugInfo;
-		private MenuStrip m_mainMenu;
-		private ToolStripMenuItem fileToolStripMenuItem;
-		private ToolStripMenuItem saveToolStripMenuItem;
-		private ToolStripMenuItem reloadToolStripMenuItem;
-		private ToolStripMenuItem closeToolStripMenuItem;
-		private ToolStripMenuItem filterToolStripMenuItem;
-		private ToolStripMenuItem mnuKtFilter;
-		private ToolStripMenuItem mnuShowAllPhrases;
-		private ToolStripMenuItem mnuShowPhrasesWithKtRenderings;
-		private ToolStripMenuItem mnuShowPhrasesWithMissingKtRenderings;
-		private ToolStripMenuItem viewToolStripMenuItem;
-		private ToolStrip toolStrip1;
-		private ToolStripLabel toolStripLabel1;
-		private ToolStripTextBox txtFilterByPart;
-		private ToolStripMenuItem mnuMatchExact;
-		private ToolStripSeparator toolStripSeparator1;
-		private ToolStripSeparator toolStripSeparator2;
-		private ToolStripMenuItem mnuGenerateTemplate;
-		private ToolStripSeparator toolStripSeparator3;
-		private ToolStripMenuItem mnuViewToolbar;
-		private ToolStripMenuItem mnuAutoSave;
-		private ToolStripButton btnSave;
+		private readonly List<Substitution> m_phraseSubstitutions;
+		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
+		private bool m_fProcessingSyncMessage;
+		private ScrReference m_queuedReference;
+		private int m_lastRowEntered = -1;
+		private TranslatablePhrase m_currentPhrase = null;
+		private int m_iCurrentColumn = -1;
+		private int m_normalRowHeight = -1;
 		#endregion
 
 		#region Delegates
 		public Func<IEnumerable<int>> GetAvailableBooks { private get; set; }
-		public event EventHandler UpdateCustomMenu;
 		#endregion
 
 		#region Properties
+		private DataGridViewTextBoxEditingControl TextControl { get; set;}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the settings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		public ComprehensionCheckingSettings Settings
 		{
 			get { return new ComprehensionCheckingSettings(this); }
@@ -97,7 +91,7 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().Where(
 					menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).First().Checked = true;
-				ApplyFilter(null, new EventArgs());
+				ApplyFilter();
 			}
 		}
 
@@ -107,7 +101,7 @@ namespace SILUBS.PhraseTranslationHelper
 			set
 			{
 				if (mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
-					Save(null, new EventArgs());
+					Save();
 				else
 					saveToolStripMenuItem.Enabled = btnSave.Enabled = value;
 			}
@@ -132,13 +126,14 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating matching on parts matches whole part.
+		/// Gets or sets a value indicating whether the textual question filter requires whole-
+		/// word matches.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal bool MatchWholeParts
+		internal bool MatchWholeWords
 		{
-			get { return mnuMatchExact.Checked; }
-			set { mnuMatchExact.Checked = value; }
+			get { return mnuMatchWholeWords.Checked; }
+			set { mnuMatchWholeWords.Checked = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -152,285 +147,61 @@ namespace SILUBS.PhraseTranslationHelper
 			set { mnuViewToolbar.Checked = value; }
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether to send Scripture references as Santa-Fe
+		/// messages.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool SendScrRefs
+		{
+			get { return btnSendScrReferences.Checked; }
+			set { btnSendScrReferences.Checked = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether to receive Santa-Fe Scripture reference
+		/// focus messages.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool ReceiveScrRefs
+		{
+			get { return btnReceiveScrReferences.Checked; }
+			set { btnReceiveScrReferences.Checked = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether to show a pane with the answers and comments
+		/// on the questions.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool ShowAnswersAndComments
+		{
+			get { return mnuViewAnswers.Checked; }
+			set { mnuViewAnswers.Checked = value; }
+		}
+
 		internal GenerateTemplateSettings GenTemplateSettings { get; private set; }
-		#endregion
 
-		#region class UnsTranslation
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Little class to support XML serialization
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[XmlType("Translation")]
-		public class UnsTranslation
+		protected TranslatablePhrase CurrentPhrase
 		{
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets or sets the reference.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			[XmlAttribute("ref")]
-			public string Reference { get; set; }
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets or sets the original phrase.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public string OriginalPhrase { get; set; }
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets or sets the translation.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public string Translation { get; set; }
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="UnsTranslation"/> class, needed
-			/// for XML serialization.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public UnsTranslation()
+			get
 			{
+				Debug.Assert(dataGridUns.CurrentRow != null, "Caller is responsible for checking dataGridUns.CurrentRow before accessing this property.");
+				return m_helper[dataGridUns.CurrentRow.Index];
 			}
-
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="UnsTranslation"/> class.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public UnsTranslation(TranslatablePhrase tp)
-			{
-				Reference = tp.Reference;
-				OriginalPhrase = tp.OriginalPhrase;
-				Translation = tp.Translation;
-			}
-		}
-		#endregion
-
-		#region class AnswersAndComments
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the questions from the file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal class AnswersAndComments
-		{
-			private List<string> m_answers;
-			private List<string> m_comments;
-
-			internal void AddAnswer(string answer)
-			{
-				if (string.IsNullOrEmpty(answer))
-					return;
-				if (m_answers == null)
-					m_answers = new List<string>(1);
-				m_answers.Add(answer);
-			}
-
-			internal void AddComment(string comment)
-			{
-				if (string.IsNullOrEmpty(comment))
-					return;
-				if (m_comments == null)
-					m_comments = new List<string>(1);
-				m_comments.Add(comment);
-			}
-
-			internal bool HasAnswer
-			{
-				get { return m_answers != null;}
-			}
-
-			internal bool HasComment
-			{
-				get { return m_comments != null; }
-			}
-
-			internal IEnumerable<string> Answers
-			{
-				get
-				{
-					if (m_answers != null)
-						return m_answers;
-					return new List<string>();
-				}
-			}
-
-			internal IEnumerable<string> Comments
-			{
-				get
-				{
-					if (m_comments != null)
-						return m_comments;
-					return new List<string>();
-				}
-			}
-		}
-		#endregion
-
-		#region class QuestionProvider
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the questions from the file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private class QuestionProvider : IEnumerable<TranslatablePhrase>
-		{
-			private readonly string m_sFilename;
-			private readonly Dictionary<string, string> m_sectionHeadText = new Dictionary<string, string>();
-			private bool finishedParsingFile = false;
-			private static readonly string s_kSectionHead = @"\rf";
-			private static readonly string s_kRefMarker = @"\tqref";
-			private static readonly string s_kQuestionMarker = @"\bttq";
-			private static readonly string s_kAnswerMarker = @"\tqe";
-			private static readonly string s_kCommentMarker = @"\an";
-			private static readonly List<string> s_categories = new List<string>();
-
-			static QuestionProvider()
-			{
-				s_categories.Add(@"\oh");
-				s_categories.Add(@"\dh");
-			}
-
-			internal QuestionProvider(string filename)
-			{
-				m_sFilename = filename;
-			}
-
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Parses the given reference (that could be a verse bridge) and returns a BBBCCCVVV
-			/// integer representing the start and end references.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public void Parse(string sReference, out int startRef, out int endRef)
-			{
-				BCVRef bcvStartRef = 0;
-				BCVRef bcvEndRef = 0;
-				BCVRef.ParseRefRange(sReference, ref bcvStartRef, ref bcvEndRef);
-				startRef = bcvStartRef;
-				endRef = bcvEndRef;
-			}
-
-			internal IDictionary<string, string> SectionHeads
-			{
-				get
-				{
-					if (!finishedParsingFile)
-						throw new InvalidOperationException("Cannot access SectionHeads until all TranslatablePhrases have been retrieved");
-					return m_sectionHeadText; }
-			}
-
-			#region IEnumerable<string> Members
-			public IEnumerator<TranslatablePhrase> GetEnumerator()
-			{
-				// Initialize the ID textbox.
-				TextReader reader = null;
-				int currCat = -1;
-				string currRef = null;
-				string currQuestion = null;
-				AnswersAndComments currAnswersAndComments = new AnswersAndComments();
-				int startRef = 0, endRef = 0, seq = 0;
-				List<int> categoriesAdded = new List<int>(s_categories.Count);
-				int kSectHeadMarkerLen = s_kSectionHead.Length;
-				int kRefMarkerLen = s_kRefMarker.Length;
-				int kQMarkerLen = s_kQuestionMarker.Length;
-				int kAMarkerLen = s_kAnswerMarker.Length;
-				int kCommentMarkerLen = s_kCommentMarker.Length;
-				string sectionHeadText = null;
-				try
-				{
-					reader = new StreamReader(m_sFilename, Encoding.UTF8);
-
-					string sLine;
-					while ((sLine = reader.ReadLine()) != null)
-					{
-						if (sLine.StartsWith(s_kQuestionMarker))
-						{
-							if (currQuestion != null)
-							{
-								yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq++, currAnswersAndComments);
-								currAnswersAndComments = new AnswersAndComments();
-							}
-							currQuestion = sLine.Substring(kQMarkerLen).Trim();
-						}
-						else if (sLine.StartsWith(s_kAnswerMarker))
-						{
-							currAnswersAndComments.AddAnswer(sLine.Substring(kAMarkerLen).Trim());
-						}
-						else if (sLine.StartsWith(s_kCommentMarker))
-						{
-							currAnswersAndComments.AddComment(sLine.Substring(kCommentMarkerLen).Trim());
-						}
-						else
-						{
-							if (currQuestion != null)
-							{
-								yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq++, currAnswersAndComments);
-								currQuestion = null;
-								currAnswersAndComments = new AnswersAndComments();
-							}
-
-							if (sLine.StartsWith(s_kRefMarker))
-							{
-								currRef = sLine.Substring(kRefMarkerLen).Trim();
-								if (sectionHeadText != null)
-								{
-									m_sectionHeadText[currRef] = sectionHeadText;
-									sectionHeadText = null;
-								}
-								Parse(currRef, out startRef, out endRef);
-								seq = 0;
-							}
-							else if (sLine.StartsWith(s_kSectionHead))
-							{
-								sectionHeadText = sLine.Substring(kSectHeadMarkerLen).Trim();
-							}
-							else
-							{
-								for (int i = 0; i < s_categories.Count; i++)
-								{
-									string category = s_categories[i];
-									if (sLine.StartsWith(category))
-									{
-										if (i == 0)
-											startRef = endRef = 0;
-										seq = 0;
-										currCat = i;
-										if (!categoriesAdded.Contains(i))
-										{
-											yield return new TranslatablePhrase(sLine.Substring(category.Length).Trim(),
-												-1, string.Empty, 0, 0, i);
-											categoriesAdded.Add(i);
-										}
-										break;
-									}
-								}
-							}
-						}
-					}
-					if (currQuestion != null)
-						yield return new TranslatablePhrase(currQuestion, currCat, currRef, startRef, endRef, seq, currAnswersAndComments);
-				}
-				finally
-				{
-					if (reader != null)
-						reader.Close();
-					finishedParsingFile = true;
-				}
-			}
-			#endregion
-
-			#region IEnumerable Members
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return GetEnumerator();
-			}
-			#endregion
 		}
 		#endregion
 
 		#region Constructors
+		static UNSQuestionsDialog()
+		{
+			s_unsDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+				"UNS Questions");
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
@@ -438,22 +209,36 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string sDefaultLcfFolder,
-			ComprehensionCheckingSettings settings, string appName,
-			IList<KeyValuePair<string, Func<int, int, string, bool>>> refFilters,
-			Action selectVernacularKeyboard, Action helpDelegate)
+			ComprehensionCheckingSettings settings, string appName, ScrReference startRef,
+			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate)
 		{
+			if (startRef != ScrReference.Empty && endRef != ScrReference.Empty && startRef > endRef)
+				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
+			m_keyTerms = keyTerms;
+			m_vernFont = vernFont;
 			m_vernIcuLocale = VernIcuLocale;
-			m_selectVernacularKeyboard = selectVernacularKeyboard;
+			m_selectKeyboard = selectKeyboard;
 			m_helpDelegate = helpDelegate;
 			m_defaultLcfFolder = sDefaultLcfFolder;
 			m_appName = appName;
+			m_startRef = startRef;
+			m_endRef = endRef;
 
 			InitializeComponent();
+
+			m_biblicalTermsPane.Controls.Clear();
+
+			Text = String.Format(Text, projectName);
+			HelpButton = (m_helpDelegate != null);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
+			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
+			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
+			lblFilterIndicator.Tag = lblFilterIndicator.Text;
+			lblRemainingWork.Tag = lblRemainingWork.Text;
 
 			Location = settings.Location;
 			WindowState = settings.DefaultWindowState;
@@ -462,66 +247,11 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				Size = settings.DialogSize;
 			}
-			MatchWholeParts = settings.MatchWholeParts;
+			MatchWholeWords = !settings.MatchPartialWords;
 			ShowToolbar = settings.ShowToolbar;
 			GenTemplateSettings = settings.GenTemplateSettings;
-
-			if (refFilters != null)
-			{
-				int index;
-				for (index = 0; index < refFilters.Count; index++)
-				{
-					KeyValuePair<string, Func<int, int, string, bool>> filter = refFilters[index];
-					ToolStripMenuItem menuItem = new ToolStripMenuItem(filter.Key, null, ApplyFilter);
-					menuItem.Tag = filter.Value;
-					filterToolStripMenuItem.DropDownItems.Insert(index, menuItem);
-				}
-				if (index > 0)
-				{
-					filterToolStripMenuItem.DropDownItems.Insert(index, new ToolStripSeparator());
-					filterToolStripMenuItem.DropDownOpening += DetermineAvailabilityOfCustomFilterMenuItems;
-				}
-			}
-
-			if (!File.Exists(settings.QuestionsFile))
-			{
-				MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
-				return;
-			}
-
-			m_unsDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-				"UNS Questions");
-			m_translationsFile = Path.Combine(m_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
-
-			HelpButton = (m_helpDelegate != null);
-
-			Exception e;
-			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(Path.Combine(m_unsDataFolder, "keyTermRules.xml"), out e);
-			if (e != null)
-				MessageBox.Show(e.ToString(), Text);
-
-			QuestionProvider qp = new QuestionProvider(settings.QuestionsFile);
-			m_helper = new PhraseTranslationHelper(qp, keyTerms, rules);
-			m_sectionHeadText = qp.SectionHeads;
-			if (File.Exists(m_translationsFile))
-			{
-				List<UnsTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<UnsTranslation>>(m_translationsFile, out e);
-				if (e != null)
-				{
-					MessageBox.Show(e.ToString());
-				}
-				else
-				{
-					foreach (UnsTranslation unsTranslation in translations)
-					{
-						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.OriginalPhrase);
-						if (phrase != null) // unlikely, but an happen if master list is modified
-							phrase.Translation = unsTranslation.Translation;
-					}
-				}
-			}
-			m_helper.ProcessAllTranslations();
-			m_helper.TranslationsChanged += m_helper_TranslationsChanged;
+			ReceiveScrRefs = settings.ReceiveScrRefs;
+			ShowAnswersAndComments = settings.ShowAnswersAndComments;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -529,330 +259,40 @@ namespace SILUBS.PhraseTranslationHelper
 			if (fVernIsRtoL)
 				m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-			m_gridRowHeight = Math.Max(vernFont.Height, dataGridUns.Font.Height) + 2;
-
-			dataGridUns.RowCount = m_helper.Phrases.Count();
+			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
+				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-			// Now apply settings that have filtering side-effects
-			CheckedKeyTermFilterType = settings.KeyTermFilterType;
-		}
+			m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
+			string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
+				Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
+			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty, "keyTermRules.xml");
+			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
+			FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
+			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 
-		void DetermineAvailabilityOfCustomFilterMenuItems(object sender, EventArgs e)
-		{
-			if (UpdateCustomMenu == null)
-				return;
-			foreach (ToolStripItem menu in filterToolStripMenuItem.DropDownItems)
+			if (!finfoXmlQuestions.Exists ||
+				(finfoSfmQuestions.Exists && finfoXmlQuestions.CreationTimeUtc < finfoSfmQuestions.CreationTimeUtc) ||
+				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
 			{
-				if (menu == mnuKtFilter || menu is ToolStripSeparator)
-					break;
-				UpdateCustomMenu(menu, e);
+				if (!finfoSfmQuestions.Exists)
+					MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
+				if (!finfoAlternatives.Exists)
+					alternativesFilename = null;
+				QuestionSfmFileAccessor.Generate(settings.QuestionsFile, alternativesFilename, m_questionsFilename);
 			}
-		}
-		#endregion
 
-		#region InitializeComponent
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Forms designer method
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitializeComponent()
-		{
-			System.Windows.Forms.ToolStripMenuItem mnuViewDebugInfo;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
-			this.dataGridUns = new System.Windows.Forms.DataGridView();
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_mainMenu = new System.Windows.Forms.MenuStrip();
-			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
-			this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.mnuGenerateTemplate = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuKtFilter = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuShowAllPhrases = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuShowPhrasesWithKtRenderings = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuShowPhrasesWithMissingKtRenderings = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuMatchExact = new System.Windows.Forms.ToolStripMenuItem();
-			this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuViewToolbar = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.btnSave = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-			this.txtFilterByPart = new System.Windows.Forms.ToolStripTextBox();
-			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
-			this.m_mainMenu.SuspendLayout();
-			this.toolStrip1.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// mnuViewDebugInfo
-			//
-			mnuViewDebugInfo.Checked = true;
-			mnuViewDebugInfo.CheckOnClick = true;
-			mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
-			mnuViewDebugInfo.Name = "mnuViewDebugInfo";
-			resources.ApplyResources(mnuViewDebugInfo, "mnuViewDebugInfo");
-			mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.m_chkDebugInfo_CheckedChanged);
-			//
-			// dataGridUns
-			//
-			this.dataGridUns.AllowUserToAddRows = false;
-			this.dataGridUns.AllowUserToDeleteRows = false;
-			this.dataGridUns.AllowUserToResizeRows = false;
-			this.dataGridUns.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.dataGridUns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridUns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-			this.m_colReference,
-			this.m_colEnglish,
-			this.m_colTranslation,
-			this.m_colUserTranslated,
-			this.m_colDebugInfo});
-			resources.ApplyResources(this.dataGridUns, "dataGridUns");
-			this.dataGridUns.Name = "dataGridUns";
-			this.dataGridUns.RowHeadersVisible = false;
-			this.dataGridUns.VirtualMode = true;
-			this.dataGridUns.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellDoubleClick);
-			this.dataGridUns.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridUns_ColumnHeaderMouseClick);
-			this.dataGridUns.RowHeightInfoNeeded += new System.Windows.Forms.DataGridViewRowHeightInfoNeededEventHandler(this.dataGridUns_RowHeightInfoNeeded);
-			this.dataGridUns.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValueNeeded);
-			this.dataGridUns.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValuePushed);
-			this.dataGridUns.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellEnter);
-			//
-			// m_colReference
-			//
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			resources.ApplyResources(this.m_colReference, "m_colReference");
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
-			// m_colEnglish
-			//
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			//
-			// m_colTranslation
-			//
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colTranslation, "m_colTranslation");
-			this.m_colTranslation.Name = "m_colTranslation";
-			//
-			// m_colUserTranslated
-			//
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			resources.ApplyResources(this.m_colUserTranslated, "m_colUserTranslated");
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			//
-			// m_colDebugInfo
-			//
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colDebugInfo, "m_colDebugInfo");
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
-			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
-			// m_mainMenu
-			//
-			this.m_mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.fileToolStripMenuItem,
-			this.filterToolStripMenuItem,
-			this.viewToolStripMenuItem});
-			resources.ApplyResources(this.m_mainMenu, "m_mainMenu");
-			this.m_mainMenu.Name = "m_mainMenu";
-			//
-			// fileToolStripMenuItem
-			//
-			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.saveToolStripMenuItem,
-			this.mnuAutoSave,
-			this.reloadToolStripMenuItem,
-			this.toolStripSeparator2,
-			this.mnuGenerateTemplate,
-			this.toolStripSeparator3,
-			this.closeToolStripMenuItem});
-			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
-			//
-			// saveToolStripMenuItem
-			//
-			resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
-			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save);
-			//
-			// mnuAutoSave
-			//
-			this.mnuAutoSave.Checked = true;
-			this.mnuAutoSave.CheckOnClick = true;
-			this.mnuAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.mnuAutoSave.Name = "mnuAutoSave";
-			resources.ApplyResources(this.mnuAutoSave, "mnuAutoSave");
-			this.mnuAutoSave.CheckedChanged += new System.EventHandler(this.mnuAutoSave_CheckedChanged);
-			//
-			// reloadToolStripMenuItem
-			//
-			this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-			resources.ApplyResources(this.reloadToolStripMenuItem, "reloadToolStripMenuItem");
-			//
-			// toolStripSeparator2
-			//
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
-			//
-			// mnuGenerateTemplate
-			//
-			this.mnuGenerateTemplate.Name = "mnuGenerateTemplate";
-			resources.ApplyResources(this.mnuGenerateTemplate, "mnuGenerateTemplate");
-			this.mnuGenerateTemplate.Click += new System.EventHandler(this.mnuGenerateTemplate_Click);
-			//
-			// toolStripSeparator3
-			//
-			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
-			//
-			// closeToolStripMenuItem
-			//
-			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
-			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-			//
-			// filterToolStripMenuItem
-			//
-			this.filterToolStripMenuItem.CheckOnClick = true;
-			this.filterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.mnuKtFilter,
-			this.mnuMatchExact});
-			this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-			resources.ApplyResources(this.filterToolStripMenuItem, "filterToolStripMenuItem");
-			//
-			// mnuKtFilter
-			//
-			this.mnuKtFilter.CheckOnClick = true;
-			this.mnuKtFilter.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.mnuShowAllPhrases,
-			this.mnuShowPhrasesWithKtRenderings,
-			this.mnuShowPhrasesWithMissingKtRenderings});
-			this.mnuKtFilter.Name = "mnuKtFilter";
-			resources.ApplyResources(this.mnuKtFilter, "mnuKtFilter");
-			//
-			// mnuShowAllPhrases
-			//
-			this.mnuShowAllPhrases.Checked = true;
-			this.mnuShowAllPhrases.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.mnuShowAllPhrases.Name = "mnuShowAllPhrases";
-			resources.ApplyResources(this.mnuShowAllPhrases, "mnuShowAllPhrases");
-			this.mnuShowAllPhrases.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
-			this.mnuShowAllPhrases.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
-			//
-			// mnuShowPhrasesWithKtRenderings
-			//
-			this.mnuShowPhrasesWithKtRenderings.CheckOnClick = true;
-			this.mnuShowPhrasesWithKtRenderings.Name = "mnuShowPhrasesWithKtRenderings";
-			resources.ApplyResources(this.mnuShowPhrasesWithKtRenderings, "mnuShowPhrasesWithKtRenderings");
-			this.mnuShowPhrasesWithKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
-			this.mnuShowPhrasesWithKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
-			//
-			// mnuShowPhrasesWithMissingKtRenderings
-			//
-			this.mnuShowPhrasesWithMissingKtRenderings.CheckOnClick = true;
-			this.mnuShowPhrasesWithMissingKtRenderings.Name = "mnuShowPhrasesWithMissingKtRenderings";
-			resources.ApplyResources(this.mnuShowPhrasesWithMissingKtRenderings, "mnuShowPhrasesWithMissingKtRenderings");
-			this.mnuShowPhrasesWithMissingKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
-			this.mnuShowPhrasesWithMissingKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
-			//
-			// mnuMatchExact
-			//
-			this.mnuMatchExact.CheckOnClick = true;
-			this.mnuMatchExact.Name = "mnuMatchExact";
-			resources.ApplyResources(this.mnuMatchExact, "mnuMatchExact");
-			this.mnuMatchExact.CheckedChanged += new System.EventHandler(this.ApplyFilter);
-			//
-			// viewToolStripMenuItem
-			//
-			this.viewToolStripMenuItem.Checked = true;
-			this.viewToolStripMenuItem.CheckOnClick = true;
-			this.viewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			mnuViewDebugInfo,
-			this.mnuViewToolbar});
-			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-			resources.ApplyResources(this.viewToolStripMenuItem, "viewToolStripMenuItem");
-			this.viewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
-			//
-			// mnuViewToolbar
-			//
-			this.mnuViewToolbar.Checked = true;
-			this.mnuViewToolbar.CheckOnClick = true;
-			this.mnuViewToolbar.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.mnuViewToolbar.Name = "mnuViewToolbar";
-			resources.ApplyResources(this.mnuViewToolbar, "mnuViewToolbar");
-			this.mnuViewToolbar.CheckStateChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
-			//
-			// toolStrip1
-			//
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.btnSave,
-			this.toolStripSeparator1,
-			this.toolStripLabel1,
-			this.txtFilterByPart});
-			resources.ApplyResources(this.toolStrip1, "toolStrip1");
-			this.toolStrip1.Name = "toolStrip1";
-			//
-			// btnSave
-			//
-			this.btnSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			resources.ApplyResources(this.btnSave, "btnSave");
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Click += new System.EventHandler(this.Save);
-			//
-			// toolStripSeparator1
-			//
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-			//
-			// toolStripLabel1
-			//
-			this.toolStripLabel1.Name = "toolStripLabel1";
-			resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
-			//
-			// txtFilterByPart
-			//
-			this.txtFilterByPart.AcceptsReturn = true;
-			this.txtFilterByPart.Name = "txtFilterByPart";
-			resources.ApplyResources(this.txtFilterByPart, "txtFilterByPart");
-			this.txtFilterByPart.TextChanged += new System.EventHandler(this.ApplyFilter);
-			//
-			// UNSQuestionsDialog
-			//
-			resources.ApplyResources(this, "$this");
-			this.Controls.Add(this.dataGridUns);
-			this.Controls.Add(this.toolStrip1);
-			this.Controls.Add(this.m_mainMenu);
-			this.HelpButton = true;
-			this.MainMenuStrip = this.m_mainMenu;
-			this.Name = "UNSQuestionsDialog";
-			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
-			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();
-			this.m_mainMenu.ResumeLayout(false);
-			this.m_mainMenu.PerformLayout();
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
+			m_phraseCustomizationsFile = Path.Combine(s_unsDataFolder, string.Format("Question Customizations - {0}.xml", projectName));
+			m_phraseSubstitutionsFile = Path.Combine(s_unsDataFolder, string.Format("Phrase substitutions - {0}.xml", projectName));
+			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
+			KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
 
+			LoadTranslations();
+
+			// Now apply settings that have filtering or other side-effects
+			CheckedKeyTermFilterType = settings.KeyTermFilterType;
+			SendScrRefs = settings.SendScrRefs;
 		}
 		#endregion
 
@@ -861,7 +301,6 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Closing"/> event.
 		/// </summary>
-		/// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
@@ -871,7 +310,7 @@ namespace SILUBS.PhraseTranslationHelper
 					"Save changes?", MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
-						Save(null, null);
+						Save();
 						break;
 					case DialogResult.Cancel:
 						e.Cancel = true;
@@ -880,6 +319,36 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 
 			base.OnClosing(e);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Processes Windows messages.
+		/// </summary>
+		/// <param name="msg">The Windows Message to process.</param>
+		/// ------------------------------------------------------------------------------------
+		protected override void WndProc(ref Message msg)
+		{
+			if (msg.Msg == SantaFeFocusMessageHandler.FocusMsg)
+			{
+				// Always assume the English versification scheme for passing references.
+				var scrRef = new ScrReference(
+					SantaFeFocusMessageHandler.ReceiveFocusMessage(msg), ScrVers.English);
+
+				if (!btnReceiveScrReferences.Checked || m_fIgnoreNextRecvdSantaFeSyncMessage ||
+					m_fProcessingSyncMessage)
+				{
+					if (m_fProcessingSyncMessage)
+						m_queuedReference = scrRef;
+
+					m_fIgnoreNextRecvdSantaFeSyncMessage = false;
+					return;
+				}
+
+				ProcessReceivedMessage(scrRef);
+			}
+
+			base.WndProc(ref msg);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -894,11 +363,17 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 2 && m_selectVernacularKeyboard != null)
-				m_selectVernacularKeyboard();
+			if (e.ColumnIndex == 2 && m_selectKeyboard != null)
+				m_selectKeyboard(true);
 		}
 
-		private void m_chkDebugInfo_CheckedChanged(object sender, EventArgs e)
+		private void dataGridUns_CellLeave(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.ColumnIndex == 2 && m_selectKeyboard != null)
+				m_selectKeyboard(false);
+		}
+
+		private void mnuViewDebugInfo_CheckedChanged(object sender, EventArgs e)
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			if (!item.Checked)
@@ -907,12 +382,17 @@ namespace SILUBS.PhraseTranslationHelper
 				dataGridUns.Columns.Add(m_colDebugInfo);
 		}
 
+		private void mnuViewAnswersColumn_CheckedChanged(object sender, EventArgs e)
+		{
+			m_pnlAnswersAndComments.Visible = ShowAnswersAndComments;
+		}
+
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
 			switch (e.ColumnIndex)
 			{
 				case 0: e.Value = m_helper[e.RowIndex].Reference; break;
-				case 1: e.Value = m_helper[e.RowIndex].OriginalPhrase; break;
+				case 1: e.Value = m_helper[e.RowIndex].PhraseInUse; break;
 				case 2: e.Value = m_helper[e.RowIndex].Translation; break;
 				case 3: e.Value = m_helper[e.RowIndex].HasUserTranslation; break;
 				case 4: e.Value = m_helper[e.RowIndex].Parts; break;
@@ -924,7 +404,21 @@ namespace SILUBS.PhraseTranslationHelper
 			switch (e.ColumnIndex)
 			{
 				case 2: m_helper[e.RowIndex].Translation = (string)e.Value; SaveNeeded = true;  break;
-				case 3: m_helper[e.RowIndex].HasUserTranslation = (bool)e.Value; SaveNeeded = true; break;
+				case 3:
+					m_helper[e.RowIndex].HasUserTranslation = (bool)e.Value; SaveNeeded = true;
+					dataGridUns.InvalidateRow(e.RowIndex);
+					break;
+			}
+			UpdateCountsAndFilterStatus();
+		}
+
+		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.ColumnIndex == 3)
+			{
+				// Force commital of the click's change.
+				dataGridUns.CommitEdit(DataGridViewDataErrorContexts.Commit);
+				dataGridUns.EndEdit();
 			}
 		}
 
@@ -954,7 +448,7 @@ namespace SILUBS.PhraseTranslationHelper
 			switch (iClickedCol)
 			{
 				case 0: m_helper.Sort(PhraseTranslationHelper.SortBy.Reference, sortAscending); break;
-				case 1: m_helper.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, sortAscending); break;
+				case 1: m_helper.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, sortAscending); break;
 				case 2: m_helper.Sort(PhraseTranslationHelper.SortBy.Translation, sortAscending); break;
 				case 3: m_helper.Sort(PhraseTranslationHelper.SortBy.Status, sortAscending); break;
 				case 4: m_helper.Sort(PhraseTranslationHelper.SortBy.Default, sortAscending); break;
@@ -963,20 +457,102 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the Enter event of the txtFilterByPart control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void txtFilterByPart_Enter(object sender, EventArgs e)
+		{
+			//if (m_selectKeyboard != null)
+			//    m_selectKeyboard(true);
+			RememberCurrentSelection();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Remembers the current selection so the same phrase and column can be re-selected
+		/// after filtering.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void RememberCurrentSelection()
+		{
+			if (dataGridUns.CurrentRow != null && dataGridUns.CurrentCell != null)
+			{
+				m_currentPhrase = CurrentPhrase;
+				m_iCurrentColumn = dataGridUns.CurrentCell.ColumnIndex;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Filtering is done, so
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void txtFilterByPart_Leave(object sender, EventArgs e)
+		{
+			m_currentPhrase = null;
+			m_iCurrentColumn = -1;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckChanged event of the mnuMatchWholeWords control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuMatchWholeWords_CheckChanged(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Text.Trim().Length > 0)
+				ApplyFilter();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Applies the filter.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ApplyFilter(object sender, EventArgs e)
 		{
-			Func<int, int, string, bool> refFilter = (sender is ToolStripMenuItem) ?
-				((ToolStripMenuItem)sender).Tag as Func<int, int, string, bool>: null;
+			ApplyFilter();
+		}
+		private void ApplyFilter()
+		{
+			bool clearCurrentSelection = false;
+			if (m_currentPhrase == null)
+			{
+				RememberCurrentSelection();
+				clearCurrentSelection = true;
+			}
+			Func<int, int, string, bool> refFilter = (m_startRef == ScrReference.Empty) ? null :
+				new Func<int, int, string, bool>((start, end, sref) => m_endRef >= start && m_startRef <= end);
 			dataGridUns.RowCount = 0;
-			m_helper.Filter(txtFilterByPart.Text, MatchWholeParts, CheckedKeyTermFilterType, refFilter);
+			m_biblicalTermsPane.Hide();
+
+			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter, mnuViewExcludedQuestions.Checked);
 			dataGridUns.RowCount = m_helper.Phrases.Count();
+
+			if (m_currentPhrase != null)
+			{
+				for (int i = 0; i < dataGridUns.Rows.Count; i++)
+				{
+					if (m_helper[i] == m_currentPhrase)
+					{
+						dataGridUns.CurrentCell = dataGridUns.Rows[i].Cells[m_iCurrentColumn];
+						break;
+					}
+				}
+				if (clearCurrentSelection)
+				{
+					m_currentPhrase = null;
+					m_iCurrentColumn = -1;
+				}
+			}
+			UpdateCountsAndFilterStatus();
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CellDoubleClick event of the dataGridUns control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.ColumnIndex == 4)
@@ -996,23 +572,8 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the RowHeightInfoNeeded event of the dataGridView1 control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewRowHeightInfoNeededEventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void dataGridUns_RowHeightInfoNeeded(object sender, DataGridViewRowHeightInfoNeededEventArgs e)
-		{
-			e.Height = m_gridRowHeight;
-			e.MinimumHeight = m_gridRowHeight;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Called when one of the Key Term filtering sub-menus is clicked.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void OnKeyTermsFilterChange(object sender, EventArgs e)
 		{
@@ -1021,15 +582,13 @@ namespace SILUBS.PhraseTranslationHelper
 
 			if (!((ToolStripMenuItem)sender).Checked)
 				mnuShowAllPhrases.Checked = true;
-			ApplyFilter(sender, e);
+			ApplyFilter();
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when one of the Key Term filtering sub-menus is checked.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void OnKeyTermsFilterChecked(object sender, EventArgs e)
 		{
@@ -1048,9 +607,6 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>
 		/// Handles the HelpButtonClicked event of the UNSQuestionsDialog control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance
-		/// containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void UNSQuestionsDialog_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
 		{
@@ -1061,17 +617,26 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>
 		/// Saves the UNS Translation data.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void Save(object sender, EventArgs e)
 		{
-			if (!Directory.Exists(m_unsDataFolder))
-				Directory.CreateDirectory(m_unsDataFolder);
+			Save();
+		}
+
+		private void Save()
+		{
+			EnsureDataFolderExists();
 			XmlSerializationHelper.SerializeToFile(m_translationsFile,
 				(from translatablePhrase in m_helper.UnfilteredPhrases
-				 where translatablePhrase.HasUserTranslation
-				 select new UnsTranslation(translatablePhrase)).ToList());
+				where translatablePhrase.HasUserTranslation
+				select new XmlTranslation(translatablePhrase)).ToList());
+			List<PhraseCustomization> customizations = (from translatablePhrase
+				in m_helper.UnfilteredPhrases
+				where translatablePhrase.IsCustomized
+				select new PhraseCustomization(translatablePhrase)).ToList();
+			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
+				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
+
 			m_lastSaveTime = DateTime.Now;
 			SaveNeeded = false;
 		}
@@ -1092,34 +657,38 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>
 		/// Handles the Click event of the mnuGenerateTemplate control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
 		{
+			if (string.IsNullOrEmpty(GenTemplateSettings.Folder))
+				GenTemplateSettings.Folder = m_defaultLcfFolder;
 			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName,
-				GenTemplateSettings, AvailableBookIds))
+				GenTemplateSettings, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
 			{
-				dlg.m_lblFolder.Text = m_defaultLcfFolder;
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					GenTemplateSettings = dlg.Settings;
 
-					Func<int, bool> InRange;
+					Func<int, int, bool> InRange;
 					if (dlg.m_rdoWholeBook.Checked)
 					{
 						int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
-						InRange = (bcv) =>
+						InRange = (bcvStart, bcvEnd) =>
 						{
-							return BCVRef.GetBookFromBcv(bcv) == bookNum;
+							return BCVRef.GetBookFromBcv(bcvStart) == bookNum;
 						};
 					}
 					else
 					{
-						throw new NotImplementedException();
+						BCVRef startRef = dlg.VerseRangeStartRef;
+						BCVRef endRef = dlg.VerseRangeEndRef;
+						InRange = (bcvStart, bcvEnd) =>
+						{
+							return bcvStart >= startRef && bcvEnd <= endRef;
+						};
 					}
 
-					List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef)).ToList();
+					List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
 					if (dlg.m_rdoDisplayWarning.Checked)
 					{
 						int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
@@ -1172,19 +741,20 @@ namespace SILUBS.PhraseTranslationHelper
 						sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
 						sw.WriteLine("<h1 lang=\"en\">" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</h1>");
 						int prevCategory = -1;
-						string prevSectionRef = null;
+						int prevSectionStartRef = -1, prevSectionEndRef = -1;
 						string prevQuestionRef = null;
 						string pendingSectionHead = null;
 
 						foreach (TranslatablePhrase phrase in allPhrasesInRange)
 						{
-							if (phrase.Category == 0 && prevSectionRef != phrase.Reference)
+							if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
 							{
 								if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
 									pendingSectionHead = phrase.Reference;
 								prevCategory = -1;
 							}
-							prevSectionRef = phrase.Reference;
+							prevSectionStartRef = phrase.StartRef;
+							prevSectionEndRef = phrase.EndRef;
 
 							if (!phrase.HasUserTranslation && !dlg.m_rdoUseOriginal.Checked)
 								continue; // skip this question
@@ -1213,20 +783,20 @@ namespace SILUBS.PhraseTranslationHelper
 							}
 
 							sw.WriteLine("<p class=\"question\">" +
-								(phrase.HasUserTranslation ? phrase.Translation : phrase.OriginalPhrase).Normalize(NormalizationForm.FormC) + "</p>");
+								(phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseInUse).Normalize(NormalizationForm.FormC) + "</p>");
 
 							sw.WriteLine("<div class=\"extras\" lang=\"en\">");
 							if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation)
-								sw.WriteLine("<p class=\"questionbt\">" + phrase.OriginalPhrase.Normalize(NormalizationForm.FormC) + "</p>");
-							AnswersAndComments answersAndComments = (AnswersAndComments)phrase.AdditionalInfo[0];
-							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.HasAnswer)
+								sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseInUse.Normalize(NormalizationForm.FormC) + "</p>");
+							Question answersAndComments = (Question)phrase.AdditionalInfo[0];
+							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
 							{
 								foreach (string answer in answersAndComments.Answers)
 									sw.WriteLine("<p class=\"answer\">" + answer.Normalize(NormalizationForm.FormC) + "</p>");
 							}
-							if (dlg.m_chkIncludeComments.Checked && answersAndComments.HasComment)
+							if (dlg.m_chkIncludeComments.Checked && answersAndComments.Notes != null)
 							{
-								foreach (string comment in answersAndComments.Comments)
+								foreach (string comment in answersAndComments.Notes)
 									sw.WriteLine("<p class=\"comment\">" + comment.Normalize(NormalizationForm.FormC) + "</p>");
 							}
 							sw.WriteLine("</div>");
@@ -1239,6 +809,18 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Writes the CSS style info.
+		/// </summary>
+		/// <param name="sw">The sw.</param>
+		/// <param name="questionGroupHeadingsClr">The question group headings CLR.</param>
+		/// <param name="englishQuestionClr">The english question CLR.</param>
+		/// <param name="englishAnswerClr">The english answer CLR.</param>
+		/// <param name="commentClr">The comment CLR.</param>
+		/// <param name="cBlankLines">The c blank lines.</param>
+		/// <param name="fNumberQuestions">if set to <c>true</c> [f number questions].</param>
+		/// ------------------------------------------------------------------------------------
 		private void WriteCssStyleInfo(StreamWriter sw, Color questionGroupHeadingsClr,
 			Color englishQuestionClr, Color englishAnswerClr, Color commentClr, int cBlankLines, bool fNumberQuestions)
 		{
@@ -1269,18 +851,711 @@ namespace SILUBS.PhraseTranslationHelper
 			sw.WriteLine(".extras {margin-bottom:" + cBlankLines + "em;}");
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckedChanged event of the mnuViewToolbar control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		private void mnuViewToolbar_CheckedChanged(object sender, EventArgs e)
 		{
 			toolStrip1.Visible = mnuViewToolbar.Checked;
 			if (toolStrip1.Visible)
 				m_mainMenu.SendToBack(); // this makes the toolbar appear below the menu
 		}
-		#endregion
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckedChanged event of the mnuAutoSave control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		private void mnuAutoSave_CheckedChanged(object sender, EventArgs e)
 		{
 			if (mnuAutoSave.Checked && SaveNeeded)
-				Save(sender, e);
+				Save();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the phraseSubstitutionsToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void phraseSubstitutionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (PhraseSubstitutionsDlg dlg = new PhraseSubstitutionsDlg(m_phraseSubstitutions,
+				m_helper.Phrases.Select(p => p.PhraseInUse), dataGridUns.CurrentRow.Index))
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					m_phraseSubstitutions.Clear();
+					m_phraseSubstitutions.AddRange(dlg.Substitutions);
+					// Save items to file
+					EnsureDataFolderExists();
+					XmlSerializationHelper.SerializeToFile(m_phraseSubstitutionsFile, m_phraseSubstitutions);
+
+					Reload();
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the reloadToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Reload();
+		}
+
+		private void Reload()
+		{
+			using (new WaitCursor(this))
+			{
+				Save();
+				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
+				dataGridUns.RowCount = 0;
+				LoadTranslations();
+				ApplyFilter();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckedChanged event of the mnuViewBiblicalTermsPane control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuViewBiblicalTermsPane_CheckedChanged(object sender, EventArgs e)
+		{
+			if (mnuViewBiblicalTermsPane.Checked && dataGridUns.CurrentRow != null)
+				LoadKeyTermsPane(dataGridUns.CurrentRow.Index);
+			else
+			{
+				m_biblicalTermsPane.Hide();
+				ClearBiblicalTermsPane();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the RowEnter event of the dataGridUns control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void dataGridUns_RowEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			m_lastRowEntered = e.RowIndex;
+			if (mnuViewBiblicalTermsPane.Checked)
+				LoadKeyTermsPane(e.RowIndex);
+			if (m_pnlAnswersAndComments.Visible)
+				LoadAnswerAndComment(e.RowIndex);
+			if (btnSendScrReferences.Checked)
+				SendScrReference(e.RowIndex);
+
+			DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
+			row.ReadOnly = m_helper[e.RowIndex].IsExcluded;
+
+			m_normalRowHeight = row.Height;
+			dataGridUns.AutoResizeRow(e.RowIndex);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the RowLeave event of the dataGridUns control. Resets the row height to the
+		/// standard height.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void dataGridUns_RowLeave(object sender, DataGridViewCellEventArgs e)
+		{
+			dataGridUns.Rows[e.RowIndex].Height = m_normalRowHeight;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Resize event of the dataGridUns control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void dataGridUns_Resize(object sender, EventArgs e)
+		{
+			if (m_lastRowEntered < 0 || m_lastRowEntered >= dataGridUns.RowCount)
+				return;
+			int heightOfDisplayedPortionOfRow = dataGridUns.GetRowDisplayRectangle(m_lastRowEntered, true).Height;
+			if (heightOfDisplayedPortionOfRow != dataGridUns.Rows[m_lastRowEntered].Height)
+			{
+				// Changing panel sizes have now hidden the current row. Need to scroll it into view.
+				int iNewFirstRow = dataGridUns.FirstDisplayedScrollingRowIndex + 1; // bump it up at least 1 whole row
+				if (heightOfDisplayedPortionOfRow == 0)
+					iNewFirstRow++; // Completely hidden, so bump it up at least one more row.
+				int iRow = m_lastRowEntered;
+				while (iRow > 0 && !dataGridUns.Rows[--iRow].Displayed && iNewFirstRow < dataGridUns.RowCount)
+					iNewFirstRow++;
+				if (iNewFirstRow < dataGridUns.RowCount)
+					dataGridUns.FirstDisplayedScrollingRowIndex = iNewFirstRow;
+			}
+		}
+
+		private void mnuIncludeOrExcludeQuestion_Click(object sender, EventArgs e)
+		{
+			if (dataGridUns.CurrentRow == null)
+				return;
+
+			TranslatablePhrase phrase = CurrentPhrase;
+			string reference = phrase.Reference;
+			string question = phrase.PhraseInUse;
+			int iCol = dataGridUns.CurrentCell.ColumnIndex;
+			phrase.IsExcluded = (sender == mnuExcludeQuestion);
+			phrase = null;
+			Reload();
+			int iRow = m_helper.FindPhrase(reference, question);
+			if (iRow < 0)
+				iRow = 0;
+			dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+		}
+
+		private void mnuEditQuestion_Click(object sender, EventArgs e)
+		{
+			TranslatablePhrase phrase = CurrentPhrase;
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase))
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					phrase.ModifiedPhrase = dlg.ModifiedPhrase;
+					Reload();
+				}
+			}
+		}
+
+		private void dataGridUns_RowContextMenuStripNeeded(object sender, DataGridViewRowContextMenuStripNeededEventArgs e)
+		{
+			e.ContextMenuStrip = (m_helper[e.RowIndex].Category == -1) ? null : dataGridContextMenu;
+		}
+
+		private void dataGridContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			bool fExcluded = CurrentPhrase.IsExcluded;
+			mnuExcludeQuestion.Visible = !fExcluded;
+			mnuIncludeQuestion.Visible = fExcluded;
+			mnuEditQuestion.Enabled = !fExcluded;
+		}
+
+		private void dataGridUns_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+		{
+			if (m_helper[e.RowIndex].IsExcluded)
+				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightCoral;
+		}
+
+		private void dataGridUns_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+			{
+				dataGridUns.CurrentCell = dataGridUns.Rows[e.RowIndex].Cells[e.ColumnIndex];
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuReferenceRange control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
+		private void mnuReferenceRange_Click(object sender, EventArgs e)
+		{
+			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(
+				new ScrReference(m_startRef), new ScrReference(m_endRef), m_availableBookIds))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_startRef = dlg.FromRef;
+					m_endRef = dlg.ToRef;
+					ApplyFilter();
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the SelectedIndexChanged event for one of the biblical terms list boxes.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void KeyTermRenderingSelected(TermRenderingCtrl sender)
+		{
+			if (dataGridUns.CurrentRow == null)
+				return;
+			if (sender.SelectedRendering == null)
+				return;
+			int rowIndex = dataGridUns.CurrentRow.Index;
+			m_helper[rowIndex].ReplaceKeyTermRendering(FindTermRenderingInUse(sender, rowIndex),
+				sender.SelectedRendering);
+			dataGridUns.InvalidateRow(rowIndex);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Need to invalidate any columns that might be showing key term renderings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void KeyTermBestRenderingsChanged()
+		{
+			dataGridUns.InvalidateColumn(m_colTranslation.Index);
+			if (dataGridUns.ColumnCount == (m_colDebugInfo.Index + 1))
+				dataGridUns.InvalidateColumn(m_colDebugInfo.Index);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckStateChanged event of the btnSendScrReferences control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
+		{
+			if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
+				SendScrReference(dataGridUns.CurrentRow.Index);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the VisibleChanged event of the m_pnlAnswersAndComments control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void m_pnlAnswersAndComments_VisibleChanged(object sender, EventArgs e)
+		{
+			if (m_pnlAnswersAndComments.Visible && dataGridUns.CurrentRow != null)
+				LoadAnswerAndComment(dataGridUns.CurrentRow.Index);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the biblicalTermsRenderingSelectionRulesToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void biblicalTermsRenderingSelectionRulesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (RenderingSelectionRulesDlg dlg = new RenderingSelectionRulesDlg(
+				m_helper.TermRenderingSelectionRules, m_selectKeyboard))
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					m_helper.TermRenderingSelectionRules = new List<RenderingSelectionRule>(dlg.Rules);
+					KeyTermBestRenderingsChanged();
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the EditingControlShowing event of the m_dataGridView control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewEditingControlShowingEventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
+		private void dataGridUns_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+		{
+			TextControl = e.Control as DataGridViewTextBoxEditingControl;
+			if (TextControl == null)
+				return;
+			TextControl.KeyDown += txtControl_KeyDown;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CellEndEdit event of the dataGridUns control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void dataGridUns_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+		{
+			if (TextControl != null)
+				TextControl.KeyDown -= txtControl_KeyDown;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the KeyDown event of the dataGridUns control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void txtControl_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (dataGridUns.IsCurrentCellInEditMode &&
+				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index &&
+				(e.Modifiers & Keys.Alt) > 0 && e.Shift &&
+				(e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
+			{
+				DataGridViewTextBoxEditingControl txt = (DataGridViewTextBoxEditingControl)dataGridUns.EditingControl;
+				e.SuppressKeyPress = txt.MoveSelectedWord(e.KeyCode == Keys.Right);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the aboutTransceleratorToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuHelpAbout_Click(object sender, EventArgs e)
+		{
+			// Get copyright information from assembly info. By doing this we don't have
+			// to update the splash screen each year.
+			string copyRight;
+			var assembly = Assembly.GetExecutingAssembly();
+			object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+			if (attributes.Length > 0)
+				copyRight = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+			else
+			{
+				// if we can't find it in the assembly info, use generic one (which might be out of date)
+				copyRight = "Copyright (c) 2011, SIL International";
+			}
+			copyRight = string.Format(Properties.Resources.kstidCopyrightFmt, copyRight.Replace("(C)", "©"));
+			MessageBox.Show("Transcelerator is in alpha. Currently under development by Tom Bogle." +
+				Environment.NewLine + copyRight + Environment.NewLine + Environment.NewLine +
+				"Distributable under the terms of either the Common Public License or the GNU Lesser General Public License" + Environment.NewLine +
+				Environment.NewLine + "Some icons were downloaded from http://www.iconfinder.com and are covered by their respective licenses:" +
+				Environment.NewLine + "The Add Rule icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons License: http://creativecommons.org/licenses/by/3.0/" +
+				Environment.NewLine + "The Copy Rule icon was developed by Momenticons and is covered by this Creative Commons Licence: http://creativecommons.org/licenses/by/3.0/" +
+				Environment.NewLine + "The Delete Rule icon was developed by Rodolphe and is covered by the GNU General Public License: http://www.gnu.org/copyleft/gpl.html",
+				"Transcelerator");
+		}
+		#endregion
+
+		#region Private helper methods
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the Scripture reference of the row corresponding to the given index.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private BCVRef GetScrRefOfRow(int iRow)
+		{
+			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
+			if (string.IsNullOrEmpty(sRef))
+				return null;
+			int ichDash = sRef.IndexOf('-');
+			if (ichDash > 0)
+				sRef = sRef.Substring(0, ichDash);
+			return new BCVRef(sRef);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Ensures the data folder exists.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal static void EnsureDataFolderExists()
+		{
+			if (!Directory.Exists(s_unsDataFolder))
+				Directory.CreateDirectory(s_unsDataFolder);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the translations.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void LoadTranslations()
+		{
+			Exception e;
+			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
+			if (e != null)
+				MessageBox.Show(e.ToString(), Text);
+
+			List<PhraseCustomization> customizations = null;
+			if (File.Exists(m_phraseCustomizationsFile))
+			{
+				customizations = XmlSerializationHelper.DeserializeFromFile<List<PhraseCustomization>>(m_phraseCustomizationsFile, out e);
+				if (e != null)
+					MessageBox.Show(e.ToString());
+			}
+
+			QuestionProvider qp = new QuestionProvider(m_questionsFilename, customizations);
+			m_helper = new PhraseTranslationHelper(qp, m_keyTerms, rules, m_phraseSubstitutions);
+			m_helper.KeyTermRenderingRulesFile = Path.Combine(s_unsDataFolder, string.Format("Term rendering selection rules - {0}.xml", m_projectName));
+			m_sectionHeadText = qp.SectionHeads;
+			m_availableBookIds = qp.AvailableBookIds;
+			if (File.Exists(m_translationsFile))
+			{
+				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_translationsFile, out e);
+				if (e != null)
+					MessageBox.Show(e.ToString());
+				else
+				{
+					foreach (XmlTranslation unsTranslation in translations)
+					{
+						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.OriginalPhrase);
+						if (phrase != null && !phrase.IsExcluded)
+							phrase.Translation = unsTranslation.Translation;
+					}
+				}
+			}
+			m_helper.ProcessAllTranslations();
+			m_helper.TranslationsChanged += m_helper_TranslationsChanged;
+
+			dataGridUns.RowCount = m_helper.Phrases.Count();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the key terms pane.
+		/// </summary>
+		/// <param name="rowIndex">Index of the row to load for.</param>
+		/// ------------------------------------------------------------------------------------
+		private void LoadKeyTermsPane(int rowIndex)
+		{
+			m_biblicalTermsPane.SuspendLayout();
+			ClearBiblicalTermsPane();
+			int col = 0;
+			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
+			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>())
+			{
+				IEnumerable<string> renderings = keyTerm.Renderings;
+				if (renderings.Any())
+				{
+					int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
+					previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
+					TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
+						ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard);
+					ktRenderCtrl.VernacularFont = m_vernFont;
+
+					SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
+					if (sd == null)
+					{
+						// Didn't find any renderings for this term in the translation, so don't select anything
+						previousKeyTermEndOfRenderingOffsets[keyTerm] = m_helper[rowIndex].Translation.Length;
+					}
+					else
+					{
+						previousKeyTermEndOfRenderingOffsets[keyTerm] = sd.EndOffset;
+						ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Offset, sd.Length);
+					}
+					ktRenderCtrl.Dock = DockStyle.Fill;
+					m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
+					ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
+					ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
+					col++;
+				}
+			}
+			m_biblicalTermsPane.ColumnCount = col;
+			ResizeKeyTermPaneColumns();
+			m_biblicalTermsPane.Visible = m_biblicalTermsPane.ColumnCount > 0;
+			m_biblicalTermsPane.ResumeLayout();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Resizes the key term pane columns.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void ResizeKeyTermPaneColumns()
+		{
+			int columnsToFit = m_biblicalTermsPane.ColumnCount;
+			if (columnsToFit == 0)
+				return;
+			int colWidth = m_biblicalTermsPane.ClientSize.Width / columnsToFit;
+			m_biblicalTermsPane.ColumnStyles.Clear();
+			for (int iCol = 0; iCol < columnsToFit; iCol++)
+			{
+				m_biblicalTermsPane.ColumnStyles.Add(new ColumnStyle(
+					SizeType.Percent, colWidth));
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Updates the counts and filter status.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void UpdateCountsAndFilterStatus()
+		{
+			if (m_helper.FilteredPhraseCount == m_helper.UnfilteredPhraseCount)
+			{
+				lblFilterIndicator.Text = (string)lblFilterIndicator.Tag;
+				lblFilterIndicator.Image = null;
+			}
+			else
+			{
+				lblFilterIndicator.Text = Properties.Resources.kstidFilteredStatus;
+				lblFilterIndicator.Image = Properties.Resources.Filtered;
+			}
+			lblRemainingWork.Text = string.Format((string)lblRemainingWork.Tag,
+				m_helper.Phrases.Count(p => !p.HasUserTranslation), m_helper.FilteredPhraseCount);
+			lblRemainingWork.Visible = true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Clears the biblical terms pane.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void ClearBiblicalTermsPane()
+		{
+			foreach (TermRenderingCtrl ctrl in m_biblicalTermsPane.Controls.OfType<TermRenderingCtrl>())
+				ctrl.SelectedRenderingChanged -= KeyTermRenderingSelected;
+			m_biblicalTermsPane.Controls.Clear();
+			m_biblicalTermsPane.ColumnCount = 0;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the term rendering (from the known ones in the renderingInfo) in use in
+		/// the current translation.
+		/// </summary>
+		/// <param name="renderingInfo">The information about a single occurrence of a key
+		/// biblical term and its rendering in a string in the target language.</param>
+		/// <param name="rowIndex">Index of the row.</param>
+		/// <returns>An object that indicates where in the translation string the match was
+		/// found (offset and length)</returns>
+		/// ------------------------------------------------------------------------------------
+		private SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo, int rowIndex)
+		{
+			return m_helper[rowIndex].FindTermRenderingInUse(renderingInfo);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sends the start reference for the given row as a Santa-Fe "focus" message.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void SendScrReference(int iRow)
+		{
+			m_fIgnoreNextRecvdSantaFeSyncMessage = true;
+			BCVRef currRef = GetScrRefOfRow(iRow);
+			if (currRef != null && currRef.Valid)
+				SantaFeFocusMessageHandler.SendFocusMessage(currRef.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Processes the received sync message.
+		/// </summary>
+		/// <param name="reference">The reference in English versification scheme.</param>
+		/// ------------------------------------------------------------------------------------
+		private void ProcessReceivedMessage(ScrReference reference)
+		{
+			// While we process the given reference we might get additional synch events, the
+			// most recent of which we store in m_queuedReference. If we're done
+			// and we have a new reference in m_queuedReference we process that one, etc.
+			for (; reference != null; reference = m_queuedReference)
+			{
+				m_queuedReference = null;
+				m_fProcessingSyncMessage = true;
+
+				try
+				{
+					if (reference.Valid && (dataGridUns.CurrentRow == null ||
+						!QuestionCoversRef(dataGridUns.CurrentRow.Index, reference)))
+					{
+						GoToReference(reference);
+					}
+				}
+				finally
+				{
+					m_fProcessingSyncMessage = false;
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the question in the given row covers the given Scripture
+		/// reference.
+		/// </summary>
+		/// <param name="iRow">The index of the row</param>
+		/// <param name="reference">The reference.</param>
+		/// ------------------------------------------------------------------------------------
+		internal bool QuestionCoversRef(int iRow, ScrReference reference)
+		{
+			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
+			BCVRef bcvStartRef, bcvEndRef;
+			QuestionSfmFileAccessor.ParseRefRange(sRef, out bcvStartRef, out bcvEndRef);
+			return reference >= bcvStartRef && reference <= bcvEndRef;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Goes to the first row in the data grid corresponding to the given reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void GoToReference(ScrReference reference)
+		{
+			for (int iRow = 0; iRow < dataGridUns.Rows.Count; iRow++)
+			{
+				if (QuestionCoversRef(iRow, reference))
+				{
+					dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[dataGridUns.CurrentCell.ColumnIndex];
+					return;
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the answer and comment labels for the given row.
+		/// </summary>
+		/// <param name="rowIndex">Index of the row.</param>
+		/// ------------------------------------------------------------------------------------
+		private void LoadAnswerAndComment(int rowIndex)
+		{
+			object[] addlInfo = m_helper[rowIndex].AdditionalInfo;
+			if (addlInfo == null || addlInfo.Length == 0)
+			{
+				m_lblAnswerLabel.Visible = m_lblAnswers.Visible = false;
+				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
+				return;
+			}
+			Question answersAndComments = (Question)addlInfo[0];
+			PopulateAnswerOrCommentLabel(answersAndComments.Answers, m_lblAnswerLabel,
+				m_lblAnswers, Properties.Resources.kstidAnswersLabel);
+			PopulateAnswerOrCommentLabel(answersAndComments.Notes, m_lblCommentLabel,
+				m_lblComments, Properties.Resources.kstidCommentsLabel);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Populates the answer or comment label.
+		/// </summary>
+		/// <param name="details">The list of answers or comments.</param>
+		/// <param name="label">The label that has the "Answer:" or "Comment:" label.</param>
+		/// <param name="contents">The label that is to be populated with the actual answer(s)
+		/// or comment(s).</param>
+		/// <param name="sLabelMultiple">The text to use for <see cref="label"/> if there are
+		/// multiple answers/comments.</param>
+		/// ------------------------------------------------------------------------------------
+		private static void PopulateAnswerOrCommentLabel(IEnumerable<string> details,
+			Label label, Label contents, string sLabelMultiple)
+		{
+			label.Visible = contents.Visible = details != null;
+			if (label.Visible)
+			{
+				label.Show();
+				label.Text = (details.Count() == 1) ? (string)label.Tag : sLabelMultiple;
+				contents.Text = details.ToString("\r\n\t");
+			}
+		}
+		#endregion
+	}
+	#endregion
+
+	#region class SubstringDescriptor
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Simple class to allow methods to pass an offset and a length in order to descibe a
+	/// substring.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class SubstringDescriptor
+	{
+		public int Offset { get; set; }
+		public int Length { get; set; }
+
+		public int EndOffset
+		{
+			get { return Offset + Length; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SubstringDescriptor"/> class.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public SubstringDescriptor(int offset, int length)
+		{
+			Offset = offset;
+			Length = length;
 		}
 	}
 	#endregion

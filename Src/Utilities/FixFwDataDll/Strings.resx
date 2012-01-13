@@ -162,4 +162,8 @@
   <data name="ksRemovingEditableAttribute" xml:space="preserve">
 	<value>Removing 'editable' attribute from a string in a {0}</value>
   </data>
+  <data name="ksRemovingGenericDate" xml:space="preserve">
+	<value>Removing invalid Generic Date {0} from {1} of {2} ({3}).</value>
+	<comment>0 will be a string representation of a number, 1 a field name, 2 a class name, 3 a guid.</comment>
+  </data>
 </root>

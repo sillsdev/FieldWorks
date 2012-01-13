@@ -155,6 +155,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				try
 				{
+					//You may have forgotten to set the WritingSystemFactory in a recently added custom control?
 					throw new ArgumentException("This is a hard-to-reproduce scenario (TE-6891) where writing system (" + hvoWs + ") and factory are inconsistent.");
 				}
 				catch (ArgumentException e)

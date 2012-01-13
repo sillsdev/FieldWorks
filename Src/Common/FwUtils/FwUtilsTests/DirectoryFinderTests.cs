@@ -46,22 +46,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Asserts that the two directories are equal. This performs a comparison ignoring
-		/// case (on Windows), or considering case (on Linux).
-		/// </summary>
-		/// <param name="expected">The expected directory.</param>
-		/// <param name="actual">The actual directory.</param>
-		/// <remarks>TODO: once we start using NUnit 2.5 we can replace this method with
-		/// calls to DirectoryAssert.AreEqual. However, currently (as of 8/14/09) NUnit 2.5
-		/// still has problems when running on Mono so can't be used on Linux.</remarks>
-		/// ------------------------------------------------------------------------------------
-		private void DirectoryAssertEquals(string expected, string actual)
-		{
-			Assert.IsTrue(FileUtils.PathsAreEqual(expected, actual));
-		}
-
 		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the FWCodeDirectory property. This should return the DistFiles directory.
@@ -71,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void FWCodeDirectory()
 		{
 			string currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
-			DirectoryAssertEquals(currentDir, DirectoryFinder.FWCodeDirectory);
+			Assert.That(DirectoryFinder.FWCodeDirectory, Is.SamePath(currentDir));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -83,7 +67,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void FWDataDirectory()
 		{
 			string currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
-			DirectoryAssertEquals(currentDir, DirectoryFinder.FWDataDirectory);
+			Assert.That(DirectoryFinder.FWDataDirectory, Is.SamePath(currentDir));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -95,7 +79,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void FwSourceDirectory()
 		{
 			string expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"));
-			DirectoryAssertEquals(expectedDir, DirectoryFinder.FwSourceDirectory);
+			Assert.That(DirectoryFinder.FwSourceDirectory, Is.SamePath(expectedDir));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -107,9 +91,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWCodeSubDirectory_NoLeadingSlash()
 		{
-			DirectoryAssertEquals(
-				Path.Combine(DirectoryFinder.FWCodeDirectory, "Translation Editor/Configuration"),
-				DirectoryFinder.GetFWCodeSubDirectory("Translation Editor/Configuration"));
+			Assert.That(DirectoryFinder.GetFWCodeSubDirectory("Translation Editor/Configuration"),
+				Is.SamePath(Path.Combine(DirectoryFinder.FWCodeDirectory, "Translation Editor/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -121,9 +104,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWCodeSubDirectory_LeadingSlash()
 		{
-			DirectoryAssertEquals(
-				Path.Combine(DirectoryFinder.FWCodeDirectory, "Translation Editor/Configuration"),
-				DirectoryFinder.GetFWCodeSubDirectory("/Translation Editor/Configuration"));
+			Assert.That(DirectoryFinder.GetFWCodeSubDirectory("/Translation Editor/Configuration"),
+				Is.SamePath(Path.Combine(DirectoryFinder.FWCodeDirectory, "Translation Editor/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -134,8 +116,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWCodeSubDirectory_InvalidDir()
 		{
-			DirectoryAssertEquals("NotExisting",
-				DirectoryFinder.GetFWCodeSubDirectory("NotExisting"));
+			Assert.That(DirectoryFinder.GetFWCodeSubDirectory("NotExisting"),
+				Is.SamePath("NotExisting"));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -147,9 +129,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWDataSubDirectory_NoLeadingSlash()
 		{
-			DirectoryAssertEquals(
-				Path.Combine(DirectoryFinder.FWDataDirectory, "Translation Editor/Configuration"),
-				DirectoryFinder.GetFWDataSubDirectory("Translation Editor/Configuration"));
+			Assert.That(DirectoryFinder.GetFWDataSubDirectory("Translation Editor/Configuration"),
+				Is.SamePath(Path.Combine(DirectoryFinder.FWDataDirectory, "Translation Editor/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -161,9 +142,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWDataSubDirectory_LeadingSlash()
 		{
-			DirectoryAssertEquals(
-				Path.Combine(DirectoryFinder.FWDataDirectory, "Translation Editor/Configuration"),
-				DirectoryFinder.GetFWDataSubDirectory("/Translation Editor/Configuration"));
+			Assert.That(DirectoryFinder.GetFWDataSubDirectory("/Translation Editor/Configuration"),
+				Is.SamePath(Path.Combine(DirectoryFinder.FWDataDirectory, "Translation Editor/Configuration")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -174,8 +154,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetFWDataSubDirectory_InvalidDir()
 		{
-			DirectoryAssertEquals("NotExisting",
-				DirectoryFinder.GetFWDataSubDirectory("NotExisting"));
+			Assert.That(DirectoryFinder.GetFWDataSubDirectory("NotExisting"),
+				Is.SamePath("NotExisting"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -286,6 +266,99 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var fileUnderProjectRootDir = String.Format("{1}{0}AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar, DirectoryFinder.FWDataDirectory);
 			fullLFPath = DirectoryFinderRelativePaths.GetFullPathFromRelativeLFPath(fileUnderProjectRootDir, linkedFilesRootDir);
 			Assert.AreEqual(fullLFPath, fileUnderProjectRootDir);
+		}
+
+		/// <summary>
+		/// Base class for testing CommonApplicationData. This base class deals with setting
+		/// and resetting the environment variable.
+		/// </summary>
+		public class GetCommonAppDataBaseTest: BaseTest
+		{
+			private string PreviousEnvironment;
+
+			/// <summary>
+			/// Setup the tests.
+			/// </summary>
+			public override void FixtureSetup()
+			{
+				base.FixtureSetup();
+
+				DirectoryFinder.ResetStaticVars();
+				PreviousEnvironment = Environment.GetEnvironmentVariable("FW_CommonAppData");
+				var properties = (PropertyAttribute[])GetType().GetCustomAttributes(typeof(PropertyAttribute), true);
+				Assert.That(properties.Length, Is.GreaterThan(0));
+				Environment.SetEnvironmentVariable("FW_CommonAppData", (string)properties[0].Properties["Value"]);
+			}
+
+			/// <summary>
+			/// Reset environment variable to previous value
+			/// </summary>
+			public override void FixtureTeardown()
+			{
+				Environment.SetEnvironmentVariable("FW_CommonAppData", PreviousEnvironment);
+
+				base.FixtureTeardown();
+			}
+		}
+
+		/// <summary>
+		/// Tests the GetFolderPath method for CommonApplicationData when no environment variable
+		/// is set.
+		/// </summary>
+		[TestFixture]
+		[Property("Value", null)]
+		public class GetCommonAppDataNormalTests: GetCommonAppDataBaseTest
+		{
+			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
+			/// variable is set</summary>
+			[Test]
+			[Platform(Include="Linux")]
+			public void Linux()
+			{
+				Assert.AreEqual("/var/lib/fieldworks",
+					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+			}
+
+			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
+			/// variable is set</summary>
+			[Test]
+			[Platform(Exclude="Linux")]
+			public void Windows()
+			{
+				Assert.AreEqual(
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+			}
+		}
+
+		/// <summary>
+		/// Tests the GetFolderPath method for CommonApplicationData when the environment variable
+		/// is set.
+		/// </summary>
+		[TestFixture]
+		[Property("Value", "/bla")]
+		public class GetCommonAppDataOverrideTests: GetCommonAppDataBaseTest
+		{
+			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
+			/// variable is set</summary>
+			[Test]
+			[Platform(Include="Linux")]
+			public void Linux()
+			{
+				Assert.AreEqual("/bla",
+					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+			}
+
+			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
+			/// variable is set</summary>
+			[Test]
+			[Platform(Exclude="Linux")]
+			public void Windows()
+			{
+				Assert.AreEqual(
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+			}
 		}
 	}
 }

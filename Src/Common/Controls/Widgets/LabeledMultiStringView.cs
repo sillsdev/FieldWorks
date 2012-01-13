@@ -31,6 +31,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoObj;
 		int m_flid;
 		int m_wsMagic;
+		// This is additional writing systems that might possibly be relevant in addition to the one(s) indicated
+		// by m_wsMagic. Currently the only example is that on a pronunciation field, vernacular as well as
+		// the default pronunciation WSS might be relevant.
 		int m_wsOptional;
 		List<IWritingSystem> m_rgws;
 		List<IWritingSystem> m_rgwsToDisplay;
@@ -125,7 +128,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				RootSiteEditingHelper.PasteFixTssEvent -= new FwPasteFixTssEventHandler(OnPasteFixTssEvent);
 			if (m_rootb != null)
 			{
-				m_rgws = WritingSystemsToDisplay;
+				m_rgws = WritingSystemOptions;
 				m_vc.Reuse(m_flid, m_rgws, m_editable);
 				// Not yet, may depend on configuration node.
 				//m_rootb.SetRootObject(hvo, m_vc, 1, m_styleSheet);
@@ -236,7 +239,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		public override bool RefreshDisplay()
 		{
 			DisposeSoundControls(); // before we do the base refresh, which will layout, and possibly miss a deleted WS.
-			m_rgws = WritingSystemsToDisplay;
+			m_rgws = WritingSystemOptions;
 			bool baseResult = base.RefreshDisplay();
 			SetupSoundControls();
 			return baseResult;
@@ -483,7 +486,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rgws = WritingSystemsToDisplay;
+			m_rgws = WritingSystemOptions;
 
 			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
 			m_vc = new LabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, m_fdoCache.TsStrFactory, this);
@@ -502,12 +505,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
-		/// This is the list of writing systems that can be enabled for this control.
+		/// This is the list of writing systems that can be enabled for this control. It should be either the Vernacular list
+		/// or Analysis list shown in the WritingSystemPropertiesDialog which are checked and unchecked.
 		/// </summary>
 		public List<IWritingSystem> WritingSystemOptions
 		{
 			get
-		{
+			{
 				CheckDisposed();
 				return GetWritingSystemOptions(true);
 			}
@@ -536,7 +540,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
-		/// if non-null, we'll use this list to determine which writing systems to display.
+		/// if non-null, we'll use this list to determine which writing systems to display. These
+		/// are the writing systems the user has checked in the WritingSystemPropertiesDialog.
 		/// if null, we'll display every writing system option.
 		/// </summary>
 		public List<IWritingSystem> WritingSystemsToDisplay
@@ -545,8 +550,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				m_rgwsToDisplay = value;
-				if (m_vc != null)
-					m_vc.m_rgws = m_rgwsToDisplay; // called must still arrange for Reconstruct.
 			}
 		}
 

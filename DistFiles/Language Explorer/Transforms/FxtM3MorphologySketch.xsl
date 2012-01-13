@@ -2717,11 +2717,11 @@ Main template
 		<xsl:value-of select="key('PhonemesID', @dst)/Name"/>
 	</xsl:template>
 	<xsl:template name="OutputMetathesisRule">
-		<xsl:variable name="iLeftEnvironmentIndex" select="substring-before(@StrucChange, ' ') + 1"/>
-		<xsl:variable name="iRightTargetIndex" select="substring-before(substring-after(@StrucChange, ' '),' ') + 1"/>
-		<xsl:variable name="sMorphBoundary" select="substring-before(substring-after(substring-after(@StrucChange, ' '),' '), ' ')"/>
-		<xsl:variable name="iLeftTargetIndex" select="substring-before(substring-after(substring-after(substring-after(@StrucChange, ' '),' '), ' '), ' ') + 1"/>
-		<xsl:variable name="iRightEnvironmentIndex" select="substring-after(substring-after(substring-after(substring-after(@StrucChange, ' '),' '), ' '), ' ') + 1"/>
+		<xsl:variable name="iLeftEnvironmentIndex" select="substring-before(StrucChange, ' ') + 1"/>
+		<xsl:variable name="iRightTargetIndex" select="substring-before(substring-after(StrucChange, ' '),' ') + 1"/>
+		<xsl:variable name="sMorphBoundary" select="substring-before(substring-after(substring-after(StrucChange, ' '),' '), ' ')"/>
+		<xsl:variable name="iLeftTargetIndex" select="substring-before(substring-after(substring-after(substring-after(StrucChange, ' '),' '), ' '), ' ') + 1"/>
+		<xsl:variable name="iRightEnvironmentIndex" select="substring-after(substring-after(substring-after(substring-after(StrucChange, ' '),' '), ' '), ' ') + 1"/>
 		<table border="1" type="tLeftOffset">
 			<tr>
 				<td>&#xa0;</td>
@@ -2825,17 +2825,31 @@ Main template
 	</xsl:template>
 	<xsl:template name="OutputMetathesisRuleRightEnvironment">
 		<xsl:param name="iRightEnvironmentIndex"/>
-		<xsl:variable name="contents" select="StrucDesc/child::*[position() &gt;= $iRightEnvironmentIndex]"/>
-		<xsl:call-template name="OutputMetathesisRuleEnvironment">
-			<xsl:with-param name="contents" select="$contents"/>
-		</xsl:call-template>
+		<xsl:choose>
+			<xsl:when test="$iRightEnvironmentIndex=0">
+				<xsl:text>&#xa0;</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="contents" select="StrucDesc/child::*[position() &gt;= $iRightEnvironmentIndex]"/>
+				<xsl:call-template name="OutputMetathesisRuleEnvironment">
+					<xsl:with-param name="contents" select="$contents"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template name="OutputMetathesisRuleLeftEnvironment">
 		<xsl:param name="iLeftEnvironmentIndex"/>
-		<xsl:variable name="contents" select="StrucDesc/child::*[position() &lt;= $iLeftEnvironmentIndex]"/>
-		<xsl:call-template name="OutputMetathesisRuleEnvironment">
-			<xsl:with-param name="contents" select="$contents"/>
-		</xsl:call-template>
+		<xsl:choose>
+			<xsl:when test="$iLeftEnvironmentIndex=0">
+				<xsl:text>&#xa0;</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="contents" select="StrucDesc/child::*[position() &lt;= $iLeftEnvironmentIndex]"/>
+				<xsl:call-template name="OutputMetathesisRuleEnvironment">
+					<xsl:with-param name="contents" select="$contents"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template name="OutputMetathesisRuleEnvironment">
 		<xsl:param name="contents"/>

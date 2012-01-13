@@ -67,32 +67,32 @@ namespace SIL.FieldWorks.XWorks
 
 			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
 			window.TreeBarControl.IsFlatList = true;
-			window.Cursor = Cursors.WaitCursor;
-			ListView list = (ListView)window.ListStyleRecordList;
-			list.BeginUpdate();
-			window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
-			m_hvoToListViewItemTable.Clear();
-
-			AddListViewItems(recList.SortedObjects, list);
-			try
+			using (new WaitCursor(window))
 			{
-				list.Font = new System.Drawing.Font(recList.FontName, recList.TypeSize);
+				ListView list = (ListView)window.ListStyleRecordList;
+				list.BeginUpdate();
+				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single node is removed!
+				m_hvoToListViewItemTable.Clear();
+
+				AddListViewItems(recList.SortedObjects, list);
+				try
+				{
+					list.Font = new System.Drawing.Font(recList.FontName, recList.TypeSize);
+				}
+				catch(Exception error)
+				{
+					IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+					ErrorReporter.ReportException(error, app.SettingsKey,
+						m_mediator.FeedbackInfoProvider.SupportEmailAddress, null, false);
+				}
+
+
+				UpdateSelection(recList.CurrentObject);
+				list.EndUpdate();
+
+				if (list.SelectedItems.Count >0)
+				{}//list.s .EnsureVisible();
 			}
-			catch(Exception error)
-			{
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				ErrorReporter.ReportException(error, app.SettingsKey,
-					m_mediator.FeedbackInfoProvider.SupportEmailAddress, null, false);
-			}
-
-
-			UpdateSelection(recList.CurrentObject);
-			list.EndUpdate();
-
-			if (list.SelectedItems.Count >0)
-			{}//list.s .EnsureVisible();
-
-			window.Cursor = Cursors.Default;
 		}
 
 		/// <summary>

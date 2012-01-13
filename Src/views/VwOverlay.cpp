@@ -394,7 +394,6 @@ STDMETHODIMP VwOverlay::SetTagInfo(OLECHAR * prgchGuid, HVO hvo, int osm, BSTR b
 		m_vtds.Push(TagDispSpec());
 		// And put it at the end of the ordering, for now.
 		m_vitdsOrder.Push(itds);
-		TagSpecKey tdk;
 		MoveItems(prgchGuid, tdk.m_rgchGuid, kcchGuidRepLength);
 		m_hmgi.Insert(tdk, itds);
 	}

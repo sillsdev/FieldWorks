@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2008, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2008' company='SIL International'>
-//		Copyright (c) 2008, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -134,14 +134,11 @@ namespace SIL.FieldWorks.TE
 			Assert.IsNull(apocalipsis.BookNameAlt.get_String(wsSpanish).Text);
 
 			MultilingScrBooks mlsb = new MultilingScrBooks(m_scr.ScrProjMetaDataProvider);
-			mlsb.InitializeWritingSystems(Cache.WritingSystemFactory);
 
 			foreach (IScrBookRef brf in books)
 			{
-				string sBookName = brf.BookName.get_String(wsEnglish).Text;
-				Assert.IsTrue(sBookName != null && sBookName != string.Empty);
-				string sBookAbbrev = brf.BookAbbrev.get_String(wsEnglish).Text;
-				Assert.IsTrue(sBookAbbrev != null && sBookAbbrev != string.Empty);
+				Assert.IsTrue(!String.IsNullOrEmpty(brf.BookName.get_String(wsEnglish).Text));
+				Assert.IsTrue(!String.IsNullOrEmpty(brf.BookAbbrev.get_String(wsEnglish).Text));
 			}
 		}
 		#endregion

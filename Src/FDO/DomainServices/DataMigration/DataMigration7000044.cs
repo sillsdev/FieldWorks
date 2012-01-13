@@ -172,20 +172,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					bool changedFile = false;
 					foreach (var elt in layout.XPathSelectElements("//*[@ws]"))
 					{
-						var attr = elt.Attribute("ws");
-						var oldTag = attr.Value;
-						var prefix = "";
-						if (oldTag.StartsWith("$ws="))
-						{
-							prefix = "$ws=";
-							oldTag = oldTag.Substring(prefix.Length);
-						}
-						string newTag;
-						if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(oldTag, out newTag))
-						{
-							changedFile = true;
-							attr.Value = prefix + newTag;
-						}
+						changedFile |= FixWsAtttribute(elt.Attribute("ws"));
+					}
+					foreach (var elt in layout.XPathSelectElements("//*[@visibleWritingSystems]"))
+					{
+						changedFile |= FixWsAtttribute(elt.Attribute("visibleWritingSystems"));
 					}
 					if (changedFile)
 					{
@@ -207,47 +198,87 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					namesAndPatterns["db$local$InterlinConfig_Edit_Interlinearizer"] = ",[0-9]+%(?'target'[^,]+)";
 					// Here we expect to find something like  ws="x-kal"
 					namesAndPatterns["db$local$LexDb.Entries_sorter"] = "ws=\"(?'target'[^\"]+)\"";
+					// The value of this one simply IS a writing system.
+					namesAndPatterns["db$local$ConcordanceWs"] = "^(?'target'.*)$";
 					foreach (var elt in settings.Elements("Property"))
 					{
 						var nameElt = elt.Element("name");
 						if (nameElt == null)
 							continue;
 						string pattern;
-						if (!namesAndPatterns.TryGetValue(nameElt.Value, out pattern))
-							continue;
-						var valueElt = elt.Element("value");
-						if (valueElt == null)
-							continue; // paranoia
-						// Process matches in reverse order so length changes will not invalidate positions of earlier ones.
-						var matches = new List<Match>();
-						foreach (Match match in Regex.Matches(valueElt.Value, pattern))
-							matches.Insert(0, match);
-						foreach (Match match in matches)
-						{
-							var target = match.Groups["target"];
-							var oldTag = target.Value;
-							var prefixTag = "";
-							if (oldTag.StartsWith("$ws="))
-							{
-								prefixTag = "$ws=";
-								oldTag = oldTag.Substring(prefixTag.Length);
-							}
-							string newTag;
-							if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(oldTag, out newTag))
-							{
-								newTag = prefixTag + newTag;
-								changedFile = true;
-								string prefix = valueElt.Value.Substring(0, target.Index);
-								string suffix = valueElt.Value.Substring(target.Index + target.Length);
-								valueElt.Value = prefix + newTag + suffix;
-							}
-						}
+						var propName = nameElt.Value;
+						if (namesAndPatterns.TryGetValue(propName, out pattern))
+							ReplaceWsIdInValue(elt, pattern, ref changedFile);
+						else if (propName.EndsWith("_sorter") || propName.EndsWith("_filter") || propName.EndsWith("_ColumnList"))
+							ReplaceWsIdInValue(elt, "ws=\"(?'target'[^\"]+)\"", ref changedFile);
 					}
 					if (changedFile)
 					{
 						using (var xmlWriter = XmlWriter.Create(localSettingsPath, new XmlWriterSettings() { Encoding = Encoding.UTF8 }))
 							settings.WriteTo(xmlWriter);
 					}
+				}
+			}
+		}
+
+		// Replace any updated writing systems in the attribute value.
+		// Handles an input which may begin with $ws= and/or may have multiple WSs separated by comma.
+		private bool FixWsAtttribute(XAttribute attr)
+		{
+			bool changedFile = false;
+			var oldTag = attr.Value;
+			var prefix = "";
+			if (oldTag.StartsWith("$ws="))
+			{
+				prefix = "$ws=";
+				oldTag = oldTag.Substring(prefix.Length);
+			}
+			string combinedTags = "";
+			foreach (string input in oldTag.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				string convertedTag;
+				string outputTag = input;
+				if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(input, out convertedTag))
+				{
+					changedFile = true;
+					outputTag = convertedTag;
+				}
+				if (combinedTags != "")
+					combinedTags += ",";
+				combinedTags += outputTag;
+			}
+			if (changedFile)
+				attr.Value = prefix + combinedTags;
+			return changedFile;
+		}
+
+		private void ReplaceWsIdInValue(XElement elt, string pattern, ref bool changedFile)
+		{
+			var valueElt = elt.Element("value");
+			if (valueElt == null)
+				return;
+			// Process matches in reverse order so length changes will not invalidate positions of earlier ones.
+			var matches = new List<Match>();
+			foreach (Match match in Regex.Matches(valueElt.Value, pattern))
+				matches.Insert(0, match);
+			foreach (Match match in matches)
+			{
+				var target = match.Groups["target"];
+				var oldTag = target.Value;
+				var prefixTag = "";
+				if (oldTag.StartsWith("$ws="))
+				{
+					prefixTag = "$ws=";
+					oldTag = oldTag.Substring(prefixTag.Length);
+				}
+				string newTag;
+				if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(oldTag, out newTag))
+				{
+					newTag = prefixTag + newTag;
+					changedFile = true;
+					string prefix = valueElt.Value.Substring(0, target.Index);
+					string suffix = valueElt.Value.Substring(target.Index + target.Length);
+					valueElt.Value = prefix + newTag + suffix;
 				}
 			}
 		}

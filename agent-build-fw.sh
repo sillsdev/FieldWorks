@@ -24,6 +24,12 @@ done
 # Get ready to build
 . environ
 export AssertUiEnabled=false  # bypass assert message boxes for headless build
+# Set environment variable to allow building on CI build agents without having to create
+# /var/lib/fieldworks directory with correct permissions.
+export FW_CommonAppData=$WORKSPACE/var/lib/fieldworks
+
+# start ibus daemon just in case it's not yet running
+/usr/bin/ibus-daemon --xim -d
 
 # Set up a headless X server to run the graphical unit tests inside
 # Avoid DISPLAY collisions with concurrent builds

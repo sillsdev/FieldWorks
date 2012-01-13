@@ -624,119 +624,129 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_fdoCache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
 				return;
 			Form frm = FindForm();
-			// frm will be null, if the record has been switched
-			if (frm != null)
-				frm.Cursor = Cursors.WaitCursor;
-			// We're saving any changes to the real cache, so can no longer Undo/Redo local edits.
-			CommitLocalEdits();
-			// [NB: m_silCache is the same cache as m_vwCache, but is is a different cache than
-			// m_fdoCache.  m_fdoCache has access to the database, and updates it, but
-			// m_silCache does not.]
-			if (DesignMode || m_rootb == null
-				// It may not be valid by now, since it may have been deleted.
-				|| !m_rootObj.IsValidObject)
+			WaitCursor wc = null;
+			try
 			{
+				// frm will be null, if the record has been switched
 				if (frm != null)
-					frm.Cursor = Cursors.Default;
-				return;
-			}
-			string fieldname =
-				(m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv) ? "PhoneEnv" : "Position";
-			m_fdoCache.DomainDataByFlid.BeginUndoTask(
-				String.Format(DetailControlsStrings.ksUndoSet, fieldname),
-				String.Format(DetailControlsStrings.ksRedoSet, fieldname));
-			IPhEnvironmentFactory factEnv = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
-			IFdoOwningSequence<IPhEnvironment> phoneEnvs =
-				m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
-			int count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
-			// We need one less than the size,
-			// because the last 'env' is a dummy that lets the user type a new one.
-			int[] hvos = new int[count - 1];
-			int cvDel = 0;
-			for (int i = hvos.Length - 1; i >= 0; --i)
-			{
-				IPhEnvironment env = null;
-				int hvoDummyObj = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-				ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
-				if (tss == null)
-					tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
-				ITsStrBldr bldr = tss.GetBldr();
-				string rep = tss.Text;
-				if (rep == null || rep.Trim().Length == 0)
+					wc = new WaitCursor(frm);
+				// We're saving any changes to the real cache, so can no longer Undo/Redo local edits.
+				CommitLocalEdits();
+				// [NB: m_silCache is the same cache as m_vwCache, but is is a different cache than
+				// m_fdoCache.  m_fdoCache has access to the database, and updates it, but
+				// m_silCache does not.]
+				if (DesignMode || m_rootb == null
+					// It may not be valid by now, since it may have been deleted.
+					|| !m_rootObj.IsValidObject)
 				{
-					// The environment at 'i' is being deleted, so
-					// shrink the array of hvos that go into the real cache.
-					cvDel++;
-					m_realEnvs.Remove(hvoDummyObj);
-					// Remove it from the dummy cache.
-					int oldSelId = m_hvoOldSelection;
-					m_hvoOldSelection = hvoDummyObj;
-					RemoveFromDummyCache(i);
-					m_hvoOldSelection = oldSelId;
+					if (frm != null)
+						frm.Cursor = Cursors.Default;
+					return;
 				}
-				else
+				string fieldname =
+					(m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv) ? "PhoneEnv" : "Position";
+				m_fdoCache.DomainDataByFlid.BeginUndoTask(
+					String.Format(DetailControlsStrings.ksUndoSet, fieldname),
+					String.Format(DetailControlsStrings.ksRedoSet, fieldname));
+				IPhEnvironmentFactory factEnv = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
+				IFdoOwningSequence<IPhEnvironment> phoneEnvs =
+					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
+				int count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
+				// We need one less than the size,
+				// because the last 'env' is a dummy that lets the user type a new one.
+				int[] hvos = new int[count - 1];
+				int cvDel = 0;
+				for (int i = hvos.Length - 1; i >= 0; --i)
 				{
-					foreach (IPhEnvironment envCurrent in phoneEnvs)
+					IPhEnvironment env = null;
+					int hvoDummyObj = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
+					ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
+					if (tss == null)
+						tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
+					ITsStrBldr bldr = tss.GetBldr();
+					string rep = tss.Text;
+					if (rep == null || rep.Trim().Length == 0)
 					{
-						// Compare them without spaces, since they are not needed.
-						if (envCurrent.StringRepresentation.Text != null &&
-							envCurrent.StringRepresentation.Text.Replace(" ", null) ==
-							rep.Replace(" ", null))
-						{
-							env = envCurrent;
-							// Maybe the ws has changed, so change the real one, in case.
-							env.StringRepresentation = tss;
-							break;
-						}
+						// The environment at 'i' is being deleted, so
+						// shrink the array of hvos that go into the real cache.
+						cvDel++;
+						m_realEnvs.Remove(hvoDummyObj);
+						// Remove it from the dummy cache.
+						int oldSelId = m_hvoOldSelection;
+						m_hvoOldSelection = hvoDummyObj;
+						RemoveFromDummyCache(i);
+						m_hvoOldSelection = oldSelId;
 					}
-					if (env == null)
-					{
-						env = factEnv.Create();
-						phoneEnvs.Add(env);
-						env.StringRepresentation = tss;
-					}
-					ConstraintFailure failure;
-					if (env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
-						ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
 					else
-						MakeSquigglyLine(hvoDummyObj, failure.XmlDescription, ref tss, ref bldr);
-					hvos[i] = env.Hvo;
-					// Refresh
-					m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
-					m_rootb.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
+					{
+						foreach (IPhEnvironment envCurrent in phoneEnvs)
+						{
+							// Compare them without spaces, since they are not needed.
+							if (envCurrent.StringRepresentation.Text != null &&
+								envCurrent.StringRepresentation.Text.Replace(" ", null) ==
+								rep.Replace(" ", null))
+							{
+								env = envCurrent;
+								// Maybe the ws has changed, so change the real one, in case.
+								env.StringRepresentation = tss;
+								break;
+							}
+						}
+						if (env == null)
+						{
+							env = factEnv.Create();
+							phoneEnvs.Add(env);
+							env.StringRepresentation = tss;
+						}
+						ConstraintFailure failure;
+						if (env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
+							ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
+						else
+							MakeSquigglyLine(hvoDummyObj, failure.XmlDescription, ref tss, ref bldr);
+						hvos[i] = env.Hvo;
+						// Refresh
+						m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
+						m_rootb.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
+					}
 				}
-			}
-			int[] newHvos = new int[hvos.Length];
-			hvos.CopyTo(newHvos, 0);
-			if (cvDel > 0)
-			{
-				newHvos = new int[hvos.Length - cvDel];
-				count = 0;
-				for (int i = 0; i < hvos.Length; ++i)
+				int[] newHvos = new int[hvos.Length];
+				hvos.CopyTo(newHvos, 0);
+				if (cvDel > 0)
 				{
-					int tempHvo = hvos[i];
-					if (tempHvo > 0)
-						newHvos[count++] = tempHvo;
+					newHvos = new int[hvos.Length - cvDel];
+					count = 0;
+					for (int i = 0; i < hvos.Length; ++i)
+					{
+						int tempHvo = hvos[i];
+						if (tempHvo > 0)
+							newHvos[count++] = tempHvo;
+					}
+				}
+				count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				// Only reset the main property, if it has changed.
+				// Otherwise, the parser gets too excited about needing to reload.
+				int[] contents;
+				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+				{
+					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+				}
+				if ((count != newHvos.Length)
+					|| !equalArrays(contents, newHvos))
+				{
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, count, newHvos, newHvos.Length);
+				}
+				m_fdoCache.DomainDataByFlid.EndUndoTask();
+			}
+			finally
+			{
+				if (wc != null)
+				{
+					wc.Dispose();
+					wc = null;
 				}
 			}
-			count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-			// Only reset the main property, if it has changed.
-			// Otherwise, the parser gets too excited about needing to reload.
-			int[] contents;
-			int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(chvoMax, typeof(int)))
-			{
-				m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
-				contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvoMax, typeof(int));
-			}
-			if ((count != newHvos.Length)
-				|| !equalArrays(contents, newHvos))
-			{
-				m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, count, newHvos, newHvos.Length);
-			}
-			m_fdoCache.DomainDataByFlid.EndUndoTask();
-			if (frm != null)
-				frm.Cursor = Cursors.Default;
 		}
 
 		/// <summary>

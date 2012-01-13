@@ -128,6 +128,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox2.Name = "textBox2";
 			this.textBox2.ReadOnly = true;
 			this.textBox2.TabStop = false;
+			this.textBox2.Click += new System.EventHandler(this.textBox2_Click);
 			//
 			// textBox3
 			//
@@ -136,6 +137,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox3.Name = "textBox3";
 			this.textBox3.ReadOnly = true;
 			this.textBox3.TabStop = false;
+			this.textBox3.Click += new System.EventHandler(this.textBox3_Click);
 			//
 			// textBox4
 			//
@@ -144,6 +146,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox4.Name = "textBox4";
 			this.textBox4.ReadOnly = true;
 			this.textBox4.TabStop = false;
+			this.textBox4.Click += new System.EventHandler(this.textBox4_Click);
 			//
 			// FwCheckAnthroListDlg
 			//

@@ -634,6 +634,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			CheckDisposed();
 
+			if (styleInfo.IsCharacterStyle)
+			{
+				Debug.Assert(false, "Somehow, the Border tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
+				return;
+			}
+
 			// Save the border widths
 			bool newInherit = m_cboWidth.IsInherited;
 			BorderThicknesses newThickness = new BorderThicknesses();

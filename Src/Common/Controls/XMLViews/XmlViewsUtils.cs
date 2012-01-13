@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// allomorph in Find Entries dialog display.  Part of fixing LT-10293.)
 			string layoutName = XmlVc.GetLayoutName(node, caller);
 			XmlNode layoutNode = XmlVc.GetNodeForPart(hvoDst, layoutName, true, sda, layouts);
-			return XmlVc.GetNodeForChild(layoutNode, node, layouts);
+			return XmlVc.GetDisplayNodeForChild(layoutNode, node, layouts);
 		}
 
 		static int[] AppendInt(int[] sofar, int add)
@@ -883,11 +883,11 @@ namespace SIL.FieldWorks.Common.Controls
 					int flid = GetFlid(sda, layout, hvo);
 					int[] contents;
 					int ctarget = sda.get_VecSize(hvo, flid);
-					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(ctarget, typeof(int)))
+					using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(ctarget))
 					{
 						int chvo;
 						sda.VecProp(hvo, flid, ctarget, out chvo, arrayPtr);
-						contents = (int[])MarshalEx.NativeToArray(arrayPtr, chvo, typeof(int));
+						contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 					}
 
 					string[] result = null;

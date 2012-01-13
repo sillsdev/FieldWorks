@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache.</param>
 		/// <param name="mainWnd">the FwMainWnd that owns this control.</param>
 		/// ------------------------------------------------------------------------------------
-		public KeyTermRenderingsControl(FdoCache cache,	FwMainWnd mainWnd) : base(cache, mainWnd)
+		public KeyTermRenderingsControl(FdoCache cache, FwMainWnd mainWnd) : base(cache, mainWnd)
 		{
 			InitializeComponent();
 			AccessibleName = Name;
@@ -182,32 +182,20 @@ namespace SIL.FieldWorks.TE
 			if (m_stylesheet != null)
 			{
 				if (!String.IsNullOrEmpty(chkTerm.Name.get_String(m_wsGreek).Text))
-				{
 					m_OriginalTerm.WritingSystemCode = m_wsGreek;
-					m_OriginalTerm.Font = m_stylesheet.GetUiFontForWritingSystem(m_wsGreek,
-						FontInfo.kDefaultFontSize);
-				}
 				else if (!String.IsNullOrEmpty(chkTerm.Name.get_String(m_wsHebrew).Text))
-				{
 					m_OriginalTerm.WritingSystemCode = m_wsHebrew;
-					m_OriginalTerm.Font = m_stylesheet.GetUiFontForWritingSystem(m_wsHebrew,
-						FontInfo.kDefaultFontSize);
-				}
 				else
 					throw new ArgumentException("Unexpected biblical term - no Greek or Hebrew Name. Term id = " + chkTerm);
+
+				if (m_OriginalTerm.Font != null)
+					m_OriginalTerm.Font.Dispose();
+
+				m_OriginalTerm.Font = m_stylesheet.GetUiFontForWritingSystem(
+					m_OriginalTerm.WritingSystemCode,
+					m_OriginalTerm.SizeOfFontAt100Percent * ZoomFactor);
 			}
-#if __MonoCS__
-			try
-			{
-				m_dataGridView.RowCount = m_list.Count;
-			}
-			catch(System.ArgumentOutOfRangeException e)
-			{
-				// TODO-Linux FWNX-189: remove try catch when https://bugzilla.novell.com/show_bug.cgi?id=516960 is fixed
-			}
-#else
 			m_dataGridView.RowCount = m_list.Count;
-#endif
 			m_dataGridView.KeyTermRefs = m_list;
 			m_dataGridView.RowEnter += m_dataGridView_RowEnter;
 			Sort(m_sortedColumn, false, kRefCol);

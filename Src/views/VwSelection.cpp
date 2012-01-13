@@ -19,8 +19,6 @@ Description:
 #pragma hdrstop
 // any other headers (not precompiled)
 
-#include "FwCellarTlb.h"
-
 #undef THIS_FILE
 DEFINE_THIS_FILE
 #define EDITABLE_SELECTIONS_ONLY 1
@@ -2076,7 +2074,6 @@ STDMETHODIMP VwTextSelection::SetSelectionProps(int cttp, ITsTextProps ** prgptt
 	{
 		HvoTagRec htr = it.GetKey();
 		UpdateInfo upi = it.GetValue();
-		bool fOk;
 		DoUpdateProp(prootb, htr.m_hvo, htr.m_tag, upi.m_vnp, upi.m_qvvcEdit,
 			upi.m_fragEdit, upi.m_qtsb, &fOk);
 		// REVIEW JohnT: should we break out of the loop if fOk is false?
@@ -3433,8 +3430,6 @@ void VwTextSelection::StartEditing()
 		int itssProp;
 		ITsStringPtr qtssPropFirst;
 
-		VwNoteProps vnp; // Notifier Property attributes.
-
 		if (CallEditableSubstring(pvpboxFirst, ichFirst, ichFirst, fAssocPrevious, &hvoEdit,
 			&tagEdit, &ichMinEditProp, &ichLimEditProp, &qvvcEdit, &fragEdit,
 			&qanote, &iprop, &vnp, &itssProp, &qtssPropFirst) != kvepvEditable)
@@ -3693,7 +3688,9 @@ public:
 			m_stuNFD.Assign(pchInput + 1, cchInput - 1); // don't include bs or del.
 		else
 			m_stuNFD.Assign(pchInput, cchInput);
-		if (!m_prootb->TextStore()->IsCompositionActive())
+		ComBool fCompositionInProgress;
+		CheckHr(m_prootb->get_IsCompositionInProgress(&fCompositionInProgress));
+		if (!fCompositionInProgress)
 			StrUtil::NormalizeStrUni(m_stuNFD, UNORM_NFD);
 		//if (cchInput != m_stuNFD.Length())
 		//{
@@ -4542,7 +4539,7 @@ public:
 						// modifying the one we're in. The following code implements the relevant
 						// cases of what InsertNew does. (It can't be used, because we want to
 						// copy the styles of the following, not preceding, paragraph.)
-						ITsTextPropsPtr qttp; // Style info to copy to all inserted paras.
+						ITsTextPropsPtr qttpLocal; // Style info to copy to all inserted paras.
 						int ihvo = m_qsel->m_ihvoFirstPara;
 						PropTag tag = m_qsel->m_tagParaProp;
 						HVO hvoObj = m_qsel->m_hvoParaOwner;
@@ -4556,7 +4553,7 @@ public:
 							IUnknownPtr qunkTtp;
 							CheckHr(qsda->get_UnknownProp(hvoBase, stParaTags_StyleRules, &qunkTtp));
 							if (qunkTtp)
-								CheckHr(qunkTtp->QueryInterface(IID_ITsTextProps, (void **) &qttp));
+								CheckHr(qunkTtp->QueryInterface(IID_ITsTextProps, (void **) &qttpLocal));
 						}
 
 						// Create and initialize the new objects.
@@ -4566,7 +4563,7 @@ public:
 							CheckHr(qsda->MakeNewObject(kclidStTxtPara, hvoObj, tag,
 								ihvo + i2, &hvoNew));
 							if (tag == kflidStText_Paragraphs)
-								CheckHr(qsda->SetUnknown(hvoNew, stParaTags_StyleRules, qttp));
+								CheckHr(qsda->SetUnknown(hvoNew, stParaTags_StyleRules, qttpLocal));
 							CheckHr(m_qsda->SetString(hvoNew, m_qsel->m_tagEdit, qtssEmpty));
 						}
 						ihvoIns--;
@@ -4574,8 +4571,6 @@ public:
 					else
 					{
 						// Split the current paragraph.
-						ITsStrBldrPtr qtsbT;
-						CheckHr(qtssCurrent->GetBldr(&qtsbT));
 						int ichStartDel = m_ichAnchor - m_qsel->m_ichMinEditProp;
 
 						// There is text after the IP, new lines take same style
@@ -5249,12 +5244,23 @@ void VwTextSelection::CommitAndContinue(bool * pfOk, VwChangeInfo * pci)
 
 	if (!m_qtsbProp)
 	{
+#ifdef ENABLE_TSF
 		if (m_pvpbox->Root()->TextStore()->IsDoingRecommit())
 		{
 			// We need to do a real update!!
 			StartEditing();
 		}
 		else
+#elif defined(MANAGED_KEYBOARDING)
+		ComBool fDoingRecommit;
+		CheckHr(m_pvpbox->Root()->InputManager()->get_IsEndingComposition(&fDoingRecommit));
+		if (fDoingRecommit)
+		{
+			// We need to do a real update!!
+			StartEditing();
+		}
+		else
+#endif
 		{
 			*pfOk = true;
 			return;
@@ -5719,7 +5725,6 @@ STDMETHODIMP VwTextSelection::ReplaceWithTsString(ITsString * ptss)
 			int tagEdit = m_tagEdit;
 			HVO hvoEdit = m_hvoEdit;
 			// We have multiple paragraphs to create. The properties of each are in vpttpPara.
-			VwRootBox * prootb = m_pvpbox->Root();
 			int cchProp;
 			int ichMin;
 			int ichLim;
@@ -7280,7 +7285,11 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 {
 	*pfOk = false; // only set true if we make it all the way (though failures throw exceptions)
 
+#ifdef ENABLE_TSF
 	VwTextStore * ptxs = prootb->TextStore();
+#elif defined(MANAGED_KEYBOARDING)
+	IViewInputMgr * pvim = prootb->InputManager();
+#endif
 
 	// Update the property.
 	ITsStringPtr qtssNewSub;
@@ -7300,11 +7309,17 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 	{
 		int ichOffset = m_ichAnchor - m_ichMinEditProp;
 		int * poffset = &ichOffset;
+#ifdef ENABLE_TSF
 		if (ptxs->IsCompositionActive())
 		{
 			ptxs->NoteCommitDuringComposition();
 		}
 		else
+#elif defined(MANAGED_KEYBOARDING)
+		ComBool fProcessed;
+		CheckHr(pvim->OnUpdateProp(&fProcessed));
+		if (!fProcessed)
+#endif
 		{
 			// normal case...normalize
 			ITsStringPtr qtssT;
@@ -7391,11 +7406,22 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				CheckHr(qsda->get_StringProp(hvo, tag, &qtssOld));
 				int ichMinDiff, ichLimDiff; // in qtssNewSub
 				CompareStrings(qtssOld, qtssNewSub, &ichMinDiff, &ichLimDiff);
-				if (ichMinDiff >= 0 || ptxs->IsDoingRecommit()) // there's some difference
+#ifdef MANAGED_KEYBOARDING
+				ComBool fDoingRecommit;
+				CheckHr(pvim->get_IsEndingComposition(&fDoingRecommit));
+#endif
+
+				if (ichMinDiff >= 0
+#ifdef ENABLE_TSF
+					 || ptxs->IsDoingRecommit() // there's some difference
+#elif defined(MANAGED_KEYBOARDING)
+					 || fDoingRecommit // there's some difference
+#endif
+					)
 				{
 					// Make the new string the value of the property
-						CheckHr(qsda->SetString(hvo, tag, qtssNewSub));
-					}
+					CheckHr(qsda->SetString(hvo, tag, qtssNewSub));
+				}
 			}
 			break;
 		case kvnpUnicodeProp:
@@ -7465,7 +7491,18 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				CheckHr(qsda->get_MultiStringAlt(hvo, tag, fragEdit, &qtssOld));
 				ComBool fEqual;
 				CheckHr(qtssOld->Equals(qtssNewSub, &fEqual));
-				if (!fEqual || ptxs->IsDoingRecommit())
+#ifdef MANAGED_KEYBOARDING
+				ComBool fDoingRecommit;
+				CheckHr(pvim->get_IsEndingComposition(&fDoingRecommit));
+#endif
+
+				if (!fEqual
+#ifdef ENABLE_TSF
+					 || ptxs->IsDoingRecommit()
+#elif defined(MANAGED_KEYBOARDING)
+					 || fDoingRecommit
+#endif
+					)
 				{
 						CheckHr(qsda->SetMultiStringAlt(hvo, tag, fragEdit, qtssNewSub));
 					}
@@ -7865,8 +7902,8 @@ bool VwTextSelection::DeleteRangeAndPrepareToInsert()
 	else if (m_ichAnchor != m_ichEnd)
 	{
 		// Delete a range within a single paragraph.
-		int ichMin = min(m_ichAnchor, m_ichEnd);
-		int ichLim = max(m_ichAnchor, m_ichEnd);
+		ichMin = min(m_ichAnchor, m_ichEnd);
+		ichLim = max(m_ichAnchor, m_ichEnd);
 
 		//ITsTextPropsPtr qttp; // new props, irrelevant unless string is empty.
 		//if (ichMin == m_ichMinEditProp && ichLim > m_ichMinEditProp && ichLim == m_ichLimEditProp)
@@ -9099,10 +9136,10 @@ void VwTextSelection::ShiftPhysicalArrow(IVwGraphics * pvg, bool fRight, bool fS
 		VwStringBox * psboxTmp = dynamic_cast<VwStringBox *>(pboxTmp);
 		if (!psboxTmp)
 			continue;
-		VwStringBox * psboxNewEnd = psboxTmp;
-		ILgSegmentPtr qsegNewEnd = psboxNewEnd->Segment();
-		CheckHr(qsegNewEnd->get_RightToLeft(psboxNewEnd->IchMin(), &fNewEndRtl));
-		if (psboxNewEnd == psboxAnchor)
+		VwStringBox * psboxNewEndTmp = psboxTmp;
+		ILgSegmentPtr qsegNewEndTmp = psboxNewEndTmp->Segment();
+		CheckHr(qsegNewEndTmp->get_RightToLeft(psboxNewEndTmp->IchMin(), &fNewEndRtl));
+		if (psboxNewEndTmp == psboxAnchor)
 			fAssocPrevNeeded = (m_fEndBeforeAnchor) ?
 				(fParaRtl != fNewEndRtl) :
 				(fParaRtl == fNewEndRtl);
@@ -9110,11 +9147,11 @@ void VwTextSelection::ShiftPhysicalArrow(IVwGraphics * pvg, bool fRight, bool fS
 			fAssocPrevNeeded = (fParaRtl != fRight);
 		else
 			fAssocPrevNeeded = !m_fEndBeforeAnchor;
-		CheckHr(qsegNewEnd->ExtendSelectionPosition(psboxNewEnd->IchMin(), pvg,
+		CheckHr(qsegNewEndTmp->ExtendSelectionPosition(psboxNewEndTmp->IchMin(), pvg,
 			&ichNewEnd, true, fAssocPrevNeeded, -1,
 			fRight, true, &fResult));
 		if (!fResult)
-			CheckHr(qsegNewEnd->ExtendSelectionPosition(psboxNewEnd->IchMin(), pvg,
+			CheckHr(qsegNewEndTmp->ExtendSelectionPosition(psboxNewEndTmp->IchMin(), pvg,
 				&ichNewEnd, true, !fAssocPrevNeeded, -1,
 				fRight, true, &fResult));
 		if (fResult)
@@ -10825,12 +10862,10 @@ int VwTextSelection::ForwardOneWord(int ichLogIP, VwParagraphBox * pvpboxIP, IVw
 						psbox = GetStringBox(ich, pvpbox, false);
 						if (!psbox)
 							continue;
-						ILgSegmentPtr qlseg = psbox->Segment();
-						int ichBoxMin = psbox->IchMin();
-						int ichSegLim;
+						qlseg = psbox->Segment();
+						ichBoxMin = psbox->IchMin();
 						CheckHr(qlseg->get_Lim(0, &ichSegLim));
 						Assert(ich >= ichBoxMin || ich <= ichBoxMin + ichSegLim);
-						LgIpValidResult ipvr;
 						CheckHr(qlseg->IsValidInsertionPoint(ichBoxMin, pvg, ich,
 							&ipvr));
 					}

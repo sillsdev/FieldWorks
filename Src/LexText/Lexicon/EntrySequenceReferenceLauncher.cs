@@ -265,7 +265,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					ler.PrimaryLexemesRS.Add(objectsToAdd.First());
 				if (!ler.ComplexEntryTypesRS.Contains(ler.Services.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDerivation)))
 					foreach (var item in objectsToAdd)
-						ler.ShowComplexFormsInRS.Add(item);
+					{
+						// Don't add it twice!  See LT-12285.
+						if (!ler.ShowComplexFormsInRS.Contains(item))
+							ler.ShowComplexFormsInRS.Add(item);
+					}
 			}
 		}
 
@@ -539,15 +543,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						if (Cache.MetaDataCacheAccessor.get_IsVirtual(m_rootFlid))
 						{
 							var obj = m_fdoCache.ServiceLocator.GetObject(rghvos[ihvo]);
-							ILexEntryRef ler;
+							ILexEntryRef ler = null;
 							if (obj is ILexEntry)
 							{
 								var complex = (ILexEntry)obj;
 								// the selected object in the list is a complex entry which has this as one of
 								// its components.  We want to remove this from its components.
-								ler = (from item in complex.EntryRefsOS
-									where item.RefType == LexEntryRefTags.krtComplexForm
-									select item).First();
+								foreach (var item in complex.EntryRefsOS)
+								{
+									switch (item.RefType)
+									{
+										case LexEntryRefTags.krtComplexForm:
+										case LexEntryRefTags.krtVariant:
+											ler = item;
+											break;
+										default:
+											throw new Exception("Unexpected LexEntryRef type in EntrySequenceVectorReferenceView.OnProblemDeletion");
+									}
+								}
 							}
 							else if (obj is ILexEntryRef)
 							{
@@ -559,9 +572,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							}
 							var fieldName = m_fdoCache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
 							if (fieldName == "Subentries")
+							{
 								ler.PrimaryLexemesRS.Remove(m_rootObj);
+							}
 							else if (fieldName == "VisibleComplexFormEntries" || fieldName == "VisibleComplexFormBackRefs")
+							{
 								ler.ShowComplexFormsInRS.Remove(m_rootObj);
+							}
+							else if (fieldName == "VariantFormEntries")
+							{
+								ler.ComponentLexemesRS.Remove(m_rootObj);
+							}
 						}
 						else
 						{

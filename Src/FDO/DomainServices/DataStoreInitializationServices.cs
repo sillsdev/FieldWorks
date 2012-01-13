@@ -876,6 +876,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private static void EnsureStylesInUseSetForPara(IScrTxtPara para, IScripture scr)
 		{
 			IStStyle paraStyle = scr.FindStyle(para.StyleName);
+			if (paraStyle == null)
+			{
+				para.StyleName = para.DefaultStyleName;
+				paraStyle = scr.FindStyle(para.StyleName);
+			}
 			((StStyle)paraStyle).InUse = true;
 
 			ITsString paraContents = para.Contents;

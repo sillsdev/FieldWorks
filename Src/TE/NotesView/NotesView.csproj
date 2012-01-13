@@ -116,9 +116,8 @@
 	  <Name>Framework</Name>
 	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
 	</Reference>
-	<Reference Include="FwControls">
-	  <Name>FwControls</Name>
-	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	<Reference Include="FwControls, Version=7.2.0.24570, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="FwCoreDlgControls, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -171,6 +170,9 @@
 	<Reference Include="ScrUtilsInterfaces">
 	  <Name>ScrUtilsInterfaces</Name>
 	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="SharedScrControls, Version=7.2.0.23420, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -273,13 +275,21 @@
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="CategoryChooserDlg.cs" />
-	<Compile Include="NotesCategoryChooserTreeView.cs" />
-	<Compile Include="NotesDataEntryView.cs" />
+	<Compile Include="CategoryChooserDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="NotesCategoryChooserTreeView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="NotesDataEntryView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="NotesEditingHelper.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="NotesMainWnd.cs" />
+	<Compile Include="NotesMainWnd.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>

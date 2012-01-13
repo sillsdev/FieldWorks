@@ -23,11 +23,34 @@ using System.Collections.Generic;
 
 namespace XCore
 {
+	public enum ColleaguePriority
+	{
+		High = 0,
+		Medium  = 0x000F000,
+		Low = 0xFFFFFFF
+	}
+
 	public interface IxCoreColleague
 	{
 		void Init(Mediator mediator, XmlNode configurationParameters);
+
+		/// <summary>
+		/// In OnInvokeRecursive in the mediator this list will determine order.
+		/// </summary>
+		/// <returns></returns>
 		IxCoreColleague[] GetMessageTargets();
+
 		bool ShouldNotCall { get; }
+
+		/// <summary>
+		/// When Colleagues are added to the mediator this priority will determine the order that they are called
+		/// in InvokeOnColleagues in the Mediator, and also in the Mediator Dispose method.
+		///
+		/// Where possible ColleaguePriority should be used, if two Colleagues conflict and both belong at the same
+		/// ColleaguePriority level a custom priority may be necessary. Priority is determined by the natural sort order for
+		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
+		/// </summary>
+		int Priority { get; }
 	}
 
 	/// <summary>

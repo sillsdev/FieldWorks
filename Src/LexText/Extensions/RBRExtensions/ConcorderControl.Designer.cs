@@ -1,3 +1,6 @@
+using System;
+using XCore;
+
 namespace RBRExtensions
 {
 	partial class ConcorderControl
@@ -132,5 +135,14 @@ namespace RBRExtensions
 		private System.Windows.Forms.ComboBox m_cbFind;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Panel panel2;
+
+		#region Implementation of IxCoreColleague
+
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
+		#endregion
 	}
 }

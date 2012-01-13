@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
@@ -398,6 +400,49 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ReconcileMakingEntryAndSense()
 		{
 			VerifyReconcilingAChange(()=>MakeEntry("kick", "strike with foot"), "make entry and sense");
+		}
+
+		/// <summary>
+		/// Check we can reconcile changes to custom properties.
+		/// </summary>
+		[Test]
+		public void ReconcilingModifiedCustomProperties()
+		{
+			var mdc = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var customCertifiedFlid = mdc.AddCustomField("WfiWordform", "Certified", CellarPropertyType.Boolean, 0);
+			var customITsStringFlid = mdc.AddCustomField("WfiWordform", "NewTsStringProp", CellarPropertyType.String, 0);
+			var customMultiUnicodeFlid = mdc.AddCustomField("WfiWordform", "MultiUnicodeProp", CellarPropertyType.MultiUnicode, 0);
+			var customAtomicReferenceFlid = mdc.AddCustomField("WfiWordform", "NewAtomicRef", CellarPropertyType.ReferenceAtomic, CmPersonTags.kClassId);
+			var customAtomicOwningFlid = mdc.AddCustomField("WfiWordform", "NewAtomicOwning", CellarPropertyType.OwningAtomic, StTextTags.kClassId);
+
+			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
+			Cache.LangProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var person = Cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create();
+			Cache.LangProject.PeopleOA.PossibilitiesOS.Add(person);
+
+			var sda = Cache.MainCacheAccessor;
+			VerifyReconcilingAChange(
+				() => sda.SetBoolean(wf.Hvo, customCertifiedFlid, true),
+				"set custom bool property");
+			VerifyReconcilingAChange(
+				() => sda.SetString(wf.Hvo, customITsStringFlid, Cache.TsStrFactory.MakeString("test", Cache.DefaultVernWs)),
+				"set custom string property");
+			VerifyReconcilingAChange(
+				() => sda.SetMultiStringAlt(wf.Hvo, customMultiUnicodeFlid, Cache.DefaultVernWs,
+					Cache.TsStrFactory.MakeString("test", Cache.DefaultVernWs)),
+				"set custom multistring property");
+			VerifyReconcilingAChange(
+				() => sda.SetObjProp(wf.Hvo, customAtomicReferenceFlid, person.Hvo),
+				"set custom atomic ref property");
+			VerifyReconcilingAChange(
+				() =>
+					{
+						sda.MakeNewObject(StTextTags.kClassId, wf.Hvo, customAtomicOwningFlid, -2);
+					},
+				"set custom owning atomic property");
+			var text = Cache.ServiceLocator.GetObject(sda.get_ObjectProp(wf.Hvo, customAtomicOwningFlid)) as StText;
+			Assert.That(text, Is.Not.Null);
+			Assert.That(text.Owner, Is.EqualTo(wf));
 		}
 
 		/// <summary>

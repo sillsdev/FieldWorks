@@ -225,11 +225,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_decorator.get_VecItem(m_hot.Hvo, LexEntryTags.kflidSenses, 1), Is.EqualTo(m_desirable.Hvo));
 
 			// This test is perhaps redundant here: DictionaryPublicationDecorator does not have to do anything to get this behavior.
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative(2, typeof(int)))
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
 				int chvo;
 				m_decorator.VecProp(m_hot.Hvo, LexEntryTags.kflidSenses, 2, out chvo, arrayPtr);
-				var values = ((int[])MarshalEx.NativeToArray(arrayPtr, 2, typeof(int)));
+				var values = MarshalEx.NativeToArray<int>(arrayPtr, 2);
 				Assert.That(values[0], Is.EqualTo(m_hot.SensesOS[0].Hvo));
 				Assert.That(values[1], Is.EqualTo(m_desirable.Hvo));
 			}

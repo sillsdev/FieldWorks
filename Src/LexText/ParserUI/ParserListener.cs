@@ -25,6 +25,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -33,7 +34,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.WordWorks.Parser;
@@ -48,8 +49,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	[MediatorDispose]
 	public class ParserListener : IxCoreColleague, IFWDisposable, IVwNotifyChange
 	{
-		protected Mediator m_mediator;
-		protected FdoCache m_cache; //a pointer to the one owned by from the form
+		private Mediator m_mediator;
+		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -60,22 +61,24 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
-		protected TraceSwitch m_traceSwitch = new TraceSwitch("ParserListener", "");
+		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserListener", "");
 
 		/// <summary>
 		/// Set when we are running the parser; must be freed when we no longer are.
 		/// </summary>
 		private IDisposable m_lock;
 
+		private TryAWordDlg m_dialog;
+		private FormWindowState m_prevWindowState;
+		private ParserConnection m_parserConnection;
+
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			mediator.AddColleague(this);
-			mediator.PropertyTable.SetProperty("ParserListener", this);
-			mediator.PropertyTable.SetPropertyPersistence("ParserListener", false);
 
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
@@ -102,19 +105,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return IsDisposed; }
 		}
 
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
 
-		private ParserConnection Connection
+
+		public ParserConnection Connection
 		{
 			get
 			{
 				CheckDisposed();
-				return (ParserConnection)m_mediator.PropertyTable.GetValue("ParserConnection");
+				return m_parserConnection;
 			}
 			set
 			{
 				CheckDisposed();
-				m_mediator.PropertyTable.SetProperty("ParserConnection", value);
-				m_mediator.PropertyTable.SetPropertyPersistence("ParserConnection", false);
+				m_parserConnection = value;
 			}
 		}
 
@@ -125,11 +132,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (propertyName == "ActiveClerkSelectedObject")
+			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
 			{
 				var wordform = m_mediator.PropertyTable.GetValue(propertyName) as IWfiWordform;
 				if (wordform != null)
-					UpdateWordformAsap(wordform);
+					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
 			}
 		}
 
@@ -139,115 +146,51 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			// no need to parse if we don't have a connection.
-			if (Connection == null)
-				return;
 			// If someone updated the wordform inventory with a real wordform, schedule it to be parsed.
-			if (tag == WfiWordformTags.kflidForm)
+			if (m_parserConnection != null && tag == WfiWordformTags.kflidForm)
 			{
 				// the form of this WfiWordform was changed, so update its parse info.
-				UpdateWordformAsap(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo));
+				m_parserConnection.UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
 			}
-			// Note: typically when adding a new WfiWordform to WordformInventory, it will not
-			// have it's form set. So, there's no point in checking for that case.
-			// It's sufficient to check for change in Form.
-			//else if (tag == (int)WordformInventory.WordformInventoryTags.kflidWordforms &&
-			//    cvIns == 1 && cvDel == 0)
-			//{
-			//    // find the item with the highest id.
-			//    int[] hvosWf = m_cache.LangProject.WordformInventoryOA.WordformsOC.HvoArray;
-			//    List<int> hvosSorted = new List<int>(hvosWf);
-			//    hvosSorted.Sort();
-			//    int hvoWfNew = hvosSorted[hvosSorted.Count - 1];
-			//    // Schedule this one to be parsed.
-			//    WfiWordform wf = WfiWordform.CreateFromDBObject(m_cache, hvoWfNew) as WfiWordform;
-			//    // no need to update
-			//    UpdateWordformAsap(wf);
-			//}
 		}
 
 		#endregion
 
-		public void ConnectToParser()
+		public bool ConnectToParser()
 		{
 			CheckDisposed();
 
-			if (Connection == null)
+			if (m_parserConnection == null)
 			{
-				Connection = new ParserConnection(m_cache, m_mediator.IdleQueue);
-				m_mediator.PropertyTable.SetProperty("ParserConnection", Connection);
+				if (!GetLock())
+					return false;
+				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue);
 			}
+			return true;
 		}
 
 		public void DisconnectFromParser()
 		{
 			CheckDisposed();
 
-			if (Connection != null)
+			if (m_parserConnection != null)
 			{
-				Connection.Dispose();
+				m_parserConnection.Dispose();
+				Unlock();
 			}
-			Connection = null;
-		}
-
-		/// <summary>
-		/// Put the wordform in the highest priority queue of the Parser
-		/// </summary>
-		/// <param name="wf"></param>
-		public void UpdateWordformAsap(IWfiWordform wf)
-		{
-			CheckDisposed();
-
-			ParserConnection con = Connection;
-			if (con != null && wf.Form.VernacularDefaultWritingSystem != null)
-				con.UpdateWordform(wf, ParserPriority.High);
-		}
-
-		/// <summary>
-		/// Put all (unique) wordforms of the text in the medium priority queue of the Parser
-		/// </summary>
-		/// <param name="text"></param>
-		public void UpdateWordformsInText(IStText text)
-		{
-			CheckDisposed();
-
-			var wordforms = text.UniqueWordforms();
-
-			ParserConnection con = Connection;
-			if (con != null)
-				con.UpdateWordforms(wordforms, ParserPriority.Medium);
-		}
-
-		/// <summary>
-		/// put the wordform in the medium priority queue of the Parser
-		/// </summary>
-		/// <param name="wordform">The wordform.</param>
-		public void UpdateWordformSoon(IWfiWordform wordform)
-		{
-			CheckDisposed();
-
-			Connection.UpdateWordform(wordform, ParserPriority.Medium);
-		}
-
-		public void Reload()
-		{
-			CheckDisposed();
-
-			Debug.Fail("Not implemented. Hit 'ignore' now.");
-			//GetParserConnection().Prepare(m_iParserClientNum, 0, 2/*reload flag */);
+			m_parserConnection = null;
 		}
 
 		public bool OnIdle(object argument)
 		{
 			CheckDisposed();
 
-			m_mediator.PropertyTable.SetProperty("StatusPanelProgress", GetParserQueueString() + " " + GetParserActivityString());
+			m_mediator.PropertyTable.SetProperty("StatusPanelProgress", ParserQueueString + " " + ParserActivityString);
 			m_mediator.PropertyTable.SetPropertyPersistence("StatusPanelProgress", false);
 
-			ParserConnection con = Connection;
-			if (con != null)
+			if (m_parserConnection != null)
 			{
-				Exception ex = con.UnhandledException;
+				Exception ex = m_parserConnection.UnhandledException;
 				if (ex != null)
 				{
 					DisconnectFromParser();
@@ -256,7 +199,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					string notification = con.GetAndClearNotification();
+					string notification = m_parserConnection.GetAndClearNotification();
 					if (notification != null)
 						m_mediator.SendMessage("ShowNotification", notification);
 				}
@@ -269,32 +212,38 @@ namespace SIL.FieldWorks.LexText.Controls
 		//so that we are notified for every single event that happens.
 		//Here, we have instead chosen to use the polling ability.
 		//We will thus missed some events but not get slowed down with too many.
-		public string GetParserActivityString()
+		public string ParserActivityString
 		{
-			CheckDisposed();
+			get
+			{
+				CheckDisposed();
 
-			return Connection == null ? ParserUIStrings.ksNoParserLoaded : Connection.Activity;
+				return m_parserConnection == null ? ParserUIStrings.ksNoParserLoaded : m_parserConnection.Activity;
+			}
 		}
 
 		/// <summary>
 		///
 		/// </summary>
 		/// <returns></returns>
-		public string GetParserQueueString()
+		public string ParserQueueString
 		{
-			CheckDisposed();
-
-			string low = ParserUIStrings.ksDash;
-			string med = ParserUIStrings.ksDash;
-			string high = ParserUIStrings.ksDash;
-			if (Connection != null)
+			get
 			{
-				low = Connection.GetQueueSize(ParserPriority.Low).ToString();
-				med = Connection.GetQueueSize(ParserPriority.Medium).ToString();
-				high = Connection.GetQueueSize(ParserPriority.High).ToString();
-			}
+				CheckDisposed();
 
-			return string.Format(ParserUIStrings.ksQueueXYZ, low, med, high);
+				string low = ParserUIStrings.ksDash;
+				string med = ParserUIStrings.ksDash;
+				string high = ParserUIStrings.ksDash;
+				if (m_parserConnection != null)
+				{
+					low = m_parserConnection.GetQueueSize(ParserPriority.Low).ToString();
+					med = m_parserConnection.GetQueueSize(ParserPriority.Medium).ToString();
+					high = m_parserConnection.GetQueueSize(ParserPriority.High).ToString();
+				}
+
+				return string.Format(ParserUIStrings.ksQueueXYZ, low, med, high);
+			}
 		}
 
 		#region IDisposable & Co. implementation
@@ -316,7 +265,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private bool m_isDisposed;
 
-		private const string ksParserLockName = "parser";
+		private const string ParserLockName = "parser";
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -377,7 +326,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
@@ -386,22 +335,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (disposing)
 			{
-				Unlock();
 				// other clients may now parse
 				// Dispose managed resources here.
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
 				m_mediator.RemoveColleague(this);
-				ParserConnection cnx = Connection;
-				if (cnx != null)
-				{
-					// Remove ParserConnection from the PropertyTable.
-					m_mediator.PropertyTable.SetProperty("ParserConnection", null, false);
-					m_mediator.PropertyTable.SetPropertyPersistence("ParserConnection", false);
-					m_mediator.PropertyTable.SetProperty("ParserListener", null, false);
-					m_mediator.PropertyTable.SetPropertyPersistence("ParserListener", false);
-					cnx.Dispose();
-				}
+				if (m_parserConnection != null)
+					m_parserConnection.Dispose();
 				if (m_lock != null)
 					m_lock.Dispose();
 			}
@@ -412,74 +352,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = null;
 			m_traceSwitch = null;
 			m_lock = null;
+			m_parserConnection = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		/// <summary>
-		/// enable/disable and check items in the Parser menu
-		/// </summary>
-		internal void menuParser_Popup(object sender, EventArgs e)
-		{
-			CheckDisposed();
-
-			const int kIndexOfStartItem = 6;		//the only one that is enabled if we are disconnected
-			bool connected = (null != Connection);
-
-			//first, set them all to match whether we are enabled or not
-			foreach (MenuItem item in ((MenuItem)sender).MenuItems)
-			{
-				item.Enabled = connected;
-			}
-			//next, switch the "start" item to be the opposite
-			((MenuItem)sender).MenuItems[kIndexOfStartItem].Enabled = !connected;
-		}
-
 		private IStText CurrentText
 		{
 			get
 			{
-				Object obj = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject");
-				if (obj != null)
-					return obj as IStText;
-#if TryInWordsConcordance
-				// Andy Black: Not sure if this is always the case or if it is worth it...
-				{
-					StText text = obj as StText;
-					if (text != null)
-						return text;
-					// Not in interlinear, so must be in words concordance;  try to get the text
-					obj = m_mediator.PropertyTable.GetValue("OccurrencesOfSelectedWordform-selected");
-					if (obj != null)
-					{
-						RecordNavigationInfo info = obj as RecordNavigationInfo;
-						if (info != null)
-						{
-							CmBaseAnnotation anno = info.Clerk.CurrentObject as CmBaseAnnotation;
-							if (anno != null)
-							{
-								StTxtPara para = anno.BeginObjectRA as StTxtPara;
-								if (para != null)
-								{
-									text = para.Owner as StText;
-									return text;
-								}
-							}
-						}
-					}
-				}
-#endif
-				return null;
+				return InInterlinearText ? m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as IStText : null;
 			}
 		}
 		private IWfiWordform CurrentWordform
 		{
 			get
 			{
-				object obj = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject");
-				return obj != null ? obj as IWfiWordform : null;
+				IWfiWordform wordform = null;
+				if (InInterlinearText)
+					wordform = (IWfiWordform) m_mediator.PropertyTable.GetValue("TextSelectedWord");
+				else if (InWordAnalyses)
+					wordform = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as IWfiWordform;
+				return wordform;
 			}
 		}
 
@@ -487,41 +383,35 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public bool OnDisplayClearSelectedWordParserAnalyses(object commandObject, ref UIItemDisplayProperties display)
 		{
-			bool enable = InWordsAnalyses && CurrentWordform != null;
+			CheckDisposed();
+
+			bool enable = CurrentWordform != null;
 			display.Visible = enable;
 			display.Enabled = enable;
+
 			return true;	//we handled this.
 		}
 
 		public bool OnClearSelectedWordParserAnalyses(object dummyObj)
 		{
-			var wf = CurrentWordform;
-			if (wf == null)
+			IWfiWordform wf = CurrentWordform;
+			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses,
+				ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
 			{
-				MessageBox.Show(ParserUIStrings.ksSelectWordFirst);
-				return true;
-			}
-			if (wf.Hvo > 0 && wf.HasWordform)
-			{
-				var analyses = wf.AnalysesOC.ToArray();
-				var canalyses = analyses.Length;
-				UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses,
-					ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
+				foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
 				{
-					for (var i = 0; i < canalyses; i++)
-					{
-						var curAnalysis = analyses[i];
-						if (DoesAnyParserHaveAnOpinionOnAnalysis(curAnalysis))
-							curAnalysis.Delete();
-					}
-				});
-			}
-			return true;	//we handled this.
-		}
+					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+					foreach (ICmAgentEvaluation parserEval in parserEvals)
+						analysis.EvaluationsRC.Remove(parserEval);
 
-		private static bool DoesAnyParserHaveAnOpinionOnAnalysis(IWfiAnalysis curAnalysis)
-		{
-			return curAnalysis.EvaluationsRC.Any(eval => eval.Approves && !eval.Human);
+					if (analysis.EvaluationsRC.Count == 0)
+						wf.AnalysesOC.Remove(analysis);
+
+					if (parserEvals.Length > 0)
+						wf.Checksum = 0;
+				}
+			});
+			return true;	//we handled this.
 		}
 
 		#endregion ClearSelectedWordParserAnalyses handlers
@@ -530,25 +420,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			// JohnT: changed this to check CurrentWordformHvo to fix LT-1184.
-			// Seems in IText Document view, no wordform gets recorded in the property table,
-			// even when the user has selected text that looks like a wordform.
-			// Susanna thinks the command SHOULD be disabled in this view, so enhancing it to
-			// note a wordform when the user clicks doesn't work.
-			// This change of course defeats the attempt to have choosing the command tell the user
-			// to select a word. But that message is merely confusing in this context.
-			//display.Enabled = m_mediator.PropertyTable.GetValue("ParserConnection") != null
-			//	&& CurrentWordformHvo > 0;
-
-			// CurtisH: As per LT-3087 and Susanna's suggestion, for now we're just going to disable
-			// the menu item outside of the Words area.  In the future, it would be nice to fix this
-			// so it can parse whatever word is selected in any area as suggested in LT-1184.
-
-			string sToolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
-			display.Enabled = (InTextsWordsArea &&
-							   ((sToolName == "Analyses") ||
-								(sToolName == "wordListConcordance") ||
-								(sToolName == "toolBulkEditWordforms")));
+			bool enable = CurrentWordform != null;
+			display.Visible = enable;
+			display.Enabled = enable;
 
 			return true;	//we handled this.
 		}
@@ -557,15 +431,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			IWfiWordform wf = CurrentWordform;
-			if (wf == null)
+			if (ConnectToParser())
 			{
-				MessageBox.Show(ParserUIStrings.ksSelectWordFirst);
-			}
-			else
-			{
-				ConnectToParser();
-				UpdateWordformAsap(wf);
+				IWfiWordform wf = CurrentWordform;
+				m_parserConnection.UpdateWordform(wf, ParserPriority.High);
 			}
 
 			return true;	//we handled this.
@@ -575,11 +444,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			string sToolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
-			string sTabName = m_mediator.PropertyTable.GetStringProperty("InterlinearTab", "");
-			display.Enabled = (InTextsWordsArea &&
-							   ((sToolName == "interlinearEdit") &&
-							   ((sTabName == "Interlinearizer") || (sTabName == "RawText"))));
+			bool enable = CurrentText != null;
+			display.Visible = enable;
+			display.Enabled = enable;
 
 			return true;	//we handled this.
 		}
@@ -588,22 +455,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			IStText text = CurrentText;
-			if (text != null)
+			if (ConnectToParser())
 			{
-				ConnectToParser();
-				UpdateWordformsInText(text);
+				IStText text = CurrentText;
+				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
+				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
 			}
+
 			return true;	//we handled this.
 		}
 		public bool OnParseAllWords(object argument)
 		{
 			CheckDisposed();
-			if (!GetLock())
-				return true; // we still dealt with the command.
-
-			ConnectToParser();
-			Connection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			if (ConnectToParser())
+				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
 
 			return true;	//we handled this.
 		}
@@ -612,7 +477,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_lock != null)
 				return true; // we already have it locked.
-			m_lock = ClientServerServices.Current.GetExclusiveModeToken(m_cache, ksParserLockName);
+			m_lock = ClientServerServices.Current.GetExclusiveModeToken(m_cache, ParserLockName);
 			if (m_lock == null)
 			{
 				MessageBox.Show(Form.ActiveForm, ParserUIStrings.ksOtherClientIsParsing, ParserUIStrings.ksParsingElsewhere,
@@ -630,36 +495,31 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_lock = null;
 		}
 
-		protected bool InFriendlyArea
-		{
-			get
-			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
-				return (areaChoice == "textsWords");
-			}
-		}
-
-		protected bool InTextsWordsArea
+		private bool InTextsWordsArea
 		{
 			get
 			{
 				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", "");
-				if (areaChoice.ToLower() == "textswords")
-					return true;
-				return false;
+				return areaChoice == "textsWords";
 			}
 		}
-		protected bool InWordsAnalyses
+
+		private bool InWordAnalyses
 		{
 			get
 			{
-				if (InTextsWordsArea)
-				{
-					string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl","");
-					if (toolName.ToLower() == "analyses")
-						return true;
-				}
-				return false;
+				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "toolBulkEditWordforms");
+			}
+		}
+
+		private bool InInterlinearText
+		{
+			get
+			{
+				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				string tabName = m_mediator.PropertyTable.GetStringProperty("InterlinearTab", "");
+				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 
@@ -676,30 +536,29 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			display.Enabled = (Connection == null);
+			display.Enabled = m_parserConnection == null;
 			return true;	//we handled this.
 		}
 		public bool OnDisplayReInitParser(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
-			display.Enabled = (Connection != null);
+			display.Enabled = m_parserConnection != null;
 			return true;	//we handled this.
 		}
 		public bool OnDisplayStopParser(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
-			display.Enabled = (Connection != null);
+			display.Enabled = m_parserConnection != null;
 			return true;	//we handled this.
 		}
 		public bool OnDisplayReparseAllWords(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
-			ParserConnection con = Connection;
 			// must wait for the queue to empty before we can fill it up again or else we run the risk of breaking the parser thread
-			display.Enabled = con != null && con.GetQueueSize(ParserPriority.Low) == 0;
+			display.Enabled = m_parserConnection != null && m_parserConnection.GetQueueSize(ParserPriority.Low) == 0;
 
 			return true;	//we handled this.
 		}
@@ -708,9 +567,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (Connection != null)
-				DisconnectFromParser();
-			Unlock();
+			DisconnectFromParser();
 			return true;	//we handled this.
 		}
 
@@ -719,23 +576,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (Connection == null)
+			if (m_parserConnection == null)
 				ConnectToParser();
 			else
-				Connection.ReloadGrammarAndLexicon();
+				m_parserConnection.ReloadGrammarAndLexicon();
 			return true; //we handled this.
 		}
 
 		public bool OnReparseAllWords(object argument)
 		{
 			CheckDisposed();
-			if (!GetLock())
-				return true; // we still dealt with the command.
-
-			ConnectToParser();
-			Connection.UpdateWordforms(
-				m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(),
-				ParserPriority.Low);
+			if (ConnectToParser())
+				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
 			return true;	//we handled this.
 		}
 
@@ -745,8 +597,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 			var cmd = (Command) commandObject;
 
-			display.Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser ==
-				cmd.GetParameter("parser");
+			display.Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == cmd.GetParameter("parser");
 			return true; //we've handled this
 		}
 
@@ -758,8 +609,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			string newParser = cmd.GetParameter("parser");
 			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser != newParser)
 			{
-				if (Connection != null)
-					DisconnectFromParser();
+				DisconnectFromParser();
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					m_cache.LangProject.MorphologicalDataOA.ActiveParser = newParser;
@@ -767,6 +617,43 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Handles the xWorks message for Try A Word
+		/// </summary>
+		/// <param name="argument">The xCore Command object.</param>
+		/// <returns>false</returns>
+		public bool OnTryAWord(object argument)
+		{
+			CheckDisposed();
+
+			if (m_dialog == null || m_dialog.IsDisposed)
+			{
+				m_dialog = new TryAWordDlg();
+				m_dialog.SizeChanged += (sender, e) =>
+											{
+												if (m_dialog.WindowState != FormWindowState.Minimized)
+													m_prevWindowState = m_dialog.WindowState;
+											};
+				m_dialog.SetDlgInfo(m_mediator, CurrentWordform, this);
+				var form = (FwXWindow) m_mediator.PropertyTable.GetValue("window");
+				m_dialog.Show(form);
+				// This allows Keyman to work correctly on initial typing.
+				// Marc Durdin suggested switching to a different window and back.
+				// PostMessage gets into the queue after the dialog settles down, so it works.
+				Win32.PostMessage(form.Handle, Win32.WinMsgs.WM_SETFOCUS, 0, 0);
+				Win32.PostMessage(m_dialog.Handle, Win32.WinMsgs.WM_SETFOCUS, 0, 0);
+			}
+			else
+			{
+				if (m_dialog.WindowState == FormWindowState.Minimized)
+					m_dialog.WindowState = m_prevWindowState;
+				else
+					m_dialog.Activate();
+			}
+
+			return true; // we handled this
 		}
 
 		#region TraceSwitch methods

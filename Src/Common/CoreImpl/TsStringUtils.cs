@@ -1253,6 +1253,32 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Gets the first vernacular ws.
+		/// </summary>
+		/// <param name="vernWsVecImage">The vern ws vec image, like "seh pt mar-fonipa".</param>
+		/// <param name="wsf">The Writing System Factory.</param>
+		/// <param name="text">The text.</param>
+		/// <returns>
+		/// The first vernacular ws used in the text or -1 if none
+		/// </returns>
+		public static int GetFirstVernacularWs(string vernWsVecImage, ILgWritingSystemFactory wsf, ITsString text)
+		{
+			int wid = -1; // writing system id
+			for (int runSeq = 0; runSeq < text.RunCount; runSeq++)
+			{
+				wid = text.get_WritingSystem(runSeq);
+				var ws = wsf.get_EngineOrNull(wid);
+				if (ws != null)
+				{   // ws.Id is short like "en"
+					if (vernWsVecImage.IndexOf(ws.Id) >= 0)
+						break; // wid > -1
+				}
+				wid = -1;
+			}
+			return wid;
+		}
+
+		/// <summary>
 		/// Get the writing system of the specified run of a TsString.
 		/// </summary>
 		public static int GetWsOfRun(ITsString tss, int irun)
@@ -1736,6 +1762,70 @@ namespace SIL.CoreImpl
 				tssValue = bldr.GetString();
 			}
 			return tssValue;
+		}
+
+		/// <summary>
+		/// Remove characters that are illegal in XML files. Returns the input string if nothing is wrong with it.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public static ITsString RemoveIllegalXmlChars(ITsString input)
+		{
+
+			for (var result = input;;)
+			{
+				var modified = RemoveOneIllegalXmlCharacter(result);
+				if (modified == result)
+					return result; // nothing (more) to remove
+				result = modified;
+			}
+		}
+
+		/// <summary>
+		/// Remove one illegal character, if one is found; otherwise, return the original string.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		private static ITsString RemoveOneIllegalXmlCharacter(ITsString input)
+		{
+			var text = input.Text;
+			if (text == null)
+				return input;
+			for (int i = 0; i < text.Length; i++)
+			{
+				if (IsIllegalXmlCharacter(text, i))
+					return input.Remove(i, 1);
+			}
+			return input;
+		}
+
+		/// <summary>
+		/// See http://www.w3.org/TR/REC-xml/#charsets
+		/// Also detects unmatched surrogates
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		private static bool IsIllegalXmlCharacter(string text, int index)
+		{
+			var ch = text[index];
+			if (ch < '\x9' || (ch > '\xa' && ch < '\xd') || (ch > '\xd' && ch < '\x20') || ch > '\xfffd')
+				return true;
+			if (Surrogates.IsLeadSurrogate(ch))
+			{
+				if (index + 1 == text.Length)
+					return true;
+				if (!Surrogates.IsTrailSurrogate(text[index + 1]))
+					return true;
+			}
+			if (Surrogates.IsTrailSurrogate(ch))
+			{
+				if (index == 0)
+					return true;
+				if (!Surrogates.IsLeadSurrogate(text[index - 1]))
+					return true;
+			}
+			return false;
 		}
 	}
 	#endregion

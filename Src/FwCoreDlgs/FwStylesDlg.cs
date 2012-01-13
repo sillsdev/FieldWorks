@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool m_fShowTEStyleTypes = false;
 		private object m_lastStyleTypeEntryForOtherApp;
+		private bool m_fOkToSaveTabsToStyle = true;
 		#endregion
 
 		#region Constructors and initialization
@@ -207,8 +208,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="owner">parent window</param>
 		/// <param name="app"></param>
 		/// <param name="helpTopicProvider"></param>
-		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle, FwStyleSheet stylesheet,
-			int nMaxStyleLevel, int hvoAppRoot, FdoCache cache, IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider)
+		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle,
+			FwStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, FdoCache cache,
+			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider)
 		{
 			var sci = combo.SelectedItem as StyleComboItem;
 			string charStyleName = combo.SelectedItem as string;
@@ -372,7 +374,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				object temp = m_lastStyleTypeEntryForOtherApp;
 				Debug.Assert(m_cboTypes.Items.Count == 4);
 				m_lastStyleTypeEntryForOtherApp = m_cboTypes.Items[3];
-				m_cboTypes.Items[3] = m_lastStyleTypeEntryForOtherApp;
+				m_cboTypes.Items[3] = temp;
 			}
 		}
 
@@ -462,7 +464,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_tabControl.TabPages.Add(m_tbFont);
 
 			// For character styles, hide the "Paragraph", "Bullets", and "Border" tabs
-			if (styleInfo.IsCharacterStyle && m_tabControl.TabPages.Contains(m_tbParagraph))
+			if (styleInfo.IsCharacterStyle)
 			{
 				// deselect tab before removing. This is needed on mono.
 				// see bug: https://bugzilla.novell.com/show_bug.cgi?id=613765
@@ -470,19 +472,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_tabControl.SelectedTab == m_tbBullets ||
 					m_tabControl.SelectedTab == m_tbParagraph)
 				{
+					// LT-12119: Switching to General tab will cause "current" tab to save data to
+					// "current" style, but the two are currently out of sync! So prevent the save:
+					m_fOkToSaveTabsToStyle = false;
 					m_tabControl.SelectedTab = m_tbGeneral;
+					m_fOkToSaveTabsToStyle = true;
 				}
 
-				m_tabControl.TabPages.Remove(m_tbBorder);
-				m_tabControl.TabPages.Remove(m_tbBullets);
-				m_tabControl.TabPages.Remove(m_tbParagraph);
+				RemoveParagraphStyleTabs();
 			}
-			else if (styleInfo.IsParagraphStyle && !m_tabControl.TabPages.Contains(m_tbParagraph))
-			{
-				m_tabControl.TabPages.Add(m_tbParagraph);
-				m_tabControl.TabPages.Add(m_tbBullets);
-				m_tabControl.TabPages.Add(m_tbBorder);
-			}
+			else if (styleInfo.IsParagraphStyle)
+				EnsureParagraphStyleTabs();
 
 			UpdateTabsForStyle(styleInfo);
 
@@ -518,12 +518,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void FillForDefaultParagraphCharacters()
 		{
-			if (m_tabControl.TabPages.Contains(m_tbParagraph))
-			{
-				m_tabControl.TabPages.Remove(m_tbBorder);
-				m_tabControl.TabPages.Remove(m_tbBullets);
-				m_tabControl.TabPages.Remove(m_tbParagraph);
-			}
+			RemoveParagraphStyleTabs();
 			if (m_tabControl.TabPages.Contains(m_tbFont))
 				m_tabControl.TabPages.Remove(m_tbFont);
 			m_btnDelete.Enabled = false;
@@ -583,9 +578,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// style -- hide several tab pages, and force the General tab.
 				if (m_tabControl.SelectedTab != m_tbGeneral)
 					m_tabControl.SelectedTab = m_tbGeneral;
-				m_tabControl.TabPages.Remove(m_tbBorder);
-				m_tabControl.TabPages.Remove(m_tbBullets);
-				m_tabControl.TabPages.Remove(m_tbParagraph);
+				RemoveParagraphStyleTabs();
 			}
 		}
 
@@ -647,11 +640,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Selecting event of the m_tabControl control.
-		/// This handles the case of switching to the General tab without changing the
-		/// selected style.  Choosing DefaultParagraphCharacters also fires this event
-		/// but the previous style is updated by another method, and this method should not
-		/// try to update Default Paragraph Characters.
+		/// Handles the Deselecting event of the m_tabControl control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.TabControlCancelEventArgs"/> instance containing the event data.</param>
@@ -682,7 +671,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			if (tabDeselecting != null)
 			{
-				if (info != null)
+				if (m_fOkToSaveTabsToStyle && info != null)
 					tabDeselecting.SaveToInfo(info);
 				m_styleTable.ConnectStyles();
 			}
@@ -1183,6 +1172,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_changeType |= StyleChangeType.RenOrDel;
 		}
+
+		/// <summary>
+		/// Makes sure the dialog tabs pertaining to paragraph styles are visible.
+		/// </summary>
+		private void EnsureParagraphStyleTabs()
+		{
+			if (!m_tabControl.TabPages.Contains(m_tbParagraph))
+				m_tabControl.TabPages.Add(m_tbParagraph);
+
+			if (!m_tabControl.TabPages.Contains(m_tbBullets))
+				m_tabControl.TabPages.Add(m_tbBullets);
+
+			if (!m_tabControl.TabPages.Contains(m_tbBorder))
+				m_tabControl.TabPages.Add(m_tbBorder);
+		}
+
+		/// <summary>
+		/// Removes from the dialog the tabs pertaining to paragraph styles.
+		/// </summary>
+		private void RemoveParagraphStyleTabs()
+		{
+			m_tabControl.TabPages.Remove(m_tbBorder);
+			m_tabControl.TabPages.Remove(m_tbBullets);
+			m_tabControl.TabPages.Remove(m_tbParagraph);
+		}
+
 		#endregion
 	}
 	#endregion // FwStylesDlg class

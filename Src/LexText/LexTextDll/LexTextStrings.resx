@@ -198,9 +198,7 @@ If you click No, you will see various options for starting work in Language Expl
 	<value>Could not locate the tool named '{0}'.</value>
   </data>
   <data name="ksChartTemplateWarning" xml:space="preserve">
-	<value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. If you change the columns after you have done some charting, you may need to rework your earlier charts.
-
-This tool does not yet support right-to-left writing systems.</value>
+	<value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
   </data>
   <data name="ksNewFeature" xml:space="preserve">
 	<value>New Feature</value>

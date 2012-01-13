@@ -16,15 +16,11 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
-
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
@@ -312,13 +308,9 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_selectedIndex == value)
 				{
 					// It's useful to check this anyway, since the width of the window or something else
-					// that affects visibility may have changed...
-					if (value >= 0)
-					{
-						int hvoObjNewSel1 = GetNewSelectionObject(value);
-						if (m_wantScrollIntoView)
-							DoSelectAndScroll(hvoObjNewSel1, value);
-					}
+					// that affects visibility may have changed...but don't CHANGE the selection, the user may be editing...(LT-12092)
+					if (value >= 0 && m_wantScrollIntoView)
+						MakeSelectionVisible(GetRowSelection(value));
 					return;
 				}
 
@@ -1035,12 +1027,14 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						object x = Mediator.PropertyTable.GetValue("ActiveClerk");
+						IRecordListUpdater x = Mediator.PropertyTable.GetValue("ActiveClerk") as IRecordListUpdater;
 						if (x != null)
 						{
-							MethodInfo mi = x.GetType().GetMethod("OnRefresh");
-							if (mi != null)
-								mi.Invoke(x, new object[] {null});
+							using (new WaitCursor(this))
+							{
+								//update the list, forcing a recursive refresh
+								x.UpdateList(true);
+							}
 						}
 						chvo = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
 						if (chvo == 0)

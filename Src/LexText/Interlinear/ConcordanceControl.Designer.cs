@@ -1,4 +1,7 @@
+using System;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Widgets;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -20,7 +23,7 @@ namespace SIL.FieldWorks.IText
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConcordanceControl));
 			this.m_lblTop = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
+			this.m_searchContentLabel = new System.Windows.Forms.Label();
 			this.m_cbLine = new System.Windows.Forms.ComboBox();
 			this.m_tbSearchText = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_btnRegExp = new System.Windows.Forms.Button();
@@ -36,9 +39,10 @@ namespace SIL.FieldWorks.IText
 			this.m_rbtnUseRegExp = new System.Windows.Forms.RadioButton();
 			this.m_chkMatchCase = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.helpProvider = new HelpProvider();
+			this.helpProvider = new System.Windows.Forms.HelpProvider();
 			this.m_fwtbItem = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_lnkSpecify = new System.Windows.Forms.LinkLabel();
+			this.m_cbSearchText = new TreeCombo();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbSearchText)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwtbItem)).BeginInit();
@@ -56,8 +60,8 @@ namespace SIL.FieldWorks.IText
 			//
 			// label3
 			//
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
+			resources.ApplyResources(this.m_searchContentLabel, "m_searchContentLabel");
+			this.m_searchContentLabel.Name = "m_searchContentLabel";
 			//
 			// m_cbLine
 			//
@@ -182,10 +186,18 @@ namespace SIL.FieldWorks.IText
 			this.m_lnkSpecify.TabStop = true;
 			this.m_lnkSpecify.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_lnkSpecify_LinkClicked);
 			//
+			// m_cbSearchText
+			//
+			this.m_cbSearchText.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			resources.ApplyResources(this.m_cbSearchText, "m_cbSearchText");
+			this.m_cbSearchText.Name = "m_cbSearchText";
+			this.helpProvider.SetShowHelp(this.m_cbSearchText, ((bool)(resources.GetObject("m_cbSearchText.ShowHelp"))));
+			//
 			// ConcordanceControl
 			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.m_cbSearchText);
 			this.Controls.Add(this.m_lnkSpecify);
 			this.Controls.Add(this.m_fwtbItem);
 			this.Controls.Add(this.groupBox1);
@@ -198,7 +210,7 @@ namespace SIL.FieldWorks.IText
 			this.Controls.Add(this.m_btnRegExp);
 			this.Controls.Add(this.m_tbSearchText);
 			this.Controls.Add(this.m_cbLine);
-			this.Controls.Add(this.label3);
+			this.Controls.Add(this.m_searchContentLabel);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.m_lblTop);
 			this.Name = "ConcordanceControl";
@@ -215,7 +227,7 @@ namespace SIL.FieldWorks.IText
 
 		private System.Windows.Forms.Label m_lblTop;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label m_searchContentLabel;
 		private System.Windows.Forms.ComboBox m_cbLine;
 		private System.Windows.Forms.Button m_btnRegExp;
 		private System.Windows.Forms.Button m_btnHelp;
@@ -234,5 +246,18 @@ namespace SIL.FieldWorks.IText
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbItem;
 		private System.Windows.Forms.LinkLabel m_lnkSpecify;
 		protected System.Windows.Forms.ComboBox m_cbWritingSystem;
+		protected SIL.FieldWorks.Common.Widgets.TreeCombo m_cbSearchText;
+
+		#region Implementation of IxCoreColleague
+
+		/// <summary>
+		/// Mediator message handling Priority
+		/// </summary>
+		public int Priority
+		{
+			get { return (int)ColleaguePriority.Medium; }
+		}
+
+		#endregion
 	}
 }

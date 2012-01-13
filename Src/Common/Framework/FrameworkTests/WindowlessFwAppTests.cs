@@ -98,6 +98,14 @@ namespace SIL.FieldWorks.Common.Framework
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// window or control id, or hvo of composed object
+		/// </summary>
+		public override int Priority
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called just before a window syncronizes it's views with DB changes (e.g. when an

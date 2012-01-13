@@ -25,6 +25,15 @@ namespace SIL.FieldWorks.IText
 		public StatisticsView()
 		{
 			InitializeComponent();
+
+			ContextMenu cm = new ContextMenu();
+			MenuItem mi = new MenuItem("Cut");
+
+			mi = new MenuItem("Copy");
+			mi.Click += new EventHandler(mi_Copy);
+			cm.MenuItems.Add(mi);
+
+			statisticsBox.ContextMenu = cm;
 		}
 
 		public string AccName
@@ -58,7 +67,10 @@ namespace SIL.FieldWorks.IText
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
 			clerk = (InterlinearTextsRecordClerk) (mediator.PropertyTable.GetValue(name) ??
 												   RecordClerkFactory.CreateClerk(mediator, configurationParameters, true));
-
+			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
+			// the set of selected texts).
+			clerk.ActivateUI(true);
+			_areaName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "area", "unknown");
 			RebuildStatisticsTable();
 			//add ourselves so that we can receive messages (related to the text selection currently misnamed AddTexts)
 			mediator.AddColleague(this);
@@ -69,7 +81,8 @@ namespace SIL.FieldWorks.IText
 
 		private void RebuildStatisticsTable()
 		{
-			statisticsTable.Controls.Clear();
+			statisticsBox.Clear();
+			statisticsBox.SelectionTabs = new int[] { 10, 300};
 			//retrieve the default UI font.
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
 														  FontHeightAdjuster.StyleSheetFromMediator(mediator),
@@ -78,54 +91,8 @@ namespace SIL.FieldWorks.IText
 			Font headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
 
 			//refresh the statisticsDescription (in case of font changes)
-			statisticsDescription.Text = ITextStrings.ksStatisticsView_HeaderText;
-			statisticsDescription.Font = headerFont;
-			statisticsDescription.UseMnemonic = false;
+			statisticsBox.Text = ITextStrings.ksStatisticsView_HeaderText;
 
-			Label segmentCountLabel = new Label
-										{
-											Font = font,
-											AutoSize = true,
-											Anchor = AnchorStyles.Right,
-											TextAlign = ContentAlignment.MiddleRight,
-											Text = ITextStrings.ksStatisticsViewTotalSentencesText
-										};
-			Label segmentCount = new Label
-										{
-											Font = font,
-											AutoSize = true,
-											Anchor = AnchorStyles.Left,
-											TextAlign = ContentAlignment.MiddleLeft
-										};
-			Label totalWordTokenCountLabel = new Label
-										{
-											Font = font,
-											AutoSize = true,
-											Anchor = AnchorStyles.Right,
-											TextAlign = ContentAlignment.MiddleRight,
-											Text = ITextStrings.ksStatisticsViewTotalWordTokensText
-										};
-			Label totalWordTokenCount = new Label
-									{
-										Font = font,
-										Anchor = AnchorStyles.Left,
-										TextAlign = ContentAlignment.MiddleLeft
-									};
-			Label totalWordTypeCountLabel = new Label
-			{
-				Font = font,
-				AutoSize = true,
-				Anchor = AnchorStyles.Right,
-				TextAlign = ContentAlignment.MiddleRight,
-				Text = ITextStrings.ksStatisticsViewTotalWordTypesText
-			};
-
-			Label totalWordTypeCount = new Label
-			{
-				Font = font,
-				Anchor = AnchorStyles.Left,
-				TextAlign = ContentAlignment.MiddleLeft
-			};
 			int row = 0;
 			var textList = InterestingTextsDecorator.GetInterestingTextList(mediator, Cache.ServiceLocator);
 			int numberOfSegments = 0;
@@ -181,71 +148,52 @@ namespace SIL.FieldWorks.IText
 					wordCount += words.Count;
 				}
 			}
-			segmentCount.Text = "" + numberOfSegments;
-			statisticsTable.Controls.Add(totalWordTypeCountLabel, 0, row);
-			statisticsTable.Controls.Add(totalWordTypeCount, 1, row);
+			// insert total word type count
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalWordTypesText + "\t"; // Todo: find the right System.?.NewLine constant
+
 			++row;
 			//add one row for the unique words in each language.
 			foreach (KeyValuePair<int, Set<String>> keyValuePair in languageTypeCount)
 			{
 				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-				Label wsLabel = new Label
-				{
-					Font = font,
-					AutoSize = true,
-					Anchor = AnchorStyles.Right,
-					Text = (ws != null ? ws.ToString() : "#unknown#") + @":",
-					TextAlign = ContentAlignment.MiddleRight
-				};
-				Label wsCount = new Label
-				{
-					Font = font,
-					Anchor = AnchorStyles.Left,
-					Text = "" + keyValuePair.Value.Count,
-					TextAlign = ContentAlignment.MiddleLeft
-				};
-				statisticsTable.Controls.Add(wsLabel, 0, row);
-				statisticsTable.Controls.Add(wsCount, 1, row);
+
+				string labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
+				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
+				statisticsBox.Text += "" + keyValuePair.Value.Count;
 				++row;
 				uniqueWords += keyValuePair.Value.Count; //increase the total of unique words
 			}
-			//add extra padding row
-			statisticsTable.Controls.Add(new Label {Text = @"   "}, 0, row++);
 
-			totalWordTypeCount.Text = "" + uniqueWords; //update the text of the total unique word label
-			totalWordTokenCount.Text = "" + wordCount;
-			statisticsTable.Controls.Add(totalWordTokenCountLabel, 0, row);
-			statisticsTable.Controls.Add(totalWordTokenCount, 1, row);
+			// next insert the word count.
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalWordTokensText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += wordCount;
 			++row;
 			//add one row for the token count for each language.
 			foreach (KeyValuePair<int, int> keyValuePair in languageCount)
 			{
 				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-				Label wsLabel = new Label
-				{
-					Font = font,
-					AutoSize = true,
-					Anchor = AnchorStyles.Right,
-					Text = (ws != null ? ws.ToString() : "#unknown#") + @":",
-					TextAlign = ContentAlignment.MiddleRight
-				};
-				Label wsCount = new Label
-				{
-					Font = font,
-					Anchor = AnchorStyles.Left,
-					Text = "" + keyValuePair.Value,
-					TextAlign = ContentAlignment.MiddleLeft
-				};
-				statisticsTable.Controls.Add(wsLabel, 0, row);
-				statisticsTable.Controls.Add(wsCount, 1, row);
+
+				string labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
+				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
+				statisticsBox.Text += "" + keyValuePair.Value;
 				++row;
 			}
-			//add extra padding row between unique words and sentence(segment) count
-			statisticsTable.Controls.Add(new Label { Text = @"   " }, 0, row++);
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + ITextStrings.ksStatisticsViewTotalSentencesText + "\t"; // Todo: find the right System.?.NewLine constant
 
-			statisticsTable.Controls.Add(segmentCountLabel, 0, row);
-			statisticsTable.Controls.Add(segmentCount, 1, row);
-			statisticsDescription.Refresh();
+			// next insert the sentence count.
+			statisticsBox.Text += numberOfSegments;
+
+			// insert the total word type count into the richTextBox (it wasn't available earlier)
+			statisticsBox.SelectionStart = statisticsBox.Find(ITextStrings.ksStatisticsViewTotalWordTypesText) +
+										   ITextStrings.ksStatisticsViewTotalWordTypesText.Length;
+			statisticsBox.SelectionLength = 1;
+			statisticsBox.SelectedText = "\t" + uniqueWords;
+
+			// Set the font for the header. Do this after we add the other stuff to make sure
+			// it doesn't apply to extra text added adjacent to it.
+			statisticsBox.Select(0, ITextStrings.ksStatisticsView_HeaderText.Length);
+			statisticsBox.SelectionFont = headerFont;
+			statisticsBox.Select(0,0);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -258,6 +206,14 @@ namespace SIL.FieldWorks.IText
 		public bool ShouldNotCall
 		{
 			get { return _shouldNotCall; }
+		}
+
+		public int Priority
+		{
+			get
+			{
+				return (int)ColleaguePriority.Low;
+			}
 		}
 
 		public bool OnDisplayAddTexts(object commandObject, ref UIItemDisplayProperties display)
@@ -323,6 +279,13 @@ namespace SIL.FieldWorks.IText
 			{
 				return mediator != null ? (FdoCache)mediator.PropertyTable.GetValue("cache") : null;
 			}
+		}
+		//Code to add right click
+
+
+		void mi_Copy(object sender, EventArgs e)
+		{
+			statisticsBox.Copy();
 		}
 	}
 }

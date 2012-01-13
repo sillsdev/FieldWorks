@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -41,6 +42,27 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
+		}
+
+		/// <summary>
+		/// Put the hidden item back into the list of visible items to make the list that should be stored in the property.
+		/// </summary>
+		/// <param name="items"></param>
+		protected override void AddHiddenItems(List<ICmObject> items)
+		{
+			var allItems = base.GetVisibleItemList();
+			if (allItems.Count != 0)
+				items.Insert(0, allItems[0]);
+		}
+
+		/// <summary>
+		/// In a tree view the FIRST item is hidden.
+		/// </summary>
+		protected override List<ICmObject> GetVisibleItemList()
+		{
+			var result = base.GetVisibleItemList();
+			result.RemoveAt(0);
+			return result;
 		}
 
 		#region Component Designer generated code

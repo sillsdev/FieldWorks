@@ -49,6 +49,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private bool m_isDisposed = false;
 
+		private int instanceID = 0x00000F0;
+
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
@@ -198,6 +200,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool ShouldNotCall
 		{
 			get { return IsDisposed; }
+		}
+
+		public int Priority
+		{
+			get { return (int) ColleaguePriority.Medium; }
 		}
 
 
@@ -570,17 +577,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			var mainWindow = (Form)m_mediator.PropertyTable.GetValue("window");
-			mainWindow.Cursor = Cursors.WaitCursor;
-			using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+			using (new WaitCursor(mainWindow))
 			{
-				var ui = new CmObjectUi(ri);
-				dlg.SetDlgInfo(ui, m_cache, m_mediator);
-				dlg.TopMessage = LexEdStrings.ksDeletingThisRevIndex;
-				dlg.BottomQuestion = LexEdStrings.ksReallyWantToDeleteRevIndex;
-				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-					ReallyDeleteReversalIndex(ri);
+				using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
+				{
+					var ui = new CmObjectUi(ri);
+					dlg.SetDlgInfo(ui, m_cache, m_mediator);
+					dlg.TopMessage = LexEdStrings.ksDeletingThisRevIndex;
+					dlg.BottomQuestion = LexEdStrings.ksReallyWantToDeleteRevIndex;
+					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
+						ReallyDeleteReversalIndex(ri);
+				}
 			}
-			mainWindow.Cursor = Cursors.Default;
 		}
 
 		protected virtual void ReallyDeleteReversalIndex(IReversalIndex ri)

@@ -10,6 +10,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -31,14 +32,20 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		T[] GetListOfIncludedTexts();
 
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Save the information needed to prune the tree later.
 		/// </summary>
-		void PruneToSelectedTexts(T text);
+		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
+		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
+		/// ------------------------------------------------------------------------------------
+		void PruneToInterestingTextsAndSelect(IEnumerable<T> interestingTexts, T selectedText);
 
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get/set the label shown above the tree view.
 		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		string TreeViewLabel { get; set; }
 
 		/// ------------------------------------------------------------------------------------

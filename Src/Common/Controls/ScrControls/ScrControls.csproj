@@ -143,6 +143,9 @@
 	  <Name>ScrUtilsInterfaces</Name>
 	  <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="SharedScrControls, Version=7.2.0.19910, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
@@ -186,46 +189,37 @@
 	</Compile>
 -->
 	<Compile Include="DbMultilingScrBooks.cs" />
-	<Compile Include="FilterTextsDialogTE.cs" />
+	<Compile Include="FilterTextsDialogTE.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="ScrBookControl.cs">
-	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="ScrControls.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>ScrControls.resx</DependentUpon>
 	</Compile>
-	<Compile Include="ScrPassageControl.cs">
+	<Compile Include="DbScrPassageControl.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="ScrPassageDropDown.cs" />
+	<Compile Include="DbScrPassageDropDown.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<EmbeddedResource Include="FilterTextsDialogTE.resx">
 	  <DependentUpon>FilterTextsDialogTE.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="ScrControls.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>ScrControls.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="ScrPassageControl.resx">
-	  <DependentUpon>ScrPassageControl.cs</DependentUpon>
+	<EmbeddedResource Include="DbScrPassageControl.resx">
+	  <DependentUpon>DbScrPassageControl.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<EmbeddedResource Include="ScrPassageDropDown.resx">
-	  <DependentUpon>ScrPassageDropDown.cs</DependentUpon>
+	<EmbeddedResource Include="DbScrPassageDropDown.resx">
+	  <DependentUpon>DbScrPassageDropDown.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
@@ -257,7 +251,7 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-	<None Include="DropDownArrow.png" />
+	<Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

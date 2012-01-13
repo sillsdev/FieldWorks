@@ -139,7 +139,7 @@
 	<value>0</value>
   </data>
   <data name="m_tbDescription.Text" xml:space="preserve">
-	<value>Import from the FieldWorks interlinear XML export format. Currently this process imports only the baseline and free translations. It makes no changes to the lexicon.</value>
+	<value>Import from the FLExText interlinear export format. Currently this process imports only the baseline and free translations. It makes no changes to the lexicon.</value>
   </data>
   <data name="&gt;&gt;m_tbDescription.Name" xml:space="preserve">
 	<value>m_tbDescription</value>
@@ -292,7 +292,7 @@
 	<value>7</value>
   </data>
   <data name="textBox1.Text" xml:space="preserve">
-	<value>Interlinear XML file:</value>
+	<value>FLExText file:</value>
   </data>
   <data name="&gt;&gt;textBox1.Name" xml:space="preserve">
 	<value>textBox1</value>
@@ -322,7 +322,7 @@
 	<value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-	<value>FieldWorks interlinear XML file</value>
+	<value>FieldWorks interlinear (FLExText) file</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>InterlinearImportDlg</value>

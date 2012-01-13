@@ -483,10 +483,10 @@ namespace SIL.FieldWorks.TE
 
 			int cws = wsf.NumberOfWs;
 
-			using (ArrayPtr ptr = MarshalEx.ArrayToNative(cws, typeof(int)))
+			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
 			{
 				wsf.GetWritingSystems(ptr, cws);
-				int[] vws = (int[])MarshalEx.NativeToArray(ptr, cws, typeof(int));
+				int[] vws = MarshalEx.NativeToArray<int>(ptr, cws);
 
 				for (int iws = 0; iws < cws; iws++)
 				{

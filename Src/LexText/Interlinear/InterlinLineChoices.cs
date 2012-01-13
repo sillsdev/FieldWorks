@@ -890,10 +890,11 @@ namespace SIL.FieldWorks.IText
 				return -1;
 			int newPos = n - 1; // default place to put it.
 			// If it is not morpheme level and a morpheme-level precedes it, must move
-			// past all of them.
+			// past all of them. Same treatment for notes if there is more than one ws (one per line)
 			if (!spec.MorphemeLevel && this[newPos].MorphemeLevel)
-				for ( ; newPos > 0 && this[newPos - 1].MorphemeLevel; newPos--)
-					;
+				for (; newPos > 0 && this[newPos - 1].MorphemeLevel; newPos--) {}
+			if (spec.Flid != kflidNote && this[newPos].Flid == kflidNote)
+				for (; newPos > 0 && this[newPos - 1].Flid == kflidNote; newPos--) {}
 			// If it can't go here it just can't move.
 			if (newPos > 0 && !CanFollow(this[newPos - 1], spec))
 				return -1;
@@ -912,6 +913,11 @@ namespace SIL.FieldWorks.IText
 			return WhereToMoveUpTo(n) >= 0;
 		}
 
+		/// <summary>
+		/// Moves a choice line up to the position n.
+		/// Morpheme lines, word lines and
+		/// </summary>
+		/// <param name="n"></param>
 		public void MoveUp(int n)
 		{
 			int dest = WhereToMoveUpTo(n);
@@ -919,12 +925,14 @@ namespace SIL.FieldWorks.IText
 				return;
 			InterlinLineSpec spec = this[n];
 			// If this was the first morpheme field, move the others too.
-			bool fMoveGroup = spec.MorphemeLevel && !this[n - 1].MorphemeLevel;
+			bool fMoveMorphemeGroup = spec.MorphemeLevel && !this[n - 1].MorphemeLevel;
+			bool fMoveNoteGroup	= spec.Flid == kflidNote && this[n - 1].Flid != kflidNote;
 			m_specs.RemoveAt(n);
 			m_specs.Insert(dest, spec);
-			if (fMoveGroup)
+			if (fMoveMorphemeGroup || fMoveNoteGroup)
 			{
-				for (int i = n + 1; i < Count && this[i].MorphemeLevel; i++)
+				for (int i = n + 1; i < Count && ((fMoveMorphemeGroup && this[i].MorphemeLevel) ||
+												  (fMoveNoteGroup && this[i].Flid == kflidNote)); i++)
 				{
 					InterlinLineSpec specT = this[i];
 					m_specs.RemoveAt(i);

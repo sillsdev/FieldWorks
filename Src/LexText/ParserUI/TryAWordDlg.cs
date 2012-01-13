@@ -18,6 +18,9 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -26,7 +29,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -38,322 +40,175 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class TryAWordDlg : Form, IFWDisposable, IxWindow
 	{
+		private const string PersistProviderID = "TryAWord";
+		private const string HelpTopicID = "khtpTryAWord";
+
 		#region Data members
 
 		/// <summary>
 		/// xCore Mediator.
 		/// </summary>
-		protected Mediator m_mediator;
-		/// <summary>
-		/// Optional configuration parameters.
-		/// </summary>
-		//protected XmlNode m_configurationParameters;
+		private Mediator m_mediator;
+		private FdoCache m_cache;
+		private ParserListener m_parserListener;
+		private PersistenceProvider m_persistProvider;
+		private readonly HelpProvider m_helpProvider;
 
-		private Label m_lblWordToTry;
-		private System.ComponentModel.IContainer components;
-
-		private FwTextBox m_tbWordForm;
-		private Button m_btnTryIt;
-		private Button m_btnClose;
-		private Panel m_pnlResults;
-		private Panel m_pnlClose;
-		private Panel m_pnlWord;
-		private Label m_lblStatus;
+		private Label m_wordToTryLabel;
+		private IContainer components;
+		private FwTextBox m_wordformTextBox;
+		private Button m_tryItButton;
+		private Button m_closeButton;
+		private Panel m_resultsPanel;
+		private Panel m_closePanel;
+		private Panel m_wordPanel;
+		private Label m_statusLabel;
 		private Timer m_timer;
 		private TryAWordRootSite m_rootsite;
-		public FormWindowState m_windowState;
-
-		/// <summary>
-		/// The control that shows the HTML data.
-		/// </summary>
-		protected HtmlControl m_htmlControl;
+		private HtmlControl m_htmlControl;
+		private Button m_helpButton;
+		private CheckBox m_doTraceCheckBox;
+		private Label m_resultsLabel;
+		private Panel m_sandboxPanel;
+		private CheckBox m_doSelectMorphsCheckBox;
 
 		/// <summary>
 		/// The parser trace objects
 		/// </summary>
-		private ParserTrace m_parserTrace;
-		private readonly XAmpleTrace m_xampleTrace;
-		private readonly HCTrace m_hermitCrabTrace;
+		private XAmpleTrace m_xampleTrace;
+		private HCTrace m_hermitCrabTrace;
 
-		protected FdoCache m_cache;
-		protected ParserListener m_parserListener;
+		private bool m_parserCanDoSelectMorphs = true;
 
-		protected string m_sLastWordUsedPropertyName;
-		private Button buttonHelp;
-		protected string m_sWhileTracingFile;
-		// private string m_sXAmpleSelectFile; // CS0414
-
-		private const string s_helpTopic = "khtpTryAWord";
-		private readonly HelpProvider helpProvider;
-
-		// private string m_sOneWordMessage; // CS0414
-		// private string m_sOneWordCaption; // CS0414
-		private string m_sNoLexInfoForMorphsMessage;
-		private string m_sNoLexInfoForMorphsCaption;
-		private string m_sParserStatusPrefix;
-		private string m_sParserStatusSuffix;
-		private string m_sParserStatusRunning;
-		private string m_sParserStatusStopped;
-		private CheckBox m_cbDoTrace;
-
-		private Timer m_connectionTimer;
-		private Label m_lblResults;
-		private Panel m_pnlSandbox;
-		private CheckBox m_cbDoSelectMorphs;  // timer needed to wait for connection to be established
-		private readonly bool m_fParserCanDoSelectMorphs = true;
-
-		private bool m_fProcesingTextChange;
-		private bool m_fJustMadeConnectionToParser;
-
-		private readonly PersistenceProvider m_persistProvider;
-		const string m_ksTryAWord = "TryAWord";
-		private static TryAWordDlg m_dialog;
+		private bool m_procesingTextChange;
 
 		private IAsyncResult m_tryAWordResult;
 
 		private WebPageInteractor m_webPageInteractor;
 
 		#endregion Data members
-		// Using the Singleton pattern since we want/need only one instance of this dialog
-		public static TryAWordDlg Instance(Mediator mediator, PersistenceProvider persistenceProvider)
-		{
-			if (m_dialog == null)
-			{
-				m_dialog = new TryAWordDlg(mediator, persistenceProvider);
-				var form = (FwXWindow) mediator.PropertyTable.GetValue("window");
-				if (persistenceProvider != null)
-					persistenceProvider.RestoreWindowSettings(m_ksTryAWord, m_dialog);
-				m_dialog.Show(form);
-				m_dialog.InitStatusMaterial();
-				// This allows Keyman to work correctly on initial typing.
-				// Marc Durdin suggested switching to a different window and back.
-				// PostMessage gets into the queue after the dialog settles down, so it works.
-				Win32.PostMessage(form.Handle, Win32.WinMsgs.WM_SETFOCUS, 0, 0);
-				Win32.PostMessage(m_dialog.Handle, Win32.WinMsgs.WM_SETFOCUS, 0, 0);
-			}
-			else
-			{
-				if (m_dialog.WindowState == FormWindowState.Minimized)
-				{
-					m_dialog.WindowState = m_dialog.m_windowState == FormWindowState.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
-				}
-				else
-				{
-					m_dialog.WindowState = m_dialog.m_windowState;
-					m_dialog.Activate();
-				}
-			}
-			return m_dialog;
-		}
-
 
 		/// <summary>
-		/// For testing
+		///
 		/// </summary>
-		private TryAWordDlg()
+		public TryAWordDlg()
 		{
-		}
-		/// <summary>
-		/// The real deal
-		/// </summary>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="persistenceProvider">The persistence provider.</param>
-		private TryAWordDlg(Mediator mediator, PersistenceProvider persistenceProvider)
-		{
-			m_mediator = mediator;
-			m_persistProvider = persistenceProvider;
-			m_xampleTrace = new XAmpleTrace(mediator);
-			m_hermitCrabTrace = new HCTrace(mediator);
-			m_parserTrace = m_xampleTrace; // we'll start with the default one; it can get changed by the user
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			m_parserListener = (ParserListener)m_mediator.PropertyTable.GetValue("ParserListener");
-
-			m_sLastWordUsedPropertyName = m_cache.ProjectId.Name + "TryAWordDlg-lastWordToTry";
-			m_sWhileTracingFile = Path.Combine(TransformPath, "WhileTracing.htm");
-			// m_sXAmpleSelectFile = Path.Combine(Path.GetTempPath(), m_cache.DatabaseName + "XAmpleSelectFile.txt"); // CS0414
-
-			m_connectionTimer = new Timer {Interval = 250};
-			m_connectionTimer.Tick += m_connectionTimer_Tick;
-
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			// Ensure that <Enter> triggers a parse instead of splitting the word.  See FWR-3539.
-			m_tbWordForm.SuppressEnter = true;
-
-			Text = m_cache.ProjectId.UiName + " - " + Text;
-			// order is important between SetInitialWord and SetRootSite
-			SetRootSite();
-			SetInitialWord();
 
 			InitHtmlControl();
 
-			SetStrings();
+			m_helpProvider = new HelpProvider();
+		}
+
+		public void SetDlgInfo(Mediator mediator, IWfiWordform wordform, ParserListener parserListener)
+		{
+			m_mediator = mediator;
+			m_persistProvider = new PersistenceProvider(PersistProviderID, m_mediator.PropertyTable);
+			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
+			m_xampleTrace = new XAmpleTrace(mediator);
+			m_hermitCrabTrace = new HCTrace(mediator);
+			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_parserListener = parserListener;
+
+			Text = m_cache.ProjectId.UiName + " - " + Text;
+			SetRootSite();
+			SetFontInfo();
+			if (wordform == null)
+				GetLastWordUsed();
+			else
+				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
+
+			m_webPageInteractor = new WebPageInteractor(m_htmlControl, ParserTrace, m_mediator, m_wordformTextBox);
+#if !__MonoCS__
+			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
+#endif
 
 			// HermitCrab does not currently support selected tracing
 			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
 			{
-				m_fParserCanDoSelectMorphs = false;
-				m_cbDoSelectMorphs.Enabled = false;
+				m_parserCanDoSelectMorphs = false;
+				m_doSelectMorphsCheckBox.Enabled = false;
 			}
 
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			if (m_mediator.HelpTopicProvider != null) // trying this
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
-				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				m_helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
+				m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(HelpTopicID));
+				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
-		}
 
-		public void InitStatusMaterial()
-		{
-			SetInitialStatusMessage();
-			if (Connection != null)
+			if (m_parserListener.Connection != null)
 			{
-				Connection.TryAWordDialogIsRunning = true;
+				m_parserListener.Connection.TryAWordDialogIsRunning = true;
+				m_statusLabel.Text = GetString("ParserStatusPrefix") + ParserUIStrings.ksIdle_ + GetString("ParserStatusSuffix");
 			}
-		}
-
-		private void SetInitialStatusMessage()
-		{
-			// NB: cannot be called until SetStrings() is called
-			if (Connection != null)
-				m_lblStatus.Text = m_sParserStatusPrefix + m_sParserStatusRunning + m_sParserStatusSuffix;
 			else
-				m_lblStatus.Text = ParserStoppedMessage();
+			{
+				m_statusLabel.Text = ParserStoppedMessage();
+			}
 		}
 
 		private void SetRootSite()
 		{
-			m_rootsite = new TryAWordRootSite(m_cache, m_mediator);
-			//m_rootsite.Location = new Point(m_cbDoTrace.Location.X + 15, m_cbDoTrace.Location.Y + 20);
-			//m_rootsite.Size = new Size(Width - 25, (m_lblResults.Location.Y - m_rootsite.Location.Y));
-			m_rootsite.Dock = DockStyle.Top;
-			//m_rootsite.AutoSize = true;
-			//m_rootsite.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
-			m_pnlSandbox.Controls.Add(m_rootsite);
+			m_rootsite = new TryAWordRootSite(m_cache, m_mediator) { Dock = DockStyle.Top };
+			m_sandboxPanel.Controls.Add(m_rootsite);
 			m_rootsite.SizeChanged += m_rootsite_SizeChanged;
-			if (m_pnlSandbox.Height != m_rootsite.Height)
-				m_pnlSandbox.Height = m_rootsite.Height;
-			//m_lblResults.Location = new Point(m_lblResults.Location.X, m_rootsite.Location.Y + m_rootsite.Height + 15);
+			if (m_sandboxPanel.Height != m_rootsite.Height)
+				m_sandboxPanel.Height = m_rootsite.Height;
 		}
 
-		void m_rootsite_SizeChanged(object sender, EventArgs e)
+		private void m_rootsite_SizeChanged(object sender, EventArgs e)
 		{
-			if (m_pnlSandbox.Height != m_rootsite.Height)
-				m_pnlSandbox.Height = m_rootsite.Height;
+			if (m_sandboxPanel.Height != m_rootsite.Height)
+				m_sandboxPanel.Height = m_rootsite.Height;
 		}
 
-		void m_connectionTimer_Tick(object sender, EventArgs e)
+		private string GetString(string id)
 		{
-			if (Connection != null)
-			{
-				m_connectionTimer.Stop();  // now have a connection, so stop the timer
-				TryTheWord();
-			}
+			return m_mediator.StringTbl.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
-		private void SetStrings()
-		{
-			const string ksPath = "Linguistics/Morphology/TryAWord";
-			// m_sOneWordMessage = m_mediator.StringTbl.GetString("OnlyOneWordMessage", ksPath); // CS0414
-			// m_sOneWordCaption = m_mediator.StringTbl.GetString("OnlyOneWordCaption", ksPath); // CS0414
-			m_sNoLexInfoForMorphsMessage = m_mediator.StringTbl.GetString("NoLexInfoForMorphsMessage", ksPath);
-			m_sNoLexInfoForMorphsCaption = m_mediator.StringTbl.GetString("NoLexInfoForMorphsCaption", ksPath);
-			m_sParserStatusPrefix = m_mediator.StringTbl.GetString("ParserStatusPrefix", ksPath);
-			m_sParserStatusSuffix = m_mediator.StringTbl.GetString("ParserStatusSuffix", ksPath);
-			m_sParserStatusRunning = ParserUIStrings.ksIdle_;
-			m_sParserStatusStopped = ParserUIStrings.ksNoParserLoaded;
-
-		}
 		private void InitHtmlControl()
 		{
-			m_htmlControl = new HtmlControl();
+			m_htmlControl = new HtmlControl
+				{
+					Location = new Point(0, m_resultsLabel.Bottom + 1),
+					Size = new Size(m_resultsPanel.Width, m_resultsPanel.Height - (m_resultsLabel.Height + 1)),
+					Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right
+				};
 			// Setting the Dock to fill doesn't work, as we lose the top of the HtmlControl to the
 			// label control at the top of the panel.  See LT-7446 for the worst case scenario (120dpi).
 			// So, set the location and size of the HTML control, and anchor it to all four sides of the
 			// panel.
-			m_htmlControl.Location = new Point(0, m_lblResults.Bottom + 1);
-			m_htmlControl.Size = new Size(m_pnlResults.Width, m_pnlResults.Height - (m_lblResults.Height + 1));
-			m_htmlControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
-			m_pnlResults.Controls.Add(m_htmlControl);
+			m_resultsPanel.Controls.Add(m_htmlControl);
 			m_htmlControl.URL = Path.Combine(TransformPath, "InitialDocument.htm");
-
-			m_webPageInteractor = new WebPageInteractor(m_htmlControl, m_parserTrace, m_mediator, m_tbWordForm);
-#if !__MonoCS__
-			m_htmlControl.Browser.ObjectForScripting = m_webPageInteractor;
-#endif
-		}
-
-		protected void	SetInitialWord()
-		{
-			SetFontInfo();
-
-			string sCurrentControl = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			if (sCurrentControl != null)
-			{
-				if (sCurrentControl != "Analyses" && sCurrentControl != "wordListConcordance")
-				{
-					// use the last wordform used in Try A Word if we're not in a control that lists out wordforms
-					GetLastWordUsed();
-					return;
-				}
-			}
-			// we are in a control that lists out wordforms; try to get that wordform
-			Object x = m_mediator.PropertyTable.GetValue("concordanceWords-selected");
-			if (x == null)
-			{
-				// nothing set or no wordforms to use yet
-				GetLastWordUsed();
-				return;
-			}
-
-			IWfiWordform wordform = null;
-			var info = x as RecordNavigationInfo;
-			if (info != null)
-			{
-				wordform = info.Clerk.CurrentObject as IWfiWordform;
-			}
-			if (wordform == null)
-			{
-				// can't find the selected wordform
-				GetLastWordUsed();
-				return;
-			}
-			SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 		}
 
 		private void SetFontInfo()
 		{
 			// Set writing system factory and code for the two edit boxes.
-			m_tbWordForm.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbWordForm.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			m_tbWordForm.Text = "";
-			m_tbWordForm.AdjustForStyleSheet(this, m_pnlWord, m_mediator);
+			m_wordformTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
+			m_wordformTextBox.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			m_wordformTextBox.Text = "";
+			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, m_mediator);
 		}
 
-		protected void GetLastWordUsed()
+		private void GetLastWordUsed()
 		{
-			Object x = m_mediator.PropertyTable.GetValue(m_sLastWordUsedPropertyName);
-			if (x == null)
-			{
-				return;
-			}
-
-			var sWord = x as string;
-			if (sWord == null)
-				return;
-			SetWordToUse(sWord.Trim());
+			var word = m_mediator.PropertyTable.GetValue("TryAWordDlg-lastWordToTry") as string;
+			if (word != null)
+				SetWordToUse(word.Trim());
 		}
 
-		private void SetWordToUse(string sWord)
+		private void SetWordToUse(string word)
 		{
-			m_tbWordForm.Text = sWord;
-			m_btnTryIt.Enabled = !String.IsNullOrEmpty(sWord);
+			m_wordformTextBox.Text = word;
+			m_tryItButton.Enabled = !String.IsNullOrEmpty(word);
 		}
 
 		/// <summary>
@@ -372,28 +227,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if (m_connectionTimer != null)
-				{
-					m_connectionTimer.Stop();
-					m_connectionTimer.Tick -= m_connectionTimer_Tick;
-					m_connectionTimer.Dispose();
-				}
-
-				if(components != null)
-				{
+				if (components != null)
 					components.Dispose();
-				}
-				m_connectionTimer = null;
-
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -405,110 +249,110 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TryAWordDlg));
-			this.m_lblWordToTry = new System.Windows.Forms.Label();
-			this.m_btnClose = new System.Windows.Forms.Button();
-			this.m_btnTryIt = new System.Windows.Forms.Button();
-			this.m_pnlResults = new System.Windows.Forms.Panel();
-			this.m_lblResults = new System.Windows.Forms.Label();
-			this.m_pnlClose = new System.Windows.Forms.Panel();
-			this.m_lblStatus = new System.Windows.Forms.Label();
-			this.buttonHelp = new System.Windows.Forms.Button();
-			this.m_pnlWord = new System.Windows.Forms.Panel();
-			this.m_cbDoSelectMorphs = new System.Windows.Forms.CheckBox();
-			this.m_cbDoTrace = new System.Windows.Forms.CheckBox();
-			this.m_tbWordForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_wordToTryLabel = new System.Windows.Forms.Label();
+			this.m_closeButton = new System.Windows.Forms.Button();
+			this.m_tryItButton = new System.Windows.Forms.Button();
+			this.m_resultsPanel = new System.Windows.Forms.Panel();
+			this.m_resultsLabel = new System.Windows.Forms.Label();
+			this.m_closePanel = new System.Windows.Forms.Panel();
+			this.m_statusLabel = new System.Windows.Forms.Label();
+			this.m_helpButton = new System.Windows.Forms.Button();
+			this.m_wordPanel = new System.Windows.Forms.Panel();
+			this.m_doSelectMorphsCheckBox = new System.Windows.Forms.CheckBox();
+			this.m_doTraceCheckBox = new System.Windows.Forms.CheckBox();
+			this.m_wordformTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_timer = new System.Windows.Forms.Timer(this.components);
-			this.m_pnlSandbox = new System.Windows.Forms.Panel();
-			this.m_pnlResults.SuspendLayout();
-			this.m_pnlClose.SuspendLayout();
-			this.m_pnlWord.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_tbWordForm)).BeginInit();
+			this.m_sandboxPanel = new System.Windows.Forms.Panel();
+			this.m_resultsPanel.SuspendLayout();
+			this.m_closePanel.SuspendLayout();
+			this.m_wordPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_wordformTextBox)).BeginInit();
 			this.SuspendLayout();
 			//
-			// m_lblWordToTry
+			// m_wordToTryLabel
 			//
-			resources.ApplyResources(this.m_lblWordToTry, "m_lblWordToTry");
-			this.m_lblWordToTry.Name = "m_lblWordToTry";
+			resources.ApplyResources(this.m_wordToTryLabel, "m_wordToTryLabel");
+			this.m_wordToTryLabel.Name = "m_wordToTryLabel";
 			//
-			// m_btnClose
+			// m_closeButton
 			//
-			resources.ApplyResources(this.m_btnClose, "m_btnClose");
-			this.m_btnClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btnClose.Name = "m_btnClose";
-			this.m_btnClose.Click += new System.EventHandler(this.m_btnClose_Click);
+			resources.ApplyResources(this.m_closeButton, "m_closeButton");
+			this.m_closeButton.Name = "m_closeButton";
+			this.m_closeButton.Click += new System.EventHandler(this.m_closeButton_Click);
 			//
-			// m_btnTryIt
+			// m_tryItButton
 			//
-			resources.ApplyResources(this.m_btnTryIt, "m_btnTryIt");
-			this.m_btnTryIt.Name = "m_btnTryIt";
-			this.m_btnTryIt.Click += new System.EventHandler(this.m_btnTryIt_Click);
+			resources.ApplyResources(this.m_tryItButton, "m_tryItButton");
+			this.m_tryItButton.Name = "m_tryItButton";
+			this.m_tryItButton.Click += new System.EventHandler(this.m_tryItButton_Click);
 			//
-			// m_pnlResults
+			// m_resultsPanel
 			//
-			this.m_pnlResults.Controls.Add(this.m_lblResults);
-			resources.ApplyResources(this.m_pnlResults, "m_pnlResults");
-			this.m_pnlResults.Name = "m_pnlResults";
+			this.m_resultsPanel.Controls.Add(this.m_resultsLabel);
+			resources.ApplyResources(this.m_resultsPanel, "m_resultsPanel");
+			this.m_resultsPanel.Name = "m_resultsPanel";
 			//
-			// m_lblResults
+			// m_resultsLabel
 			//
-			resources.ApplyResources(this.m_lblResults, "m_lblResults");
-			this.m_lblResults.Name = "m_lblResults";
+			resources.ApplyResources(this.m_resultsLabel, "m_resultsLabel");
+			this.m_resultsLabel.Name = "m_resultsLabel";
 			//
-			// m_pnlClose
+			// m_closePanel
 			//
-			this.m_pnlClose.Controls.Add(this.m_lblStatus);
-			this.m_pnlClose.Controls.Add(this.buttonHelp);
-			this.m_pnlClose.Controls.Add(this.m_btnClose);
-			resources.ApplyResources(this.m_pnlClose, "m_pnlClose");
-			this.m_pnlClose.Name = "m_pnlClose";
+			this.m_closePanel.Controls.Add(this.m_statusLabel);
+			this.m_closePanel.Controls.Add(this.m_helpButton);
+			this.m_closePanel.Controls.Add(this.m_closeButton);
+			resources.ApplyResources(this.m_closePanel, "m_closePanel");
+			this.m_closePanel.Name = "m_closePanel";
 			//
-			// m_lblStatus
+			// m_statusLabel
 			//
-			resources.ApplyResources(this.m_lblStatus, "m_lblStatus");
-			this.m_lblStatus.Name = "m_lblStatus";
+			resources.ApplyResources(this.m_statusLabel, "m_statusLabel");
+			this.m_statusLabel.Name = "m_statusLabel";
 			//
-			// buttonHelp
+			// m_helpButton
 			//
-			resources.ApplyResources(this.buttonHelp, "buttonHelp");
-			this.buttonHelp.Name = "buttonHelp";
-			this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+			resources.ApplyResources(this.m_helpButton, "m_helpButton");
+			this.m_helpButton.Name = "m_helpButton";
+			this.m_helpButton.Click += new System.EventHandler(this.m_buttonHelp_Click);
 			//
-			// m_pnlWord
+			// m_wordPanel
 			//
-			this.m_pnlWord.Controls.Add(this.m_cbDoSelectMorphs);
-			this.m_pnlWord.Controls.Add(this.m_cbDoTrace);
-			this.m_pnlWord.Controls.Add(this.m_btnTryIt);
-			this.m_pnlWord.Controls.Add(this.m_lblWordToTry);
-			this.m_pnlWord.Controls.Add(this.m_tbWordForm);
-			resources.ApplyResources(this.m_pnlWord, "m_pnlWord");
-			this.m_pnlWord.Name = "m_pnlWord";
+			this.m_wordPanel.Controls.Add(this.m_doSelectMorphsCheckBox);
+			this.m_wordPanel.Controls.Add(this.m_doTraceCheckBox);
+			this.m_wordPanel.Controls.Add(this.m_tryItButton);
+			this.m_wordPanel.Controls.Add(this.m_wordToTryLabel);
+			this.m_wordPanel.Controls.Add(this.m_wordformTextBox);
+			resources.ApplyResources(this.m_wordPanel, "m_wordPanel");
+			this.m_wordPanel.Name = "m_wordPanel";
 			//
-			// m_cbDoSelectMorphs
+			// m_doSelectMorphsCheckBox
 			//
-			resources.ApplyResources(this.m_cbDoSelectMorphs, "m_cbDoSelectMorphs");
-			this.m_cbDoSelectMorphs.Name = "m_cbDoSelectMorphs";
-			this.m_cbDoSelectMorphs.UseVisualStyleBackColor = true;
-			this.m_cbDoSelectMorphs.CheckedChanged += new System.EventHandler(this.m_cbDoSelectMorphs_CheckedChanged);
+			resources.ApplyResources(this.m_doSelectMorphsCheckBox, "m_doSelectMorphsCheckBox");
+			this.m_doSelectMorphsCheckBox.Name = "m_doSelectMorphsCheckBox";
+			this.m_doSelectMorphsCheckBox.UseVisualStyleBackColor = true;
+			this.m_doSelectMorphsCheckBox.CheckedChanged += new System.EventHandler(this.m_doSelectMorphsCheckBox_CheckedChanged);
 			//
-			// m_cbDoTrace
+			// m_doTraceCheckBox
 			//
-			resources.ApplyResources(this.m_cbDoTrace, "m_cbDoTrace");
-			this.m_cbDoTrace.Name = "m_cbDoTrace";
-			this.m_cbDoTrace.UseVisualStyleBackColor = true;
-			this.m_cbDoTrace.CheckedChanged += new System.EventHandler(this.m_cbDoTrace_CheckedChanged);
+			resources.ApplyResources(this.m_doTraceCheckBox, "m_doTraceCheckBox");
+			this.m_doTraceCheckBox.Name = "m_doTraceCheckBox";
+			this.m_doTraceCheckBox.UseVisualStyleBackColor = true;
+			this.m_doTraceCheckBox.CheckedChanged += new System.EventHandler(this.m_doTraceCheckBox_CheckedChanged);
 			//
-			// m_tbWordForm
+			// m_wordformTextBox
 			//
-			this.m_tbWordForm.AdjustStringHeight = true;
-			this.m_tbWordForm.BackColor = System.Drawing.SystemColors.Window;
-			this.m_tbWordForm.controlID = null;
-			resources.ApplyResources(this.m_tbWordForm, "m_tbWordForm");
-			this.m_tbWordForm.HasBorder = true;
-			this.m_tbWordForm.Name = "m_tbWordForm";
-			this.m_tbWordForm.SelectionLength = 0;
-			this.m_tbWordForm.SelectionStart = 0;
-			this.m_tbWordForm.TextChanged += new System.EventHandler(this.m_tbWordForm_TextChanged);
-			this.m_tbWordForm.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_tbWordForm_KeyDown);
+			this.m_wordformTextBox.AcceptsReturn = false;
+			this.m_wordformTextBox.AdjustStringHeight = true;
+			this.m_wordformTextBox.BackColor = System.Drawing.SystemColors.Window;
+			this.m_wordformTextBox.controlID = null;
+			resources.ApplyResources(this.m_wordformTextBox, "m_wordformTextBox");
+			this.m_wordformTextBox.HasBorder = true;
+			this.m_wordformTextBox.Name = "m_wordformTextBox";
+			this.m_wordformTextBox.SuppressEnter = true;
+			this.m_wordformTextBox.WordWrap = false;
+			this.m_wordformTextBox.TextChanged += new System.EventHandler(this.m_wordformTextBox_TextChanged);
+			this.m_wordformTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_wordformTextBox_KeyDown);
 			//
 			// m_timer
 			//
@@ -516,25 +360,24 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_timer.Interval = 10;
 			this.m_timer.Tick += new System.EventHandler(this.m_timer_Tick);
 			//
-			// m_pnlSandbox
+			// m_sandboxPanel
 			//
-			resources.ApplyResources(this.m_pnlSandbox, "m_pnlSandbox");
-			this.m_pnlSandbox.Name = "m_pnlSandbox";
+			resources.ApplyResources(this.m_sandboxPanel, "m_sandboxPanel");
+			this.m_sandboxPanel.Name = "m_sandboxPanel";
 			//
 			// TryAWordDlg
 			//
 			resources.ApplyResources(this, "$this");
-			this.CancelButton = this.m_btnClose;
-			this.Controls.Add(this.m_pnlResults);
-			this.Controls.Add(this.m_pnlSandbox);
-			this.Controls.Add(this.m_pnlWord);
-			this.Controls.Add(this.m_pnlClose);
+			this.Controls.Add(this.m_resultsPanel);
+			this.Controls.Add(this.m_sandboxPanel);
+			this.Controls.Add(this.m_wordPanel);
+			this.Controls.Add(this.m_closePanel);
 			this.Name = "TryAWordDlg";
-			this.m_pnlResults.ResumeLayout(false);
-			this.m_pnlClose.ResumeLayout(false);
-			this.m_pnlWord.ResumeLayout(false);
-			this.m_pnlWord.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_tbWordForm)).EndInit();
+			this.m_resultsPanel.ResumeLayout(false);
+			this.m_closePanel.ResumeLayout(false);
+			this.m_wordPanel.ResumeLayout(false);
+			this.m_wordPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_wordformTextBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -545,87 +388,72 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnClosed(ea);
 			// remember last word used, if possible
-			m_mediator.PropertyTable.SetProperty(m_sLastWordUsedPropertyName, m_tbWordForm.Text.Trim());
-			m_persistProvider.PersistWindowSettings(m_ksTryAWord, m_dialog);
-			m_dialog = null;
-			if (Connection != null)
-				Connection.TryAWordDialogIsRunning = false;
+			m_mediator.PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), false, PropertyTable.SettingsGroup.LocalSettings);
+			m_mediator.PropertyTable.SetPropertyPersistence("TryAWordDlg-lastWordToTry", true, PropertyTable.SettingsGroup.LocalSettings);
+			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
+			if (m_parserListener.Connection != null)
+				m_parserListener.Connection.TryAWordDialogIsRunning = false;
 		}
 
-		private void m_tbWordForm_TextChanged(object sender, EventArgs e)
+		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)
 		{
-			if (m_fProcesingTextChange)
+			if (m_procesingTextChange)
 				return;
-			m_fProcesingTextChange = true;
+			m_procesingTextChange = true;
 			try
 			{
-				EnableDiableSelectMorphControls();
-				m_btnTryIt.Enabled = m_tbWordForm.Text.Length > 0;
+				EnableDisableSelectMorphControls();
+				m_tryItButton.Enabled = m_wordformTextBox.Text.Length > 0;
 				UpdateSandboxWordform();
 			}
 			finally
 			{
-				m_fProcesingTextChange = false;
+				m_procesingTextChange = false;
 			}
 		}
 
 		private void UpdateSandboxWordform()
 		{
 			if (m_rootsite != null)
-				m_rootsite.WordForm = m_tbWordForm.Tss;
+				m_rootsite.WordForm = m_wordformTextBox.Tss;
 		}
 
-		private void m_btnTryIt_Click(object sender, EventArgs e)
+		private void m_tryItButton_Click(object sender, EventArgs e)
 		{
 			// get a connection, if one does not exist
-			if (Connection == null)
+			if (m_parserListener.ConnectToParser())
 			{
-				m_mediator.BroadcastMessageUntilHandled("ReInitParser", null);
-				// Now we need to wait for the message to be handled.
-				// We'll know it's done when there's a connection
-				m_connectionTimer.Start();
-				m_fJustMadeConnectionToParser = true;
-				return;
+				string sWord = CleanUpWord();
+				// check to see if limiting trace and, if so, if all morphs have msas
+				string selectedTraceMorphs;
+				if (GetSelectedTraceMorphs(out selectedTraceMorphs))
+				{
+					// Display a "processing" message (and include info on how to improve the results)
+					m_htmlControl.URL = Path.Combine(TransformPath, "WhileTracing.htm");
+					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
+					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
+					if (m_webPageInteractor != null)
+						m_webPageInteractor.ParserTrace = ParserTrace;
+					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
+					// waiting for result, so disable Try It button
+					m_tryItButton.Enabled = false;
+				}
 			}
-			TryTheWord();
 		}
 
-		private void TryTheWord()
+		private ParserTrace ParserTrace
 		{
-			string sWord = CleanUpWord();
-			// check to see if limiting trace and, if so, if all morphs have msas
-			string sSelectTraceMorphs;
-			if (!GetSelectTraceMorphs(out sSelectTraceMorphs))
-				return;
-			// Display a "processing" message (and include info on how to improve the results)
-			m_htmlControl.URL = m_sWhileTracingFile;
-			sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
-			Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
-
-			SetParserTrace();
-
-			if (m_webPageInteractor != null)
-				m_webPageInteractor.ParserTrace = m_parserTrace;
-
-			m_tryAWordResult = Connection.BeginTryAWord(sWord, DoTrace, sSelectTraceMorphs);
-			// waiting for result, so disable Try It button
-			m_btnTryIt.Enabled = false;
-		}
-
-		private void SetParserTrace()
-		{
-			if (DoTrace)
+			get
 			{
 				switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 				{
 					case "XAmple":
-						m_parserTrace = m_xampleTrace;
-						break;
+						return m_xampleTrace;
 
 					case "HC":
-						m_parserTrace = m_hermitCrabTrace;
-						break;
+						return m_hermitCrabTrace;
 				}
+				return null;
 			}
 		}
 
@@ -633,48 +461,42 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			TrimWord();
 			RemoveExtraDashes();
-			return m_tbWordForm.Text.Trim();
+			return m_wordformTextBox.Text.Trim();
 		}
 
 		private void TrimWord()
 		{
-			string sTemp = m_tbWordForm.Text.Trim();
-			if (sTemp.Length != m_tbWordForm.Text.Length)
+			string sTemp = m_wordformTextBox.Text.Trim();
+			if (sTemp.Length != m_wordformTextBox.Text.Length)
 			{
-				m_tbWordForm.Text = sTemp;
+				m_wordformTextBox.Text = sTemp;
 			}
 		}
 
-		private bool GetSelectTraceMorphs(out string sSelectTraceMorphs)
+		private bool GetSelectedTraceMorphs(out string selectedTraceMorphs)
 		{
-			sSelectTraceMorphs = null;
+			selectedTraceMorphs = null;
 			if (DoTrace && DoManualParse)
 			{
-				sSelectTraceMorphs = CollectTraceMorphs(sSelectTraceMorphs);
-				if (sSelectTraceMorphs != null && (sSelectTraceMorphs.StartsWith("0 ") || sSelectTraceMorphs.Contains(" 0 ")))
+				List<int> msas = m_rootsite.MsaList;
+				var sb = new StringBuilder();
+				foreach (int msa in msas)
 				{
-					MessageBox.Show(m_sNoLexInfoForMorphsMessage, m_sNoLexInfoForMorphsCaption,
+					sb.Append(msa.ToString());
+					sb.Append(" ");
+				}
+				if (sb.Length > 0)
+				{
+					selectedTraceMorphs = sb.ToString();
+				}
+				if (selectedTraceMorphs != null && (selectedTraceMorphs.StartsWith("0 ") || selectedTraceMorphs.Contains(" 0 ")))
+				{
+					MessageBox.Show(GetString("NoLexInfoForMorphsMessage"), GetString("NoLexInfoForMorphsCaption"),
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return false;
 				}
 			}
 			return true;
-		}
-
-		private string CollectTraceMorphs(string sSelectTraceMorphs)
-		{
-			System.Collections.Generic.List<int> msas = m_rootsite.MsaList;
-			var sb = new StringBuilder();
-			foreach (int msa in msas)
-			{
-				sb.Append(msa.ToString());
-				sb.Append(" ");
-			}
-			if (sb.Length > 0)
-			{
-				sSelectTraceMorphs = sb.ToString();
-			}
-			return sSelectTraceMorphs;
 		}
 
 		/// <summary>
@@ -684,85 +506,77 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void RemoveExtraDashes()
 		{
-			string s = m_tbWordForm.Text;
+			string s = m_wordformTextBox.Text;
 			int i = s.IndexOf("--");
 			while (i > -1)
 			{
-				m_tbWordForm.Text = s.Replace("--", "-");
-				m_tbWordForm.Refresh();
-				s = m_tbWordForm.Text;
+				m_wordformTextBox.Text = s.Replace("--", "-");
+				m_wordformTextBox.Refresh();
+				s = m_wordformTextBox.Text;
 				i = s.IndexOf("--");
 			}
 		}
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
-			if (m_parserListener != null)
-			{
-				m_lblStatus.Text = m_parserListener.GetParserActivityString();
-			}
+			m_statusLabel.Text = m_parserListener.ParserActivityString;
 
-			ParserConnection conn = Connection;
-			if (conn == null)
+			if (m_parserListener.Connection == null)
 			{
-				m_lblStatus.Text = ParserStoppedMessage();
+				m_statusLabel.Text = ParserStoppedMessage();
 				return;
 			}
-			Exception ex = conn.UnhandledException;
+			Exception ex = m_parserListener.Connection.UnhandledException;
 			if (ex != null)
 			{
-				conn.Dispose();
-				Connection = null;
-				m_lblStatus.Text = ParserStoppedMessage();
-				m_btnTryIt.Enabled = true;
+				m_parserListener.DisconnectFromParser();
+				m_statusLabel.Text = ParserStoppedMessage();
+				m_tryItButton.Enabled = true;
 				var app = (IApp) m_mediator.PropertyTable.GetValue("App");
 				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
 
-			if (m_fJustMadeConnectionToParser)
-			{
-				conn.TryAWordDialogIsRunning = true;
-				m_fJustMadeConnectionToParser = false;
-			}
-
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				string sOutput = m_parserTrace.CreateResultPage((string) m_tryAWordResult.AsyncState);
+				string sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string) m_tryAWordResult.AsyncState);
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;
 				// got result so enable Try It button
-				m_btnTryIt.Enabled = true;
+				m_tryItButton.Enabled = true;
 			}
 		}
 
 		private string ParserStoppedMessage()
 		{
-			return m_sParserStatusPrefix + m_sParserStatusStopped + m_sParserStatusSuffix;
+			return GetString("ParserStatusPrefix") + ParserUIStrings.ksNoParserLoaded + GetString("ParserStatusSuffix");
 		}
 
-		void m_tbWordForm_KeyDown(object sender, KeyEventArgs e)
+		private void m_wordformTextBox_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Enter && m_btnTryIt.Enabled)
+			if (e.KeyCode == Keys.Enter && m_tryItButton.Enabled)
 			{
-				if (m_tbWordForm.SelectionLength > 0)
+				if (m_wordformTextBox.SelectionLength > 0)
 				{ // otherwise, the Enter stroke removes the word
-					m_tbWordForm.SelectionStart = m_tbWordForm.Text.Length;
-					m_tbWordForm.SelectionLength = 0;
+					m_wordformTextBox.SelectionStart = m_wordformTextBox.Text.Length;
+					m_wordformTextBox.SelectionLength = 0;
 				}
-				m_btnTryIt_Click(null, null);
+				m_tryItButton_Click(null, null);
 			}
 			else
 				base.OnKeyDown(e);
 		}
+
 		private bool DoTrace
 		{
-			get { return m_cbDoTrace.Checked; }
+			get { return m_doTraceCheckBox.Checked; }
 		}
+
 		private bool DoManualParse
 		{
-			get { return m_cbDoSelectMorphs.Checked; }
+			get { return m_doSelectMorphsCheckBox.Checked; }
 		}
+
 		/// <summary>
 		/// Path to transforms
 		/// </summary>
@@ -771,67 +585,52 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
 
-		private ParserConnection Connection
+		private void m_buttonHelp_Click(object sender, EventArgs e)
 		{
-			get
-			{
-				return (ParserConnection)m_mediator.PropertyTable.GetValue("ParserConnection");
-			}
-
-			set
-			{
-				m_mediator.PropertyTable.SetProperty("ParserConnection", value);
-				m_mediator.PropertyTable.SetPropertyPersistence("ParserConnection", false);
-			}
+			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, HelpTopicID);
 		}
 
-		private void buttonHelp_Click(object sender, EventArgs e)
-		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
-		}
-
-		private void m_btnClose_Click(object sender, EventArgs e)
+		private void m_closeButton_Click(object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		private void m_cbDoTrace_CheckedChanged(object sender, EventArgs e)
+		private void m_doTraceCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			EnableDiableSelectMorphControls();
+			EnableDisableSelectMorphControls();
 			UpdateSandboxWordform();
 		}
-		private void EnableDiableSelectMorphControls()
+
+		private void EnableDisableSelectMorphControls()
 		{
-			if (m_fParserCanDoSelectMorphs && m_cbDoTrace.Checked && m_tbWordForm.Text.Length > 0)
+			if (m_parserCanDoSelectMorphs && m_doTraceCheckBox.Checked && m_wordformTextBox.Text.Length > 0)
 			{
-				m_cbDoSelectMorphs.Enabled = true;
-				m_pnlSandbox.Visible = m_cbDoSelectMorphs.Checked;
+				m_doSelectMorphsCheckBox.Enabled = true;
+				m_sandboxPanel.Visible = m_doSelectMorphsCheckBox.Checked;
 			}
 			else
 			{
-				m_cbDoSelectMorphs.Enabled = false;
-				m_pnlSandbox.Visible = false;
+				m_doSelectMorphsCheckBox.Enabled = false;
+				m_sandboxPanel.Visible = false;
 			}
 		}
 
-		private void m_cbDoSelectMorphs_CheckedChanged(object sender, EventArgs e)
+		private void m_doSelectMorphsCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_cbDoSelectMorphs.Checked)
+			if (m_doSelectMorphsCheckBox.Checked)
 			{
-				m_pnlSandbox.Visible = true;
+				m_sandboxPanel.Visible = true;
 				UpdateSandboxWordform();
 			}
 			else
 			{
-				m_pnlSandbox.Visible = false;
+				m_sandboxPanel.Visible = false;
 			}
 		}
 		protected override void OnResize(EventArgs e)
 		{
-			if (WindowState != FormWindowState.Minimized)
-				m_windowState = WindowState; // remember the state before it might be minimized
 			base.OnResize(e);
-			m_lblResults.Width = m_pnlResults.Width;
+			m_resultsLabel.Width = m_resultsPanel.Width;
 		}
 
 		/// <summary>

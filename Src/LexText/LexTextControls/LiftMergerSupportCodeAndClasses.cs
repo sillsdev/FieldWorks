@@ -1416,15 +1416,27 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (fd.Custom != 0 && fd.Userlabel == sLabel && fd.Class == clid)
 				{
-					var fOk = CheckForCompatibleTypes(type, fd);
-					if (!fOk)
+					if (String.IsNullOrEmpty(sSpec))
 					{
-						// log error.
-						return 0;
+						// Fieldworks knows about a field with this label, but the file doesn't. Assume the project's definition of it is valid.
+						m_dictCustomFlid.Add(sTag, fd.Id);
+						possListGuid = fd.ListRootId;
+						m_CustomFieldNamesToPossibilityListGuids.Add(sTag, possListGuid);
+						return fd.Id;
 					}
-					m_dictCustomFlid.Add(sTag, fd.Id);
-					m_CustomFieldNamesToPossibilityListGuids.Add(sTag, possListGuid);
-					return fd.Id;			// field with same label and type information exists already.
+					else
+					{
+						// The project and the file both specify type information for this field. See whether they match (near enough).
+						var fOk = CheckForCompatibleTypes(type, fd);
+						if (!fOk)
+						{
+							// log error.
+							return 0;
+						}
+						m_dictCustomFlid.Add(sTag, fd.Id);
+						m_CustomFieldNamesToPossibilityListGuids.Add(sTag, possListGuid);
+						return fd.Id; // field with same label and type information exists already.
+					}
 				}
 			}
 			switch (type)
@@ -1478,6 +1490,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListRootId = possListGuid
 			};
 			fdNew.UpdateCustomField();
+			//Clear the data so that when the descriptions are next requested the up to date data is used
+			FieldDescription.ClearDataAbout();
 			m_dictCustomFlid.Add(sTag, fdNew.Id);
 			m_CustomFieldNamesToPossibilityListGuids.Add(sTag, possListGuid);
 			m_rgnewCustomFields.Add(fdNew);
@@ -1557,11 +1571,38 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (sDef.StartsWith("WsSelector="))
 				{
 					string sValue = sDef.Substring(11);
-					int ws = (int)Enum.Parse(typeof(CellarModuleDefns), sValue, true);
+					// Do NOT use WritingSystemServices.GetMagicWsIdFromName...that's a different set of names (LT-12275)
+					int ws = GetLiftExportMagicWsIdFromName(sValue);
 					if (ws == 0)
 						ws = GetWsFromStr(sValue);
 					return ws;
 				}
+			}
+			return 0;
+		}
+
+		/// <summary>
+		/// Method MUST be consistent with LiftExporter.GetLiftExportMagicWsNameFromId.
+		/// Change only with great care...this affects how we can import existing LIFT files.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		private int GetLiftExportMagicWsIdFromName(string name)
+		{
+			switch (name)
+			{
+				case "kwsAnal":
+					return WritingSystemServices.kwsAnal;
+				case "kwsVern":
+					return WritingSystemServices.kwsVern;
+				case "kwsAnals":
+					return WritingSystemServices.kwsAnals;
+				case "kwsVerns":
+					return WritingSystemServices.kwsVerns;
+				case "kwsAnalVerns":
+					return WritingSystemServices.kwsAnalVerns;
+				case "kwsVernAnals":
+					return WritingSystemServices.kwsVernAnals;
 			}
 			return 0;
 		}
@@ -4324,7 +4365,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class LdmlFileBackup
 	{
 		/// <summary>
-		///
+		/// Copy a complete directory, including all contents recursively.
+		/// Everything in out put will be writeable, even if some input files are read-only.
 		/// </summary>
 		/// <param name="sourcePath"></param>
 		/// <param name="targetPath"></param>
@@ -4344,7 +4386,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Copy each file into its new directory.
 			foreach (FileInfo fi in source.GetFiles())
 			{
-				fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+				var destFileName = Path.Combine(target.ToString(), fi.Name);
+				fi.CopyTo(destFileName, true);
+				File.SetAttributes(destFileName, FileAttributes.Normal); // don't want to copy readonly property.
 			}
 
 			// Copy each subdirectory using recursion.

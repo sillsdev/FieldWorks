@@ -122,6 +122,8 @@
 	<Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
+	<Reference Include="Framework, Version=7.2.0.17330, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FwCoreDlgs, Version=7.2.0.17328, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FwResources, Version=5.3.0.27327, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -169,7 +171,12 @@
 	<Reference Include="System.Xml">
 	  <Name>System.XML</Name>
 	</Reference>
-	<Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="XMLUtils">
 	  <Name>XMLUtils</Name>
 	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -213,9 +220,6 @@
 	</Compile>
 	<Compile Include="DockExtender\IFloaty.cs" />
 	<Compile Include="DockExtender\Overlay.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="DropDownContainer.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="ExplorerBarItem.cs">
@@ -303,9 +307,6 @@
 	</Compile>
 	<Compile Include="InformationBarButtonCollection.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="LabelButton.cs">
-	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="LanguageSetup.cs">
 	  <SubType>UserControl</SubType>
@@ -525,13 +526,9 @@
 	<Content Include="resources\Unchecked.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\..\..\XCore\xCoreInterfaces\xCoreInterfaces.csproj">
-	  <Project>{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}</Project>
-	  <Name>xCoreInterfaces</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\DetailControls\DetailControls.csproj">
-	  <Project>{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}</Project>
-	  <Name>DetailControls</Name>
+	<ProjectReference Include="..\..\..\xWorks\xWorks.csproj">
+	  <Project>{86B57733-A74B-43F1-863F-31A39E60F120}</Project>
+	  <Name>xWorks</Name>
 	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
