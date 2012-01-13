@@ -75,6 +75,7 @@
 	<Compile Include="FileDialog\Manager.cs" />
 	<Compile Include="FileDialog\FileDialogAdapter.cs" />
 	<Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+	<Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
 	<None Include="FileDialog\readme.txt" />
 	<Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
 	<Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
@@ -83,8 +84,11 @@
 	<Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
 	<Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
 	<Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+	<Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
 	<Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
 	<Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+	<Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+	<Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="FileDialog\FileDialogStrings.resx">

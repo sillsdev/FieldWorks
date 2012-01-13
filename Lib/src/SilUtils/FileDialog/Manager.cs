@@ -18,6 +18,7 @@ namespace SIL.Utils.FileDialog
 	{
 		private static Type s_OpenFileDialogType;
 		private static Type s_SaveFileDialogType;
+		private static Type s_FolderBrowserDialogType;
 
 		static Manager()
 		{
@@ -44,6 +45,16 @@ namespace SIL.Utils.FileDialog
 			s_SaveFileDialogType = typeof(T);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the FolderBrowserDialog type.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static void SetFolderBrowserDialog<T>() where T : IFolderBrowserDialog
+		{
+			s_FolderBrowserDialogType = typeof(T);
+		}
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Resets the dialog types to the default.
@@ -54,9 +65,11 @@ namespace SIL.Utils.FileDialog
 #if __MonoCS__
 			SetOpenFileDialog<Linux.OpenFileDialogLinux>();
 			SetSaveFileDialog<Linux.SaveFileDialogLinux>();
+			SetFolderBrowserDialog<Linux.FolderBrowserDialogLinux>();
 #else
 			SetOpenFileDialog<Windows.OpenFileDialogWindows>();
 			SetSaveFileDialog<Windows.SaveFileDialogWindows>();
+			SetFolderBrowserDialog<Windows.FolderBrowserDialogWindows>();
 #endif
 		}
 
@@ -68,6 +81,11 @@ namespace SIL.Utils.FileDialog
 		public static ISaveFileDialog CreateSaveFileDialog()
 		{
 			return (ISaveFileDialog)Activator.CreateInstance(s_SaveFileDialogType);
+		}
+
+		public static IFolderBrowserDialog CreateFolderBrowserDialog()
+		{
+			return (IFolderBrowserDialog)Activator.CreateInstance(s_FolderBrowserDialogType);
 		}
 	}
 }

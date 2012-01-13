@@ -154,7 +154,18 @@ namespace SIL.Utils.FileDialog.Linux
 
 		protected string AcceptButtonText
 		{
-			get { return Action == FileChooserAction.Open ? FileDialogStrings.Open : FileDialogStrings.Save; }
+			get
+			{
+				switch (Action)
+				{
+					case FileChooserAction.Open:
+						return FileDialogStrings.Open;
+					case FileChooserAction.Save:
+						return FileDialogStrings.Save;
+					default:
+						return FileDialogStrings.OK;
+				}
+			}
 		}
 
 		protected ResponseType ShowMessageBox(string formatMessage, ButtonsType buttons,

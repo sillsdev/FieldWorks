@@ -137,6 +137,10 @@
 	<value>Help</value>
 	<comment>Button "Help"</comment>
   </data>
+  <data name="OK" xml:space="preserve">
+	<value>OK</value>
+	<comment>Button "OK"</comment>
+  </data>
   <data name="Open" xml:space="preserve">
 	<value>Open</value>
 	<comment>Button "Open" on OpenFileDialog</comment>

@@ -1,5 +1,5 @@
 The classes and interfaces in this folder provide a cross-platform implementation of the
-FileOpenDialog and FileSaveDialog. By using the adapter class the .NET
+FileOpenDialog, FileSaveDialog and FolderBrowserDialog. By using the adapter class the .NET
 implementation of the dialog will be displayed on Windows. On Linux the corresponding GTK
 dialog is used.
 

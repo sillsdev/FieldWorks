@@ -106,6 +106,15 @@ namespace SIL.Utils.FileDialog {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to OK.
+		/// </summary>
+		internal static string OK {
+			get {
+				return ResourceManager.GetString("OK", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Open.
 		/// </summary>
 		internal static string Open {
