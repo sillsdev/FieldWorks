@@ -19,3 +19,4 @@ AnnB, 12 Jan 2012.  Hook up Help Buttons LT-11789 and LT-12490.
 JohnT, 12 Jan 2012. LT-12496, "FieldWorks has stopped working" problem clicking areas in Texts and Words area sequentially
 GordonM, 12 Jan 2012. LT-12232 partial fix.
 JohnT, 12 Jan 2012. LT-12499, Can get incorrect homograph numbers in Dictionary view
+JohnT, 13 Jan 2012. LT-12232, Mouse-over blue button gives grey background

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Blue circle button to alert user to the presence of the Configure Interlinear context menu.
 		/// </summary>
-		private Button m_contextButton;
+		private BlueCircleButton m_contextButton;
 
 		/// <summary>
 		/// Index of Interlinear line clicked on to generate above blue button.
@@ -346,15 +347,10 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			m_contextButton = new Button();
-			var pullDown = ResourceHelper.BlueCircleDownArrowForView;
-			m_contextButton.Image = pullDown;
-			m_contextButton.Height = pullDown.Height + 3;
-			m_contextButton.Width = pullDown.Width + 3;
-			m_contextButton.FlatStyle = FlatStyle.Flat;
+			m_contextButton = new BlueCircleButton();
 			m_contextButton.ForeColor = BackColor;
 			m_contextButton.BackColor = BackColor;
-			m_contextButton.Click += new EventHandler(m_contextButton_Click);
+			m_contextButton.Click += m_contextButton_Click;
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -494,7 +490,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(m_iLineChoice > -1, "Why isn't this variable set?");
 			if (m_iLineChoice > -1)
 			{
-				ShowContextMenuIfNotClosing(((Button)sender).Location, m_iLineChoice);
+				ShowContextMenuIfNotClosing(((Control)sender).Location, m_iLineChoice);
 			}
 		}
 

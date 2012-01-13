@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.21022</ProductVersion>
+	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{D71043A0-1871-461E-875F-3CEF13929EB9}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -165,6 +165,12 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="AssemblyInfo.cs" />
+	<Compile Include="BlueCircleButton.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="BlueCircleButton.designer.cs">
+	  <DependentUpon>BlueCircleButton.cs</DependentUpon>
+	</Compile>
 	<Compile Include="ConfigParentNode.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
