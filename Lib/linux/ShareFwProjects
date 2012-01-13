@@ -1,0 +1,80 @@
+#! /bin/sh
+
+# This script is designed to be run automatically during login to a desktop
+# session, or manually from a shell prompt if a problem occurs during the
+# automatic run.
+
+LIBDIR=/usr/lib/fieldworks
+DAEMON=$LIBDIR/FwRemoteDatabaseConnectorService.exe
+MONOSERVICE=$LIBDIR/mono/bin/mono-service2
+
+/usr/bin/test -x $DAEMON || exit 0
+/usr/bin/test -x $MONOSERVICE || exit 0
+
+ENVIRON=$LIBDIR/environ
+PIDFILE=/tmp/FwRemoteDatabaseConnectorService.exe.lock
+LOGFILE=/tmp/FwRemote-Startup-$USER.log
+
+if [ -f $LOGFILE ]; then /bin/rm $LOGFILE; fi
+
+# Killing a service running for another user (or removing a defunct lock file
+# belonging to another user) will fail during login since there's no way for
+# sudo to obtain the password. In those cases, we need to leave a log message
+# advising the user what to do (ie, run this script manually).
+# Running this script manually will succeed if the user is allowed to use sudo,
+# and is the simplest way to restart the service for the new user.  (Note that
+# a user will not be able to access his own local projects if another user is
+# running the service, so restarting the service is really advisable.)
+
+# Check for a running service, and react accordingly.
+PSOUT=`/bin/ps aux | /bin/grep $DAEMON | /bin/grep mono`
+REALPID=`/bin/echo $PSOUT | /usr/bin/cut -d' ' -f2`
+PIDUSER=`/bin/echo $PSOUT | /usr/bin/cut -d' ' -f1`
+
+# any errors from here on abort the script
+set -e
+
+if [ "$REALPID" ]; then
+	if [ -f $PIDFILE ]; then
+		OWNER=`/usr/bin/stat -c%U $PIDFILE`
+		if [ $OWNER = $USER ]; then
+			FILEPID=`/bin/cat $PIDFILE`
+			if [ "$REALPID" = "$FILEPID" ]; then
+				/bin/echo FwRemoteDatabaseConnectorService is already running with process id=$FILEPID >>$LOGFILE
+				exit 0
+			fi
+			# If we reach here, the stored pid and the real pid differ.  This
+			# should never happen, of course, but if it does, fall through to
+			# kill the process and delete the file.
+		fi
+	fi
+	# Kill the running service since it's not ours, or the lock file has
+	# disappeared somehow.
+	/bin/echo You must run /usr/lib/fieldworks/ShareFwProjects from a command prompt to share >>$LOGFILE
+	/bin/echo your FieldWorks projects.  Sharing is currently set up for $PIDUSER. >>$LOGFILE
+	/usr/bin/sudo kill $REALPID
+	# Allow time for the process to die and remove the lock file, and truncate
+	# the log file to remove the (now unneeded) warning.
+	/bin/sleep 1
+	/bin/echo stopped running FwRemoteDatabaseConnectorService for $PIDUSER >$LOGFILE
+	if [ -f $PIDFILE ]; then /usr/bin/sudo rm $PIDFILE; fi
+else
+	# If we ever have a lock file without a process, then we need to remove
+	# the lock file.  Otherwise, we're locked out from starting a process.
+	if [ -f $PIDFILE ]; then
+		/bin/echo You must run /usr/lib/fieldworks/ShareFwProjects from a command prompt to share >>$LOGFILE
+		/bin/echo your FieldWorks projects.  Sharing is currently blocked by an orphaned lock file. >>$LOGFILE
+		/usr/bin/sudo /bin/rm -f $PIDFILE
+		# Truncate the log file to remove the (now unneeded) warning.
+		/bin/echo removed orphaned lock file >$LOGFILE
+	fi
+fi
+
+# Start the new sharing service for the current user.
+cd $LIBDIR
+RUNMODE="INSTALLED"
+. $ENVIRON
+$MONOSERVICE $DAEMON
+/bin/sleep 1
+/bin/echo started FwRemoteDatabaseConnectorService for $USER, process id=`/bin/cat $PIDFILE` >>$LOGFILE
+exit 0

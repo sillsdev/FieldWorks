@@ -259,6 +259,8 @@ install-tree:
 	install Lib/linux/fieldworks-{te,flex} $(DESTDIR)/usr/bin
 	install Lib/linux/{cpol-action,run-app} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
+	install Lib/linux/ShareFwProjects $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd,rng} $(DESTDIR)/usr/share/fieldworks
 	cp -dr --preserve=mode DistFiles/{"Editorial Checks",EncodingConverters,lib} $(DESTDIR)/usr/share/fieldworks

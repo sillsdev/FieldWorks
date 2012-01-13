@@ -23,6 +23,7 @@ FW_SHARE=$script_location
 		cp -R "${FW_SHARE}/SIL" "${FW_CONFIG}/"
 		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 		mkdir -p "${FW_DATA}/Projects"
+		mkdir -p "${XDG_CONFIG_HOME}/autostart"
 
 		# copy sample databases
 		if [ -d ${FW_SAMPLES}/ReleaseData ]; then
@@ -33,6 +34,11 @@ FW_SHARE=$script_location
 				chmod -R gu+w "${FW_DATA}/Projects/$dbname"
 			done
 		fi
+	fi
+	# if we haven't setup running the remote access daemon yet, set it up and start it.
+	if [ ! -f ${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop ]; then
+		cp "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
+		/usr/lib/fieldworks/ShareFwProjects
 	fi
 
 	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
