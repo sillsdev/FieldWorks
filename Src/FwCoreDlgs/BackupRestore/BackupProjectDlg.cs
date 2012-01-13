@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#region Event handlers
 		private void m_browse_Click(object sender, EventArgs e)
 		{
-			using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+			using (var dlg = new FolderBrowserDialogAdapter())
 			{
 				dlg.Description = String.Format(FwCoreDlgs.ksDirectoryLocationForBackup);
 				dlg.ShowNewFolderButton = true;

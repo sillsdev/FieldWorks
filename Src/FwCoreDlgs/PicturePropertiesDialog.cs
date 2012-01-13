@@ -576,7 +576,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_btnBrowseDest_Click(object sender, EventArgs e)
 		{
 			Logger.WriteEvent("Browsing for destination folder in 'Picture Properties' dialog");
-			using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+			using (var dlg = new FolderBrowserDialogAdapter())
 			{
 				dlg.SelectedPath = m_txtDestination.Text;
 				dlg.Description = String.Format(FwCoreDlgs.kstidSelectLinkedFilesSubFolder,

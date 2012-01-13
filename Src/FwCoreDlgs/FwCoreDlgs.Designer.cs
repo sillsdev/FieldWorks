@@ -2126,5 +2126,16 @@ namespace SIL.FieldWorks.FwCoreDlgs {
 				return ResourceManager.GetString("TextFileFilter", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Linked Files Folder.
+		/// </summary>
+		public static string folderBrowserDlgDescription
+		{
+			get
+			{
+				return ResourceManager.GetString("folderBrowserDlgDescription", resourceCulture);
+			}
+		}
 	}
 }

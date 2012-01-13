@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using System.IO;
 using System.Collections.Generic;
@@ -206,7 +207,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			string defaultPath = DirectoryFinder.ProjectsDirectory;
 
-			using (FolderBrowserDialog fldrBrowse = new FolderBrowserDialog())
+			using (var fldrBrowse = new FolderBrowserDialogAdapter())
 			{
 				fldrBrowse.ShowNewFolderButton = true;
 				fldrBrowse.Description = FwCoreDlgs.ksChooseProjectFolder;

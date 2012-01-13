@@ -943,4 +943,7 @@ The error was:
   <data name="TextFileFilter" xml:space="preserve">
 	<value>Text files|*.txt</value>
   </data>
+  <data name="folderBrowserDlgDescription" xml:space="preserve">
+	<value>Linked Files Folder</value>
+  </data>
 </root>

@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.XWorks
 			string sDirectory;
 			if (fLiftExport)
 			{
-				using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+				using (var dlg = new FolderBrowserDialogAdapter())
 				{
 					dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle;	// can't set title !!??
 					dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
