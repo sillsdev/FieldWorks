@@ -10,7 +10,7 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.FieldWorks.TE</RootNamespace>
 	<AssemblyName>TeImportExportTests</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<SccProjectName>Perforce Project</SccProjectName>
 	<SccLocalPath>..\..\..\..</SccLocalPath>
@@ -36,6 +36,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -232,21 +233,31 @@
 	<Compile Include="ExportTests\DummyExportUsfm.cs" />
 	<Compile Include="ExportTests\DummyFileWriter.cs" />
 	<Compile Include="ExportTests\ExportHelper.cs" />
-	<Compile Include="ExportTests\ExportParatextDlgTests.cs" />
+	<Compile Include="ExportTests\ExportParatextDlgTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="ExportTests\ExportParatextTests.cs" />
 	<Compile Include="ExportTests\ExportRtfTests.cs" />
 	<Compile Include="ExportTests\ExportUsfmTests.cs" />
 	<Compile Include="ExportTests\ExportXmlTests.cs" />
 	<Compile Include="ImportComponentsTests\CharacterMappingSettingsTests.cs" />
-	<Compile Include="ImportComponentsTests\ImportWizardTests.cs" />
-	<Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs" />
-	<Compile Include="ImportTests\ImportDialogTests.cs" />
+	<Compile Include="ImportComponentsTests\ImportWizardTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ImportTests\ImportDialogTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="ImportTests\ImportStyleProxyTests.cs" />
 	<Compile Include="ImportTests\ScrNoteImportManagerTests.cs" />
 	<Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
 	<Compile Include="ImportTests\TeImportBtInterleaved.cs" />
 	<Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
-	<Compile Include="ImportTests\TeImportManagerTests.cs" />
+	<Compile Include="ImportTests\TeImportManagerTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="ImportTests\TeImportNoUi.cs" />
 	<Compile Include="ImportTests\TeImportParatext6Tests.cs" />
 	<Compile Include="ImportTests\TeImportTests.cs" />
@@ -254,7 +265,9 @@
 	<Compile Include="ImportTests\TeXmlImportTests.cs" />
 	<Compile Include="ExportTests\XmlNoteCategoryTests.cs" />
 	<Compile Include="SCTextEnumTests.cs" />
-	<Compile Include="SFFileListBuilderTests.cs" />
+	<Compile Include="SFFileListBuilderTests.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />

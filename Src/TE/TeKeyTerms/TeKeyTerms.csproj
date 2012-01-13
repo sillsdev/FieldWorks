@@ -30,7 +30,7 @@
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -45,6 +45,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -234,18 +235,24 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="KeyTermRef.cs" />
-	<Compile Include="KeyTermRenderingsControl.cs" />
+	<Compile Include="KeyTermRenderingsControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="KeyTermRenderingsControl.Designer.cs">
 	  <DependentUpon>KeyTermRenderingsControl.cs</DependentUpon>
 	</Compile>
-	<Compile Include="KeyTermsControl.cs" />
+	<Compile Include="KeyTermsControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="KeyTermsControl.Designer.cs">
 	  <DependentUpon>KeyTermsControl.cs</DependentUpon>
 	</Compile>
 	<Compile Include="KeyTermsTree.cs">
 	  <SubType>Component</SubType>
 	</Compile>
-	<Compile Include="KeyTermsViewWrapper.cs" />
+	<Compile Include="KeyTermsViewWrapper.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="ScrRefEventArgs.cs" />
 	<Compile Include="XmlTermRendering.cs" />
 	<Compile Include="XmlTermRenderingsList.cs" />

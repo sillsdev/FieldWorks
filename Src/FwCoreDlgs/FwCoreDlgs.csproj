@@ -33,7 +33,7 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -49,6 +49,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\Output\Debug\</OutputPath>
@@ -288,7 +289,9 @@
 	<Compile Include="ChooseLangProjectDialog.Designer.cs">
 	  <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
 	</Compile>
-	<Compile Include="ChooserTreeView.cs" />
+	<Compile Include="ChooserTreeView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
 	<Compile Include="CnvtrPropertiesCtrl.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>

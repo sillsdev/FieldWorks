@@ -33,6 +33,10 @@ namespace XCore
 	{
 	}
 
+	/// <summary>
+	/// A comparer for the tuples used - the default comparer for tuples requires
+	/// all items to implement IComparable.
+	/// </summary>
 	internal class TupleComparer : IComparer<Tuple<int, IxCoreColleague>>
 	{
 		#region IComparer<Tuple<int,IxCoreColleague>> Members

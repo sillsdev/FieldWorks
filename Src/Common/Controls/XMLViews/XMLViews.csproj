@@ -33,7 +33,7 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -49,6 +49,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -302,9 +303,15 @@
 	<Compile Include="SimpleMatchDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="XmlBrowseRDEView.cs" />
-	<Compile Include="XmlBrowseView.cs" />
-	<Compile Include="XmlBrowseViewBase.cs" />
+	<Compile Include="XmlBrowseRDEView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseViewBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="XmlBrowseViewBaseVc.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -315,12 +322,16 @@
 	<Compile Include="XmlRDEBrowseViewVc.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="XmlSeqView.cs" />
+	<Compile Include="XmlSeqView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="XmlVc.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="XmlVcDisplayVec.cs" />
-	<Compile Include="XmlView.cs" />
+	<Compile Include="XmlView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="XMLViewsDataCache.cs" />
 	<Compile Include="XMLViewsStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>

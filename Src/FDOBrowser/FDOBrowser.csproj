@@ -19,7 +19,7 @@
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<NoWin32Manifest>true</NoWin32Manifest>
 	<PublishUrl>publish\</PublishUrl>
@@ -36,6 +36,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -136,7 +137,9 @@
 	<Compile Include="BrowserProjectId.cs" />
 	<Compile Include="CustomFields.cs" />
 	<Compile Include="Db4oToXml.cs" />
-	<Compile Include="FDOBrowserForm.cs" />
+	<Compile Include="FDOBrowserForm.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="FDOBrowserForm.Designer.cs">
 	  <DependentUpon>FDOBrowserForm.cs</DependentUpon>
 	</Compile>
@@ -162,6 +165,7 @@
 	</Compile>
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<None Include="app.config" />
 	<None Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="ClassPropertySelector.resx">
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>

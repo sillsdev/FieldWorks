@@ -33,7 +33,7 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -49,6 +49,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -233,9 +234,13 @@
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="TeEditingHelperTests.cs" />
+	<Compile Include="TeEditingHelperTests.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="TeEditingHelper_FindFootnoteNearSelectionTests.cs" />
-	<Compile Include="TeEditingHelper_NavigationTests.cs" />
+	<Compile Include="TeEditingHelper_NavigationTests.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="TeTestBase.cs" />
   </ItemGroup>
   <ItemGroup>

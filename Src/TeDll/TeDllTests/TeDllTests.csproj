@@ -34,7 +34,7 @@
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -49,6 +49,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -301,9 +302,10 @@
 	</Compile>
 	<Compile Include="DraftViewTestBase.cs" />
 	<Compile Include="DummyDraftView.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="DummyFootnoteViewForm.cs">
-	  <SubType>Form</SubType>
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="FootnoteViewTests.cs" />
 	<Compile Include="SyncedDraftViewTests.cs" />
@@ -339,13 +341,16 @@
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="KeyTermsTests.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="ScrObjWrapperTests.cs" />
 	<Compile Include="TeAppTests.cs">
 	</Compile>
 	<Compile Include="TeMainWndTests.cs">
+	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="TeMainWndTestsNoWindow.cs">
+	  <SubType>Form</SubType>
 	</Compile>
 	<EmbeddedResource Include="DummyDraftViewForm.resx">
 	  <DependentUpon>DummyDraftViewForm.cs</DependentUpon>
