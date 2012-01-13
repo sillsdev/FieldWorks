@@ -17,6 +17,9 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects.Properties {
 
 		private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
 
+		/// <summary>
+		/// Added for compiler
+		/// </summary>
 		public static Settings Default {
 			get {
 				return defaultInstance;
