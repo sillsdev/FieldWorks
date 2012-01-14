@@ -17,10 +17,12 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -474,7 +476,7 @@ namespace SIL.FieldWorks.FDO
 
 					// Set the Date Created and Date Modified values.  (See FWR-3189.)
 					cache.LangProject.DateCreated = DateTime.Now;
-					cache.LangProject.DateModified = DateTime.Now;
+					cache.LangProject.DateModified = cache.LangProject.DateCreated;
 				});
 				cache.ActionHandlerAccessor.Commit();
 			}
@@ -534,6 +536,24 @@ namespace SIL.FieldWorks.FDO
 				File.Copy(Path.Combine(DirectoryFinder.TemplateDirectory,
 					DirectoryFinder.GetXmlDataFileName("NewLangProj")), dbFileName, false);
 				File.SetAttributes(dbFileName, FileAttributes.Normal);
+
+				// Change the LangProject Guid to a new one to make it unique between projects, so Lift Bridge won't get cross with FLEx.
+				var doc = XDocument.Load(dbFileName);
+				var lpElement = doc.Element("languageproject").Elements("rt")
+					.Where(rtEl => rtEl.Attribute("class").Value == "LangProject")
+					.First();
+				var newLpGuid = Guid.NewGuid().ToString().ToLowerInvariant();
+				var guidAttr = lpElement.Attribute("guid");
+				var oldLpGuid = guidAttr.Value.ToLowerInvariant();
+				guidAttr.Value = newLpGuid;
+
+				// Change all of the LP's owned stuff, so their ownerguid attrs are updated.
+				foreach (var ownedEl in doc.Element("languageproject").Elements("rt").Where(ownedRt => ownedRt.Attribute("ownerguid") != null && ownedRt.Attribute("ownerguid").Value.ToLowerInvariant() == oldLpGuid))
+				{
+					ownedEl.Attribute("ownerguid").Value = newLpGuid;
+				}
+
+				doc.Save(dbFileName);
 			}
 			catch (Exception e)
 			{

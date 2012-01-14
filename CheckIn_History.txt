@@ -23,3 +23,4 @@ JohnT, 13 Jan 2012. LT-12232, Mouse-over blue button gives grey background
 GordonM, 13 Jan 2012. Fixed some vagaries relating to when/how the blue button
 						 shows up. Related to LT-12232.
 JohnT, 13 Jan 2012. LT-12505, Writing System Property dialog misbehaving
+RandyR, 14 Jan 2012. FW-side fixes for LT-12509 "Send/Receive fails for more than the first file".
