@@ -5679,3 +5679,4 @@ JohnT, 12 Jan 2012. LT-12477, Approve new analysis when I move off the word afte
 KenZ, 12 Jan 2012. Did final full integration from WW to FW_7.2 for the 7.2.0 release.
 	Changed version number of WW to 7.3 for ongoing work.
 AnnB, 12 Jan 2012.  Hook up Help Buttons LT-11789 and LT-12490.
+RandyR, 15 Jan 2012. Integration: FW72->WW.

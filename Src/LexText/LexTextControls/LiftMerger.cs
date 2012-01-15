@@ -5403,9 +5403,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			// {FW DataDir}/filename
 			// {FW DataDir}/Pictures/filename
 			// give up and store relative path Pictures/filename (even though it doesn't exist)
+			// Some versions of WeSay (e.g., 1.1.68) incorrectly include pictures\ in the picture file names, while
+			// excluding the audio directory from the audio file names. So we need to be able to handle picture
+			// file names with or without the initial pictures\ directory. We'll delete the initial directory if present.
+			// Remember there may be subdirectories under pictures that must be handled.
+			var ssFile = sFile;
+			if (sFile.Length > 8)
+			{
+				var tpath = sFile.Substring(0, 9);
+				if (tpath.ToLowerInvariant() == "pictures\\" || tpath.ToLowerInvariant() == "pictures/")
+					ssFile = sFile.Substring(9);
+			}
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
-				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, sFile));
-			sPath = CopyFileToLinkedFiles(sFile, sPath, DirectoryFinder.ksPicturesDir);
+				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, ssFile));
+			sPath = CopyFileToLinkedFiles(ssFile, sPath, DirectoryFinder.ksPicturesDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -5448,7 +5459,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// If the file which is represented in the LIFT file as sFile exists at the expected place, sPath,
-		/// Copy it to the appropriate place relative to the indicated subfolder of the fieldworks
+		/// copy it to the appropriate place relative to the indicated subfolder of the fieldworks
 		/// linked files directory, and return an updated path name.
 		/// </summary>
 		private string CopyFileToLinkedFiles(string sFile, string sPath, string fwDirectory)
@@ -5456,8 +5467,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				// It exists in the expected place in the LIFT folder. Copy to the expected place in the linked files folder.
-				var picturesDir = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, fwDirectory);
-				var fwPath = Path.Combine(picturesDir, sFile);
+				var linkedFilesSubDir = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, fwDirectory);
+				var fwPath = Path.Combine(linkedFilesSubDir, sFile);
 				Directory.CreateDirectory(Path.GetDirectoryName(fwPath));
 				File.Copy(sPath, fwPath, true);
 				sPath = fwPath; // Make the linke to the copied file.

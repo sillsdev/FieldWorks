@@ -344,6 +344,8 @@ namespace SIL.FieldWorks.FixData
 			{
 				FixWsAttributeIfNeeded(auni);
 			}
+			FixDuplicateWritingSystems(rt, guid, "AUni");
+			FixDuplicateWritingSystems(rt,guid, "AStr");
 			switch (className)
 			{
 				case "LangProject":
@@ -391,6 +393,43 @@ namespace SIL.FieldWorks.FixData
 					FixGenericDate("DateOfBirth", rt, className, guid);
 					FixGenericDate("DateOfDeath", rt, className, guid);
 					break;
+			}
+		}
+
+		/// <summary>
+		/// Fix any cases where a multistring has duplicate writing systems.
+		/// </summary>
+		/// <param name="eltName"></param>
+		private void FixDuplicateWritingSystems(XElement rt, Guid guid, string eltName)
+		{
+			// Get all the alternatives of the given type.
+			var alternatives = rt.Descendants(eltName);
+			// group them by parent
+			var groups = new Dictionary<XElement, List<XElement>>();
+			foreach (var item in alternatives)
+			{
+				List<XElement> children;
+				if (!groups.TryGetValue(item.Parent, out children))
+				{
+					children = new List<XElement>();
+					groups[item.Parent] = children;
+				}
+				children.Add(item);
+			}
+			foreach (var kvp in groups)
+			{
+				var list = kvp.Value;
+				list.Sort((x, y) => x.Attribute("ws").Value.CompareTo(y.Attribute("ws").Value));
+				for (int i = 0; i < list.Count - 1; i++)
+				{
+					if (list[i].Attribute("ws").Value == list[i+1].Attribute("ws").Value)
+					{
+						m_errors.Add(string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]));
+						list[i+1].Remove();
+						// Note that we did not remove it from the LIST, only from its parent.
+						// It is still available to be compared to the NEXT item, which might also have the same WS.
+					}
+				}
 			}
 		}
 

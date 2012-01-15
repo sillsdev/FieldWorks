@@ -547,6 +547,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		private void PopulateVariantCombo(bool fPreserve)
 		{
+			m_variantName.TextChanged -= m_variantName_TextChanged; // don't modify the WS while fixing up the combo.
 			m_variantName.BeginUpdate();
 			VariantSubtag orig = VariantSubtag;
 			m_variantName.ClearItems();
@@ -556,6 +557,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (orig != null && fPreserve)
 				VariantSubtag = orig;
 			m_variantName.EndUpdate();
+			m_variantName.TextChanged += m_variantName_TextChanged;
 		}
 
 		/// <summary>
