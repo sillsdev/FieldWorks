@@ -1425,10 +1425,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (IsVoiceWritingSystem(wsString))
 				{
-					// The alternative contains a file path. We need to adjust and export and copy the file.
+					// The alternative contains a file path or null. We need to adjust and export and copy the file.
 					// The whole content of the representation of the TsString will be the adjusted file name,
 					// since these WS alternatives never contain formatted data.
-					var internalPath = tssVal.Text;
+					var internalPath = tssVal.Text == null ? "" : tssVal.Text;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					var writePath = ExportFile(internalPath,
 						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
