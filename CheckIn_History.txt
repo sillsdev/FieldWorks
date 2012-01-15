@@ -25,3 +25,4 @@ GordonM, 13 Jan 2012. Fixed some vagaries relating to when/how the blue button
 JohnT, 13 Jan 2012. LT-12505, Writing System Property dialog misbehaving
 RandyR, 14 Jan 2012. FW-side fixes for LT-12509 "Send/Receive fails for more than the first file".
 KenZ, 14 Jan 2012. Fixed LIFT missing pictures LT-12508 and LIFT export failure LT-12510.
+RandyR, 14 Jan 2012. Finish up changing the LP guid (and users) in data sets.
