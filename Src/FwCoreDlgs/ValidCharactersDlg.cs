@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_openFileDialog = new OpenFileDialogAdapter();
 			m_openFileDialog.DefaultExt = "lds";
-			m_openFileDialog.InitialDirectory = "c:\\My Paratext Projects";
+			m_openFileDialog.InitialDirectory = DirectoryFinder.MyParatextProjectsDirectory;
 			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left +

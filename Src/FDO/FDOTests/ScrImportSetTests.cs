@@ -19,15 +19,16 @@ using System.IO;
 using System.Text;
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SILUBS.SharedScrUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 using Rhino.Mocks;
+
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -1221,7 +1222,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			m_importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
 
-			string paratextDir = MiscUtils.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\";
+			string paratextDir = DirectoryFinder.MyParatextProjectsDirectory;
 			m_mockParatextAdapter.Stub(x => x.LoadProjectMappings(Arg<string>.Is.Anything,
 				Arg<ScrMappingList>.Is.Anything, Arg<ImportDomain>.Is.Anything)).Return(true);
 			m_mockParatextAdapter.Stub(x => x.ProjectDir).Return(paratextDir);

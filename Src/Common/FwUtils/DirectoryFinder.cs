@@ -667,6 +667,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Gets the "My Paratext Projects" directory.
+		/// </summary>
+		public static string MyParatextProjectsDirectory
+		{
+			get { return MiscUtils.IsUnix ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MyParatextProjects") : @"c:\My Paratext Projects\"; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the given path is a direct sub folder of the projects directory.
