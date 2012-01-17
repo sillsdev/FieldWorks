@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 				m_chkShowInFolder.Checked = false;
 
 			m_exportItems = new List<ListViewItem>();
-	}
+		}
 
 		private void InitFromMainControl(object objCurrentControl)
 		{
@@ -200,22 +200,43 @@ namespace SIL.FieldWorks.XWorks
 			var cmo = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject", null) as ICmObject;
 			if (cmo != null)
 			{
-				// Handle LexEntries that no longer have owners.
-				if (cmo is ILexEntry)
+				int clidRoot;
+				var newHvoRoot = SetRoot(cmo, out clidRoot);
+				if (newHvoRoot > 0)
 				{
-					m_hvoRootObj = m_cache.LanguageProject.LexDbOA.Hvo;
-					m_clidRootObj = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-				}
-				else if (cmo.Owner != null)
-				{
-					m_hvoRootObj = cmo.Owner.Hvo;
-					m_clidRootObj = cmo.Owner.ClassID;
+					m_hvoRootObj = newHvoRoot;
+					m_clidRootObj = clidRoot;
 				}
 			}
 
 			XmlBrowseView browseView = FindXmlBrowseView(objCurrentControl as Control);
 			if (browseView != null)
 				m_sda = browseView.RootBox.DataAccess;
+		}
+
+		/// <summary>
+		/// Allows process to find an appropriate root hvo and change the current root.
+		/// Subclasses (e.g. NotebookExportDialog) can override.
+		/// </summary>
+		/// <param name="cmo"></param>
+		/// <param name="clidRoot"></param>
+		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
+		protected virtual int SetRoot(ICmObject cmo, out int clidRoot)
+		{
+			clidRoot = -1;
+			var hvoRoot = -1;
+			// Handle LexEntries that no longer have owners.
+			if (cmo is ILexEntry)
+			{
+				hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
+				clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			}
+			else if (cmo.Owner != null)
+			{
+				hvoRoot = cmo.Owner.Hvo;
+				clidRoot = cmo.Owner.ClassID;
+			}
+			return hvoRoot;
 		}
 
 		/// <summary>
