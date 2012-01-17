@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.XWorks
 					bldr.AppendFormat("{0} - ", tss.Text);
 			}
 			if (rec.Title != null && rec.Title.Length > 0)
-				bldr.Append(rec.Title.Text);
+				bldr.Append(TsStringUtils.GetXmlRep(rec.Title, m_cache.WritingSystemFactory, 0, true));
 			if (!rec.DateOfEvent.IsEmpty)
 				bldr.AppendFormat(" - {0}", rec.DateOfEvent.ToXMLExportShortString());
 			return bldr.ToString();
