@@ -46,7 +46,7 @@ namespace XCore
 			int c = x.Item1 - y.Item1;
 			if (c != 0)
 				return c;
-			return x.Item1.GetHashCode() - y.Item2.GetHashCode();
+			return x.Item2.GetHashCode() - y.Item2.GetHashCode();
 		}
 
 		#endregion
