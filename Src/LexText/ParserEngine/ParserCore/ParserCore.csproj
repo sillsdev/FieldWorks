@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
@@ -30,7 +30,7 @@
 	</FileUpgradeFlags>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,6 +54,7 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
@@ -76,6 +77,7 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=7.2.0.24545, Culture=neutral, processorArchitecture=MSIL">
