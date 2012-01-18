@@ -235,7 +235,9 @@ namespace SIL.FieldWorks.TE.ExportTests
 			var projectFolder = Path.Combine(DirectoryFinder.MyParatextProjectsDirectory, "xyz");
 			m_dummyParaDlg.SimulateBrowseFolder(projectFolder);
 
-			Assert.AreEqual(DirectoryFinder.MyParatextProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			var expected = DirectoryFinder.MyParatextProjectsDirectory.TrimEnd(
+				Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			Assert.AreEqual(expected, m_dummyParaDlg.ScriptureOutputFolder);
 			Assert.AreEqual(projectFolder, m_dummyParaDlg.DisplayedOutputFolder);
 		}
 
