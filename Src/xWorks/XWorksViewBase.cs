@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 			using (var dlg = new AddCustomFieldDlg(m_mediator, locationType))
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
@@ -678,7 +678,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
 				using (var dlg = new ConfigureListDlg(m_mediator, (ICmPossibilityList) Clerk.OwningObject))
-					dlg.ShowDialog();
+					dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
@@ -706,7 +706,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			using (var dlg = new AddListDlg(m_mediator))
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
