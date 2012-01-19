@@ -1,0 +1,307 @@
+Index: fieldworks-enchant-1.6.1/configure.in
+===================================================================
+--- enchant-1.6.1/configure.in
++++ fieldworks-enchant-1.6.1/configure.in
+@@ -3,7 +3,7 @@
+
+ dnl Set release number
+ dnl This is derived from "Versioning" chapter of info libtool documentation.
+-PACKAGE=enchant
++PACKAGE=enchant-cs
+ dnl     4a) Increment when removing or changing interfaces.
+ ENCHANT_MAJOR_VERSION=1
+ dnl     4a) 5) Increment when adding interfaces.
+@@ -524,8 +524,8 @@
+
+ AC_OUTPUT([
+ Makefile
+-enchant.pc
+-enchant-uninstalled.pc
++enchant-cs.pc
++enchant-cs-uninstalled.pc
+ enchant.spec
+ src/libenchant.rc
+ src/Makefile
+Index: fieldworks-enchant-1.6.1/src/aspell/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/aspell/Makefile.am
++++ fieldworks-enchant-1.6.1/src/aspell/Makefile.am
+@@ -7,9 +7,9 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) @ASPELL_INC@ -D_ENCHANT_BUILD=1 @ASPELL_CFLAGS@
+
+ aspell_LTLIBRARIES = $(target_lib)
+-aspelldir= $(libdir)/enchant
++aspelldir= $(libdir)/enchant-cs
+
+-libenchant_aspell_la_LIBADD= $(ENCHANT_LIBS) $(ASPELL_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_aspell_la_LIBADD= $(ENCHANT_LIBS) $(ASPELL_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_aspell_la_LDFLAGS = -module -avoid-version -no-undefined
+ libenchant_aspell_la_SOURCES = aspell_provider.c
+-libenchant_aspell_lalibdir=$(libdir)/enchant
++libenchant_aspell_lalibdir=$(libdir)/enchant-cs
+Index: fieldworks-enchant-1.6.1/src/myspell/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/myspell/Makefile.am
++++ fieldworks-enchant-1.6.1/src/myspell/Makefile.am
+@@ -48,10 +48,10 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(MYSPELL_CFLAGS) $(CXX_WARN_CFLAGS) $(EXTRA_MYSPELL_CFLAGS) -D_ENCHANT_BUILD=1
+
+ myspell_LTLIBRARIES = $(target_lib)
+-myspelldir= $(libdir)/enchant
++myspelldir= $(libdir)/enchant-cs
+
+-libenchant_myspell_lalibdir=$(libdir)/enchant
+-libenchant_myspell_la_LIBADD= $(MYSPELL_LIBS) $(ENCHANT_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_myspell_lalibdir=$(libdir)/enchant-cs
++libenchant_myspell_la_LIBADD= $(MYSPELL_LIBS) $(ENCHANT_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_myspell_la_LDFLAGS = -module -avoid-version -no-undefined
+
+ libenchant_myspell_la_SOURCES =	\
+Index: fieldworks-enchant-1.6.1/src/hspell/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/hspell/Makefile.am
++++ fieldworks-enchant-1.6.1/src/hspell/Makefile.am
+@@ -7,9 +7,9 @@
+ AM_CPPFLAGS=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) $(HSPELL_CFLAGS) -D_ENCHANT_BUILD=1
+
+ hspell_LTLIBRARIES = $(target_lib)
+-hspelldir= $(libdir)/enchant
++hspelldir= $(libdir)/enchant-cs
+
+-libenchant_hspell_la_LIBADD= $(ENCHANT_LIBS) $(HSPELL_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_hspell_la_LIBADD= $(ENCHANT_LIBS) $(HSPELL_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_hspell_la_LDFLAGS = -module -avoid-version -no-undefined
+ libenchant_hspell_la_SOURCES = hspell_provider.c
+-libenchant_hspell_lalibdir=$(libdir)/enchant
++libenchant_hspell_lalibdir=$(libdir)/enchant-cs
+Index: fieldworks-enchant-1.6.1/src/ispell/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/ispell/Makefile.am
++++ fieldworks-enchant-1.6.1/src/ispell/Makefile.am
+@@ -7,10 +7,10 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(CXX_WARN_CFLAGS) $(ISPELL_CFLAGS) -D_ENCHANT_BUILD=1
+
+ ispell_LTLIBRARIES = $(target_lib)
+-ispelldir= $(libdir)/enchant
++ispelldir= $(libdir)/enchant-cs
+
+-libenchant_ispell_lalibdir=$(libdir)/enchant
+-libenchant_ispell_la_LIBADD= $(ENCHANT_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_ispell_lalibdir=$(libdir)/enchant-cs
++libenchant_ispell_la_LIBADD= $(ENCHANT_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_ispell_la_LDFLAGS = -module -avoid-version -no-undefined
+ libenchant_ispell_la_SOURCES =	\
+	correct.cpp		\
+Index: fieldworks-enchant-1.6.1/src/voikko/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/voikko/Makefile.am
++++ fieldworks-enchant-1.6.1/src/voikko/Makefile.am
+@@ -7,9 +7,9 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) @VOIKKO_INC@ -D_ENCHANT_BUILD=1
+
+ voikko_LTLIBRARIES = $(target_lib)
+-voikkodir= $(libdir)/enchant
++voikkodir= $(libdir)/enchant-cs
+
+-libenchant_voikko_la_LIBADD= $(ENCHANT_LIBS) $(VOIKKO_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_voikko_la_LIBADD= $(ENCHANT_LIBS) $(VOIKKO_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_voikko_la_LDFLAGS = -module -avoid-version -no-undefined
+ libenchant_voikko_la_SOURCES = voikko_provider.c
+-libenchant_voikko_lalibdir=$(libdir)/enchant
++libenchant_voikko_lalibdir=$(libdir)/enchant-cs
+Index: fieldworks-enchant-1.6.1/src/zemberek/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/zemberek/Makefile.am
++++ fieldworks-enchant-1.6.1/src/zemberek/Makefile.am
+@@ -7,10 +7,10 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(ZEMBEREK_CFLAGS) $(CXX_WARN_CFLAGS) -D_ENCHANT_BUILD=1
+
+ zemberek_LTLIBRARIES = $(target_lib)
+-zemberekdir= $(libdir)/enchant
++zemberekdir= $(libdir)/enchant-cs
+
+-libenchant_zemberek_lalibdir=$(libdir)/enchant
+-libenchant_zemberek_la_LIBADD= $(ZEMBEREK_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_zemberek_lalibdir=$(libdir)/enchant-cs
++libenchant_zemberek_la_LIBADD= $(ZEMBEREK_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_zemberek_la_LDFLAGS = -avoid-version -no-undefined
+
+ libenchant_zemberek_la_SOURCES =\
+Index: fieldworks-enchant-1.6.1/src/uspell/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/uspell/Makefile.am
++++ fieldworks-enchant-1.6.1/src/uspell/Makefile.am
+@@ -7,9 +7,9 @@
+ INCLUDES=-I$(top_srcdir)/src $(ENCHANT_CFLAGS) $(USPELL_CFLAGS) $(CXX_WARN_CFLAGS) -D_ENCHANT_BUILD=1
+
+ uspell_LTLIBRARIES = $(target_lib)
+-uspelldir= $(libdir)/enchant
++uspelldir= $(libdir)/enchant-cs
+
+-libenchant_uspell_la_LIBADD= $(ENCHANT_LIBS) $(USPELL_LIBS) $(top_builddir)/src/libenchant.la
++libenchant_uspell_la_LIBADD= $(ENCHANT_LIBS) $(USPELL_LIBS) $(top_builddir)/src/libenchant-cs.la
+ libenchant_uspell_la_LDFLAGS = -module -avoid-version -no-undefined
+ libenchant_uspell_la_SOURCES = uspell_provider.cpp
+-libenchant_uspell_lalibdir=$(libdir)/enchant
++libenchant_uspell_lalibdir=$(libdir)/enchant-cs
+Index: fieldworks-enchant-1.6.1/src/Makefile.am
+===================================================================
+--- enchant-1.6.1/src/Makefile.am
++++ fieldworks-enchant-1.6.1/src/Makefile.am
+@@ -1,30 +1,30 @@
+ SUBDIRS=. aspell ispell uspell myspell hspell applespell voikko zemberek
+
+-INCLUDES=-I$(top_srcdir) $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) -DENCHANT_GLOBAL_MODULE_DIR=\"$(libdir)/enchant\" -DENCHANT_GLOBAL_ORDERING=\"$(datadir)/enchant\" -D_ENCHANT_BUILD=1 -DENCHANT_VERSION_STRING=\"@ENCHANT_MAJOR_VERSION@.@ENCHANT_MINOR_VERSION@.@ENCHANT_MICRO_VERSION@\"
++INCLUDES=-I$(top_srcdir) $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) -DENCHANT_GLOBAL_MODULE_DIR=\"$(libdir)/enchant-cs\" -DENCHANT_GLOBAL_ORDERING=\"$(datadir)/enchant-cs\" -D_ENCHANT_BUILD=1 -DENCHANT_VERSION_STRING=\"@ENCHANT_MAJOR_VERSION@.@ENCHANT_MINOR_VERSION@.@ENCHANT_MICRO_VERSION@\"
+
+-lib_LTLIBRARIES = libenchant.la
++lib_LTLIBRARIES = libenchant-cs.la
+
+-libenchant_la_LIBADD= $(ENCHANT_LIBS) @ENCHANT_WIN32_RESOURCE@
++libenchant_cs_la_LIBADD= $(ENCHANT_LIBS) @ENCHANT_WIN32_RESOURCE@
+
+-libenchant_la_LDFLAGS = -no-undefined -export-dynamic
++libenchant_cs_la_LDFLAGS = -no-undefined -export-dynamic
+ if OS_WIN32
+-libenchant_la_LDFLAGS += -avoid-version
++libenchant_cs_la_LDFLAGS += -avoid-version
+ else
+-libenchant_la_LDFLAGS += -version-info $(VERSION_INFO)
++libenchant_cs_la_LDFLAGS += -version-info $(VERSION_INFO)
+ endif
+
+-libenchant_la_DEPENDENCIES = @ENCHANT_WIN32_RESOURCE@
+-libenchant_la_SOURCES = prefix.c enchant.c pwl.c enchant.h prefix.h pwl.h
++libenchant_cs_la_DEPENDENCIES = @ENCHANT_WIN32_RESOURCE@
++libenchant_cs_la_SOURCES = prefix.c enchant.c pwl.c enchant.h prefix.h pwl.h
+
+-libenchant_includedir = $(includedir)/enchant
+-libenchant_include_HEADERS = enchant.h enchant-provider.h enchant++.h
++libenchant_cs_includedir = $(includedir)/enchant-cs
++libenchant_cs_include_HEADERS = enchant.h enchant-provider.h enchant++.h
+
+ if WITH_APPLESPELL
+ INCLUDES += @APPLESPELL_CFLAGS@
+-libenchant_la_LIBADD += @APPLESPELL_LIBS@
+-libenchant_la_LDFLAGS += @APPLESPELL_LDFLAGS@
+-libenchant_la_SOURCES += enchant_cocoa.m enchant_cocoa.h
+-libenchant_include_HEADERS += enchant_cocoa.h
++libenchant_cs_la_LIBADD += @APPLESPELL_LIBS@
++libenchant_cs_la_LDFLAGS += @APPLESPELL_LDFLAGS@
++libenchant_cs_la_SOURCES += enchant_cocoa.m enchant_cocoa.h
++libenchant_cs_include_HEADERS += enchant_cocoa.h
+ endif
+
+ EXTRA_DIST=enchant.i
+Index: fieldworks-enchant-1.6.1/src/.cvsignore
+===================================================================
+--- enchant-1.6.1/src/.cvsignore
++++ fieldworks-enchant-1.6.1/src/.cvsignore
+@@ -2,5 +2,6 @@
+ Makefile
+ enchant.lo
+ libenchant.la
++libenchant-cs.la
+ .deps
+ .libs
+Index: fieldworks-enchant-1.6.1/tests/Makefile.am
+===================================================================
+--- enchant-1.6.1/tests/Makefile.am
++++ fieldworks-enchant-1.6.1/tests/Makefile.am
+@@ -2,8 +2,8 @@
+
+ EXTRA_DIST=test.pwl ispell.in
+
+-DEPS= $(top_builddir)/src/libenchant.la
+-ldadd= $(top_builddir)/src/libenchant.la  $(ENCHANT_LIBS)
++DEPS= $(top_builddir)/src/libenchant-cs.la
++ldadd= $(top_builddir)/src/libenchant-cs.la  $(ENCHANT_LIBS)
+
+ if WITH_CXX
+ cxx_progs = test-enchantxx
+@@ -12,24 +12,24 @@
+ endif
+
+ noinst_PROGRAMS = test-enchant $(cxx_progs)
+-bin_PROGRAMS= enchant-lsmod enchant
++bin_PROGRAMS= enchant-cs-lsmod enchant-cs
+
+ test_enchant_SOURCES = test-enchant.c
+ test_enchant_LDFLAGS =
+ test_enchant_DEPENDENCIES = $(DEPS)
+ test_enchant_LDADD = $(ldadd)
+
+-enchant_SOURCES = enchant-ispell.c
+-enchant_LDFLAGS =
+-enchant_DEPENDENCIES = $(DEPS)
+-enchant_LDADD = $(ldadd)
++enchant_cs_SOURCES = enchant-ispell.c
++enchant_cs_LDFLAGS =
++enchant_cs_DEPENDENCIES = $(DEPS)
++enchant_cs_LDADD = $(ldadd)
+
+ test_enchantxx_SOURCES = test-enchantxx.cpp
+ test_enchantxx_LDFLAGS =
+ test_enchantxx_DEPENDENCIES = $(DEPS)
+ test_enchantxx_LDADD = $(ldadd)
+
+-enchant_lsmod_SOURCES = enchant-lsmod.c
+-enchant_lsmod_LDFLAGS =
+-enchant_lsmod_DEPENDENCIES = $(DEPS)
+-enchant_lsmod_LDADD = $(ldadd)
++enchant_cs_lsmod_SOURCES = enchant-lsmod.c
++enchant_cs_lsmod_LDFLAGS =
++enchant_cs_lsmod_DEPENDENCIES = $(DEPS)
++enchant_cs_lsmod_LDADD = $(ldadd)
+Index: fieldworks-enchant-1.6.1/Makefile.am
+===================================================================
+--- enchant-1.6.1/Makefile.am
++++ fieldworks-enchant-1.6.1/Makefile.am
+@@ -1,12 +1,12 @@
+ SUBDIRS=src tests doc data
+
+ pkgconfigdir = $(libdir)/pkgconfig
+-pkgconfig_DATA = enchant.pc
++pkgconfig_DATA = enchant-cs.pc
+
+ EXTRA_DIST =		\
+	autogen.sh	\
+-	enchant.pc.in	\
+-	enchant-uninstalled.pc.in \
++	enchant-cs.pc.in	\
++	enchant-cs-uninstalled.pc.in \
+	enchant.spec.in	\
+	enchant.spec	\
+	lt-compile-resource \
+Index: fieldworks-enchant-1.6.1/enchant-cs.pc.in
+===================================================================
+--- /dev/null
++++ fieldworks-enchant-1.6.1/enchant-cs.pc.in
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: libenchant-cs
++Description: A spell checking library
++Version: @VERSION@
++Requires: glib-2.0 gmodule-no-export-2.0
++Libs: -L${libdir} -lenchant-cs
++Cflags: -I${includedir}/enchant-cs
+Index: fieldworks-enchant-1.6.1/enchant-cs-uninstalled.pc.in
+===================================================================
+--- /dev/null
++++ fieldworks-enchant-1.6.1/enchant-cs-uninstalled.pc.in
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: libenchant-cs
++Description: A spell checking library
++Version: @VERSION@
++Requires: glib-2.0 gmodule-2.0
++Libs: ${pc_top_builddir}/${pcfiledir}/src/libenchant-cs.la
++Cflags: -I${pc_top_builddir}/${pcfiledir}/src

@@ -1,0 +1,20 @@
+Index: fieldworks-enchant-1.6.1/src/pwl.c
+===================================================================
+--- enchant-1.6.1/src/pwl.c
++++ fieldworks-enchant-1.6.1/src/pwl.c
+@@ -626,6 +626,7 @@
+	if(exists)
+		return 0;
+
++	/* Don't want title-case and all-caps smarts in FieldWorks.
+	if(enchant_is_title_case(word, len) || (isAllCaps = enchant_is_all_caps(word, len)))
+		{
+			char * lower_case_word = g_utf8_strdown(word, len);
+@@ -643,7 +644,7 @@
+					return 0;
+			}
+		}
+-
++	*/
+	return 1; /* not found */
+ }
