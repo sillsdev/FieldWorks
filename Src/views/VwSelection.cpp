@@ -7476,11 +7476,10 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 #ifdef WIN32
 			nVal = _wtoi(buf);
 #else
-			// TODO-Linux: REVIEW
-			// TODO-P4CL23677-Merge
 			{
 				UErrorCode status = U_ZERO_ERROR;
-				Formattable result(-999);
+				// value should be 0 if we encounter an error
+				Formattable result(0);
 				NumberFormat* nf = NumberFormat::createInstance(status);
 				nf->parse(buf, result, status);
 				nVal = result.getLong();
