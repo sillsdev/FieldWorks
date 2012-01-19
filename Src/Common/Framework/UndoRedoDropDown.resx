@@ -217,9 +217,6 @@
   <data name="m_Actions.IntegralHeight" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
   </data>
-  <data name="m_Actions.ItemHeight" type="System.Int32, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>13</value>
-  </data>
   <data name="m_Actions.Location" type="System.Drawing.Point, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>0, 0</value>
   </data>

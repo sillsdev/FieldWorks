@@ -1242,9 +1242,6 @@
   <data name="cbEncodingConverter.HelpString" xml:space="preserve">
 	<value>Specifies the encoding converter for importing data which uses this writing system.</value>
   </data>
-  <data name="cbEncodingConverter.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cbEncodingConverter.Location" type="System.Drawing.Point, System.Drawing">
 	<value>48, 67</value>
   </data>

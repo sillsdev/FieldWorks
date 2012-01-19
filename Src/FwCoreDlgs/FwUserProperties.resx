@@ -992,9 +992,6 @@
   <data name="&gt;&gt;lblSelectFeatures.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="cboApplication.ItemHeight" type="System.Int32, mscorlib">
-	<value>15</value>
-  </data>
   <data name="cboApplication.Location" type="System.Drawing.Point, System.Drawing">
 	<value>80, 44</value>
   </data>

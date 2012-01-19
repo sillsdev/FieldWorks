@@ -213,9 +213,6 @@
   <data name="outputFontCombo.HelpString" xml:space="preserve">
 	<value>Specify a font in order to display the output text in the ‘Converted’ preview window.</value>
   </data>
-  <data name="outputFontCombo.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="outputFontCombo.Location" type="System.Drawing.Point, System.Drawing">
 	<value>72, 48</value>
   </data>

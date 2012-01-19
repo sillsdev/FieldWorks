@@ -122,9 +122,6 @@
 	<value>Bottom, Left, Right</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="cboList.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="cboList.Location" type="System.Drawing.Point, System.Drawing">
 	<value>240, 259</value>
@@ -299,9 +296,6 @@
   </data>
   <data name="&gt;&gt;chkExclude.ZOrder" xml:space="preserve">
 	<value>5</value>
-  </data>
-  <data name="cboWritingSys.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cboWritingSys.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 195</value>

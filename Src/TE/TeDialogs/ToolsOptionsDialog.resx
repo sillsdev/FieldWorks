@@ -789,9 +789,6 @@
   <data name="&gt;&gt;rdoBasicStyles.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <data name="cboStyleLevel.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboStyleLevel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>176, 21</value>
   </data>
@@ -938,9 +935,6 @@
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
 	<value>2</value>
-  </data>
-  <data name="m_cboMeasurement.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="m_cboMeasurement.Items" xml:space="preserve">
 	<value>Inches</value>
