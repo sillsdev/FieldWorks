@@ -28,3 +28,4 @@ KenZ, 14 Jan 2012. Fixed LIFT missing pictures LT-12508 and LIFT export failure 
 RandyR, 14 Jan 2012. Finish up changing the LP guid (and users) in data sets.
 KenZ, 18 Jan 2012. Fixed old LIFT import problem (LT-12516), removed Scripture from custom field lists for SE
 	(LT-12520), and Fixed problems with master Hindi ldml file.
+JohnT, 19 Jan 2012. Added a comment to a string resource file.
