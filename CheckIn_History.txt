@@ -5683,3 +5683,4 @@ RandyR, 15 Jan 2012. Integration: FW72->WW.
 GordonM, 17 Jan 2012. Fixed LT-12427 so Full Notebook Export to SFM doesn't crash on ampersand.
 LastufkaM, 17 Jan 2012. Fixed a crash while looking at LT-12097 again.
 GordonM, 17 Jan 2012. Fixed LT-12457 so Notebook XHTML export works while on subrecord.
+NaylorJ, 20 Jan 2012. Re-named the FwData class and file to FwDataFixer in preperation of LT-12530 work.

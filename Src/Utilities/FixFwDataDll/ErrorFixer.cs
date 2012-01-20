@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.FixData
 			string pathname = parameters[0] as string;
 			StringBuilder bldr = new StringBuilder();
 
-			FwData data = new FwData(pathname, progressDlg);
+			FwDataFixer data = new FwDataFixer(pathname, progressDlg);
 			data.FixErrorsAndSave();
 
 			foreach (var err in data.Errors)

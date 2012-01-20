@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{9C534D8A-3445-4827-8D3B-957D98461533}</ProjectGuid>
 	<OutputType>Library</OutputType>
@@ -79,11 +79,11 @@
 	<Compile Include="FixErrorsDlg.Designer.cs">
 	  <DependentUpon>FixErrorsDlg.cs</DependentUpon>
 	</Compile>
-	<Compile Include="FwData.cs" />
 	<Compile Include="ErrorFixer.cs" />
 	<None Include="Properties\AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
+	<Compile Include="FwDataFixer.cs" />
 	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
 	<Compile Include="Strings.Designer.cs">
 	  <AutoGen>True</AutoGen>

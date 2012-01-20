@@ -8,7 +8,7 @@
 // </copyright>
 #endregion
 //
-// File: FwData.cs
+// File: FwDataFixer.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FixData
 	/// Fix errors in a FieldWorks data XML file.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwData
+	public class FwDataFixer
 	{
 		string m_filename;
 		IProgress m_progress;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.FixData
 		/// <summary>
 		/// Constructor.  Reads the file and stores any data needed for corrections later on.
 		/// </summary>
-		public FwData(string filename, IProgress progress)
+		public FwDataFixer(string filename, IProgress progress)
 		{
 			m_filename = filename;
 			m_progress = progress;
