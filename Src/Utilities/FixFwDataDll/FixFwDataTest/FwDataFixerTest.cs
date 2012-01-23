@@ -34,8 +34,13 @@ namespace FixFwDataTest
 
 		[Test]
 		public void TestDanglingReferences()
-		{
-			;
+		{			//This test checks that duplicate guids are identified and that an error message is produced for them.
+			string testGuid = "cccccccc-a7d4-4e1e-a403-deec87c34455";
+			FwDataFixer data = new FwDataFixer("../../TestData/DanglingReference/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			AssertThatXmlIn.File("../../TestData/DanglingReference/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 0);
+			Assert.True(errors.Count == 1 && errors[0].EndsWith("Object with guid '" + testGuid + "' already exists! (not fixed)"));//FwDataFixer.ksObjectWithGuidAlreadyExists));)
+			AssertThatXmlIn.File("../../TestData/DanglingReference/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 1);
 		}
 
 		[Test]

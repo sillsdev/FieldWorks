@@ -43,6 +43,11 @@ namespace SIL.FieldWorks.FixData
 		//List<DocumentFixers> docLevelFixers = new List<DocumentFixers>();
 		List<RTFixers> rtLevelFixers = new List<RTFixers>();
 
+		Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
+		HashSet<Guid> m_guids = new HashSet<Guid>();
+		List<XElement> m_dupGuidElements = new List<XElement>();
+		List<XElement> m_dupOwnedElements = new List<XElement>();
+
 		/// <summary>
 		/// Constructor.  Reads the file and stores any data needed for corrections later on.
 		/// </summary>
@@ -70,7 +75,7 @@ namespace SIL.FieldWorks.FixData
 				{
 					string rtXml = xrdr.ReadOuterXml();
 					XElement rt = XElement.Parse(rtXml);
-					//StoreGuidInfo(rt);
+					StoreGuidInfo(rt, errorLogger);
 					xrdr.MoveToContent();
 					++m_crt;
 					if (m_progress.Position == m_progress.Maximum)
@@ -80,7 +85,7 @@ namespace SIL.FieldWorks.FixData
 				}
 				xrdr.Close();
 			}
-			rtLevelFixers.Add(new OriginalFixer());
+			rtLevelFixers.Add(new OriginalFixer(m_owners, m_guids));
 		}
 
 		/// <summary>
@@ -218,15 +223,14 @@ namespace SIL.FieldWorks.FixData
 
 		internal class OriginalFixer : RTFixers
 		{
-			static Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
-			static HashSet<Guid> m_guids = new HashSet<Guid>();
 			static List<XElement> m_danglingLinks = new List<XElement>();
-			static List<XElement> m_dupGuidElements = new List<XElement>();
-			static List<XElement> m_dupOwnedElements = new List<XElement>();
+
+			public OriginalFixer(Dictionary<Guid, Guid> owners, HashSet<Guid> guids) : base(owners, guids)
+			{
+			}
 
 			public override void FixElement(XElement rt, ErrorLogger errorLogger)
 			{
-				StoreGuidInfo(rt, errorLogger);
 				Guid guid = new Guid(rt.Attribute("guid").Value);
 				Guid storedOwner;
 				if (!m_owners.TryGetValue(guid, out storedOwner))
@@ -239,7 +243,7 @@ namespace SIL.FieldWorks.FixData
 					Guid guidOwner = new Guid(xaOwner.Value);
 					if (guidOwner != storedOwner)
 					{
-						if (storedOwner != Guid.Empty && m_guids.Contains(storedOwner))
+						if (!storedOwner.ToString().Equals(Guid.Empty.ToString()) && m_guids.Contains(storedOwner))
 						{
 							errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksChangingOwnerGuidValue,
 								guidOwner, storedOwner, className, guid));
@@ -366,36 +370,36 @@ namespace SIL.FieldWorks.FixData
 						break;
 				}
 			}
+		}
 
-			private void StoreGuidInfo(XElement rt, ErrorLogger errorLogger)
+		private void StoreGuidInfo(XElement rt, ErrorLogger errorLogger)
+		{
+			Guid guid = new Guid(rt.Attribute("guid").Value);
+			if (m_guids.Contains(guid))
 			{
-				Guid guid = new Guid(rt.Attribute("guid").Value);
-				if (m_guids.Contains(guid))
+				errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyExists, guid));
+				m_dupGuidElements.Add(rt);
+			}
+			else
+			{
+				m_guids.Add(guid);
+			}
+			foreach (var objsur in rt.Descendants("objsur"))
+			{
+				XAttribute xaType = objsur.Attribute("t");
+				if (xaType == null || xaType.Value != "o")
+					continue;
+				XAttribute xaGuidObj = objsur.Attribute("guid");
+				Guid guidObj = new Guid(xaGuidObj.Value);
+				if (m_owners.ContainsKey(guidObj))
 				{
-					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyExists, guid));
-					m_dupGuidElements.Add(rt);
+					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyOwned,
+						guidObj, guid));
+					m_dupOwnedElements.Add(objsur);
 				}
 				else
 				{
-					m_guids.Add(guid);
-				}
-				foreach (var objsur in rt.Descendants("objsur"))
-				{
-					XAttribute xaType = objsur.Attribute("t");
-					if (xaType == null || xaType.Value != "o")
-						continue;
-					XAttribute xaGuidObj = objsur.Attribute("guid");
-					Guid guidObj = new Guid(xaGuidObj.Value);
-					if (m_owners.ContainsKey(guidObj))
-					{
-						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyOwned,
-							guidObj, guid));
-						m_dupOwnedElements.Add(objsur);
-					}
-					else
-					{
-						m_owners.Add(guidObj, guid);
-					}
+					m_owners.Add(guidObj, guid);
 				}
 			}
 		}
@@ -588,6 +592,14 @@ namespace SIL.FieldWorks.FixData
 
 	internal abstract class RTFixers
 	{
+		protected HashSet<Guid> m_guids = new HashSet<Guid>();
+		protected Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
+		public RTFixers(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+		{
+			m_owners = owners;
+			m_guids = guids;
+		}
+
 		public abstract void FixElement(XElement rt, FwDataFixer.ErrorLogger logger);
 	}
 }

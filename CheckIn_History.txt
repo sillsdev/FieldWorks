@@ -5687,3 +5687,4 @@ NaylorJ, 20 Jan 2012. Re-named the FwData class and file to FwDataFixer in prepe
 GordonM, 20 Jan 2012. LT-12498 fixed Other button in Find in Dictionary dialog.
 NaylorJ, 23 Jan 2012. Further work related to LT-12530.
 GordonM, 23 Jan 2012. Fixed LT-11922 (and LT-12053) so LiftBridge doesn't disappear from the menu.
+NaylorJ, 23 Jan 2012. Incremental changes for test cases of LT-12430.
