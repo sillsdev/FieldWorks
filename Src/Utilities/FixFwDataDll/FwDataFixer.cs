@@ -85,6 +85,7 @@ namespace SIL.FieldWorks.FixData
 				}
 				xrdr.Close();
 			}
+			//The following fixers will be run on each rt element during FixErrorsAndSave()
 			rtLevelFixers.Add(new OriginalFixer(m_owners, m_guids));
 		}
 
@@ -221,6 +222,12 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
+		/// <summary>
+		/// This class contains the adapted code for the original FwDataFixer which tried to handle a small set
+		/// of reference and writing system problems.
+		/// It attempts to repair dangling links, duplicate writing systems, and incorrectly formatted dates
+		/// It also identifies items with duplicate guids, but does not attempt to repair them.
+		/// </summary>
 		internal class OriginalFixer : RTFixers
 		{
 			static List<XElement> m_danglingLinks = new List<XElement>();
@@ -590,6 +597,10 @@ namespace SIL.FieldWorks.FixData
 		}
 	}
 
+	/// <summary>
+	/// This abstract class provides the interface for fixing problems on an element\row\CmObject level.
+	/// The members m_guids and m_owners can be used by fixes which need global information.
+	/// </summary>
 	internal abstract class RTFixers
 	{
 		protected HashSet<Guid> m_guids = new HashSet<Guid>();

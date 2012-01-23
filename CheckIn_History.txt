@@ -5689,3 +5689,4 @@ NaylorJ, 23 Jan 2012. Further work related to LT-12530.
 GordonM, 23 Jan 2012. Fixed LT-11922 (and LT-12053) so LiftBridge doesn't disappear from the menu.
 NaylorJ, 23 Jan 2012. Incremental changes for test cases of LT-12430.
 NaylorJ, 23 Jan 2012. Test harness refinement for LT-12430.
+	Later: Version 1 of the new Fixer model and testing framework.
