@@ -66,7 +66,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = File.Exists(LiftBridgeDll);
+			// LT-11922 & LT-12053 show that we need the CodeDirectory here and it's better
+			// to use the FileUtils version of FileExists for cross-platform reasons.
+			var dllPath = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
+			display.Enabled = FileUtils.FileExists(dllPath);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
