@@ -33,22 +33,24 @@ namespace SIL.FieldWorks.FixData
 		string m_filename;
 		IProgress m_progress;
 		int m_crt;
-		HashSet<Guid> m_guids = new HashSet<Guid>();
-		Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
 
-		List<string> m_errors = new List<string>();
-		List<XElement> m_dupGuidElements = new List<XElement>();
-		List<XElement> m_dupOwnedElements = new List<XElement>();
-		List<XElement> m_danglingLinks = new List<XElement>();
 		string m_logfile;
+
+		public delegate void ErrorLogger(string guid, string date, string description);
+
+		private ErrorLogger errorLogger;
+
+		//List<DocumentFixers> docLevelFixers = new List<DocumentFixers>();
+		List<RTFixers> rtLevelFixers = new List<RTFixers>();
 
 		/// <summary>
 		/// Constructor.  Reads the file and stores any data needed for corrections later on.
 		/// </summary>
-		public FwDataFixer(string filename, IProgress progress)
+		public FwDataFixer(string filename, IProgress progress, ErrorLogger logger)
 		{
 			m_filename = filename;
 			m_progress = progress;
+			errorLogger = logger;
 
 			m_progress.Minimum = 0;
 			m_progress.Maximum = 1000;
@@ -68,7 +70,7 @@ namespace SIL.FieldWorks.FixData
 				{
 					string rtXml = xrdr.ReadOuterXml();
 					XElement rt = XElement.Parse(rtXml);
-					StoreGuidInfo(rt);
+					//StoreGuidInfo(rt);
 					xrdr.MoveToContent();
 					++m_crt;
 					if (m_progress.Position == m_progress.Maximum)
@@ -78,6 +80,7 @@ namespace SIL.FieldWorks.FixData
 				}
 				xrdr.Close();
 			}
+			rtLevelFixers.Add(new OriginalFixer());
 		}
 
 		/// <summary>
@@ -91,9 +94,7 @@ namespace SIL.FieldWorks.FixData
 			m_progress.Position = 0;
 			m_progress.Message = String.Format(Strings.ksLookingForAndFixingErrors, m_filename);
 			string outfile = m_filename + "-x";
-			XmlWriterSettings settings = new XmlWriterSettings();
-			settings.Indent = true;
-			settings.IndentChars = String.Empty;
+			XmlWriterSettings settings = new XmlWriterSettings {Indent = true, IndentChars = String.Empty};
 			using (XmlWriter xw = XmlWriter.Create(outfile, settings))
 			{
 				xw.WriteStartDocument();
@@ -118,7 +119,10 @@ namespace SIL.FieldWorks.FixData
 					{
 						var rtXml = xrdr.ReadOuterXml();
 						var rt = XElement.Parse(rtXml);
-						FixErrors(rt);
+						foreach(RTFixers fixer in rtLevelFixers)
+						{
+							fixer.FixElement(rt, errorLogger);
+						}
 						rt.WriteTo(xw);
 						xrdr.MoveToContent();
 						m_progress.Step(1);
@@ -139,16 +143,6 @@ namespace SIL.FieldWorks.FixData
 			if (m_dictWsChanges.Count > 0)
 				FixLdmlFiles(Path.GetDirectoryName(m_filename));
 
-			if (Errors.Count > 0)
-			{
-				m_logfile = Path.ChangeExtension(m_filename, ".fixes");
-				using (TextWriter tw = new StreamWriter(m_logfile, false, System.Text.Encoding.UTF8))
-				{
-					foreach (var err in Errors)
-						tw.WriteLine(err);
-					tw.Close();
-				}
-			}
 		}
 
 		private void FixLdmlFiles(string projectDirectory)
@@ -222,185 +216,244 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		private void StoreGuidInfo(XElement rt)
+		internal class OriginalFixer : RTFixers
 		{
-			Guid guid = new Guid(rt.Attribute("guid").Value);
-			if (m_guids.Contains(guid))
+			static Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
+			static HashSet<Guid> m_guids = new HashSet<Guid>();
+			static List<XElement> m_danglingLinks = new List<XElement>();
+			static List<XElement> m_dupGuidElements = new List<XElement>();
+			static List<XElement> m_dupOwnedElements = new List<XElement>();
+
+			public override void FixElement(XElement rt, ErrorLogger errorLogger)
 			{
-				m_errors.Add(String.Format(Strings.ksObjectWithGuidAlreadyExists, guid));
-				m_dupGuidElements.Add(rt);
-			}
-			else
-			{
-				m_guids.Add(guid);
-			}
-			foreach (var objsur in rt.Descendants("objsur"))
-			{
-				XAttribute xaType = objsur.Attribute("t");
-				if (xaType == null || xaType.Value != "o")
-					continue;
-				XAttribute xaGuidObj = objsur.Attribute("guid");
-				Guid guidObj = new Guid(xaGuidObj.Value);
-				if (m_owners.ContainsKey(guidObj))
+				StoreGuidInfo(rt, errorLogger);
+				Guid guid = new Guid(rt.Attribute("guid").Value);
+				Guid storedOwner;
+				if (!m_owners.TryGetValue(guid, out storedOwner))
+					storedOwner = Guid.Empty;
+				var xaClass = rt.Attribute("class");
+				var className = xaClass == null ? "<unknown>" : xaClass.Value;
+				XAttribute xaOwner = rt.Attribute("ownerguid");
+				if (xaOwner != null)
 				{
-					m_errors.Add(String.Format(Strings.ksObjectWithGuidAlreadyOwned,
-						guidObj, guid));
-					m_dupOwnedElements.Add(objsur);
+					Guid guidOwner = new Guid(xaOwner.Value);
+					if (guidOwner != storedOwner)
+					{
+						if (storedOwner != Guid.Empty && m_guids.Contains(storedOwner))
+						{
+							errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksChangingOwnerGuidValue,
+								guidOwner, storedOwner, className, guid));
+							xaOwner.Value = storedOwner.ToString();
+						}
+						else if (!m_guids.Contains(guidOwner))
+						{
+							errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingLinkToNonexistentOwner,
+								guidOwner, className, guid));
+							xaOwner.Remove();
+						}
+					}
+				}
+				else if (storedOwner != Guid.Empty)
+				{
+					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksAddingLinkToOwner,
+						storedOwner, className, guid));
+					xaOwner = new XAttribute("ownerguid", storedOwner);
+					rt.Add(xaOwner);
+				}
+				foreach (var objsur in rt.Descendants("objsur"))
+				{
+					XAttribute xaType = objsur.Attribute("t");
+					if (xaType == null)
+						continue;
+					XAttribute xaGuidObj = objsur.Attribute("guid");
+					Guid guidObj = new Guid(xaGuidObj.Value);
+					if (!m_guids.Contains(guidObj))
+					{
+						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingLinkToNonexistingObject,
+							guidObj, className, guid, objsur.Parent.Name));
+						m_danglingLinks.Add(objsur);
+						continue;
+					}
+					if (xaType.Value == "o")
+					{
+						Guid guidStored;
+						if (m_owners.TryGetValue(guidObj, out guidStored))
+						{
+							if (guidStored != guid)
+							{
+								errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingMultipleOwnershipLink,
+									guidObj, className, guid, objsur.Parent.Name));
+								m_danglingLinks.Add(objsur);	// excessive ownership
+							}
+						}
+					}
+				}
+				foreach (var objsur in m_danglingLinks)
+					objsur.Remove();
+				m_danglingLinks.Clear();
+
+				foreach (var run in rt.Descendants("Run"))
+				{
+					XAttribute xa = run.Attribute("editable");
+					if (xa != null)
+					{
+						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingEditableAttribute,
+							rt.Attribute("class")));
+						run.SetAttributeValue("editable", null);
+					}
+					FixWsAttributeIfNeeded(guid, run, errorLogger);
+				}
+				foreach (var auni in rt.Descendants("AUni"))
+				{
+					FixWsAttributeIfNeeded(guid, auni, errorLogger);
+				}
+				foreach (var auni in rt.Descendants("AStr"))
+				{
+					FixWsAttributeIfNeeded(guid, auni, errorLogger);
+				}
+				foreach (var auni in rt.Descendants("WsProp"))
+				{
+					FixWsAttributeIfNeeded(guid, auni, errorLogger);
+				}
+				FixDuplicateWritingSystems(rt, guid, "AUni", errorLogger);
+				FixDuplicateWritingSystems(rt, guid, "AStr", errorLogger);
+				switch (className)
+				{
+					case "LangProject":
+						foreach (var xeUni in rt.Descendants("Uni"))
+						{
+							Debug.Assert(xeUni.Parent != null);
+							switch (xeUni.Parent.Name.LocalName)
+							{
+								case "AnalysisWss":
+								case "CurAnalysisWss":
+								case "VernWss":
+								case "CurVernWss":
+								case "CurPronunWss":
+									FixWsList(guid, xeUni, errorLogger);
+									break;
+							}
+						}
+						break;
+					case "CmPossibilityList":
+					case "CmBaseAnnotation":
+					case "FsOpenFeature":
+					case "ReversalIndex":
+					case "ScrImportSource":
+					case "ScrMarkerMapping":
+					case "WordformLookupList":
+						foreach (var xeUni in rt.Descendants("Uni"))
+						{
+							if (xeUni.Parent != null && xeUni.Parent.Name.LocalName == "WritingSystem")
+							{
+								var wsVal = xeUni.Value;
+								var wsValNew = GetProperWs(wsVal);
+								if (wsVal != wsValNew)
+								{
+									RecordWsChange(guid, wsVal, wsValNew, errorLogger);
+									xeUni.SetAttributeValue("ws", null);	// shouldn't have a ws attribute!
+									xeUni.SetValue(wsValNew);
+								}
+							}
+						}
+						break;
+					case "RnGenericRec":
+						FixGenericDate("DateOfEvent", rt, className, guid, errorLogger);
+						break;
+					case "CmPerson":
+						FixGenericDate("DateOfBirth", rt, className, guid, errorLogger);
+						FixGenericDate("DateOfDeath", rt, className, guid, errorLogger);
+						break;
+				}
+			}
+
+			private void StoreGuidInfo(XElement rt, ErrorLogger errorLogger)
+			{
+				Guid guid = new Guid(rt.Attribute("guid").Value);
+				if (m_guids.Contains(guid))
+				{
+					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyExists, guid));
+					m_dupGuidElements.Add(rt);
 				}
 				else
 				{
-					m_owners.Add(guidObj, guid);
+					m_guids.Add(guid);
+				}
+				foreach (var objsur in rt.Descendants("objsur"))
+				{
+					XAttribute xaType = objsur.Attribute("t");
+					if (xaType == null || xaType.Value != "o")
+						continue;
+					XAttribute xaGuidObj = objsur.Attribute("guid");
+					Guid guidObj = new Guid(xaGuidObj.Value);
+					if (m_owners.ContainsKey(guidObj))
+					{
+						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyOwned,
+							guidObj, guid));
+						m_dupOwnedElements.Add(objsur);
+					}
+					else
+					{
+						m_owners.Add(guidObj, guid);
+					}
 				}
 			}
 		}
 
-		private void FixErrors(XElement rt)
+		internal static void FixGenericDate(string fieldName, XElement rt, string className, Guid guid, ErrorLogger errorLogger)
 		{
-			Guid guid = new Guid(rt.Attribute("guid").Value);
-			Guid storedOwner;
-			if (!m_owners.TryGetValue(guid, out storedOwner))
-				storedOwner = Guid.Empty;
-			var xaClass = rt.Attribute("class");
-			var className = xaClass == null ? "<unknown>" : xaClass.Value;
-			XAttribute xaOwner = rt.Attribute("ownerguid");
-			if (xaOwner != null)
+			foreach (var xeGenDate in rt.Descendants(fieldName).ToList()) // ToList because we may modify things and mess up iterator.
 			{
-				Guid guidOwner = new Guid(xaOwner.Value);
-				if (guidOwner != storedOwner)
-				{
-					if (storedOwner != Guid.Empty && m_guids.Contains(storedOwner))
-					{
-						m_errors.Add(String.Format(Strings.ksChangingOwnerGuidValue,
-							guidOwner, storedOwner, className, guid));
-						xaOwner.Value = storedOwner.ToString();
-					}
-					else if (!m_guids.Contains(guidOwner))
-					{
-						m_errors.Add(String.Format(Strings.ksRemovingLinkToNonexistentOwner,
-							guidOwner, className, guid));
-						xaOwner.Remove();
-					}
-				}
-			}
-			else if (storedOwner != Guid.Empty)
-			{
-				m_errors.Add(String.Format(Strings.ksAddingLinkToOwner,
-					storedOwner, className, guid));
-				xaOwner = new XAttribute("ownerguid", storedOwner);
-				rt.Add(xaOwner);
-			}
-			foreach (var objsur in rt.Descendants("objsur"))
-			{
-				XAttribute xaType = objsur.Attribute("t");
-				if (xaType == null)
+				var genDateAttr = xeGenDate.Attribute("val");
+				if (genDateAttr == null)
 					continue;
-				XAttribute xaGuidObj = objsur.Attribute("guid");
-				Guid guidObj = new Guid(xaGuidObj.Value);
-				if (!m_guids.Contains(guidObj))
-				{
-					m_errors.Add(String.Format(Strings.ksRemovingLinkToNonexistingObject,
-						guidObj, className, guid, objsur.Parent.Name));
-					m_danglingLinks.Add(objsur);
-					continue;
-				}
-				if (xaType.Value == "o")
-				{
-					Guid guidStored;
-					if (m_owners.TryGetValue(guidObj, out guidStored))
-					{
-						if (guidStored != guid)
-						{
-							m_errors.Add(String.Format(Strings.ksRemovingMultipleOwnershipLink,
-								guidObj, className, guid, objsur.Parent.Name));
-							m_danglingLinks.Add(objsur);	// excessive ownership
-						}
-					}
-				}
-			}
-			foreach (var objsur in m_danglingLinks)
-				objsur.Remove();
-			m_danglingLinks.Clear();
+				var genDateStr = genDateAttr.Value;
+				GenDate someDate;
+				if (GenDate.TryParse(genDateStr, out someDate))
+					continue; // all is well, valid GenDate
+				xeGenDate.Remove();
+				errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
+					string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
+				// possible enhancement: take it apart like this and see whether swapping month and day makes it valid.
+				//var ad = true;
+				//if (genDateStr.StartsWith("-"))
+				//{
+				//    ad = false;
+				//    genDateStr = genDateStr.Substring(1);
+				//}
+				//genDateStr = genDateStr.PadLeft(9, '0');
+				//var year = Convert.ToInt32(genDateStr.Substring(0, 4));
+				//var month = Convert.ToInt32(genDateStr.Substring(4, 2));
+				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
+				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
+				//return new GenDate(precision, month, day, year, ad);
 
-			foreach (var run in rt.Descendants("Run"))
+			}
+		}
+
+		internal static void FixWsAttributeIfNeeded(Guid guid, XElement xe, ErrorLogger errorLogger)
+		{
+			var xa = xe.Attribute("ws");
+			if (xa != null)
 			{
-				XAttribute xa = run.Attribute("editable");
-				if (xa != null)
+				var wsVal = xa.Value;
+				var wsValNew = GetProperWs(wsVal);
+				if (wsValNew != wsVal)
 				{
-					m_errors.Add(String.Format(Strings.ksRemovingEditableAttribute,
-						rt.Attribute("class")));
-					run.SetAttributeValue("editable", null);
+					RecordWsChange(guid, wsVal, wsValNew, errorLogger);
+					xe.SetAttributeValue("ws", wsValNew);
 				}
-				FixWsAttributeIfNeeded(run);
-			}
-			foreach (var auni in rt.Descendants("AUni"))
-			{
-				FixWsAttributeIfNeeded(auni);
-			}
-			foreach (var auni in rt.Descendants("AStr"))
-			{
-				FixWsAttributeIfNeeded(auni);
-			}
-			foreach (var auni in rt.Descendants("WsProp"))
-			{
-				FixWsAttributeIfNeeded(auni);
-			}
-			FixDuplicateWritingSystems(rt, guid, "AUni");
-			FixDuplicateWritingSystems(rt,guid, "AStr");
-			switch (className)
-			{
-				case "LangProject":
-					foreach (var xeUni in rt.Descendants("Uni"))
-					{
-						Debug.Assert(xeUni.Parent != null);
-						switch (xeUni.Parent.Name.LocalName)
-						{
-							case "AnalysisWss":
-							case "CurAnalysisWss":
-							case "VernWss":
-							case "CurVernWss":
-							case "CurPronunWss":
-								FixWsList(xeUni);
-								break;
-						}
-					}
-					break;
-				case "CmPossibilityList":
-				case "CmBaseAnnotation":
-				case "FsOpenFeature":
-				case "ReversalIndex":
-				case "ScrImportSource":
-				case "ScrMarkerMapping":
-				case "WordformLookupList":
-					foreach (var xeUni in rt.Descendants("Uni"))
-					{
-						if (xeUni.Parent != null && xeUni.Parent.Name.LocalName == "WritingSystem")
-						{
-							var wsVal = xeUni.Value;
-							var wsValNew = GetProperWs(wsVal);
-							if (wsVal != wsValNew)
-							{
-								RecordWsChange(wsVal, wsValNew);
-								xeUni.SetAttributeValue("ws", null);	// shouldn't have a ws attribute!
-								xeUni.SetValue(wsValNew);
-							}
-						}
-					}
-					break;
-				case "RnGenericRec":
-					FixGenericDate("DateOfEvent", rt, className, guid);
-					break;
-				case "CmPerson":
-					FixGenericDate("DateOfBirth", rt, className, guid);
-					FixGenericDate("DateOfDeath", rt, className, guid);
-					break;
 			}
 		}
 
 		/// <summary>
 		/// Fix any cases where a multistring has duplicate writing systems.
 		/// </summary>
+		/// <param name="rt">The element to repair</param>
+		/// <param name="guid">for logging</param>
 		/// <param name="eltName"></param>
-		private void FixDuplicateWritingSystems(XElement rt, Guid guid, string eltName)
+		/// <param name="errorLogger">The logger to use</param>
+		internal static void FixDuplicateWritingSystems(XElement rt, Guid guid, string eltName, ErrorLogger errorLogger)
 		{
 			// Get all the alternatives of the given type.
 			var alternatives = rt.Descendants(eltName);
@@ -422,10 +475,11 @@ namespace SIL.FieldWorks.FixData
 				list.Sort((x, y) => x.Attribute("ws").Value.CompareTo(y.Attribute("ws").Value));
 				for (int i = 0; i < list.Count - 1; i++)
 				{
-					if (list[i].Attribute("ws").Value == list[i+1].Attribute("ws").Value)
+					if (list[i].Attribute("ws").Value == list[i + 1].Attribute("ws").Value)
 					{
-						m_errors.Add(string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]));
-						list[i+1].Remove();
+						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
+							string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]));
+						list[i + 1].Remove();
 						// Note that we did not remove it from the LIST, only from its parent.
 						// It is still available to be compared to the NEXT item, which might also have the same WS.
 					}
@@ -433,37 +487,7 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		private void FixGenericDate(string fieldName, XElement rt, string className, Guid guid)
-		{
-			foreach (var xeGenDate in rt.Descendants(fieldName).ToList()) // ToList because we may modify things and mess up iterator.
-			{
-				var genDateAttr = xeGenDate.Attribute("val");
-				if (genDateAttr == null)
-					continue;
-				var genDateStr = genDateAttr.Value;
-				GenDate someDate;
-				if (GenDate.TryParse(genDateStr, out someDate))
-					continue; // all is well, valid GenDate
-				xeGenDate.Remove();
-				m_errors.Add(string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
-				// possible enhancement: take it apart like this and see whether swapping month and day makes it valid.
-				//var ad = true;
-				//if (genDateStr.StartsWith("-"))
-				//{
-				//    ad = false;
-				//    genDateStr = genDateStr.Substring(1);
-				//}
-				//genDateStr = genDateStr.PadLeft(9, '0');
-				//var year = Convert.ToInt32(genDateStr.Substring(0, 4));
-				//var month = Convert.ToInt32(genDateStr.Substring(4, 2));
-				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
-				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
-				//return new GenDate(precision, month, day, year, ad);
-
-			}
-		}
-
-		private void FixWsList(XElement xeUni)
+		internal static void FixWsList(Guid guid, XElement xeUni, ErrorLogger errorLogger)
 		{
 			var wssValue = xeUni.Value;
 			var wss = wssValue.Split(' ');
@@ -474,7 +498,7 @@ namespace SIL.FieldWorks.FixData
 					sb.Append(" ");
 				var wsValNew = GetProperWs(wss[i]);
 				if (wsValNew != wss[i])
-					RecordWsChange(wss[i], wsValNew);
+					RecordWsChange(guid, wss[i], wsValNew, errorLogger);
 				sb.Append(GetProperWs(wss[i]));
 			}
 			var wssValueNew = sb.ToString();
@@ -546,51 +570,11 @@ namespace SIL.FieldWorks.FixData
 			return wsVal;
 		}
 
-		private void FixWsAttributeIfNeeded(XElement xe)
-		{
-			var xa = xe.Attribute("ws");
-			if (xa != null)
-			{
-				var wsVal = xa.Value;
-				var wsValNew = GetProperWs(wsVal);
-				if (wsValNew != wsVal)
-				{
-					RecordWsChange(wsVal, wsValNew);
-					xe.SetAttributeValue("ws", wsValNew);
-				}
-			}
-		}
-
 		private readonly Dictionary<string, int> m_dictWsChanges = new Dictionary<string, int>();
-		private void RecordWsChange(string oldWs, string newWs)
-		{
-			var key = String.Format("{0}\t{1}", oldWs, newWs);
-			int count;
-			if (!m_dictWsChanges.TryGetValue(key, out count))
-			{
-				count = 0;
-				m_dictWsChanges.Add(key, count);
-			}
-			m_dictWsChanges[key] = count + 1;
-		}
 
-		/// <summary>
-		/// Get the list of error messages.
-		/// </summary>
-		public List<string> Errors
+		internal static void RecordWsChange(Guid guid, string oldWs, string newWs, ErrorLogger errorLogger)
 		{
-			get
-			{
-				foreach (var key in m_dictWsChanges.Keys)
-				{
-					var wses = key.Split('\t');
-					var msg = String.Format("Changed the writing system tag {0} to {1} {2} times.",
-						wses[0], wses[1], m_dictWsChanges[key]);
-					m_errors.Add(msg);
-				}
-				m_dictWsChanges.Clear();
-				return m_errors;
-			}
+			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format("Changed the writing system tag {0} to {1}", oldWs, newWs));
 		}
 
 		/// <summary>
@@ -600,5 +584,10 @@ namespace SIL.FieldWorks.FixData
 		{
 			get { return m_logfile; }
 		}
+	}
+
+	internal abstract class RTFixers
+	{
+		public abstract void FixElement(XElement rt, FwDataFixer.ErrorLogger logger);
 	}
 }

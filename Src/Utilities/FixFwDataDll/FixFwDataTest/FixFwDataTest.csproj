@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{5E5B50B7-D9CC-46CE-8459-0EE2E3677549}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>FixFwDataTest</RootNamespace>
+	<AssemblyName>FixFwDataTest</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<StartupObject>
+	</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+	<Compile Include="FwDataFixerTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<Reference Include="COMInterfaces, Version=7.3.0.25499, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfacesTests, Version=7.3.0.25499, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+	</Reference>
+	<Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\..\Common\FwUtils\FwUtils.csproj">
+	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
+	  <Name>FwUtils</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\..\..\FDO\FDOTests\FDOTests.csproj">
+	  <Project>{5B119AEF-2895-44AB-BB28-6C1071A9B62B}</Project>
+	  <Name>FDOTests</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\..\..\TestUtils\TestUtils.csproj">
+	  <Project>{91AE66B6-2926-402A-9F4E-CB89366D884F}</Project>
+	  <Name>TestUtils</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\FixFwDataDll.csproj">
+	  <Project>{9C534D8A-3445-4827-8D3B-957D98461533}</Project>
+	  <Name>FixFwDataDll</Name>
+	</ProjectReference>
+  </ItemGroup>
+</Project>

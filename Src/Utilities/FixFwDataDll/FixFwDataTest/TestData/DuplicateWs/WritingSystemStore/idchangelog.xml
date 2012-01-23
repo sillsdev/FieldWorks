@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WritingSystemChangeLog
+	Version="1">
+	<Changes>
+		<Add
+			Producer="FieldWorks"
+			ProducerVersion="Version 7.3.0 (apparent build date: 1/23/2012)"
+			TimeStamp="2012-01-23T19:20:01Z">
+			<Id>en</Id>
+		</Add>
+		<Add
+			Producer="FieldWorks"
+			ProducerVersion="Version 7.3.0 (apparent build date: 1/23/2012)"
+			TimeStamp="2012-01-23T19:20:01Z">
+			<Id>pt</Id>
+		</Add>
+	</Changes>
+</WritingSystemChangeLog>
