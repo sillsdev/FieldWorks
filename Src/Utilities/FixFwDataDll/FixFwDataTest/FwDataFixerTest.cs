@@ -18,7 +18,9 @@ namespace FixFwDataTest
 		[TestFixtureSetUp]
 		public void AllTestSetup()
 		{
-
+			File.Copy("../../TestData/DuplicateGuid/Test.fwdata", "../../TestData/DuplicateGuid/BasicFixup.fwdata");
+			File.Copy("../../TestData/DanglingReference/Test.fwdata", "../../TestData/DanglingReference/BasicFixup.fwdata");
+//			File.Copy("../../TestData/DuplicateGuid/Test.fwdata", "../../TestData/DuplicateGuid/BasicFixup.fwdata");
 		}
 
 		[SetUp]
@@ -31,10 +33,10 @@ namespace FixFwDataTest
 		public void TearDown()
 		{
 			File.Delete("../../TestData/DuplicateGuid/BasicFixup.fwdata");
-			File.Move("../../TestData/DuplicateGuid/BasicFixup.bak", "../../TestData/DuplicateGuid/BasicFixup.fwdata");
+			File.Delete("../../TestData/DuplicateGuid/BasicFixup.bak");
 
 			File.Delete("../../TestData/DanglingReference/BasicFixup.fwdata");
-			File.Move("../../TestData/DanglingReference/BasicFixup.bak", "../../TestData/DuplicateGuid/BasicFixup.fwdata");
+			File.Delete("../../TestData/DanglingReference/BasicFixup.bak");
 
 		}
 
