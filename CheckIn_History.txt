@@ -5691,7 +5691,11 @@ NaylorJ, 23 Jan 2012. Incremental changes for test cases of LT-12530.
 NaylorJ, 23 Jan 2012. Test harness refinement for LT-12530.
 	Later: Version 1 of the new Fixer model and testing framework.
 	Later: Changed the directory name so that the build will run the tests automagically.
-BogleT,24 Jan 2012. TXL-93: Removed release mode code in TE options dialog that required a copy of QTTallBooks.sfm
+BogleT, 24 Jan 2012. TXL-93: Removed release mode code in TE options dialog that required a copy of QTTallBooks.sfm
 		in My Documents\UNS Questions in order to display the experimental feature.
 	TXL-94: Ensured creation the UNS Questions folder in Environment.SpecialFolder.ApplicationData when
 		Transcelerator runs the very first time.
+BogleT, 24 Jan 2012. TXL-87: Changed to display key term renderings in alphabetical order.
+	TXL-88: Made change to commit current edit when saving. This prevents data loss and avoids a crash when reloading.
+	TXL-89: Preserved sorting when reloading.
+	TXL-90, TXL-91: Fixed some layout and user-interaction problems in the Edit Question dialog box.
