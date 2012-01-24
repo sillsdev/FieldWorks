@@ -58,12 +58,10 @@ namespace SILUBS.PhraseTranslationHelper
 						newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 					}
 					m_rdoAlternative.Text = q.AlternateForms.First();
+					return;
 				}
 			}
-			else
-			{
-				m_pnlAlternatives.Hide();
-			}
+			m_pnlAlternatives.Hide();
 		}
 
 		private void m_txtModified_TextChanged(object sender, EventArgs e)
@@ -71,12 +69,8 @@ namespace SILUBS.PhraseTranslationHelper
 			btnOk.Enabled = (m_txtModified.Text.Length > 0 && m_txtModified.Text != m_question.ModifiedPhrase);
 			if (!m_pnlAlternatives.Visible)
 				return;
-			foreach (Control control in m_pnlAlternatives.Controls)
-			{
-				RadioButton rdoAlt = control as RadioButton;
-				if (rdoAlt != null)
-					rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text);
-			}
+			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
+				rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text);
 		}
 
 		private void m_rdoAlternative_CheckedChanged(object sender, EventArgs e)
@@ -86,6 +80,8 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void btnReset_Click(object sender, EventArgs e)
 		{
+			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
+				rdoAlt.Checked = false;
 			m_txtModified.Text = m_txtOriginal.Text;
 		}
 	}

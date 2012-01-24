@@ -87,6 +87,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lbRenderings.Location = new System.Drawing.Point(0, 20);
 			this.m_lbRenderings.Name = "m_lbRenderings";
 			this.m_lbRenderings.Size = new System.Drawing.Size(150, 82);
+			this.m_lbRenderings.Sorted = true;
 			this.m_lbRenderings.TabIndex = 2;
 			this.m_lbRenderings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lbRenderings_MouseUp);
 			this.m_lbRenderings.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.m_lbRenderings_DrawItem);

@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Utils;
@@ -2479,6 +2480,47 @@ namespace SILUBS.PhraseTranslationHelper
 				new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
 
 			Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering selection rule based on the (English) suffix causes
+		/// the correct vernacular rendering to be inserted into the translation template. In
+		/// this test, there are multiple renderings which conform to the rendering selection
+		/// rule -- we want the one that is also the default rendering for the term.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule_PreferDefault()
+		{
+			AddMockedKeyTerm("magician", "mago", new[] { "brujo" });
+			AddMockedKeyTerm("servant", "criado", new[] { "siervo" });
+			AddMockedKeyTerm("heal", "sanara\u0301", new[] { "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado" });
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Will the servant be healed?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("Will the magician be healed?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+
+			phrase1.Translation = "\u00BFSe curara\u0301 el siervo?";
+
+			Assert.IsFalse(phrase2.HasUserTranslation);
+			Assert.AreEqual("\u00BFSe sanara\u0301 el mago?", phrase2.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+				new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
+
+			Dictionary<Word, List<KeyTermMatch>> keyTermsTable =
+				(Dictionary<Word, List<KeyTermMatch>>)ReflectionHelper.GetField(pth, "m_keyTermsTable");
+
+			keyTermsTable["heal"].First().BestRendering = "curara\u0301";
+
+			Assert.AreEqual("\u00BFSe curara\u0301 el mago?", phrase2.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------

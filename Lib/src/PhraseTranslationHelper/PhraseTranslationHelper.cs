@@ -454,10 +454,7 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				m_termRenderingSelectionRules = value;
 				if (m_keyTermRenderingRulesFile != null)
-				{
-					UNSQuestionsDialog.EnsureDataFolderExists();
 					XmlSerializationHelper.SerializeToFile(m_keyTermRenderingRulesFile, m_termRenderingSelectionRules);
-				}
 			}
 		}
 

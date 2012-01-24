@@ -100,8 +100,8 @@ namespace SILUBS.PhraseTranslationHelper
 			get { return btnSave.Enabled; }
 			set
 			{
-				if (mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
-					Save();
+				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
+					Save(true);
 				else
 					saveToolStripMenuItem.Enabled = btnSave.Enabled = value;
 			}
@@ -200,6 +200,8 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			s_unsDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 				"UNS Questions");
+			if (!Directory.Exists(s_unsDataFolder))
+				Directory.CreateDirectory(s_unsDataFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -306,11 +308,16 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (SaveNeeded)
 			{
+				if (mnuAutoSave.Checked)
+				{
+					Save(true);
+					return;
+				}
 				switch (MessageBox.Show(this, "You have made changes. Do you wish to save before closing?",
 					"Save changes?", MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
-						Save();
+						Save(true);
 						break;
 					case DialogResult.Cancel:
 						e.Cancel = true;
@@ -414,9 +421,9 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 3)
+			if (e.ColumnIndex == m_colUserTranslated.Index)
 			{
-				// Force commital of the click's change.
+				// Force commital of the check-box change.
 				dataGridUns.CommitEdit(DataGridViewDataErrorContexts.Commit);
 				dataGridUns.EndEdit();
 			}
@@ -620,12 +627,17 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void Save(object sender, EventArgs e)
 		{
-			Save();
+			Save(false);
 		}
 
-		private void Save()
+		private void Save(bool fForce)
 		{
-			EnsureDataFolderExists();
+			if (!fForce && !SaveNeeded)
+				return;
+			SaveNeeded = false;
+			m_lastSaveTime = DateTime.Now;
+			if (dataGridUns.IsCurrentCellInEditMode)
+				dataGridUns.EndEdit();
 			XmlSerializationHelper.SerializeToFile(m_translationsFile,
 				(from translatablePhrase in m_helper.UnfilteredPhrases
 				where translatablePhrase.HasUserTranslation
@@ -636,9 +648,6 @@ namespace SILUBS.PhraseTranslationHelper
 				select new PhraseCustomization(translatablePhrase)).ToList();
 			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
 				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
-
-			m_lastSaveTime = DateTime.Now;
-			SaveNeeded = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -870,8 +879,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuAutoSave_CheckedChanged(object sender, EventArgs e)
 		{
-			if (mnuAutoSave.Checked && SaveNeeded)
-				Save();
+			if (mnuAutoSave.Checked)
+				Save(false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -889,7 +898,6 @@ namespace SILUBS.PhraseTranslationHelper
 					m_phraseSubstitutions.Clear();
 					m_phraseSubstitutions.AddRange(dlg.Substitutions);
 					// Save items to file
-					EnsureDataFolderExists();
 					XmlSerializationHelper.SerializeToFile(m_phraseSubstitutionsFile, m_phraseSubstitutions);
 
 					Reload();
@@ -911,11 +919,13 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			using (new WaitCursor(this))
 			{
-				Save();
+				Save(false);
 				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
 				dataGridUns.RowCount = 0;
 				LoadTranslations();
 				ApplyFilter();
+				if (dataGridUns.SortedColumn != null)
+					SortByColumn(dataGridUns.SortedColumn.Index, dataGridUns.SortOrder != SortOrder.Descending);
 			}
 		}
 
@@ -1233,17 +1243,6 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Ensures the data folder exists.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal static void EnsureDataFolderExists()
-		{
-			if (!Directory.Exists(s_unsDataFolder))
-				Directory.CreateDirectory(s_unsDataFolder);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Loads the translations.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1300,34 +1299,30 @@ namespace SILUBS.PhraseTranslationHelper
 			ClearBiblicalTermsPane();
 			int col = 0;
 			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
-			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>())
+			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>().Where(ktm => ktm.Renderings.Any()))
 			{
-				IEnumerable<string> renderings = keyTerm.Renderings;
-				if (renderings.Any())
-				{
-					int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
-					previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
-					TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
-						ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard);
-					ktRenderCtrl.VernacularFont = m_vernFont;
+				int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
+				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
+				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
+					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard);
+				ktRenderCtrl.VernacularFont = m_vernFont;
 
-					SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
-					if (sd == null)
-					{
-						// Didn't find any renderings for this term in the translation, so don't select anything
-						previousKeyTermEndOfRenderingOffsets[keyTerm] = m_helper[rowIndex].Translation.Length;
-					}
-					else
-					{
-						previousKeyTermEndOfRenderingOffsets[keyTerm] = sd.EndOffset;
-						ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Offset, sd.Length);
-					}
-					ktRenderCtrl.Dock = DockStyle.Fill;
-					m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
-					ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
-					ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
-					col++;
+				SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
+				if (sd == null)
+				{
+					// Didn't find any renderings for this term in the translation, so don't select anything
+					previousKeyTermEndOfRenderingOffsets[keyTerm] = m_helper[rowIndex].Translation.Length;
 				}
+				else
+				{
+					previousKeyTermEndOfRenderingOffsets[keyTerm] = sd.EndOffset;
+					ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Offset, sd.Length);
+				}
+				ktRenderCtrl.Dock = DockStyle.Fill;
+				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
+				ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
+				ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
+				col++;
 			}
 			m_biblicalTermsPane.ColumnCount = col;
 			ResizeKeyTermPaneColumns();
