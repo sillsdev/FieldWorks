@@ -29,6 +29,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using System.Text;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -118,6 +119,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				var ma = new ProgressMessageArgs { Max = cEntries, MessageId = "ksExportingLift" };
 				SetProgressMessage(this, ma);
 			}
+
+			// pre-emtively delete the audio folder so files of deleted/changed references
+			// won't be orphaned
+			if (Directory.Exists(Path.Combine(FolderPath,"audio")))
+				Directory.Delete(Path.Combine(FolderPath, "audio"), true);
+
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
 			w.WriteLine("<lift producer=\"SIL.FLEx {0}\" version=\"0.13\">", GetVersion());
@@ -125,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			//Determine which custom fields ones point to a CmPossibility List (either custom or standard).
 			//Determine which ones point to a custom CmPossibility List and make sure we output that list as a range.
 			//Also if a List is not referred to by standard fields, it might not be output as a range, so if the List
-			//is referenced by a custom field, then that List does need to be putput to the LIFT ranges file.
+			//is referenced by a custom field, then that List does need to be output to the LIFT ranges file.
 			m_CmPossibilityListsReferencedByFields = GetCmPossibilityListsReferencedByFields(entries);
 			MapCmPossibilityListGuidsToLiftRangeNames(m_CmPossibilityListsReferencedByFields);
 
@@ -1347,8 +1354,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws;
 				var tssForm = alt.Form.GetStringFromIndex(i, out ws);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					XmlUtils.MakeSafeXmlAttribute(sLang), XmlUtils.MakeSafeXml(GetFormWithMarkers(alt, ws)));
+				var internalPath = alt.Form.get_String(ws).Text;
+				// a deleted audio link can leave an empty string - it's the file path
+				// Chorus sometimes tells users "Report this problem to the developers" when missing this element
+				// Users should refresh and try to send/receive again.
+				if (!String.IsNullOrEmpty(internalPath))
+					w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
+						XmlUtils.MakeSafeXmlAttribute(sLang), XmlUtils.MakeSafeXml(GetFormWithMarkers(alt, ws)));
 			}
 			if (!String.IsNullOrEmpty(wrappingElementName))
 				w.WriteLine("</{0}>", wrappingElementName);

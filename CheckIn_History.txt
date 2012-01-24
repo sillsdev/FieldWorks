@@ -5699,3 +5699,4 @@ BogleT, 24 Jan 2012. TXL-87: Changed to display key term renderings in alphabeti
 	TXL-88: Made change to commit current edit when saving. This prevents data loss and avoids a crash when reloading.
 	TXL-89: Preserved sorting when reloading.
 	TXL-90, TXL-91: Fixed some layout and user-interaction problems in the Edit Question dialog box.
+LastufkaM, 24 Jan 2012. LT-12130 AppData Local folder not cleared of obsolete data when Send/Receive LIFT used
