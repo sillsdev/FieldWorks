@@ -5,7 +5,7 @@ using SIL.FieldWorks.FixData;
 using System.Collections.Generic;
 using Palaso.TestUtilities;
 
-namespace FixFwDataTest
+namespace FixFwDataDllTests
 {
 	class FwDataFixerTest
 	{

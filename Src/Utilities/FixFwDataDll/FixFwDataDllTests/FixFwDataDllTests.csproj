@@ -8,8 +8,8 @@
 	<ProjectGuid>{5E5B50B7-D9CC-46CE-8459-0EE2E3677549}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>FixFwDataTest</RootNamespace>
-	<AssemblyName>FixFwDataTest</AssemblyName>
+	<RootNamespace>FixFwDataDllTests</RootNamespace>
+	<AssemblyName>FixFwDataDllTests</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<StartupObject>
