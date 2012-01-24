@@ -29,3 +29,4 @@ RandyR, 14 Jan 2012. Finish up changing the LP guid (and users) in data sets.
 KenZ, 18 Jan 2012. Fixed old LIFT import problem (LT-12516), removed Scripture from custom field lists for SE
 	(LT-12520), and Fixed problems with master Hindi ldml file.
 JohnT, 19 Jan 2012. Added a comment to a string resource file.
+JohnT and RickM, 24 Jan 2012. LT-12598  Add right-click menu "Show entry in lexicon" to Categorized Entry tool

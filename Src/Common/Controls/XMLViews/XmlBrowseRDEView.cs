@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
@@ -889,6 +890,47 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Other methods
 
 		#region Other message handlers
+
+		/// <summary>
+		/// Overridden to implement the Show Entry in Lexicon right-click menu.
+		/// We would prefer to implement this using the methods of CmObjectUi, but the assembly
+		/// dependencies go the wrong way.
+		/// </summary>
+		/// <param name="pt"></param>
+		/// <param name="rcSrcRoot"></param>
+		/// <param name="rcDstRoot"></param>
+		/// <returns></returns>
+		protected override bool OnRightMouseUp(System.Drawing.Point pt, System.Drawing.Rectangle rcSrcRoot, System.Drawing.Rectangle rcDstRoot)
+		{
+			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
+			if (sel == null)
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			var index = GetRowIndexFromSelection(sel, false);
+			if (index < 0)
+				 return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			int hvo = m_sda.get_VecItem(m_hvoRoot, m_fakeFlid, index);
+			// It would sometimes work to jump to one of the editable objects.
+			// But sometimes one of them will get destroyed when we switch away from this view
+			// (e.g., because there is already a similar sense to which we can just add this semantic domain).
+			// Then we would crash trying to jump to it.
+			if (RDEVc.EditableObjectsContains(hvo))
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			ICmObject target;
+			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out target) || !(target is ILexSense))
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			// We have a valid (real, not temporary fake) LexEntry and will put up the context menu
+			var menu = new ContextMenuStrip();
+			var item = new ToolStripMenuItem(XMLViewsStrings.ksShowEntryInLexicon);
+			menu.Items.Add(item);
+			item.Click += (sender, args) => JumpToToolFor(((ILexSense)target).Entry);
+			menu.Show(this, pt);
+			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+		}
+
+		private void JumpToToolFor(ICmObject target)
+		{
+			m_mediator.PostMessage("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
+		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles OnKeyDown.
