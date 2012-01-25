@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.FixData
 		IProgress m_progress;
 		int m_crt;
 
-		string m_logfile;
+		//string m_logfile;
 
 		public delegate void ErrorLogger(string guid, string date, string description);
 
@@ -355,13 +355,14 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		/// <summary>
-		/// Get the pathname of the log file containing all the error messages.
-		/// </summary>
-		public string LogFile
-		{
-			get { return m_logfile; }
-		}
+		// Until this gets used, it causes compiler warnings that are now treated as errors.
+		///// <summary>
+		///// Get the pathname of the log file containing all the error messages.
+		///// </summary>
+		//public string LogFile
+		//{
+		//    get { return m_logfile; }
+		//}
 	}
 
 	/// <summary>

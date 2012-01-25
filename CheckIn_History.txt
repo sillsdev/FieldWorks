@@ -5702,3 +5702,4 @@ BogleT, 24 Jan 2012. TXL-87: Changed to display key term renderings in alphabeti
 LastufkaM, 24 Jan 2012. LT-12130 AppData Local folder not cleared of obsolete data when Send/Receive LIFT used
 NaylorJ, 24 Jan 2012. Finished LT-12530. Added some addition tests, removed obsolete ws migration code. Made the tests work from nant.
 GordonM, 25 Jan 2012. Small changes in FDO and FixFwDataDllTests.
+GordonM, 25 Jan 2012. Changes to FixFwDataDll and tests project files, so tests work through VS.
