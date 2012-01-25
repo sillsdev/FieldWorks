@@ -580,6 +580,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
 
+		//public string GetToolForList(ICmPossibilityList list)
+		//{
+		//    foreach (var toolNode in windowConfig.SelectSingleNode(GetListClerksXPath()))
+		//}
+
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
 			// Put the clerk node in the window configuration for this list
@@ -1038,6 +1043,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				return "textsWords";
 			if (IsToolInArea(toolName, "lists", windowConfiguration))
 				return "lists";
+			if (IsToolInArea(toolName, "notebook", windowConfiguration))
+				return "notebook";
 			return null;
 		}
 	}

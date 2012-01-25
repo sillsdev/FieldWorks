@@ -454,6 +454,55 @@ namespace SIL.FieldWorks.XWorks
 						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid.ToString(),
 						PropertyTable.SettingsGroup.LocalSettings);
 				}
+				if (m_lnkActive.ToolName == "default")
+				{
+					// Need some smarts here. The link creator was not sure what tool to use.
+					// The object may also be a child we don't know how to jump to directly.
+					var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+					ICmObject target;
+					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
+						return false; // or message?
+					var realTarget = GetObjectToShowInTool(target);
+					string realTool;
+					var majorObject = realTarget.Owner ?? realTarget;
+					var app = FwUtils.ksFlexAbbrev;
+					switch (majorObject.ClassID)
+					{
+						case ReversalIndexTags.kClassId:
+							realTool = "reversalToolEditComplete";
+							break;
+						case TextTags.kClassId:
+							realTool = "interlinearEdit";
+							break;
+						case LexEntryTags.kClassId:
+							realTool = "lexiconEdit";
+							break;
+						case ScriptureTags.kClassId:
+							return false; // Todo: don't know how to handle this yet.
+							//app = FwUtils.ksTeAbbrev;
+							//realTool = "reversalToolEditComplete";
+							//break;
+						case CmPossibilityListTags.kClassId:
+							// Todo JohnT: Generate all possibilities somehow from AreaListener data?
+							// Unfortunately AreaListener is in an assembly we can't reference.
+							// But there may be custom ones, so just listing them all here does not seem to be an option.
+							realTool = "domainTypeEdit";
+							break;
+						case RnResearchNbkTags.kClassId:
+							realTool = "notebookEdit";
+							break;
+						case DsConstChartTags.kClassId:
+							realTarget = ((IDsConstChart) majorObject).BasedOnRA;
+							realTool = "interlinearEdit";
+							// Enhance JohnT: do something to make it switch to Discourse tab
+							break;
+						case LexDbTags.kClassId: // other things owned by this??
+						default:
+							return false; // can't jump to it...should we put up a message?
+					}
+					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
+					// Todo JohnT: need to do something special here if we c
+				}
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
@@ -495,6 +544,23 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			return true;	//we handled this.
+		}
+
+		/// <summary>
+		/// Get the object we want to point our tool at. This is typically the one that is one level down from
+		/// a CmMajorObject.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <returns></returns>
+		ICmObject GetObjectToShowInTool(ICmObject start)
+		{
+			for(var current = start;;current = current.Owner)
+			{
+				if (current.Owner == null)
+					return current;
+				if (current.Owner is ICmMajorObject)
+					return current;
+			}
 		}
 	}
 }
