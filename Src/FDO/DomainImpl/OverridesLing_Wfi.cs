@@ -1608,14 +1608,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "Title", alternativeWs.Handle);
 					break; // still do the default thing, base class has this property too.
-				case TextTags.kflidDescription:
+				case CmMajorObjectTags.kflidDescription:
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "Comment", alternativeWs.Handle);
-					return; // still do the default thing, base class has this property too.
+					break; // still do the default thing, base class has this property too.
 				case TextTags.kflidAbbreviation:
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "TitleAbbreviation", alternativeWs.Handle);
-					return; // still do the default thing, base class has this property too.
+					return; // We don't need the default thing, this is not a base class property.
 			}
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 		}
