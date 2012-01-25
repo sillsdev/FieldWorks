@@ -12,9 +12,7 @@
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
@@ -145,81 +143,6 @@ namespace SIL.FieldWorks.FixData
 				File.Delete(bakfile);
 			File.Move(m_filename, bakfile);
 			File.Move(outfile, m_filename);
-
-			if (m_dictWsChanges.Count > 0)
-				FixLdmlFiles(Path.GetDirectoryName(m_filename));
-
-		}
-
-		private void FixLdmlFiles(string projectDirectory)
-		{
-			if (projectDirectory == null)
-				projectDirectory = "";
-			var wsDirectory = Path.Combine(projectDirectory, "WritingSystemStore");
-			if (!Directory.Exists(wsDirectory))
-				return;
-			foreach (var key in m_dictWsChanges.Keys)
-			{
-				var wses = key.Split('\t');
-				var oldTag = wses[0];
-				var newTag = wses[1];
-				var oldLdmlFile = Path.Combine(wsDirectory, oldTag + ".ldml");
-				var newLdmlFile = Path.Combine(wsDirectory, newTag + ".ldml");
-				if (!File.Exists(oldLdmlFile))
-				{
-					if (oldTag.StartsWith("cmn"))
-						oldLdmlFile = Path.Combine(wsDirectory, oldTag.Remove(0,3).Insert(0,"zh") + ".ldml");
-					else
-						oldLdmlFile = newLdmlFile;
-					if (!File.Exists(oldLdmlFile))
-						continue;
-				}
-				var xeLdml = XElement.Load(oldLdmlFile);
-				var parts = newTag.Split('-');
-				var xeIdentity = xeLdml.Descendants("identity").FirstOrDefault();
-				if (xeIdentity == null)
-					continue;
-				var xeLanguage = xeIdentity.Descendants("language").FirstOrDefault();
-				if (xeLanguage == null)
-					continue;
-				var itag = 0;
-				var tagLang = parts[itag++];
-				if (tagLang == "x" && itag < parts.Length)
-					tagLang = parts[itag++];
-				xeLanguage.SetAttributeValue("type", tagLang);
-				var xeRegion = xeIdentity.Descendants("territory").FirstOrDefault();
-				if (xeRegion == null && itag < parts.Length)
-				{
-					var tag = parts[itag++];
-					if (tag.Length == 4 && itag < parts.Length)
-						tag = parts[itag];		// skip script.
-					if (tag.Length == 2)
-					{
-						xeRegion = new XElement("territory");
-						xeRegion.SetAttributeValue("type", tag);
-					}
-					else
-					{
-						continue;
-					}
-					xeLanguage.AddAfterSelf(xeRegion);
-				}
-				File.Move(oldLdmlFile, oldLdmlFile + "-old");
-				if (File.Exists(newLdmlFile))
-					File.Move(newLdmlFile, newLdmlFile + "-bak");
-				using (var outFile = File.Create(newLdmlFile))
-				{
-					var settings = new XmlWriterSettings
-						{
-							Encoding = Encoding.UTF8,
-							Indent = true,
-							IndentChars = "\t"
-						};
-					var writer = XmlWriter.Create(outFile, settings);
-					xeLdml.WriteTo(writer);
-					writer.Close();
-				}
-			}
 		}
 
 		/// <summary>
@@ -312,62 +235,11 @@ namespace SIL.FieldWorks.FixData
 							rt.Attribute("class")));
 						run.SetAttributeValue("editable", null);
 					}
-					FixWsAttributeIfNeeded(guid, run, errorLogger);
-				}
-				foreach (var auni in rt.Descendants("AUni"))
-				{
-					FixWsAttributeIfNeeded(guid, auni, errorLogger);
-				}
-				foreach (var auni in rt.Descendants("AStr"))
-				{
-					FixWsAttributeIfNeeded(guid, auni, errorLogger);
-				}
-				foreach (var auni in rt.Descendants("WsProp"))
-				{
-					FixWsAttributeIfNeeded(guid, auni, errorLogger);
 				}
 				FixDuplicateWritingSystems(rt, guid, "AUni", errorLogger);
 				FixDuplicateWritingSystems(rt, guid, "AStr", errorLogger);
 				switch (className)
 				{
-					case "LangProject":
-						foreach (var xeUni in rt.Descendants("Uni"))
-						{
-							Debug.Assert(xeUni.Parent != null);
-							switch (xeUni.Parent.Name.LocalName)
-							{
-								case "AnalysisWss":
-								case "CurAnalysisWss":
-								case "VernWss":
-								case "CurVernWss":
-								case "CurPronunWss":
-									FixWsList(guid, xeUni, errorLogger);
-									break;
-							}
-						}
-						break;
-					case "CmPossibilityList":
-					case "CmBaseAnnotation":
-					case "FsOpenFeature":
-					case "ReversalIndex":
-					case "ScrImportSource":
-					case "ScrMarkerMapping":
-					case "WordformLookupList":
-						foreach (var xeUni in rt.Descendants("Uni"))
-						{
-							if (xeUni.Parent != null && xeUni.Parent.Name.LocalName == "WritingSystem")
-							{
-								var wsVal = xeUni.Value;
-								var wsValNew = GetProperWs(wsVal);
-								if (wsVal != wsValNew)
-								{
-									RecordWsChange(guid, wsVal, wsValNew, errorLogger);
-									xeUni.SetAttributeValue("ws", null);	// shouldn't have a ws attribute!
-									xeUni.SetValue(wsValNew);
-								}
-							}
-						}
-						break;
 					case "RnGenericRec":
 						FixGenericDate("DateOfEvent", rt, className, guid, errorLogger);
 						break;
@@ -442,21 +314,6 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		internal static void FixWsAttributeIfNeeded(Guid guid, XElement xe, ErrorLogger errorLogger)
-		{
-			var xa = xe.Attribute("ws");
-			if (xa != null)
-			{
-				var wsVal = xa.Value;
-				var wsValNew = GetProperWs(wsVal);
-				if (wsValNew != wsVal)
-				{
-					RecordWsChange(guid, wsVal, wsValNew, errorLogger);
-					xe.SetAttributeValue("ws", wsValNew);
-				}
-			}
-		}
-
 		/// <summary>
 		/// Fix any cases where a multistring has duplicate writing systems.
 		/// </summary>
@@ -496,96 +353,6 @@ namespace SIL.FieldWorks.FixData
 					}
 				}
 			}
-		}
-
-		internal static void FixWsList(Guid guid, XElement xeUni, ErrorLogger errorLogger)
-		{
-			var wssValue = xeUni.Value;
-			var wss = wssValue.Split(' ');
-			var sb = new StringBuilder(xeUni.Value.Length + 10);
-			for (var i = 0; i < wss.Length; ++i)
-			{
-				if (i > 0)
-					sb.Append(" ");
-				var wsValNew = GetProperWs(wss[i]);
-				if (wsValNew != wss[i])
-					RecordWsChange(guid, wss[i], wsValNew, errorLogger);
-				sb.Append(GetProperWs(wss[i]));
-			}
-			var wssValueNew = sb.ToString();
-			if (wssValue != wssValueNew)
-				xeUni.SetValue(sb.ToString());
-		}
-
-		static string GetProperWs(string wsVal)
-		{
-			if (wsVal.StartsWith("cmn"))
-			{
-				if (wsVal == "cmn")
-					return "zh-CN";
-				var wsValNew = wsVal.Remove(0, 3).Insert(0, "zh");
-				if (!wsValNew.ToLowerInvariant().Contains("-cn-") &&
-					!wsValNew.ToLowerInvariant().EndsWith("-cn"))
-				{
-					var parts = wsValNew.Split('-');
-					var sb = new StringBuilder(wsValNew.Length + 5);	// +5 is overkill...
-					sb.Append(parts[0]);
-					var fNeedRegion = true;
-					var fHaveScript = false;
-					for (var i = 1; i < parts.Length; ++i)
-					{
-						sb.Append("-");
-						if (i == 1)
-						{
-							if (parts[i].Length == 4)
-							{
-								sb.Append(parts[i]); // Script
-								fHaveScript = true;
-								if (parts.Length == 2)
-									sb.Append("-CN");
-							}
-							else if (parts[i].Length == 2)
-							{
-								sb.Append(parts[i]); // Region
-								fNeedRegion = false;
-							}
-							else
-							{
-								sb.Append("CN-");
-								fNeedRegion = false;
-								sb.Append(parts[i]);
-							}
-						}
-						else
-						{
-							if (fHaveScript && i == 2 && parts[i].Length == 2)
-								fNeedRegion = false;
-							if (fNeedRegion)
-							{
-								sb.Append("CN-");
-								fNeedRegion = false;
-							}
-							sb.Append(parts[i]);
-						}
-					}
-					wsValNew = sb.ToString();
-				}
-				return wsValNew;
-			}
-			if (wsVal.StartsWith("pes"))
-				return wsVal.Remove(0, 3).Insert(0, "fa");
-			if (wsVal.StartsWith("zlm"))
-				return wsVal.Remove(0, 3).Insert(0, "ms");
-			if (wsVal.StartsWith("arb"))
-				return wsVal.Remove(2, 1);	// change arb to ar
-			return wsVal;
-		}
-
-		private readonly Dictionary<string, int> m_dictWsChanges = new Dictionary<string, int>();
-
-		internal static void RecordWsChange(Guid guid, string oldWs, string newWs, ErrorLogger errorLogger)
-		{
-			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format("Changed the writing system tag {0} to {1}", oldWs, newWs));
 		}
 
 		/// <summary>

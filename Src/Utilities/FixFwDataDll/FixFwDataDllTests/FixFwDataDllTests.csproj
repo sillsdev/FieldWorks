@@ -14,6 +14,10 @@
 	<FileAlignment>512</FileAlignment>
 	<StartupObject>
 	</StartupObject>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -45,9 +49,9 @@
 	<Compile Include="FwDataFixerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="COMInterfaces, Version=7.3.0.25499, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="BasicUtils, Version=7.3.0.25458, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="COMInterfacesTests, Version=7.3.0.25499, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
@@ -65,6 +69,10 @@
 	<ProjectReference Include="..\..\..\Common\FwUtils\FwUtils.csproj">
 	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
 	  <Name>FwUtils</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\..\..\FDO\FDO.csproj">
+	  <Project>{E5E9DDC7-2855-4D92-AD46-960AC4C46457}</Project>
+	  <Name>FDO</Name>
 	</ProjectReference>
 	<ProjectReference Include="..\..\..\FDO\FDOTests\FDOTests.csproj">
 	  <Project>{5B119AEF-2895-44AB-BB28-6C1071A9B62B}</Project>
