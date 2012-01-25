@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// Step 2: Sort and rewrite file.
 			using (var fastSplitter = new FastXmlElementSplitter(pathname))
 			{
-				var sortedObjects = new SortedDictionary<string, string>();
+				var sortedObjects = new SortedDictionary<string, byte[]>();
 				bool foundOptionalFirstElement;
 				foreach (var record in fastSplitter.GetSecondLevelElementStrings(OptionalFirstElementTag, StartTag, out foundOptionalFirstElement))
 				{
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					{
 						// Step 2B: Sort main CmObject record.
 						var sortedMainObject = SortMainElement(sortableProperties, record);
-						sortedObjects.Add(sortedMainObject.Attribute("guid").Value, sortedMainObject.ToString());
+						sortedObjects.Add(sortedMainObject.Attribute("guid").Value, Utf8.GetBytes(sortedMainObject.ToString()));
 					}
 				}
 				foreach (var sortedObjectKvp in sortedObjects)
@@ -196,7 +196,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, string element)
 		{
-			using (var nodeReader = XmlReader.Create(new MemoryStream(Utf8.GetBytes(element), false), readerSettings))
+			WriteElement(writer, readerSettings, Utf8.GetBytes(element));
+		}
+
+		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] element)
+		{
+			using (var nodeReader = XmlReader.Create(new MemoryStream(element, false), readerSettings))
 				writer.WriteNode(nodeReader, true);
 		}
 

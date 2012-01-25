@@ -35,3 +35,4 @@ TomB, 24 Jan 2012. Integrated fixes for the following issues:
 	TXL-88: Made change to commit current edit when saving. This prevents data loss and avoids a crash when reloading.
 	TXL-89: Preserved sorting when reloading.
 	TXL-90, TXL-91: Fixed some layout and user-interaction problems in the Edit Question dialog box.
+JohnW, 25 Jan 2012. LT-12609: reduced memory usage when sorting entire fwdata file when opening.
