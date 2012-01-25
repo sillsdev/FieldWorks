@@ -208,7 +208,7 @@
 		<echo message="******************************************************************"/>
 		<property name="passbyref" value="fw-test-error"/>
 		<nantex
-			target="release test mkall-localize"
+			target="release test mkall"
 			buildfile="${project::get-buildfile-path()}"
 			passbyref="${passbyref}"/>
 		<if test="${property::exists('fw-test-error')}">
