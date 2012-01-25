@@ -1060,9 +1060,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_selInfo[iEnd] = new SelInfo(m_selInfo[iAnchor]);
 			}
 
+			// This change was proposed in change set 37331 but it's not clear what crash sometimes happens if it's not done.
+			// Apparently it doesn't always crash because some TeDllTests fail if we do this.
 			// Don't make a selection if the property indicates not to: see comment about -2 in InterlinDocForAnalysis.HandleSelectionChange
-			if (m_selInfo[iAnchor].tagTextProp == -2)
-				return null;  // crashes if allowed to continue
+			//if (m_selInfo[iAnchor].tagTextProp == -2)
+			//    return null;  // crashes if allowed to continue
 
 			// we want to pass fInstall=false to MakeTextSelection so that it doesn't notify
 			// the RootSite of the selection change.
