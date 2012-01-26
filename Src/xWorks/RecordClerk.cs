@@ -2041,7 +2041,8 @@ namespace SIL.FieldWorks.XWorks
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
-			m_list.ListLoadingSuppressed = false;
+			if (m_list != null)
+				m_list.ListLoadingSuppressed = false;
 		}
 
 		/// <summary>
