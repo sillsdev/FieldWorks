@@ -207,7 +207,6 @@ namespace SIL.Utils
 			// btnClose
 			//
 			resources.ApplyResources(this.btnClose, "btnClose");
-			this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnClose.Name = "btnClose";
 			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
 			//
@@ -243,7 +242,6 @@ namespace SIL.Utils
 			// cancelButton
 			//
 			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.UseVisualStyleBackColor = true;
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
