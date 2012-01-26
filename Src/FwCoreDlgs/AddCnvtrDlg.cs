@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnDelete = new System.Windows.Forms.Button();
 			btnHelp = new System.Windows.Forms.Button();
 			btnClose = new System.Windows.Forms.Button();
-			helpProvider1 = new HelpProvider();
+			helpProvider1 = new System.Windows.Forms.HelpProvider();
 			this.m_addCnvtrTabCtrl.SuspendLayout();
 			this.propertiesTab.SuspendLayout();
 			this.testTab.SuspendLayout();
@@ -317,6 +317,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_converterTest
 			//
+			this.m_converterTest.Converters = null;
 			resources.ApplyResources(this.m_converterTest, "m_converterTest");
 			this.m_converterTest.Name = "m_converterTest";
 			helpProvider1.SetShowHelp(this.m_converterTest, ((bool)(resources.GetObject("m_converterTest.ShowHelp"))));
@@ -374,6 +375,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// AddCnvtrDlg
 			//
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ControlBox = false;
 			this.Controls.Add(this.btnDelete);
 			this.Controls.Add(this.btnCopy);

@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Type=Application
+Exec=/usr/lib/fieldworks/ShareFwProjects
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=FieldWorks Sharing
+Name=FieldWorks Sharing
+Comment[en_US]=Allow local FieldWorks projects to be shared
+Comment=Allow local FieldWorks projects to be shared

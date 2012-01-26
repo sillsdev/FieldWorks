@@ -57,7 +57,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.colContextItem = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colContextAfter = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.pnlScan = new System.Windows.Forms.Panel();
-			this.m_openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.m_cmnuScan = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cmnuScanScripture = new System.Windows.Forms.ToolStripMenuItem();
 			this.cmnuScanFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -216,11 +215,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.pnlScan, "pnlScan");
 			this.pnlScan.Name = "pnlScan";
 			//
-			// m_openFileDialog
-			//
-			this.m_openFileDialog.DefaultExt = "lds";
-			resources.ApplyResources(this.m_openFileDialog, "m_openFileDialog");
-			//
 			// m_cmnuScan
 			//
 			this.m_cmnuScan.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -278,6 +272,5 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextBefore;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextItem;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextAfter;
-		private System.Windows.Forms.OpenFileDialog m_openFileDialog;
 	}
 }

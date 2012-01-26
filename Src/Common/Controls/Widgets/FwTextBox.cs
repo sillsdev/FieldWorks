@@ -107,6 +107,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Since the TE team put a limit on the text height based on the control's Font,
 			// we want a default font size that is big enough never to limit things.
 			Font = new Font(Font.Name, 100.0f);
+
+			// We don't want to auto scale because that messes up selections. You can see this
+			// by commenting this line. If FwFindReplaceDlg.AutoScaleMode is set to Font the test
+			// SIL.FieldWorks.FwCoreDlgs.FwFindReplaceDlgTests.ApplyWS_ToSelectedString will
+			// fail because it didn't make a range selection.
+			AutoScaleMode = AutoScaleMode.None;
 		}
 
 		Rectangle ContentRectangle

@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.m_mergeButton;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_cancelButton;
 			this.CausesValidation = false;
 			this.Controls.Add(this.m_backupButton);

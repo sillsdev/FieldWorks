@@ -445,7 +445,7 @@
 	<value>m_lstStyles</value>
   </data>
   <data name="&gt;&gt;m_lstStyles.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.CaseSensitiveListBox, FwControls, Version=6.1.1.30363, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.CaseSensitiveListBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_lstStyles.Parent" xml:space="preserve">
 	<value>panel1</value>
@@ -553,7 +553,7 @@
 	<value>m_btnHelp</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwHelpButton, FwControls, Version=6.1.1.30363, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwHelpButton, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -577,7 +577,7 @@
 	<value>m_generalTab</value>
   </data>
   <data name="&gt;&gt;m_generalTab.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_generalTab.Parent" xml:space="preserve">
 	<value>m_tbGeneral</value>
@@ -612,6 +612,9 @@
   <data name="&gt;&gt;m_tbGeneral.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="m_fontTab.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="m_fontTab.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 0</value>
   </data>
@@ -625,7 +628,7 @@
 	<value>m_fontTab</value>
   </data>
   <data name="&gt;&gt;m_fontTab.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.FwFontTab, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwFontTab, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_fontTab.Parent" xml:space="preserve">
 	<value>m_tbFont</value>
@@ -676,7 +679,7 @@
 	<value>m_paragraphTab</value>
   </data>
   <data name="&gt;&gt;m_paragraphTab.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.FwParagraphTab, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwParagraphTab, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_paragraphTab.Parent" xml:space="preserve">
 	<value>m_tbParagraph</value>
@@ -724,7 +727,7 @@
 	<value>m_bulletsTab</value>
   </data>
   <data name="&gt;&gt;m_bulletsTab.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_bulletsTab.Parent" xml:space="preserve">
 	<value>m_tbBullets</value>
@@ -772,7 +775,7 @@
 	<value>m_borderTab</value>
   </data>
   <data name="&gt;&gt;m_borderTab.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.FwBorderTab, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwBorderTab, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_borderTab.Parent" xml:space="preserve">
 	<value>m_tbBorder</value>

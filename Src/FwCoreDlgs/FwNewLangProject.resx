@@ -645,9 +645,6 @@
   <data name="m_cbVernWrtSys.HelpString" xml:space="preserve">
 	<value>Specifies the writing system to use as the initial vernacular language writing system.</value>
   </data>
-  <data name="m_cbVernWrtSys.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="m_cbVernWrtSys.Location" type="System.Drawing.Point, System.Drawing">
 	<value>16, 269</value>
   </data>
@@ -664,7 +661,7 @@
 	<value>m_cbVernWrtSys</value>
   </data>
   <data name="&gt;&gt;m_cbVernWrtSys.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.23047, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cbVernWrtSys.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -674,9 +671,6 @@
   </data>
   <data name="m_cbAnalWrtSys.HelpString" xml:space="preserve">
 	<value>Specifies the writing system to use as the initial analysis language writing system.</value>
-  </data>
-  <data name="m_cbAnalWrtSys.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="m_cbAnalWrtSys.Location" type="System.Drawing.Point, System.Drawing">
 	<value>16, 375</value>
@@ -694,7 +688,7 @@
 	<value>m_cbAnalWrtSys</value>
   </data>
   <data name="&gt;&gt;m_cbAnalWrtSys.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.23047, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cbAnalWrtSys.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -777,8 +771,8 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>498, 495</value>

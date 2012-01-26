@@ -147,9 +147,6 @@
   <data name="comboGlossListItem.Enabled" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="comboGlossListItem.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="comboGlossListItem.Location" type="System.Drawing.Point, System.Drawing">
 	<value>77, 0</value>
   </data>
@@ -166,7 +163,7 @@
 	<value>comboGlossListItem</value>
   </data>
   <data name="&gt;&gt;comboGlossListItem.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.15949, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;comboGlossListItem.Parent" xml:space="preserve">
 	<value>panel1</value>
@@ -295,7 +292,7 @@
 	<value>treeViewGlossListItem</value>
   </data>
   <data name="&gt;&gt;treeViewGlossListItem.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Linguistics.Common.MGA.GlossListTreeView, MGA, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListTreeView, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeViewGlossListItem.Parent" xml:space="preserve">
 	<value>tableLayoutPanel1</value>
@@ -550,7 +547,7 @@
 	<value>glossListBoxGloss</value>
   </data>
   <data name="&gt;&gt;glossListBoxGloss.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Linguistics.Common.MGA.GlossListBox, MGA, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListBox, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;glossListBoxGloss.Parent" xml:space="preserve">
 	<value>tableLayoutPanelSelectedGloss</value>
@@ -945,6 +942,9 @@
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
+  <data name="labelConstructedGlossForPrompt.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="labelConstructedGlossForPrompt.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
@@ -952,7 +952,7 @@
 	<value>5, 2</value>
   </data>
   <data name="labelConstructedGlossForPrompt.Size" type="System.Drawing.Size, System.Drawing">
-	<value>120, 14</value>
+	<value>109, 13</value>
   </data>
   <data name="labelConstructedGlossForPrompt.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
@@ -972,6 +972,9 @@
   <data name="&gt;&gt;labelConstructedGlossForPrompt.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="labelAllomorph.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="labelAllomorph.Font" type="System.Drawing.Font, System.Drawing">
 	<value>Microsoft Sans Serif, 12pt, style=Bold</value>
   </data>
@@ -979,10 +982,10 @@
 	<value>NoControl</value>
   </data>
   <data name="labelAllomorph.Location" type="System.Drawing.Point, System.Drawing">
-	<value>5, 16</value>
+	<value>5, 15</value>
   </data>
   <data name="labelAllomorph.Size" type="System.Drawing.Size, System.Drawing">
-	<value>150, 22</value>
+	<value>140, 31</value>
   </data>
   <data name="labelAllomorph.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
@@ -1167,8 +1170,8 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>665, 501</value>

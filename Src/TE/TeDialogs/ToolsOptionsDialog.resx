@@ -792,9 +792,6 @@
   <data name="&gt;&gt;rdoBasicStyles.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <data name="cboStyleLevel.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboStyleLevel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>176, 21</value>
   </data>
@@ -808,7 +805,7 @@
 	<value>cboStyleLevel</value>
   </data>
   <data name="&gt;&gt;cboStyleLevel.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.1.0.26268, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.17337, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboStyleLevel.Parent" xml:space="preserve">
 	<value>grpCustom</value>
@@ -898,7 +895,7 @@
 	<value>16, 80</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>324, 45</value>
+	<value>343, 45</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
 	<value>9</value>
@@ -922,7 +919,7 @@
 	<value>UserInterfaceChooser</value>
   </data>
   <data name="m_userInterfaceChooser.Location" type="System.Drawing.Point, System.Drawing">
-	<value>145, 56</value>
+	<value>164, 56</value>
   </data>
   <data name="m_userInterfaceChooser.Size" type="System.Drawing.Size, System.Drawing">
 	<value>195, 21</value>
@@ -934,16 +931,13 @@
 	<value>m_userInterfaceChooser</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.1.0.26286, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.0.6.17401, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
 	<value>tabPageInterface</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
 	<value>2</value>
-  </data>
-  <data name="m_cboMeasurement.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="m_cboMeasurement.Items" xml:space="preserve">
 	<value>Inches</value>
@@ -955,7 +949,7 @@
 	<value>Centimeters</value>
   </data>
   <data name="m_cboMeasurement.Location" type="System.Drawing.Point, System.Drawing">
-	<value>145, 13</value>
+	<value>164, 13</value>
   </data>
   <data name="m_cboMeasurement.Size" type="System.Drawing.Size, System.Drawing">
 	<value>81, 21</value>
@@ -967,7 +961,7 @@
 	<value>m_cboMeasurement</value>
   </data>
   <data name="&gt;&gt;m_cboMeasurement.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.1.0.26268, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.17337, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cboMeasurement.Parent" xml:space="preserve">
 	<value>tabPageInterface</value>
@@ -1053,8 +1047,8 @@
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>68</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>402, 299</value>

@@ -2285,9 +2285,6 @@ To begin importing, click Finish.</value>
   <data name="&gt;&gt;m_btnSaveMapFile.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
   <data name="m_btnQuickFinish.AccessibleName" xml:space="preserve">
 	<value>btnFinish</value>
   </data>
@@ -2428,12 +2425,6 @@ To begin importing, click Finish.</value>
   </data>
   <data name="&gt;&gt;columnHeaderCM4.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog.Name" xml:space="preserve">
-	<value>openFileDialog</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog.Type" xml:space="preserve">
-	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;LangcolumnHeader1.Name" xml:space="preserve">
 	<value>LangcolumnHeader1</value>

@@ -1230,4 +1230,10 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksReferenceCount" xml:space="preserve">
 	<value>Reference Count</value>
   </data>
+  <data name="openFileDialog1_Title" xml:space="preserve">
+	<value>Open Lexicon Interchange FormaT File</value>
+  </data>
+  <data name="openFileDialog1_Filter" xml:space="preserve">
+	<value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
+  </data>
 </root>

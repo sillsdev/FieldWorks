@@ -129,6 +129,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = m_btnCancel;
 			this.Controls.Add(m_btnHelp);
 			this.Controls.Add(this.m_btnOK);

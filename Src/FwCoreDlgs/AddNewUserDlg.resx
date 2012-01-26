@@ -153,6 +153,69 @@
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
+  <metadata name="btnHelp.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>217, 254</value>
+  </data>
+  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
+	<value>btnHelp</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="lblPrompt.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblPrompt.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblPrompt.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 16</value>
+  </data>
+  <data name="lblPrompt.Size" type="System.Drawing.Size, System.Drawing">
+	<value>192, 23</value>
+  </data>
+  <data name="lblPrompt.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="lblPrompt.Text" xml:space="preserve">
+	<value>How would you describe this user?</value>
+  </data>
+  <data name="&gt;&gt;lblPrompt.Name" xml:space="preserve">
+	<value>lblPrompt</value>
+  </data>
+  <data name="&gt;&gt;lblPrompt.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPrompt.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblPrompt.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
   <data name="btnAdd.AccessibleDescription" xml:space="preserve">
 	<value>Add button. Click to add this type of user.</value>
   </data>
@@ -188,39 +251,6 @@
   </data>
   <data name="&gt;&gt;btnAdd.ZOrder" xml:space="preserve">
 	<value>7</value>
-  </data>
-  <metadata name="btnHelp.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <data name="btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom</value>
-  </data>
-  <data name="btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>217, 254</value>
-  </data>
-  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 23</value>
-  </data>
-  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="btnHelp.Text" xml:space="preserve">
-	<value>Help</value>
-  </data>
-  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
-	<value>btnHelp</value>
-  </data>
-  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
-	<value>5</value>
   </data>
   <data name="radioBeginner.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
 	<value>TopLeft</value>
@@ -321,36 +351,6 @@
   <data name="&gt;&gt;radioAdvanced.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <metadata name="lblPrompt.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <data name="lblPrompt.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="lblPrompt.Location" type="System.Drawing.Point, System.Drawing">
-	<value>24, 16</value>
-  </data>
-  <data name="lblPrompt.Size" type="System.Drawing.Size, System.Drawing">
-	<value>192, 23</value>
-  </data>
-  <data name="lblPrompt.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
-  </data>
-  <data name="lblPrompt.Text" xml:space="preserve">
-	<value>How would you describe this user?</value>
-  </data>
-  <data name="&gt;&gt;lblPrompt.Name" xml:space="preserve">
-	<value>lblPrompt</value>
-  </data>
-  <data name="&gt;&gt;lblPrompt.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lblPrompt.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;lblPrompt.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
   <data name="cbHasMaintenance.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
 	<value>TopLeft</value>
   </data>
@@ -384,14 +384,11 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>354, 288</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
 	<value>CenterParent</value>

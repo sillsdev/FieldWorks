@@ -6,18 +6,23 @@ using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.Fieldworks.LexText;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.LexText
 {
 	public partial class LiftImportDlg : Form, IFwExtension
 	{
 		private FdoCache _cache;
-	 //   private Mediator _mediator;
+		private OpenFileDialogAdapter openFileDialog1;
+
 		public LiftImportDlg()
 		{
 			InitializeComponent();
-			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(openFileDialog1.Filter);
+			openFileDialog1 = new OpenFileDialogAdapter();
+			openFileDialog1.Title = "Open WeSay Interchange File";
+			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations("WeSay Files|*.wesay|All files|*.*");
 		}
+
 		/// <summary>
 		/// From IFwExtension
 		/// </summary>

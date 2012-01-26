@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -49,11 +50,19 @@
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />
+	<Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+	  <Private>False</Private>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="ColorHelper.cs" />
 	<Compile Include="ComponentsExtensionMethods.cs" />
 	<Compile Include="ContinuableErrorException.cs" />
+	<Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>FileDialogStrings.resx</DependentUpon>
+	</Compile>
 	<Compile Include="CustomDropDown.cs">
 	  <SubType>Component</SubType>
 	</Compile>
@@ -73,6 +82,30 @@
 	<Compile Include="WaitCursor.cs" />
 	<Compile Include="Win32Wrappers.cs" />
 	<Compile Include="XmlSerializationHelper.cs" />
+	<Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+	<Compile Include="FileDialog\Manager.cs" />
+	<Compile Include="FileDialog\FileDialogAdapter.cs" />
+	<Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+	<Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+	<None Include="FileDialog\readme.txt" />
+	<Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
+	<Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
+	<Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
+	<Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
+	<Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
+	<Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
+	<Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+	<Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
+	<Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
+	<Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+	<Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+	<Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

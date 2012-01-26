@@ -1,0 +1,6 @@
+﻿<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<pkg-references>
+		<package name="gtk-sharp-2.0" if="${platform::is-unix()}"/>
+	</pkg-references>
+</include>

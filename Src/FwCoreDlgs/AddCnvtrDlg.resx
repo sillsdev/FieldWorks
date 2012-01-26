@@ -259,7 +259,7 @@
 	<value>m_cnvtrPropertiesCtrl</value>
   </data>
   <data name="&gt;&gt;m_cnvtrPropertiesCtrl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgs.CnvtrPropertiesCtrl, FwCoreDlgs, Version=5.5.0.16520, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.CnvtrPropertiesCtrl, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cnvtrPropertiesCtrl.Parent" xml:space="preserve">
 	<value>propertiesTab</value>
@@ -340,7 +340,7 @@
 	<value>m_converterTest</value>
   </data>
   <data name="&gt;&gt;m_converterTest.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgs.ConverterTest, FwCoreDlgs, Version=5.5.0.16520, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.ConverterTest, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_converterTest.Parent" xml:space="preserve">
 	<value>testTab</value>
@@ -388,7 +388,7 @@
 	<value>m_advancedEncProps</value>
   </data>
   <data name="&gt;&gt;m_advancedEncProps.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgs.AdvancedEncProps, FwCoreDlgs, Version=5.5.0.16520, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.AdvancedEncProps, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_advancedEncProps.Parent" xml:space="preserve">
 	<value>advancedTab</value>
@@ -537,8 +537,8 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>555, 336</value>

@@ -458,17 +458,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 
 			// Figure out where to locate the dlg.
-			object obj = SettingsKey.GetValue("InsertX");
-			if (obj != null)
+			using (var regKey = SettingsKey)
 			{
-				var x = (int)obj;
-				var y = (int)SettingsKey.GetValue("InsertY");
-				var width = (int)SettingsKey.GetValue("InsertWidth", Width);
-				var height = (int)SettingsKey.GetValue("InsertHeight", Height);
-				var rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
+				object obj = regKey.GetValue("InsertX");
+				if (obj != null)
+				{
+					var x = (int)obj;
+					var y = (int)regKey.GetValue("InsertY");
+					var width = (int)regKey.GetValue("InsertWidth", Width);
+					var height = (int)regKey.GetValue("InsertHeight", Height);
+					var rect = new Rectangle(x, y, width, height);
+					ScreenUtils.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
 			}
 
 			m_helpProvider = new HelpProvider();
@@ -1478,13 +1481,16 @@ catch(Exception e)
 		private void InsertEntryDlg_Closed(object sender, EventArgs e)
 		{
 			// Save location.
-			SettingsKey.SetValue("InsertX", Location.X);
-			SettingsKey.SetValue("InsertY", Location.Y);
-			SettingsKey.SetValue("InsertWidth", Width);
-			// We want to save the default height, without the growing we did
-			// to make room for multiple gloss writing systems or a large font
-			// in the lexical form box.
-			SettingsKey.SetValue("InsertHeight", Height - m_delta);
+			using (var regKey = SettingsKey)
+			{
+				regKey.SetValue("InsertX", Location.X);
+				regKey.SetValue("InsertY", Location.Y);
+				regKey.SetValue("InsertWidth", Width);
+				// We want to save the default height, without the growing we did
+				// to make room for multiple gloss writing systems or a large font
+				// in the lexical form box.
+				regKey.SetValue("InsertHeight", Height - m_delta);
+			}
 		}
 
 		/// <summary>

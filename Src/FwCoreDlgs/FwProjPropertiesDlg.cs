@@ -26,6 +26,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
@@ -79,7 +80,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ContextMenuStrip m_cmnuAddWs;
 		private ToolStripMenuItem menuItem2;
 		private TextBox txtExtLnkEdit;
-		private FolderBrowserDialog folderBrowserDlg;
 		private IContainer components;
 		/// <summary></summary>
 		protected IVwStylesheet m_stylesheet;
@@ -358,7 +358,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.m_cmnuAddWs = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-			this.folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
 			this.helpProvider1 = new System.Windows.Forms.HelpProvider();
 			this.m_wsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_modifyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -771,10 +770,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.menuItem2.Name = "menuItem2";
 			resources.ApplyResources(this.menuItem2, "menuItem2");
 			//
-			// folderBrowserDlg
-			//
-			resources.ApplyResources(this.folderBrowserDlg, "folderBrowserDlg");
-			//
 			// m_wsMenuStrip
 			//
 			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -813,6 +808,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = m_btnCancel;
 			this.Controls.Add(this.m_tabControl);
 			this.Controls.Add(m_btnCancel);
@@ -1318,21 +1314,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void btnLinkedFilesBrowse_Click(object sender, EventArgs e)
 		{
-			folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-			if (!Directory.Exists(txtExtLnkEdit.Text))
+			using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 			{
-				string msg = String.Format(FwCoreDlgs.ksLinkedFilesFolderIsUnavailable, txtExtLnkEdit.Text);
-				MessageBox.Show(msg, FwCoreDlgs.ksLinkedFilesFolderUnavailable);
-				folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
-			}
-			else
-			{
-				folderBrowserDlg.SelectedPath = txtExtLnkEdit.Text;
-			}
+				folderBrowserDlg.Description = FwCoreDlgs.folderBrowserDlgDescription;
+				folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+				if (!Directory.Exists(txtExtLnkEdit.Text))
+				{
+					string msg = String.Format(FwCoreDlgs.ksLinkedFilesFolderIsUnavailable, txtExtLnkEdit.Text);
+					MessageBox.Show(msg, FwCoreDlgs.ksLinkedFilesFolderUnavailable);
+					folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+				}
+				else
+				{
+					folderBrowserDlg.SelectedPath = txtExtLnkEdit.Text;
+				}
 
-
-			if(folderBrowserDlg.ShowDialog() == DialogResult.OK)
-				txtExtLnkEdit.Text = folderBrowserDlg.SelectedPath;
+				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+					txtExtLnkEdit.Text = folderBrowserDlg.SelectedPath;
+			}
 		}
 
 		/// <summary>

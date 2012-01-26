@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			bool fBaseCalled = false;
-			if (titleStr == string.Empty)
+			if (String.IsNullOrEmpty(titleStr))
 			{
 				base.SetInfoBarText();
 				fBaseCalled = true;

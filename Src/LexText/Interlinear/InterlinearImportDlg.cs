@@ -8,6 +8,7 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.IText
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.DefaultExt = "flextext";
 				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);

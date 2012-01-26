@@ -172,8 +172,9 @@
 			// ChooseLangProjectDialog
 			//
 			this.AcceptButton = this.m_btnOk;
-			this.CancelButton = this.m_btnCancel;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.m_btnCancel;
 			this.Controls.Add(this.m_tblLayoutOuter);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;

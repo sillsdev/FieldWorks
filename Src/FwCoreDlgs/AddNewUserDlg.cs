@@ -157,18 +157,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			btnCancel.Name = "btnCancel";
 			//
+			// btnHelp
+			//
+			resources.ApplyResources(btnHelp, "btnHelp");
+			btnHelp.Name = "btnHelp";
+			btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+			//
+			// lblPrompt
+			//
+			resources.ApplyResources(lblPrompt, "lblPrompt");
+			lblPrompt.Name = "lblPrompt";
+			//
 			// btnAdd
 			//
 			resources.ApplyResources(this.btnAdd, "btnAdd");
 			this.btnAdd.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.btnAdd.Name = "btnAdd";
 			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-			//
-			// btnHelp
-			//
-			resources.ApplyResources(btnHelp, "btnHelp");
-			btnHelp.Name = "btnHelp";
-			btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
 			//
 			// radioBeginner
 			//
@@ -187,11 +192,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.radioAdvanced, "radioAdvanced");
 			this.radioAdvanced.Name = "radioAdvanced";
 			//
-			// lblPrompt
-			//
-			resources.ApplyResources(lblPrompt, "lblPrompt");
-			lblPrompt.Name = "lblPrompt";
-			//
 			// cbHasMaintenance
 			//
 			resources.ApplyResources(this.cbHasMaintenance, "cbHasMaintenance");
@@ -201,6 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnAdd;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(this.cbHasMaintenance);
 			this.Controls.Add(lblPrompt);

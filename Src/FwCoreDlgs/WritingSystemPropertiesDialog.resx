@@ -117,107 +117,6 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;tpGeneral.Name" xml:space="preserve">
-	<value>tpGeneral</value>
-  </data>
-  <data name="&gt;&gt;tpGeneral.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpGeneral.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpGeneral.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Name" xml:space="preserve">
-	<value>tpFonts</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Name" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Name" xml:space="preserve">
-	<value>tpConverters</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Name" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Name" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.ZOrder" xml:space="preserve">
-	<value>5</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="tabControl.ItemSize" type="System.Drawing.Size, System.Drawing">
-	<value>42, 18</value>
-  </data>
-  <data name="tabControl.Location" type="System.Drawing.Point, System.Drawing">
-	<value>208, 100</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabControl.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="tabControl.Size" type="System.Drawing.Size, System.Drawing">
-	<value>443, 308</value>
-  </data>
-  <data name="tabControl.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;tabControl.Name" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tabControl.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabControl.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;tabControl.ZOrder" xml:space="preserve">
-	<value>10</value>
-  </data>
   <data name="&gt;&gt;lblScriptRegionVariant.Name" xml:space="preserve">
 	<value>lblScriptRegionVariant</value>
   </data>
@@ -270,7 +169,7 @@
 	<value>cbDictionaries</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.25577, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Parent" xml:space="preserve">
 	<value>tpGeneral</value>
@@ -282,7 +181,7 @@
 	<value>m_regionVariantControl</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Parent" xml:space="preserve">
 	<value>tpGeneral</value>
@@ -326,9 +225,11 @@
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
 	<value>8</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="tpGeneral.Location" type="System.Drawing.Point, System.Drawing">
 	<value>4, 22</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="tpGeneral.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -353,16 +254,541 @@
   <data name="&gt;&gt;tpGeneral.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Name" xml:space="preserve">
+	<value>m_defaultFontsControl</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Parent" xml:space="preserve">
+	<value>tpFonts</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tpFonts.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tpFonts.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="tpFonts.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tpFonts.Size" type="System.Drawing.Size, System.Drawing">
+	<value>435, 282</value>
+  </data>
+  <data name="tpFonts.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="tpFonts.Text" xml:space="preserve">
+	<value>Font</value>
+  </data>
+  <data name="&gt;&gt;tpFonts.Name" xml:space="preserve">
+	<value>tpFonts</value>
+  </data>
+  <data name="&gt;&gt;tpFonts.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpFonts.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpFonts.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_fwTextBoxTestWs.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 100pt</value>
+  </data>
+  <data name="m_fwTextBoxTestWs.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 223</value>
+  </data>
+  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_fwTextBoxTestWs.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_fwTextBoxTestWs.Size" type="System.Drawing.Size, System.Drawing">
+	<value>414, 52</value>
+  </data>
+  <data name="m_fwTextBoxTestWs.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxTestWs.Name" xml:space="preserve">
+	<value>m_fwTextBoxTestWs</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxTestWs.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.0.6.22051, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxTestWs.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxTestWs.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 207</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>134, 13</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_lblKeyboardTestInstr.Text" xml:space="preserve">
+	<value>Test the {0} writing system:</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardTestInstr.Name" xml:space="preserve">
+	<value>m_lblKeyboardTestInstr</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardTestInstr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardTestInstr.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardTestInstr.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.Location" type="System.Drawing.Point, System.Drawing">
+	<value>244, 158</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.Size" type="System.Drawing.Size, System.Drawing">
+	<value>110, 13</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_linkKeymanConfiguration.Text" xml:space="preserve">
+	<value>Keyman Configuration</value>
+  </data>
+  <data name="&gt;&gt;m_linkKeymanConfiguration.Name" xml:space="preserve">
+	<value>m_linkKeymanConfiguration</value>
+  </data>
+  <data name="&gt;&gt;m_linkKeymanConfiguration.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_linkKeymanConfiguration.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_linkKeymanConfiguration.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.Location" type="System.Drawing.Point, System.Drawing">
+	<value>36, 158</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.Size" type="System.Drawing.Size, System.Drawing">
+	<value>137, 13</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_linkWindowsKeyboard.Text" xml:space="preserve">
+	<value>Windows keyboard settings</value>
+  </data>
+  <data name="&gt;&gt;m_linkWindowsKeyboard.Name" xml:space="preserve">
+	<value>m_linkWindowsKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_linkWindowsKeyboard.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_linkWindowsKeyboard.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_linkWindowsKeyboard.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 134</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.Size" type="System.Drawing.Size, System.Drawing">
+	<value>398, 13</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_lblKeyboardSetupInst.Text" xml:space="preserve">
+	<value>If the keyboard you need is not listed, click the appropriate link(s) below to set it up.</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardSetupInst.Name" xml:space="preserve">
+	<value>m_lblKeyboardSetupInst</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardSetupInst.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardSetupInst.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardSetupInst.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 9</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.Size" type="System.Drawing.Size, System.Drawing">
+	<value>290, 13</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_lblKeyboardInstruction.Text" xml:space="preserve">
+	<value>Select the keyboard combination with which to type {0} text.</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardInstruction.Name" xml:space="preserve">
+	<value>m_lblKeyboardInstruction</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardInstruction.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardInstruction.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_lblKeyboardInstruction.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_KeyboardControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 30</value>
+  </data>
+  <data name="m_KeyboardControl.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_KeyboardControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>419, 96</value>
+  </data>
+  <data name="m_KeyboardControl.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Name" xml:space="preserve">
+	<value>m_KeyboardControl</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.KeyboardControl, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Parent" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="tpKeyboard.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tpKeyboard.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tpKeyboard.Size" type="System.Drawing.Size, System.Drawing">
+	<value>435, 282</value>
+  </data>
+  <data name="tpKeyboard.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="tpKeyboard.Text" xml:space="preserve">
+	<value>Keyboard</value>
+  </data>
+  <data name="&gt;&gt;tpKeyboard.Name" xml:space="preserve">
+	<value>tpKeyboard</value>
+  </data>
+  <data name="&gt;&gt;tpKeyboard.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpKeyboard.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpKeyboard.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverter.Name" xml:space="preserve">
+	<value>btnEncodingConverter</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverter.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverter.Parent" xml:space="preserve">
+	<value>tpConverters</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverter.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncodingConverter.Name" xml:space="preserve">
+	<value>m_lblEncodingConverter</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncodingConverter.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncodingConverter.Parent" xml:space="preserve">
+	<value>tpConverters</value>
+  </data>
+  <data name="&gt;&gt;m_lblEncodingConverter.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Name" xml:space="preserve">
+	<value>cbEncodingConverter</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Parent" xml:space="preserve">
+	<value>tpConverters</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tpConverters.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tpConverters.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tpConverters.Size" type="System.Drawing.Size, System.Drawing">
+	<value>435, 282</value>
+  </data>
+  <data name="tpConverters.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="tpConverters.Text" xml:space="preserve">
+	<value>Converters</value>
+  </data>
+  <data name="&gt;&gt;tpConverters.Name" xml:space="preserve">
+	<value>tpConverters</value>
+  </data>
+  <data name="&gt;&gt;tpConverters.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpConverters.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpConverters.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingLabel.Name" xml:space="preserve">
+	<value>m_sortUsingLabel</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingLabel.Parent" xml:space="preserve">
+	<value>tpSorting</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingLabel.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingComboBox.Name" xml:space="preserve">
+	<value>m_sortUsingComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingComboBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingComboBox.Parent" xml:space="preserve">
+	<value>tpSorting</value>
+  </data>
+  <data name="&gt;&gt;m_sortUsingComboBox.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_sortRulesPanel.Name" xml:space="preserve">
+	<value>m_sortRulesPanel</value>
+  </data>
+  <data name="&gt;&gt;m_sortRulesPanel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_sortRulesPanel.Parent" xml:space="preserve">
+	<value>tpSorting</value>
+  </data>
+  <data name="&gt;&gt;m_sortRulesPanel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_sortLanguagePanel.Name" xml:space="preserve">
+	<value>m_sortLanguagePanel</value>
+  </data>
+  <data name="&gt;&gt;m_sortLanguagePanel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_sortLanguagePanel.Parent" xml:space="preserve">
+	<value>tpSorting</value>
+  </data>
+  <data name="&gt;&gt;m_sortLanguagePanel.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tpSorting.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tpSorting.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tpSorting.Size" type="System.Drawing.Size, System.Drawing">
+	<value>435, 282</value>
+  </data>
+  <data name="tpSorting.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="tpSorting.Text" xml:space="preserve">
+	<value>Sorting</value>
+  </data>
+  <data name="&gt;&gt;tpSorting.Name" xml:space="preserve">
+	<value>tpSorting</value>
+  </data>
+  <data name="&gt;&gt;tpSorting.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpSorting.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpSorting.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_lblPunctuation.Name" xml:space="preserve">
+	<value>m_lblPunctuation</value>
+  </data>
+  <data name="&gt;&gt;m_lblPunctuation.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblPunctuation.Parent" xml:space="preserve">
+	<value>tpPUACharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblPunctuation.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;btnPunctuation.Name" xml:space="preserve">
+	<value>btnPunctuation</value>
+  </data>
+  <data name="&gt;&gt;btnPunctuation.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnPunctuation.Parent" xml:space="preserve">
+	<value>tpPUACharacters</value>
+  </data>
+  <data name="&gt;&gt;btnPunctuation.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_lblValidCharacters.Name" xml:space="preserve">
+	<value>m_lblValidCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblValidCharacters.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblValidCharacters.Parent" xml:space="preserve">
+	<value>tpPUACharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblValidCharacters.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;btnValidChars.Name" xml:space="preserve">
+	<value>btnValidChars</value>
+  </data>
+  <data name="&gt;&gt;btnValidChars.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnValidChars.Parent" xml:space="preserve">
+	<value>tpPUACharacters</value>
+  </data>
+  <data name="&gt;&gt;btnValidChars.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tpPUACharacters.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tpPUACharacters.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tpPUACharacters.Size" type="System.Drawing.Size, System.Drawing">
+	<value>435, 282</value>
+  </data>
+  <data name="tpPUACharacters.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tpPUACharacters.Text" xml:space="preserve">
+	<value>Characters</value>
+  </data>
+  <data name="&gt;&gt;tpPUACharacters.Name" xml:space="preserve">
+	<value>tpPUACharacters</value>
+  </data>
+  <data name="&gt;&gt;tpPUACharacters.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpPUACharacters.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpPUACharacters.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="tabControl.ItemSize" type="System.Drawing.Size, System.Drawing">
+	<value>42, 18</value>
+  </data>
+  <data name="tabControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>208, 100</value>
+  </data>
+  <data name="tabControl.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tabControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>443, 308</value>
+  </data>
+  <data name="tabControl.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Name" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabControl.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
   <data name="lblScriptRegionVariant.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
   <data name="lblScriptRegionVariant.Location" type="System.Drawing.Point, System.Drawing">
 	<value>15, 35</value>
   </data>
-  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
   <data name="lblScriptRegionVariant.ShowHelp" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
@@ -394,7 +820,7 @@
 	<value>NoControl</value>
   </data>
   <data name="m_FullCode.Location" type="System.Drawing.Point, System.Drawing">
-	<value>251, 259</value>
+	<value>265, 258</value>
   </data>
   <data name="m_FullCode.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -502,13 +928,16 @@
 	<value>cbDictionaries</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.25577, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Parent" xml:space="preserve">
 	<value>tpGeneral</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.ZOrder" xml:space="preserve">
 	<value>4</value>
+  </data>
+  <data name="m_regionVariantControl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
   </data>
   <data name="m_regionVariantControl.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 72</value>
@@ -517,7 +946,7 @@
 	<value>False</value>
   </data>
   <data name="m_regionVariantControl.Size" type="System.Drawing.Size, System.Drawing">
-	<value>384, 136</value>
+	<value>420, 136</value>
   </data>
   <data name="m_regionVariantControl.TabIndex" type="System.Int32, mscorlib">
 	<value>12</value>
@@ -526,7 +955,7 @@
 	<value>m_regionVariantControl</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Parent" xml:space="preserve">
 	<value>tpGeneral</value>
@@ -714,48 +1143,6 @@
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
 	<value>8</value>
   </data>
-  <data name="&gt;&gt;m_defaultFontsControl.Name" xml:space="preserve">
-	<value>m_defaultFontsControl</value>
-  </data>
-  <data name="&gt;&gt;m_defaultFontsControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_defaultFontsControl.Parent" xml:space="preserve">
-	<value>tpFonts</value>
-  </data>
-  <data name="&gt;&gt;m_defaultFontsControl.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="tpFonts.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="tpFonts.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 3, 3, 3</value>
-  </data>
-  <data name="tpFonts.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="tpFonts.Size" type="System.Drawing.Size, System.Drawing">
-	<value>435, 282</value>
-  </data>
-  <data name="tpFonts.TabIndex" type="System.Int32, mscorlib">
-	<value>5</value>
-  </data>
-  <data name="tpFonts.Text" xml:space="preserve">
-	<value>Font</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Name" xml:space="preserve">
-	<value>tpFonts</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpFonts.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
   <data name="m_defaultFontsControl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
@@ -769,7 +1156,7 @@
 	<value>True</value>
   </data>
   <data name="m_defaultFontsControl.Size" type="System.Drawing.Size, System.Drawing">
-	<value>289, 159</value>
+	<value>424, 159</value>
   </data>
   <data name="m_defaultFontsControl.TabIndex" type="System.Int32, mscorlib">
 	<value>2</value>
@@ -778,403 +1165,13 @@
 	<value>m_defaultFontsControl</value>
   </data>
   <data name="&gt;&gt;m_defaultFontsControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_defaultFontsControl.Parent" xml:space="preserve">
 	<value>tpFonts</value>
   </data>
   <data name="&gt;&gt;m_defaultFontsControl.ZOrder" xml:space="preserve">
 	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Name" xml:space="preserve">
-	<value>m_fwTextBoxTestWs</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25604, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Name" xml:space="preserve">
-	<value>m_lblKeyboardTestInstr</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Name" xml:space="preserve">
-	<value>m_linkKeymanConfiguration</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Name" xml:space="preserve">
-	<value>m_linkWindowsKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Name" xml:space="preserve">
-	<value>m_lblKeyboardSetupInst</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Name" xml:space="preserve">
-	<value>m_lblKeyboardInstruction</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.ZOrder" xml:space="preserve">
-	<value>5</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Name" xml:space="preserve">
-	<value>m_KeyboardControl</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.KeyboardControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.ZOrder" xml:space="preserve">
-	<value>6</value>
-  </data>
-  <data name="tpKeyboard.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="tpKeyboard.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="tpKeyboard.Size" type="System.Drawing.Size, System.Drawing">
-	<value>435, 282</value>
-  </data>
-  <data name="tpKeyboard.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="tpKeyboard.Text" xml:space="preserve">
-	<value>Keyboard</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Name" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpKeyboard.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="m_fwTextBoxTestWs.Font" type="System.Drawing.Font, System.Drawing">
-	<value>Microsoft Sans Serif, 100pt</value>
-  </data>
-  <data name="m_fwTextBoxTestWs.Location" type="System.Drawing.Point, System.Drawing">
-	<value>11, 223</value>
-  </data>
-  <data name="m_fwTextBoxTestWs.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_fwTextBoxTestWs.Size" type="System.Drawing.Size, System.Drawing">
-	<value>414, 52</value>
-  </data>
-  <data name="m_fwTextBoxTestWs.TabIndex" type="System.Int32, mscorlib">
-	<value>12</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Name" xml:space="preserve">
-	<value>m_fwTextBoxTestWs</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25604, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_fwTextBoxTestWs.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.Location" type="System.Drawing.Point, System.Drawing">
-	<value>8, 208</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.Size" type="System.Drawing.Size, System.Drawing">
-	<value>134, 13</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.TabIndex" type="System.Int32, mscorlib">
-	<value>11</value>
-  </data>
-  <data name="m_lblKeyboardTestInstr.Text" xml:space="preserve">
-	<value>Test the {0} writing system:</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Name" xml:space="preserve">
-	<value>m_lblKeyboardTestInstr</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardTestInstr.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.Location" type="System.Drawing.Point, System.Drawing">
-	<value>244, 158</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.Size" type="System.Drawing.Size, System.Drawing">
-	<value>110, 13</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.TabIndex" type="System.Int32, mscorlib">
-	<value>9</value>
-  </data>
-  <data name="m_linkKeymanConfiguration.Text" xml:space="preserve">
-	<value>Keyman Configuration</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Name" xml:space="preserve">
-	<value>m_linkKeymanConfiguration</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkKeymanConfiguration.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.Location" type="System.Drawing.Point, System.Drawing">
-	<value>36, 158</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.Size" type="System.Drawing.Size, System.Drawing">
-	<value>137, 13</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.TabIndex" type="System.Int32, mscorlib">
-	<value>8</value>
-  </data>
-  <data name="m_linkWindowsKeyboard.Text" xml:space="preserve">
-	<value>Windows keyboard settings</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Name" xml:space="preserve">
-	<value>m_linkWindowsKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_linkWindowsKeyboard.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 134</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.Size" type="System.Drawing.Size, System.Drawing">
-	<value>398, 13</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
-  </data>
-  <data name="m_lblKeyboardSetupInst.Text" xml:space="preserve">
-	<value>If the keyboard you need is not listed, click the appropriate link(s) below to set it up.</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Name" xml:space="preserve">
-	<value>m_lblKeyboardSetupInst</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardSetupInst.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 9</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.Size" type="System.Drawing.Size, System.Drawing">
-	<value>290, 13</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="m_lblKeyboardInstruction.Text" xml:space="preserve">
-	<value>Select the keyboard combination with which to type {0} text.</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Name" xml:space="preserve">
-	<value>m_lblKeyboardInstruction</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_lblKeyboardInstruction.ZOrder" xml:space="preserve">
-	<value>5</value>
-  </data>
-  <data name="m_KeyboardControl.Location" type="System.Drawing.Point, System.Drawing">
-	<value>6, 30</value>
-  </data>
-  <data name="m_KeyboardControl.ShowHelp" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="m_KeyboardControl.Size" type="System.Drawing.Size, System.Drawing">
-	<value>282, 96</value>
-  </data>
-  <data name="m_KeyboardControl.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Name" xml:space="preserve">
-	<value>m_KeyboardControl</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.KeyboardControl, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.Parent" xml:space="preserve">
-	<value>tpKeyboard</value>
-  </data>
-  <data name="&gt;&gt;m_KeyboardControl.ZOrder" xml:space="preserve">
-	<value>6</value>
-  </data>
-  <data name="&gt;&gt;btnEncodingConverter.Name" xml:space="preserve">
-	<value>btnEncodingConverter</value>
-  </data>
-  <data name="&gt;&gt;btnEncodingConverter.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnEncodingConverter.Parent" xml:space="preserve">
-	<value>tpConverters</value>
-  </data>
-  <data name="&gt;&gt;btnEncodingConverter.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_lblEncodingConverter.Name" xml:space="preserve">
-	<value>m_lblEncodingConverter</value>
-  </data>
-  <data name="&gt;&gt;m_lblEncodingConverter.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblEncodingConverter.Parent" xml:space="preserve">
-	<value>tpConverters</value>
-  </data>
-  <data name="&gt;&gt;m_lblEncodingConverter.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;cbEncodingConverter.Name" xml:space="preserve">
-	<value>cbEncodingConverter</value>
-  </data>
-  <data name="&gt;&gt;cbEncodingConverter.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.25577, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;cbEncodingConverter.Parent" xml:space="preserve">
-	<value>tpConverters</value>
-  </data>
-  <data name="&gt;&gt;cbEncodingConverter.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="tpConverters.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="tpConverters.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="tpConverters.Size" type="System.Drawing.Size, System.Drawing">
-	<value>435, 282</value>
-  </data>
-  <data name="tpConverters.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
-  </data>
-  <data name="tpConverters.Text" xml:space="preserve">
-	<value>Converters</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Name" xml:space="preserve">
-	<value>tpConverters</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpConverters.ZOrder" xml:space="preserve">
-	<value>3</value>
   </data>
   <data name="btnEncodingConverter.HelpString" xml:space="preserve">
 	<value>Opens a dialog box for adding and testing encoding converters.</value>
@@ -1245,9 +1242,6 @@
   <data name="cbEncodingConverter.HelpString" xml:space="preserve">
 	<value>Specifies the encoding converter for importing data which uses this writing system.</value>
   </data>
-  <data name="cbEncodingConverter.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cbEncodingConverter.Location" type="System.Drawing.Point, System.Drawing">
 	<value>48, 67</value>
   </data>
@@ -1264,88 +1258,13 @@
 	<value>cbEncodingConverter</value>
   </data>
   <data name="&gt;&gt;cbEncodingConverter.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.25577, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cbEncodingConverter.Parent" xml:space="preserve">
 	<value>tpConverters</value>
   </data>
   <data name="&gt;&gt;cbEncodingConverter.ZOrder" xml:space="preserve">
 	<value>2</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingLabel.Name" xml:space="preserve">
-	<value>m_sortUsingLabel</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingLabel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingLabel.Parent" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingLabel.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingComboBox.Name" xml:space="preserve">
-	<value>m_sortUsingComboBox</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingComboBox.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingComboBox.Parent" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;m_sortUsingComboBox.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_sortRulesPanel.Name" xml:space="preserve">
-	<value>m_sortRulesPanel</value>
-  </data>
-  <data name="&gt;&gt;m_sortRulesPanel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_sortRulesPanel.Parent" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;m_sortRulesPanel.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="&gt;&gt;m_sortLanguagePanel.Name" xml:space="preserve">
-	<value>m_sortLanguagePanel</value>
-  </data>
-  <data name="&gt;&gt;m_sortLanguagePanel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_sortLanguagePanel.Parent" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;m_sortLanguagePanel.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="tpSorting.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="tpSorting.ShowHelp" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="tpSorting.Size" type="System.Drawing.Size, System.Drawing">
-	<value>435, 282</value>
-  </data>
-  <data name="tpSorting.TabIndex" type="System.Int32, mscorlib">
-	<value>3</value>
-  </data>
-  <data name="tpSorting.Text" xml:space="preserve">
-	<value>Sorting</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Name" xml:space="preserve">
-	<value>tpSorting</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpSorting.ZOrder" xml:space="preserve">
-	<value>4</value>
   </data>
   <data name="m_sortUsingLabel.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -1423,7 +1342,7 @@
 	<value>m_sortRulesTextBox</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25604, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.0.6.22051, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Parent" xml:space="preserve">
 	<value>m_sortRulesPanel</value>
@@ -1483,7 +1402,7 @@
 	<value>m_similarWsButton</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Parent" xml:space="preserve">
 	<value>m_sortRulesLoadPanel</value>
@@ -1578,7 +1497,7 @@
 	<value>m_similarWsButton</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=6.1.1.25608, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=7.0.6.22066, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Parent" xml:space="preserve">
 	<value>m_sortRulesLoadPanel</value>
@@ -1694,6 +1613,9 @@
   <data name="m_sortRulesTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_sortRulesTextBox.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
   <data name="m_sortRulesTextBox.Font" type="System.Drawing.Font, System.Drawing">
 	<value>Microsoft Sans Serif, 100pt</value>
   </data>
@@ -1713,7 +1635,7 @@
 	<value>m_sortRulesTextBox</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=6.1.1.25604, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.0.6.22051, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Parent" xml:space="preserve">
 	<value>m_sortRulesPanel</value>
@@ -1843,81 +1765,6 @@
   </data>
   <data name="&gt;&gt;m_sortLanguageLabel.ZOrder" xml:space="preserve">
 	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_lblPunctuation.Name" xml:space="preserve">
-	<value>m_lblPunctuation</value>
-  </data>
-  <data name="&gt;&gt;m_lblPunctuation.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblPunctuation.Parent" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;m_lblPunctuation.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;btnPunctuation.Name" xml:space="preserve">
-	<value>btnPunctuation</value>
-  </data>
-  <data name="&gt;&gt;btnPunctuation.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnPunctuation.Parent" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;btnPunctuation.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_lblValidCharacters.Name" xml:space="preserve">
-	<value>m_lblValidCharacters</value>
-  </data>
-  <data name="&gt;&gt;m_lblValidCharacters.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblValidCharacters.Parent" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;m_lblValidCharacters.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="&gt;&gt;btnValidChars.Name" xml:space="preserve">
-	<value>btnValidChars</value>
-  </data>
-  <data name="&gt;&gt;btnValidChars.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnValidChars.Parent" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;btnValidChars.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="tpPUACharacters.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="tpPUACharacters.ShowHelp" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="tpPUACharacters.Size" type="System.Drawing.Size, System.Drawing">
-	<value>435, 282</value>
-  </data>
-  <data name="tpPUACharacters.TabIndex" type="System.Int32, mscorlib">
-	<value>2</value>
-  </data>
-  <data name="tpPUACharacters.Text" xml:space="preserve">
-	<value>Characters</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Name" xml:space="preserve">
-	<value>tpPUACharacters</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.Parent" xml:space="preserve">
-	<value>tabControl</value>
-  </data>
-  <data name="&gt;&gt;tpPUACharacters.ZOrder" xml:space="preserve">
-	<value>5</value>
   </data>
   <data name="m_lblPunctuation.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -2447,22 +2294,19 @@
 	<value>NoControl</value>
   </data>
   <data name="m_LanguageCode.Location" type="System.Drawing.Point, System.Drawing">
-	<value>352, 20</value>
+	<value>357, 20</value>
   </data>
   <data name="m_LanguageCode.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
   <data name="m_LanguageCode.Size" type="System.Drawing.Size, System.Drawing">
-	<value>55, 20</value>
+	<value>83, 20</value>
   </data>
   <data name="m_LanguageCode.TabIndex" type="System.Int32, mscorlib">
 	<value>5</value>
   </data>
   <data name="m_LanguageCode.Text" xml:space="preserve">
 	<value>###</value>
-  </data>
-  <data name="m_LanguageCode.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>TopRight</value>
   </data>
   <data name="&gt;&gt;m_LanguageCode.Name" xml:space="preserve">
 	<value>m_LanguageCode</value>
@@ -2606,7 +2450,7 @@
 	<value>NoControl</value>
   </data>
   <data name="lblHiddenWss.Location" type="System.Drawing.Point, System.Drawing">
-	<value>7, 116</value>
+	<value>8, 114</value>
   </data>
   <data name="lblHiddenWss.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -2638,8 +2482,8 @@
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>50</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>652, 446</value>

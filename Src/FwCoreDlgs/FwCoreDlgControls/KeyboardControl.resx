@@ -117,16 +117,73 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="m_helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_keyboardComboBox.HelpString" xml:space="preserve">
+	<value>Specifies the Keyman keyboard for typing this writing system.  This lists currently installed Keyman keyboards.</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_keyboardComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 65</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_keyboardComboBox.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_keyboardComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>280, 21</value>
+  </data>
+  <data name="m_keyboardComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;m_keyboardComboBox.Name" xml:space="preserve">
+	<value>m_keyboardComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_keyboardComboBox.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_keyboardComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_keyboardComboBox.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_langIdComboBox.HelpString" xml:space="preserve">
+	<value>Specifies the system language which will provide a keyboard. You may need to install one.</value>
+  </data>
+  <data name="m_langIdComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 16</value>
+  </data>
+  <data name="m_langIdComboBox.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_langIdComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>280, 21</value>
+  </data>
+  <data name="m_langIdComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_langIdComboBox.Name" xml:space="preserve">
+	<value>m_langIdComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_langIdComboBox.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_langIdComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_langIdComboBox.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
   <metadata name="m_langIdLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
   </metadata>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_langIdLabel.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_langIdLabel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>-3, 0</value>
+	<value>3, 0</value>
   </data>
   <data name="m_langIdLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>183, 13</value>
@@ -156,7 +213,7 @@
 	<value>True</value>
   </data>
   <data name="m_keyboardLabel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>-3, 49</value>
+	<value>3, 49</value>
   </data>
   <data name="m_keyboardLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>95, 13</value>
@@ -178,63 +235,6 @@
   </data>
   <data name="&gt;&gt;m_keyboardLabel.ZOrder" xml:space="preserve">
 	<value>2</value>
-  </data>
-  <metadata name="m_helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
-  <data name="m_keyboardComboBox.HelpString" xml:space="preserve">
-	<value>Specifies the Keyman keyboard for typing this writing system.  This lists currently installed Keyman keyboards.</value>
-  </data>
-  <data name="m_keyboardComboBox.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 65</value>
-  </data>
-  <data name="m_keyboardComboBox.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_keyboardComboBox.Size" type="System.Drawing.Size, System.Drawing">
-	<value>280, 21</value>
-  </data>
-  <data name="m_keyboardComboBox.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
-  </data>
-  <data name="&gt;&gt;m_keyboardComboBox.Name" xml:space="preserve">
-	<value>m_keyboardComboBox</value>
-  </data>
-  <data name="&gt;&gt;m_keyboardComboBox.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.17973, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_keyboardComboBox.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_keyboardComboBox.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_langIdComboBox.HelpString" xml:space="preserve">
-	<value>Specifies the system language which will provide a keyboard. You may need to install one.</value>
-  </data>
-  <data name="m_langIdComboBox.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 16</value>
-  </data>
-  <data name="m_langIdComboBox.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_langIdComboBox.Size" type="System.Drawing.Size, System.Drawing">
-	<value>280, 21</value>
-  </data>
-  <data name="m_langIdComboBox.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="&gt;&gt;m_langIdComboBox.Name" xml:space="preserve">
-	<value>m_langIdComboBox</value>
-  </data>
-  <data name="&gt;&gt;m_langIdComboBox.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.17973, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_langIdComboBox.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_langIdComboBox.ZOrder" xml:space="preserve">
-	<value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>

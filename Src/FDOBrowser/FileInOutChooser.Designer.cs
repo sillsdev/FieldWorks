@@ -13,9 +13,12 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && !IsDisposed)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				Db4oFile.Dispose();
+				XmlFile.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -34,8 +37,6 @@
 			this.xml = new System.Windows.Forms.TextBox();
 			this.done = new System.Windows.Forms.Button();
 			this.cancel = new System.Windows.Forms.Button();
-			this.Db4oFile = new System.Windows.Forms.OpenFileDialog();
-			this.XmlFile = new System.Windows.Forms.SaveFileDialog();
 			this.status = new System.Windows.Forms.StatusStrip();
 			this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.compressed = new System.Windows.Forms.CheckBox();
@@ -96,14 +97,6 @@
 			this.cancel.UseVisualStyleBackColor = true;
 			this.cancel.Click += new System.EventHandler(this.cancel_Click);
 			//
-			// Db4oFile
-			//
-			this.Db4oFile.Filter = "Db4o Files|*.fwdb|All Files|*.*";
-			//
-			// XmlFile
-			//
-			this.XmlFile.DefaultExt = "fwxml";
-			//
 			// status
 			//
 			this.status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -161,10 +154,6 @@
 		private System.Windows.Forms.Button done;
 		private System.Windows.Forms.Button cancel;
 
-		// expose these to hold returns
-		private System.Windows.Forms.OpenFileDialog Db4oFile;
-		// expose these to hold returns
-		private System.Windows.Forms.SaveFileDialog XmlFile;
 		private System.Windows.Forms.StatusStrip status;
 		private System.Windows.Forms.ToolStripStatusLabel statusLabel;
 		private System.Windows.Forms.CheckBox compressed;
