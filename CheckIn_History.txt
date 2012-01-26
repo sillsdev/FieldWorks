@@ -9,7 +9,7 @@ out for an extended time. It should be checked out only when you have finished a
 and are ready to integrate your work and check it in.
 
 Here begins the recent check-in history - please add your notes at the end:
-------------------------------------------------------------------------------------------------
+----------------- FW7.2.0 -------------------------------------------------------------------------------
 KenZ, 10 Nov 2011. Created FW_7.2 branch and integrated from WW.
 KenZ, 3 Jan 2012. Integrated WW to 7.2 using auto resolve from other.
 KenZ, 12 Jan 2012. Final full integration from WW to 7.2 using auto resolve from other.
@@ -40,3 +40,4 @@ TomB, 24 Jan 2012. Integrated fixes for the following issues:
 	TXL-90, TXL-91: Fixed some layout and user-interaction problems in the Edit Question dialog box.
 JohnW, 25 Jan 2012. LT-12609: reduced memory usage when sorting entire fwdata file when opening.
 KenZ, 26 Jan 2012. Fixed unreliable audio sound icon LT-12551.
+KenZ, 26 Jan 2012. Set version number to 7.2.2
