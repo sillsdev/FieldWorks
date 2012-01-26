@@ -5705,3 +5705,4 @@ GordonM, 25 Jan 2012. Small changes in FDO and FixFwDataDllTests.
 GordonM, 25 Jan 2012. Changes to FixFwDataDll and tests project files, so tests work through VS.
 JohnT, 25 Jan 2012. Enhanced handling of incoming links to support figuring out a suitable default tool for most object types.
 	Later: Reverted 37331. This needs more investigation (the original purpose was not clear) but it was breaking tests.
+EberhardB, 26 Jan 2012. Integration Calgary/WW -> WW.

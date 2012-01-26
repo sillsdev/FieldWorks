@@ -439,7 +439,7 @@
 	<value>m_txtCaption</value>
   </data>
   <data name="&gt;&gt;m_txtCaption.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.0.1.30991, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.0.6.22051, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_txtCaption.Parent" xml:space="preserve">
 	<value>pnlCaption</value>
@@ -472,7 +472,7 @@
 	<value>pnlPicture</value>
   </data>
   <data name="&gt;&gt;pnlPicture.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=7.0.1.30973, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlPicture.Parent" xml:space="preserve">
 	<value>panelBottom</value>
@@ -499,13 +499,16 @@
 	<value>pnlCaption</value>
   </data>
   <data name="&gt;&gt;pnlCaption.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=7.0.1.30973, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlCaption.Parent" xml:space="preserve">
 	<value>panelBottom</value>
   </data>
   <data name="&gt;&gt;pnlCaption.ZOrder" xml:space="preserve">
 	<value>1</value>
+  </data>
+  <data name="panelBottom.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
   </data>
   <data name="panelBottom.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 126</value>
@@ -530,9 +533,6 @@
   </data>
   <data name="&gt;&gt;panelBottom.ZOrder" xml:space="preserve">
 	<value>0</value>
-  </data>
-  <data name="m_grpFileLocOptions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Top, Left, Right</value>
   </data>
   <data name="m_grpFileLocOptions.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
 	<value>GrowAndShrink</value>
@@ -789,8 +789,8 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
 	<value>GrowAndShrink</value>

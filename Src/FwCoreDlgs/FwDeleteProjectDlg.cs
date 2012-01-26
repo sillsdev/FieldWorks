@@ -208,6 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// FwDeleteProjectDlg
 			//
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = m_btnExit;
 			this.Controls.Add(label2);
 			this.Controls.Add(label1);

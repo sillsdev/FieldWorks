@@ -30,6 +30,7 @@ using Palaso.Lift;
 using Palaso.Lift.Validation;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -499,7 +500,7 @@ namespace SIL.FieldWorks.XWorks
 				string sDirectory;
 				if (fLiftExport)
 				{
-					using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+					using (var dlg = new FolderBrowserDialogAdapter())
 					{
 						dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle; // can't set title !!??
 						dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
@@ -576,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 							ProcessPathwayExport();
 							return;
 						default:
-							using (SaveFileDialog dlg = new SaveFileDialog())
+							using (var dlg = new SaveFileDialogAdapter())
 							{
 								dlg.AddExtension = true;
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;

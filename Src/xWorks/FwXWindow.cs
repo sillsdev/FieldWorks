@@ -32,6 +32,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -732,7 +733,7 @@ namespace SIL.FieldWorks.XWorks
 			if (helper == null || !helper.CanInsertLinkToFile())
 				return false;
 			string pathname = null;
-			using (var fileDialog = new OpenFileDialog())
+			using (var fileDialog = new OpenFileDialogAdapter())
 			{
 				fileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
 				fileDialog.RestoreDirectory = true;
@@ -1807,7 +1808,7 @@ namespace SIL.FieldWorks.XWorks
 			var form = ActiveForm;
 			if (form == null)
 				form = this;
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;

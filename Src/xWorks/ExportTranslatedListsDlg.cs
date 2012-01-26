@@ -13,19 +13,14 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
-using System.IO;
-
-using XCore;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using System.Diagnostics;
+using SIL.Utils.FileDialog;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -188,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (SaveFileDialog dlg = new SaveFileDialog())
+			using (var dlg = new SaveFileDialogAdapter())
 			{
 				dlg.AddExtension = true;
 				dlg.DefaultExt = String.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;

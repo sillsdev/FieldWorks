@@ -399,9 +399,6 @@
   <data name="cboShowBtWritingSystem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
   </data>
-  <data name="cboShowBtWritingSystem.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboShowBtWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
 	<value>240, 184</value>
   </data>
@@ -512,9 +509,6 @@
   </data>
   <data name="cboShowNotesWritingSystem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
-  </data>
-  <data name="cboShowNotesWritingSystem.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cboShowNotesWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
 	<value>48, 8</value>
@@ -650,9 +644,6 @@
   </data>
   <data name="cboShowNoteTypes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Right</value>
-  </data>
-  <data name="cboShowNoteTypes.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cboShowNoteTypes.Location" type="System.Drawing.Point, System.Drawing">
 	<value>200, 8</value>

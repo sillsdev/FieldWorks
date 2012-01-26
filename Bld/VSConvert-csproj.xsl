@@ -207,6 +207,7 @@
 						<patternset refid="Resource"/>
 					</resources>
 					<references refid="refs"/>
+					<xsl:copy-of select="$LocalInclude/fw:include/fw:pkg-references"/>
 				</xsl:element>
 				<copyrefs todir="${{dir.buildOutput}}" failonerror="false" verbose="${{verbose}}">
 					<fileset refid="refs"/>

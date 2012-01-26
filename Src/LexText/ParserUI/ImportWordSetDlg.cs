@@ -25,6 +25,7 @@ using System.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Framework;
 using XCore;
@@ -226,7 +227,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnChooseFiles_Click(object sender, System.EventArgs e)
 		{
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.Multiselect = true;
 				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.Text);

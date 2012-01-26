@@ -39,15 +39,15 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		public MGAHtmlHelpDialog(FdoCache cache, Mediator mediator, string sMorphemeForm) : base(cache, mediator, sMorphemeForm)
 		{
 			m_webBrowserInfo = new WebBrowser
-						{
-							Dock = DockStyle.Fill,
-							Location = new Point(0, 0),
-							TabIndex = 1,
-							IsWebBrowserContextMenuEnabled = false,
-							MinimumSize = new Size(20, 20),
-							Name = "webBrowserInfo",
-							WebBrowserShortcutsEnabled = false
-						};
+								{
+									Dock = DockStyle.Fill,
+									Location = new Point(0, 0),
+									TabIndex = 1,
+									IsWebBrowserContextMenuEnabled = false,
+									MinimumSize = new Size(20, 20),
+									Name = "webBrowserInfo",
+									WebBrowserShortcutsEnabled = false
+								};
 
 			splitContainerHorizontal.Panel2.Controls.Add(m_webBrowserInfo);
 		}
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
 
-			splitContainerHorizontal.Panel2Collapsed = false;
+			ShowInfoPane();
 			buttonInfo.Visible = true;
 
 			m_webBrowserInfo.Navigate(m_sHelpHtm);

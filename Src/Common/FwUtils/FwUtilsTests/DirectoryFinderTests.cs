@@ -269,6 +269,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Tests the DefaultBackupDirectory property for use on Windows
+		/// </summary>
+		[Test]
+		[Platform(Exclude="Linux")]
+		public void DefaultBackupDirectory_Window()
+		{
+			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
+		}
+
+		/// <summary>
+		/// Tests the DefaultBackupDirectory property for use on Linux
+		/// </summary>
+		[Test]
+		[Platform(Include="Linux")]
+		public void DefaultBackupDirectory_Linux()
+		{
+			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				Path.Combine("fieldworks", "backups")), DirectoryFinder.DefaultBackupDirectory);
+		}
+
+		/// <summary>
 		/// Base class for testing CommonApplicationData. This base class deals with setting
 		/// and resetting the environment variable.
 		/// </summary>

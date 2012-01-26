@@ -22,6 +22,7 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -463,7 +464,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected virtual void btnFolderBrowse_Click(object sender, System.EventArgs e)
 		{
-			using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+			using (var dlg = new FolderBrowserDialogAdapter())
 			{
 				dlg.SelectedPath = BaseOutputFolder;
 				dlg.Description = TeResourceHelper.GetResourceString(StidExportDlgFolderBrowserPrompt);

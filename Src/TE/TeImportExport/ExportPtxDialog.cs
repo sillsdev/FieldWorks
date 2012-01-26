@@ -21,12 +21,12 @@ using System.Diagnostics;
 using Paratext;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.TE
 {
@@ -63,10 +63,6 @@ namespace SIL.FieldWorks.TE
 		/// <summary>file naming scheme for back translation projects</summary>
 		protected FileNameFormat m_BTfileNameScheme = new FileNameFormat();
 
-		#endregion
-
-		#region Constants
-		private const string kDefaultParatextPath = @"c:\My Paratext Projects";
 		#endregion
 
 		#region Constructor
@@ -396,7 +392,9 @@ namespace SIL.FieldWorks.TE
 				// might not exist and/or we might have no permissions to write there. We attempt to
 				// create this folder now. If we fail, then we disable the Short Name control and
 				// won't bother writing the Paratext settings files.
-				m_paratextProjFolder = kDefaultParatextPath;
+				// REVIEW: this comment seems to be out of date. We might crash if we have an
+				// invalid directory (see FWNX-828).
+				m_paratextProjFolder = ParatextHelper.ProjectsDirectory;
 			}
 
 			cboShortName.Text = ShortName;

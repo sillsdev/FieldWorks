@@ -1,0 +1,18 @@
+fieldworks-enchant for Debian
+-----------------------------
+
+The original sources are from http://svn.abisource.com/enchant/trunk at
+revision 29930 (which is marked as version 1.6.1).  For some reason, a
+version 1.6.1 tarball has not been provided, and even the 1.6.0 tarball
+lacks the msvc subdirectory which we need for Windows development.  A
+command like the following checks out the sources to the current directory.
+(It should be executed in the parent directory of this file.)
+
+	svn checkout http://svn.abisource.com/enchant/trunk -r 29930 .
+
+Fix-stat-bug.patch has been submitted to Abisource, and there is a good
+possibility that it will be accepted in a future release.  However,
+Force-case-sensitive.patch changes the behavior of the library in a way
+that we consider desirable in FieldWorks, but which might not be accepted
+by Abisource.  (I don't think it's been submitted to Abisource to find out,
+however.)

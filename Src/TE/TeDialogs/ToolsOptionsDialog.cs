@@ -513,6 +513,7 @@ namespace SIL.FieldWorks.TE
 			//
 			this.AcceptButton = this.btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(btnHelp);
 			this.Controls.Add(btnCancel);

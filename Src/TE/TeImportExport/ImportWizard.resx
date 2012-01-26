@@ -927,9 +927,6 @@
   <data name="cboPTBackTrans.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
-  <data name="cboPTBackTrans.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboPTBackTrans.Location" type="System.Drawing.Point, System.Drawing">
 	<value>152, 144</value>
   </data>
@@ -954,9 +951,6 @@
   <data name="cboPTTransNotes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
-  <data name="cboPTTransNotes.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboPTTransNotes.Location" type="System.Drawing.Point, System.Drawing">
 	<value>152, 171</value>
   </data>
@@ -980,9 +974,6 @@
   </data>
   <data name="cboPTLangProj.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
-  </data>
-  <data name="cboPTLangProj.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cboPTLangProj.Location" type="System.Drawing.Point, System.Drawing">
 	<value>152, 64</value>

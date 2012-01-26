@@ -5,14 +5,13 @@
 XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 
-script_location="$(dirname "$0")"
-# TODO: readlink -e doesn't work on Mac.
-prefix=$(readlink -en "${script_location}/../..")
+scriptdir="$(dirname "$0")"
+prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 FW_DATA="${XDG_DATA_HOME}/fieldworks"
 FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
 FW_SAMPLES=${FW_SAMPLES:-/usr/share/fieldworks-examples}
 FW_LIB=$prefix/lib/fieldworks
-FW_SHARE=$script_location
+FW_SHARE=$scriptdir
 
 (
 	if [ ! -d "${FW_CONFIG}/" ]; then
@@ -23,6 +22,7 @@ FW_SHARE=$script_location
 		cp -R "${FW_SHARE}/SIL" "${FW_CONFIG}/"
 		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 		mkdir -p "${FW_DATA}/Projects"
+		mkdir -p "${XDG_CONFIG_HOME}/autostart"
 
 		# copy sample databases
 		if [ -d ${FW_SAMPLES}/ReleaseData ]; then
@@ -34,11 +34,16 @@ FW_SHARE=$script_location
 			done
 		fi
 	fi
+	# if we haven't setup running the remote access daemon yet, set it up and start it.
+	if [ ! -f ${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop ]; then
+		cp "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
+		/usr/lib/fieldworks/ShareFwProjects
+	fi
 
 	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
 		echo "# Updating configuration"
 
-		cd "$FW_LIB"; RUNMODE="INSTALLED" source environ; cd "$OLDPWD"
+		cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
 
 		WRITEKEY="${FW_LIB}/WriteKey.exe"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"

@@ -117,60 +117,24 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnOk.AccessibleDescription" xml:space="preserve">
-	<value>Okay button. Click to accept changes.</value>
-  </data>
-  <data name="btnOk.AccessibleName" xml:space="preserve">
-	<value>Okay button</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Right</value>
-  </data>
-  <data name="btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
-	<value>368, 443</value>
-  </data>
-  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 23</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="btnOk.Text" xml:space="preserve">
-	<value>OK</value>
-  </data>
-  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
-	<value>btnOk</value>
-  </data>
-  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
-	<value>7</value>
-  </data>
   <metadata name="btnCancel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
   </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
   </data>
   <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
 	<value>448, 443</value>
   </data>
   <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
 	<value>7</value>
   </data>
@@ -188,39 +152,6 @@
   </data>
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
 	<value>6</value>
-  </data>
-  <data name="lblMaintenanceAccess.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Left</value>
-  </data>
-  <data name="lblMaintenanceAccess.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="lblMaintenanceAccess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="lblMaintenanceAccess.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 258</value>
-  </data>
-  <data name="lblMaintenanceAccess.Size" type="System.Drawing.Size, System.Drawing">
-	<value>107, 13</value>
-  </data>
-  <data name="lblMaintenanceAccess.TabIndex" type="System.Int32, mscorlib">
-	<value>14</value>
-  </data>
-  <data name="lblMaintenanceAccess.Text" xml:space="preserve">
-	<value>Maintenance Access</value>
-  </data>
-  <data name="&gt;&gt;lblMaintenanceAccess.Name" xml:space="preserve">
-	<value>lblMaintenanceAccess</value>
-  </data>
-  <data name="&gt;&gt;lblMaintenanceAccess.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lblMaintenanceAccess.Parent" xml:space="preserve">
-	<value>tabAccount</value>
-  </data>
-  <data name="&gt;&gt;lblMaintenanceAccess.ZOrder" xml:space="preserve">
-	<value>1</value>
   </data>
   <metadata name="lblConfirmPwd2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
@@ -293,39 +224,6 @@
   </data>
   <data name="&gt;&gt;lblPassword.ZOrder" xml:space="preserve">
 	<value>7</value>
-  </data>
-  <data name="lblPasswordGroup.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Left</value>
-  </data>
-  <data name="lblPasswordGroup.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="lblPasswordGroup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="lblPasswordGroup.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 134</value>
-  </data>
-  <data name="lblPasswordGroup.Size" type="System.Drawing.Size, System.Drawing">
-	<value>53, 13</value>
-  </data>
-  <data name="lblPasswordGroup.TabIndex" type="System.Int32, mscorlib">
-	<value>4</value>
-  </data>
-  <data name="lblPasswordGroup.Text" xml:space="preserve">
-	<value>Password</value>
-  </data>
-  <data name="&gt;&gt;lblPasswordGroup.Name" xml:space="preserve">
-	<value>lblPasswordGroup</value>
-  </data>
-  <data name="&gt;&gt;lblPasswordGroup.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lblPasswordGroup.Parent" xml:space="preserve">
-	<value>tabAccount</value>
-  </data>
-  <data name="&gt;&gt;lblPasswordGroup.ZOrder" xml:space="preserve">
-	<value>8</value>
   </data>
   <metadata name="lblDescription.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>False</value>
@@ -570,6 +468,108 @@
   <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="btnOk.AccessibleDescription" xml:space="preserve">
+	<value>Okay button. Click to accept changes.</value>
+  </data>
+  <data name="btnOk.AccessibleName" xml:space="preserve">
+	<value>Okay button</value>
+  </data>
+  <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>368, 443</value>
+  </data>
+  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
+	<value>btnOk</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="lblMaintenanceAccess.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblMaintenanceAccess.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblMaintenanceAccess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblMaintenanceAccess.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 258</value>
+  </data>
+  <data name="lblMaintenanceAccess.Size" type="System.Drawing.Size, System.Drawing">
+	<value>107, 13</value>
+  </data>
+  <data name="lblMaintenanceAccess.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="lblMaintenanceAccess.Text" xml:space="preserve">
+	<value>Maintenance Access</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Name" xml:space="preserve">
+	<value>lblMaintenanceAccess</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="lblPasswordGroup.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblPasswordGroup.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblPasswordGroup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblPasswordGroup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 134</value>
+  </data>
+  <data name="lblPasswordGroup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>53, 13</value>
+  </data>
+  <data name="lblPasswordGroup.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblPasswordGroup.Text" xml:space="preserve">
+	<value>Password</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Name" xml:space="preserve">
+	<value>lblPasswordGroup</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
   <metadata name="FaceImages.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>17, 17</value>
   </metadata>
@@ -578,7 +578,7 @@
 		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
 		LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
 		ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADk
-		BwAAAk1TRnQBSQFMAwEBAAEEAQABBAEAARABAAEQAQAE/wEJAQAI/wFCAU0BNgEEBgABNgEEAgABKAMA
+		BwAAAk1TRnQBSQFMAwEBAAEMAQABDAEAARABAAEQAQAE/wEJAQAI/wFCAU0BNgEEBgABNgEEAgABKAMA
 		AUADAAEQAwABAQEAAQgGAAEEGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHAAdwBwAEA
 		AfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANCAQADOQEA
 		AYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/ATMDAAFm
@@ -962,9 +962,6 @@
   <data name="&gt;&gt;clbFeatures.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="lblSelectFeatures.AccessibleDescription" xml:space="preserve">
-	<value />
-  </data>
   <data name="lblSelectFeatures.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -995,9 +992,6 @@
   <data name="&gt;&gt;lblSelectFeatures.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="cboApplication.ItemHeight" type="System.Int32, mscorlib">
-	<value>15</value>
-  </data>
   <data name="cboApplication.Location" type="System.Drawing.Point, System.Drawing">
 	<value>80, 44</value>
   </data>
@@ -1011,7 +1005,7 @@
 	<value>cboApplication</value>
   </data>
   <data name="&gt;&gt;cboApplication.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboApplication.Parent" xml:space="preserve">
 	<value>tabFeatures</value>
@@ -1322,9 +1316,6 @@
   <data name="lvwUsers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="user.Text" xml:space="preserve">
-	<value />
-  </data>
   <data name="user.Width" type="System.Int32, mscorlib">
 	<value>1000</value>
   </data>
@@ -1391,8 +1382,8 @@
   <data name="$this.AccessibleName" xml:space="preserve">
 	<value>User Properties</value>
   </data>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>634, 484</value>

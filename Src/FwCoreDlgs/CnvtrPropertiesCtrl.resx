@@ -258,9 +258,6 @@
   <data name="cboConversion.HelpString" xml:space="preserve">
 	<value>Specifies the encoding of the data before and after conversion.</value>
   </data>
-  <data name="cboConversion.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboConversion.Location" type="System.Drawing.Point, System.Drawing">
 	<value>5, 168</value>
   </data>
@@ -387,9 +384,6 @@
   <data name="cboConverter.HelpString" xml:space="preserve">
 	<value>Specifies what type of converter it is. The type specified changes the contents of the next dropdown list.</value>
   </data>
-  <data name="cboConverter.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboConverter.Location" type="System.Drawing.Point, System.Drawing">
 	<value>5, 74</value>
   </data>
@@ -419,9 +413,6 @@
   </data>
   <data name="cboSpec.HelpString" xml:space="preserve">
 	<value>Specifies the actual encoding converter.</value>
-  </data>
-  <data name="cboSpec.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cboSpec.Location" type="System.Drawing.Point, System.Drawing">
 	<value>5, 120</value>

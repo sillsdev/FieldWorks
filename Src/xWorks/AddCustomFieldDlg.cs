@@ -90,11 +90,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// create member variables
 			m_mediator = mediator;
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
 			InitializeComponent();		// form required method
 			AccessibleName = GetType().Name;
+			StartPosition = FormStartPosition.CenterParent;
 
 			m_fieldsLabel.Tag = m_fieldsLabel.Text;	// Localizes Tag!
 

@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using System.Diagnostics;
 
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly RestoreProjectSettings m_settings;
 		private readonly string m_fmtUseOriginalName;
-		private OpenFileDialog m_openFileDlg;
+		private OpenFileDialogAdapter m_openFileDlg;
 		private char[] m_invalidCharArray;
 
 		#endregion
@@ -250,7 +251,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_openFileDlg == null)
 			{
-				m_openFileDlg = new OpenFileDialog();
+				m_openFileDlg = new OpenFileDialogAdapter();
 				m_openFileDlg.CheckFileExists = true;
 				m_openFileDlg.InitialDirectory = DirectoryFinder.DefaultBackupDirectory;
 				m_openFileDlg.RestoreDirectory = true;
