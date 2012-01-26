@@ -669,9 +669,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
 		{
-			if (string.IsNullOrEmpty(GenTemplateSettings.Folder))
-				GenTemplateSettings.Folder = m_defaultLcfFolder;
-			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName,
+			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName, m_defaultLcfFolder,
 				GenTemplateSettings, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)

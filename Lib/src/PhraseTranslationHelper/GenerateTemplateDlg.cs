@@ -50,8 +50,9 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Initializes a new instance of the <see cref="T:GenerateTemplateDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal GenerateTemplateDlg(string projectName, GenerateTemplateSettings settings,
-			IEnumerable<int> canonicalBookIds, IEnumerable<KeyValuePair<string, string>> sections)
+		internal GenerateTemplateDlg(string projectName, string defaultLcfFolder,
+			GenerateTemplateSettings settings, IEnumerable<int> canonicalBookIds,
+			IEnumerable<KeyValuePair<string, string>> sections)
 		{
 			InitializeComponent();
 			m_chkEnglishQuestions.Tag = btnChooseEnglishQuestionColor;
@@ -67,7 +68,9 @@ namespace SILUBS.PhraseTranslationHelper
 			LoadBooks(canonicalBookIds);
 			LoadSectionCombos(sections);
 
-			if (settings != null)
+			if (settings == null)
+				m_lblFolder.Text = defaultLcfFolder;
+			else
 			{
 				switch (settings.Range)
 				{

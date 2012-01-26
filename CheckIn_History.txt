@@ -5706,3 +5706,8 @@ GordonM, 25 Jan 2012. Changes to FixFwDataDll and tests project files, so tests 
 JohnT, 25 Jan 2012. Enhanced handling of incoming links to support figuring out a suitable default tool for most object types.
 	Later: Reverted 37331. This needs more investigation (the original purpose was not clear) but it was breaking tests.
 EberhardB, 26 Jan 2012. Integration Calgary/WW -> WW.
+BogleT, 26 Jan 2012.
+	TXL-84, TXL-86: Added more key term rules toprevent unhelpful matches. Did additional clean-up of questions, and added and
+		cleaned up some alternate forms for a few questions.  Enhanced the porter stemmer to prevent some bogus stemmings.
+	TE-9485, TE-9513: Fixed a few English glosses for key terms.
+	TXL-95: Fixed crash (Null reference exception) when a user tries to open dialog to generate checking script template for the first time
