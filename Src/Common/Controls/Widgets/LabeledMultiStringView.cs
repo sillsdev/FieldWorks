@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using System.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -182,7 +183,19 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.LangProject.LinkedFilesRootDir);
 					Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
-					path = Path.Combine(mediaDir, filename);
+					path = Path.Combine(mediaDir, filename.Normalize(NormalizationForm.FormC));
+
+					// Windows in total defiance of the Unicode standard does not consider alternate normalizations
+					// of file names equal. The name in our string will always be NFD. From 7.2.2 we are saving files
+					// in NFC, but files from older versions could be NFD, so we need to check both. This is not
+					// foolproof...don't know any way to look for all files that might exist with supposedly equivalent
+					// names not normalized at all.
+					if (!File.Exists(path))
+					{
+						var tryPath = path.Normalize(NormalizationForm.FormD);
+						if (File.Exists(tryPath))
+							path = tryPath;
+					}
 				}
 				soundFieldControl.Path = path;
 				soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
@@ -270,8 +283,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			string filename;
 			do
 			{
-
-				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + obj.ShortName, "wav");
+				//WeSay and most other programs use NFC for file names, so we'll standardize on this.
+				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + obj.ShortName.Normalize(NormalizationForm.FormC), "wav");
 				foreach (var c in Path.GetInvalidFileNameChars())
 					filename = filename.Replace(c, '_');
 				path = Path.Combine(mediaDir, filename);
