@@ -41,3 +41,4 @@ TomB, 24 Jan 2012. Integrated fixes for the following issues:
 JohnW, 25 Jan 2012. LT-12609: reduced memory usage when sorting entire fwdata file when opening.
 KenZ, 26 Jan 2012. Fixed unreliable audio sound icon LT-12551.
 KenZ, 26 Jan 2012. Set version number to 7.2.2
+JohnT, 26 Jan 2012. LT-12554, Bulk Edit goes blank until restart
