@@ -241,8 +241,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_filter.FilteredBooks = new[] { m_scr.ScriptureBooksOS[0], m_scr.ScriptureBooksOS[2] };
 			ScrReference start, end;
 			m_filter.GetRefRangeForContiguousBooks(out start, out end);
-			Assert.AreEqual(ScrReference.Empty, start);
-			Assert.AreEqual(ScrReference.Empty, end);
+			Assert.AreEqual(0, start.BBCCCVVV);
+			Assert.AreEqual(m_scr.Versification, start.Versification);
+			Assert.AreEqual(0, end.BBCCCVVV);
+			Assert.AreEqual(m_scr.Versification, end.Versification);
 		}
 	}
 }

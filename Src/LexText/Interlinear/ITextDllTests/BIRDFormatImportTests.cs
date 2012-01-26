@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.IText
 		public void ValidateFlexTextFile()
 		{
 			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
-			string file = Path.Combine(path, "FlexTextExportOutput.xml");
+			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			XmlDocument doc = new XmlDocument();
 			doc.Load(file);
 
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.IText
 		public void ImportParatextExportBasic()
 		{
 			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
-			string file = Path.Combine(path, "FlexTextExportOutput.xml");
+			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);

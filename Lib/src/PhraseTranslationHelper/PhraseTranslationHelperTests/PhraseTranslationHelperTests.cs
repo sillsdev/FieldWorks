@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Utils;
@@ -86,7 +87,7 @@ namespace SILUBS.PhraseTranslationHelper
 				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
-			pth.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, true);
+			pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, true);
 
 			Assert.AreEqual("D", pth[0].Reference);
 			Assert.AreEqual("C", pth[1].Reference);
@@ -95,7 +96,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("F", pth[4].Reference);
 			Assert.AreEqual("A", pth[5].Reference);
 
-			pth.Sort(PhraseTranslationHelper.SortBy.OriginalPhrase, false);
+			pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, false);
 
 			Assert.AreEqual("A", pth[0].Reference);
 			Assert.AreEqual("F", pth[1].Reference);
@@ -277,19 +278,59 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("F", pth[0].Reference);
 			Assert.AreEqual("B", pth[1].Reference);
 			Assert.AreEqual("E", pth[2].Reference);
 
-			pth.Filter("what is Pau", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("what is Pau", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(0, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("what is Paul", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("what is Paul", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("B", pth[0].Reference);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering phrases textually with the whole-word-match option
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredTextually_WholeWordMatch_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", 1, 4);
+			AddMockedKeyTerm("Paul", 1, 2, 5);
+			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
+			AddMockedKeyTerm("say", 1, 2, 5);
+
+			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			tp2.IsExcluded = true;
+			tp6.IsExcluded = true;
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual(tp5, pth[0]);
+
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, true);
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual(tp5, pth[0]);
+			Assert.AreEqual(tp2, pth[1]);
+			Assert.AreEqual(tp6, pth[2]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -316,7 +357,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
@@ -348,7 +389,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("[", false, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("[", false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("A", pth[0].Reference);
 		}
@@ -377,7 +418,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("finkelsteins", true, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter("finkelsteins", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(0, pth.Phrases.Count(), "Wrong number of phrases in helper");
 		}
 
@@ -406,7 +447,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"));
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("B", pth[0].Reference);
@@ -414,8 +455,49 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("E", pth[2].Reference);
 
 			// Now remove the ref filter
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering by ref
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredOnlyByRef_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", 1, 4);
+			AddMockedKeyTerm("Paul", 1, 2, 5);
+			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
+			AddMockedKeyTerm("say", 1, 2, 5);
+
+			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			tp4.IsExcluded = true;
+			tp5.IsExcluded = true;
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6 },
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
+			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
+			Assert.AreEqual(tp2, pth[0]);
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
+				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), true);
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
+			Assert.AreEqual(tp2, pth[0]);
+			Assert.AreEqual(tp4, pth[1]);
+			Assert.AreEqual(tp5, pth[2]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -442,7 +524,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -450,6 +532,47 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual("C", pth[1].Reference);
 			Assert.AreEqual("E", pth[2].Reference);
 			Assert.AreEqual("F", pth[3].Reference);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering for phrases where all key terms have renderings
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrasesFilteredByKeyTerms_WithRenderings_IncludeExcluded()
+		{
+			AddMockedKeyTerm("God", (string)null);
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have", (string)null);
+			AddMockedKeyTerm("say");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0) { IsExcluded = true },       // God & have don't have renderings
+				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0) { IsExcluded = true },
+				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
+				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
+				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0) { IsExcluded = true },
+				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
+			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual("C", pth[0].Reference);
+			Assert.AreEqual("F", pth[1].Reference);
+
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, true);
+			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+			Assert.AreEqual("A", pth[0].Reference); // Even though there is an unrendered term, this phrase gets included because we don't actually parse excluded phrases to look for key term matches.
+			Assert.AreEqual("B", pth[1].Reference);
+			Assert.AreEqual("C", pth[2].Reference);
+			Assert.AreEqual("E", pth[3].Reference);
+			Assert.AreEqual("F", pth[4].Reference);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -476,7 +599,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null);
+			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -509,7 +632,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null);
+			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("F", pth[0].Reference);
@@ -542,7 +665,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings,
-				((start, end, sref) => start < 6));
+				((start, end, sref) => start < 6), false);
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			Assert.AreEqual("E", pth[0].Reference);
@@ -573,7 +696,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null);
+			pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
 
@@ -2357,6 +2480,47 @@ namespace SILUBS.PhraseTranslationHelper
 				new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
 
 			Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering selection rule based on the (English) suffix causes
+		/// the correct vernacular rendering to be inserted into the translation template. In
+		/// this test, there are multiple renderings which conform to the rendering selection
+		/// rule -- we want the one that is also the default rendering for the term.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule_PreferDefault()
+		{
+			AddMockedKeyTerm("magician", "mago", new[] { "brujo" });
+			AddMockedKeyTerm("servant", "criado", new[] { "siervo" });
+			AddMockedKeyTerm("heal", "sanara\u0301", new[] { "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado" });
+
+			TranslatablePhrase phrase1 = new TranslatablePhrase("Will the servant be healed?");
+			TranslatablePhrase phrase2 = new TranslatablePhrase("Will the magician be healed?");
+
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+			Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+
+			phrase1.Translation = "\u00BFSe curara\u0301 el siervo?";
+
+			Assert.IsFalse(phrase2.HasUserTranslation);
+			Assert.AreEqual("\u00BFSe sanara\u0301 el mago?", phrase2.Translation);
+
+			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+				new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
+
+			Dictionary<Word, List<KeyTermMatch>> keyTermsTable =
+				(Dictionary<Word, List<KeyTermMatch>>)ReflectionHelper.GetField(pth, "m_keyTermsTable");
+
+			keyTermsTable["heal"].First().BestRendering = "curara\u0301";
+
+			Assert.AreEqual("\u00BFSe curara\u0301 el mago?", phrase2.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------

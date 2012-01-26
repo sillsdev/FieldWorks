@@ -940,10 +940,18 @@ VwNotifier::UpdateType VwNotifier::UpdateLazyProp(VwBox * & pboxFirst, VwBox * &
 	HvoVec vhvoInsItems;
 	for (int ihvo = ihvoMin; ihvo < ihvoMin + chvoIns; ihvo++)
 	{
-		HVO hvoItem;
-		CheckHr(psda->get_VecItem(m_hvo, tag, ihvo, &hvoItem));
-		vhvoInsItems.Push(hvoItem);
+		int iDisplayIndex;
+		CheckHr(psda->GetDisplayIndex(m_hvo, tag, ihvo, &iDisplayIndex));
+		if (iDisplayIndex >= 0)
+		{
+			HVO hvoItem;
+			CheckHr(psda->get_VecItem(m_hvo, tag, iDisplayIndex, &hvoItem));
+			vhvoInsItems.Push(hvoItem);
+		}
+		else
+			return kutFail;	// item being updated is no longer displayed, will need to rebuild display
 	}
+
 	NotifierMap * pmmboxqnote;
 	prootb->GetNotifierMap(&pmmboxqnote);
 

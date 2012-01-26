@@ -99,6 +99,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+		protected override bool CanInsert(Command command, Slice currentSlice, out int index)
+		{
+			if (base.CanInsert(command, currentSlice, out index))
+			{
+				switch (command.Id)
+				{
+					case "CmdDataTree-Insert-POS-AffixSlot":
+					case "CmdDataTree-Insert-POS-AffixTemplate":
+					case "CmdDataTree-Insert-POS-InflectionClass":
+						return false;
+					default:
+						return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>

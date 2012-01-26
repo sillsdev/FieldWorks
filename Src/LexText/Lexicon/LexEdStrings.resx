@@ -487,4 +487,11 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="ksAddAComplexForm" xml:space="preserve">
 	<value>Add a Complex Form...</value>
   </data>
+  <data name="kProblemImportWhileMerging" xml:space="preserve">
+	<value>FieldWorks was unable to import the LIFT file {0} that resulted from merging remote changes. Remote changes have NOT been received into this project. This may indicate corruption of the LIFT file, or possibly a bug in Language Explorer. The following message may provide more details of what went wrong: {1}</value>
+  </data>
+  <data name="kProblemMerging" xml:space="preserve">
+	<value>Problem merging remote changes</value>
+	<comment>Dialog caption</comment>
+  </data>
 </root>

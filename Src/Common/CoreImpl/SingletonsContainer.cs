@@ -48,12 +48,6 @@ namespace SIL.CoreImpl
 			{
 				m_lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 				m_SingletonsToDispose = new Dictionary<string, IDisposable>();
-				Application.ApplicationExit += OnApplicationExit;
-			}
-
-			private void OnApplicationExit(object sender, EventArgs e)
-			{
-				DisposeSingletons();
 			}
 
 			/// ------------------------------------------------------------------------------------
@@ -68,8 +62,6 @@ namespace SIL.CoreImpl
 						keyValuePair.Value.Dispose();
 
 					m_SingletonsToDispose.Clear();
-
-					Application.ApplicationExit -= OnApplicationExit;
 				}
 				finally
 				{
@@ -223,9 +215,12 @@ namespace SIL.CoreImpl
 		}
 
 		/// ------------------------------------------------------------------------------------
-		/// <summary>Releases this instance. To be used in tests.</summary>
+		/// <summary>Releases this instance. To only be used when application is exiting.
+		/// Tried using the Application.ApplicationExit event, but the timing of this was
+		/// wrong in some cases.
+		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static void Release()
+		public static void Release()
 		{
 			if (s_container != null)
 				s_container.DisposeSingletons();

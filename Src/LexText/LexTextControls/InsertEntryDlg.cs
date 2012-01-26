@@ -1336,8 +1336,10 @@ catch(Exception e)
 		private bool CheckMorphType()
 		{
 			string form = BestForm;
+			string originalForm = form;
 			int clsid;
 			IMoMorphType mmt = MorphServices.FindMorphType(m_cache, ref form, out clsid);
+			bool result;
 			switch (m_morphType.Guid.ToString())
 			{
 				// these cases are not handled by FindMorphType
@@ -1348,23 +1350,38 @@ catch(Exception e)
 				case MoMorphTypeTags.kMorphRoot:
 				case MoMorphTypeTags.kMorphParticle:
 				case MoMorphTypeTags.kMorphClitic:
-					return mmt.Guid == MoMorphTypeTags.kguidMorphStem || mmt.Guid == MoMorphTypeTags.kguidMorphPhrase;
+					result = mmt.Guid == MoMorphTypeTags.kguidMorphStem || mmt.Guid == MoMorphTypeTags.kguidMorphPhrase;
+					break;
 
 				case MoMorphTypeTags.kMorphBoundRoot:
-					return mmt.Guid == MoMorphTypeTags.kguidMorphBoundStem;
+					result = mmt.Guid == MoMorphTypeTags.kguidMorphBoundStem;
+					break;
 
 				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					return mmt.Guid == MoMorphTypeTags.kguidMorphSuffix;
+					result = mmt.Guid == MoMorphTypeTags.kguidMorphSuffix;
+					break;
 
 				case MoMorphTypeTags.kMorphPrefixingInterfix:
-					return mmt.Guid == MoMorphTypeTags.kguidMorphPrefix;
+					result = mmt.Guid == MoMorphTypeTags.kguidMorphPrefix;
+					break;
 
 				case MoMorphTypeTags.kMorphInfixingInterfix:
-					return mmt.Guid == MoMorphTypeTags.kguidMorphInfix;
+					result = mmt.Guid == MoMorphTypeTags.kguidMorphInfix;
+					break;
 
 				default:
-					return mmt.Equals(m_morphType);
+					result = mmt.Equals(m_morphType);
+					break;
 			}
+			if (result)
+				return true; // all is well.
+			// Pathologically the user may have changed the markers so that we cannot distinguish things that
+			// are normally distinct (e.g., LT-12378).
+			var expected = mmt.Prefix + form + mmt.Postfix;
+			if (expected == originalForm)
+				return true; // predicted form does not match, but the one the user chose would look the same.
+
+			return result;
 		}
 
 		/// <summary>

@@ -200,7 +200,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 
 				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), (int)m_clidDst);
-				IVwCacheDa cda = m_sda as IVwCacheDa;
 
 				m_rootb.DataAccess = m_sda;
 
@@ -293,8 +292,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						hvoStringObj = para.Hvo;
 					}
 					// Set its property m_flidStringProp to tssTyped. If it is multilingual, choose based on ghostWs.
-					CellarPropertyType typeString =
-						(CellarPropertyType)(mdc.GetFieldType(m_flidStringProp) & (int)CellarPropertyTypeFilter.VirtualMask);
+					var typeString = (CellarPropertyType)(mdc.GetFieldType(m_flidStringProp) &
+						(int)CellarPropertyTypeFilter.VirtualMask);
 					switch (typeString)
 					{
 						default:
@@ -344,9 +343,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// To be written.
 				foreach (Slice slice in datatree.Slices)
 				{
-					if (!StartsWith(slice.Key, key))
-						continue;
 					if (slice.Key.Length < key.Length + 2)
+						continue;
+					if (!StartsWith(slice.Key, key))
 						continue;
 					object nextKeyItem = slice.Key[key.Length]; // should be hvoNewObj
 					if (!(nextKeyItem is int))
@@ -408,8 +407,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// <summary>
 			/// We arrange to be called once when this slice should turn into a real object.
 			/// </summary>
-			/// <param name="sender"></param>
-			/// <param name="e"></param>
+			/// <param name="parameter"></param>
 			private bool SwitchToRealOnIdle(object parameter)
 			{
 				if (IsDisposed)
@@ -432,7 +430,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
 				// If grandParent is not a Slice, then we have to move up to the great-grandparent
 				// to find the Slice.
-				GhostStringSlice slice = Parent.Parent as GhostStringSlice; // Will also be disposed.
+				var slice = Parent.Parent as GhostStringSlice; // Will also be disposed.
 				if (slice == null)
 					slice = Parent.Parent.Parent as GhostStringSlice; // Will also be disposed.
 
@@ -441,7 +439,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int flidEmptyProp = m_flidEmptyProp;
 				int flidStringProp = m_flidStringProp;
 				int wsToCreate = m_wsToCreate;
-				DataTree datatree = slice.ContainingDataTree;
+				var datatree = slice.ContainingDataTree;
 				ITsString tssTyped;
 				int ich, hvo, tag, ws;
 				bool fAssocPrev;

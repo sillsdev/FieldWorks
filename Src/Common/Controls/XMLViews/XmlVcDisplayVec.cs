@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private int ApplyFilterToSequence(ref int[] rghvo)
 		{
-			rghvo = m_viewConstructor.FilterAndSortListByGuidMap(rghvo, m_hvo);
+			rghvo = m_viewConstructor.FilterAndSortListByComplexFormType(rghvo, m_hvo);
 			var chvo = rghvo.Length;
 			if (chvo == 0)
 			{

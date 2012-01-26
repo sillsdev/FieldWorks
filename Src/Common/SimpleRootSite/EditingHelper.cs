@@ -1161,6 +1161,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 			Callbacks.WsPending = -1; // using these keys suppresses prior input lang change.
+			// sets the arrow direction to physical or logical based on LTR or RTL
 			EditingHelper.CkBehavior nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
 
 			int retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, (int)nFlags);

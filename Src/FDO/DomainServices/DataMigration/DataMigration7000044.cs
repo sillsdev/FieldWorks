@@ -172,20 +172,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					bool changedFile = false;
 					foreach (var elt in layout.XPathSelectElements("//*[@ws]"))
 					{
-						var attr = elt.Attribute("ws");
-						var oldTag = attr.Value;
-						var prefix = "";
-						if (oldTag.StartsWith("$ws="))
-						{
-							prefix = "$ws=";
-							oldTag = oldTag.Substring(prefix.Length);
-						}
-						string newTag;
-						if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(oldTag, out newTag))
-						{
-							changedFile = true;
-							attr.Value = prefix + newTag;
-						}
+						changedFile |= FixWsAtttribute(elt.Attribute("ws"));
+					}
+					foreach (var elt in layout.XPathSelectElements("//*[@visibleWritingSystems]"))
+					{
+						changedFile |= FixWsAtttribute(elt.Attribute("visibleWritingSystems"));
 					}
 					if (changedFile)
 					{
@@ -228,6 +219,37 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					}
 				}
 			}
+		}
+
+		// Replace any updated writing systems in the attribute value.
+		// Handles an input which may begin with $ws= and/or may have multiple WSs separated by comma.
+		private bool FixWsAtttribute(XAttribute attr)
+		{
+			bool changedFile = false;
+			var oldTag = attr.Value;
+			var prefix = "";
+			if (oldTag.StartsWith("$ws="))
+			{
+				prefix = "$ws=";
+				oldTag = oldTag.Substring(prefix.Length);
+			}
+			string combinedTags = "";
+			foreach (string input in oldTag.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				string convertedTag;
+				string outputTag = input;
+				if (WritingSystemServices.GetMagicWsIdFromName(oldTag) == 0 && TryGetNewTag(input, out convertedTag))
+				{
+					changedFile = true;
+					outputTag = convertedTag;
+				}
+				if (combinedTags != "")
+					combinedTags += ",";
+				combinedTags += outputTag;
+			}
+			if (changedFile)
+				attr.Value = prefix + combinedTags;
+			return changedFile;
 		}
 
 		private void ReplaceWsIdInValue(XElement elt, string pattern, ref bool changedFile)

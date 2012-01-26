@@ -468,26 +468,11 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
 					if (entry == null)
-					{
 						return;
-					}
 					entries = new List<ILexEntry>(1);
 					entries.Add(entry);
 				}
-
-				DisposeCurrentModalForm();
-				using (SummaryDialogForm sdform =
-					   new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf, helpProvider,
-											 helpFileKey,
-											 styleSheet, cache, mediator))
-				{
-					SetCurrentModalForm(sdform);
-					if (owner == null)
-						sdform.StartPosition = FormStartPosition.CenterScreen;
-					sdform.ShowDialog(owner);
-					if (!sdform.IsDisposed && sdform.ShouldLink)
-						sdform.LinkToLexicon();
-				}
+				DisplayEntriesRecursive(cache, owner, mediator, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 			}
 			finally
 			{
@@ -495,7 +480,34 @@ namespace SIL.FieldWorks.FdoUi
 				if (fRestore)
 					mediator.StringTbl = stOrig;
 			}
+		}
 
+		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
+			Mediator mediator, IVwStylesheet stylesheet,
+			IHelpTopicProvider helpProvider, string helpFileKey,
+			List<ILexEntry> entries, ITsString tssWf)
+		{
+			DisposeCurrentModalForm();
+			ILexEntry otherBtnResult;
+			using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
+										 helpProvider, helpFileKey,
+										 stylesheet, cache, mediator))
+			{
+				SetCurrentModalForm(sdform);
+				if (owner == null)
+					sdform.StartPosition = FormStartPosition.CenterScreen;
+				sdform.ShowDialog(owner);
+				if (!sdform.IsDisposed && sdform.ShouldLink)
+					sdform.LinkToLexicon();
+				otherBtnResult = sdform.OtherResult;
+			}
+			if (otherBtnResult == null)
+				return;
+			// SummaryDialogForm will be disposed by now, but we need to show it again.
+			DisplayEntriesRecursive(cache, owner, mediator, stylesheet,
+									helpProvider, helpFileKey,
+									new List<ILexEntry> { otherBtnResult },
+									otherBtnResult.HeadWord);
 		}
 
 		/// <summary>

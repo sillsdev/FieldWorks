@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// For LT-12274. "Fr-Tech 30Oct" should convert to qaa-x-Fr-Tech30Oct.
+		/// For LT-12274. "Fr-Tech 30Oct" should convert to qaa-x-Fr-Tech30Oc.
 		/// (Fr-x-Tech-30Oct or Fr-Qaaa-x-Tech-30Oct might be better, but this is last-resort handling for a code we don't really understand;
 		/// main thing is the result is a valid code that is recognizably derived from the original.
 		/// </summary>
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IWritingSystem ws;
 			Assert.That(WritingSystemServices.FindOrCreateSomeWritingSystem(Cache, "Fr-Tech 30Oct", true, false, out ws), Is.False);
-			Assert.That(ws.Id, Is.EqualTo("qaa-x-Fr-Tech30Oct"));
+			Assert.That(ws.Id, Is.EqualTo("qaa-x-Fr-Tech30Oc")); //8 characters is the maximum allowed for a part.
 		}
 
 		/// <summary>

@@ -72,10 +72,25 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		/// This is used in situations like switching views. In such cases we should force a reload.
+		/// </summary>
+		/// <returns></returns>
+		protected override bool NeedToReloadList()
+		{
+			return base.NeedToReloadList() || reloadRequested;
+		}
+
 		public override void ChangeSorter(RecordSorter sorter)
 		{
 			RequestRefresh();
 			base.ChangeSorter(sorter);
+		}
+
+		public override void ForceReloadList()
+		{
+			RequestRefresh();
+			base.ForceReloadList();
 		}
 
 		/// <summary>
@@ -85,8 +100,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (selectionChanged || CurrentIndex == -1)
 			{
+				reloadRequested = selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
 				base.ReloadList();
-				reloadRequested = selectionChanged = false;
 			}
 			else
 			{

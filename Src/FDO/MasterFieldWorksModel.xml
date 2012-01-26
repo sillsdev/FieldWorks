@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	Executive Summary: Almost all changes in this file require a new version number even if
-	  extant data does not change.
-	Exceptions are:
+  WARNING 1: Don't even think of not bumping up the version number,
+	unless you are ONLY doing one, or more, of the following three exceptions.
+	ALL other changes to this file REQUIRE a change of the 'version' attribute of the main "EntireModel" element
+	to the next higher number.
+
+	If the model changes do not require a formal data migration in the C# code, you MUST then add the 'do-nothing'
+	data migration to the system in C#.
+	The ONLY exceptions to incrementing the version number are:
 	  1) Add/remove/modify optional <comment> and <notes> elements,
 	  2) Add/remove/modify regular xml comments, and
 	  3) Add stuff that only affects the code generator
+		(e.g., optional singleton attribute added to class element and to the code generator)
 
-	Comments and notes:
+  WARNING 2: You should be using a schema-aware editor, when you edit this file,
+	or you run the risk of leaving it in a state where it becomes invalid.
+	The schema this file is associated with is MasterFieldWorksModel.xsd,
+	and it is in the same folder as this file.
+
+   WARNING 3: Comments and notes within the model:
 	These *must* follow the MS code documentation conventions, with the following exceptions:
 	  1. Must be one or more <para> elements, and
 	  2. <para> elements must not have newlines in them. (The build will likely fail, otherwise.)
 
-	  The original version number was: 7000000. Be sure it has the right number of zeros after
-	  editing it.
-	  Don't forget to change the version number below this comment.
+The original version number was: 7000000. Be sure it has the right number of zeros after
+editing it.
 
-  Change History:
+Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  14 January 2012 (7000051): No actual model change. Change Guid id on LangProject to ensure it really is unique between different projects.
+  1 December 2011 (7000050): Add Speaker to Segment. (Only the do-nothing DM needed in C#.)
   17 November 2011 (7000049): Added CmMediaContainer, CmMediaURI classes, changed Segment to reference a CmMediaURI and include a begin and end time offset
 	Modified Text to include a CmMediaContainer, and elminated the soundfilelocation attribute no significant migration should be required, the removed attribute
 	is believed to have been unused.
@@ -130,7 +142,7 @@
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000049" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000051" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -209,14 +221,18 @@
 			<para>This string can be used to store the time offset into the mediaFile for the beginning of this segment.</para>
 			<para>Currently intended to hold ELAN information, not modified by FLEx as of Nov 2011 -NaylorJ.</para>
 		  </comment>
-		  <notes><para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para></notes>
+		  <notes>
+<para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para>
+</notes>
 		</basic>
 		<basic num="9" id="EndTimeOffset" sig="Unicode">
 		  <comment>
 			<para>This string can be used to store the time offset into the mediaFile for the end of this segment.</para>
 			<para>Currently intended to hold ELAN information, not modified by FLEx as of Nov 2011 -NaylorJ.</para>
 		  </comment>
-		  <notes><para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para></notes>
+		  <notes>
+<para>Type is string so ELAN could optionally store their timeslot concept: http://flexelan.blogspot.com/2011/11/proposed-schema.html#comment-form</para>
+</notes>
 		</basic>
 		<rel num="10" id="Speaker" card="atomic" sig="CmPerson">
 		  <comment>
@@ -1524,52 +1540,52 @@
 		</basic>
 	  </props>
 	</class>
-	 <class num="71" id="VirtualOrdering" abstract="false" abbr="vo" base="CmObject" depth="0" owner="none">
+	<class num="71" id="VirtualOrdering" abstract="false" abbr="vo" base="CmObject" depth="0" owner="none">
 	  <comment>
-		  <para>A virtual ordering is created when the user specifies a non-default order for a virtual property. It specifies the order of the items present in the specified virtual property of the specified source object at the time it was created. We arrange that at the time the virtual is read, it contains the correct items, starting with those the user has manually ordered, and followed by any extras in the default order.</para>
+		<para>A virtual ordering is created when the user specifies a non-default order for a virtual property. It specifies the order of the items present in the specified virtual property of the specified source object at the time it was created. We arrange that at the time the virtual is read, it contains the correct items, starting with those the user has manually ordered, and followed by any extras in the default order.</para>
 	  </comment>
 	  <props>
-		  <rel num="1" id="Source" card="atomic" sig="CmObject">
-			  <comment>
-				  <para>The object that has the virtual property whose order is being customized.</para>
-			  </comment>
-		  </rel>
-		  <basic num="2" id="Field" sig="Unicode">
-			  <comment>
-				  <para>The name of the virtual property whose order is being customized.</para>
-			  </comment>
-		  </basic>
-		  <rel num="3" id="Items" card="seq" sig="CmObject">
-			  <comment>
-				  <para>The values of the virtual property in the order the user desires. This list may become out of date. Items it contains not in the current computed value are ignored. Additional items in the virtual are included after the ordered ones.</para>
-			  </comment>
-		  </rel>
+		<rel num="1" id="Source" card="atomic" sig="CmObject">
+		  <comment>
+			<para>The object that has the virtual property whose order is being customized.</para>
+		  </comment>
+		</rel>
+		<basic num="2" id="Field" sig="Unicode">
+		  <comment>
+			<para>The name of the virtual property whose order is being customized.</para>
+		  </comment>
+		</basic>
+		<rel num="3" id="Items" card="seq" sig="CmObject">
+		  <comment>
+			<para>The values of the virtual property in the order the user desires. This list may become out of date. Items it contains not in the current computed value are ignored. Additional items in the virtual are included after the ordered ones.</para>
+		  </comment>
+		</rel>
 	  </props>
-	 </class>
-	<class num="72" id="CmMediaURI" abstract="false" abbr="media" base="CmObject" depth="0">
-		<comment>
-			<para>A class that holds the location and offset of a media file (video or audio)</para>
-			<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
-		</comment>
-		<props>
-			<basic num="1" id="MediaURI" sig="Unicode">
-			  <comment>
-				  <para>The location and offset of the media file, this should be a subset of the MediaFragment specification.</para>
-				  <para>see http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/ </para>
-				  <para>and discussions at http://flexelan.blogspot.com</para>
-			  </comment>
-			</basic>
-		</props>
 	</class>
-	<class num="73" id="CmMediaContainer" abstract="false" abbr="mediaContainer" base="CmObject" dpth="0">
-		<comment>
-			<para>This class collects any number of MediaURIs and provides an offset type to indicate how referring object offsets are connected.</para>
-			<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
-		</comment>
-		<props>
-			<basic num="1" id="OffsetType" sig="Unicode"/>
-			<owning num="2" id="MediaURIs" card="col" sig="CmMediaURI"/>
-		</props>
+	<class num="72" id="CmMediaURI" abstract="false" abbr="media" base="CmObject" depth="0">
+	  <comment>
+		<para>A class that holds the location and offset of a media file (video or audio)</para>
+		<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
+	  </comment>
+	  <props>
+		<basic num="1" id="MediaURI" sig="Unicode">
+		  <comment>
+			<para>The location and offset of the media file, this should be a subset of the MediaFragment specification.</para>
+			<para>see http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/ </para>
+			<para>and discussions at http://flexelan.blogspot.com</para>
+		  </comment>
+		</basic>
+	  </props>
+	</class>
+	<class num="73" id="CmMediaContainer" abstract="false" abbr="mediaContainer" base="CmObject" depth="0">
+	  <comment>
+		<para>This class collects any number of MediaURIs and provides an offset type to indicate how referring object offsets are connected.</para>
+		<para>Currently a placeholder for ELAN data, not modifiable or viewable in flex as of Nov 2011 -NaylorJ</para>
+	  </comment>
+	  <props>
+		<basic num="1" id="OffsetType" sig="Unicode"/>
+		<owning num="2" id="MediaURIs" card="col" sig="CmMediaURI"/>
+	  </props>
 	</class>
 
   </CellarModule>
@@ -1802,9 +1818,9 @@
 		  </comment>
 		</basic>
 		<basic num="15" id="ImportedBtCheckSum" sig="MultiUnicode">
-			<comment>
-			  <para>A checksum representing the last imported back translation version from an external source (e.g., Paratext) for each writing system</para>
-			</comment>
+		  <comment>
+			<para>A checksum representing the last imported back translation version from an external source (e.g., Paratext) for each writing system</para>
+		  </comment>
 		</basic>
 	  </props>
 	</class>
@@ -2403,7 +2419,7 @@
 			<para>A text (suitable for analysis in the Words/Texts tool) that is associated with this record. For example, the record may be a description of how it was obtained.</para>
 		  </comment>
 		</owning>
-	 </props>
+	  </props>
 	</class>
 	<class num="7" id="Reminder" abstract="false" abbr="rem" base="CmObject" depth="0">
 	  <comment>
@@ -2576,11 +2592,11 @@
 			<para>This property is empty for main entries. For variant and complex entries, one or more LexEntryRef is used to point to the major entries. One variant entry could apply to more than one main entry, so each one could have a separate LexEntryRef. It’s possible for an entry to be a complex entry as well as a variant. This could be represented by one or more LexEntryRefs. Some may want to order multiple entries in a particular way, so we have a sequence instead of a collection.</para>
 		  </comment>
 		</owning>
-		  <rel num="35" id="DoNotPublishIn" card="col" sig="CmPossibility">
-			  <comment>
-				  <para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
-			  </comment>
-		  </rel>
+		<rel num="35" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="3" id="ConstChartRow" abbr="ccr" abstract="false" base="CmObject" depth="0">
@@ -2612,11 +2628,11 @@
 		<basic num="2" id="Reference" sig="String"/>
 		<owning num="3" id="Translations" card="col" sig="CmTranslation"/>
 		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
-		  <rel num="5" id="DoNotPublishIn" card="col" sig="CmPossibility">
-			  <comment>
-				  <para>This property lists publications in which this example should not appear.</para>
-			  </comment>
-		  </rel>
+		<rel num="5" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this example should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="5" id="LexDb" abstract="false" abbr="ldb" base="CmMajorObject" depth="1" singleton="true">
@@ -2690,11 +2706,11 @@
 			<para>Saying</para>
 		  </comment>
 		</owning>
-		  <owning num="24" id="PublicationTypes" card="atomic" sig="CmPossibilityList">
-			  <comment>
-				  <para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
-			  </comment>
-		  </owning>
+		<owning num="24" id="PublicationTypes" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
 	<class num="6" id="ConstituentChartCellPart" abbr="cccp" abstract="true" base="CmObject" depth="0">
@@ -2829,11 +2845,11 @@
 		  </comment>
 		</basic>
 		<basic num="31" id="LiftResidue" sig="Unicode" big="true"/>
-		  <rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility">
-			  <comment>
-				  <para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
-			  </comment>
-		  </rel>
+		<rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="26" id="MoAdhocProhib" abstract="true" abbr="acp" base="CmObject" depth="0">
@@ -3744,7 +3760,9 @@
 		  </comment>
 		</basic>
 		<owning num="12" id="MediaFiles" card="atomic" sig="CmMediaContainer">
-			<comment>A container for media files which are associated with this text, and possibly referenced by segments in the text.</comment>
+		  <comment>
+			<para>A container for media files which are associated with this text, and possibly referenced by segments in the text.</para>
+		  </comment>
 		</owning>
 	  </props>
 	</class>
@@ -4839,12 +4857,12 @@
 			<para>This property is needed in the UI to know whether the current LexEntryRef should show up as a variant or a complex form. We currently use VariantTypes and ComplexFormTypes to determine this, but there are occasions when both of these are missing but we still need to show something in the UI. This integer will be used as an enum with 0 for variants and 1 for complex forms. We may later need to specify inflected forms and perhaps combinations of these.</para>
 		  </comment>
 		</basic>
-		  <rel num="9" id="ShowComplexFormsIn" card="seq" sig="CmObject">
-			  <comment>
-				  <para>The UI limits this to a sequence of LexEntry or LexSense. For variants, this field is unused.</para>
-				  <para>For complex entries, this field points to a subset of ComponentLexemes. The entries or senses in this property will list this item as a complex form (in a stem-based dictionary). For example, if ComponentLexemes has un, and known, and ShowComplexFormsIn only has known, then 'unknown' will be listed as a complex form of 'known' but not of 'un-'.</para>
-			  </comment>
-		  </rel>
+		<rel num="9" id="ShowComplexFormsIn" card="seq" sig="CmObject">
+		  <comment>
+			<para>The UI limits this to a sequence of LexEntry or LexSense. For variants, this field is unused.</para>
+			<para>For complex entries, this field points to a subset of ComponentLexemes. The entries or senses in this property will list this item as a complex form (in a stem-based dictionary). For example, if ComponentLexemes has un, and known, and ShowComplexFormsIn only has known, then 'unknown' will be listed as a complex form of 'known' but not of 'un-'.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="128" id="PhSegmentRule" abstract="false" abbr="segrule" base="CmObject" depth="0">
@@ -5100,9 +5118,9 @@
 		  </comment>
 		</owning>
 		<owning num="56" id="FilePathsInTsStrings" card="atomic" sig="CmFolder">
-			  <comment>
-				  <para>This contains one folder holding owning CmFile objects. The CmFolder is called "File paths in TsStrings" that holds all externalLink's to files found in TsStrings.</para>
-			  </comment>
+		  <comment>
+			<para>This contains one folder holding owning CmFile objects. The CmFolder is called "File paths in TsStrings" that holds all externalLink's to files found in TsStrings.</para>
+		  </comment>
 		</owning>
 		<owning num="154" id="PhFeatureSystem" card="atomic" sig="FsFeatureSystem">
 		  <comment>

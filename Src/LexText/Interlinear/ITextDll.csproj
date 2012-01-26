@@ -93,6 +93,10 @@
 	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
+	<Reference Include="FwControls, Version=7.2.0.15477, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="FwCoreDlgs, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
 	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
@@ -290,6 +294,7 @@
 	<Compile Include="InfoPane.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="InterAreaBookmark.cs" />
 	<Compile Include="InterlinDocChart.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -530,12 +535,6 @@
   </ItemGroup>
   <ItemGroup>
 	<Content Include="ZeroWidth.ico" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\Common\Controls\FwControls\FwControls.csproj">
-	  <Project>{2322C388-DD81-466A-B079-956B5524B9A9}</Project>
-	  <Name>FwControls</Name>
-	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

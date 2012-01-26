@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 
 				m_trailingTokens.Add(new Tuple<int, ITsString>(ichStartWordBL,
-														  m_baseline.Substring(ichStartWordBL, ichEndWordBL - ichStartWordBL)));
+									 m_baseline.Substring(ichStartWordBL, ichEndWordBL - ichStartWordBL)));
 			}
 			m_newAnalysisGroups.Add(canalysis); // note last group size
 		}
@@ -1150,8 +1150,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			for (int i = 0; i <= iTokenIndex; i++)
 			{
 				var token = m_trailingTokens[i].Item2;
-				//Decide whether we need to make a wordform or a punctuationForm
-				if (m_wordFinder.IsWordforming(m_trailingTokens[i].Item1))
+				var vernWid = TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, token);
+
+				//Decide whether we need to make a wordform or a punctuationForm)
+				// must be in a vernacular ws and be word forming characters
+				if (vernWid > -1 && m_wordFinder.IsWordforming(m_trailingTokens[i].Item1))
 				{
 					IWfiWordform wf;
 					if (!wwfRepo.TryGetObject(token, out wf))

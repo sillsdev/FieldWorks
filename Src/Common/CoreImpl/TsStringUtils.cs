@@ -1253,6 +1253,32 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Gets the first vernacular ws.
+		/// </summary>
+		/// <param name="vernWsVecImage">The vern ws vec image, like "seh pt mar-fonipa".</param>
+		/// <param name="wsf">The Writing System Factory.</param>
+		/// <param name="text">The text.</param>
+		/// <returns>
+		/// The first vernacular ws used in the text or -1 if none
+		/// </returns>
+		public static int GetFirstVernacularWs(string vernWsVecImage, ILgWritingSystemFactory wsf, ITsString text)
+		{
+			int wid = -1; // writing system id
+			for (int runSeq = 0; runSeq < text.RunCount; runSeq++)
+			{
+				wid = text.get_WritingSystem(runSeq);
+				var ws = wsf.get_EngineOrNull(wid);
+				if (ws != null)
+				{   // ws.Id is short like "en"
+					if (vernWsVecImage.IndexOf(ws.Id) >= 0)
+						break; // wid > -1
+				}
+				wid = -1;
+			}
+			return wid;
+		}
+
+		/// <summary>
 		/// Get the writing system of the specified run of a TsString.
 		/// </summary>
 		public static int GetWsOfRun(ITsString tss, int irun)

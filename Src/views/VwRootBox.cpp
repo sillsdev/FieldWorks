@@ -1287,6 +1287,16 @@ STDMETHODIMP VwRootBox::MakeTextSelInObj(int ihvoRoot, int cvsli, VwSelLevInfo *
 			qselRet = qselFirst;
 			pselRet = dynamic_cast<VwTextSelection *>(qselRet.Ptr());
 			pselRet->ExtendEndTo(pselLast);
+			// pathologically, when trying to select a whole object, it may have no content...
+			// for example, trying to select a whole object, where the whole object is an empty division.
+			// We then find typically that the first selection we can make after the start of the object is
+			// in the next object, while the last thing we can select before its end is at the end of the previous
+			// object. This is not a valid selection of the target object. One way to detect it is that the
+			// end-points of the selection are not in the expected order. Return a null selection in this case to indicate failure.
+			ComBool fResultHasEndBeforeAnchor;
+			CheckHr(pselRet->get_EndBeforeAnchor(&fResultHasEndBeforeAnchor));
+			if (fResultHasEndBeforeAnchor)
+				return S_OK;
 		}
 		if (fInstall)
 		{

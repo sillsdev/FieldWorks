@@ -62,7 +62,6 @@ namespace SIL.FieldWorks.IText
 			m_panelGloss = null;
 			m_panelTagging = null;
 			m_panelPrintView = null;
-			m_bookmark = null;
 
 			base.Dispose(disposing);
 		}

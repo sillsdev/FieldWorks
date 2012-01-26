@@ -19,10 +19,5 @@ namespace SIL.FieldWorks.IText
 		{
 			throw new NotImplementedException();
 		}
-
-		public override int Priority
-		{
-			get { return (int)ColleaguePriority.High; }
-		}
 	}
 }

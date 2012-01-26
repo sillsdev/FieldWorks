@@ -3385,7 +3385,7 @@ namespace SIL.FieldWorks.TE
 					GotoClosestPrecedingRef(targetRef, bookToLookFor);
 				}
 
-				return true;
+				return CurrentSelection != null;
 			}
 		}
 

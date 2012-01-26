@@ -95,6 +95,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			base.FixtureSetup();
 
+			SetupEverythingButBase();
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		protected void SetupEverythingButBase()
+		{
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -107,6 +115,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			DisposeEverythingButBase();
+
+			base.FixtureTeardown();
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		protected void DisposeEverythingButBase()
+		{
 			if (m_cache != null)
 			{
 				if (m_cache.ThreadHelper != null)
@@ -115,8 +133,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 			m_cache = null;
 			m_actionHandler = null;
-
-			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------

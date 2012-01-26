@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordClerk : IFWDisposable, IxCoreColleague, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
 	{
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
+		internal static int DefaultPriority = (int)ColleaguePriority.Medium;
 
 		protected string m_id;
 		protected Mediator m_mediator;
@@ -767,7 +768,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return (int)ColleaguePriority.Medium;
+				//RecordClerks apparently need to receive messages before the views, hence this fudge.
+				return DefaultPriority;
 			}
 		}
 
@@ -842,7 +844,7 @@ namespace SIL.FieldWorks.XWorks
 				m_rch.Fixup(false);		// no need to recursively update the list!
 			bool fReload = forceSort || m_list.NeedToReloadList();
 			if (fReload)
-				m_list.ReloadList();
+				m_list.ForceReloadList();
 		}
 
 		#endregion
@@ -1918,15 +1920,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string name = GetCorrespondingPropertyName(id);
 			var clerk = (RecordClerk)mediator.PropertyTable.GetValue(name);
-			// FWR-3171 Crash going between BulkEdit Reversal Entries and Reversal Indexes after deleting RIndex.
-			if (clerk != null)
-			{
-				Debug.Assert(clerk.OwningObject != null);
-				if (clerk.OwningObject == null || !clerk.OwningObject.IsValidObject)
-					return null;
-			}
 			return clerk;
 		}
+
 
 		/// <summary>
 		/// Stop notifications of prop changes
@@ -2294,7 +2290,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			JumpToIndex(m_list.IndexOf(jumpToHvo), suppressFocusChange);
+			var index = m_list.IndexOf(jumpToHvo);
+			if (index < 0)
+				return; // not found (maybe suppressed by filter?)
+			JumpToIndex(index, suppressFocusChange);
 		}
 
 		public void JumpToIndex(int index)

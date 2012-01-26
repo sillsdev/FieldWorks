@@ -49,7 +49,7 @@ namespace SILUBS.PhraseTranslationHelper
 			YieldPart = yieldPart;
 			m_phrase = phrase;
 
-			string phraseToParse = m_phrase.OriginalPhrase;
+			string phraseToParse = m_phrase.PhraseInUse;
 			foreach (KeyValuePair<Regex, string> substituteString in substituteStrings)
 				phraseToParse = substituteString.Key.Replace(phraseToParse, substituteString.Value);
 

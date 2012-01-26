@@ -672,6 +672,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					}
 				}
 			}
+			if (occurrence.BaselineWs == -1)
+				return null; // happens with empty translation lines
 			return GetBestGuess(occurrence.Analysis, occurrence.BaselineWs);
 		}
 

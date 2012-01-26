@@ -116,6 +116,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return null;
 		}
 
+		/// <summary>
+		/// Debugging code for investigating slice reuse bugs.
+		/// </summary>
 		internal void Report()
 		{
 			int total = 0;

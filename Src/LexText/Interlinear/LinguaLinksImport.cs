@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.AccessControl;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
@@ -202,12 +203,20 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
+		[Flags]
+		public enum ImportAnalysesLevel
+		{
+			Wordform,
+			WordGloss
+		}
+
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;
 			public Stream BirdData;
 			public int AllottedProgress;
 			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
+			public ImportAnalysesLevel AnalysesLevel;
 		}
 
 		/// <summary>
@@ -220,7 +229,7 @@ namespace SIL.FieldWorks.IText
 		{
 			bool retValue = false;
 			Debug.Assert(parameters.Length == 1);
-			using (var stream = new FileStream((string) parameters[0], FileMode.Open))
+			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
 			{
 				FDO.IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
@@ -269,7 +278,7 @@ namespace SIL.FieldWorks.IText
 							{
 								MergeTextWithBIRDDoc(ref newText, new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
 																						   Progress = progress,
-																						   CheckAndAddLanguages = options.CheckAndAddLanguages
+																						   ImportOptions = options
 								});
 							}
 							else if(newText == null)
@@ -278,10 +287,16 @@ namespace SIL.FieldWorks.IText
 								//must be added for the cache to be initialized which is necessary for its population
 								langProject.TextsOC.Add(newText);
 
-								if (!PopulateTextFromBIRDDoc(ref newText,
-									new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
-										Progress = progress, CheckAndAddLanguages = options.CheckAndAddLanguages })) //if the user aborted this text
+								if (!PopulateTextFromBIRDDoc(ref newText, new TextCreationParams
+									{
+										Cache = m_cache,
+										InterlinText = interlineartext,
+										Progress = progress,
+										ImportOptions = options
+									})) //if the user aborted this text
+								{
 									langProject.TextsOC.Remove(newText); //remove it from the list
+								}
 							}
 							else //user said do not merge.
 							{
@@ -289,9 +304,17 @@ namespace SIL.FieldWorks.IText
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 								langProject.TextsOC.Add(newText);
 								if (!PopulateTextFromBIRDDoc(ref newText,
-									new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
-										Progress = progress, CheckAndAddLanguages = options.CheckAndAddLanguages })) //if the user aborted this text
-									langProject.TextsOC.Remove(newText); //remove it from the list
+									new TextCreationParams
+									{
+										Cache = m_cache,
+										InterlinText = interlineartext,
+										Progress = progress,
+										ImportOptions = options
+									})) //if the user aborted this text
+								{
+									langProject.TextsOC.Remove(newText);  //remove it from the list
+								}
+
 							}
 						}
 						else
@@ -301,9 +324,16 @@ namespace SIL.FieldWorks.IText
 							langProject.TextsOC.Add(newText);
 
 							if (!PopulateTextFromBIRDDoc(ref newText,
-								new TextCreationParams { Cache = m_cache, InterlinText = interlineartext, Progress = progress,
-										CheckAndAddLanguages = options.CheckAndAddLanguages })) //if the user aborted this text
+								new TextCreationParams
+								{
+									Cache = m_cache,
+									InterlinText = interlineartext,
+									Progress = progress,
+									ImportOptions = options
+								})) //if the user aborted this text
+							{
 								langProject.TextsOC.Remove(newText); //remove it from the list
+							}
 						}
 						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
 						if (firstNewText == null)

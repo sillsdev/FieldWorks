@@ -66,7 +66,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = File.Exists(LiftBridgeDll);
+			// LT-11922 & LT-12053 show that we need the CodeDirectory here and it's better
+			// to use the FileUtils version of FileExists for cross-platform reasons.
+			var dllPath = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
+			display.Enabled = FileUtils.FileExists(dllPath);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
@@ -90,6 +93,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				try
 				{
+					// Send LangProj Guid to Lift Bridge.
+					var liftBridgeAsNewInterface = liftBridge as ILiftBridge3;
+					if (liftBridgeAsNewInterface != null)
+						liftBridgeAsNewInterface.LanguageProjectGuid = _cache.LanguageProject.Guid;
+
 					liftBridge.DoSendReceiveForLanguageProject(_parentForm, _databaseName);
 				}
 				finally
@@ -200,8 +208,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				//Palaso.Lift.Validation.Validator.CheckLiftWithPossibleThrow(outPath, prog);
 				return outPath;
 			}
-			catch
+			catch (Exception e)
 			{
+				//MessageBox.Show(e.Message, "What errors? Really?", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return null;
 			}
 		}
@@ -223,8 +232,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			NonUndoableUnitOfWorkHelper.Do(_cache.ActionHandlerAccessor, () =>
 			{
-				try
-				{
 					string sFilename;
 					var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 					if (fMigrationNeeded)
@@ -262,29 +269,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					progressDialog.Message = ResourceHelper.GetResourceString("kstidFixingRelationLinks");
 					flexImporter.ProcessPendingRelations(progressDialog);
 					sLogFile = flexImporter.DisplayNewListItems(liftPathname, cEntries);
-				}
-				catch (Exception error)
-				{
-					// TODO: SteveMc (RandyR): JohnH isn't excited about this approach to reporting an import error. It appears to be an analyst issue to sort out.
-					//var sMsg = String.Format(Resources.kProblemImportWhileMerging,
-					//                         liftPathname);
-					//try
-					//{
-					//    var bldr = new StringBuilder();
-					//    bldr.AppendFormat(Resources.kProblem, liftPathname);
-					//    bldr.AppendLine();
-					//    bldr.AppendLine(error.Message);
-					//    bldr.AppendLine();
-					//    bldr.AppendLine(error.StackTrace);
-					//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-					//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
-					//}
-					//catch
-					//{
-					//}
-					//MessageBox.Show(sMsg, Resources.kProblemMerging,
-					//                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
 			});
 			m_fRefreshNeeded = true;
 			return sLogFile;
@@ -319,11 +303,33 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					try
 					{
 						progressDlg.Title = ResourceHelper.GetResourceString("kstidImportLiftlexicon");
-						var logFile = (string)progressDlg.RunTask(true, ImportLexicon, new object[] { _liftPathname, mergeStyle });
+						var logFile = (string) progressDlg.RunTask(true, ImportLexicon, new object[] {_liftPathname, mergeStyle});
 						return logFile != null;
 					}
-					catch
+					catch (WorkerThreadException error)
 					{
+						// It appears to be an analyst issue to sort out how we should report this.
+						// LT-12340 however says we must report it somehow.
+						var sMsg = String.Format(LexEdStrings.kProblemImportWhileMerging, _liftPathname, error.InnerException.Message);
+						// RandyR says JohnH isn't excited about this approach to reporting an import error, that is, copy it to the
+						// clipboard (and presumably say something about it in kProblemImportWhileMerging).
+						// But it would be nice to get the details if it is a crash.
+						//try
+						//{
+						//    var bldr = new StringBuilder();
+						//    bldr.AppendFormat(Resources.kProblem, _liftPathname);
+						//    bldr.AppendLine();
+						//    bldr.AppendLine(error.Message);
+						//    bldr.AppendLine();
+						//    bldr.AppendLine(error.StackTrace);
+						//    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+						//        ClipboardUtils.SetDataObject(bldr.ToString(), true);
+						//}
+						//catch
+						//{
+						//}
+						MessageBox.Show(sMsg, LexEdStrings.kProblemMerging,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return false;
 					}
 					finally

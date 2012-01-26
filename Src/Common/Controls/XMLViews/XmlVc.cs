@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.Common.Controls
 			internal int Index { get; set; }
 		}
 
-		internal int[] FilterAndSortListByGuidMap(int[] hvos, int hvoTarget)
+		internal int[] FilterAndSortListByComplexFormType(int[] hvos, int hvoTarget)
 		{
 			if (hvos.Length == 0)
 				return hvos;

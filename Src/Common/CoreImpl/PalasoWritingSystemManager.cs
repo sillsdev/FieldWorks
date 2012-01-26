@@ -447,9 +447,36 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public IWritingSystem Set(string identifier)
 		{
+			bool dummy;
+			return Set(identifier, out dummy);
+		}
+
+		/// <summary>
+		/// Create the writing system. Typically we will create it, but we may have to modify the ID and then find
+		/// that there is an existing one. Set foundExisting true if so.
+		/// </summary>
+		/// <param name="identifier"></param>
+		/// <param name="foundExisting"></param>
+		/// <returns></returns>
+		private IWritingSystem Set(string identifier, out bool foundExisting)
+		{
 			lock (m_syncRoot)
 			{
+				foundExisting = false;
 				IWritingSystem ws = Create(identifier);
+				// Pathologically, the ws that Create chooses to create may not have the exact expected ID.
+				// For example, and id of x-kal will produce a new WS with Id qaa-x-kal.
+				// In such a case, we may already have a WS with the corrected ID. Set will then fail.
+				// So, in such a case, return the already-known WS.
+				if (identifier != ws.Id)
+				{
+					IWritingSystem wsExisting;
+					if (TryGet(ws.Id, out wsExisting))
+					{
+						foundExisting = true;
+						return wsExisting;
+					}
+				}
 				Set(ws);
 				return ws;
 			}
@@ -468,8 +495,9 @@ namespace SIL.CoreImpl
 			{
 				if (TryGet(identifier, out ws))
 					return true;
-				ws = Set(identifier);
-				return false;
+				bool foundExisting;
+				ws = Set(identifier, out foundExisting);
+				return foundExisting;
 			}
 		}
 
@@ -1036,10 +1064,16 @@ namespace SIL.CoreImpl
 					var variant = fwWs.VariantSubtag;
 					if (variant != null)
 					{
-						var variantName = variant.ToString();
-						if (variantName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							variantName = variantName.Substring(2);
-						fwWs.VariantName = variantName;
+						var stdVariant = LangTagUtils.GetVariantSubtag(variant.Code);
+						if (stdVariant.Name != null)
+							fwWs.VariantName = stdVariant.Name;
+						else
+						{
+							var variantName = variant.ToString();
+							if (variantName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								variantName = variantName.Substring(2);
+							fwWs.VariantName = variantName;
+						}
 					}
 				}
 				if (fwWs.RegionName == null)
@@ -1047,10 +1081,16 @@ namespace SIL.CoreImpl
 					var region = fwWs.RegionSubtag;
 					if (region != null)
 					{
-						var regionName = region.ToString();
-						if (regionName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							regionName = regionName.Substring(2);
-						fwWs.RegionName = regionName;
+						var stdRegion = LangTagUtils.GetRegionSubtag(region.Code);
+						if (stdRegion.Name != null)
+							fwWs.RegionName = stdRegion.Name;
+						else
+						{
+							var regionName = region.ToString();
+							if (regionName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								regionName = regionName.Substring(2);
+							fwWs.RegionName = regionName;
+						}
 					}
 				}
 				if (fwWs.ScriptName == null)
@@ -1058,10 +1098,16 @@ namespace SIL.CoreImpl
 					var script = fwWs.ScriptSubtag;
 					if (script != null)
 					{
-						var scriptName = script.ToString();
-						if (scriptName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							scriptName = scriptName.Substring(2);
-						fwWs.ScriptName = scriptName;
+						var stdScript = LangTagUtils.GetScriptSubtag(script.Code);
+						if (stdScript.Name != null)
+							fwWs.ScriptName = stdScript.Name;
+						else
+						{
+							var scriptName = script.ToString();
+							if (scriptName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								scriptName = scriptName.Substring(2);
+							fwWs.ScriptName = scriptName;
+						}
 					}
 				}
 				int lcid;

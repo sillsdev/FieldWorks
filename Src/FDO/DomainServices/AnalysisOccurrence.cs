@@ -104,6 +104,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// <summary>
 		/// Get the writing system which this occurrence has in the base text.
+		/// Can return -1 if this is really not an occurance, but an empty translation line.
 		/// Enhance JohnT: could make it slightly more efficient with a method on segment etc
 		/// to get the WS without making a substring.
 		/// </summary>
@@ -111,6 +112,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			get
 			{
+				if (!IsValid)
+					return -1; // might happen on an empty translation line.
 				return TsStringUtils.GetWsAtOffset(Paragraph.Contents, GetMyBeginOffsetInPara());
 			}
 		}
@@ -561,9 +564,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// Answer the end of the occurrence in the underlying paragraph.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>-1 if not a valid analysis, otherwise the end index</returns>
 		public virtual int GetMyEndOffsetInPara()
 		{
+			if (BaselineWs == -1) return -1; // happens with empty translation lines
 			return GetMyBeginOffsetInPara() + Analysis.GetForm(BaselineWs).Length;
 		}
 

@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.TE
 			//
 			this.AcceptButton = this.m_btnImport;
 			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.m_btnCancel;
 			this.ControlBox = false;
 			this.Controls.Add(this.m_lblDescription);

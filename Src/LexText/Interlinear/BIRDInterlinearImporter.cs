@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -16,6 +17,7 @@ namespace SIL.FieldWorks.IText
 		//this delegate is used for alerting the user of new writing systems found in the import
 		private delegate DialogResult ShowDialogAboveProgressbarDelegate(IThreadedProgress progress, string text, string title, MessageBoxButtons buttons);
 
+		private static ImportInterlinearOptions s_importOptions;
 
 		private static Dictionary<string, ILgWritingSystem> s_wsMapper = new Dictionary<string, ILgWritingSystem>();
 
@@ -41,28 +43,27 @@ namespace SIL.FieldWorks.IText
 			internal Interlineartext InterlinText;
 			internal FdoCache Cache;
 			internal IThreadedProgress Progress;
-			internal Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
+			internal ImportInterlinearOptions ImportOptions;
 		}
 
 		/// <summary>
 		/// This method will create a new Text document from the given BIRD format Interlineartext.
 		/// </summary>
 		/// <param name="newText">The text to populate, could be set to null.</param>
-		/// <param name="interlinText">The Interlineartext object from the BIRDDocument read from the xml file</param>
-		/// <param name="cache">The FdoCache to use when populating the text object</param>
-		/// <param name="progress">The progress bar, used to show error dialogs above other windows.</param>
+		/// <param name="textParams"></param>
 		private static bool PopulateTextFromBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
 		{
+			s_importOptions = textParams.ImportOptions;
 			Interlineartext interlinText = textParams.InterlinText;
 			FdoCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
-			if (textParams.CheckAndAddLanguages == null)
-				textParams.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
+			if (s_importOptions.CheckAndAddLanguages == null)
+				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
 			ILgWritingSystemFactory wsFactory = cache.WritingSystemFactory;
 			char space = ' ';
 			//handle the languages(writing systems) section alerting the user if new writing systems are encountered
-			if (!textParams.CheckAndAddLanguages(cache, interlinText, wsFactory, progress))
+			if (!s_importOptions.CheckAndAddLanguages(cache, interlinText, wsFactory, progress))
 				return false;
 
 			//handle the header(info or meta) information
@@ -129,16 +130,17 @@ namespace SIL.FieldWorks.IText
 
 		private static bool MergeTextWithBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
 		{
+			s_importOptions = textParams.ImportOptions;
 			Interlineartext interlinText = textParams.InterlinText;
 			FdoCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
-			if (textParams.CheckAndAddLanguages == null)
-				textParams.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
+			if (s_importOptions.CheckAndAddLanguages == null)
+				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
 			ILgWritingSystemFactory wsFactory = cache.WritingSystemFactory;
 			char space = ' ';
 			//handle the languages(writing systems) section alerting the user if new writing systems are encountered
-			if (!textParams.CheckAndAddLanguages(cache, interlinText, wsFactory, progress))
+			if (!s_importOptions.CheckAndAddLanguages(cache, interlinText, wsFactory, progress))
 				return false;
 
 			//handle the header(info or meta) information as well as any media-files sections
@@ -384,6 +386,7 @@ namespace SIL.FieldWorks.IText
 				IAnalysis modelWord = repoObj as IAnalysis;
 				if(modelWord != null)
 				{
+					UpgradeToWordGloss(word, ref modelWord);
 					newSegment.AnalysesRS.Add(modelWord);
 				}
 				else
@@ -510,6 +513,7 @@ namespace SIL.FieldWorks.IText
 				}
 				if (analysis != null)
 				{
+					UpgradeToWordGloss(word, ref analysis);
 					newSegment.AnalysesRS.Add(analysis);
 				}
 				else
@@ -529,6 +533,59 @@ namespace SIL.FieldWorks.IText
 					//        //fill in morpheme's stuff
 					//    }
 					//}
+				}
+			}
+		}
+
+		private static void UpgradeToWordGloss(Word word, ref IAnalysis analysis)
+		{
+			FdoCache cache = analysis.Cache;
+			var tsStrFactory = cache.ServiceLocator.GetInstance<ITsStrFactory>();
+			var wsFact = cache.WritingSystemFactory;
+			if (s_importOptions.AnalysesLevel == ImportAnalysesLevel.WordGloss)
+			{
+				var wordGlossItem = word.Items.Select(i => i).Where(i => i.type == "gls").FirstOrDefault();
+				if (wordGlossItem != null)
+				{
+					if (!wordGlossItem.analysisStatusSpecified ||
+						wordGlossItem.analysisStatus == analysisStatusTypes.humanApproved)
+					{
+						// first make sure that an existing gloss does not already exist. (i.e. don't add duplicate glosses)
+						int wsNewGloss = GetWsEngine(wsFact, wordGlossItem.lang).Handle;
+						ITsString newGlossTss = tsStrFactory.MakeString(wordGlossItem.Value,
+																		wsNewGloss);
+						var wfiWord = analysis.Wordform;
+						bool hasGlosses = wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any());
+						IWfiGloss matchingGloss = null;
+						if (hasGlosses)
+						{
+							matchingGloss =
+								wfiWord.AnalysesOC
+									.Select(
+										wfia =>
+										wfia.MeaningsOC.Where(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss)).FirstOrDefault())
+									.FirstOrDefault();
+						}
+
+						if (matchingGloss != null)
+							analysis = matchingGloss;
+						else
+						{
+							// TODO: merge with analysis having same morpheme breakdown (or at least the same stem)
+							var analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(wfiWord);
+							analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
+							// Make sure this analysis is marked as user-approved (green check mark)
+							cache.LangProject.DefaultUserAgent.SetEvaluation(analysisTree.WfiAnalysis, Opinions.approves);
+							// Create a morpheme form that matches the wordform.
+							var morphemeBundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+							var wordItem = word.Items.Select(i => i).Where(i => i.type == "txt").First();
+							int wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
+							analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
+							morphemeBundle.Form.set_String(wsWord, wordItem.Value);
+
+							analysis = analysisTree.Gloss;
+						}
+					}
 				}
 			}
 		}

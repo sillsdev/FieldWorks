@@ -44,6 +44,14 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
+		/// <summary>
+		/// Override to NOT display warning for tests.
+		/// </summary>
+		protected override void DisplayWarning()
+		{
+			// Do nothing.
+		}
+
 		#region protected methods we want to test
 
 		internal List<IConstChartRow> CallCollectEligRows(ChartLocation cell, bool fPrepose)

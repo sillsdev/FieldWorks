@@ -963,7 +963,7 @@ namespace XCore
 		/// <summary>
 		/// Get all of the elements in the given file that match our path.
 		/// </summary>
-		/// <param name="xdeFilePath">Path to one inventory file.</param>
+		/// <param name="inventoryFilePath">Path to one inventory file.</param>
 		/// <returns>A list of elements which should be inventory elements.</returns>
 		protected XmlNodeList LoadOneInventoryFile(string inventoryFilePath)
 		{
@@ -981,6 +981,42 @@ namespace XCore
 
 			}
 			return xdoc.SelectNodes(m_xpathElementsWanted);
+		}
+
+		/// <summary>
+		/// This method will save the given Nodes into the requested path, first it will remove all the existing nodes which match
+		/// the type that this inventory is representing. Then it will add the new data to the parent node of the first match.
+		/// </summary>
+		/// <param name="inventoryFilePath"></param>
+		/// <param name="newData"></param>
+		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XmlNode> newData)
+		{
+			XmlDocument xdoc = new XmlDocument();
+			try
+			{
+				xdoc.Load(inventoryFilePath);
+			}
+			catch (Exception error)
+			{
+				string x = string.Format(xCoreStrings.ErrorReadingXMLFile0, inventoryFilePath);
+				throw new ApplicationException(x, error);
+
+			}
+			var oldAndBusted = xdoc.SelectNodes(m_xpathElementsWanted);
+			if (oldAndBusted != null && oldAndBusted.Count > 0)
+			{
+				//get the parent of the nodes in the path
+				XmlElement root = oldAndBusted[0].ParentNode as XmlElement;
+				foreach (XmlNode match in oldAndBusted)
+				{
+					root.RemoveChild(match);
+				}
+				foreach (XmlNode newItem in newData)
+				{
+					root.AppendChild(root.OwnerDocument.ImportNode(newItem, true));
+				}
+				xdoc.Save(inventoryFilePath);
+			}
 		}
 
 		/// <summary>
@@ -1026,7 +1062,13 @@ namespace XCore
 				if (path == null)
 					continue;
 				var nodeList = LoadOneInventoryFile(path);
-				LoadNodeList(nodeList, version, root);
+				bool wasMerged;
+				List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged);
+				LoadNodeList(cleanedNodes, version, root);
+				if (wasMerged)
+				{
+					RefreshOneInventoryFile(path, cleanedNodes);
+				}
 			}
 		}
 
@@ -1040,12 +1082,57 @@ namespace XCore
 			var xdoc = new XmlDocument();
 			xdoc.LoadXml(input);
 			var nodeList = xdoc.SelectNodes(m_xpathElementsWanted);
-			LoadNodeList(nodeList, version, root);
+			bool wasMerged;
+			List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged);
+			LoadNodeList(cleanedNodes, version, root);
 		}
 
-
-		private void LoadNodeList(XmlNodeList nodeList, int version, XmlNode root)
+		/// <summary>
+		/// Take the collection of merged or retained nodes and insert them into our in memory document.
+		/// </summary>
+		/// <param name="nodeList"></param>
+		/// <param name="version"></param>
+		/// <param name="root"></param>
+		private void LoadNodeList(List<XmlNode> nodeList, int version, XmlNode root)
 		{
+			foreach (XmlNode node in nodeList)
+			{
+				NoteIfNodeWsTagged(node);
+				//if the version is the same then we want to use the basic AddNode to get it into the inventory
+				if(version == Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString())))
+				{
+					AddNode(node, root);
+					continue;
+				}
+				//set up the values for other options
+				string[] keyAttrs;
+				GetElementKey key = GetKeyMain(node, out keyAttrs);
+				XmlNode current;
+				//if the element table already has a match then we want to insert replacing the current value
+				if (m_getElementTable.TryGetValue(key, out current))
+				{
+					InsertNodeInDoc(node, current, m_mainDoc, key);
+				}
+				else //otherwise we are not going to attempt and replace any existing configurations
+				{
+					// We do NOT want this one to replace 'current', since it has a different name.
+					// We already know there is no matching node to replace.
+					InsertNodeInDoc(node, null, m_mainDoc, key);
+				}
+			}
+		}
+
+		/// <summary>
+		/// This method will return a list of merged and unchanged nodes from the given list.
+		/// </summary>
+		/// <param name="nodeList"></param>
+		/// <param name="version"></param>
+		/// <param name="wasMerged">This parameter will be set to true if any nodes were merged to the latest version</param>
+		/// <returns></returns>
+		private List<XmlNode> MergeAndUpdateNodes(XmlNodeList nodeList, int version, out bool wasMerged)
+		{
+			wasMerged = false;
+			List<XmlNode> survivors = new List<XmlNode>();
 			foreach(XmlNode node in nodeList)
 			{
 				// Load only nodes that either have matching version number or none.
@@ -1062,8 +1149,8 @@ namespace XCore
 					if (m_getElementTable.TryGetValue(key, out current))
 					{
 						XmlNode merged = Merger.Merge(current, node, m_mainDoc);
-						NoteIfNodeWsTagged(merged);
-						InsertNodeInDoc(merged, current, m_mainDoc, key);
+						survivors.Add(merged);
+						wasMerged = true;
 					}
 					else
 					{
@@ -1082,10 +1169,8 @@ namespace XCore
 								{
 									XmlNode merged = Merger.Merge(current, node, m_mainDoc);
 									XmlUtils.SetAttribute(merged, "name", copyName); // give it the name fro
-									NoteIfNodeWsTagged(merged);
-									// We do NOT want this one to replace 'current', since it has a different name.
-									// We already know there is no matching node to replace.
-									InsertNodeInDoc(merged, null, m_mainDoc, key);
+									survivors.Add(merged);
+									wasMerged = true;
 								}
 							}
 						}
@@ -1093,11 +1178,12 @@ namespace XCore
 				}
 				else if (fileVersion == version)
 				{
-					NoteIfNodeWsTagged(node);
-					AddNode(node, root);
+					survivors.Add(node);
 				}
 				// Otherwise it's an old-version node and we can't merge it, so ignore it.
+				// we should remove obsolete nodes to indicate the merge so don't add it to survivors
 			}
+			return survivors;
 		}
 
 		private void NoteIfNodeWsTagged(XmlNode node)

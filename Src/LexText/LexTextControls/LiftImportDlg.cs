@@ -285,6 +285,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
+						progressDlg.ThreadHelper.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
 						SIL.Utils.Logger.WriteEvent(bldr.ToString());
 				}
 				catch

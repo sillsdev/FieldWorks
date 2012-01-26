@@ -3166,8 +3166,8 @@ namespace SIL.FieldWorks.IText
 					m_caches.DataAccess.SetObjProp(m_hvoSbWord, ktagSbWordPos, hvoPos);
 					m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord,
 						ktagSbWordPos, 0, 1, WasReal());
+					m_sandbox.SelectIcon(ktagWordPosIcon);
 				}
-				m_sandbox.SelectIcon(ktagWordPosIcon);
 			}
 		}
 

@@ -130,6 +130,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+		private List<ListViewItem> m_exportItems;
+
 		public ExportDialog(Mediator mediator)
 		{
 			m_mediator = mediator;
@@ -182,6 +184,8 @@ namespace SIL.FieldWorks.XWorks
 				m_chkShowInFolder.Checked = true;
 			else
 				m_chkShowInFolder.Checked = false;
+
+			m_exportItems = new List<ListViewItem>();
 		}
 
 		private void InitFromMainControl(object objCurrentControl)
@@ -197,22 +201,43 @@ namespace SIL.FieldWorks.XWorks
 			var cmo = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject", null) as ICmObject;
 			if (cmo != null)
 			{
-				// Handle LexEntries that no longer have owners.
-				if (cmo is ILexEntry)
+				int clidRoot;
+				var newHvoRoot = SetRoot(cmo, out clidRoot);
+				if (newHvoRoot > 0)
 				{
-					m_hvoRootObj = m_cache.LanguageProject.LexDbOA.Hvo;
-					m_clidRootObj = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-				}
-				else if (cmo.Owner != null)
-				{
-					m_hvoRootObj = cmo.Owner.Hvo;
-					m_clidRootObj = cmo.Owner.ClassID;
+					m_hvoRootObj = newHvoRoot;
+					m_clidRootObj = clidRoot;
 				}
 			}
 
 			XmlBrowseView browseView = FindXmlBrowseView(objCurrentControl as Control);
 			if (browseView != null)
 				m_sda = browseView.RootBox.DataAccess;
+		}
+
+		/// <summary>
+		/// Allows process to find an appropriate root hvo and change the current root.
+		/// Subclasses (e.g. NotebookExportDialog) can override.
+		/// </summary>
+		/// <param name="cmo"></param>
+		/// <param name="clidRoot"></param>
+		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
+		protected virtual int SetRoot(ICmObject cmo, out int clidRoot)
+		{
+			clidRoot = -1;
+			var hvoRoot = -1;
+			// Handle LexEntries that no longer have owners.
+			if (cmo is ILexEntry)
+			{
+				hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
+				clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			}
+			else if (cmo.Owner != null)
+			{
+				hvoRoot = cmo.Owner.Hvo;
+				clidRoot = cmo.Owner.ClassID;
+			}
+			return hvoRoot;
 		}
 
 		/// <summary>
@@ -400,19 +425,21 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// In case the requested export requires a particular view and we aren't showing it, create a temporary one
 		/// and update the appropriate variables from it.
+		/// If this returns a non-null value, it is a newly created object which must be disposed. (See LT-11066.)
 		/// </summary>
-		void EnsureViewInfo()
+		Control EnsureViewInfo()
 		{
 			string area = "lexicon";
 			string tool = "lexiconDictionary";
 			m_areaOrig = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			if (m_rgFxtTypes.Count == 0)
-				return; // only non-Fxt exports available (like Discourse chart?)
-			var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
+				return null; // only non-Fxt exports available (like Discourse chart?)
+			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
+			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == "notebook")
 			{
 				if (ft != FxtTypes.kftConfigured)
-					return;	// nothing to do.
+					return null;	// nothing to do.
 				area = m_areaOrig;
 				tool = "notebookDocument";
 			}
@@ -430,7 +457,7 @@ namespace SIL.FieldWorks.XWorks
 						tool = "grammarSketch";
 						break;
 					default:
-						return; // nothing to do.
+						return null; // nothing to do.
 				}
 			}
 			var collector = new XmlNode[1];
@@ -445,6 +472,7 @@ namespace SIL.FieldWorks.XWorks
 			var parameters = controlNode.SelectSingleNode("parameters");
 			((IxCoreColleague)mainControl).Init(m_mediator, parameters);
 			InitFromMainControl(mainControl);
+			return mainControl;
 		}
 
 		List<int> m_translationWritingSystems;
@@ -457,132 +485,143 @@ namespace SIL.FieldWorks.XWorks
 
 			//if (ItemDisabled((string)m_exportList.SelectedItems[0].Tag))
 			//    return;
-			EnsureViewInfo();
-
-			if (!PrepareForExport())
-				return;
-
-			bool fLiftExport = m_exportList.SelectedItems[0].SubItems[2].Text == "lift";
-			string sFileName;
-			string sDirectory;
-			if (fLiftExport)
+			m_exportItems.Clear();
+			foreach (ListViewItem sel in m_exportList.SelectedItems)
+				m_exportItems.Add(sel);
+			var mainControl = EnsureViewInfo();
+			try
 			{
-				using (var dlg = new FolderBrowserDialogAdapter())
+
+				if (!PrepareForExport())
+					return;
+
+				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
+				string sFileName;
+				string sDirectory;
+				if (fLiftExport)
 				{
-					dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle;	// can't set title !!??
-					dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
-						m_exportList.SelectedItems[0].SubItems[1].Text);
-					dlg.ShowNewFolderButton = true;
-					dlg.RootFolder = Environment.SpecialFolder.Desktop;
-					dlg.SelectedPath = m_mediator.PropertyTable.GetStringProperty("ExportDir",
-						Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-					if (dlg.ShowDialog(this) != DialogResult.OK)
-						return;
-					sDirectory = dlg.SelectedPath;
-				}
-				string sFile = Path.GetFileName(sDirectory);
-				sFileName = Path.Combine(sDirectory, sFile + FwFileExtensions.ksLexiconInterchangeFormat);
-				string sMsg = null;
-				MessageBoxButtons btns = MessageBoxButtons.OKCancel;
-				if (File.Exists(sFileName))
-				{
-					sMsg = xWorksStrings.ksLIFTAlreadyExists;
-					btns = MessageBoxButtons.OKCancel;
-				}
-				else
-				{
-					string[] rgfiles = Directory.GetFiles(sDirectory);
-					if (rgfiles.Length > 0)
+					using (var dlg = new FolderBrowserDialogAdapter())
 					{
-						sMsg = xWorksStrings.ksLIFTFolderNotEmpty;
-						btns = MessageBoxButtons.YesNo;
-					}
-				}
-				if (!String.IsNullOrEmpty(sMsg))
-				{
-					using (LiftExportMessageDlg dlg = new LiftExportMessageDlg(sMsg, btns))
-					{
+						dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle; // can't set title !!??
+						dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
+							m_exportItems[0].SubItems[1].Text);
+						dlg.ShowNewFolderButton = true;
+						dlg.RootFolder = Environment.SpecialFolder.Desktop;
+						dlg.SelectedPath = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+							Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 						if (dlg.ShowDialog(this) != DialogResult.OK)
 							return;
+						sDirectory = dlg.SelectedPath;
 					}
-				}
-			}
-			else
-			{
-				FxtType ft;
-				// Note that DiscourseExportDialog doesn't add anything to m_rgFxtTypes.
-				// See FWR-2506.
-				if (m_rgFxtTypes.Count > 0)
-				{
-					string fxtPath = (string)m_exportList.SelectedItems[0].Tag;
-					ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+					string sFile = Path.GetFileName(sDirectory);
+					sFileName = Path.Combine(sDirectory, sFile + FwFileExtensions.ksLexiconInterchangeFormat);
+					string sMsg = null;
+					MessageBoxButtons btns = MessageBoxButtons.OKCancel;
+					if (File.Exists(sFileName))
+					{
+						sMsg = xWorksStrings.ksLIFTAlreadyExists;
+						btns = MessageBoxButtons.OKCancel;
+					}
+					else
+					{
+						string[] rgfiles = Directory.GetFiles(sDirectory);
+						if (rgfiles.Length > 0)
+						{
+							sMsg = xWorksStrings.ksLIFTFolderNotEmpty;
+							btns = MessageBoxButtons.YesNo;
+						}
+					}
+					if (!String.IsNullOrEmpty(sMsg))
+					{
+						using (LiftExportMessageDlg dlg = new LiftExportMessageDlg(sMsg, btns))
+						{
+							if (dlg.ShowDialog(this) != DialogResult.OK)
+								return;
+						}
+					}
 				}
 				else
 				{
-					// Choose a dummy value that will take the default branch of merely choosing
-					// an output file.
-					ft.m_ft = FxtTypes.kftConfigured;
+					FxtType ft;
+					// Note that DiscourseExportDialog doesn't add anything to m_rgFxtTypes.
+					// See FWR-2506.
+					if (m_rgFxtTypes.Count > 0)
+					{
+						string fxtPath = (string) m_exportItems[0].Tag;
+						ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+					}
+					else
+					{
+						// Choose a dummy value that will take the default branch of merely choosing
+						// an output file.
+						ft.m_ft = FxtTypes.kftConfigured;
+					}
+					switch (ft.m_ft)
+					{
+						case FxtTypes.kftTranslatedLists:
+							using (var dlg = new ExportTranslatedListsDlg())
+							{
+								dlg.Initialize(m_mediator, m_cache,
+									m_exportItems[0].SubItems[1].Text,
+									m_exportItems[0].SubItems[2].Text,
+									m_exportItems[0].SubItems[3].Text);
+								if (dlg.ShowDialog(this) != DialogResult.OK)
+									return;
+								sFileName = dlg.FileName;
+								sDirectory = Path.GetDirectoryName(sFileName);
+								m_translationWritingSystems = dlg.SelectedWritingSystems;
+								m_translatedLists = dlg.SelectedLists;
+							}
+							break;
+						case FxtTypes.kftPathway:
+							ProcessPathwayExport();
+							return;
+						default:
+							using (var dlg = new SaveFileDialogAdapter())
+							{
+								dlg.AddExtension = true;
+								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
+								dlg.Filter = m_exportItems[0].SubItems[3].Text;
+								dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
+								dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+									Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+								if (dlg.ShowDialog(this) != DialogResult.OK)
+									return;
+								sFileName = dlg.FileName;
+								sDirectory = Path.GetDirectoryName(sFileName);
+							}
+							break;
+					}
 				}
-				switch (ft.m_ft)
+				if (sDirectory != null)
 				{
-					case FxtTypes.kftTranslatedLists:
-						using (var dlg = new ExportTranslatedListsDlg())
-						{
-							dlg.Initialize(m_mediator, m_cache,
-								m_exportList.SelectedItems[0].SubItems[1].Text,
-								m_exportList.SelectedItems[0].SubItems[2].Text,
-							m_exportList.SelectedItems[0].SubItems[3].Text);
-							if (dlg.ShowDialog(this) != DialogResult.OK)
-								return;
-							sFileName = dlg.FileName;
-							sDirectory = Path.GetDirectoryName(sFileName);
-							m_translationWritingSystems = dlg.SelectedWritingSystems;
-							m_translatedLists = dlg.SelectedLists;
-						}
-						break;
-					case FxtTypes.kftPathway:
-						ProcessPathwayExport();
-						return;
-					default:
-						using (var dlg = new SaveFileDialogAdapter())
-						{
-							dlg.AddExtension = true;
-							dlg.DefaultExt = m_exportList.SelectedItems[0].SubItems[2].Text;
-							dlg.Filter = m_exportList.SelectedItems[0].SubItems[3].Text;
-							dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportList.SelectedItems[0].SubItems[1].Text);
-							dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
-								Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-							if (dlg.ShowDialog(this) != DialogResult.OK)
-								return;
-							sFileName = dlg.FileName;
-							sDirectory = Path.GetDirectoryName(sFileName);
-						}
-						break;
+					m_mediator.PropertyTable.SetProperty("ExportDir", sDirectory);
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDir", true);
+				}
+				if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
+				{
+					DoExport(sFileName, true);
+				}
+				else
+				{
+					DoExport(sFileName); // Musn't use the 2 parameter version here or overrides get messed up.
+				}
+				if (m_chkShowInFolder.Checked)
+				{
+					OpenExportFolder(sDirectory, sFileName);
+					m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "true");
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+				}
+				else
+				{
+					m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "false");
+					m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
 			}
-			if (sDirectory != null)
+			finally
 			{
-				m_mediator.PropertyTable.SetProperty("ExportDir", sDirectory);
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDir", true);
-			}
-			if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
-			{
-				DoExport(sFileName, true);
-			}
-			else
-			{
-				DoExport(sFileName); // Musn't use the 2 parameter version here or overrides get messed up.
-			}
-			if (m_chkShowInFolder.Checked)
-			{
-				OpenExportFolder(sDirectory, sFileName);
-				m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "true");
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
-			}
-			else
-			{
-				m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "false");
-				m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
+				if (mainControl != null)
+					mainControl.Dispose();
 			}
 		}
 
@@ -620,7 +659,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void DoExport(string outPath, bool fLiftOutput)
 		{
-			string fxtPath = (string)m_exportList.SelectedItems[0].Tag;
+			string fxtPath = (string)m_exportItems[0].Tag;
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			{
@@ -629,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 					try
 					{
 						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
-							m_exportList.SelectedItems[0].SubItems[0].Text);
+							m_exportItems[0].SubItems[0].Text);
 						progressDlg.Message = xWorksStrings.Exporting_;
 
 						switch (ft.m_ft)
@@ -1024,6 +1063,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!ItemDisabled((string)lvi.Tag))
 				{
 					lvi.Selected = true;
+					m_exportItems.Add(lvi);
 					break;
 				}
 			}
@@ -1563,7 +1603,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool SelectOption(string exportFormat)
 		{
-			foreach (ListViewItem lvi in m_exportList.Items)
+			// LT-12279 selected a user disturbing, different menu item
+			// return m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat));
+			foreach (ListViewItem lvi in
+				m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat)))
+			{
+				if (!ItemDisabled(lvi.Tag.ToString()))
+				{
+					m_exportItems.Insert(0, lvi);
+					return true;
+				}
+				return false;
+			}
+			return false;
+			/* foreach (ListViewItem lvi in m_exportList.Items)
 			{
 				if (lvi.Tag.ToString().Contains(exportFormat))
 				{
@@ -1573,7 +1626,7 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				}
 			}
-			return false;
+			return false; */
 		}
 
 		/// <summary>
@@ -1618,9 +1671,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (SelectOption(type))
 			{
-				EnsureViewInfo();
-				DoExport(file);
-				ValidXmlFile(file);
+				Control main = EnsureViewInfo();
+				try
+				{
+					DoExport(file);
+					ValidXmlFile(file);
+				}
+				finally
+				{
+					if (main != null)
+						main.Dispose();
+				}
 			}
 		}
 

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Discourse
 {
 	public class DiscourseTestHelper
 	{
-		internal readonly Dictionary<IStTxtPara, AnalysisOccurrence[]> m_allOccurrences;
+		internal Dictionary<IStTxtPara, AnalysisOccurrence[]> m_allOccurrences;
 		internal FDO.IText m_text;
 		internal IStText m_stText;
 		private IStTxtPara m_firstPara;
@@ -130,15 +130,47 @@ namespace SIL.FieldWorks.Discourse
 		/// <returns></returns>
 		internal IStTxtPara MakeParagraph()
 		{
+			return MakeParagraphForGivenText(m_stText);
+			//var para0 = m_servLoc.GetInstance<IStTxtParaFactory>().Create();
+			//m_stText.ParagraphsOS.Add(para0);
+			//var cPara = m_stText.ParagraphsOS.Count;
+			//var paraNum = cPara == 1 ? "one" : cPara.ToString();
+			//var tsstring = m_tsf.MakeString("this is paragraph " + paraNum + ". It is for our constituent chart database tests.",
+			//    Cache.DefaultVernWs);
+			//para0.Contents = tsstring;
+			//ParseTestParagraph(para0);
+			//return para0;
+		}
+
+		/// <summary>
+		/// Make and parse a new unique paragraph and append it to the given text.
+		/// </summary>
+		/// <returns></returns>
+		internal IStTxtPara MakeParagraphForGivenText(IStText testText)
+		{
 			var para0 = m_servLoc.GetInstance<IStTxtParaFactory>().Create();
-			m_stText.ParagraphsOS.Add(para0);
-			var cPara = m_stText.ParagraphsOS.Count;
+			testText.ParagraphsOS.Add(para0);
+			var cPara = testText.ParagraphsOS.Count;
 			var paraNum = cPara == 1 ? "one" : cPara.ToString();
 			var tsstring = m_tsf.MakeString("this is paragraph " + paraNum + ". It is for our constituent chart database tests.",
 				Cache.DefaultVernWs);
 			para0.Contents = tsstring;
 			ParseTestParagraph(para0);
 			return para0;
+		}
+
+		/// <summary>
+		/// Create a text other than the normal one and add it to the LanguageProject.
+		/// </summary>
+		/// <returns></returns>
+		internal IStText CreateANewText()
+		{
+			var servLoc = Cache.ServiceLocator;
+			var mainTextObj = servLoc.GetInstance<ITextFactory>().Create();
+			Cache.LanguageProject.TextsOC.Add(mainTextObj);
+			var strangeText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			mainTextObj.ContentsOA = strangeText;
+			return strangeText;
 		}
 
 		/// <summary>

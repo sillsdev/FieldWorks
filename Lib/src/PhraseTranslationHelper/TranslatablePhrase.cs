@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -29,8 +29,11 @@ namespace SILUBS.PhraseTranslationHelper
 	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>
 	{
 		#region Data Members
-		private readonly string m_sOrigPhrase;
 		private readonly string m_sReference;
+		private readonly string m_sOrigPhrase;
+		private string m_sModifiedPhrase;
+		private HashSet<string> m_alternateForms;
+		private bool m_fExclude;
 		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
@@ -118,9 +121,54 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the original phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string OriginalPhrase
+		internal string OriginalPhrase
 		{
 			get { return m_sOrigPhrase; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the phrase as it is being presented to the user (either the original phrase or
+		/// a modified form of it).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string PhraseInUse
+		{
+			get { return m_sModifiedPhrase ?? m_sOrigPhrase; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a modified version of the phrase to use in place of the original.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ModifiedPhrase
+		{
+			get { return m_sModifiedPhrase; }
+			internal set { m_sModifiedPhrase = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether this phrase is excluded (not available for
+		/// translation).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsExcluded
+		{
+			get { return m_fExclude; }
+			internal set { m_fExclude = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether this instance is customized (modified, deleted or
+		/// user-supplied).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool IsCustomized
+		{
+			get { return m_fExclude || m_sModifiedPhrase != null; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -162,6 +210,8 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 			set
 			{
+				if (IsExcluded)
+					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
 				m_fHasUserTranslation = !string.IsNullOrEmpty(value);
 				SetTranslationInternal(value);
 			}
@@ -201,7 +251,7 @@ namespace SILUBS.PhraseTranslationHelper
 					{
 						foreach (TranslatablePhrase similarPhrase in firstPart.OwningPhrases.Where(phrase => phrase.HasUserTranslation && phrase.PartPatternMatches(this)))
 						{
-							if (similarPhrase.OriginalPhrase == OriginalPhrase)
+							if (similarPhrase.PhraseInUse == PhraseInUse)
 							{
 								m_sTranslation = similarPhrase.Translation;
 								return;
@@ -337,9 +387,24 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			get { return m_type; }
 		}
+
+		public IEnumerable<string> AlternateForms
+		{
+			get { return m_alternateForms; }
+		}
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents this instance.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override string ToString()
+		{
+			return Reference + "-" + PhraseInUse;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all the parts, including the key terms (maybe never needed?).
@@ -410,7 +475,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (compare != 0)
 				return compare;
 			// 5)
-			return m_sOrigPhrase.CompareTo(other.m_sOrigPhrase);
+			return PhraseInUse.CompareTo(other.PhraseInUse);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -535,6 +600,18 @@ namespace SILUBS.PhraseTranslationHelper
 				sd = new SubstringDescriptor(Translation.Length, 0);
 			}
 			SetTranslationInternal(Translation.Remove(sd.Offset, sd.Length).Insert(sd.Offset, newRendering));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds an alternate form of the phrase/question.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal void AddAlternateForm(string form)
+		{
+			if (m_alternateForms == null)
+				m_alternateForms = new HashSet<string>();
+			m_alternateForms.Add(form);
 		}
 		#endregion
 

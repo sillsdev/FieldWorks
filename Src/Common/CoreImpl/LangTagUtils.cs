@@ -1304,20 +1304,21 @@ namespace SIL.CoreImpl
 			regionSubtag = null;
 			variantSubtag = null;
 
-			Match match = s_langTagPattern.Match(langTag);
-			if (!match.Success)
+			if (langTag.Any(c => !Char.IsLetterOrDigit(c) && c != '-'))
+			{
 				return false;
-			Group privateUseGroup = match.Groups["privateuse"];
-			List<string> privateUseSubTags = new List<string>();
+			}
+
+			var cleaner = new Palaso.WritingSystems.Migration.Rfc5646TagCleaner(langTag);
+			cleaner.Clean();
+
+			List<string> privateUseSubTags =
+				new List<string>(cleaner.PrivateUse.Split(new char[] {'-'}, StringSplitOptions.RemoveEmptyEntries));
 			int privateUseSubTagIndex = 0;
 			bool privateUsePrefix = false;
 			string privateUseSubTag = null;
 			int part = -1;
-			if (privateUseGroup.Success)
-			{
-				privateUseSubTags = new List<string>(privateUseGroup.Value.Split('-').Skip(1)); // leave out the 'x'
-			}
-			string languageCode = match.Groups["language"].Value;
+			string languageCode = cleaner.Language;
 			if (string.IsNullOrEmpty(languageCode))
 				return false;
 			if (languageCode.Equals("qaa", StringComparison.OrdinalIgnoreCase))
@@ -1335,7 +1336,7 @@ namespace SIL.CoreImpl
 				languageSubtag = GetLanguageSubtag(languageCode);
 			}
 
-			string scriptCode = match.Groups["script"].Value;
+			string scriptCode = cleaner.Script;
 			if (!string.IsNullOrEmpty(scriptCode))
 			{
 				if (scriptCode.Equals("Qaaa", StringComparison.OrdinalIgnoreCase) && privateUseSubTags.Count > 0)
@@ -1347,7 +1348,7 @@ namespace SIL.CoreImpl
 					scriptSubtag = GetScriptSubtag(scriptCode);
 			}
 
-			string regionCode = match.Groups["region"].Value;
+			string regionCode = cleaner.Region;
 			if (!string.IsNullOrEmpty(regionCode))
 			{
 				if (regionCode.Equals("QM", StringComparison.OrdinalIgnoreCase) && privateUseSubTags.Count > 0)
@@ -1360,7 +1361,7 @@ namespace SIL.CoreImpl
 			}
 
 			var variantSb = new StringBuilder();
-			string variantCode = match.Groups["variant"].Value;
+			string variantCode = cleaner.Variant;
 			if (!string.IsNullOrEmpty(variantCode))
 			{
 				variantSb.Append(variantCode);

@@ -3415,6 +3415,7 @@ namespace SIL.FieldWorks
 			if (s_allowFinalShutdown)
 			{
 				Logger.ShutDown();
+				SingletonsContainer.Release();
 				Application.Exit();
 			}
 		}

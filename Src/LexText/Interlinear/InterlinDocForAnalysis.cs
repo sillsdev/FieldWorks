@@ -102,7 +102,8 @@ namespace SIL.FieldWorks.IText
 		protected override void UpdateWordforms(HashSet<IWfiWordform> wordforms)
 		{
 			base.UpdateWordforms(wordforms);
-			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform))
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform)
+				&& !FocusBox.IsDirty)
 			{
 				// update focus box to display new guess
 				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
@@ -505,7 +506,7 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 				realAnalysis = FindRealAnalysisInSegment(nextSeg, !upward);
-			} while (nextSeg == null || realAnalysis == null || !HasVisibleTranslationOrNote(nextSeg, lines));
+			} while (nextSeg == null || (realAnalysis == null && !HasVisibleTranslationOrNote(nextSeg, lines)));
 			return nextSeg;
 		}
 
@@ -596,16 +597,11 @@ namespace SIL.FieldWorks.IText
 			// What non-word "choice" ie., translation text or note is on this line?
 			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, SelectedOccurrence.Segment, ws);
 			int levels;
-			SelLevInfo noteLevel = MakeNoteLevelForASelection(tagTextProp, out levels);
-			var vsli = new SelLevInfo[levels];
-			for (int i = 0; i < 2; i++)
-				vsli[i] = rgvsli[i];
-			if (tagTextProp == NoteTags.kflidContent)
-			{   // shift the indices
-				vsli[2] = vsli[1];
-				vsli[1] = vsli[0];
-				vsli[0] = noteLevel;
-			}
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel; // note or translation line
+			vsli[1] = rgvsli[0]; // segment
+			vsli[2] = rgvsli[1]; // para
 			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
 			TryHideFocusBoxAndUninstall();
 			RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
@@ -629,19 +625,14 @@ namespace SIL.FieldWorks.IText
 			if (annotationFlid == 0)
 				return null;
 			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, segment, ws);
-			int levels;
-			SelLevInfo noteLevel = MakeNoteLevelForASelection(tagTextProp, out levels);
-			var vsli = new SelLevInfo[levels];
-			vsli[0].ihvo = segment.IndexInOwner; // specifies where segment is in para
-			vsli[0].tag = StTxtParaTags.kflidSegments;
-			vsli[1].ihvo = segment.Paragraph.IndexInOwner; // specifies where para is in IStText.
-			vsli[1].tag = StTextTags.kflidParagraphs;
-			if (tagTextProp == NoteTags.kflidContent)
-			{   // shift the indices so the note sequence is at index 0
-				vsli[2] = vsli[1];
-				vsli[1] = vsli[0];
-				vsli[0] = noteLevel;
-			}
+			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
+			// notes and translation lines have 3 levels: 2:para, 1:seg, 0:content or self property
+			var vsli = new SelLevInfo[3];
+			vsli[0] = noteLevel;  // note or translation line
+			vsli[1].ihvo = segment.IndexInOwner; // specifies where segment is in para
+			vsli[1].tag = StTxtParaTags.kflidSegments;
+			vsli[2].ihvo = segment.Paragraph.IndexInOwner; // specifies where para is in IStText.
+			vsli[2].tag = StTextTags.kflidParagraphs;
 			int cPropPrevious = 0; // todo: other if not the first WS for tagTextProp
 			var sel = RootBox.MakeTextSelection(0, vsli.Length, vsli, tagTextProp, cPropPrevious,
 												0, 0, 0, false, 0, null, true);
@@ -651,21 +642,24 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Sets up the tags for the 0 level of a note selection structure if the tagTextProp
-		/// indicates a note.
+		/// Sets up the tags for the 0 level of a selection of a free translation or note.
+		/// This will be the level "inside" the ones that select the paragraph and segment.
+		/// For a note, we need to select the first note.
+		/// For a free translation, we need to insert the level for the 'self' property
+		/// which the VC inserts to isolate the free translations and make it easier to update them.
 		/// </summary>
 		/// <param name="tagTextProp">The segment or note tag of an annotation to be selected.</param>
-		/// <param name="levels">Set to the right number of levels for the slection structure.</param>
-		/// <returns>The level information for a note, or all zeros.</returns>
-		static private SelLevInfo MakeNoteLevelForASelection(int tagTextProp, out int levels)
+		private SelLevInfo MakeInnerLevelForFreeformSelection(int tagTextProp)
 		{
-			levels = 2;
 			var noteLevel = new SelLevInfo();
+			noteLevel.ihvo = 0;
 			if (tagTextProp == NoteTags.kflidContent)
 			{
-				levels = 3;
-				noteLevel.ihvo = 0;
 				noteLevel.tag = SegmentTags.kflidNotes;
+			}
+			else
+			{
+				noteLevel.tag = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 			}
 			return noteLevel;
 		}
@@ -687,7 +681,7 @@ namespace SIL.FieldWorks.IText
 				case InterlinLineChoices.kflidFreeTrans:
 					tagTextProp = SegmentTags.kflidFreeTranslation;
 					//if (segment.FreeTranslation.StringOrNull(ws) == null)
-					//	tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
+					//    tagTextProp = kTagUserPrompt; // user prompt property for empty translation annotations
 					break;
 				case InterlinLineChoices.kflidLitTrans:
 					tagTextProp = SegmentTags.kflidLiteralTranslation;
@@ -866,20 +860,44 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
-			// LT-9570 for the Tree Translation line, Susanna wanted Enter to copy Word Glosses
+			// LT-9570 for the Tree Translation line, Susanna wanted Enter to copy Word Glsses
 			// into the Free Translation line. Note: DotNetBar is not handling shortcut="Enter"
 			// for the XML <command id="CmdAddWordGlossesToFreeTrans"...
 			if (RootBox != null && e.KeyCode == Keys.Enter)
 				OnAddWordGlossesToFreeTrans(null);
 
 			// LT-4029 Capture arrow keys from inside the translation lines and notes.
-			if (!HandleArrowKeys(e))
-				base.OnKeyDown(e);
+			var change = HandleArrowKeys(e);
+			// LT-12097 Right and left arrow keys from an empty translation line (part of the issue)
+			// The up and down arrows work, so here we changed the event appropriately to up or down.
+			if (change != ArrowChange.Handled)
+			{
+				KeyEventArgs e2;
+				switch (change)
+				{   // might need to change the key event so the base method will handle it right.
+					case ArrowChange.Down:
+						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Down);
+						break;
+					case ArrowChange.Up:
+						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Up);
+						break;
+					case ArrowChange.None:
+						e2 = e;
+						break;
+					default:
+						e2 = e;
+						break;
+				}
+				base.OnKeyDown(e2);
+			}
 		}
+
+		enum ArrowChange {None, Up, Down, Handled}
 
 		/// <summary>
 		/// Performs a change in IP when arrow keys should take the IP from a translation or note
-		/// to an analysis.
+		/// to an analysis. Also handles right and left arrow for empty translation lines via the
+		/// output enum.
 		/// two directions of concern for Left to Right(LTR) and Right To Left(RTL):
 		/// 1: up from the first translation or note in a paragraph after a word line possibly
 		///  in another paragraph via up arrow or a left (right if RTL) arrow from the first (last)
@@ -892,8 +910,9 @@ namespace SIL.FieldWorks.IText
 		/// the old annotation OnKeyDown() method.
 		/// </summary>
 		/// <param name="e">The keyboard event</param>
-		/// <returns>true if it handled the situation, false if not.</returns>
-		private bool HandleArrowKeys(KeyEventArgs e)
+		/// <returns>handled if it handled the situation, None if not and Up or Down
+		/// when that is what's needed from the base method.</returns>
+		private ArrowChange HandleArrowKeys(KeyEventArgs e)
 		{
 			if (SelectedOccurrence == null &&
 				(e.KeyCode == Keys.Down || e.KeyCode == Keys.Up ||
@@ -906,7 +925,8 @@ namespace SIL.FieldWorks.IText
 				SelLevInfo[] rgvsli;
 				int clev, tag, ichAnchor, ichEnd, ws;
 				bool haveSelection = GetCurrentSelection(out clev, out rgvsli, out tag, out ichAnchor, out ichEnd, out ws);
-				if (!haveSelection) return false;
+				if (!haveSelection)
+					return ArrowChange.None;
 
 				// get the text, paragraph, segment and note, if there is one
 				int curSegIndex, curParaIndex, curNoteIndex;
@@ -919,9 +939,11 @@ namespace SIL.FieldWorks.IText
 				int id, lineNum;
 				WhichEnd where;
 				bool isRightToLeft;
+				bool hasPrompt;
 				bool haveLineInfo = GetLineInfo(curSeg, curNote, tag, ichAnchor, ichEnd, ws,
-					out id, out lineNum, out where, out isRightToLeft);
-				if (!haveLineInfo) return false;
+					out id, out lineNum, out where, out isRightToLeft, out hasPrompt);
+				if (!haveLineInfo)
+					return ArrowChange.None;
 
 				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
@@ -937,15 +959,20 @@ namespace SIL.FieldWorks.IText
 				if (isUpNewSeg || isDownNewSeg)
 				{	// Get the next segment in direction with a real analysis or a real translation or note
 					if (IsTranslationOrNoteNext(curParaIndex, curSeg, isUpNewSeg))
-						return false; // let default handle it
+						if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans ||
+										  id == InterlinLineChoices.kflidLitTrans))
+						{   // moving from an empty translation line to another translation line
+							return isUpNewSeg ? ArrowChange.Up : ArrowChange.Down;
+						}
+						else return ArrowChange.None; // let default handle it
 					// a real analysis is next or no more segments
 					var occurrence = MoveVerticallyToNextAnalysis(curParaIndex, curSegIndex, isUpNewSeg);
 					if (occurrence == null)
-						return false; // only a real translation or note, or it couldn't find a suitable segment
+						return ArrowChange.None; // only a real translation or note, or it couldn't find a suitable segment
 					SelectOccurrence(occurrence); // only works for analyses, not annotations
-					return true;
+					return ArrowChange.Handled;
 				}
-				else if (isUpMove)
+				if (isUpMove)
 				{   // Need to move up to a real analysis in the same segment
 					IAnalysis nextAnalysis = null;
 					int index = 0;
@@ -956,10 +983,18 @@ namespace SIL.FieldWorks.IText
 						break; // found the last real analysis
 					}
 					SelectOccurrence(new AnalysisOccurrence(curSeg, curSeg.AnalysesRS.Count - index));
-					return true;
+					return ArrowChange.Handled;
+				}
+				if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans ||
+								  id == InterlinLineChoices.kflidLitTrans)
+							  && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right))
+				{   // moving from an empty translation line to right or left
+					if (TextIsRightToLeft ? e.KeyCode == Keys.Right : e.KeyCode == Keys.Left)
+						return ArrowChange.Up;
+					return ArrowChange.Down;
 				}
 			}
-			return false;
+			return ArrowChange.None;
 		}
 
 		/// <summary>
@@ -992,8 +1027,7 @@ namespace SIL.FieldWorks.IText
 						return false; // if there is a real one, don't go to an annotation
 				}
 				else
-				{
-					// moving down
+				{   // moving down
 					if (hasRealAnalysis) // check analyses first
 						return false; // if there is a real one, don't go to a translation or note
 					if (hasVisibleAnnotations) // then check translations and notes
@@ -1038,7 +1072,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="curSeg">The segment that has the selection.</param>
 		/// <param name="curNoteIndex">The note that is selected in the sequence.</param>
 		/// <param name="where">Indicates where the IP is in the selected text if any.</param>
-		/// <param name="isRightToLeft"></param>
+		/// <param name="isRightToLeft">true if the current line is RTL</param>
 		/// <param name="isUpNewSeg">Output set to true if moving out of this segment.</param>
 		/// <returns>true if the IP should be moved upward to an analysis in this segment.</returns>
 		private bool DetectUpMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum,
@@ -1065,12 +1099,11 @@ namespace SIL.FieldWorks.IText
 				hasPrevAnnotation = noteIsFirstAnnotation && curNoteIndex > 0; // can have notes or empty notes before it
 			}
 			bool hasUpMotion = (e.KeyCode == Keys.Up) ||
-				(isRightToLeft ?
+				(TextIsRightToLeft ?
 					(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)) :
 					(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)));
 			bool isUpMove = hasUpMotion && !hasPrevAnnotation;
-			isUpNewSeg = isUpMove &&
-				!curSeg.AnalysesRS.Any(an => an.HasWordform); // no non-punctuation analyses
+			isUpNewSeg = isUpMove && !isThereRealAnalysisInSegment(curSeg); // no puctuation, or analysis ws
 			return isUpMove;
 		}
 
@@ -1109,7 +1142,7 @@ namespace SIL.FieldWorks.IText
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
 			bool hasDownMotion = (e.KeyCode == Keys.Down) ||
-								 (isRightToLeft ?
+								 (TextIsRightToLeft ?
 									(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)) :
 									(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)));
 			return hasDownMotion && !hasFollowingAnnotation;
@@ -1131,13 +1164,15 @@ namespace SIL.FieldWorks.IText
 		/// <param name="lineNum">Configured line number of the translation or note.</param>
 		/// <param name="where">The returned meaningful interpretation of where the IP is in the translation or note text.</param>
 		/// <param name="isRightToLeft">is set to <c>true</c> if the Configured line is right to left, false otherwise.</param>
+		/// <param name="hasPrompt">is set to <c>true</c> if the line is an empty translation.</param>
 		/// <returns>
 		/// true if the information was found, false otherwise.
 		/// </returns>
 		private bool GetLineInfo(ISegment curSeg, INote curNote, int tag, int ichAnchor, int ichEnd, int wid,
-			out int id, out int lineNum, out WhichEnd where, out bool isRightToLeft)
+						out int id, out int lineNum, out WhichEnd where, out bool isRightToLeft, out bool hasPrompt)
 		{
 			isRightToLeft = false;
+			hasPrompt = false;
 			var wsf = Cache.WritingSystemFactory;
 			var ws = wsf.get_EngineOrNull(wid);
 			if (ws != null)
@@ -1163,6 +1198,7 @@ namespace SIL.FieldWorks.IText
 					break;
 				case kTagUserPrompt: // user prompt property for empty translation annotations
 					// Is this free or literal?
+					hasPrompt = true;
 					id = m_vc.ActiveFreeformFlid;
 					id = (id == SegmentTags.kflidLiteralTranslation) ?
 						InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
@@ -1270,7 +1306,18 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Answers true if there is a "real" analysis in the segment.
+		/// </summary>
+		/// <param name="seg">The seg.</param>
+		/// <returns>True if a "real" analysis was found</returns>
+		private bool isThereRealAnalysisInSegment(ISegment seg)
+		{
+			return FindRealAnalysisInSegment(seg, true) != null;
+		}
+
+		/// <summary>
 		/// Finds a real analysis in the segment from the indicated direction.
+		/// When used just to check if there is an analysis, the direction doesn't matter.
 		/// </summary>
 		/// <param name="seg">The seg.</param>
 		/// <param name="forward">if set to <c>true</c> find a real analysis looking forward.</param>
@@ -1284,7 +1331,7 @@ namespace SIL.FieldWorks.IText
 			for (int i = 0; i < seg.AnalysesRS.Count; i++)
 			{	// need to count to create occurances
 				index++;
-				int ind = forward ? index : seg.AnalysesRS.Count - index + 1;
+				int ind = forward ? index : seg.AnalysesRS.Count - index;
 				realAnalysis = new AnalysisOccurrence(seg, ind);
 				if (m_vc.CanBeAnalyzed(realAnalysis))
 				{
@@ -1315,9 +1362,11 @@ namespace SIL.FieldWorks.IText
 		{
 			if (0 == selLength)
 				return WhichEnd.Both;
-			if (isRightToLeft ? selEnd >= selLength - 1 : selStart <= 0)
+			//if (isRightToLeft ? selEnd >= selLength - 1 : selStart <= 0)
+			if (selStart <= 0)
 				return WhichEnd.Left;
-			if (isRightToLeft ? selStart <= 0 : selEnd >= selLength - 1)
+			//if (isRightToLeft ? selStart <= 0 : selEnd >= selLength - 1)
+			if (selEnd >= selLength - 1)
 				return WhichEnd.Right; // this happens with punctuation at end!
 			return WhichEnd.Neither;
 		}
@@ -1876,6 +1925,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			// The base method does this too, but some paths in this method don't go through the base!
 			RemoveContextButtonIfPresent();
 			if (e.Button == MouseButtons.Right)
 			{

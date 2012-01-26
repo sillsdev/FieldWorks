@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='vernacular' wsType='vernacular' style='Dictionary-Headword'  />
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=all analysis' wsType='vernacular' style='Dictionary-Headword'  />
 					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=x-kal' wsType='vernacular' style='Dictionary-Headword'  />
+					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='x-kal-fonipa,x-kal' visibleWritingSystems='x-kal-fonipa,x-kal' wsType='vernacular' style='Dictionary-Headword'  />
 				</layout>
 			</LayoutInventory>
 			";
@@ -73,6 +74,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var xkalPath = Path.Combine(storePath, "x-kal.ldml");
 			File.Copy(Path.Combine(testDataPath, "x-kal_7000043.ldml"), xkalPath);
 			File.SetAttributes(xkalPath, FileAttributes.Normal); // don't want to copy readonly property.
+			var xkalFonipaPath = Path.Combine(storePath, "x-kal-fonipa.ldml");
+			File.Copy(Path.Combine(testDataPath, "x-kal-fonipa_7000043.ldml"), xkalFonipaPath);
+			File.SetAttributes(xkalFonipaPath, FileAttributes.Normal); // don't want to copy readonly property.
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000044.xml");
 			// Create all the Mock classes for the classes in my test data.
@@ -107,6 +111,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.That(File.Exists(testEnglishPath));
 			// Verify that x-kal.ldml is renamed to qaa-x-kal and content changed
 			Assert.That(File.Exists(Path.Combine(storePath, "qaa-x-kal.ldml")));
+			// Verify that x-kal-fonipa.ldml is renamed to qaa-fonipa-x-kal and content changed
+			Assert.That(File.Exists(Path.Combine(storePath, "qaa-x-kal-fonipa.ldml")));
 			// Verify that AUni data in LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c tag is changed to qaa-x-kal
 			var entry = XElement.Parse(dtoRepos.GetDTO("7ecbb299-bf35-4795-a5cc-8d38ce8b891c").Xml);
 			Assert.That(entry.Element("CitationForm").Element("AUni").Attribute("ws").Value, Is.EqualTo("qaa-x-kal"));
@@ -149,6 +155,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(1).First().Attribute("ws").Value, Is.EqualTo("vernacular"));
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(2).First().Attribute("ws").Value, Is.EqualTo("$ws=all analysis"));
 			Assert.That(layoutElt.Element("layout").Elements("part").Skip(3).First().Attribute("ws").Value, Is.EqualTo("$ws=qaa-x-kal"));
+			Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("ws").Value, Is.EqualTo("qaa-x-kal-fonipa,qaa-x-kal"));
+			Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("visibleWritingSystems").Value, Is.EqualTo("qaa-x-kal-fonipa,qaa-x-kal"));
 
 			// Check the local settings.
 			var propTable = XElement.Parse(File.ReadAllText(sampleSettings, Encoding.UTF8));

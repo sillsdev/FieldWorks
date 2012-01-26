@@ -23,9 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeDll", "..\..\..\Src\TeDll
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeKeyTerms", "..\..\..\Src\TE\TeKeyTerms\TeKeyTerms.csproj", "{A0F77159-8444-4615-970D-61821B6D0AF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeDialogs", "..\..\..\Src\TE\TeDialogs\TeDialogs.csproj", "{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}"
+EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = PhraseTranslationHelper.csproj
 		SccLocalPath1 = .
@@ -49,6 +51,9 @@ Global
 		SccProjectUniqueName10 = ..\\..\\..\\Src\\TE\\TeKeyTerms\\TeKeyTerms.csproj
 		SccLocalPath10 = ..\\..\\..
 		SccProjectFilePathRelativizedFromConnection10 = Src\\TE\\TeKeyTerms\\
+		SccProjectUniqueName11 = ..\\..\\..\\Src\\TE\\TeDialogs\\TeDialogs.csproj
+		SccLocalPath11 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection11 = Src\\TE\\TeDialogs\\
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +100,10 @@ Global
 		{A0F77159-8444-4615-970D-61821B6D0AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0F77159-8444-4615-970D-61821B6D0AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0F77159-8444-4615-970D-61821B6D0AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

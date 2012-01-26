@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -60,7 +60,7 @@ namespace SILUBS.PhraseTranslationHelper
 		public XmlTranslation(TranslatablePhrase tp)
 		{
 			Reference = tp.Reference;
-			OriginalPhrase = tp.OriginalPhrase;
+			OriginalPhrase = tp.PhraseInUse;
 			Translation = tp.Translation;
 		}
 	}

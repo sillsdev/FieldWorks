@@ -1554,8 +1554,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (wasVisible)
 				Show();
 			watch.Stop();
-			Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
-			previousSlices.Report();
+			// Uncomment this to investigate slice performance or issues with dissappearing slices
+			//Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
+			//previousSlices.Report();
 		}
 
 		protected override void OnControlAdded(ControlEventArgs e)
@@ -2479,6 +2480,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_monitoredProps.Add(new Tuple<int, int>(hvo, flid));
 		}
 
+		/// <summary>
+		/// This constant governs the decision of how many sequence items are needed before we create
+		/// DummyObjectSlices instead of building the slices instantly (through CreateSlicesFor()).
+		/// </summary>
+		private const int kInstantSliceMax = 20;
+
 		private NodeTestResult AddSeqNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
 			bool fVisIfData, XmlNode caller)
@@ -2508,18 +2515,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
-			else if (cobj < 15 ||	// This may be a little on the small side
+			else if (cobj < kInstantSliceMax ||	// This may be a little on the small side
 				m_currentObjectFlids.Contains(flid) ||
 				(!String.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
 			{
 				//Create slices immediately
-				int[] contents;
-				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-				{
-					m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-				}
+				var contents = SetupContents(flid, obj);
 				foreach (int hvo in contents)
 				{
 					path.Add(hvo);
@@ -2534,32 +2535,37 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// preceived benefit, but this way doesn't crash now that the slices are being
 				// disposed of.
 				int cnt = 0;
-				int[] contents;
-				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-				{
-					m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-				}
+				var contents = SetupContents(flid, obj);
 				foreach (int hvo in contents)
 				{
 					// TODO (DamienD): do we need to add the layout choice field to the monitored props for a dummy slice?
-					path.Add(hvo);
+					// LT-12302 exposed a path through here that was messed up when hvo was added before Dummy slices
+					//path.Add(hvo); // try putting this AFTER the dos creation
 					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()),
 						obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = m_cache, ParentSlice = parentSlice};
+					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
 					// or Show() will reorder them.
 					dos.Visible = false;
 					InsertSlice(insertPosition++, dos);
-					////InstallSlice(dos, -1);
-					////ResetTabIndices(insertPosition);
-					////insertPosition++;
 					path.RemoveAt(path.Count - 1);
 					cnt++;
 				}
 			}
 			path.RemoveAt(path.Count - 1);
 			return NodeTestResult.kntrNothing;
+		}
+
+		private int[] SetupContents(int flid, ICmObject obj)
+		{
+			int[] contents;
+			int chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+			{
+				m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+			}
+			return contents;
 		}
 
 		private readonly Set<string> m_setInvalidFields = new Set<string>();
@@ -3771,7 +3777,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				return false;
 			}
-			Guid guid = GetGuidForJumpToTool((Command)commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command)commandObject, true, out tool);
 			if (guid != Guid.Empty)
 			{
 				display.Enabled = display.Visible = true;
@@ -3789,7 +3795,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string tool;
-			Guid guid = GetGuidForJumpToTool((Command) commandObject, out tool);
+			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
@@ -3865,8 +3871,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
+		/// forEnableOnly is true when called from OnDisplayJumpToTool.
 		/// </summary>
-		private Guid GetGuidForJumpToTool(Command cmd, out string tool)
+		private Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
 			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
@@ -3932,7 +3939,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						return owner.Guid;
 					}
-
+					// Not already owned by a notebook record. So there's nothing yet to jump to.
+					// If the user is really doing the jump we need to make it now.
+					// Otherwise we just need to return something non-null to indicate the jump
+					// is possible (though this is not currently used).
+					if (forEnableOnly)
+						return CurrentSlice.Object.Guid;
+					((IText)CurrentSlice.Object).MoveToNotebook(true);
+					return CurrentSlice.Object.Owner.Guid;
 				}
 				else if (tool == "interlinearEdit")
 				{

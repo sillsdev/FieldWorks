@@ -278,7 +278,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				m_objectsToDeleteWhenNoLongerFocused.Remove(obj);
 				var wf = (WfiWordform) obj; // for now this is the only kind of object we put in the set.
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, wf.DeleteIfSpurious);
+
+				NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor, wf.DeleteIfSpurious);
 			}
 		}
 
@@ -1385,7 +1386,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						morphType.Guid == MoMorphTypeTags.kguidMorphRoot ||
 							morphType.Guid == MoMorphTypeTags.kguidMorphParticle ||
 								morphType.Guid == MoMorphTypeTags.kguidMorphPhrase ||
-									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase)
+									morphType.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase ||
+										morphType.Guid == MoMorphTypeTags.kguidMorphClitic)
 			{
 				morphType = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
 			}

@@ -582,6 +582,12 @@ namespace SIL.FieldWorks.IText
 						m_writer.WriteEndElement(); //media-files
 					}
 					m_writer.WriteEndElement(); // interlinear-text
+
+					//wipe out the pending items to be clean for next text.
+					pendingTitles.Clear();
+					pendingSources.Clear();
+					pendingAbbreviations.Clear();
+					pendingComments.Clear();
 					break;
 				case InterlinVc.kfragParaSegment:
 				case InterlinVc.kfragBundle:

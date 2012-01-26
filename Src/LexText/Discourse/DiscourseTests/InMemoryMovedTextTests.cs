@@ -845,7 +845,7 @@ namespace SIL.FieldWorks.Discourse
 			var row1 = m_helper.MakeSecondRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
-			var cellPart0_1 = m_helper.MakeMovedTextMarker(row0, 1, cellPart1_0, false);
+			m_helper.MakeMovedTextMarker(row0, 1, cellPart1_0, false);
 			EndSetupTask(); // SUT has its own UOW
 
 			// SUT
@@ -853,6 +853,34 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify
 			AssertUsedAnalyses(allParaOccurrences, 2); // no change in ribbon
+		}
+
+		/// <summary>
+		/// If we load a ConstChartWordGroup, and it references analyses on the wrong StText,
+		/// we need to delete that WordGroup.
+		/// </summary>
+		[Test]
+		public void CheckBadWordGroupOnLoad()
+		{
+			var strangeText = m_helper.CreateANewText();
+			var newPara = m_helper.MakeParagraphForGivenText(strangeText);
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1); // from original paragraph
+			var strangeOccurrence = m_helper.m_allOccurrences[newPara][0];
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, strangeOccurrence, strangeOccurrence);
+			//m_helper.MakeMovedTextMarker(row0, 1, cellPart1_0, false);
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify
+			m_helper.VerifyDeletedHvos(new int[] {row1.Hvo, cellPart1_0.Hvo},
+				"Second Row and only CellPart in that row ought to get deleted.");
+			m_helper.VerifyFirstRow(1);
+			AssertUsedAnalyses(allParaOccurrences, 1); // no change in ribbon
 		}
 
 		/// <summary>

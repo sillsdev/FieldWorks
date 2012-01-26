@@ -1283,7 +1283,7 @@ DoInflAffixMsaStemName
 			<xsl:for-each select="$PartsOfSpeech/SubPossibilities[@dst=$posid]">
 				<xsl:call-template name="DoInflAffixMsaStemName">
 					<xsl:with-param name="fs" select="$fs"/>
-					<xsl:with-param name="pos" select="../@Id"/>
+					<xsl:with-param name="posid" select="../@Id"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:for-each>

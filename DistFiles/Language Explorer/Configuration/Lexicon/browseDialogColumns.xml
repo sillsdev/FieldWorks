@@ -197,7 +197,7 @@
 	</generate>
 	<generate class="LexEntry" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForEntry_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexEntry.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexEntry.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- LexSense customs -->
 	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
@@ -223,7 +223,7 @@
 	</generate>
 	<generate class="LexSense" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForSense_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexSense.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexSense.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- MoForm customs -->
 	<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
@@ -251,7 +251,7 @@
 	</generate>
 	<generate class="MoForm" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForAllomorph_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="MoForm.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="MoForm.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 	<!-- LexExampleSentence customs -->
 	<generate class="LexExampleSentence" fieldType="mlstring" restrictions="customOnly">
@@ -279,7 +279,7 @@
 	</generate>
 	<generate class="LexExampleSentence" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
 		<column layout="CustomPossAtomForExample_$fieldName" label="$label" visibility="menu"
-				bulkEdit="atomicFlatListItem" field="LexExampleSentence.$fieldName" list="$targetList"/>
+				bulkEdit="atomicFlatListItem" field="LexExampleSentence.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
 	</generate>
 </browseColumns>
 </doc>

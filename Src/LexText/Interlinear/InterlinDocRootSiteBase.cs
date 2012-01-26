@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Blue circle button to alert user to the presence of the Configure Interlinear context menu.
 		/// </summary>
-		private Button m_contextButton;
+		private BlueCircleButton m_contextButton;
 
 		/// <summary>
 		/// Index of Interlinear line clicked on to generate above blue button.
@@ -346,22 +347,21 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			m_contextButton = new Button();
-			var pullDown = ResourceHelper.BlueCircleDownArrowForView;
-			m_contextButton.Image = pullDown;
-			m_contextButton.Height = pullDown.Height + 4;
-			m_contextButton.Width = pullDown.Width + 4;
-			m_contextButton.FlatStyle = FlatStyle.Flat;
+			m_contextButton = new BlueCircleButton();
 			m_contextButton.ForeColor = BackColor;
 			m_contextButton.BackColor = BackColor;
-			m_contextButton.Click += new EventHandler(m_contextButton_Click);
+			m_contextButton.Click += m_contextButton_Click;
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			var ilineChoice = -1;
 			RemoveContextButtonIfPresent();
+			var ilineChoice = -1;
 			var sel = GrabMousePtSelectionToTest(e);
+			if (UserClickedOnLabels(sel, out ilineChoice))
+			{
+				SetContextButtonPosition(sel, ilineChoice);
+			}
 			if (e.Button == MouseButtons.Right)
 			{
 				ilineChoice = GetIndexOfLineChoice(sel);
@@ -371,10 +371,6 @@ namespace SIL.FieldWorks.IText
 					return;
 				}
 				ShowContextMenuIfNotClosing(new Point(e.X, e.Y), ilineChoice);
-			}
-			if (e.Button == MouseButtons.Left && UserClickedOnLabels(sel, out ilineChoice))
-			{
-				SetContextButtonPosition(sel, ilineChoice);
 			}
 			base.OnMouseDown(e);
 		}
@@ -495,7 +491,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(m_iLineChoice > -1, "Why isn't this variable set?");
 			if (m_iLineChoice > -1)
 			{
-				ShowContextMenuIfNotClosing(((Button)sender).Location, m_iLineChoice);
+				ShowContextMenuIfNotClosing(((Control)sender).Location, m_iLineChoice);
 			}
 		}
 
@@ -675,6 +671,7 @@ namespace SIL.FieldWorks.IText
 				newLineChoices.Remove(newLineChoices[ilineToHide]);
 				UpdateForNewLineChoices(newLineChoices);
 			}
+			RemoveContextButtonIfPresent(); // it will still have a spurious choice to hide the line we just hid; clicking may crash.
 		}
 
 		private void addWsToFlidItem_Click(object sender, EventArgs e)
@@ -934,8 +931,19 @@ namespace SIL.FieldWorks.IText
 
 			SetRootInternal(hvo);
 			AddDecorator();
+			RemoveContextButtonIfPresent(); // Don't want to keep the context button for a different text!
 		}
 
+		/// <summary>
+		/// Returns the rootbox of this object, or null if not applicable
+		/// </summary>
+		/// <returns></returns>
+		public IVwRootBox GetRootBox()
+		{
+			return RootBox;
+		}
+
+		#endregion
 		/// <summary>
 		/// Allows InterlinTaggingChild to add a DomainDataByFlid decorator to the rootbox.
 		/// </summary>
@@ -974,7 +982,6 @@ namespace SIL.FieldWorks.IText
 			ChangeOrMakeRoot(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
 			m_vc.RootSite = this;
 		}
-		#endregion IChangeRootObject
 
 		#region IVwNotifyChange Members
 

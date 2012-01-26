@@ -63,7 +63,6 @@ namespace SIL.FieldWorks.Discourse
 		// To keep track of where we are in the text between panes (and areas)
 		internal FdoCache m_cache;
 		private IFdoServiceLocator m_serviceLocator;
-		readonly IStTextRepository m_stTextRepo;
 		private XmlNode m_configurationParameters;
 		#endregion
 
@@ -82,7 +81,6 @@ namespace SIL.FieldWorks.Discourse
 			m_cache = cache;
 			m_serviceLocator = m_cache.ServiceLocator;
 			m_logic = logic;
-			m_stTextRepo = m_serviceLocator.GetInstance<IStTextRepository>();
 
 			BuildUIComponents();
 		}
@@ -646,7 +644,7 @@ namespace SIL.FieldWorks.Discourse
 			if (m_chart.RowsOS.Count <= 0)
 				return;
 			// no rows in chart; no selection necessary
-			m_bookmark = GetAncestorBookmark(this);
+			m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
 			m_logic.RaiseRibbonChgEvent();
 			// This will override bookmark if there is a ChOrph to be inserted first.
 			if (m_logic.IsChOrphActive)
@@ -756,7 +754,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false); // bookmark this location, but don't persist.
+			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex, m_mediator); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -790,16 +788,17 @@ namespace SIL.FieldWorks.Discourse
 			m_body.SelectAndScrollToLoc(new ChartLocation(row, icol), true);
 		}
 
-		private static InterAreaBookmark GetAncestorBookmark(Control curLevelControl)
+		private static InterAreaBookmark GetAncestorBookmark(Control curLevelControl, IStText basedOnRa)
 		{
 			object myParent = curLevelControl.Parent;
 			if (myParent == null)
 				return null;
 			if (myParent is InterlinMaster)
 			{
-				return (myParent as InterlinMaster).m_bookmark;
+				string tool = (myParent as InterlinMaster).CurrentTool;
+				return InterlinMaster.m_bookmarks[new Tuple<string, Guid>(tool, basedOnRa.Guid)];
 			}
-			return GetAncestorBookmark(myParent as Control);
+			return GetAncestorBookmark(myParent as Control, basedOnRa);
 		}
 
 		public void SelectOccurrence(AnalysisOccurrence point)
@@ -954,7 +953,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
-					m_bookmark.Reset();
+					m_bookmark.Reset(m_bookmark.TextIndex, m_mediator);
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.

@@ -78,6 +78,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected FdoCache m_cache;
 
+		/// <summary>
+		/// True to prevent choosing more than one item.
+		/// </summary>
+		public bool Atomic { get; set; }
+
 		/// <summary></summary>
 		protected bool m_fLinkExecuted = false;
 
@@ -653,19 +658,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="e"></param>
 		void m_labelsTreeView_AfterCheck(object sender, TreeViewEventArgs e)
 		{
-			if (m_fEnableCtrlCheck && ModifierKeys == Keys.Control)
+			var clickNode = (LabelNode)e.Node;
+			if (m_fEnableCtrlCheck && ModifierKeys == Keys.Control && !Atomic)
 			{
-				var rootNode = (LabelNode)e.Node;
 				using (new WaitCursor())
 				{
 					if (e.Action != TreeViewAction.Unknown)
 					{
 						// The original check, not recursive.
-						rootNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
-						if (!rootNode.IsExpanded)
-							rootNode.Expand(); // open up at least one level to show effects.
+						clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
+						if (!clickNode.IsExpanded)
+							clickNode.Expand(); // open up at least one level to show effects.
 					}
-					foreach (TreeNode node in rootNode.Nodes)
+					foreach (TreeNode node in clickNode.Nodes)
 						node.Checked = e.Node.Checked; // and recursively checks children.
 				}
 			}
@@ -673,6 +678,28 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				btnOK.Enabled = AnyItemChecked(m_labelsTreeView.Nodes);
 			}
+			if (Atomic && clickNode.Checked)
+			{
+				var checkedNodes = new HashSet<TreeNode>();
+				foreach (TreeNode child in m_labelsTreeView.Nodes)
+					CollectCheckedNodes(child, checkedNodes);
+				checkedNodes.Remove(clickNode);
+				foreach (var node in checkedNodes)
+				{
+					// will produce a recursive call, but it won't do much because the changing node
+					// is NOT checked.
+					node.Checked = false;
+				}
+			}
+		}
+
+		// Uncheck every node in the tree except possibly current.
+		void CollectCheckedNodes(TreeNode root, HashSet<TreeNode> checkedNodes)
+		{
+			if (root.Checked)
+				checkedNodes.Add(root);
+			foreach (TreeNode child in root.Nodes)
+				CollectCheckedNodes(child, checkedNodes);
 		}
 
 		/// <summary>

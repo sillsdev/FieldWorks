@@ -1,0 +1,30 @@
+Process to generate Comprehension Checking Question script (in SFM format) from TW
+
+NOTE: [It may be worth talking to someone who handles the creation of TW databases (Robert_Stutzman@sil.org) to see if these questions exist in an SFM format BEFORE they get loaded as a TW resource. I know for sure that Doug Trick's questions (GEN and EXO) are already in SFM - albeit with a slightly different set of markers; but it may still be worth accessing the "source" rather than the TW formatted version.]
+
+If you choose to gather the questions from TW, then this is the process that I have used:
+
+Open Translators Workplace and locate the resource: "QUESTIONS FOR TESTING TRANSLATIONS"
+Select File | Export...
+And select the file type of Rich Text Format (*rtf)
+Provide a filename (something like: CheckingQuestions.rtf)
+
+Use RTF2SFM.exe along with the control file RTF2SFM.ini to change the RTF into an SFM file which can be read by Toolbox.
+The command will be something like this:
+RTF2SFM.exe -s -c RTF2SFM.ini -o CheckingQuestions.db CheckingQuestions.rtf
+
+When the process of conversion is complete (it takes a few minutes to run!), check the RESIDUE (*.res) file produced that it doesn't contain anything important (but if it does, you may need to check your *.RTF file and/or your RTF2SFM.ini file for issues before trying again).
+
+When you have successfully converted the RTF file into an SFM file (CheckingQuestions.db), you need to do a little bit of manual tidying up in a text editor to remove the pieces that are not needed (introductory comments and instructions, closing comments at end of file). What you should be left with is just the headers, references, checking questions, expected answers and notes. You will also need to add a Toolbox identifier line at the top of the file so that it knows what TYPE of file it is:
+\_sh v3.0  400  QuestionsForTesting
+
+Once this is done, you can open the file with Toolbox (out of curiosity, or if you need to check the result)
+
+There are a few things that still need to be fixed:
+(a) The 'dash/emdash' within bridged verse references need to be changed to regular 'hyphen'
+(b) The long-winded references in \rf need to be abbreviated and moved/copied down to sit just below the \oh Overview line.
+(c) The \tqref lines need to have the appropriate book code prefixed to the reference
+These issues are taken care of by the following CC tables (AddTQREFfield.cct,LongBookNames2Short3letterCodes.cct):
+ccw32.exe -t "AddTQREFfield.cct,LongBookNames2Short3letterCodes.cct" -o "CheckingQuestionsOUT.db" "CheckingQuestions.db"
+
+Finally, if you want an XML version of the list, then you can run "XMLiseEmptyQTTsfmList.cct" which will generate the questions in the format that Transcelerator wants it. [This CCT was originally built for transfering already TRANSLATED data from Toolbox to a prototype version of Transcerlerator and was called XMLiseQTTsfmList.cct].

@@ -2087,6 +2087,7 @@
  ~/ # y _ amech  | ~/ # y _ amech
 
 \eType prefix
+\mp StemNameAffix66683
 
 \lx 20781
 \g already

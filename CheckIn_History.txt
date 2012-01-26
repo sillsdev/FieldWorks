@@ -5596,3 +5596,112 @@ JohnT, 9 Dec 2011. Further fix of LT-11073, as the first fix caused RTL filter c
 RickM, 9 Dec 2011. LT-12143 Unchecking a WS now hides completely, instead of "hide if empty"
 JohnT, 9 Dec 2011. LT-12365, LIFT [export] fails with & in [residue id]
 JohnT, 9 Dec 2011. Yet another go at LT-11073. Now both LTR and RTL show the leading edge.
+EberhardB, 12 Dec 2011. Integration Calgary/WW -> WW.
+LastufkaM, 12 Dec 2011. LT-12304 Word focus box gets stuck on analysis ws word.
+EricP, 13 Dec 2011. Initial work on LT-12315 "Import words and user-confirmed word glosses". Enabled import of interlinear word glosses.
+NaylorJ, 13 Dec 2011. Fixed LT-12332. A new range of odd writing system codes will now import correctly, or at least without becoming invalid.
+GordonM, 13 Dec 2011. Fixed LT-12302 so Text creation in Notebook works better.
+NaylorJ, 13 Dec 2011. Fixed LT-12301. The given LIFT file now imports without crashing or complaining.
+EricP, 14 Dec 2011. Continuing work on LT-12315 "Import words and user-confirmed word glosses". Skip creation of duplicate word glosses.
+AndyBlack, 14 Dec 2011. Fixed LT-12396 "Lexicon file produced for XAmple parser does not correctly handle stem names for inflectional affixes when the affix is for a subcategory and the stem name is defined in a parent category."
+EricP, 15 Dec 2011. Continuing work on LT-12315 "Import words and user-confirmed word glosses". Add morpheme line and human user approved evaluation.
+GordonM, 15 Dec 2011. Part of LT-12313 Dict config of referenced complex forms.
+NaylorJ, 15 Dec 2011. Fixed LT-12294. Discovered that Pathway Export was not disposing of the hidden window it created. Now it is disposed of.
+JohnT, 15 Dec 2011. LT-12309, Keep place in Dictionary view
+LastufkaM, 15 Dec 2011. LT-12097 Free translation shortcut work for RTL too - more likely to come.
+GordonM, 16 Dec 2011. Fix chart checking code to make sure that words from wrong text won't be included.
+LastufkaM, 16 Dec 2011. LT-12243 Move Down isn't working on "Note" in Gloss tab.
+JohnT, 19 Dec 2011. LT-12176, Adding column resizes other columns
+	Later: LT-12242, Crash when use menu button of hidden line, when Free line hidden
+RandyR, 19 Dec 2011: Added missing 'do-nothing' DM (7000050) for a model change done on 1 Dec (Added Speaker to Segment).
+JohnT, 19 Dec 2011. LT-12361, FlexText import error message misleading for invalid writing systems
+	Later: LT-12378, Error when adding a bound root without leading token
+RickM, 19 Dec 2011. LT-12172 Anthropology Category Column has wrong content layout in Lexicon
+NaylorJ, 20 Dec 2011. LT-12282 The users place in Interlinear Texts is now remembered much more thoroughly.
+NaylorJ, 20 Dec 2011. Updated the sample data and default projects to version 7000050
+GordonM, 20 Dec 2011. Fixed LT-12313 dictionary config for minor referenced complex forms.
+NaylorJ, 20 Dec 2011. Fixed LT-12270 The custom field information is now be wiped if they are update,
+	so the new or changed fields should show after LIFT import.
+NaylorJ, 20 Dec 2011. Fixed LT-12377, the interlinear export now clears title and other meta information after each text.
+GordonM, 21 Dec 2011. Fixed LT-12376 Down arrow crash in Word Cat.
+JohnT, 21 Dec 2011. LT-12340, Failed Send/Receive should report problems
+NaylorJ, 22 Dec 2011. Refactored a poorly named method related to the issue LT-12357
+GordonM, 22 Dec 2011. Fixed LT-12419 so unwanted Insert menu items don't show up in Lists-ReversalIndexCategories.
+LastufkaM, 3 Jan 2012. LT-12279 Export selection jumps around after I click Export in the Export dialog box.
+GordonM, 3 Jan 2012. Fixed a missing "part" problem that Ken found.
+NaylorJ, 3 Jan 2012. Fixed LT-12382, Show Hidden fields will now appear on custom list items.
+JohnT, 4 Jan 2012. LT-12420, Crash pasting Chinese text into English Reversal
+	Later: LT-12390, Crash on "Word Analysis" pane When jumping from "Interlinear Texts" to "Word Analysis" pane.
+GordonM and JasonN, 4 Jan 2012. Fixed LT-12411 and probably LT-12288 (Jason).
+NaylorJ, 4 Jan 2012. Fixed LT-11798 fields with multiple writing system possibilities should still work in the quick configure menu now.
+JohnT, 5 Jan 2012. LT-12239, custom list's sub-items not available in bulk edit
+	Later: LT-12248, Unhelpful unnecessary text repositioning when navigating between Free translations
+	Later: LT-11066, Trying to "Export" data from "List" area puts "create new entry" icon in Lists area
+RandyR: 5 Jan 2012. Update LiftbridgeCore dll that has new interface, and get LBListener to use it.
+JohnT, 6 Jan 2012. LT-12286, "Show record in Notebook" shown before record link
+	Later: LT-12435, Restoring to default settings and then clicking on "Gloss" tab leads to crash.
+	Later: LT-12424, Crash after importing *.LIFT file when moving to another entry.
+GordonM, 6 Jan 2012. Fixed LT-11548 so disposed MSAPopupMgr doesn't crash.
+JohnW, 6 Jan 2012. TE-9842: Changed how fwdata file merges in newbies to maintain order to improve performance when many newbies.
+JohnT, 6 Jan 2012. LT-12430, Text is deselected on center of "Texts" column when I import and merge with existing text.
+	Later: LT-12441, When Notebook filtered, clicking a subrecord's field causes browse pane to jump to top most record
+RandyR: 6 Jan 2012. 'Nuther revision related to Lift Bridge.
+RandyR: 9 Jan 2012. Add hack to data sorter to pick first alternative if there are duplicates in the file.
+JohnT, 10 Jan 2012. LT-12439, Wrong options shown at top level of "Referenced Complex Forms".
+	Later: LT-12426, Writing system migration missed in some configuration contexts
+	Later: LT-12421, Configure Dictionary View dialog box, Referenced Complex Forms: "Display each Complex Form indented on a new line"
+		does not forget what is in Surrounding context that is not now needed.
+TomB, 10 Jan 2012. TXL-47, TXL-60, TXL-73, TXL-79, TXL-80 (TomB): Broke question processing into two steps to allow
+		for some one-time cleanup/interpretation of alternate forms and embedded verse numbers. A generated
+		XML form is then used for subsequent access. The alternate forms of the question are available to
+		the user in the new Modify Question dialog box, and there is a process (that includes looking at
+		manually-determined alternate forms) to generate all the distinct alternative forms of questions
+		that have alternate and/or optional words/phrases. Added ability to exclude questions that the user
+		doesn't deem relevant.
+	TXL-74, TXL-76: Improved the CC table for doing final cleanup of the QTTallBooks.sfm file to eliminate
+		some bugs and inconsistencies.
+JohnT, Jan 2012. LT-12469, "Problem Importing" warning message using Import/Merge From LIFT File
+LastufkaM, 10 Jan 2012. LT-12440 LT-12463 Crash in Interlinear when pressing enter to move to FT.
+NaylorJ, 10 Jan 2012. LT-12451 Deleting custom fields will now result in all objects being saved to prevent 'empty' custom fields from remaining behind. Also a change was
+	made so that configuration settings will remove obsolete settings from old versions.
+TomB, 11 Jan 2012. TXL-80: Fixed script-generation code to take into account excluded questions.
+	TXL-82: Fixed bug when trying to set filter if Te has a non-contiguous set of books filtered.
+TomB, 11 Jan 2012. TXL-83: Prevented extraneous section heads in script when overview questions have embedded
+	verse numbers (in parentheses) in their answers.
+	TXL-85: Added keyTermRules.xml to the installed files (no longer a user-specific AppData file).
+KenZ, 11 Jan 2012. JohnT fixed interlinear baseline writing system switching to wrong ws LT-12471.
+AnnB. 11 Jan 2012  Changed configuration files for adding the Kinyarwanda language pack.
+GordonM, 11 Jan 2012. Fixed LT-12437 so adding a text in Notebook doesn't crash.
+JohnT, 11 Jan 2012. LT-12474, Yellow Crash while clicking on the Delete button in Texts & Words-->Bulk Edit Wordforms Area
+NaylorJ, 11 Jan 2012. LT-12145 Possibly fixed. Was never able to reproduce. Changed default priority for RecordViews to be after RecordClerks
+	Also changed some code which would return null on attempt to find a RecordClerk if there was a Clerk found which had a null Owner.
+JohnT, 12 Jan 2012. LT-12477, Approve new analysis when I move off the word after new entry made
+KenZ, 12 Jan 2012. Did final full integration from WW to FW_7.2 for the 7.2.0 release.
+	Changed version number of WW to 7.3 for ongoing work.
+AnnB, 12 Jan 2012.  Hook up Help Buttons LT-11789 and LT-12490.
+RandyR, 15 Jan 2012. Integration: FW72->WW.
+GordonM, 17 Jan 2012. Fixed LT-12427 so Full Notebook Export to SFM doesn't crash on ampersand.
+LastufkaM, 17 Jan 2012. Fixed a crash while looking at LT-12097 again.
+GordonM, 17 Jan 2012. Fixed LT-12457 so Notebook XHTML export works while on subrecord.
+NaylorJ, 20 Jan 2012. Re-named the FwData class and file to FwDataFixer in preperation of LT-12530 work.
+GordonM, 20 Jan 2012. LT-12498 fixed Other button in Find in Dictionary dialog.
+NaylorJ, 23 Jan 2012. Further work related to LT-12530.
+GordonM, 23 Jan 2012. Fixed LT-11922 (and LT-12053) so LiftBridge doesn't disappear from the menu.
+NaylorJ, 23 Jan 2012. Incremental changes for test cases of LT-12530.
+NaylorJ, 23 Jan 2012. Test harness refinement for LT-12530.
+	Later: Version 1 of the new Fixer model and testing framework.
+	Later: Changed the directory name so that the build will run the tests automagically.
+BogleT, 24 Jan 2012. TXL-93: Removed release mode code in TE options dialog that required a copy of QTTallBooks.sfm
+		in My Documents\UNS Questions in order to display the experimental feature.
+	TXL-94: Ensured creation the UNS Questions folder in Environment.SpecialFolder.ApplicationData when
+		Transcelerator runs the very first time.
+BogleT, 24 Jan 2012. TXL-87: Changed to display key term renderings in alphabetical order.
+	TXL-88: Made change to commit current edit when saving. This prevents data loss and avoids a crash when reloading.
+	TXL-89: Preserved sorting when reloading.
+	TXL-90, TXL-91: Fixed some layout and user-interaction problems in the Edit Question dialog box.
+LastufkaM, 24 Jan 2012. LT-12130 AppData Local folder not cleared of obsolete data when Send/Receive LIFT used
+NaylorJ, 24 Jan 2012. Finished LT-12530. Added some addition tests, removed obsolete ws migration code. Made the tests work from nant.
+GordonM, 25 Jan 2012. Small changes in FDO and FixFwDataDllTests.
+GordonM, 25 Jan 2012. Changes to FixFwDataDll and tests project files, so tests work through VS.
+JohnT, 25 Jan 2012. Enhanced handling of incoming links to support figuring out a suitable default tool for most object types.
+	Later: Reverted 37331. This needs more investigation (the original purpose was not clear) but it was breaking tests.

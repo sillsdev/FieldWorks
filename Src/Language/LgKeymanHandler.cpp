@@ -556,7 +556,11 @@ STDMETHODIMP LgKeymanHandler::put_ActiveKeyboardName(BSTR bstrName)
 		staMsg.Format("Disabling keyman...name (%B) not recognized\n", bstrName);
 		::OutputDebugStringA(staMsg.Chars());
 #endif
-		::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID, KEYMANID_NONKEYMAN);
+		// Posting a message saying there is no keyman keyboard active runs code in
+		// SimpleRootSite.OnKeymanKeyboardChange which tries to set the active writing system
+		// to one which requires no keyman keyboard. This is an unfortunate thing to do
+		// as a side effect of trying to set an unavailable keyboard for a particular WS. LS-12471.
+		//::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID, KEYMANID_NONKEYMAN);
 		// This can happen if people have been renaming/removing Keyman keyboards, so don't
 		// generate a useless (and expensive time-wise) stack trace.
 		ReturnHr(E_INVALIDARG);

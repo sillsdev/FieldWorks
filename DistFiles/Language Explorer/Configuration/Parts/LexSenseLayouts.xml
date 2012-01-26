@@ -371,12 +371,12 @@
 				<obj field="$fieldName" layout="publishFullTextInParas"/>
 			</part>
 		</generate>
-		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
+		<part ref="RootComplexFormsConfig" label="Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor"/>
 		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinor" css="subsenses-minor" parastyle="Dictionary-Sense"/>
 	</layout>
 
-	<layout class="LexSense" type="jtview" name="publishRootSub_AsPara">
-		<sublayout name="publishRootSub"/>
+	<layout class="LexSense" type="jtview" name="publishMinorComplexFormDefn">
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before=" " after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor-complex"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishRootSub">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootSub" css="grammatical-info-sub"/>

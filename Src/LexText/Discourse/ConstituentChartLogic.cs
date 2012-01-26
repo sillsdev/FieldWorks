@@ -2847,7 +2847,7 @@ namespace SIL.FieldWorks.Discourse
 						}
 						// Do some further checking because it's a ConstChartWordGroup.
 						var curWordGroup = curPart as IConstChartWordGroup;
-						if (!curWordGroup.IsValidRef)
+						if (!curWordGroup.IsValidRef || !WordGroupTextMatchesChartText(curWordGroup))
 						{
 							// This is an invalid cell part. We need to delete this cell part.
 							ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
@@ -2865,18 +2865,30 @@ namespace SIL.FieldWorks.Discourse
 					irow--;
 					crows--;
 				} // row loop
+				if (fReported)
+					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
 			});
 		}
 
-		private static void ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
+		private bool WordGroupTextMatchesChartText(IConstChartWordGroup wg)
+		{
+			// Compares the hvo of our current chart's text to the hvo of the text
+			// that this ConstChartWordGroup references. They'd better be the same!
+			var wgText = wg.BeginSegmentRA.Paragraph.Owner as IStText;
+			if (wgText == null || !wgText.IsValidObject)
+				return false;
+			//return wgText.Hvo == StTextHvo; // Actually StTextHvo isn't set to the new chart yet!
+			return wgText.Hvo == Chart.BasedOnRA.Hvo; // But Chart IS set now!
+		}
+
+		private void ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
 			IConstituentChartCellPart part, ref bool fReported, ref int index, ref int count)
 		{
 			//Debug.Assert(false, "About to delete cell part. Why!?");
 			row.CellsOS.Remove(part);
 			if (!fReported)
 			{
-				MessageBox.Show(DiscourseStrings.ksTextEditWarning, DiscourseStrings.ksWarning,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				DisplayWarning();
 				fReported = true;
 			}
 			// Restart the loop; we may have deleted additional items either before or after the one
@@ -2884,6 +2896,15 @@ namespace SIL.FieldWorks.Discourse
 			index = -1; // after auto-increment in for loop, starts over at beginning.
 			// if we just removed the last cell in the row, the row will be deleted too!
 			count = row.IsValidObject ? row.CellsOS.Count : 0;
+		}
+
+		/// <summary>
+		/// Overidden by test subclass to not display message.
+		/// </summary>
+		protected virtual void DisplayWarning()
+		{
+			MessageBox.Show(DiscourseStrings.ksTextEditWarning, DiscourseStrings.ksWarning,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		/// <summary>
