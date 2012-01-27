@@ -44,4 +44,6 @@ KenZ, 26 Jan 2012. Set version number to 7.2.2
 JohnT, 26 Jan 2012. LT-12554, Bulk Edit goes blank until restart
 	Later: LT-12541, Copy error to clipboard when emailing fails/is cancelled
 	Later: LT-12586, Add a new text to the Choose Texts mega filter! (properly!)
-KenZ, 27 Kam 2012. Changed Flextext to formatted output so it can be read in a text editor.
+KenZ, 27 Jan 2012. Changed Flextext to formatted output so it can be read in a text editor.
+TomB, 27 Jan 2012. LT-12327: Fix to prevent TeStylesXmlAccessor from treating deprecated Notation_Date styles as being in use.
+	Integration of bug for for TXL-95.
