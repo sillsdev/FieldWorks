@@ -49,3 +49,4 @@ TomB, 27 Jan 2012. LT-12327: Fix to prevent TeStylesXmlAccessor from treating de
 	Integration of bug for for TXL-95.
 JohnT, 27 Jan 2012. Fixed a problem where importing an SFM interlinear text would fail if no writing system was specified
 	for fields set to be ignored.
+RickM 27 Jan 2012. LT-11975 Crash on "Bulk Edit Reversal Entries" pane When Deleting all Reversal entries.

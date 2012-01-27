@@ -1986,7 +1986,9 @@ namespace SIL.FieldWorks.Common.Controls
 															state.Breath();
 														}
 														i++;
-														m_bv.SpecialCache.DeleteObj(hvo);
+														ICmObject obj;
+														if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+															m_bv.SpecialCache.DeleteObj(hvo);
 													}
 													if (m_expectedListItemsClassId == LexEntryTags.kClassId ||
 														m_expectedListItemsClassId == LexSenseTags.kClassId)
