@@ -311,6 +311,8 @@ namespace SIL.FieldWorks.IText
 				var analysToAdd = new ArrayList();
 				foreach(var mapping in m_mappings)
 				{
+					if (mapping.Destination == InterlinDestination.Ignored)
+						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
 					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
 					if(mapping.Destination == InterlinDestination.Baseline)

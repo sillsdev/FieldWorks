@@ -47,3 +47,5 @@ JohnT, 26 Jan 2012. LT-12554, Bulk Edit goes blank until restart
 KenZ, 27 Jan 2012. Changed Flextext to formatted output so it can be read in a text editor.
 TomB, 27 Jan 2012. LT-12327: Fix to prevent TeStylesXmlAccessor from treating deprecated Notation_Date styles as being in use.
 	Integration of bug for for TXL-95.
+JohnT, 27 Jan 2012. Fixed a problem where importing an SFM interlinear text would fail if no writing system was specified
+	for fields set to be ignored.
