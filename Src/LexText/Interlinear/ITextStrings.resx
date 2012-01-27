@@ -821,6 +821,9 @@
   <data name="ksImportSFMInterlinNewWSTitle" xml:space="preserve">
 	<value>Add writing system {0} to your FieldWorks project?</value>
   </data>
+  <data name="ksImportSFMInterlinTextCount" xml:space="preserve">
+	<value>{0} texts will be imported from this SFM file.</value>
+  </data>
   <data name="ksAskMergeInterlinearText" xml:space="preserve">
 	<value>You already have this interlinear text in your project. Would you like to merge it?</value>
   </data>

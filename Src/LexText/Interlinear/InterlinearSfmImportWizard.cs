@@ -309,8 +309,11 @@ namespace SIL.FieldWorks.IText
 				ICollection<IWritingSystem> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
 				var vernToAdd = new ArrayList();
 				var analysToAdd = new ArrayList();
+				int textCount = 0;
 				foreach(var mapping in m_mappings)
 				{
+					if (mapping.Destination == InterlinDestination.Id)
+						++textCount;
 					if (mapping.Destination == InterlinDestination.Ignored)
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
@@ -363,6 +366,14 @@ namespace SIL.FieldWorks.IText
 							m_cache.LanguageProject.AddToCurrentVernacularWritingSystems(vernLang);
 						}
 					});
+				if(textCount > 1)
+				{
+					numberOfTextsLabel.Text = String.Format(ITextStrings.ksImportSFMInterlinTextCount, 5);
+				}
+				else
+				{
+					numberOfTextsLabel.Text = String.Empty;
+				}
 			}
 			base.OnNextButton();
 		}

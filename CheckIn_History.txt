@@ -55,3 +55,4 @@ NaylorJ, 27 Jan 2012. LT-12403 Segment level translations will now be retained o
 NaylorJ, 27 Jan 2012. LT-12614 Scripture export will work without crashing now.
 AlistairI, 27 Jan 2012. LT-12613 Put flashing cursor on newly added interlinear note.
 RIckM, 27 Jan 2012. LT-12577 Crash on Reversal Index pane when deleting reversal entry in "Bulk Edit Entries" pane ? Delete tab.
+NaylorJ, 27 Jan 2012. LT-12593 Show the number of text that will be imported from the SFM (if it is more than one)
