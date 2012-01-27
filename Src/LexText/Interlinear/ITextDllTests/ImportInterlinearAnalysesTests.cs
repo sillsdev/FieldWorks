@@ -629,6 +629,98 @@ namespace SIL.FieldWorks.IText
 
 		}
 
+		[Test]
+		public void ImportUnknownPhraseWholeSegmentNoVersion_MakesSeparateWords()
+		{
+			// import an analysis with word gloss
+			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+						 "<paragraphs><paragraph><phrases><phrase><words>" +
+						 "<word>" +
+							"<item type='txt' lang='en'>this is not a phrase</item>" +
+						 "</word>" +
+						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var options = new LinguaLinksImport.ImportInterlinearOptions
+			{
+				AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.WordGloss,
+
+				BirdData = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				Progress = new DummyProgressDlg(),
+				AllottedProgress = 0
+			};
+			FDO.IText importedText = null;
+			li.ImportInterlinear(options, ref importedText);
+			var stText = importedText.ContentsOA;
+			var para = (IStTxtPara)stText.ParagraphsOS[0];
+			var seg = para.SegmentsOS[0];
+			Assert.That(para.Contents.Text, Is.EqualTo("this is not a phrase"));
+			// It's acceptable either that it hasn't been parsed at all (and will be when we look at it) and so
+			// has no analyses, or that it's been parsed into five words. The other likely outcome is one phrase,
+			// which is not acceptable for parsing Saymore output (LT-12621).
+			Assert.That(seg.AnalysesRS.Count, Is.EqualTo(5).Or.EqualTo(0));
+		}
+
+		[Test]
+		public void ImportKnownPhraseWholeSegmentNoVersion_MakesPhrase()
+		{
+			// import an analysis with word gloss
+			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+						 "<paragraphs><paragraph><phrases><phrase><words>" +
+						 "<word>" +
+							"<item type='txt' lang='en'>this is a phrase</item>" +
+						 "</word>" +
+						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+					{
+						var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
+						int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+						wf.Form.set_String(wsEn, Cache.TsStrFactory.MakeString("this is a phrase", wsEn));
+					});
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var options = new LinguaLinksImport.ImportInterlinearOptions
+			{
+				AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.WordGloss,
+
+				BirdData = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				Progress = new DummyProgressDlg(),
+				AllottedProgress = 0
+			};
+			FDO.IText importedText = null;
+			li.ImportInterlinear(options, ref importedText);
+			var stText = importedText.ContentsOA;
+			var para = (IStTxtPara)stText.ParagraphsOS[0];
+			var seg = para.SegmentsOS[0];
+			Assert.That(seg.AnalysesRS.Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void ImportUnknownPhraseWholeSegmentVersion_MakesPhrase()
+		{
+			// import an analysis with word gloss
+			string xml = "<document version=\"2\"><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+						 "<paragraphs><paragraph><phrases><phrase><words>" +
+						 "<word>" +
+							"<item type='txt' lang='en'>this is not a phrase</item>" +
+						 "</word>" +
+						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			var options = new LinguaLinksImport.ImportInterlinearOptions
+			{
+				AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.WordGloss,
+
+				BirdData = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				Progress = new DummyProgressDlg(),
+				AllottedProgress = 0
+			};
+			FDO.IText importedText = null;
+			li.ImportInterlinear(options, ref importedText);
+			var stText = importedText.ContentsOA;
+			var para = (IStTxtPara)stText.ParagraphsOS[0];
+			var seg = para.SegmentsOS[0];
+			Assert.That(seg.AnalysesRS.Count, Is.EqualTo(1));
+		}
 	}
 }
