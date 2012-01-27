@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 	public class ExportParatextDlgTests: ScrInMemoryFdoTestBase
 	{
 		#region Data members
+		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
 		private DummyParatextDialog m_dummyParaDlg;
 		private FilteredScrBooks m_bookFilter;
 		private IScrBook m_Genesis;
@@ -53,6 +54,28 @@ namespace SIL.FieldWorks.TE.ExportTests
 		protected override void CreateTestData()
 		{
 			m_Genesis = AddBookToMockedScripture(1, "Genesis");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Squeezes in the mock ParatextHelper in place of the real adapter.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// If a test overrides this, it should call this base implementation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			ParatextHelper.Manager.Reset();
 		}
 
 		/// ------------------------------------------------------------------------------------

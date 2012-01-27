@@ -5711,3 +5711,4 @@ BogleT, 26 Jan 2012.
 		cleaned up some alternate forms for a few questions.  Enhanced the porter stemmer to prevent some bogus stemmings.
 	TE-9485, TE-9513: Fixed a few English glosses for key terms.
 	TXL-95: Fixed crash (Null reference exception) when a user tries to open dialog to generate checking script template for the first time
+BogleT, 27 Jan 2012. TE-9522: Fixed sporadic test failures in ExportParatextDlgTests.
