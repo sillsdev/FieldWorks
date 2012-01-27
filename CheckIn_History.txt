@@ -54,3 +54,4 @@ JohnT, 27 Jan 2012. LT-12621, Allow Flex to import current SayMore files.
 NaylorJ, 27 Jan 2012. LT-12403 Segment level translations will now be retained on a writing system switch of an entire paragraph.
 NaylorJ, 27 Jan 2012. LT-12614 Scripture export will work without crashing now.
 AlistairI, 27 Jan 2012. LT-12613 Put flashing cursor on newly added interlinear note.
+RIckM, 27 Jan 2012. LT-12577 Crash on Reversal Index pane when deleting reversal entry in "Bulk Edit Entries" pane ? Delete tab.
