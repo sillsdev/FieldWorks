@@ -51,3 +51,4 @@ JohnT, 27 Jan 2012. Fixed a problem where importing an SFM interlinear text woul
 	for fields set to be ignored.
 RickM 27 Jan 2012. LT-11975 Crash on "Bulk Edit Reversal Entries" pane When Deleting all Reversal entries.
 JohnT, 27 Jan 2012. LT-12621, Allow Flex to import current SayMore files.
+NaylorJ, 27 Jan 2012. LT-12403 Segment level translations will now be retained on a writing system switch of an entire paragraph.

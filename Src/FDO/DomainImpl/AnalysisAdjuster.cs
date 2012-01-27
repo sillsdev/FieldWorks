@@ -52,6 +52,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// d. If there is only one new segment and more than one partly surviving segment, we concatenate
 	/// translations, and concatenate lists of notes (not the contents of the notes).
 	///
+	/// e. If all the characters in the paragraph 'changed' but actually remained identical then the users
+	/// would prefer that the analysis stick around (LT-12403) so we'll pretend it didn't change for adjustment purposes.
 	/// </summary>
 	internal sealed class AnalysisAdjuster
 	{
@@ -199,7 +201,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_para = para;
 			m_oldContents = oldContents;
 			m_newContents = m_para.Contents;
-			m_paraDiffInfo = diffInfo;
+			if(diffInfo == null || diffInfo.IchFirstDiff != 0 || diffInfo.CchDeleteFromOld != diffInfo.CchInsert ||
+				m_oldContents == null || m_newContents == null || m_oldContents.Length == 0 || !m_oldContents.GetChars(0, m_oldContents.Length).Equals(m_newContents.GetChars(0, m_newContents.Length)))
+			{
+				m_paraDiffInfo = diffInfo;
+			}
+			else
+			{
+				//We didn't really change it, maybe the ws changed, but all the characters are identical
+				//let's let the user keep their analysis
+				m_paraDiffInfo = new TsStringDiffInfo(0, 0, 0);
+			}
 		}
 		#endregion
 

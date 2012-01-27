@@ -6,6 +6,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
@@ -17,6 +18,26 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class AnalysisAdjusterTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		/// <summary>
+		/// Test that segment level analysis are left alone when the entire sentence is replaced with identical text in a different writing system.
+		/// We want to make sure word level analyses are lost but verifying this has proved untestable in this framework .
+		/// </summary>
+		[Test]
+		public virtual void FullIdenticalButNewWsReplacementLeavesTranslation()
+		{
+			//Test added to deal with change request from LT-12403
+			int spanishWs = Cache.WritingSystemFactory.GetWsFromStr("es");
+			var adjuster = new AdjustmentVerifier(Cache)
+							{
+								MatchingInitialSegments = 0,
+								MatchOneMoreInitialTN = true
+							};
+			adjuster.OldContents = "pus yalola nihimbilira.";
+			adjuster.SetNewContents(Cache.TsStrFactory.MakeString("pus yalola nihimbilira.", spanishWs));
+			Cache.LangProject.AddToCurrentVernacularWritingSystems((IWritingSystem)Cache.WritingSystemFactory.get_Engine("es"));
+			adjuster.RunTest();
+		}
+
 		/// <summary>
 		///
 		/// </summary>
@@ -2460,10 +2481,22 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Adjustment verifier is used to make a specified change to a text and verify the results.
 	///
 	/// The broad idea is to specify how to create an StText in a specified state, to specify a change
-	/// that should be made to it, and to specify the expected resulting contents of the text. Also
-	/// specified is a range of segments and analyses within the text that is permitted to be affected.
+	/// that should be made to it and the expected resulting contents of the text. Also
+	/// specified is a range of segments and analyses within the text that are permitted to be affected.
 	///
-	/// The verifier does the following:
+	/// A text is originally stored as a sequence of StTxtParas, and thus both the original state and
+	/// the changed state are specified by giving a list of TsStrings that should be contents of the text
+	/// before and after the change we are adjusting for.
+	///
+	/// A text is anlyzed at two levels, first into 'segments' which typically are sentences, and then (possibly) into
+	/// words (and punctuation chunks), each of which may have an analysis. The analysis of each item may be
+	/// a wordform, WfiAnalysis, WfiGloss, or PunctuationForm. Thus, each segment has a sequence of Analyses, corresponding
+	/// to words and punctuation, which may also be adjusted if present (when the segment is not completely replaced).
+	/// In general, the code we are testing tries to preserve the translations and notes of any segments that are not
+	/// completely replaced by the new text, and the analyses of any unchanged segments and any words at the start
+	/// or end of modified segments.
+	///
+	/// The AdjustmentVerifier does the following:
 	/// 1. Sets up an StText with the specified content and no analysis. Makes the change. Verifies
 	/// that the result is as expected and also has no analysis.
 	///
@@ -2481,12 +2514,45 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// refers to the same wordforms (possibly indirectly) and punctuation forms as the adjusted one.
 	///
 	/// The most typical usage is
-	/// Set oldContents (string, default vern WS implied) or oldContentsTss; newContents or newContentsTss;
+	/// Set OldContents (string, default vern WS implied) or oldContentsTss; newContents or newContentsTss;
 	/// modifiedSegment (or firstModifiedSegment/lastModifiedSegment), an index; firstModifiedAnalysis and
 	/// lastModifiedAnalysis. The initial text contains a single paragraph with oldContents; the change is
 	/// to replace it with newContents. Call RunTest(). (the identification of what should change is
 	/// relative to the input text; what is actually verified is that the stuff outside that range is
 	/// present unmodified in the output.
+	///
+	///		adjuster = new BothWaysAdjustmentVerifier(Cache)
+	///		{
+	///			MatchingInitialSegments = 1,
+	///			MatchingFinalSegments = 1,
+	///			MatchingFinalAnalyses = 2,
+	///			MatchingInitialAnalyses = 1,
+	///			MatchOneMoreInitialTN = true,
+	///			MatchOneMoreFinalTN = true,
+	///		};
+	///		//                                1         2         3         4         5         6         7         8         9
+	///		//                      0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+	///		adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
+	///		adjuster.NewContents = "pus yalola nihimbilira. nihimbilira sup dup lup yalola. hesyla nihimbilira.";
+	///		adjuster.RunTest();
+	///
+	/// In the above, we are testing the effect of changing some text in the middle of a text that has one paragraph
+	/// and three segments (because there are three sentences).
+	/// One segment (the initial pus yalola nihimbilira) is identical in both old and new contents, so we
+	/// set MatchingInitialSegments to 1 to indicate that in the first segment everything should match
+	/// (the adjusted segment should have the same free translation, literal translation, notes, and analyses as
+	/// before the change).
+	/// Likewise, the last setence(hesyla nihimbilira.) is unchanged so the final segment should match exactly
+	/// (MatchingFinalSegments = 1).
+	/// Now for the middle sentence. There is one word at the start that is the same in old and new (the second
+	/// nihimbilira), so in the segment that does not match entirely (the second), the first analysis should be
+	/// the same before and after the adjustment (MatchingInitialAnalyses = 1). Likewise, the final "yalola" and period
+	/// in that segment are unchanged, so the last two analysies should also be unchanged (MatchingFinalAnalyses = 2).
+	///
+	/// We expect that the adjustment will preserve the translation and notes on the middle segment, since the change
+	/// leaves at least some of its content unchanged. Thus, in addition to the one initial and one final segment
+	/// that are entirely unchanged, one more (counting from either end) should have translation and notes unchanged
+	/// by the adjuster. This is indicated by MatchOneMoreInitialTN and MatchOneMoreFinalTN.
 	///
 	/// Variations:
 	/// May set oldContentsParas, an array of TsStrings, if multiple paragraphs should be in the initial state;
@@ -2506,6 +2572,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	class AdjustmentVerifier
 	{
+		// These variables all describe what is expected in the process of comparing the text and analysis that results from
+		// analyzing the original and then making the change (letting the analysis adjuster do its thing that we
+		// want to test) with the text and analysis that results from applying the change and then analyzing the
+		// resulting text from scratch. (We assume that analyzer is right.)
 		/// <summary>Count of paragraphs at start that should match entirely.</summary>
 		internal int MatchingInitialParagraphs;
 		/// <summary>Count of paragraphs at end that should match entirely.</summary>
@@ -2930,7 +3000,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Parse(newText);
 			// No longer needed because the required phrases are guessed once created in the SetupPhrases of the old text.
 			//SetupPhrases(newText, ResultingPhrases);
-
 			MakeTheTextChange(oldText, m_newText);
 
 			VerifyBaseText(newText, oldText);
@@ -3087,6 +3156,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					continue;
 				for (int j = 0; j < expectedPara.SegmentsOS.Count; j++)
 				{
+					bool shouldBeExactlyMatching = j < MatchingInitialSegments ||
+											j >= expectedPara.SegmentsOS.Count - MatchingFinalSegments;
+
 					var expectedSeg = expectedPara.SegmentsOS[j];
 					var actualSeg = actualPara.SegmentsOS[j];
 					Assert.AreEqual(expectedSeg.AnalysesRS.Count, actualSeg.AnalysesRS.Count,
@@ -3095,13 +3167,33 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						continue; // REVIEW: Don't really care about guts of analysis since they are never shown and can sometimes be wrong.
 					for (int k = 0; k < expectedSeg.AnalysesRS.Count; k++)
 					{
+						bool shouldMatchAnalysis = shouldBeExactlyMatching;
+						if (shouldBeExactlyMatching)
+						{
+							shouldMatchAnalysis = k < MatchingInitialAnalyses ||
+												  k >= expectedSeg.AnalysesRS.Count - MatchingFinalAnalyses;
+						}
 						var expectedAnalysis = expectedSeg.AnalysesRS[k];
 						var actualAnalysis = actualSeg.AnalysesRS[k];
 						if (expectedAnalysis is IWfiWordform)
-							Assert.AreEqual(expectedAnalysis.Wordform, actualAnalysis.Wordform,
-								"analysis " + k + " of segment " + j + " of paragraph " + i + " has an analysis of the wrong wordform: expected "
-								+ expectedAnalysis.Wordform.Form.VernacularDefaultWritingSystem.Text + " but was "
-								+ actualAnalysis.Wordform.Form.VernacularDefaultWritingSystem.Text);
+						{
+							if (shouldMatchAnalysis)
+							{
+								Assert.AreEqual(expectedAnalysis.Wordform, actualAnalysis.Wordform,
+												"analysis " + k + " of segment " + j + " of paragraph " + i +
+												" has an analysis of the wrong wordform: expected "
+												+ expectedAnalysis.Wordform.Form.VernacularDefaultWritingSystem.Text + " but was "
+												+ actualAnalysis.Wordform.Form.VernacularDefaultWritingSystem.Text);
+							}
+							else //The test did not expect an exact match here, so test the surface form only.
+							{
+								Assert.AreEqual(expectedAnalysis.Wordform.Form.BestVernacularAlternative.Text, actualAnalysis.Wordform.Form.BestVernacularAlternative.Text,
+												   "analysis " + k + " of segment " + j + " of paragraph " + i +
+												   " has an analysis of the wrong wordform: expected "
+												   + expectedAnalysis.Wordform.Form.BestVernacularAlternative.Text + " but was "
+												   + actualAnalysis.Wordform.Form.BestVernacularAlternative.Text);
+							}
+						}
 						else
 							Assert.AreEqual(expectedAnalysis, actualAnalysis,
 							   "analysis " + k + " of segment " + j + " of paragraph " + i + " has the wrong analysis");
@@ -3195,6 +3287,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			return stText;
 		}
+
 	}
 	#endregion
 
