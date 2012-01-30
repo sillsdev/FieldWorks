@@ -2655,9 +2655,9 @@ namespace SIL.FieldWorks.XWorks
 				// The 8 is rather arbitrary. It would be nice to take a distance from some pre-positioned control,
 				// but it is too difficult to know which one with so many overlapping options.
 				m_dyContextOffset = 8;
-				m_dyOriginalTopOfContext = this.Bottom - m_lblContext.Top;
+				m_dyOriginalTopOfContext = this.Height - m_lblContext.Top;
 			}
-			int desiredTop = belowThis == null ? this.Bottom - m_dyOriginalTopOfContext : belowThis.Bottom + m_dyContextOffset;
+			int desiredTop = belowThis == null ? this.Height - m_dyOriginalTopOfContext : belowThis.Bottom + m_dyContextOffset;
 			int diff = desiredTop - m_lblContext.Top;
 			var contextControls = new Control[] {m_lblContext, m_lblBefore, m_lblBetween, m_lblAfter, m_tbBefore, m_tbBetween, m_tbAfter};
 			// If we're putting it below something fixed, it should not move if the dialog resizes.
