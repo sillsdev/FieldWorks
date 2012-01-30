@@ -271,6 +271,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			writer.Close();
 		}
 
+		/// <summary>
+		/// Write out the results. Also deletes the temp files; may only be called once.
+		/// </summary>
+		/// <param name="writer"></param>
 		public void WriteResults(Action<byte[]> writer)
 		{
 			if (m_files.Count == 0)
@@ -309,6 +313,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				if (items[imin].Finished)
 					items.RemoveAt(imin);
 			}
+			foreach (var path in m_files)
+				File.Delete(path);
 		}
 
 		abstract class InputItem
