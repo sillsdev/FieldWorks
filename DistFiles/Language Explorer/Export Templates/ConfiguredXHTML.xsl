@@ -163,11 +163,11 @@ display/printout!
 	  <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="_ComplexFormEntryBackRefs|_VisibleVariantEntryRefs|_VariantFormEntryBackRefs|_VisibleEntryRefs|_ComplexFormEntryRefs">
+  <xsl:template match="_ComplexFormEntryBackRefs|_VisibleVariantEntryRefs|_VariantFormEntryBackRefs|_VisibleEntryRefs|_ComplexFormEntryRefs|_ComplexFormsNotSubentries">
 	<xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry">
+  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry|LexEntryRefLink_NonTrivialEntryRoots">
 	  <xsl:apply-templates/>
   </xsl:template>
 
