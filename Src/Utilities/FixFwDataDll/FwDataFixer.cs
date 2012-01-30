@@ -32,14 +32,11 @@ namespace SIL.FieldWorks.FixData
 		IProgress m_progress;
 		int m_crt;
 
-		//string m_logfile;
-
 		public delegate void ErrorLogger(string guid, string date, string description);
 
 		private ErrorLogger errorLogger;
 
-		//List<DocumentFixers> docLevelFixers = new List<DocumentFixers>();
-		List<RTFixers> rtLevelFixers = new List<RTFixers>();
+		List<RtFixer> m_rtLevelFixers = new List<RtFixer>();
 
 		Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
 		HashSet<Guid> m_guids = new HashSet<Guid>();
@@ -60,6 +57,9 @@ namespace SIL.FieldWorks.FixData
 			m_progress.Position = 0;
 			m_progress.Message = String.Format(Strings.ksReadingTheInputFile, m_filename);
 			m_crt = 0;
+			//The following fixers will be run on each rt element during FixErrorsAndSave()
+			m_rtLevelFixers.Add(new OriginalFixer());
+			m_rtLevelFixers.Add(new SequenceFixer());
 			using (XmlReader xrdr = XmlReader.Create(m_filename))
 			{
 				xrdr.MoveToContent();
@@ -74,6 +74,10 @@ namespace SIL.FieldWorks.FixData
 					string rtXml = xrdr.ReadOuterXml();
 					XElement rt = XElement.Parse(rtXml);
 					StoreGuidInfo(rt, errorLogger);
+					// Give each fixer a chance to gather data on the first pass,
+					// if it needs two passes to fix its sort of problem.
+					foreach (var fixer in m_rtLevelFixers)
+						fixer.InspectElement(rt);
 					xrdr.MoveToContent();
 					++m_crt;
 					if (m_progress.Position == m_progress.Maximum)
@@ -81,10 +85,10 @@ namespace SIL.FieldWorks.FixData
 					if ((m_crt % 1000) == 0)
 						m_progress.Step(1);
 				}
+				foreach (var fixer in m_rtLevelFixers)
+					fixer.FinalFixerInitialization(m_owners, m_guids);
 				xrdr.Close();
 			}
-			//The following fixers will be run on each rt element during FixErrorsAndSave()
-			rtLevelFixers.Add(new OriginalFixer(m_owners, m_guids));
 		}
 
 		/// <summary>
@@ -123,11 +127,15 @@ namespace SIL.FieldWorks.FixData
 					{
 						var rtXml = xrdr.ReadOuterXml();
 						var rt = XElement.Parse(rtXml);
-						foreach(RTFixers fixer in rtLevelFixers)
+						// set flag to false if we don't want to write out this rt element, i.e. delete it!
+						var fwrite = true;
+						foreach (var fixer in m_rtLevelFixers)
 						{
-							fixer.FixElement(rt, errorLogger);
+							if (!fixer.FixElement(rt, errorLogger))
+								fwrite = false;
 						}
-						rt.WriteTo(xw);
+						if (fwrite)
+							rt.WriteTo(xw);
 						xrdr.MoveToContent();
 						m_progress.Step(1);
 					}
@@ -151,15 +159,19 @@ namespace SIL.FieldWorks.FixData
 		/// It attempts to repair dangling links, duplicate writing systems, and incorrectly formatted dates
 		/// It also identifies items with duplicate guids, but does not attempt to repair them.
 		/// </summary>
-		internal class OriginalFixer : RTFixers
+		internal class OriginalFixer : RtFixer
 		{
 			static List<XElement> m_danglingLinks = new List<XElement>();
 
-			public OriginalFixer(Dictionary<Guid, Guid> owners, HashSet<Guid> guids) : base(owners, guids)
-			{
-			}
-
-			public override void FixElement(XElement rt, ErrorLogger errorLogger)
+			/// <summary>
+			/// Do any fixes to this particular root element here.
+			/// Return true if we are done fixing this element and can write it out.
+			/// Return false if we need to delete this root element.
+			/// </summary>
+			/// <param name="rt"></param>
+			/// <param name="errorLogger"></param>
+			/// <returns></returns>
+			internal override bool FixElement(XElement rt, ErrorLogger errorLogger)
 			{
 				Guid guid = new Guid(rt.Attribute("guid").Value);
 				Guid storedOwner;
@@ -248,6 +260,7 @@ namespace SIL.FieldWorks.FixData
 						FixGenericDate("DateOfDeath", rt, className, guid, errorLogger);
 						break;
 				}
+				return true;
 			}
 		}
 
@@ -310,7 +323,6 @@ namespace SIL.FieldWorks.FixData
 				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
 				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
 				//return new GenDate(precision, month, day, year, ad);
-
 			}
 		}
 
@@ -354,31 +366,42 @@ namespace SIL.FieldWorks.FixData
 				}
 			}
 		}
-
-		// Until this gets used, it causes compiler warnings that are now treated as errors.
-		///// <summary>
-		///// Get the pathname of the log file containing all the error messages.
-		///// </summary>
-		//public string LogFile
-		//{
-		//    get { return m_logfile; }
-		//}
 	}
 
 	/// <summary>
 	/// This abstract class provides the interface for fixing problems on an element\row\CmObject level.
 	/// The members m_guids and m_owners can be used by fixes which need global information.
 	/// </summary>
-	internal abstract class RTFixers
+	internal abstract class RtFixer
 	{
 		protected HashSet<Guid> m_guids = new HashSet<Guid>();
 		protected Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
-		public RTFixers(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+
+		internal virtual void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
 		{
 			m_owners = owners;
 			m_guids = guids;
 		}
 
-		public abstract void FixElement(XElement rt, FwDataFixer.ErrorLogger logger);
+		/// <summary>
+		/// Do any fixes to this particular root element here.
+		/// Return true if we are done fixing this element and can write it out.
+		/// Return false if we need to delete this root element.
+		/// </summary>
+		/// <param name="rt"></param>
+		/// <param name="logger"></param>
+		/// <returns></returns>
+		internal abstract bool FixElement(XElement rt, FwDataFixer.ErrorLogger logger);
+
+		/// <summary>
+		/// Override this method if a Fixer needs to gather information on one pass in FwDataFixer.ProcessDocument().
+		/// in order to fix everything on another pass (with FixElement). Try hard to limit your time in here to a
+		/// small subset of the available rt elements!
+		/// </summary>
+		/// <param name="rt"></param>
+		internal virtual void InspectElement(XElement rt)
+		{
+			// Base class does nothing.
+		}
 	}
 }
