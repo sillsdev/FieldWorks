@@ -554,6 +554,12 @@ namespace SIL.FieldWorks.IText
 				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
+			catch (InvalidOperationException ex)
+			{
+				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message);
+				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return new List<InterlinearMapping>();
+			}
 		}
 
 		private string GetDefaultInputSettingsPath()
