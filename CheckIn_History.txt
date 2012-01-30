@@ -5713,3 +5713,4 @@ BogleT, 26 Jan 2012.
 	TXL-95: Fixed crash (Null reference exception) when a user tries to open dialog to generate checking script template for the first time
 BogleT, 27 Jan 2012. TE-9522: Fixed sporadic test failures in ExportParatextDlgTests.
 GordonM, 30 Jan 2012. LT-12533 Ensure that Send/Receive does not leave disallowed empty sequences.
+	later: forgot two files!
