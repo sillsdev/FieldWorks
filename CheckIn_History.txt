@@ -60,3 +60,5 @@ NaylorJ, 30 Jan 2012. Fixed LT-12615. The baseline will no longer steal the focu
 JohnT, 30 Jan 2012. LT-12609, Made sorting large file by guid use temp files to avoid running out of memory.
 	Later: added code to delete temp files created in fix for LT-12609
 AlistairI, 30 Jan 2012. LT-12388, fixed bug where "surrounding context" controls were positioned relative to dialog bottom.
+NaylorJ, 30 Jan 2012. Fixed LT-12593 and LT-12594. The count is now properly calculated and displayed, and the dialog
+	will no longer get confused about its current tab.

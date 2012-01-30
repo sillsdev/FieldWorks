@@ -632,7 +632,7 @@ namespace Sfm2Xml
 
 	public class SfmFileReader : ByteReader
 	{
-		protected int m_longestSfmSize = 0;	// number of bytes in the longes sfm
+		protected int m_longestSfmSize = 0;	// number of bytes in the longest sfm
 		public int LongestSfm { get { return m_longestSfmSize; } }
 
 		//protected Hashtable m_sfmUsage;
@@ -689,7 +689,7 @@ namespace Sfm2Xml
 			}
 			catch
 			{
-				// just eat the exception sense the data members will be empty
+				// just eat the exception since the data members will be empty
 			}
 		}
 

@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -32,6 +33,9 @@ namespace SIL.FieldWorks.IText
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
 		private Dictionary<string, string> m_preferredConverters = new Dictionary<string, string>();
+		//Map of the information about which tags follow others, needed to count the number of resulting interlinear texts
+		//after the users mapping has been applied.
+		Dictionary<string, Dictionary<string, int>> followedBy = new Dictionary<string, Dictionary<string, int>>();
 		private bool m_firstTimeInMappingsPane = true;
 
 		public InterlinearSfmImportWizard()
@@ -238,7 +242,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnNextButton()
 		{
-			if (CurrentStepNumber == 1)
+			if (CurrentStepNumber == 0)
 			{
 				// Populate m_mappingsList based on the selected files.
 				var sfmcounts = new Dictionary<string, int>();
@@ -246,7 +250,8 @@ namespace SIL.FieldWorks.IText
 				int fileNum = 0;
 				foreach (var pathName in InputFiles)
 				{
-					var reader = new SfmFileReader(pathName);
+					var reader = new SfmFileReaderEx(pathName);
+					followedBy = reader.GetFollowedByInfo();
 					foreach (string marker in reader.SfmInfo)
 					{
 						int oldVal;
@@ -303,17 +308,15 @@ namespace SIL.FieldWorks.IText
 					m_mappingsList.SelectedIndices.Add(0);
 				m_mappingsList.ResumeLayout();
 			}
-			else if(CurrentStepNumber == 2)
+			else if(CurrentStepNumber == 1)
 			{
 				ICollection<IWritingSystem> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
 				ICollection<IWritingSystem> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
 				var vernToAdd = new ArrayList();
 				var analysToAdd = new ArrayList();
-				int textCount = 0;
+				int textCount = CalculateTextCount(m_mappings, followedBy);
 				foreach(var mapping in m_mappings)
 				{
-					if (mapping.Destination == InterlinDestination.Id)
-						++textCount;
 					if (mapping.Destination == InterlinDestination.Ignored)
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
@@ -368,7 +371,7 @@ namespace SIL.FieldWorks.IText
 					});
 				if(textCount > 1)
 				{
-					numberOfTextsLabel.Text = String.Format(ITextStrings.ksImportSFMInterlinTextCount, 5);
+					numberOfTextsLabel.Text = String.Format(ITextStrings.ksImportSFMInterlinTextCount, textCount);
 				}
 				else
 				{
@@ -376,6 +379,52 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			base.OnNextButton();
+		}
+
+		/// <summary>
+		/// Given the mapping and followed by information from the file calculate how many texts will result from an import.
+		/// </summary>
+		/// <param name="mMappings"></param>
+		/// <param name="dictionary"></param>
+		/// <returns></returns>
+		private int CalculateTextCount(List<InterlinearMapping> mMappings, Dictionary<string, Dictionary<string, int>> dictionary)
+		{
+			int count = 0;
+			Set<string> headers = new Set<string>();
+			foreach (InterlinearMapping interlinearMapping in mMappings)
+			{
+				if(interlinearMapping.Destination == InterlinDestination.Id ||
+				   interlinearMapping.Destination == InterlinDestination.Source ||
+				   interlinearMapping.Destination == InterlinDestination.Comment ||
+				   interlinearMapping.Destination == InterlinDestination.Title ||
+				   interlinearMapping.Destination == InterlinDestination.Abbreviation)
+				{
+					headers.Add(interlinearMapping.Marker);
+				}
+			}
+			// if no headers were mapped then only one text could result (and 0 would be counted)
+			if (headers.Count == 0)
+				return 1;
+
+			//iterate through the data of markers and the counts of markers that follow them
+			foreach (KeyValuePair<string, Dictionary<string, int>> markerAndFollowing in dictionary)
+			{
+				//if the marker is a header
+				if(headers.Contains(markerAndFollowing.Key))
+				{
+					//every time a header marker is followed by a non header it is the start of a text.
+
+					//for every non header that follows a header marker add the occurence count to count.
+					foreach (var followingMarker in markerAndFollowing.Value)
+					{
+						if (!headers.Contains(followingMarker.Key))
+						{
+							count += followingMarker.Value;
+						}
+					}
+				}
+			}
+			return count;
 		}
 
 		private string GetWritingSystemName(string wsid)

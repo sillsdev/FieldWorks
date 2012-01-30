@@ -2303,6 +2303,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void OnBackButton()
 		{
 			ShowSaveButtonOrNot();
+			base.OnBackButton();
 			if (m_QuickFinish)
 			{
 				// go back to the page where we came from
@@ -2319,7 +2320,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				UpdateStepLabel();
 			}
 
-			base.OnBackButton ();
 			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
 		}
@@ -2402,6 +2402,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void OnNextButton()
 		{
 			ShowSaveButtonOrNot();
+			base.OnNextButton();
 			// handle the case where they've entered a paseXoutput file
 			if (CurrentStepNumber == 2)
 			{
@@ -2433,7 +2434,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			base.OnNextButton();
 			NextButtonEnabled = EnableNextButton();
 		}
 
