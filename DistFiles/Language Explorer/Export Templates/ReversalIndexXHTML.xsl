@@ -237,14 +237,7 @@ display/printout!
 
   <xsl:template match="LexSenseLink">
 	<xsl:choose>
-	  <xsl:when test="parent::_ReferringSenses">
-		<xsl:call-template name="ProcessSense">
-		  <xsl:with-param name="id">
-		<xsl:value-of select="ancestor::ReversalIndexEntry/@id"/><xsl:text>_</xsl:text><xsl:value-of select="@target"/>
-	  </xsl:with-param>
-		</xsl:call-template>
-	  </xsl:when>
-	  <xsl:when test="parent::ReversalIndexEntry_ReferringSenses">
+	  <xsl:when test="parent::_ReferringSenses|parent::ReversalIndexEntry_ReferringSenses">
 		<xsl:call-template name="ProcessSense">
 		  <xsl:with-param name="id">
 		<xsl:value-of select="ancestor::ReversalIndexEntry/@id"/><xsl:text>_</xsl:text><xsl:value-of select="@target"/>
@@ -252,7 +245,7 @@ display/printout!
 		</xsl:call-template>
 	  </xsl:when>
 	  <xsl:when test="count(../LexEntryLink)+count(../LexSenseLink) > 1"><span class="xitem"><xsl:apply-templates/></span></xsl:when>
-	  <xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+	  <xsl:otherwise>[Otherwise Stuff]<xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
   </xsl:template>
 
@@ -428,8 +421,6 @@ display/printout!
 	<xsl:call-template name="ProcessString"></xsl:call-template>
   </xsl:template>
 
-
-
   <xsl:template match="LiteralString">
 	<xsl:if test="Str/Run/@fontsize and Str/Run/@editable='not'">
 	  <span><xsl:attribute name="class">xlanguagetag</xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
@@ -437,6 +428,7 @@ display/printout!
 	  </span>
 	</xsl:if>
   </xsl:template>
+
   <xsl:template match="ItemNumber">
 	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
 		<xsl:value-of select="Str/Run"/>
@@ -679,7 +671,15 @@ MoInflAffixSlot_Name/AStr/Run
 	  <xsl:if test="preceding-sibling::LiteralString[1]/Str/Run[@bold='on']">
 		<span class="xsensenumber"><xsl:value-of select="preceding-sibling::LiteralString[1]/Str/Run[@bold='on']"/></span>
 	  </xsl:if>
+	  <!-- is there "before" bullet text? -->
+	  <xsl:if test="name(span[@class='headref']/LiteralString[1]/following-sibling::*[1])='LexSenseLink_ReversalName'">
+		<span class="headref-before" before="{span[@class='headref']/LiteralString[1]/Str/Run/.}"></span>
+	  </xsl:if>
 	  <xsl:apply-templates/>
+	  <!-- is there "after" bullet text? -->
+	  <xsl:if test="name(span[@class='headref']/LexSenseLink_ReversalName/following-sibling::*[1])='LiteralString'">
+		<span class="headref-after" after="{span[@class='headref']/LiteralString[2]/Str/Run/.}"></span>
+	  </xsl:if>
 	</span>
   </xsl:template>
 

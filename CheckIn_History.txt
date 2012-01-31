@@ -65,3 +65,5 @@ NaylorJ, 30 Jan 2012. Fixed LT-12593 and LT-12594. The count is now properly cal
 AlistairI, 30 Jan 2012. LT-12612, Enabled custom fields using possibility lists to export them properly to XHTML.
 NaylorJ, 30 Jan 2012. LT-12338 Fixed bad XHTML output, extraneous tags removed.
 RickM, 31 Jan 2012. LT-12558  Part of the "report a problem"/"send a suggestion" dialogs is not using translated strings
+LastufkaM, 31 Jan 2012. LT-12514 Style of sense number references for Reversal not exported.
+LastufkaM, 31 Jan 2012. LT-12599 Reversal sense header reference before and aftertexts (bullets) were missing from Xhtml export files.

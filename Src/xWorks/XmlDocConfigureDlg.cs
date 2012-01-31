@@ -654,7 +654,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							var cNew = ltn.Nodes.Count - cOrig;
 							var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.OuterXml);
-							Debug.Assert(cNew <= 1, msg);
+							//Debug.Assert(cNew <= 1, msg);
 							//if (cNew > 1)
 							//    Debug.WriteLine(msg);
 						}
