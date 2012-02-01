@@ -69,3 +69,4 @@ LastufkaM, 31 Jan 2012. LT-12514 Style of sense number references for Reversal n
 LastufkaM, 31 Jan 2012. LT-12599 Reversal sense header reference before and aftertexts (bullets) were missing from Xhtml export files.
 KenZ, 1 Feb 2012. Fixed problem that broke build. Integrated LT-11922 fix from WW to 7.2.
 -------------------------- Begin FW7.2.3
+JohnT, 1 Feb 2012. LT-12651, Referenced Complex Forms ordering only used temporarily in Dictionary view
