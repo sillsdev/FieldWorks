@@ -317,5 +317,14 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 				return ResourceManager.GetString("kstidUntranslatedQuestionsWarning", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to User-added question with no English version.
+		/// </summary>
+		internal static string kstidUserAddedEmptyPhrase {
+			get {
+				return ResourceManager.GetString("kstidUserAddedEmptyPhrase", resourceCulture);
+			}
+		}
 	}
 }

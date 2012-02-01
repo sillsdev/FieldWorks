@@ -5717,3 +5717,5 @@ GordonM, 30 Jan 2012. LT-12533 Ensure that Send/Receive does not leave disallowe
 JohnT, 30 Jan 2012. LT-12619, Crash in SF text import wizard
 JohnT, 31 Jan 2012. LT-12632, Crash on Click Copy to reversals
 	Later: LT-12629, New analysis lost after click another word and back to original word.
+TomB, 1 Feb 2012. TXL-27, TXL-78: Enabled the addition/insertion of new questions.
+	TXL-89: Came up with a *real* fix for the problem of losing the sort order when reloading.

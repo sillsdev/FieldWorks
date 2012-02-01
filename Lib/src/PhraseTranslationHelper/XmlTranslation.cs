@@ -32,10 +32,11 @@ namespace SILUBS.PhraseTranslationHelper
 		public string Reference { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the original phrase.
+		/// Gets or sets the phrase key (typically the text of the question in English.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public string OriginalPhrase { get; set; }
+		[XmlElement("OriginalPhrase")]
+		public string PhraseKey { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the translation.
@@ -60,7 +61,7 @@ namespace SILUBS.PhraseTranslationHelper
 		public XmlTranslation(TranslatablePhrase tp)
 		{
 			Reference = tp.Reference;
-			OriginalPhrase = tp.PhraseInUse;
+			PhraseKey = tp.PhraseKey;
 			Translation = tp.Translation;
 		}
 	}

@@ -54,6 +54,12 @@ namespace SILUBS.PhraseTranslationHelper
 		public string ModifiedPhrase { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets or sets the answer (probably mostly used for added questions).
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public string Answer { get; set; }
+		/// --------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets the translation.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
@@ -79,14 +85,24 @@ namespace SILUBS.PhraseTranslationHelper
 			Reference = tp.Reference;
 			OriginalPhrase = tp.OriginalPhrase;
 			ModifiedPhrase = tp.ModifiedPhrase;
-			if (tp.IsExcluded)
-				Type = CustomizationType.Deletion;
-			else
-			{
-				//if (tp.OriginalPhrase
-				//Type = tp.Translation;
-				Type = CustomizationType.Modification;
-			}
+			Type = tp.IsExcluded ? CustomizationType.Deletion : CustomizationType.Modification;
+		}
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XmlTranslation"/> class for an
+		/// insertion or addition.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public PhraseCustomization(string basePhrase, Question addedPhrase,
+			CustomizationType type)
+		{
+			Reference = addedPhrase.ScriptureReference;
+			OriginalPhrase = basePhrase;
+			ModifiedPhrase = addedPhrase.Text;
+			if (addedPhrase.Answers != null && addedPhrase.Answers.Length == 1)
+				Answer = addedPhrase.Answers[0];
+			Type = type;
 		}
 	}
 	#endregion

@@ -24,6 +24,7 @@ namespace SILUBS.PhraseTranslationHelper
 		Unknown,
 		Question,
 		StatementOrImperative,
+		NoEnglishVersion,
 	}
 
 	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>
@@ -39,8 +40,8 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly TypeOfPhrase m_type;
 		private readonly int m_startRef;
 		private readonly int m_endRef;
-		private readonly int m_seqNumber;
-		private readonly object[] m_additionalInfo;
+		private readonly float m_seqNumber;
+		private readonly Question m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsMatch;
@@ -48,6 +49,26 @@ namespace SILUBS.PhraseTranslationHelper
 		#endregion
 
 		#region Constructors
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
+		/// </summary>
+		/// <param name="questionlInfo">Information about the original question</param>
+		/// <param name="category">The category (e.g. Overview vs. Detail question).</param>
+		/// <param name="reference">The displayable "reference" that tells what this phrase
+		/// pertains to.</param>
+		/// <param name="startRef">The (numeric) start reference, for sorting and comparing.</param>
+		/// <param name="endRef">The (numeric) end reference, for sorting and comparing.</param>
+		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
+		/// a phrase within a particular category and reference).</param>
+		/// ------------------------------------------------------------------------------------
+		public TranslatablePhrase(Question questionlInfo, int category, string reference,
+			int startRef, int endRef, float seqNumber)
+			: this(questionlInfo.Text, category, reference, startRef, endRef, seqNumber)
+		{
+			m_questionInfo = questionlInfo;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
@@ -60,18 +81,15 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="endRef">The (numeric) end reference, for sorting and comparing.</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular category and reference).</param>
-		/// <param name="additionalInfo">Any additional info that the caller would like to keep
-		/// associated with this phrase</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(string phrase, int category, string reference,
-			int startRef, int endRef, int seqNumber, params object[] additionalInfo) : this(phrase)
+			int startRef, int endRef, float seqNumber) : this(phrase)
 		{
 			m_category = category;
 			m_sReference = reference;
 			m_endRef = endRef;
 			m_startRef = startRef;
 			m_seqNumber = seqNumber;
-			m_additionalInfo = additionalInfo;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -90,6 +108,11 @@ namespace SILUBS.PhraseTranslationHelper
 					case '?': m_type = TypeOfPhrase.Question; break;
 					case '.': m_type = TypeOfPhrase.StatementOrImperative; break;
 					default: m_type = TypeOfPhrase.Unknown; break;
+				}
+				if (m_type == TypeOfPhrase.Unknown && m_sOrigPhrase.StartsWith(Question.kGuidPrefix))
+				{
+					m_sOrigPhrase = string.Empty;
+					m_type = TypeOfPhrase.NoEnglishVersion;
 				}
 			}
 		}
@@ -128,13 +151,45 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the phrase as it is being presented to the user (either the original phrase or
-		/// a modified form of it).
+		/// Gets the phrase to use for processing & comparison purposes (either the original\
+		/// phrase or a modified form of it).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string PhraseInUse
 		{
 			get { return m_sModifiedPhrase ?? m_sOrigPhrase; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the phrase as it is being presented to the user (the original phrase, a
+		/// modified form of it, or a special UI string indicating a user-added question with
+		/// no English equivalent).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string PhraseToDisplayInUI
+		{
+			get
+			{
+				return (m_type == TypeOfPhrase.NoEnglishVersion) ? Properties.Resources.kstidUserAddedEmptyPhrase :
+					m_sModifiedPhrase ?? m_sOrigPhrase;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the phrase to use when saving or attempting to look up a specific translation
+		/// (either the original phrase, a modified form of it, or the underlying GUID-based key
+		/// to use for user-added questions that have no english version).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string PhraseKey
+		{
+			get
+			{
+				return (m_type == TypeOfPhrase.NoEnglishVersion) ? QuestionInfo.Text :
+					m_sModifiedPhrase ?? m_sOrigPhrase;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -145,8 +200,29 @@ namespace SILUBS.PhraseTranslationHelper
 		public string ModifiedPhrase
 		{
 			get { return m_sModifiedPhrase; }
-			internal set { m_sModifiedPhrase = value; }
+			internal set
+			{
+				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormD);
+				if (IsUserAdded)
+					QuestionInfo.Text = value;
+			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets information about a question that is inserted ahead of this phrase in
+		/// the list (when sorted in text order).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal Question InsertedPhraseBefore { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets information about a question that is added after this phrase in
+		/// the list (when sorted in text order).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal Question AddedPhraseAfter { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -162,13 +238,26 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a value indicating whether this instance is customized (modified, deleted or
-		/// user-supplied).
+		/// Gets a value indicating whether this instance is customized (i.e, modified, deleted
+		/// but not user-supplied).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal bool IsCustomized
 		{
-			get { return m_fExclude || m_sModifiedPhrase != null; }
+			get { return (m_fExclude || m_sModifiedPhrase != null) && !IsUserAdded; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether this instance is user-supplied.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal bool IsUserAdded
+		{
+			get
+			{
+				return SequenceNumber != Math.Round(SequenceNumber);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -356,7 +445,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// given category and for a particular reference).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int SequenceNumber
+		public float SequenceNumber
 		{
 			get { return m_seqNumber; }
 		}
@@ -378,14 +467,14 @@ namespace SILUBS.PhraseTranslationHelper
 		/// it.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public object[] AdditionalInfo
+		public Question QuestionInfo
 		{
-			get { return m_additionalInfo; }
+			get { return m_questionInfo; }
 		}
 
 		public TypeOfPhrase TypeOfPhrase
 		{
-			get { return m_type; }
+			get { return (IsUserAdded && m_sModifiedPhrase == string.Empty) ? TypeOfPhrase.NoEnglishVersion : m_type; }
 		}
 
 		public IEnumerable<string> AlternateForms
@@ -402,7 +491,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public override string ToString()
 		{
-			return Reference + "-" + PhraseInUse;
+			return Reference + "-" + PhraseKey;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -625,7 +714,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void SetTranslationInternal(string value)
 		{
 			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormD);
-			if (m_fHasUserTranslation)
+			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
 				m_allTermsMatch = false; // This will usually get updated in ProcessTranslation
 				s_helper.ProcessTranslation(this);

@@ -41,32 +41,29 @@ namespace SILUBS.PhraseTranslationHelper
 			InitializeComponent();
 			m_txtOriginal.Text = question.OriginalPhrase;
 			m_txtModified.Text = question.PhraseInUse;
-			if (question.AdditionalInfo.Length >= 1)
+			Question q = question.QuestionInfo;
+			if (q != null && q.AlternateForms != null)
 			{
-				Question q = question.AdditionalInfo[0] as Question;
-				if (q != null && q.AlternateForms != null)
-				{
-					System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
+				System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
 
-					foreach (string alternateForm in q.AlternateForms.Skip(1))
-					{
-						RadioButton newBtn = new RadioButton();
-						m_pnlAlternatives.Controls.Add(newBtn);
-						resources.ApplyResources(newBtn, "m_rdoAlternative");
-						m_pnlAlternatives.SetFlowBreak(newBtn, true);
-						newBtn.Text = alternateForm;
-						newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
-					}
-					m_rdoAlternative.Text = q.AlternateForms.First();
-					return;
+				foreach (string alternateForm in q.AlternateForms.Skip(1))
+				{
+					RadioButton newBtn = new RadioButton();
+					m_pnlAlternatives.Controls.Add(newBtn);
+					resources.ApplyResources(newBtn, "m_rdoAlternative");
+					m_pnlAlternatives.SetFlowBreak(newBtn, true);
+					newBtn.Text = alternateForm;
+					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
+				m_rdoAlternative.Text = q.AlternateForms.First();
+				return;
 			}
 			m_pnlAlternatives.Hide();
 		}
 
 		private void m_txtModified_TextChanged(object sender, EventArgs e)
 		{
-			btnOk.Enabled = (m_txtModified.Text.Length > 0 && m_txtModified.Text != m_question.ModifiedPhrase);
+			btnOk.Enabled = ((m_txtModified.Text.Length > 0 || m_question.IsUserAdded) && m_txtModified.Text != m_question.PhraseInUse);
 			if (!m_pnlAlternatives.Visible)
 				return;
 			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())

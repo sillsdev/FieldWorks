@@ -61,15 +61,12 @@ namespace SILUBS.PhraseTranslationHelper
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mnuExcludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuIncludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInsertQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuAddQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mainMenu = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,6 +109,11 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lblCommentLabel = new System.Windows.Forms.Label();
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
+			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -202,51 +204,14 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
 			this.dataGridUns.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellContentClick);
 			//
-			// m_colReference
-			//
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			resources.ApplyResources(this.m_colReference, "m_colReference");
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
-			// m_colEnglish
-			//
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
-			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			//
-			// m_colTranslation
-			//
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colTranslation, "m_colTranslation");
-			this.m_colTranslation.Name = "m_colTranslation";
-			//
-			// m_colUserTranslated
-			//
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			resources.ApplyResources(this.m_colUserTranslated, "m_colUserTranslated");
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			//
-			// m_colDebugInfo
-			//
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colDebugInfo, "m_colDebugInfo");
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
-			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
 			// dataGridContextMenu
 			//
 			this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.mnuExcludeQuestion,
 			this.mnuIncludeQuestion,
-			this.mnuEditQuestion});
+			this.mnuEditQuestion,
+			this.mnuInsertQuestion,
+			this.mnuAddQuestion});
 			this.dataGridContextMenu.Name = "dataGridContextMenu";
 			resources.ApplyResources(this.dataGridContextMenu, "dataGridContextMenu");
 			this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
@@ -268,6 +233,18 @@ namespace SILUBS.PhraseTranslationHelper
 			this.mnuEditQuestion.Name = "mnuEditQuestion";
 			resources.ApplyResources(this.mnuEditQuestion, "mnuEditQuestion");
 			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
+			//
+			// mnuInsertQuestion
+			//
+			this.mnuInsertQuestion.Name = "mnuInsertQuestion";
+			resources.ApplyResources(this.mnuInsertQuestion, "mnuInsertQuestion");
+			this.mnuInsertQuestion.Click += new System.EventHandler(this.InsertOrAddQuestion);
+			//
+			// mnuAddQuestion
+			//
+			this.mnuAddQuestion.Name = "mnuAddQuestion";
+			resources.ApplyResources(this.mnuAddQuestion, "mnuAddQuestion");
+			this.mnuAddQuestion.Click += new System.EventHandler(this.InsertOrAddQuestion);
 			//
 			// m_mainMenu
 			//
@@ -584,6 +561,45 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.m_pnlAnswersAndComments_VisibleChanged);
 			//
+			// m_colReference
+			//
+			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			resources.ApplyResources(this.m_colReference, "m_colReference");
+			this.m_colReference.Name = "m_colReference";
+			this.m_colReference.ReadOnly = true;
+			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			//
+			// m_colEnglish
+			//
+			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
+			this.m_colEnglish.Name = "m_colEnglish";
+			this.m_colEnglish.ReadOnly = true;
+			//
+			// m_colTranslation
+			//
+			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.m_colTranslation, "m_colTranslation");
+			this.m_colTranslation.Name = "m_colTranslation";
+			//
+			// m_colUserTranslated
+			//
+			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			resources.ApplyResources(this.m_colUserTranslated, "m_colUserTranslated");
+			this.m_colUserTranslated.Name = "m_colUserTranslated";
+			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			//
+			// m_colDebugInfo
+			//
+			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.m_colDebugInfo, "m_colDebugInfo");
+			this.m_colDebugInfo.Name = "m_colDebugInfo";
+			this.m_colDebugInfo.ReadOnly = true;
+			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			//
 			// UNSQuestionsDialog
 			//
 			resources.ApplyResources(this, "$this");
@@ -650,11 +666,6 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem mnuHelpAbout;
 		private ToolStripMenuItem biblicalTermsRenderingSelectionRulesToolStripMenuItem;
-		private DataGridViewTextBoxColumn m_colReference;
-		private DataGridViewTextBoxColumn m_colEnglish;
-		private DataGridViewTextBoxColumn m_colTranslation;
-		private DataGridViewCheckBoxColumn m_colUserTranslated;
-		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripLabel lblFilterIndicator;
 		private ToolStripLabel lblRemainingWork;
 		private ToolStripMenuItem mnuViewExcludedQuestions;
@@ -663,5 +674,12 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem mnuExcludeQuestion;
 		private ToolStripMenuItem mnuIncludeQuestion;
 		private ToolStripMenuItem mnuEditQuestion;
+		private ToolStripMenuItem mnuAddQuestion;
+		private ToolStripMenuItem mnuInsertQuestion;
+		private DataGridViewTextBoxColumn m_colReference;
+		private DataGridViewTextBoxColumn m_colEnglish;
+		private DataGridViewTextBoxColumn m_colTranslation;
+		private DataGridViewCheckBoxColumn m_colUserTranslated;
+		private DataGridViewTextBoxColumn m_colDebugInfo;
 	}
 }

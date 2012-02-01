@@ -71,6 +71,12 @@
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="NewQuestionDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="NewQuestionDlg.Designer.cs">
+	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+	</Compile>
 	<Compile Include="QuestionAlternativeOverrides.cs" />
 	<Compile Include="QuestionSections.cs" />
 	<Compile Include="Question.cs" />
@@ -150,6 +156,9 @@
   <ItemGroup>
 	<EmbeddedResource Include="AddRenderingDlg.resx">
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="NewQuestionDlg.resx">
+	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="EditQuestionDlg.resx">
 	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
