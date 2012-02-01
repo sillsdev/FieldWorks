@@ -1583,6 +1583,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		protected override void OnBackButton()
 		{
+			base.OnBackButton();
 			ShowSaveButtonOrNot();
 			if (m_QuickFinish)
 			{
@@ -1592,7 +1593,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				UpdateStepLabel();
 				m_QuickFinish = false;	// going back, so turn off flag
 			}
-			base.OnBackButton();
 			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
 		}
@@ -1601,8 +1601,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			ShowSaveButtonOrNot();
 
-			PrepareForNextTab(CurrentStepNumber);
 			base.OnNextButton();
+			PrepareForNextTab(CurrentStepNumber);
 			NextButtonEnabled = EnableNextButton();
 			AllowQuickFinishButton();		// make it visible if needed, or hidden if not
 		}

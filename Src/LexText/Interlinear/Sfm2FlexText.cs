@@ -108,6 +108,12 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="mapping"></param>
+		/// <param name="data"></param>
+		/// <param name="itemType"></param>
 		private void MakeRootItem(InterlinearMapping mapping, byte[] data, string itemType)
 		{
 			if (m_textHasContent)
@@ -153,13 +159,15 @@ namespace SIL.FieldWorks.IText
 
 		void WriteStartElementIn(string marker, string parentMarker)
 		{
-			AdjustDepth(parentMarker);
+			AdjustDepth(parentMarker); //<-May initiate EndElement or StartElement calls as needed.
 			WriteStartElement(marker);
 		}
 
 		/// <summary>
 		/// Do whatever start or end element calls are needed so that we are at the level where the current
 		/// open element is parentMarker
+		/// <note>This implementation precludes any element name re-use in the output format,
+		/// i.e. a phrase element could not have a phrase element nested in it, or in any of its children</note>
 		/// </summary>
 		private void AdjustDepth(string parentMarker)
 		{

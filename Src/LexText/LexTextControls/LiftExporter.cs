@@ -2486,7 +2486,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public const string sDbDomainTypesOAold1 = "domaintype";
 
 		/// <summary> </summary>
-		public const string sDbMorphTypesOAold = "morphtype";
+		public const string sDbMorphTypesOAold = "MorphType";
 		/// <summary> </summary>
 		public const string sDbMorphTypesOA = "morph-type";
 

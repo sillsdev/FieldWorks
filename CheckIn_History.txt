@@ -5719,3 +5719,4 @@ JohnT, 31 Jan 2012. LT-12632, Crash on Click Copy to reversals
 	Later: LT-12629, New analysis lost after click another word and back to original word.
 TomB, 1 Feb 2012. TXL-27, TXL-78: Enabled the addition/insertion of new questions.
 	TXL-89: Came up with a *real* fix for the problem of losing the sort order when reloading.
+KenZ, 1 Feb 2012. Integrated FW7.2.2 changes to WW.

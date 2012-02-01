@@ -49,7 +49,7 @@ namespace SIL.Utils
 		private Label labelAttemptToContinue;
 		private Button btnClose;
 		private RadioButton radEmail;
-		private Label emailLabel;
+		private Label lbl_EmailReport;
 
 		/// <summary>The subject for error report emails</summary>
 		protected static readonly string s_emailSubject = "Automated Error Report";
@@ -70,6 +70,7 @@ namespace SIL.Utils
 		private LinkLabel viewDetailsLink;
 		private Button cancelButton;
 		private Label m_stepsLabel;
+		private Label lbl_AdditionInfo;
 		private static bool s_fIgnoreReport;
 		#endregion
 
@@ -145,12 +146,11 @@ namespace SIL.Utils
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Label label3;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
 			this.m_reproduce = new System.Windows.Forms.TextBox();
 			this.radEmail = new System.Windows.Forms.RadioButton();
 			this.m_details = new System.Windows.Forms.TextBox();
-			this.emailLabel = new System.Windows.Forms.Label();
+			this.lbl_EmailReport = new System.Windows.Forms.Label();
 			this.radSelf = new System.Windows.Forms.RadioButton();
 			this.btnClose = new System.Windows.Forms.Button();
 			this.m_notification = new System.Windows.Forms.TextBox();
@@ -158,14 +158,8 @@ namespace SIL.Utils
 			this.viewDetailsLink = new System.Windows.Forms.LinkLabel();
 			this.m_stepsLabel = new System.Windows.Forms.Label();
 			this.cancelButton = new System.Windows.Forms.Button();
-			label3 = new System.Windows.Forms.Label();
+			this.lbl_AdditionInfo = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			//
-			// label3
-			//
-			resources.ApplyResources(label3, "label3");
-			label3.BackColor = System.Drawing.Color.Transparent;
-			label3.Name = "label3";
 			//
 			// m_reproduce
 			//
@@ -191,11 +185,11 @@ namespace SIL.Utils
 			this.m_details.Name = "m_details";
 			this.m_details.ReadOnly = true;
 			//
-			// emailLabel
+			// lbl_EmailReport
 			//
-			resources.ApplyResources(this.emailLabel, "emailLabel");
-			this.emailLabel.BackColor = System.Drawing.Color.Transparent;
-			this.emailLabel.Name = "emailLabel";
+			resources.ApplyResources(this.lbl_EmailReport, "lbl_EmailReport");
+			this.lbl_EmailReport.BackColor = System.Drawing.Color.Transparent;
+			this.lbl_EmailReport.Name = "lbl_EmailReport";
 			//
 			// radSelf
 			//
@@ -207,7 +201,6 @@ namespace SIL.Utils
 			// btnClose
 			//
 			resources.ApplyResources(this.btnClose, "btnClose");
-			this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnClose.Name = "btnClose";
 			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
 			//
@@ -248,6 +241,12 @@ namespace SIL.Utils
 			this.cancelButton.UseVisualStyleBackColor = true;
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			//
+			// lbl_AdditionInfo
+			//
+			resources.ApplyResources(this.lbl_AdditionInfo, "lbl_AdditionInfo");
+			this.lbl_AdditionInfo.BackColor = System.Drawing.Color.Transparent;
+			this.lbl_AdditionInfo.Name = "lbl_AdditionInfo";
+			//
 			// ErrorReporter
 			//
 			this.AcceptButton = this.btnClose;
@@ -255,6 +254,7 @@ namespace SIL.Utils
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.CancelButton = this.cancelButton;
 			this.ControlBox = false;
+			this.Controls.Add(this.lbl_AdditionInfo);
 			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.viewDetailsLink);
 			this.Controls.Add(this.m_reproduce);
@@ -262,8 +262,7 @@ namespace SIL.Utils
 			this.Controls.Add(this.m_details);
 			this.Controls.Add(this.labelAttemptToContinue);
 			this.Controls.Add(this.m_stepsLabel);
-			this.Controls.Add(label3);
-			this.Controls.Add(this.emailLabel);
+			this.Controls.Add(this.lbl_EmailReport);
 			this.Controls.Add(this.radEmail);
 			this.Controls.Add(this.radSelf);
 			this.Controls.Add(this.btnClose);
@@ -459,6 +458,8 @@ namespace SIL.Utils
 			m_originalHeight = Height;
 			m_originalMinSize = MinimumSize;
 
+			SetDialogStringsSoLocatilizationWorks();
+
 			if (m_fUserReport)
 			{
 				ControlBox = true;
@@ -495,7 +496,7 @@ namespace SIL.Utils
 			else
 			{
 				// Add the e-mail address to the dialog.
-				emailLabel.Text = String.Format(emailLabel.Text, m_emailAddress);
+				lbl_EmailReport.Text = String.Format(lbl_EmailReport.Text, m_emailAddress);
 			}
 
 			if (!m_isLethal)
@@ -560,6 +561,19 @@ namespace SIL.Utils
 			}
 			else	//the test environment already prohibits dialogs but will save the contents of assertions in some log.
 				Debug.Fail(m_details.Text);
+		}
+
+		private void SetDialogStringsSoLocatilizationWorks()
+		{
+			Text = ReportingStrings.kstidERTexts;
+			m_notification.Text = ReportingStrings.kstidERReportProblemNotification;
+			m_stepsLabel.Text = ReportingStrings.kstidERProblemAndSteps;
+
+			lbl_AdditionInfo.Text = ReportingStrings.kstidAdditionalInfoSent;
+			viewDetailsLink.Text = ReportingStrings.kstidViewDetailsLink;
+			lbl_EmailReport.Text = ReportingStrings.kstidEmailReport;
+			radEmail.Text = ReportingStrings.kstidradEmail;
+			radSelf.Text = ReportingStrings.kstidradSelf;
 		}
 
 		private static void UpdateCrashCount(RegistryKey applicationKey, string sPropName)

@@ -175,6 +175,29 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Determines whether the given style is (possibly) in use.
+		/// </summary>
+		/// <remarks>This method is virtual to allow for applications (such as FLEx) that may
+		/// not have made good use of the InUse property of styles.</remarks>
+		/// <param name="style">The style.</param>
+		/// <returns><c>true</c> if there is any reasonable chance the given style is in use
+		/// somewhere in the project data; <c>false</c> if the style has never been used and
+		/// there is no real possibility it could be in the data.</returns>
+		/// ------------------------------------------------------------------------------------
+		protected override bool StyleIsInUse(IStStyle style)
+		{
+			if ((style.Context == ContextValues.Internal &&
+				!ScrStyleNames.InternalStyles.Contains(style.Name)) ||
+				(style.Context == ContextValues.InternalMappable &&
+				!ScrStyleNames.InternalMappableStyles.Contains(style.Name)))
+			{
+				return false;
+			}
+			return style.InUse;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// If a style has been modified by the user, this method will be called to determine
 		/// whether the factory settings or the modified properties should be used.
 		/// </summary>

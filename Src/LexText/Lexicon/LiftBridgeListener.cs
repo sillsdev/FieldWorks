@@ -208,9 +208,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				//Palaso.Lift.Validation.Validator.CheckLiftWithPossibleThrow(outPath, prog);
 				return outPath;
 			}
-			catch (Exception e)
+			catch
 			{
-				//MessageBox.Show(e.Message, "What errors? Really?", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return null;
 			}
 		}

@@ -49,6 +49,7 @@ namespace SIL.FieldWorks.IText
 		private string m_sErrorMsg;
 		private LanguageMapping[] m_languageMappings;
 		private LanguageMapping m_current;
+		private int m_version; // of FLExText being imported. 0 if no version found.
 		private EncConverters m_converters;
 		private string m_nextInput;
 		private string m_sTempDir;
@@ -259,6 +260,9 @@ namespace SIL.FieldWorks.IText
 				progress.Message = ITextStrings.ksInterlinImportPhase1of2;
 				var serializer = new XmlSerializer(typeof(BIRDDocument));
 				doc = (BIRDDocument)serializer.Deserialize(birdData);
+				int version = 0;
+				if (!string.IsNullOrEmpty(doc.version))
+					int.TryParse(doc.version, out version);
 				progress.Position = initialProgress + allottedProgress / 2;
 				progress.Message = ITextStrings.ksInterlinImportPhase2of2;
 				if (doc.interlineartext != null)
@@ -278,7 +282,8 @@ namespace SIL.FieldWorks.IText
 							{
 								MergeTextWithBIRDDoc(ref newText, new TextCreationParams { Cache = m_cache, InterlinText = interlineartext,
 																						   Progress = progress,
-																						   ImportOptions = options
+																						   ImportOptions = options,
+																						   Version = version
 								});
 							}
 							else if(newText == null)
@@ -292,7 +297,8 @@ namespace SIL.FieldWorks.IText
 										Cache = m_cache,
 										InterlinText = interlineartext,
 										Progress = progress,
-										ImportOptions = options
+										ImportOptions = options,
+										Version = version
 									})) //if the user aborted this text
 								{
 									langProject.TextsOC.Remove(newText); //remove it from the list
@@ -309,7 +315,8 @@ namespace SIL.FieldWorks.IText
 										Cache = m_cache,
 										InterlinText = interlineartext,
 										Progress = progress,
-										ImportOptions = options
+										ImportOptions = options,
+										Version = version
 									})) //if the user aborted this text
 								{
 									langProject.TextsOC.Remove(newText);  //remove it from the list
@@ -329,7 +336,8 @@ namespace SIL.FieldWorks.IText
 									Cache = m_cache,
 									InterlinText = interlineartext,
 									Progress = progress,
-									ImportOptions = options
+									ImportOptions = options,
+									Version = version
 								})) //if the user aborted this text
 							{
 								langProject.TextsOC.Remove(newText); //remove it from the list

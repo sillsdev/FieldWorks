@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.IText
 			this.mediator = mediator; //allows the Cache property to function
 
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
-			clerk = (InterlinearTextsRecordClerk) (mediator.PropertyTable.GetValue(name) ??
+			clerk = (InterlinearTextsRecordClerk) (RecordClerk.FindClerk(mediator, name) ??
 												   RecordClerkFactory.CreateClerk(mediator, configurationParameters, true));
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).

@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.IText
 			exporter = null;
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Encoding = System.Text.Encoding.UTF8;
-			settings.Indent = false;
+			settings.Indent = true;
 			using (XmlWriter writer = XmlTextWriter.Create(fileName, settings))
 			{
 				exporter = InterlinearExporter.Create(mode, m_cache, writer, m_objs[0], m_vc.LineChoices, m_vc);

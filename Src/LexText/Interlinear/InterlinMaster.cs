@@ -930,9 +930,12 @@ namespace SIL.FieldWorks.IText
 				}
 				if (stText.ParagraphsOS.Count == 1 && (stText.ParagraphsOS[0] as IStTxtPara).Contents.Length == 0)
 				{
-					// since we have a new text, we should switch to the Baseline tab.
-					// ShowTabView() will adjust the tab control appropriately.
-					InterlinearTab = TabPageSelection.RawText;
+					// since we have no text, we should not sit on any of the analyses tabs,
+					// the info tab is still useful though.
+					if (InterlinearTab != TabPageSelection.Info && InterlinearTab != TabPageSelection.RawText)
+					{
+						InterlinearTab = TabPageSelection.RawText;
+					}
 					// Don't steal the focus from another window.  See FWR-1795.
 					if (ParentForm == Form.ActiveForm)
 						m_rtPane.Focus();

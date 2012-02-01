@@ -83,7 +83,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="Palaso, Version=1.9.146.0, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="Palaso, Version=1.9.146.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>

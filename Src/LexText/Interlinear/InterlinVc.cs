@@ -1382,6 +1382,8 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		internal int GetRealWsOrBestWsForContext(int hvo, InterlinLineSpec spec)
 		{
+			if (spec != null && !spec.IsMagicWritingSystem && spec.WritingSystem > 0)
+				return GetRealWs(m_cache, hvo, spec, spec.WritingSystem);
 			return GetRealWs(m_cache, hvo, spec, m_wsVernForDisplay);
 		}
 

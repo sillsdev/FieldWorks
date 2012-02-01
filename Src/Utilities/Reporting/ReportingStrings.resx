@@ -195,4 +195,28 @@ Suggestion: Add a field to Word Analyses view in which a regular expression can 
   <data name="kstidSendFailedCaption" xml:space="preserve">
 	<value>Send Message Failed</value>
   </data>
+  <data name="kstidEmailReport" xml:space="preserve">
+	<value>Please email this report to the development team: {0}</value>
+  </data>
+  <data name="kstidradEmail" xml:space="preserve">
+	<value>&amp;Open an email containing this message using the default email client</value>
+  </data>
+  <data name="kstidradSelf" xml:space="preserve">
+	<value>&amp;Copy this information to the clipboard and I will paste it into an email message myself.</value>
+  </data>
+  <data name="kstidViewDetailsLink" xml:space="preserve">
+	<value>View Details</value>
+  </data>
+  <data name="kstidERProblemAndSteps" xml:space="preserve">
+	<value>Please describe the steps necessary to make this problem appear:</value>
+  </data>
+  <data name="kstidERReportProblemNotification" xml:space="preserve">
+	<value>An internal error has occurred. To help us fix the problem, please submit this error information to us.</value>
+  </data>
+  <data name="kstidERTexts" xml:space="preserve">
+	<value>An error has occurred</value>
+  </data>
+  <data name="kstidAdditionalInfoSent" xml:space="preserve">
+	<value>Additional information about your computer and project will be sent:</value>
+  </data>
 </root>
