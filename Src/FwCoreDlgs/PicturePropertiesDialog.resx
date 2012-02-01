@@ -507,9 +507,6 @@
   <data name="&gt;&gt;pnlCaption.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="panelBottom.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
   <data name="panelBottom.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 126</value>
   </data>
