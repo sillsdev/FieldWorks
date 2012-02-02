@@ -446,14 +446,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//Debug.Assert(!(m_lnkActive is FwAppArgs), "Beware: This will not handle link requests for other databases/applications." +
 				//	" To handle other databases or applications, pass the FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.");
-				if (m_lnkActive.TargetGuid != Guid.Empty)
-				{
-					// allow tools to skip loading a record if we're planning to jump to one.
-					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
-					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
-						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid.ToString(),
-						PropertyTable.SettingsGroup.LocalSettings);
-				}
 				if (m_lnkActive.ToolName == "default")
 				{
 					// Need some smarts here. The link creator was not sure what tool to use.
@@ -483,10 +475,15 @@ namespace SIL.FieldWorks.XWorks
 							//realTool = "reversalToolEditComplete";
 							//break;
 						case CmPossibilityListTags.kClassId:
-							// Todo JohnT: Generate all possibilities somehow from AreaListener data?
+							// The area listener knows about the possible list tools.
 							// Unfortunately AreaListener is in an assembly we can't reference.
-							// But there may be custom ones, so just listing them all here does not seem to be an option.
-							realTool = "domainTypeEdit";
+							// But there may be custom ones, so just listing them all here does not seem to be an option,
+							// and anyway it would be hard to maintain.
+							// Thus we've created this method (on AreaListener) which we call awkwardly throught the mediator.
+							var parameters = new object[2];
+							parameters[0] = majorObject;
+							m_mediator.SendMessage("GetToolForList", parameters);
+							realTool = (string)parameters[1];
 							break;
 						case RnResearchNbkTags.kClassId:
 							realTool = "notebookEdit";
@@ -502,6 +499,18 @@ namespace SIL.FieldWorks.XWorks
 					}
 					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
 					// Todo JohnT: need to do something special here if we c
+				}
+				// It's important to do this AFTER we set the real tool name if it is "default". Otherwise, the code that
+				// handles the jump never realizes we have reached the desired tool (as indicated by the value of
+				// SuspendLoadingRecordUntilOnJumpToRecord) and we stop recording context history and various similar problems.
+				if (m_lnkActive.TargetGuid != Guid.Empty)
+				{
+					// allow tools to skip loading a record if we're planning to jump to one.
+					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
+					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
+						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid.ToString(),
+						PropertyTable.SettingsGroup.LocalSettings);
+					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,

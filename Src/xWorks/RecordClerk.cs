@@ -706,6 +706,7 @@ namespace SIL.FieldWorks.XWorks
 					// reset this property.
 					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
 						PropertyTable.SettingsGroup.LocalSettings);
+					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 
 			}

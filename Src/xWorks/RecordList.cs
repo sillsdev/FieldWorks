@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			m_flid  = CmPossibilityListTags.kflidPossibilities;
 		}
 
-		internal static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
+		public static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
 		{
 			ICmObject obj = null;
 
