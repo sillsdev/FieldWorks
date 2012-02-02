@@ -5,6 +5,9 @@
 		in="${BUILD_ROOT}/Bld/GlobalInclude.xml"
 		out="${BUILD_ROOT}/Bld/GlobalInclude.build.xml"/>
 	<include buildfile="${BUILD_ROOT}/Bld/GlobalInclude.build.xml"/>
+	<if test="${(not property::exists('dir.fwoutput')) and environment::variable-exists('FW_OUTPUT')}">
+		<property name="dir.fwoutput" value="${environment::get-variable('FW_OUTPUT')}"/>
+	</if>
 	<if test="${not property::exists('dir.fwoutput')}">
 		<property name="dir.fwoutput" value="${BUILD_ROOT}/Output_${fw::architecture()}" if="${platform::is-unix()}"/>
 		<property name="dir.fwoutput" value="${BUILD_ROOT}\Output" unless="${platform::is-unix()}"/>

@@ -5724,3 +5724,4 @@ GordonM, 1 Feb 2012. Fixed LT-12622 so picture properties dialog again has butto
 EricP, 2 Feb 2012. LT-12532 - Retain the Form of a WfiMorphBundle even when fully analyzed.
 GordonM, 2 Feb 2012. Fixed other half of LT-11922 and refactored code that finds the LiftBridge dll.
 JohnT, 2 Feb 2012. Second stage of LT-12561; made incoming links with tool 'default' work for all kinds of PossibilityList (that display in Flex).
+AlistairI, 2 Feb 2012. Tweaked build to allow Installer build to redirect output.

@@ -65,9 +65,9 @@ if "%BUILD_ACTION%"=="ec" goto ERASE_COM1
 goto BUILD_DLL
 
 :ERASE_COM1
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%.*"
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%_*.*"
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%-*.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%_*.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%-*.*"
 
 :BUILD_DLL
 echo nmake -f %BUILD_MAKEFILE% CFG="%BUILD_CONFIG%" %BUILD_COMMAND%
@@ -84,9 +84,9 @@ if "%BUILD_ACTION%"=="cc" goto ERASE_COM2
 goto BUILD_TLB
 
 :ERASE_COM2
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%.*"
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%_*.*"
-del /q "%BUILD_ROOT%\Output\Common\%BUILD_PROJ%-*.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%_*.*"
+del /q "%BUILD_OUTPUT%\Common\%BUILD_PROJ%-*.*"
 :ERASE
 
 if "%BUILD_ACTION%"=="e" goto DONE

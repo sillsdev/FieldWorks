@@ -4,9 +4,10 @@
 # MSVC_ROOT
 # MSDEVDIR
 #
-# BUILD_ROOT: d:\FieldWorks
+# BUILD_ROOT: Typically "C:\FW-WW"
 # BUILD_TYPE: b, d, r, p
 # BUILD_CONFIG: Bounds, Debug, Release, Profile
+# BUILD_OUTPUT: Typically "C:\FW-WW\Output"
 # BUILD_EXTENSION: exe, dll, lib, ocx, (or empty indicating no main target)
 # BUILD_PRODUCT: LangProj
 # BUILD_REGSVR: 0 (no) or 1 (yes)
@@ -31,7 +32,11 @@
 !IF "$(BUILD_EXTENSION)"=="lib"
 OUT_DIR=$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)
 !ELSE
+!IF "$(BUILD_OUTPUT)"==""
 OUT_DIR=$(BUILD_ROOT)\Output\$(BUILD_CONFIG)
+!ELSE
+OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
+!ENDIF
 !ENDIF
 !ENDIF
 
@@ -44,7 +49,11 @@ INT_DIR=$(OBJ_DIR)\$(BUILD_CONFIG)\$(BUILD_PRODUCT)
 !ENDIF
 
 !IF "$(COM_OUT_DIR)"==""
+!IF "$(BUILD_OUTPUT)"==""
 COM_OUT_DIR=$(BUILD_ROOT)\Output\Common
+!ELSE
+COM_OUT_DIR=$(BUILD_OUTPUT)\Common
+!ENDIF
 !ENDIF
 
 !IF "$(COM_OUT_DIR_RAW)"==""

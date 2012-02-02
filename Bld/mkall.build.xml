@@ -507,6 +507,8 @@
 			<environment>
 				<variable name="BUILD_ROOT" value="${fwroot}"/>
 				<variable name="BUILD_TYPE" value="${build-type}"/>
+				<variable name="BUILD_OUTPUT" value="${dir.fwoutput}"/>
+				<variable name="OBJ_DIR" value="${dir.fwobj}"/>
 				<variable name="BUILD_CONFIG" value="${config}"/>
 				<variable name="BUILD4UX" value="${build4ux}"/>
 				<variable name="ANAL_TYPE" value="performance" if="${property::exists('performance')}"/>
@@ -717,6 +719,7 @@
 		<!-- if we're running as a limited user (Vista with UAC enabled) we have to register the DLL in HKCU -->
 		<setenv name="REGSVR_OPTS" value="/n /i:user" unless="${user::is-admin()}"/>
 		<setenv name="ISLUA" value="1" unless="${user::is-admin()}"/>
+		<setenv name="FW_OUTPUT" value="${dir.fwoutput}" if="${property::exists('buildingInstallers')}"/>
 		<exec program="cmd.exe" commandline="/c ${fwroot}/Bin/wrapper.cmd ${_output-dir} ${dir.fwoutputCommon} ${dir.fwobj} ${batch-file}.bat ${build-type} ${build-action} ${extra-params}"
 			workingdir="${batch-working-dir}" verbose="${verbose}"/>
 		<property name="fw-call-batch-error" value="false"/>

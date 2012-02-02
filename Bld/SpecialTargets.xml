@@ -44,6 +44,7 @@
 	<target name="extraInstallerBuild"
 		description="Building a TE-only or Flex-only build via GenerateFilesSource.exe.">
 		<property name="buildingInstallers" value="true"/>
+		<property name="deleteOutput" value="false"/>"
 	</target>
 
 	<target name="ContinuousBuildTests" description="Prepare to run acceptance tests on Dallas continuous build machine.">
