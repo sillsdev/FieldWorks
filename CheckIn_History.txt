@@ -5722,3 +5722,4 @@ TomB, 1 Feb 2012. TXL-27, TXL-78: Enabled the addition/insertion of new question
 KenZ, 1 Feb 2012. Integrated FW7.2.2 changes to WW.
 GordonM, 1 Feb 2012. Fixed LT-12622 so picture properties dialog again has buttons.
 EricP, 2 Feb 2012. LT-12532 - Retain the Form of a WfiMorphBundle even when fully analyzed.
+GordonM, 2 Feb 2012. Fixed other half of LT-11922 and refactored code that finds the LiftBridge dll.
