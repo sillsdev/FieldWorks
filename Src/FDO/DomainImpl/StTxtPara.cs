@@ -509,6 +509,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (m_paraCloneInProgress)
 				return;
+			if (originalValue == null && String.IsNullOrEmpty(newValue.Text))
+				return; // no point in doing AnalysisAdjuster stuff if we're just creating an empty paragraph.
 			TsStringDiffInfo diffInfo = TsStringUtils.GetDiffsInTsStrings(originalValue, newValue);
 			Debug.Assert(diffInfo != null, "We shouldn't get called if there is no difference");
 			if (diffInfo != null)
@@ -584,7 +586,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			var stText = (IStText)Owner;
 			var wordGrpRepo = Cache.ServiceLocator.GetInstance<IConstChartWordGroupRepository>();
-			var cells = wordGrpRepo.AllInstances().Where(cellPart => ((IDsConstChart)cellPart.Owner.Owner).BasedOnRA == stText);
+			// At least one bug involved cells whose Owner was null!
+			var cells = wordGrpRepo.AllInstances().Where(
+				cellPart => (cellPart.Owner != null && cellPart.Owner.Owner != null &&
+					((IDsConstChart)cellPart.Owner.Owner).BasedOnRA == stText));
 			// Several bugs, e.g., LT-11418, have occurred where one of the segmentRa properties is null.
 			// So we allow a match if one of them is null, but not if both are.
 			return cells.Where(cellPart =>
