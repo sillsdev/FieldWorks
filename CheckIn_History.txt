@@ -5727,3 +5727,4 @@ JohnT, 2 Feb 2012. Second stage of LT-12561; made incoming links with tool 'defa
 AlistairI, 2 Feb 2012. Tweaked build to allow Installer build to redirect output.
 KenZ, 3 Feb 2012. Finished Eric's LT-12532 migration by updating sample project files.
 JohnT, 3 Feb 2012. Last part of LT-12561; made TE able to handle incoming links (to guids owned by ScrBook or below).
+NaylorJ, 3 Feb 2012. Fix related to LT-12670, make sure that the fwdata file does not get mistakenly deleted in case of crashes writing out the project.
