@@ -70,3 +70,4 @@ LastufkaM, 31 Jan 2012. LT-12599 Reversal sense header reference before and afte
 KenZ, 1 Feb 2012. Fixed problem that broke build. Integrated LT-11922 fix from WW to 7.2.
 -------------------------- Begin FW7.2.3
 JohnT, 1 Feb 2012. LT-12651, Referenced Complex Forms ordering only used temporarily in Dictionary view
+KenZ, 3 Feb 2012. Integrated Jason's fix for LT-12672 avoiding loss of fwdata file on errror writing to tmp file.

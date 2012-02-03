@@ -642,6 +642,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private void CopyTempFileToOriginal(bool fUseLocalTempFile, string mainPathname, string tempPathname)
 		{
+			if(!File.Exists(tempPathname))
+			{
+				//There is no temp file to copy, there was probably an error previous to this call.
+				//Nothing to do here, so move along.
+				return;
+			}
 			try
 			{
 				if (fUseLocalTempFile)
