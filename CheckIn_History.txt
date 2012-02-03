@@ -5726,3 +5726,4 @@ GordonM, 2 Feb 2012. Fixed other half of LT-11922 and refactored code that finds
 JohnT, 2 Feb 2012. Second stage of LT-12561; made incoming links with tool 'default' work for all kinds of PossibilityList (that display in Flex).
 AlistairI, 2 Feb 2012. Tweaked build to allow Installer build to redirect output.
 KenZ, 3 Feb 2012. Finished Eric's LT-12532 migration by updating sample project files.
+JohnT, 3 Feb 2012. Last part of LT-12561; made TE able to handle incoming links (to guids owned by ScrBook or below).

@@ -2550,7 +2550,7 @@ namespace SIL.FieldWorks
 					if (s_teApp == null)
 					{
 						s_teApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
-							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev));
+							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_teAppKey = s_teApp.SettingsKey;
 					}
 					return s_teApp;

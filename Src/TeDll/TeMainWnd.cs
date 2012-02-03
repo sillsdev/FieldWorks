@@ -443,6 +443,7 @@ namespace SIL.FieldWorks.TE
 		private RegistryFloatSetting m_footnoteViewZoomSettingAlternate;
 		private const string kComprehensionCheckingToolSubKey = "ComprehensionCheckingTool";
 		private const string kCCSettings = "Settings";
+		FwLinkArgs m_startupLink;
 		#endregion
 
 		#region TeMainWnd Constructors, Initializers, Cleanup
@@ -473,10 +474,24 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="wndCopyFrom"></param>
+		/// <param name="startupLink">Optional link to jump to in OnFinishedInit</param>
 		/// -----------------------------------------------------------------------------------
-		public TeMainWnd(FwApp app, Form wndCopyFrom) : base(app, wndCopyFrom)
+		public TeMainWnd(FwApp app, Form wndCopyFrom, FwLinkArgs startupLink)
+			: base(app, wndCopyFrom)
 		{
+			m_startupLink = startupLink;
 			Init();
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the TeMainWnd class
+		/// </summary>
+		/// <param name="app"></param>
+		/// <param name="wndCopyFrom"></param>
+		/// -----------------------------------------------------------------------------------
+		public TeMainWnd(FwApp app, Form wndCopyFrom) : this(app, wndCopyFrom, null)
+		{
 		}
 
 		#region IDisposable override
@@ -1497,10 +1512,18 @@ namespace SIL.FieldWorks.TE
 			// If there are books in the project...
 			if (m_cache.LangProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0)
 			{
-				// When the TE window first opens, check if a book filter was enabled when
-				// the user last closed TE. If so, then show the user the book filter dialog.
-				if (TeProjectSettings.BookFilterEnabled)
-					OnBookFilter(null);
+				if (m_startupLink != null)
+				{
+					// This should automatically disabled any problem filters.
+					m_app.HandleIncomingLink(m_startupLink);
+				}
+				else
+				{
+					// When the TE window first opens, check if a book filter was enabled when
+					// the user last closed TE. If so, then show the user the book filter dialog.
+					if (TeProjectSettings.BookFilterEnabled)
+						OnBookFilter(null);
+				}
 
 				if (!ActiveViewHelper.IsViewVisible(ActiveView) && SIBAdapter != null)
 				{
