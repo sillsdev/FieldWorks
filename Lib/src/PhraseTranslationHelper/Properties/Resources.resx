@@ -117,8 +117,54 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="kstidInvalidRegularExpressionCaption" xml:space="preserve">
+	<value>Regular Expression Invalid</value>
+  </data>
+  <data name="kstidRenderingSelectionCriteriaCustom" xml:space="preserve">
+	<value>matches the regular expression "{0}"</value>
+  </data>
+  <data name="kstidRenderingSelectionCriteriaStartsWith" xml:space="preserve">
+	<value>starts with {0}</value>
+  </data>
+  <data name="kstidInvalidRenderingCondition" xml:space="preserve">
+	<value>Invalid condition for determining which rendering to select.</value>
+  </data>
+  <data name="kstidFixConditionNow" xml:space="preserve">
+	<value>This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</value>
+  </data>
+  <data name="kstidRenderingSelectionConditionResultFrame" xml:space="preserve">
+	<value>When the biblical term in the original question {0}, then select the first vernacular rendering that {1}.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Filtered" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>Filtered.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidRuleNameRequired" xml:space="preserve">
+	<value>Name is required.</value>
+  </data>
+  <data name="kstidRenderingSelectionRuleQuestionConditionEndsWith" xml:space="preserve">
+	<value>ends with {0}</value>
+  </data>
+  <data name="kstidRenderingSelectionRuleQuestionConditionCustom" xml:space="preserve">
+	<value>matches the regular expression "{0}"</value>
+  </data>
+  <data name="kstidRenderingSelectionCriteriaEndsWith" xml:space="preserve">
+	<value>ends with {0}</value>
+  </data>
+  <data name="kstidRenderingSelectionRuleQuestionConditionFollowedBy" xml:space="preserve">
+	<value>is immediately followed by {0}</value>
+  </data>
+  <data name="kstidNewSelectionRuleNameTemplate" xml:space="preserve">
+	<value>Selection Rule - {0}</value>
+  </data>
   <data name="kstidTemplateGenerationComplete" xml:space="preserve">
 	<value>Template generation complete!</value>
+  </data>
+  <data name="kstidUserAddedEmptyPhrase" xml:space="preserve">
+	<value>User-added question with no English version</value>
+  </data>
+  <data name="kstidKeyTermPlaceHolderMissing" xml:space="preserve">
+	<value>Question-matching pattern must have a place holder for the key term.</value>
   </data>
   <data name="kstidUntranslatedQuestionsWarning" xml:space="preserve">
 	<value>There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</value>
@@ -127,9 +173,40 @@
 	<value>Required file not found:
 </value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="kstidRenderingSelectionRuleQuestionConditionPrecededBy" xml:space="preserve">
+	<value>is immediately preceded by {0}</value>
+  </data>
+  <data name="kstidFilteredStatus" xml:space="preserve">
+	<value>Filtered</value>
+  </data>
+  <data name="kstidEditRuleCaption" xml:space="preserve">
+	<value>Edit Rendering Selection Rule</value>
+  </data>
+  <data name="Copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>Copy.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidInvalidQuestionCondition" xml:space="preserve">
+	<value>Invalid condition for determining when rule applies.</value>
+  </data>
+  <data name="kstidRenderingSelectionRuleQuestionConditionStartsWith" xml:space="preserve">
+	<value>starts with {0}</value>
+  </data>
+  <data name="kstidRuleNameInUse" xml:space="preserve">
+	<value>This name is already in use by another rule.</value>
+  </data>
+  <data name="kstidCopiedSelectionRuleNameTemplate" xml:space="preserve">
+	<value>{0} - Copy{1}</value>
+	<comment>Parameter 0 is the original rule name; Parameter 1 is an optional numeric suffix to prevent duplicates (if needed)</comment>
+  </data>
   <data name="check_circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>check-circle.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidCopyrightFmt" xml:space="preserve">
+	<value>{0}. All rights reserved.</value>
+	<comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidCommentsLabel" xml:space="preserve">
+	<value>Comments:</value>
   </data>
   <data name="kstidRenderingExists" xml:space="preserve">
 	<value>Rendering already exists</value>
@@ -137,78 +214,7 @@
   <data name="kstidAnswersLabel" xml:space="preserve">
 	<value>Answers:</value>
   </data>
-  <data name="kstidCommentsLabel" xml:space="preserve">
-	<value>Comments:</value>
-  </data>
-  <data name="kstidKeyTermPlaceHolderMissing" xml:space="preserve">
-	<value>Question-matching pattern must have a place holder for the key term.</value>
-  </data>
-  <data name="kstidEditRuleCaption" xml:space="preserve">
-	<value>Edit Rendering Selection Rule</value>
-  </data>
-  <data name="kstidNewSelectionRuleNameTemplate" xml:space="preserve">
-	<value>Selection Rule - {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionConditionResultFrame" xml:space="preserve">
-	<value>When the biblical term in the original question {0}, then select the first vernacular rendering that {1}.</value>
-  </data>
-  <data name="kstidRenderingSelectionCriteriaCustom" xml:space="preserve">
-	<value>matches the regular expression "{0}"</value>
-  </data>
-  <data name="kstidRenderingSelectionCriteriaEndsWith" xml:space="preserve">
-	<value>ends with {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionCriteriaStartsWith" xml:space="preserve">
-	<value>starts with {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionRuleQuestionConditionCustom" xml:space="preserve">
-	<value>matches the regular expression "{0}"</value>
-  </data>
-  <data name="kstidRenderingSelectionRuleQuestionConditionEndsWith" xml:space="preserve">
-	<value>ends with {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionRuleQuestionConditionFollowedBy" xml:space="preserve">
-	<value>is immediately followed by {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionRuleQuestionConditionPrecededBy" xml:space="preserve">
-	<value>is immediately preceded by {0}</value>
-  </data>
-  <data name="kstidRenderingSelectionRuleQuestionConditionStartsWith" xml:space="preserve">
-	<value>starts with {0}</value>
-  </data>
-  <data name="kstidCopyrightFmt" xml:space="preserve">
-	<value>{0}. All rights reserved.</value>
-	<comment>Displays in the Help/About box and the splash screen</comment>
-  </data>
-  <data name="kstidRuleNameInUse" xml:space="preserve">
-	<value>This name is already in use by another rule.</value>
-  </data>
-  <data name="kstidRuleNameRequired" xml:space="preserve">
-	<value>Name is required.</value>
-  </data>
-  <data name="kstidInvalidQuestionCondition" xml:space="preserve">
-	<value>Invalid condition for determining when rule applies.</value>
-  </data>
-  <data name="kstidCopiedSelectionRuleNameTemplate" xml:space="preserve">
-	<value>{0} - Copy{1}</value>
-	<comment>Parameter 0 is the original rule name; Parameter 1 is an optional numeric suffix to prevent duplicates (if needed)</comment>
-  </data>
-  <data name="kstidFixConditionNow" xml:space="preserve">
-	<value>This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</value>
-  </data>
-  <data name="kstidInvalidRegularExpressionCaption" xml:space="preserve">
-	<value>Regular Expression Invalid</value>
-  </data>
-  <data name="kstidInvalidRenderingCondition" xml:space="preserve">
-	<value>Invalid condition for determining which rendering to select.</value>
-  </data>
-  <data name="kstidFilteredStatus" xml:space="preserve">
-	<value>Filtered</value>
-  </data>
-  <data name="Filtered" type="System.Resources.ResXFileRef, System.Windows.Forms">
-	<value>Filtered.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="kstidUserAddedEmptyPhrase" xml:space="preserve">
-	<value>User-added question with no English version</value>
+  <data name="Paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>Paste.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

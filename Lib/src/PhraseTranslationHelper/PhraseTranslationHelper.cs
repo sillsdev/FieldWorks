@@ -377,16 +377,6 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Public methods and properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (first) phrase in the collection that matches the given text.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase GetPhrase(string englishPhrase)
-		{
-			return GetPhrase(null, englishPhrase);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the (first) phrase in the collection that matches the given text for the given
 		/// reference.
 		/// </summary>
@@ -394,22 +384,22 @@ namespace SILUBS.PhraseTranslationHelper
 		public TranslatablePhrase GetPhrase(string reference, string englishPhrase)
 		{
 			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
-			return m_phrases.FirstOrDefault(x => (reference == null || x.Reference == reference) && x.PhraseKey == englishPhrase);
+			return m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
+				x.PhraseKey.Text == englishPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the index of the (first) phrase in the (filtered) collection that matches the
-		/// given reference and text.
+		/// given key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int FindPhrase(string reference, string englishPhrase)
+		public int FindPhrase(QuestionKey phraseKey)
 		{
-			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
 			for (int i = 0; i < FilteredSortedPhrases.Count; i++)
 			{
 				TranslatablePhrase phrase = FilteredSortedPhrases[i];
-				if (phrase.Reference == reference && phrase.PhraseKey == englishPhrase)
+				if (phrase.PhraseKey.Matches(phraseKey))
 					return i;
 			}
 			return -1;

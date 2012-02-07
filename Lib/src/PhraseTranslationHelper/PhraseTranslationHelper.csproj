@@ -71,6 +71,7 @@
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="QuestionKey.cs" />
 	<Compile Include="NewQuestionDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -198,6 +199,12 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="Properties\Filtered.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Copy.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Paste.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -22,12 +22,12 @@ namespace SILUBS.PhraseTranslationHelper
 	/// ----------------------------------------------------------------------------------------
 	public partial class NewQuestionDlg : Form
 	{
-		private readonly string m_scrReference;
+		private readonly Question m_baseQuestion;
 		internal Question NewQuestion
 		{
 			get
 			{
-				return new Question(m_scrReference, chkNoEnglish.Checked ? null : m_txtEnglish.Text,
+				return new Question(m_baseQuestion, chkNoEnglish.Checked ? null : m_txtEnglish.Text,
 					m_txtAnswer.Text);
 			}
 		}
@@ -37,12 +37,12 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Initializes a new instance of the <see cref="T:NewQuestionDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public NewQuestionDlg(string scrReference)
+		public NewQuestionDlg(Question baseQuestion)
 		{
-			m_scrReference = scrReference;
+			m_baseQuestion = baseQuestion;
 			InitializeComponent();
 
-			lblReference.Text = String.Format(lblReference.Text, scrReference);
+			lblReference.Text = String.Format(lblReference.Text, m_baseQuestion.ScriptureReference);
 		}
 
 		private void m_txtEnglish_TextChanged(object sender, EventArgs e)

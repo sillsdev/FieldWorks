@@ -105,33 +105,20 @@ namespace SILUBS.PhraseTranslationHelper
 
 					if (category.Type != null && !processedCategories.Contains(category.Type.ToLowerInvariant()))
 					{
-						yield return new TranslatablePhrase(category.Type, -1, string.Empty,
-							ScrReference.StartOfBible(ScrVers.English).BBCCCVVV,
-							ScrReference.EndOfBible(ScrVers.English).BBCCCVVV, processedCategories.Count);
+						yield return new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, processedCategories.Count);
 						processedCategories.Add(category.Type.ToLowerInvariant());
 					}
 
 					for (int iQuestion = 0; iQuestion < category.Questions.Length; iQuestion++)
 					{
 						Question q = category.Questions[iQuestion];
-						string sRef;
-						int startRef, endRef;
 						if (q.ScriptureReference == null)
 						{
-							sRef = section.ScriptureReference;
-							startRef = section.StartRef;
-							endRef = section.EndRef;
+							q.ScriptureReference = section.ScriptureReference;
+							q.StartRef = section.StartRef;
+							q.EndRef = section.EndRef;
 						}
-						else
-						{
-							sRef = q.ScriptureReference;
-							startRef = q.StartRef;
-							endRef = q.EndRef;
-						}
-						if (q.Answers != null || q.Notes != null)
-							yield return new TranslatablePhrase(q, iCat, sRef, startRef, endRef, iQuestion + 1);
-						else
-							yield return new TranslatablePhrase(q.Text, iCat, sRef, startRef, endRef, iQuestion + 1);
+						yield return new TranslatablePhrase(q, iCat, iQuestion + 1);
 					}
 				}
 			}
@@ -165,7 +152,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private IEnumerable<TranslatablePhrase> GetPhraseCustomizations(TranslatablePhrase phrase, float seqOffset)
 		{
 			TranslatablePhrase addedPhrase = null;
-			foreach (PhraseCustomization customization in m_customizations.Where(c => c.Reference == phrase.Reference && c.OriginalPhrase == phrase.PhraseKey))
+			foreach (PhraseCustomization customization in m_customizations.Where(c => phrase.PhraseKey.Matches(c.Reference, c.OriginalPhrase)))
 			{
 				switch (customization.Type)
 				{
@@ -189,10 +176,9 @@ namespace SILUBS.PhraseTranslationHelper
 								"' already has a phrase inserted before it: '" + phrase.InsertedPhraseBefore + "'. Value of of subsequent insertion attempt was: '" +
 								customization.ModifiedPhrase + "'.");
 						}
-						Question addedQuestion = new Question(phrase.Reference, customization.ModifiedPhrase, customization.Answer);
+						Question addedQuestion = new Question(phrase.QuestionInfo, customization.ModifiedPhrase, customization.Answer);
 						phrase.InsertedPhraseBefore = addedQuestion;
-						TranslatablePhrase tpInserted = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.Reference,
-							phrase.StartRef, phrase.EndRef, phrase.SequenceNumber - seqOffset);
+						TranslatablePhrase tpInserted = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.SequenceNumber - seqOffset);
 						foreach (TranslatablePhrase translatablePhrase in GetPhraseCustomizations(tpInserted, seqOffset / 4))
 							yield return translatablePhrase;
 						break;
@@ -203,10 +189,9 @@ namespace SILUBS.PhraseTranslationHelper
 								"' already has a phrase added after it: '" + phrase.AddedPhraseAfter + "'. Value of of subsequent addition attempt was: '" +
 								customization.ModifiedPhrase + "'.");
 						}
-						addedQuestion = new Question(phrase.Reference, customization.ModifiedPhrase, customization.Answer);
+						addedQuestion = new Question(phrase.QuestionInfo, customization.ModifiedPhrase, customization.Answer);
 						phrase.AddedPhraseAfter = addedQuestion;
-						addedPhrase = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.Reference, phrase.StartRef,
-							phrase.EndRef, phrase.SequenceNumber + seqOffset);
+						addedPhrase = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.SequenceNumber + seqOffset);
 						break;
 				}
 			}

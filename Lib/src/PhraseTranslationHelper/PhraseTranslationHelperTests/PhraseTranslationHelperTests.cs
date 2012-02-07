@@ -52,12 +52,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -79,12 +79,12 @@ namespace SILUBS.PhraseTranslationHelper
 		public void GetPhrasesSortedByOriginalPhrase()
 		{
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0),
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, true);
@@ -115,12 +115,12 @@ namespace SILUBS.PhraseTranslationHelper
 		public void GetPhrasesSortedByReference()
 		{
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0),
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
@@ -151,17 +151,17 @@ namespace SILUBS.PhraseTranslationHelper
 		public void GetPhrasesSortedByReferenceCategoryAndSequenceNum()
 		{
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What is the meaning of life?", 0, "A-D", 1, 4, 0),
-				new TranslatablePhrase("Why am I here?", 0, "A-D", 1, 4, 1),
-				new TranslatablePhrase("What would God do?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("What is Paul asking that man?", 1, "A", 1, 1, 1),
-				new TranslatablePhrase("When is the best time for ice cream?", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul to talk to God today?", 1, "D", 4, 4, 0),
-				new TranslatablePhrase("Is a dog man's best friend?", 1, "D", 4, 4, 1),
-				new TranslatablePhrase("Why is there evil?", 0, "E-G", 5, 6, 0),
-				new TranslatablePhrase("What is that dog?", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "E-F", 5, 6, 0),
-				new TranslatablePhrase("What is that dog?", 1, "E-G", 5, 7, 0)},
+				new TranslatablePhrase(new TestQ("What is the meaning of life?", "A-D", 1, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("Why am I here?", "A-D", 1, 4), 0, 1),
+				new TranslatablePhrase(new TestQ("What would God do?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking that man?", "A", 1, 1), 1, 1),
+				new TranslatablePhrase(new TestQ("When is the best time for ice cream?", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul to talk to God today?", "D", 4, 4), 1, 0),
+				new TranslatablePhrase(new TestQ("Is a dog man's best friend?", "D", 4, 4), 1, 1),
+				new TranslatablePhrase(new TestQ("Why is there evil?", "E-G", 5, 6), 0, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "E-F", 5, 6), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "E-G", 5, 7), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
@@ -217,12 +217,12 @@ namespace SILUBS.PhraseTranslationHelper
 		[Test]
 		public void GetPhrasesSortedByTranslation()
 		{
-			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);
-			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);
-			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);
-			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0);
-			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);
-			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);
+			TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);
+			TranslatablePhrase tp2 = new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0);
+			TranslatablePhrase tp3 = new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0);
+			TranslatablePhrase tp4 = new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0);
+			TranslatablePhrase tp5 = new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0);
+			TranslatablePhrase tp6 = new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { tp1, tp2, tp3, tp4, tp5, tp6 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
@@ -268,12 +268,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -306,12 +306,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
-			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
-			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0);                                         // what is (3)        | that dog (4)
 			tp2.IsExcluded = true;
 			tp6.IsExcluded = true;
 
@@ -347,12 +347,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("This would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (2)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and say radish", 1, "E", 5, 5, 0),				  // that dog (4)       | wishes this (1) | and (1)             | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (2)        | that dog (4)
+				new TranslatablePhrase(new TestQ("This would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (2)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and say radish", "E", 5, 5), 1, 0),				  // that dog (4)       | wishes this (1) | and (1)             | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (2)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -383,8 +383,8 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("This would God have me [to] say with respect to Paul?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("What is that dog?", 1, "B", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("This would God have me [to] say with respect to Paul?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "B", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -408,12 +408,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -436,12 +436,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -472,12 +472,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			TranslatablePhrase tp1 = new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
-			TranslatablePhrase tp2 = new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-			TranslatablePhrase tp3 = new TranslatablePhrase("that dog", 1, "C", 3, 3, 0);                                                  // that dog (4)
-			TranslatablePhrase tp4 = new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-			TranslatablePhrase tp5 = new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-			TranslatablePhrase tp6 = new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0);                                         // what is (3)        | that dog (4)
+			TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+			TranslatablePhrase tp2 = new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+			TranslatablePhrase tp3 = new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0);                                                  // that dog (4)
+			TranslatablePhrase tp4 = new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+			TranslatablePhrase tp5 = new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0);          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+			TranslatablePhrase tp6 = new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0);                                         // what is (3)        | that dog (4)
 			tp4.IsExcluded = true;
 			tp5.IsExcluded = true;
 
@@ -514,12 +514,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // God & have don't have renderings
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // God & have don't have renderings
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // God doesn't have a rendering
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -548,12 +548,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0) { IsExcluded = true },       // God & have don't have renderings
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0) { IsExcluded = true },
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0) { IsExcluded = true },
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0) { IsExcluded = true },       // God & have don't have renderings
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0) { IsExcluded = true },
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // God doesn't have a rendering
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0) { IsExcluded = true },
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -589,12 +589,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // God & have don't have renderings
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // God doesn't have a rendering
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // God & have don't have renderings
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // God doesn't have a rendering
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -622,12 +622,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is have radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is have radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -654,12 +654,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is have radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is have radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -686,12 +686,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("This would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),                                                  // that dog (4)
-				new TranslatablePhrase("Is it okay for Paul me to talk with respect to God today?", 1, "D", 4, 4, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-				new TranslatablePhrase("that dog wishes this Paul and what is say radish", 1, "E", 5, 5, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)},                                        // what is (3)        | that dog (4)
+				new TranslatablePhrase(new TestQ("This would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
+				new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -1256,7 +1256,7 @@ namespace SILUBS.PhraseTranslationHelper
 		[Test]
 		public void SetNewTranslation_Null()
 		{
-			TranslatablePhrase phrase = new TranslatablePhrase("Who was the man?", 1, "A", 1, 1, 0);
+			TranslatablePhrase phrase = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
@@ -1275,10 +1275,10 @@ namespace SILUBS.PhraseTranslationHelper
 		[Test]
 		public void SetNewTranslation_AutoAcceptTranslationForAllIdenticalPhrases()
 		{
-			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man?", 1, "A", 1, 1, 0);
-			TranslatablePhrase phrase2 = new TranslatablePhrase("Where was the woman?", 1, "A", 1, 1, 0);
-			TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man?", 1, "B", 2, 2, 0);
-			TranslatablePhrase phrase4 = new TranslatablePhrase("Where was the woman?", 1, "C", 3, 3, 0);
+			TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
+			TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Where was the woman?", "A", 1, 1), 1, 0);
+			TranslatablePhrase phrase3 = new TranslatablePhrase(new TestQ("Who was the man?", "B", 2, 2), 1, 0);
+			TranslatablePhrase phrase4 = new TranslatablePhrase(new TestQ("Where was the woman?", "C", 3, 3), 1, 0);
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
@@ -1302,8 +1302,8 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			AddMockedKeyTerm("man", (string)null);
 
-			TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man?", 1, "A", 1, 1, 0);
-			TranslatablePhrase phrase2 = new TranslatablePhrase("Who was the man?", 1, "B", 2, 2, 0);
+			TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
+			TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Who was the man?", "B", 2, 2), 1, 0);
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
@@ -2137,12 +2137,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 1, "D", 4, 4, 0),
-				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 1, "F", 6, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "D", 4, 4), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would god have me to say with respect to", 1);
@@ -2167,12 +2167,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 0, "A-D", 1, 4, 0),
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 0, "B-D", 2, 4, 0),
-				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "B-D", 2, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "E-F", 5, 6), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
@@ -2197,12 +2197,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("say", 2, 5);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("What would God have me to say with respect to Paul?", 0, "A-D", 1, 4, 0),
-				new TranslatablePhrase("What is Paul asking me to say with respect to that dog?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("that dog", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("Is it okay for Paul to talk with respect to God today?", 0, "B-D", 2, 4, 0),
-				new TranslatablePhrase("that dog wishes this Paul what is say radish", 1, "E", 5, 5, 0),
-				new TranslatablePhrase("What is that dog?", 0, "E-F", 5, 6, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "B-D", 2, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
+				new TranslatablePhrase(new TestQ("What is that dog?", "E-F", 5, 6), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
@@ -2228,12 +2228,12 @@ namespace SILUBS.PhraseTranslationHelper
 			AddMockedKeyTerm("high or drunk sailor", 2, 4);
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-				new TranslatablePhrase("Was the high priest on his high horse?", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("Who was the high priest?", 1, "B", 2, 2, 0),
-				new TranslatablePhrase("I have eaten the horse.", 1, "A", 1, 1, 0),
-				new TranslatablePhrase("How high is this?", 1, "C", 3, 3, 0),
-				new TranslatablePhrase("That drunk sailor has eaten a radish", 0, "C-D", 3, 4, 0),
-				new TranslatablePhrase("That high sailor was to have drunk some radish juice", 0, "A-B", 1, 2, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+				new TranslatablePhrase(new TestQ("Was the high priest on his high horse?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("Who was the high priest?", "B", 2, 2), 1, 0),
+				new TranslatablePhrase(new TestQ("I have eaten the horse.", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("How high is this?", "C", 3, 3), 1, 0),
+				new TranslatablePhrase(new TestQ("That drunk sailor has eaten a radish", "C-D", 3, 4), 0, 0),
+				new TranslatablePhrase(new TestQ("That high sailor was to have drunk some radish juice", "A-B", 1, 2), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			VerifyTranslatablePhrase(pth, "Was the high priest on his high horse?", "was the", 2, "on his", 1, "horse", 1);
@@ -2620,7 +2620,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private static void VerifyTranslatablePhrase(PhraseTranslationHelper pth, string phrase,
 			params object[] parts)
 		{
-			TranslatablePhrase phr = pth.GetPhrase(phrase);
+			TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == phrase.Normalize(NormalizationForm.FormD));
 			Assert.IsNotNull(phr);
 			Assert.AreEqual(parts.Length / 2, phr.TranslatableParts.Count(), "Phrase \"" + phrase +
 				"\" was split into the wrong number of parts.");
@@ -2671,6 +2671,35 @@ namespace SILUBS.PhraseTranslationHelper
 			Term = keyTerm;
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 		}
+		#endregion
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Trivial implementation of QuestionKey for test questions (not real Scripture references)
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class TestQ : QuestionKey
+	{
+		#region Constructors
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public TestQ(string text, string sRef, int startRef, int endRef)
+		{
+			Text = text;
+			ScriptureReference = sRef;
+			StartRef = startRef;
+			EndRef = endRef;
+		}
+		#endregion
+
+		#region Overrides of QuestionKey
+		public override string ScriptureReference { get; set; }
+		public override int StartRef { get; set; }
+		public override int EndRef { get; set; }
 		#endregion
 	}
 }

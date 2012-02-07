@@ -5729,3 +5729,8 @@ KenZ, 3 Feb 2012. Finished Eric's LT-12532 migration by updating sample project 
 JohnT, 3 Feb 2012. Last part of LT-12561; made TE able to handle incoming links (to guids owned by ScrBook or below).
 NaylorJ, 3 Feb 2012. Fix related to LT-12670, make sure that the fwdata file does not get mistakenly deleted in case of crashes writing out the project.
 GordonM, 3 Feb 2012. A couple small fixes to prevent crashes in AnalysisAdjuster with a corrupt file.
+TomB, 7 Feb 2012. TXL-100: Added copy and paste commands to allow copying of entire cells in the data grid.
+	TXL-105: When editing a question or otherwise reloading the data grid, made TXL select the same question after reloading.
+	TXL-106: Improved keyboard switching.
+	TXL-107: Added initial support for excluding user-added questions
+	Also, refactored to reduce redundant data storage and improve logic for key-matching.

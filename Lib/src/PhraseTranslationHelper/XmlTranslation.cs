@@ -60,8 +60,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// --------------------------------------------------------------------------------
 		public XmlTranslation(TranslatablePhrase tp)
 		{
-			Reference = tp.Reference;
-			PhraseKey = tp.PhraseKey;
+			Reference = tp.PhraseKey.ScriptureReference;
+			PhraseKey = tp.PhraseKey.Text;
 			Translation = tp.Translation;
 		}
 	}

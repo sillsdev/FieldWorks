@@ -29,22 +29,22 @@ namespace SILUBS.PhraseTranslationHelper
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot(Namespace = "", IsNullable = false)]
-	public class Question
+	public class Question : QuestionKey
 	{
 		public const string kGuidPrefix = "GUID: ";
 		private string m_text;
 
 		[XmlAttribute("scrref")]
-		public string ScriptureReference { get; set; }
+		public override string ScriptureReference { get; set; }
 
 		[XmlAttribute("startref")]
-		public int StartRef { get; set; }
+		public override int StartRef { get; set; }
 
 		[XmlAttribute("endref")]
-		public int EndRef { get; set; }
+		public override int EndRef { get; set; }
 
 		[XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
-		public string Text
+		public override string Text
 		{
 			get { return m_text; }
 			set
@@ -80,9 +80,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Constructor to make a new Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(string scrReference, string newQuestion, string answer)
+		public Question(Question baseQuestion, string newQuestion, string answer)
 		{
-			ScriptureReference = scrReference;
+			ScriptureReference = baseQuestion.ScriptureReference;
+			StartRef = baseQuestion.StartRef;
+			EndRef = baseQuestion.EndRef;
 			Text = newQuestion;
 
 			if (!string.IsNullOrEmpty(answer))
