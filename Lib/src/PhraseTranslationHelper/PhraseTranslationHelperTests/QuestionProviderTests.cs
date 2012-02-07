@@ -1052,7 +1052,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			phrase = phrases[3];
 			Assert.AreEqual("User-added question with no English version", phrase.PhraseToDisplayInUI);
-			Assert.AreEqual(Question.kGuidPrefix + guidOfAddedQuestion, phrase.PhraseKey);
+			Assert.AreEqual(Question.kGuidPrefix + guidOfAddedQuestion, phrase.PhraseKey.Text);
 			Assert.AreEqual(string.Empty, phrase.OriginalPhrase);
 			Assert.Less(phrase.SequenceNumber, phrases[4].SequenceNumber);
 			Assert.IsNull(phrase.InsertedPhraseBefore);
@@ -1101,7 +1101,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase phrase = phrases[2];
 			Assert.AreEqual(string.Empty, phrase.PhraseInUse);
 			Assert.AreEqual("User-added question with no English version", phrase.PhraseToDisplayInUI);
-			Assert.AreEqual(Question.kGuidPrefix + guidOfAddedQuestion, phrase.PhraseKey);
+			Assert.AreEqual(Question.kGuidPrefix + guidOfAddedQuestion, phrase.PhraseKey.Text);
 			Assert.AreEqual(string.Empty, phrase.OriginalPhrase);
 			Assert.AreEqual(1, phrase.Category);
 			Assert.AreEqual("ACT 1.6", phrase.Reference);
