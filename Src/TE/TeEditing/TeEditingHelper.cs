@@ -2938,7 +2938,7 @@ namespace SIL.FieldWorks.TE
 		/// <exception cref="Exception">Requested selection could not be made in the picture
 		/// caption.</exception>
 		/// ------------------------------------------------------------------------------------
-		public void MakeSelectionInPictureCaption(int iBook, int iSection, int tag,
+		private void MakeSelectionInPictureCaption(int iBook, int iSection, int tag,
 			int iPara, int ichOrcPos, int startCharacter, int endCharacter)
 		{
 			CheckDisposed();
@@ -2984,8 +2984,6 @@ namespace SIL.FieldWorks.TE
 
 			if (vwsel == null)
 				throw new Exception("Requested selection could not be made in the picture caption.");
-
-			Application.DoEvents(); // REVIEW: Do we need this? Why?
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4458,43 +4456,44 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void SelectCitedTextInPictureCaption(int iBook, IScrScriptureNote note)
 		{
-			try
+			ICmPicture picture = (ICmPicture)note.BeginObjectRA;
+			int iSection, iPara, ichOrcPos;
+			if (picture == null || !FindPictureInVerse(new ScrReference(note.BeginRef, m_scr.Versification),
+				picture.Hvo, out iSection, out iPara, out ichOrcPos))
 			{
-				ICmPicture picture = (ICmPicture)note.BeginObjectRA;
-				int iSection, iPara, ichOrcPos;
-				ITsString citedText = note.CitedTextTss;
-				if (!FindPictureInVerse(new ScrReference(note.BeginRef, m_scr.Versification),
-					picture.Hvo, out iSection, out iPara, out ichOrcPos))
-				{
-					throw new Exception("Picture ORC not found in verse"); // See catch
-				}
-				int ichStart, ichEnd;
-				ITsString sCaptionText = picture.Caption.VernacularDefaultWritingSystem;
-				if (sCaptionText.Length >= note.EndOffset &&
-					sCaptionText.Substring(note.BeginOffset, note.EndOffset - note.BeginOffset) == citedText)
-				{
-					ichStart = note.BeginOffset;
-					ichEnd = note.EndOffset;
-				}
-				else
-				{
-					// Search for word form in caption
-					if (!TsStringUtils.FindWordFormInString(citedText, sCaptionText,
-						m_cache.WritingSystemFactory, out ichStart, out ichEnd))
-					{
-						ichStart = ichEnd = 0;
-					}
-				}
-				MakeSelectionInPictureCaption(iBook, iSection,
-					ScrSectionTags.kflidContent, iPara,
-					ichOrcPos, ichStart, ichEnd);
-			}
-			catch
-			{
-				// Picture or caption no longer exists. Go to the start of the specified verse.
+				Logger.WriteEvent("Picture ORC not found in verse.");
+				// Picture no longer exists or has been moved to a different verse.
+				// Go to the start of the specified verse.
 				GotoVerse(new ScrReference(note.BeginRef, m_scr.Versification));
 				return;
 			}
+			int ichStart, ichEnd;
+			ITsString citedText = note.CitedTextTss;
+			ITsString tssCaption = picture.Caption.VernacularDefaultWritingSystem;
+			if (tssCaption.Length >= note.EndOffset &&
+				tssCaption.Substring(note.BeginOffset, note.EndOffset - note.BeginOffset).Equals(citedText))
+			{
+				ichStart = note.BeginOffset;
+				ichEnd = note.EndOffset;
+			}
+			else
+			{
+				// Search for word form in caption
+				// Note: FindWordFormInString deals with normalization issues and ORCs. Since
+				// picture captions can't contain ORCs, we could probably get away with a
+				// simpler approach. Sadly, FindWordFormInString doesn't work for non-word-forming
+				// strings, so if our cited text is a punctuation character, this won't find it.
+				// Since TE is being discontinued and there is an easy work-around (re-run the check),
+				// there's no point in fixing this.
+				if (!TsStringUtils.FindWordFormInString(citedText, tssCaption,
+					m_cache.WritingSystemFactory, out ichStart, out ichEnd))
+				{
+					ichStart = ichEnd = 0;
+				}
+			}
+			MakeSelectionInPictureCaption(iBook, iSection,
+				ScrSectionTags.kflidContent, iPara,
+				ichOrcPos, ichStart, ichEnd);
 		}
 
 		/// ------------------------------------------------------------------------------------
