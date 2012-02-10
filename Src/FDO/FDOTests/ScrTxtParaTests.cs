@@ -1463,6 +1463,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 		#endregion
 
+		#region String splitting Tests
+		/// <summary>
+		/// Test that splitting a paragraph before a footnote marker correctly associates
+		/// that footnote with the new paragraph and doesn't delete the marker. TE-9530.
+		/// </summary>
+		[Test]
+		public void SplitParagraphBeforeFootnoteOrc()
+		{
+			// The main current application of this is a complex delete followed by inserting a character, so try that.
+			IStTxtPara paraOrig = m_currentText[0];
+			paraOrig.Contents = Cache.TsStrFactory.MakeString("First stinkin' Para", Cache.DefaultVernWs);
+			IStFootnote footnote1 = AddFootnote(m_book, paraOrig, 14, "Footnote text");
+
+			IScrTxtParaFactory paraFactory = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>();
+			IScrTxtPara paraNew = paraFactory.CreateWithStyle(m_currentText, 1, ScrStyleNames.NormalParagraph);
+
+			Cache.DomainDataByFlid.MoveString(paraOrig.Hvo, StTxtParaTags.kflidContents, 0, 5, paraOrig.Contents.Length,
+						paraNew.Hvo, StTxtParaTags.kflidContents, 0, 0, true);
+			Assert.AreEqual(" stinkin'" + StringUtils.kChObject + " Para", paraNew.Contents.Text);
+			Assert.IsTrue(footnote1.IsValidObject);
+		}
+		#endregion
+
 		#region CreateOwnedObjects Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

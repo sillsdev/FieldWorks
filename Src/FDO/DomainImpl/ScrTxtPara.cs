@@ -2028,7 +2028,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Any footnotes that were deleted from this paragraph need to be deleted
 					IScrFootnote footnote = (IScrFootnote)footnoteRepo.GetFootnoteFromObjData(
 						originalValue.get_StringProperty(i, (int)FwTextPropType.ktptObjData));
-					if (footnote != null)
+					if (footnote != null && (footnote.ParaContainingOrcRA == null || footnote.ParaContainingOrcRA == this))
 					{
 						bool fFound = false;
 						for (int iNew = 0; iNew < newRunCount; iNew++)
