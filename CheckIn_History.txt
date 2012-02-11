@@ -5734,3 +5734,4 @@ TomB, 7 Feb 2012. TXL-100: Added copy and paste commands to allow copying of ent
 	TXL-106: Improved keyboard switching.
 	TXL-107: Added initial support for excluding user-added questions
 	Also, refactored to reduce redundant data storage and improve logic for key-matching.
+NaylorJ, 10 Feb 2012. Added the first 2 of 3 integration points to FieldworksBridge described in LT-12525
