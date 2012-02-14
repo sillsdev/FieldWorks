@@ -818,6 +818,59 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#region Segment handling code
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the segment corresponding to the given character offset in the specified free
+		/// translation.
+		/// </summary>
+		/// <param name="ich">The character offset in the free translation.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		public ISegment GetSegmentForOffsetInFreeTranslation(int ich, int ws)
+		{
+			int cumulativeLengthOfBt = 0;
+
+			foreach (ISegment segment in SegmentsOS)
+			{
+				ITsString tss = segment.FreeTranslation.get_String(ws);
+				int cchSegTrans = (tss == null ? 0 : tss.Length);
+				if (ich >= cumulativeLengthOfBt && ich < cchSegTrans)
+					return segment;
+				cumulativeLengthOfBt += cchSegTrans;
+			}
+			return SegmentsOS.Last();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Given a character position in the contents of this paragraph, return a character
+		/// offset to the start of the free translation for the corresponding segment.
+		/// </summary>
+		/// <param name="ich">The ich main position.</param>
+		/// <param name="btWs">The back translation writing system HVO</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public int GetBtPosition(int ich, int btWs)
+		{
+			int cumulativeLengthOfBt = 0;
+
+			foreach (ISegment segment in SegmentsOS)
+			{
+				if (ich >= segment.BeginOffset && ich < segment.EndOffset)
+					return cumulativeLengthOfBt;
+				int cchSeg;
+				if (segment.IsLabel)
+					cchSeg = segment.Length;
+				else
+				{
+					ITsString tss = segment.FreeTranslation.get_String(btWs);
+					cchSeg = (tss == null ? 0 : tss.Length);
+				}
+				cumulativeLengthOfBt += cchSeg;
+			}
+			throw new ArgumentOutOfRangeException("ich", ich, "No segment found for requested position.");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Updates the segments that are affected by the replacement of the characters in this
 		/// paragraph by the characters in the specified paragraph.
 		/// </summary>

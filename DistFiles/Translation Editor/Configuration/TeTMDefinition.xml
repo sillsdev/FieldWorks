@@ -334,6 +334,9 @@ Item "displaytype" Values (applies to item types 0 - 3):
 		<command id="CmdNextBtUnfinished" text="kstidBtNextUnfinishedItemName" category="kstidToolsCategory"
 			message="BackTranslationNextUnfinished" tooltip="kstidBtNextUnfinishedToolTip">
 		</command>
+		<command id="CmdNextMissingBtFootnoteMkr" text="kstidNextMissingBtFootnoteMkrItemName" category="kstidToolsCategory"
+			message="BackTranslationNextMissingBtFootnoteMkr" tooltip="kstidNextMissingBtFootnoteMkrToolTip">
+		</command>
 		<command id="CmdKeyTerms" text="kstidKeyTermsItemName"/>
 		<command id="CmdScrChecks" text="kstidScrChecksItemName">
 		</command>
@@ -538,6 +541,7 @@ Item "displaytype" Values (applies to item types 0 - 3):
 			<item name="mnuBtChecked" commandid="CmdBtChecked"/>
 			<item name="mnuPrevBtUnfinished" commandid="CmdPrevBtUnfinished" begingroup="true"/>
 			<item name="mnuNextBtUnfinished" commandid="CmdNextBtUnfinished"/>
+			<item name="mnuNextMissingBtFootnoteMkr" commandid="CmdNextMissingBtFootnoteMkr"/>
 		</item>
 		<item name="mnuScrChecks" commandid="CmdScrChecks" insertbefore="mnuUserProperties">
 			<item name="mnuStatusIgnored" commandid="CmdScrChecksIgnored" />

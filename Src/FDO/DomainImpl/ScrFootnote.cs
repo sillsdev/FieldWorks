@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -19,60 +19,9 @@ using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
-	#region FootnoteLocationInfo class
-	internal class FootnoteLocationInfo
-	{
-		/// <summary>Location info that hasn't been set</summary>
-		public static readonly FootnoteLocationInfo EMPTY = new FootnoteLocationInfo(0, 0);
-
-		/// <summary>Starting Scripture reference</summary>
-		private BCVRef m_startRef;
-		/// <summary>Ending Scripture reference (same as start except in case of verse bridge)</summary>
-		private BCVRef m_endRef;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="startRef">The start reference at the position where the footnote ORC is
-		/// in the vernacular text</param>
-		/// <param name="endRef">The end reference at the position where the footnote ORC is in
-		/// the vernacular text (can be different from start ref because of verse bridges).
-		/// </param>
-		/// ------------------------------------------------------------------------------------
-		public FootnoteLocationInfo(BCVRef startRef, BCVRef endRef)
-		{
-			m_startRef = new BCVRef(startRef);
-			m_endRef = new BCVRef(endRef);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the start reference of the footnote has entry.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal BCVRef StartRef
-		{
-			get { return new BCVRef(m_startRef); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the end reference of the footnote has entry.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal BCVRef EndRef
-		{
-			get { return new BCVRef(m_endRef); }
-		}
-	}
-	#endregion
-
 	#region ScrFootnote
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -82,7 +31,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class ScrFootnote
 	{
 		#region Data members
-		protected FootnoteLocationInfo m_location = FootnoteLocationInfo.EMPTY;
+		protected RefRange m_location = RefRange.EMPTY;
 		private bool m_fIgnoreDisplaySettings = false;
 		private IScripture m_scr;
 		private static int s_maxAllowedParagraphs = 1; // Should be readonly, but need to allow for unit tests to change this
@@ -195,7 +144,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					startRef.Chapter = endRef.Chapter = new BCVRef(owningSection.VerseRefStart).Chapter;
 			}
 
-			FootnoteRefInfo = new FootnoteLocationInfo(startRef, endRef);
+			FootnoteRefInfo = new RefRange(startRef, endRef);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -251,8 +200,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							foundSelf = true;
 							continue;
 						}
-						FootnoteLocationInfo otherFootnoteLocation = ((ScrFootnote)footnote).FootnoteRefInfo_Internal;
-						if (foundSelf && otherFootnoteLocation != FootnoteLocationInfo.EMPTY)
+						RefRange otherFootnoteLocation = ((ScrFootnote)footnote).FootnoteRefInfo_Internal;
+						if (foundSelf && otherFootnoteLocation != RefRange.EMPTY)
 						{
 							// Found another footnote with a reference we can use
 							if (startRef.Verse == 0)
@@ -290,15 +239,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get the FootnoteLocationInfo containing meta-info for the footnote (para HVO and
-		/// Scripture refs)
+		/// Get the RefRange containing meta-info for the footnote (Scripture refs)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal FootnoteLocationInfo FootnoteRefInfo
+		internal RefRange FootnoteRefInfo
 		{
 			get
 			{
-				if (FootnoteRefInfo_Internal == FootnoteLocationInfo.EMPTY)
+				if (FootnoteRefInfo_Internal == RefRange.EMPTY)
 					UpdateFootnoteRef();
 				return FootnoteRefInfo_Internal;
 			}
@@ -314,11 +262,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get the FootnoteLocationInfo containing meta-info for the footnote (para HVO and
-		/// Scripture refs). Returns the actual value (i.e. will not try update if its empty)
+		/// Get the RefRange containing meta-info for the footnote (Scripture refs).
+		/// Returns the actual value (i.e. will not try to update if it's empty)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private FootnoteLocationInfo FootnoteRefInfo_Internal
+		private RefRange FootnoteRefInfo_Internal
 		{
 			get
 			{
@@ -370,7 +318,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				FootnoteLocationInfo footnoteEntry = FootnoteRefInfo;
+				RefRange footnoteEntry = FootnoteRefInfo;
 				return new ScrReference(footnoteEntry.StartRef, m_scr.Versification);
 			}
 		}
@@ -384,7 +332,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				FootnoteLocationInfo footnoteEntry = FootnoteRefInfo;
+				RefRange footnoteEntry = FootnoteRefInfo;
 				return new ScrReference(footnoteEntry.EndRef, m_scr.Versification);
 			}
 		}
@@ -507,7 +455,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (!IgnoreDisplaySettings && !m_scr.GetDisplayFootnoteReference(ParaStyleId))
 				return string.Empty;
-			FootnoteLocationInfo footnoteEntry = FootnoteRefInfo;
+			RefRange footnoteEntry = FootnoteRefInfo;
 			// Don't display the reference if the reference is for an intro
 			if (footnoteEntry.StartRef.Verse == 0 && footnoteEntry.EndRef.Verse == 0)
 				return string.Empty;

@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.21022</ProductVersion>
+	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{E5E9DDC7-2855-4D92-AD46-960AC4C46457}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -329,6 +329,7 @@
 	</Compile>
 	<Compile Include="DomainServices\DataMigration\ImportFrom6_0.cs" />
 	<Compile Include="DomainServices\Db4OServerFinder.cs" />
+	<Compile Include="DomainServices\FootnoteLocationInfo.cs" />
 	<Compile Include="DomainServices\FwProjectFinder.cs" />
 	<Compile Include="DomainServices\GlobalSettingServices.cs" />
 	<Compile Include="DomainServices\M3ModelExportServices.cs" />

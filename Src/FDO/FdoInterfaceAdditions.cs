@@ -2950,6 +2950,27 @@ namespace SIL.FieldWorks.FDO
 		/// Collects the HashSet of the unique wordforms in the paragraph.
 		/// </summary>
 		void CollectUniqueWordforms(HashSet<IWfiWordform> wordforms);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the segment corresponding to the given character offset in the specified free
+		/// translation.
+		/// </summary>
+		/// <param name="ich">The charcater offset.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		ISegment GetSegmentForOffsetInFreeTranslation(int ich, int ws);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Given a character position in the contents of this paragraph, return a character
+		/// offset to the start of the free translation for the corresponding segment.
+		/// </summary>
+		/// <param name="ich">The ich main position.</param>
+		/// <param name="btWs">The back translation writing system HVO</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		int GetBtPosition(int ich, int btWs);
 	}
 
 	/// <summary>
@@ -3781,29 +3802,24 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
 		/// <param name="ich">Character index to start search</param>
 		/// <param name="tag">Flid to start search</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph, ref int ich,
-			ref int tag);
+		FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich, int tag);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
@@ -3811,11 +3827,11 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="tag">Flid to start search</param>
 		/// <param name="fSkipCurrentPos"><c>true</c> to start search with run after ich,
 		/// <c>false</c> to start with current run.</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph, ref int ich,
-			ref int tag, bool fSkipCurrentPos);
+		FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich, int tag,
+			bool fSkipCurrentPos);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

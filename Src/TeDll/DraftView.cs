@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -29,6 +30,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
@@ -475,17 +477,15 @@ namespace SIL.FieldWorks.TE
 			using (new WaitCursor(TheMainWnd))
 			{
 				MoveToNextTranslation(TeEditingHelper.CurrentSelection,
-					BackTranslationStatus.Unfinished);
+					trans => GetBackTranslationStatus(trans) == BackTranslationStatus.Unfinished);
 			}
 			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Move to the previous paragraph in the back translation that is unfinished.
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		protected bool OnBackTranslationPrevUnfinished(object args)
 		{
@@ -502,14 +502,14 @@ namespace SIL.FieldWorks.TE
 		#region Back translation helper utilites
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Find and select the next translation with a given state
+		/// Find and select the next translation meeting a given condition
 		/// </summary>
 		/// <param name="selection">The selection where to start the search.
 		/// NOTE: The selection must have all of the info set in the LevelInfo (hvo, ihvo)</param>
-		/// <param name="searchStatus">Back translation status to search for</param>
+		/// <param name="condition">Condition the cack translation must meet</param>
 		/// ------------------------------------------------------------------------------------
 		private void MoveToNextTranslation(SelectionHelper selection,
-			BackTranslationStatus searchStatus)
+			Func<ICmTranslation, bool> condition)
 		{
 			SelLevInfo bookInfo;
 			SelLevInfo paraInfo;
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.TE
 			// Look through all the books in the book filter
 			int bookStartIndex = bookInfo.ihvo;
 			int sectionStartIndex = 0;
-			int sectionTag = ScrSectionTags.kflidContent;
+			int sectionTag;
 			int paraStartIndex = paraInfo.ihvo + 1;
 			int paraIndex;
 
@@ -541,8 +541,7 @@ namespace SIL.FieldWorks.TE
 			{
 				// no section, so this must be the title - Look through the title paragraphs
 				IScrBook checkBook = BookFilter.GetBook(bookStartIndex);
-				paraIndex = FindNextTranslationInText(checkBook.TitleOA, searchStatus,
-					paraStartIndex);
+				paraIndex = FindNextTranslationInText(checkBook.TitleOA, paraStartIndex, condition);
 				if (paraIndex >= 0)
 				{
 					// select the title paragraph
@@ -560,7 +559,7 @@ namespace SIL.FieldWorks.TE
 				if (bookIndex > bookStartIndex)
 				{
 					// Look through the title paragraphs
-					paraIndex = FindNextTranslationInText(checkBook.TitleOA, searchStatus, 0);
+					paraIndex = FindNextTranslationInText(checkBook.TitleOA, 0, condition);
 					if (paraIndex >= 0)
 					{
 						// select the title paragraph
@@ -578,7 +577,7 @@ namespace SIL.FieldWorks.TE
 					// Look in the paragraphs (could be either content or heading)
 					IStText text = (sectionTag == ScrSectionTags.kflidHeading) ?
 						checkSection.HeadingOA : checkSection.ContentOA;
-					paraIndex = FindNextTranslationInText(text, searchStatus, paraStartIndex);
+					paraIndex = FindNextTranslationInText(text, paraStartIndex, condition);
 					if (paraIndex >= 0)
 					{
 						// select the paragraph
@@ -586,15 +585,14 @@ namespace SIL.FieldWorks.TE
 						return;
 					}
 
-					// Look in the heading paragraphs, if we haven't already
+					// Look in the content paragraphs, if we haven't already
 					if (sectionTag == ScrSectionTags.kflidHeading)
 					{
 						sectionTag = ScrSectionTags.kflidContent;
-						paraIndex = FindNextTranslationInText(checkSection.ContentOA,
-							searchStatus, 0);
+						paraIndex = FindNextTranslationInText(checkSection.ContentOA, 0, condition);
 						if (paraIndex >= 0)
 						{
-							// select the heading paragraph
+							// select the content paragraph
 							SetInsertionPoint(sectionTag, bookIndex, sectionIndex, paraIndex);
 							return;
 						}
@@ -612,12 +610,12 @@ namespace SIL.FieldWorks.TE
 		/// Look for a translation with a matching status in a paragraph of an StText
 		/// </summary>
 		/// <param name="text">StText to search through</param>
-		/// <param name="searchStatus">status of the CmTranslation that we want to find</param>
 		/// <param name="iParaStartSearch">Index of the paragraph where search starts</param>
+		/// <param name="condition">Condition the CmTranslation must fulfill</param>
 		/// <returns>an index of the found paragraph in the StText or -1 if not found</returns>
 		/// ------------------------------------------------------------------------------------
-		private int FindNextTranslationInText(IStText text, BackTranslationStatus searchStatus,
-			int iParaStartSearch)
+		private static int FindNextTranslationInText(IStText text, int iParaStartSearch,
+			Func<ICmTranslation, bool> condition)
 		{
 			// Look through all of the paragraphs in the StText.
 			for (int paraIndex = iParaStartSearch; paraIndex < text.ParagraphsOS.Count; paraIndex++)
@@ -627,7 +625,7 @@ namespace SIL.FieldWorks.TE
 				// Get the translation for this paragraph. If it has the desired state then
 				// return it.
 				ICmTranslation trans = para.GetOrCreateBT();
-				if (GetBackTranslationStatus(trans) == searchStatus)
+				if (condition(trans))
 					return paraIndex;
 			}
 

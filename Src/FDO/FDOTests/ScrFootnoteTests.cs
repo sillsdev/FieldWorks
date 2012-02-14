@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -13,9 +13,8 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
@@ -115,19 +114,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindNextFootnote_IPBeginningOfTitleFootnoteInIntro()
 		{
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection, ref iPara, ref ich,
-				ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 0, ScrBookTags.kflidTitle);
 
+			IScrFootnote footnote = info.m_footnote;
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[0], footnote, "Should find a footnote somewhere");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -141,19 +136,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IStFootnote expectedFootnote = AddFootnote(m_genesis,
 				(IStTxtPara)m_genesis.TitleOA.ParagraphsOS[0], 5);
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 0, ScrBookTags.kflidTitle);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in title");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(6, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrBookTags.kflidTitle, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(6, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrBookTags.kflidTitle, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -167,19 +158,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Adding a footnote puts it at the end of the sequence
 			AddFootnote(m_genesis,
 				(IStTxtPara)m_genesis.TitleOA.ParagraphsOS[0], 2);
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 3;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 3, ScrBookTags.kflidTitle);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[0], footnote, "Should find a footnote in title");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -192,18 +179,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FindNextFootnote_IPEndOfBookFootnoteInTitle()
 		{
 			AddFootnote(m_genesis, (IStTxtPara)m_genesis.TitleOA.ParagraphsOS[0], 5);
-			int iSection = 2;
-			int iPara = 0;
-			int ich = 25;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection, ref iPara, ref ich,
-				ref tag);
-
-			Assert.IsNull(footnote, "Should not find a footnote");
-			Assert.AreEqual(2, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(25, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(2, 0, 25, ScrSectionTags.kflidContent);
+			Assert.IsNull(info, "Should not find a footnote");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -219,19 +196,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"Intro heading", ScrStyleNames.IntroSectionHead);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 5);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection, ref iPara, ref ich,
-				ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 0, ScrBookTags.kflidTitle);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in heading");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(6, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidHeading, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(6, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidHeading, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -255,18 +228,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrBook leviticus = AddBookWithTwoSections(3, "Leviticus");
 			AddFootnote(leviticus, (IStTxtPara)leviticus.TitleOA.ParagraphsOS[0], 5);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = exodus.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
-
-			Assert.IsNull(footnote, "Should not find a footnote");
-			Assert.AreEqual(0, iSection, "Should not change the section");
-			Assert.AreEqual(0, iPara, "Should not change the paragraph");
-			Assert.AreEqual(0, ich, "Should not change the position");
-			Assert.AreEqual(ScrBookTags.kflidTitle, tag, "Should not change the tag");
+			FootnoteLocationInfo info = exodus.FindNextFootnote(0, 0, 0, ScrBookTags.kflidTitle);
+			Assert.IsNull(info, "Should not find a footnote");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -286,18 +249,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			AddRunToMockedPara(para, "Some more text", null);
 			AddFootnote(exodus, (IStTxtPara)exodus.TitleOA.ParagraphsOS[0], 0);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 5;
-			int tag = ScrBookTags.kflidTitle;
-			IScrFootnote footnote = exodus.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
-
-			Assert.IsNull(footnote, "Should not find a footnote");
-			Assert.AreEqual(0, iSection, "Should not change the section");
-			Assert.AreEqual(0, iPara, "Should not change the paragraph");
-			Assert.AreEqual(5, ich, "Should not change the position");
-			Assert.AreEqual(ScrBookTags.kflidTitle, tag, "Should not change the tag");
+			FootnoteLocationInfo info = exodus.FindNextFootnote(0, 0, 5, ScrBookTags.kflidTitle);
+			Assert.IsNull(info, "Should not find a footnote");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -316,18 +269,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			AddRunToMockedPara(para, "Some more text", null);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 1;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = exodus.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
-
-			Assert.IsNull(footnote, "Should not find a footnote");
-			Assert.AreEqual(0, iSection, "Should not change the section");
-			Assert.AreEqual(0, iPara, "Should not change the paragraph");
-			Assert.AreEqual(1, ich, "Should not change the position");
-			Assert.AreEqual(ScrSectionTags.kflidHeading, tag, "Should not change the tag");
+			FootnoteLocationInfo info = exodus.FindNextFootnote(0, 0, 1, ScrSectionTags.kflidHeading);
+			Assert.IsNull(info, "Should not find a footnote");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -346,18 +289,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			AddRunToMockedPara(para, "Some more text", null);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 2;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = exodus.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
-
-			Assert.IsNull(footnote, "Should not find a footnote");
-			Assert.AreEqual(0, iSection, "Should not change the section");
-			Assert.AreEqual(0, iPara, "Should not change the paragraph");
-			Assert.AreEqual(2, ich, "Should not change the position");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Should not change the tag");
+			FootnoteLocationInfo info = exodus.FindNextFootnote(0, 0, 2, ScrSectionTags.kflidContent);
+			Assert.IsNull(info, "Should not find a footnote");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -373,19 +306,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"Intro heading", ScrStyleNames.IntroSectionHead);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 5);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 2, ScrSectionTags.kflidHeading);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in heading");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(6, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidHeading, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(6, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidHeading, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -400,19 +329,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IStTxtPara para = AddSectionHeadParaToSection(m_introSection,
 				"Intro heading", ScrStyleNames.IntroSectionHead);
 
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 0, ScrSectionTags.kflidHeading);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[0].Hvo, footnote.Hvo, "Should find a footnote in content");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -424,24 +349,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindNextFootnote_IPInMultiParaHeadingFootnoteInContents()
 		{
-			IStTxtPara para = AddSectionHeadParaToSection(m_introSection,
-				"Intro heading", ScrStyleNames.IntroSectionHead);
-			para = AddSectionHeadParaToSection(m_introSection,
-				"Another intro heading", ScrStyleNames.IntroSectionHead);
+			AddSectionHeadParaToSection(m_introSection, "Intro heading", ScrStyleNames.IntroSectionHead);
+			AddSectionHeadParaToSection(m_introSection, "Another intro heading", ScrStyleNames.IntroSectionHead);
 
-			int iSection = 0;
-			int iPara = 1;
-			int ich = 4;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 1, 4, ScrSectionTags.kflidHeading);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[0].Hvo, footnote.Hvo, "Should find a footnote in content");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -469,19 +388,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ScrStyleNames.SectionHead);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 7);
 
-			int iSection = 3;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(3, 0, 0, ScrSectionTags.kflidHeading);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in next heading");
-			Assert.AreEqual(4, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(8, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidHeading, tag, "Wrong tag");
+			Assert.AreEqual(4, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(8, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidHeading, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -509,19 +424,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				null);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 7);
 
-			int iSection = 3;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrSectionTags.kflidHeading;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(3, 0, 0, ScrSectionTags.kflidHeading);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in content of next section");
-			Assert.AreEqual(4, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(8, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(4, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(8, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -533,20 +444,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindNextFootnote_IPBeginningOfContentFootnoteInSamePara()
 		{
-			int iSection = 0;
-			int iPara = 0;
-			int ich = 0;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(0, 0, 0, ScrSectionTags.kflidContent);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[0].Hvo, footnote.Hvo,
 				"Should find a footnote in same paragraph in content");
-			Assert.AreEqual(0, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(0, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -558,19 +465,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FindNextFootnote_IPBeginningOfContentFootnoteInNextPara()
 		{
-			int iSection = 1;
-			int iPara = 0;
-			int ich = 10;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(1, 0, 10, ScrSectionTags.kflidContent);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(m_genesis.FootnotesOS[2].Hvo, footnote.Hvo, "Should find a footnote in next para");
-			Assert.AreEqual(1, iSection, "Should have the correct section set");
-			Assert.AreEqual(1, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(11, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(1, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(1, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(11, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -591,19 +494,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ScrStyleNames.SectionHead);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 7);
 
-			int iSection = 2;
-			int iPara = 0;
-			int ich = 25;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(2, 0, 25, ScrSectionTags.kflidContent);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in next heading");
-			Assert.AreEqual(3, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(8, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidHeading, tag, "Wrong tag");
+			Assert.AreEqual(3, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(8, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidHeading, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -624,19 +523,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				null);
 			IStFootnote expectedFootnote = AddFootnote(m_genesis, para, 7);
 
-			int iSection = 2;
-			int iPara = 0;
-			int ich = 25;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(2, 0, 25, ScrSectionTags.kflidContent);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in content of next section");
-			Assert.AreEqual(3, iSection, "Should have the correct section set");
-			Assert.AreEqual(0, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(8, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(3, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(0, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(8, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -651,19 +546,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IStFootnote expectedFootnote = AddFootnote(m_genesis,
 				(IStTxtPara)m_section.ContentOA.ParagraphsOS[1], 0);
 
-			int iSection = 1;
-			int iPara = 0;
-			int ich = 10;
-			int tag = ScrSectionTags.kflidContent;
-			IScrFootnote footnote = m_genesis.FindNextFootnote(ref iSection,
-				ref iPara, ref ich, ref tag);
+			FootnoteLocationInfo info = m_genesis.FindNextFootnote(1, 0, 10, ScrSectionTags.kflidContent);
+			IScrFootnote footnote = info.m_footnote;
 
 			Assert.IsNotNull(footnote, "Should find a footnote");
 			Assert.AreEqual(expectedFootnote.Hvo, footnote.Hvo, "Should find a footnote in next para");
-			Assert.AreEqual(1, iSection, "Should have the correct section set");
-			Assert.AreEqual(1, iPara, "Should have the correct paragraph set");
-			Assert.AreEqual(1, ich, "Should have the correct IP position set");
-			Assert.AreEqual(ScrSectionTags.kflidContent, tag, "Wrong tag");
+			Assert.AreEqual(1, info.m_iSection, "Should have the correct section set");
+			Assert.AreEqual(1, info.m_iPara, "Should have the correct paragraph set");
+			Assert.AreEqual(1, info.m_ich, "Should have the correct IP position set");
+			Assert.AreEqual(ScrSectionTags.kflidContent, info.m_tag, "Wrong tag");
 		}
 		#endregion
 

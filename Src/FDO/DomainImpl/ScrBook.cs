@@ -400,32 +400,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
 		/// <param name="ich">Character index to start search</param>
 		/// <param name="tag">Flid to start search</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		public IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph, ref int ich,
-			ref int tag)
+		public FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich,
+			int tag)
 		{
-			return FindNextFootnote(ref iSection, ref iParagraph, ref ich, ref tag, true);
+			return FindNextFootnote(iSection, iParagraph, ich, tag, true);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
@@ -433,11 +429,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="tag">Flid to start search</param>
 		/// <param name="fSkipCurrentPos"><c>true</c> to start search with run after ich,
 		/// <c>false</c> to start with current run.</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		public IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph,
-			ref int ich, ref int tag, bool fSkipCurrentPos)
+		public FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich,
+			int tag, bool fSkipCurrentPos)
 		{
 			// Don't bother looking if book has no footnotes.
 			if (FootnotesOS.Count == 0)
@@ -445,21 +441,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			IScrFootnote footnote = null;
 
-			int iSectionTmp = iSection;
-			int iParagraphTmp = iParagraph;
-			int ichTmp = ich;
-			int tagTmp = tag;
-
-			if (tagTmp == ScrBookTags.kflidTitle)
+			if (tag == ScrBookTags.kflidTitle)
 			{
-				footnote = (IScrFootnote)TitleOA.FindNextFootnote(ref iParagraphTmp, ref ichTmp,
+				footnote = TitleOA.FindNextFootnote(ref iParagraph, ref ich,
 					fSkipCurrentPos);
 				if (footnote == null)
 				{
-					iSectionTmp = 0;
-					iParagraphTmp = 0;
-					ichTmp = 0;
-					tagTmp = ScrSectionTags.kflidHeading;
+					iSection = 0;
+					iParagraph = 0;
+					ich = 0;
+					tag = ScrSectionTags.kflidHeading;
 					fSkipCurrentPos = false;
 				}
 			}
@@ -467,42 +458,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IFdoOwningSequence<IScrSection> sections = SectionsOS;
 			IScrSection section = null;
 			if (footnote == null)
-				section = sections[iSectionTmp];
+				section = sections[iSection];
 
-			if (tagTmp == ScrSectionTags.kflidHeading)
+			if (tag == ScrSectionTags.kflidHeading)
 			{
-				footnote = (IScrFootnote)section.HeadingOA.FindNextFootnote(ref iParagraphTmp, ref ichTmp,
+				footnote = section.HeadingOA.FindNextFootnote(ref iParagraph, ref ich,
 					fSkipCurrentPos);
 				if (footnote == null)
 				{
-					iParagraphTmp = 0;
-					ichTmp = 0;
-					tagTmp = ScrSectionTags.kflidContent;
+					iParagraph = 0;
+					ich = 0;
+					tag = ScrSectionTags.kflidContent;
 					fSkipCurrentPos = false;
 				}
 			}
 
-			if (tagTmp == ScrSectionTags.kflidContent)
+			if (tag == ScrSectionTags.kflidContent)
 			{
-				footnote = (IScrFootnote)section.ContentOA.FindNextFootnote(ref iParagraphTmp, ref ichTmp,
+				footnote = section.ContentOA.FindNextFootnote(ref iParagraph, ref ich,
 					fSkipCurrentPos);
 			}
 
-			while (footnote == null && iSectionTmp < sections.Count - 1)
+			while (footnote == null && iSection < sections.Count - 1)
 			{
-				iSectionTmp++;
-				section = sections[iSectionTmp];
-				footnote = section.FindFirstFootnote(out iParagraphTmp, out ichTmp, out tagTmp);
+				iSection++;
+				section = sections[iSection];
+				footnote = section.FindFirstFootnote(out iParagraph, out ich, out tag);
 			}
 
 			if (footnote != null)
-			{
-				iSection = iSectionTmp;
-				iParagraph = iParagraphTmp;
-				ich = ichTmp;
-				tag = tagTmp;
-			}
-			return footnote;
+				return new FootnoteLocationInfo(footnote, IndexInOwner, iSection, iParagraph, ich, tag);
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -756,15 +742,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			RefreshFootnoteRefs();
 		}
 
-		///// <summary>
-		///// Override to do additional work.
-		///// </summary>
-		//protected override void DoAdditionalReconstruction()
-		//{
-		//    base.DoAdditionalReconstruction();
-		//    RefreshFootnoteRefs();
-		//}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clears the location information for every footnote owned by this book
@@ -772,22 +749,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		public void ClearFootnoteInformation()
 		{
-			foreach (IScrFootnote footnote in FootnotesOS)
-				((ScrFootnote)footnote).FootnoteRefInfo = FootnoteLocationInfo.EMPTY;
+			foreach (ScrFootnote footnote in FootnotesOS)
+				footnote.FootnoteRefInfo = RefRange.EMPTY;
 		}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Clears the location information for every footnote owned by this book starting with
-		///// the specified footnote
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//public void ClearFootnoteInformationAfter(IScrFootnote footnote)
-		//{
-		//    int iStart = FootnotesOS.IndexOf(footnote);
-		//    for (int i = iStart; i < FootnotesOS.Count; i++)
-		//        ((ScrFootnote)FootnotesOS[i]).FootnoteRefInfo = FootnoteLocationInfo.EMPTY;
-		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -893,7 +857,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						// reference with the footnote hvo in the hash table.
 						IScrFootnote footnote = (IScrFootnote)footnoteRepo.GetFootnoteFromObjData(tssContents.get_StringProperty(i, (int)FwTextPropType.ktptObjData));
 						if (footnote != null)
-							((ScrFootnote)footnote).FootnoteRefInfo = new FootnoteLocationInfo(startRef, endRef);
+							((ScrFootnote)footnote).FootnoteRefInfo = new RefRange(startRef, endRef);
 					}
 				}
 			}

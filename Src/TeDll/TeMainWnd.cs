@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
@@ -1997,7 +1998,7 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the editing helper associatied with the active view
+		/// Gets the editing helper associated with the active view
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual TeEditingHelper ActiveEditingHelper
@@ -2005,11 +2006,8 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-
-				if (ActiveView == null || ActiveView.EditingHelper == null)
-					return null;
-				else
-					return ActiveView.EditingHelper.CastAs<TeEditingHelper>();
+				return ActiveView == null || ActiveView.EditingHelper == null ? null :
+					ActiveView.EditingHelper.CastAs<TeEditingHelper>();
 			}
 		}
 
@@ -3006,6 +3004,38 @@ namespace SIL.FieldWorks.TE
 		protected bool OnUpdateGoToNextFootnote(object args)
 		{
 			return UpdateGoToSubItems(args as TMItemProperties, true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnUpdateBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			TMItemProperties itemProps = args as TMItemProperties;
+
+			if (itemProps == null)
+				return false;
+
+			itemProps.Update = true;
+			itemProps.Enabled = false;
+			if (m_bookFilter.BookCount == 0 ||
+				ActiveEditingHelper == null ||
+				ActiveEditingHelper.CurrentSelection == null)
+			{
+				return true;
+			}
+
+			TeEditingHelper btDraftEditingHelper = ((TheBTSplitWrapper != null &&
+				(ActiveView == TheBTSplitWrapper.DraftView || ActiveView == TheBTSplitWrapper.BTDraftView)) ?
+				TheBTSplitWrapper.BTDraftView.TeEditingHelper : null);
+			itemProps.Enabled = (btDraftEditingHelper != null && btDraftEditingHelper.CurrentSelection != null);
+
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -7078,6 +7108,26 @@ namespace SIL.FieldWorks.TE
 			using (new WaitCursor(this))
 			{
 				ActiveEditingHelper.GoToNextFootnote();
+			}
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			// Move to the next paragraph corresponding to a vernacular paragraph which has a
+			// footnote that has not been inserted into this BT
+			using (new WaitCursor(this))
+			{
+				if (!TheBTSplitWrapper.BTDraftView.TeEditingHelper.GoToNextMissingBtFootnoteMkr(ActiveEditingHelper))
+					SystemSounds.Beep.Play();
 			}
 			return true;
 		}
