@@ -147,6 +147,7 @@
 	<None Include="AssemblyInfo.cs" />
 	<Compile Include="CaseFunctions.cs" />
 	<Compile Include="ConsoleProgress.cs" />
+	<Compile Include="FLExBridgeHelper.cs" />
 	<Compile Include="IProjectIdentifier.cs" />
 	<Compile Include="IThreadedProgress.cs" />
 	<Compile Include="DirectoryFinder.cs" />

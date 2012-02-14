@@ -12,8 +12,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 	class FieldworksBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
-		private const string SendReceive = @"send_receive";
-		private const string FLExBridgeName = @"FieldWorksBridge.exe";
 		private FdoCache Cache { get; set; }
 		#region IxCoreColleague Members
 
@@ -45,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		public bool OnDisplayShowConflictReport(object parameters, ref UIItemDisplayProperties display)
 		{
-			var fullName = FullFieldWorksBridgePath();
+			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
 			display.Enabled = FileUtils.FileExists(fullName) && NotesFileIsPresent(Cache);
 			display.Visible = display.Enabled;
 			return true;
@@ -63,70 +61,28 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		public bool OnShowConflictReport(object commandObject)
 		{
-			LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
 								   Environment.UserName,
-								   "view_notes");
+								   FLExBridgeHelper.ConflictViewer);
 			return true;
 		}
 
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			var fullName = FullFieldWorksBridgePath();
+			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
 			display.Enabled = FileUtils.FileExists(fullName);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
 		}
 
-		private static string FullFieldWorksBridgePath()
-		{
-			return Path.Combine(DirectoryFinder.FWCodeDirectory, FLExBridgeName);
-		}
-
 		public bool OnFLExBridge(object commandObject)
 		{
-			LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
-								   Environment.UserName,
-								   SendReceive);
+			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+													Environment.UserName,
+													FLExBridgeHelper.SendReceive);
 			return true;
 		}
-
-		private static void LaunchFieldworksBridge(string projectFolder, string userName, string command)
-		{
-			string args = "";
-			if(userName != null)
-			{
-				AddArg(ref args, "-u", userName);
-			}
-			if(projectFolder != null)
-			{
-				AddArg(ref args, "-p", projectFolder);
-			}
-			AddArg(ref args, "-v", command);
-			Process.Start(FullFieldWorksBridgePath(), args);
-		}
-
-		private static void AddArg(ref string extant, string flag, string value)
-		{
-			if (!string.IsNullOrEmpty(extant))
-			{
-				extant += " ";
-			}
-			extant += flag;
-			if (!string.IsNullOrEmpty(value))
-			{
-				bool hasWhitespace;
-				if (value.Any(Char.IsWhiteSpace))
-				{
-					extant += " \"" + value + "\"";
-				}
-				else
-				{
-					extant += " " + value;
-				}
-			}
-		}
-
 		#region Implementation of IDisposable
 
 		/// <summary>
