@@ -155,7 +155,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// check for an exception to the exceptions?)
 						foreach (string badpath in invalidPaths)
 						{
-							if (newFolder.StartsWith(badpath))
+							// DriveInfo.GetDrives() sets Name to be "/", which adds it to invalidPath.
+							// Therefore, we need another test to get the OkButton to stay enabled.
+							if (newFolder.StartsWith(badpath) && badpath != "/" || newFolder == "/")
 							{
 								m_btnOK.Enabled = false;
 								return;
