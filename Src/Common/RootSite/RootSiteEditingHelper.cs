@@ -474,11 +474,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (IsBackTranslation)
 				{
+					// TODO (TE-8956): Implement this
 					SelectionHelper helper = CurrentSelection;
 					SelLevInfo info;
 					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
 					{
-						// TODO: Implement this
 						//ISegment segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
 					}
 
