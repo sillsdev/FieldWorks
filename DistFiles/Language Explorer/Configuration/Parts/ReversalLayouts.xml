@@ -62,7 +62,7 @@
 		<sublayout name="publishForReversal" group="para"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishForReversal" tagForWs="true">
-		<part ref="RIEHeadword" label="Headword" before=" " sep=" " after="" ws="vernacular" wsType="vernacular" css="headword" style="Dictionary-Headword"
+		<part ref="RIEHeadword" label="Headword" before=" " sep=" " after="" ws="vernacular" wsType="vernacular" css="headref" style="Dictionary-Headword"
 				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
 		<part ref="RIELexEntryConfig" param="publishRIELexEntryLexemeForm" hideConfig="true"/>
 		<part ref="RIELexEntryConfig" param="publishRIELexEntryPronunciations" hideConfig="true"/>

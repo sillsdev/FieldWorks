@@ -33,6 +33,9 @@ namespace FixFwDataDllTests
 
 			File.Copy(basePath + "DuplicateWs/Test.fwdata", basePath + "DuplicateWs/BasicFixup.fwdata", true);
 			File.SetAttributes(basePath + "DuplicateWs/BasicFixup.fwdata", FileAttributes.Normal);
+
+			File.Copy(basePath + "SequenceFixer/Test.fwdata", basePath + "SequenceFixer/BasicFixup.fwdata", true);
+			File.SetAttributes(basePath + "SequenceFixer/BasicFixup.fwdata", FileAttributes.Normal);
 		}
 
 		[TestFixtureTearDown]
@@ -44,6 +47,12 @@ namespace FixFwDataDllTests
 
 			File.Delete(basePath + "DanglingReference/BasicFixup.fwdata");
 			File.Delete(basePath + "DanglingReference/BasicFixup.bak");
+
+			File.Delete(basePath + "DuplicateWs/BasicFixup.fwdata");
+			File.Delete(basePath + "DuplicateWs/BasicFixup.bak");
+
+			File.Delete(basePath + "SequenceFixer/BasicFixup.fwdata");
+			File.Delete(basePath + "SequenceFixer/BasicFixup.bak");
 		}
 
 		[SetUp]
@@ -55,43 +64,124 @@ namespace FixFwDataDllTests
 		[Test]
 		public void TestDuplicateGuids()
 		{
-			//This test checks that duplicate guids are identified and that an error message is produced for them.
+			// This test checks that duplicate guids are identified and that an error message is produced for them.
 			string testGuid = "2110cf83-ad6c-47fe-91f8-8bf789473792";
-			FwDataFixer data = new FwDataFixer(basePath + "DuplicateGuid/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			var data = new FwDataFixer(basePath + "DuplicateGuid/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
-			AssertThatXmlIn.File(basePath + "DuplicateGuid/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
-			Assert.AreEqual(errors.Count, 1, "Unexpected number of errors found");
-			Assert.True(errors[0].EndsWith("Object with guid '" + testGuid + "' already exists! (not fixed)"), "Error message is incorrect.");//FwDataFixer.ksObjectWithGuidAlreadyExists
-			AssertThatXmlIn.File(basePath + "DuplicateGuid/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
+			AssertThatXmlIn.File(basePath + "DuplicateGuid/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
+			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found");
+			Assert.True(errors[0].EndsWith("Object with guid '" + testGuid + "' already exists! (not fixed)"),
+				"Error message is incorrect."); // OriginalFixer--ksObjectWithGuidAlreadyExists
+			AssertThatXmlIn.File(basePath + "DuplicateGuid/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @guid=\"" + testGuid + "\"]", 2, false);
 		}
 
 		[Test]
 		public void TestDanglingReferences()
-		{	//This test checks that dangling references guids are identified and removed
+		{
+			// This test checks that dangling references guids are identified and removed
 			// and that an error message is produced for them.
 			string testGuid = "cccccccc-a7d4-4e1e-a403-deec87c34455";
 			string testObjsurGuid = "aaaaaaaa-e15a-448e-a618-3855f93bd3c2";
-			FwDataFixer data = new FwDataFixer(basePath + "DanglingReference/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			string lexSenseGuid = "2210cf83-ad6c-47fe-91f8-8bf789473792";
+			var data = new FwDataFixer(basePath + "DanglingReference/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
-			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
-			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath("//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
-			Assert.AreEqual(errors.Count, 2, "Unexpected number of errors found.");
-			Assert.True(errors[0].EndsWith("Removing link to nonexistent ownerguid='" + testGuid + "' (class='LexSense', guid='2210cf83-ad6c-47fe-91f8-8bf789473792')."), "Error message is incorrect.");//FwDataFixer.ksObjectWithGuidAlreadyExists
-			Assert.True(errors[1].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"));
-			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 1, false);
-			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath("//objsur[@guid=\"" + testObjsurGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
+			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
+			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].EndsWith("Removing link to nonexistent ownerguid='" + testGuid
+				+ "' (class='LexSense', guid='" + lexSenseGuid + "')."),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistentOwner
+			Assert.True(errors[1].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "DanglingReference/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 1, false);
 		}
 
 		[Test]
 		public void TestDuplicateWritingSystems()
 		{
-			//Looks for duplicate AStr elements with the same writing system (english) and makes sure the Fixer fixes 'em up.
-			string testGuid = "00041516-72d1-4e56-9ed8-fe235a9b1a68";
-			FwDataFixer data = new FwDataFixer(basePath + "DuplicateWs/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			// Looks for duplicate AStr elements with the same writing system (english) and makes sure the Fixer fixes 'em up.
+			const string testGuid = "00041516-72d1-4e56-9ed8-fe235a9b1a68";
+			var data = new FwDataFixer(basePath + "DuplicateWs/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
-			AssertThatXmlIn.File(basePath + "DuplicateWs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 1, false);
-			Assert.AreEqual(errors.Count, 1, "Incorrect number of errors.");
-			AssertThatXmlIn.File(basePath + "DuplicateWs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath("//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 2, false);
+			AssertThatXmlIn.File(basePath + "DuplicateWs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 1, false);
+			Assert.AreEqual(1, errors.Count, "Incorrect number of errors.");
+			AssertThatXmlIn.File(basePath + "DuplicateWs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"CmSemanticDomain\" and @guid=\"" + testGuid + "\"]//Description/AStr[@ws=\"en\"]", 2, false);
+		}
+
+		/// <summary>
+		/// This test checks that sequences that should not be empty are identified and their parents removed
+		/// and that an error message is produced for them.
+		/// </summary>
+		[Test]
+		public void TestForEmptySequences()
+		{
+			// Setup
+			// This rt element is a clause marker that has no dependent clauses
+			// and so should be deleted from its chart.
+			const string clauseMarkerGuid = "c4e487c6-bbbe-4b8f-8137-7d5fa7d2dc09";
+			// This rt element will have no component cells after the above clause marker is deleted
+			// and so it also should be deleted from its chart.
+			const string chartRowGuid = "6d9fe079-df9c-40c6-9cec-8e1dc1bbda92";
+			// This is the row's chart (owner).
+			const string chartGuid = "8fa53cdf-9950-4a23-ba1c-844723c2342d";
+			// This rt element holds a sequence of phonetic contexts that is empty
+			// and so should be deleted from its rule.
+			const string sequenceContextGuid = "09acafc4-33fd-4c12-a96d-af0d87c343d0";
+			// This is the sequence context's owner.
+			const string segmentRuleRhsGuid = "bd72b1c5-3067-433d-980d-5aae9271556d";
+			var data = new FwDataFixer(basePath + "SequenceFixer/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+
+			// SUT
+			data.FixErrorsAndSave();
+
+			// Verification
+			// check that the clause marker was there originally
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + chartRowGuid + "\"]", 1, false);
+
+			// check that the clause marker has been deleted
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartClauseMarker\" and @guid=\"" + clauseMarkerGuid + "\"]", 0, false);
+
+			// check that the row is no longer in the chart
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + chartRowGuid + "\"]", 0, false);
+
+			// check that the row has been deleted
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+
+			// check that the phone rule sequence context was there originally
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + segmentRuleRhsGuid + "\"]", 1, false);
+
+			// check that the phone rule sequence context has been deleted
+			AssertThatXmlIn.File(basePath + "SequenceFixer/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"PhSequenceContext\" and @guid=\"" + sequenceContextGuid + "\"]", 0, false);
+
+			Assert.AreEqual(3, errors.Count, "Unexpected number of errors found.");
+			Assert.AreEqual("Removing owner of empty sequence (guid='" + chartRowGuid +
+				"' class='ConstChartRow') from its owner (guid='" + chartGuid + "').", errors[0],
+				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+			Assert.AreEqual("Removing owner of empty sequence (guid='" + clauseMarkerGuid +
+				"' class='ConstChartClauseMarker') from its owner (guid='" + chartRowGuid + "').", errors[1],
+				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+			Assert.AreEqual("Removing owner of empty sequence (guid='" + sequenceContextGuid +
+				"' class='PhSequenceContext') from its owner (guid='" + segmentRuleRhsGuid + "').", errors[2],
+				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
 		}
 	}
 }

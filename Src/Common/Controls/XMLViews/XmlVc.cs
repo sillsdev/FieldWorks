@@ -633,6 +633,10 @@ namespace SIL.FieldWorks.Common.Controls
 			internal int RefHvo { get; set; }
 			/// <summary>Sort index value for the LexReference owner/subclass</summary>
 			internal int Index { get; set; }
+			/// <summary>
+			/// Original index of the item in the list; used as a tie-breaker to make sort stable.
+			/// </summary>
+			internal int OriginalIndex { get; set; }
 		}
 
 		internal int[] FilterAndSortListByComplexFormType(int[] hvos, int hvoTarget)
@@ -655,6 +659,7 @@ namespace SIL.FieldWorks.Common.Controls
 					List<LexReferenceInfo> lris;
 					if (!m_mapGuidToReferenceInfo.TryGetValue(obj.Owner.Guid, out lris))
 						continue;
+					int originalIndex = 0;
 					foreach (var lri in lris)
 					{
 						switch (lri.SubClass)
@@ -668,7 +673,7 @@ namespace SIL.FieldWorks.Common.Controls
 									continue;
 								break;
 						}
-						refs.Add(new HvoAndIndex {RefHvo = lr.Hvo, Index = lri.Index});
+						refs.Add(new HvoAndIndex {RefHvo = lr.Hvo, Index = lri.Index, OriginalIndex = originalIndex++});
 					}
 				}
 				// Now, sort the list according to the order given by the information stored in
@@ -679,10 +684,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (objs[0].ClassID == LexEntryRefTags.kClassId &&
 				(m_mapGuidToComplexRefInfo != null || m_mapGuidToVariantRefInfo != null))
 			{
+				int originalIndex = 0;
 				var refs = (from ler in objs.OfType<ILexEntryRef>()
 							let info = GetTypeInfoForEntryRef(ler)
 							where info != null
-							select new HvoAndIndex {RefHvo = ler.Hvo, Index = info.Index}).ToList();
+							select new HvoAndIndex {RefHvo = ler.Hvo, Index = info.Index, OriginalIndex = originalIndex++}).ToList();
 				// Now, sort the list according to the order given by the information stored in
 				// m_mapGuidToComplexRefInfo or m_mapGuidToVariantRefInfo, and return the new array of hvos.
 				refs.Sort(SortHvoByIndex);
@@ -741,6 +747,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static int SortHvoByIndex(HvoAndIndex x, HvoAndIndex y)
 		{
+			if (x.Index == y.Index)
+				return x.OriginalIndex - y.OriginalIndex;
 			return x.Index - y.Index;
 		}
 

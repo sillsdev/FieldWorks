@@ -1227,8 +1227,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
 
-				m_fDisposing = true; // 'Disposing' isn't until we call base dispose.
+				// We'd prefer to do any cleanup of the current slice BEFORE its parent gets disposed.
+				// But I can't find any event that is raised before Dispose when switching areas.
+				// To avoid losing changes (e.g., in InterlinearSlice/ Words Analysis view), let the current
+				// slice know it is no longer current, if we haven't already done so.
+				if (m_currentSlice != null && !m_currentSlice.IsDisposed)
+					m_currentSlice.SetCurrentState(false);
+
 				m_currentSlice = null;
+
+				m_fDisposing = true; // 'Disposing' isn't until we call base dispose.
 				if (m_rch != null)
 				{
 					if (m_rch.HasRecordListUpdater)
@@ -1506,6 +1514,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Bizarrely, calling Hide has been known to cause OnEnter to be called in a slice; we need to suppress this,
 				// hence guarding it by setting ConstructingSlices.
 				Hide();
+				if (m_currentSlice != null)
+					m_currentSlice.SetCurrentState(false); // needs to know no longer current, may want to save something.
 				m_currentSlice = null;
 				if (differentObject)
 					m_currentSliceNew = null;
@@ -4091,6 +4101,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (!slice.IsDisposed && slice.ContainingDataTree == this && slice.TakeFocus(false))
 					break;
+			}
+		}
+
+		/// <summary>
+		/// This method seems to get called when we are switching to another tool (or area) AND when the
+		/// program is shutting down. This makes it a good point to notify the current slice that it is
+		/// no longer current (in case it wants to save something, like the InterlinearSlice).
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnValidating(CancelEventArgs e)
+		{
+			base.OnValidating(e);
+			if (m_currentSlice != null)
+			{
+				m_currentSlice.SetCurrentState(false);
+				m_currentSlice = null;
 			}
 		}
 

@@ -21,6 +21,22 @@ c Fix incorrect references
 '\tqref MRK 4.l-2' > '\tqref MRK 4.1-2'
 
 c =======================================================================
+c Fix missing or incorrect punctuation
+'is in pots' > 'is in pots"'
+'Tell in your own words what Paul said?' > 'Tell in your own words what Paul said.'
+"his friends testimony" > "his friends' testimony"
+
+c =======================================================================
+c Fix mangled question
+' to Rome, what did he do?' > ''
+
+c =======================================================================
+c Correct singular possessive s' -> s's (see CMOS, 16th edition)
+"Moses' " > "Moses's "
+"Apollos' " > "Apollos's "
+"us' " > "us's "
+
+c =======================================================================
 c Remove extra leading spaces in questions
 nl '\bttq  ' > nl '\bttq ' back(7)
 
@@ -47,8 +63,13 @@ c Switch order of tqref fields which precede oh fields
 '\rf ' > dup use(LookForTqRefInWrongOrder)
 
 c =======================================================================
-c Remove space following single slash
-nl '\bttq ' > dup use(FixSlashWithSpace)
+c Make consistent use of single and double slashes to indicate alternate
+c words/phrases or complete questions/answers.
+'. / / ' > '. // '
+'. / ' > '. // '
+' / ' > '/'
+'// ' > dup
+'/ ' > '/'
 
 c =======================================================================
 c =============================== GROUPS ================================
@@ -56,17 +77,10 @@ c =======================================================================
 
 group(LookForTqRefInWrongOrder)
 nl '\tqref ' > store(tqref) dup use(LookForOverview)
+"us' " > "us's "   c ---- Rule repeated from main group.
 nl > dup use(main)
 
 c ---------------------------
 group(LookForOverview)
 nl '\oh Overview' > endstore dup out(tqref) store(tqref) endstore use(main)
 nl > out(tqref) dup store(tqref) endstore use(main)
-
-c ---------------------------
-group(FixSlashWithSpace)
-c Add a missing closing quote
-'is in pots' > 'is in pots"'
-'// ' > dup
-'/ ' > '/'
-nl > dup use(main)

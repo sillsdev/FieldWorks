@@ -863,19 +863,31 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// When we delete an MoForm, and don't replace it with something else, we want to restore the form of the
-		/// bundle so that the morpheme does not seem to disappear from the bundle (LT-11591, LT-11281)
+		/// Any time we update the the MorphRA to something different, we want to retain the MoForm.Form data
+		/// by copying it into the WfiMorphBundle.Form alternatives. This will help make sure that
+		/// whenever the MorphRA link is broken to the MoForm (e.g. by deleting the MoForm),
+		/// the morpheme does not seem to disappear from the bundle (LT-11591, LT-11281).
 		/// </summary>
 		partial void MorphRASideEffects(IMoForm oldForm, IMoForm newForm)
 		{
-			if (newForm == null)
-			{
-				foreach (var ws in oldForm.Form.AvailableWritingSystemIds)
-				{
-					Form.set_String(ws, oldForm.Form.get_String(ws));
-				}
-			}
+			if (newForm != null)
+				SetMorphBundleFormAlternatives(newForm);
+		}
 
+		private void SetMorphBundleFormAlternatives(IMoForm mf)
+		{
+			// first empty out the current form to take care of any PropChanges
+			// but no need to empty alternatives for which we'll be providing new strings afterwards.
+			var wssToChange = mf.Form.AvailableWritingSystemIds;
+			foreach (var ws in Form.AvailableWritingSystemIds)
+			{
+				if (!Enumerable.Contains(wssToChange, ws))
+					Form.set_String(ws, Cache.TsStrFactory.EmptyString(ws));
+			}
+			// ideally we'd populate the new Form with only the ws's of the MoForm.Form.
+			// but there may be someone holding on to the old MultiString accessor, so don't
+			// set m_Form = null here.
+			Form.CopyAlternatives(mf.Form);
 		}
 
 		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)

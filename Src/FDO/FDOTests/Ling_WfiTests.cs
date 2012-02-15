@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -377,17 +374,31 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense MakeCompleteSense()
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			ILexSense sense = MakeCompleteSense(entry);
+			IMoStemAllomorph morph = MakeStemMorphWithFormDefaultAlternatives(entry, "dummy form", "dummy form");
+			return sense;
+		}
+
+		private ILexSense MakeCompleteSense(ILexEntry entry)
+		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			GiveSenseGloss(sense);
 			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			sense.MorphoSyntaxAnalysisRA = msa;
-			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("dummy form", Cache.DefaultVernWs);
-			morph.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("dummy form", Cache.DefaultAnalWs);
 			return sense;
+		}
+
+		private IMoStemAllomorph MakeStemMorphWithFormDefaultAlternatives(ILexEntry entryOwner, string formVern, string formAnalysis)
+		{
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entryOwner.LexemeFormOA = morph;
+			if (formVern != null)
+				morph.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(formVern, Cache.DefaultVernWs);
+			if (formAnalysis != null)
+				morph.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(formAnalysis, Cache.DefaultAnalWs);
+			return morph;
 		}
 
 		private void GiveSenseGloss(ILexSense sense)
@@ -462,6 +473,62 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		}
 
+		/// <summary>
+		/// Check that Updating MorphRA also updates the Form
+		/// </summary>
+		[Test]
+		public void MorphBundle_UpdateMorphRA()
+		{
+			var wf = MakeAWordform();
+			var wa = MakeAnalysis(wf);
+			var bundle = MakeBundle(wa);
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			IMoStemAllomorph morph1 = MakeStemMorphWithFormDefaultAlternatives(entry, "formVern", null);
+			bundle.MorphRA = morph1;
+
+			Assert.AreEqual("formVern", bundle.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
+
+			// test that the bundle form doesn't change with morph form changes.
+			morph1.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formVernChanged",
+																					   Cache.DefaultVernWs);
+			Assert.AreEqual("formVern", bundle.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
+
+			// save the form information off so we can try to access it with invalid data later
+			var wmbForm = bundle.Form;
+			var morphRA = bundle.MorphRA;
+
+			// test that we maintain the Form values if the MorphRA is unlinked
+			bundle.MorphRA = null;
+			Assert.AreEqual("formVern", bundle.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
+
+			// make sure saved off form accessor still matches expectations
+			Assert.AreEqual("formVern", wmbForm.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual(null, wmbForm.AnalysisDefaultWritingSystem.Text);
+
+			// test that we can set new values
+			IMoStemAllomorph morph2 = MakeStemMorphWithFormDefaultAlternatives(entry, null, "formAnalysis");
+			bundle.MorphRA = morph2;
+			Assert.AreEqual(null, bundle.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual("formAnalysis", bundle.Form.AnalysisDefaultWritingSystem.Text);
+
+			// make sure saved off form accessor still matches expectations
+			Assert.AreEqual(null, wmbForm.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual("formAnalysis", wmbForm.AnalysisDefaultWritingSystem.Text);
+
+
+			IMoStemAllomorph morphEmptyStrings = MakeStemMorphWithFormDefaultAlternatives(entry, "", "");
+			bundle.MorphRA = morphEmptyStrings;
+			Assert.AreEqual(null, bundle.Form.VernacularDefaultWritingSystem.Text);
+			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
+
+			// test XML output for empty strings.
+			//var xml = ((ICmObjectInternal)bundle).ToXmlString();
+			//Assert.IsNotNull(xml);
+		}
 
 		/// <summary>
 		/// Tests the method of the given name (also DeletionText).

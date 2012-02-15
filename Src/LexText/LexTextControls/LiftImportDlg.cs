@@ -50,8 +50,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public LiftImportDlg()
 		{
-			InitializeComponent();
 			openFileDialog1 = new OpenFileDialogAdapter();
+			InitializeComponent();
 			openFileDialog1.Title = LexTextControls.openFileDialog1_Title;
 			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
 				LexTextControls.openFileDialog1_Filter);

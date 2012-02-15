@@ -68,11 +68,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			// LT-11922 & LT-12053 show that we need the CodeDirectory here and it's better
 			// to use the FileUtils version of FileExists for cross-platform reasons.
-			var dllPath = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
-			display.Enabled = FileUtils.FileExists(dllPath);
+			var fullDllName = FullLiftBridgeDllPath();
+			display.Enabled = FileUtils.FileExists(fullDllName);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
+		}
+
+		private static string FullLiftBridgeDllPath()
+		{
+			var fullDllName = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
+			return fullDllName;
 		}
 
 		/// <summary>
@@ -81,8 +87,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			m_fRefreshNeeded = false;
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var assembly = Assembly.LoadFrom(Path.Combine(baseDir, LiftBridgeDll));
+			var assembly = Assembly.LoadFrom(FullLiftBridgeDllPath());
 			var lbType = (assembly.GetTypes().Where(typeof(ILiftBridge).IsAssignableFrom)).First();
 			var constInfo = lbType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
 			using (var liftBridge = (ILiftBridge)constInfo.Invoke(BindingFlags.NonPublic, null, null, null))
@@ -208,9 +213,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				//Palaso.Lift.Validation.Validator.CheckLiftWithPossibleThrow(outPath, prog);
 				return outPath;
 			}
-			catch (Exception e)
+			catch
 			{
-				//MessageBox.Show(e.Message, "What errors? Really?", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return null;
 			}
 		}

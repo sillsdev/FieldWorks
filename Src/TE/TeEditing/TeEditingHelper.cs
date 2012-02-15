@@ -2938,7 +2938,7 @@ namespace SIL.FieldWorks.TE
 		/// <exception cref="Exception">Requested selection could not be made in the picture
 		/// caption.</exception>
 		/// ------------------------------------------------------------------------------------
-		public void MakeSelectionInPictureCaption(int iBook, int iSection, int tag,
+		private void MakeSelectionInPictureCaption(int iBook, int iSection, int tag,
 			int iPara, int ichOrcPos, int startCharacter, int endCharacter)
 		{
 			CheckDisposed();
@@ -2984,8 +2984,6 @@ namespace SIL.FieldWorks.TE
 
 			if (vwsel == null)
 				throw new Exception("Requested selection could not be made in the picture caption.");
-
-			Application.DoEvents(); // REVIEW: Do we need this? Why?
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4458,43 +4456,44 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void SelectCitedTextInPictureCaption(int iBook, IScrScriptureNote note)
 		{
-			try
+			ICmPicture picture = (ICmPicture)note.BeginObjectRA;
+			int iSection, iPara, ichOrcPos;
+			if (picture == null || !FindPictureInVerse(new ScrReference(note.BeginRef, m_scr.Versification),
+				picture.Hvo, out iSection, out iPara, out ichOrcPos))
 			{
-				ICmPicture picture = (ICmPicture)note.BeginObjectRA;
-				int iSection, iPara, ichOrcPos;
-				ITsString citedText = note.CitedTextTss;
-				if (!FindPictureInVerse(new ScrReference(note.BeginRef, m_scr.Versification),
-					picture.Hvo, out iSection, out iPara, out ichOrcPos))
-				{
-					throw new Exception("Picture ORC not found in verse"); // See catch
-				}
-				int ichStart, ichEnd;
-				ITsString sCaptionText = picture.Caption.VernacularDefaultWritingSystem;
-				if (sCaptionText.Length >= note.EndOffset &&
-					sCaptionText.Substring(note.BeginOffset, note.EndOffset - note.BeginOffset) == citedText)
-				{
-					ichStart = note.BeginOffset;
-					ichEnd = note.EndOffset;
-				}
-				else
-				{
-					// Search for word form in caption
-					if (!TsStringUtils.FindWordFormInString(citedText, sCaptionText,
-						m_cache.WritingSystemFactory, out ichStart, out ichEnd))
-					{
-						ichStart = ichEnd = 0;
-					}
-				}
-				MakeSelectionInPictureCaption(iBook, iSection,
-					ScrSectionTags.kflidContent, iPara,
-					ichOrcPos, ichStart, ichEnd);
-			}
-			catch
-			{
-				// Picture or caption no longer exists. Go to the start of the specified verse.
+				Logger.WriteEvent("Picture ORC not found in verse.");
+				// Picture no longer exists or has been moved to a different verse.
+				// Go to the start of the specified verse.
 				GotoVerse(new ScrReference(note.BeginRef, m_scr.Versification));
 				return;
 			}
+			int ichStart, ichEnd;
+			ITsString citedText = note.CitedTextTss;
+			ITsString tssCaption = picture.Caption.VernacularDefaultWritingSystem;
+			if (tssCaption.Length >= note.EndOffset &&
+				tssCaption.Substring(note.BeginOffset, note.EndOffset - note.BeginOffset).Equals(citedText))
+			{
+				ichStart = note.BeginOffset;
+				ichEnd = note.EndOffset;
+			}
+			else
+			{
+				// Search for word form in caption
+				// Note: FindWordFormInString deals with normalization issues and ORCs. Since
+				// picture captions can't contain ORCs, we could probably get away with a
+				// simpler approach. Sadly, FindWordFormInString doesn't work for non-word-forming
+				// strings, so if our cited text is a punctuation character, this won't find it.
+				// Since TE is being discontinued and there is an easy work-around (re-run the check),
+				// there's no point in fixing this.
+				if (!TsStringUtils.FindWordFormInString(citedText, tssCaption,
+					m_cache.WritingSystemFactory, out ichStart, out ichEnd))
+				{
+					ichStart = ichEnd = 0;
+				}
+			}
+			MakeSelectionInPictureCaption(iBook, iSection,
+				ScrSectionTags.kflidContent, iPara,
+				ichOrcPos, ichStart, ichEnd);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4696,48 +4695,71 @@ namespace SIL.FieldWorks.TE
 		#region Goto Footnote methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Go to next footnote.
+		/// Sets the selection at the marker of the next footnote in the Scripture, starting
+		/// from the bottome of the current selection. (This currently only works well in the
+		/// vernacular -- See TE-9528.)
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The footnote, if one is found</returns>
 		/// ------------------------------------------------------------------------------------
 		public virtual IScrFootnote GoToNextFootnote()
 		{
 			CheckDisposed();
 
+			FootnoteLocationInfo info = FindNextVernFootnote();
+			if (info == null)
+				return null;
+
+			// Set the IP
+			SetInsertionPoint(info.m_tag, info.m_iBook, info.m_iSection, info.m_iPara, info.m_ich, false);
+			return info.m_footnote;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the next vernacular footnote starting from the bottom of the current selection
+		/// (presumed to be in the vernacular) location, and returns an object that holds all
+		/// the necessary info to locate the footnote marker in the vernacular text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public FootnoteLocationInfo FindNextVernFootnote()
+		{
 			SelectionHelper selHelper = GetSelectionReducedToIp(SelectionHelper.SelLimitType.Bottom);
 			if (selHelper == null)
 				return null;
 			// Get the information needed from the current selection
 			int paraLev = selHelper.GetLevelForTag(StTextTags.kflidParagraphs);
 			SelLevInfo[] levels = selHelper.LevelInfo;
-			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(
-				selHelper, SelectionHelper.SelLimitType.Anchor);
-			int tag = levels[paraLev + 1].tag;
-			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(
-				selHelper, SelectionHelper.SelLimitType.Anchor);
-			int iPara = levels[paraLev].ihvo;
-			int ich = selHelper.IchAnchor;
+			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(selHelper, SelectionHelper.SelLimitType.Anchor);
+			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(selHelper, SelectionHelper.SelLimitType.Anchor);
 
 			// Look for the next footnote
-			IScrFootnote footnote = BookFilter.GetBook(iBook).FindNextFootnote(
-				ref iSection, ref iPara, ref ich, ref tag);
+			return FindNextVernFootnote(iBook, iSection, levels[paraLev].ihvo, selHelper.IchAnchor,
+				levels[paraLev + 1].tag);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the next vernacular footnote starting from the position indicated by the given
+		/// indices and tag, and returns an object that references the footnote and holds all
+		/// the necessary info to locate the footnote marker in the vernacular text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public FootnoteLocationInfo FindNextVernFootnote(int iBook, int iSection, int iPara, int ich, int tag)
+		{
+			FootnoteLocationInfo info;
 
 			// If we didn't find a footnote in the current book then go through the rest of the
 			// books until we find one or we run out of books.
-			while (footnote == null && iBook < BookFilter.BookCount - 1)
+			while ((info = BookFilter.GetBook(iBook).FindNextFootnote(iSection, iPara, ich, tag)) == null &&
+				iBook < BookFilter.BookCount - 1)
 			{
 				tag = ScrBookTags.kflidTitle;
 				iBook++;
 				iPara = iSection = ich = 0;
-				footnote = BookFilter.GetBook(iBook).FindNextFootnote(ref iSection,
-					ref iPara, ref ich, ref tag);
 			}
-
-			// Set the IP
-			if (footnote != null)
-				SetInsertionPoint(tag, iBook, iSection, iPara, ich, false);
-
-			return footnote;
+			if (info != null)
+				info.m_iBook = iBook; // set to index in filter rather than absolute index.
+			return info;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5567,28 +5589,13 @@ namespace SIL.FieldWorks.TE
 			SelLevInfo[] levInfo = helper.GetLevelInfo(SelectionHelper.SelLimitType.Top);
 			if (levInfo[0].tag != StTextTags.kflidParagraphs)
 				return false;
-
-			ILocationTracker tracker = ((ITeView)Control).LocationTracker;
-			IScrBook book = tracker.GetBook(helper, SelectionHelper.SelLimitType.Anchor);
-
-			SelLevInfo tmpInfo;
 			IStText text;
-			if (helper.GetLevelInfoForTag(ScrBookTags.kflidTitle, out tmpInfo))
-				text = book.TitleOA;
-			else
-			{
-				IScrSection section = tracker.GetSection(
-					helper, SelectionHelper.SelLimitType.Anchor);
-
-				text = (levInfo[1].tag == ScrSectionTags.kflidHeading ?
-					section.HeadingOA : text = section.ContentOA);
-			}
-
-			int iPara = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs).ihvo;
-			IStTxtPara currPara = text[iPara];
-			ITsStrBldr bldr;
+			int iPara;
+			int tag;
+			IStTxtPara currPara = GetPara(helper, out text, out iPara, out tag);
 
 			// Backspace at beginning of paragraph
+			ITsStrBldr bldr;
 			if (dpt == VwDelProbType.kdptBsAtStartPara)
 			{
 				if (iPara <= 0)
@@ -5641,6 +5648,42 @@ namespace SIL.FieldWorks.TE
 				helper.SetSelection(true);
 			}
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an StTxtPara representing the paragraph of the given selection.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private IStTxtPara GetPara(SelectionHelper helper, out IStText text, out int iPara, out int tag)
+		{
+			SelLevInfo paraLevInfo;
+			if (!helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo))
+			{
+				text = null;
+				iPara = tag = -1;
+				return null;
+			}
+			iPara = paraLevInfo.ihvo;
+
+			ILocationTracker tracker = ((ITeView)Control).LocationTracker;
+			IScrBook book = tracker.GetBook(helper, SelectionHelper.SelLimitType.Top);
+
+			IScrSection section = tracker.GetSection(helper, SelectionHelper.SelLimitType.Top);
+
+			if (section == null)
+			{
+				text = book.TitleOA;
+				tag = ScrBookTags.kflidTitle;
+			}
+			else
+			{
+				tag = (helper.GetLevelForTag(ScrSectionTags.kflidContent) >= 0 ?
+					ScrSectionTags.kflidContent : ScrSectionTags.kflidHeading);
+				text = (tag == ScrSectionTags.kflidHeading ? section.HeadingOA : section.ContentOA);
+			}
+
+			return text[iPara];
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -7962,6 +8005,130 @@ namespace SIL.FieldWorks.TE
 			return prevFootnote;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempts to navigate to a position in the back translation that closely corresponds
+		/// to a place in the verncaular that has a footnote whose marker has not been inserted
+		/// into the back translation.
+		/// </summary>
+		/// <param name="activeEditingHelper">Editing helper from the active draft view (could
+		/// be either the vern or BT)</param>
+		/// <returns>A value indicating whether or not it found a place to move to.</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool GoToNextMissingBtFootnoteMkr(TeEditingHelper activeEditingHelper)
+		{
+			int iBook, iSection, iPara, ich, tag;
+			if (!GetVernPosition(activeEditingHelper, out iBook, out iSection, out iPara,
+				out ich, out tag))
+			{
+				return false;
+			}
+
+			int wsBt = IsBackTranslation ? ViewConstructorWS : ((IBtAwareView)Control).BackTranslationWS;
+			FootnoteLocationInfo info;
+
+			do
+			{
+				info = FindNextVernFootnote(iBook, iSection, iPara, ich, tag);
+				if (info == null)
+					return false;
+				IScrBook book = BookFilter.GetBook(info.m_iBook);
+				IStText stText;
+				switch (info.m_tag)
+				{
+					case ScrBookTags.kflidTitle:
+						stText = book.TitleOA;
+						break;
+					case ScrSectionTags.kflidContent:
+						stText = book.SectionsOS[info.m_iSection].ContentOA;
+						break;
+					case ScrSectionTags.kflidHeading:
+						stText = book.SectionsOS[info.m_iSection].HeadingOA;
+						break;
+					default:
+						throw new Exception("Unexpected tag.");
+				}
+
+				IScrTxtPara para = (IScrTxtPara)stText.ParagraphsOS[info.m_iPara];
+				bool missingBtOrc = true;
+				ICmTranslation trans = para.GetBT();
+				ITsString tssBt;
+				if (trans != null && (tssBt = trans.Translation.get_String(wsBt)) != null)
+				{
+					int iRun = 0;
+					int runCount = tssBt.RunCount;
+					while (iRun < runCount)
+					{
+						if (TsStringUtils.GetHotObjectGuidFromProps(tssBt.get_Properties(iRun++)) == info.m_footnote.Guid)
+						{
+							missingBtOrc = false;
+							break;
+						}
+					}
+				}
+
+				if (missingBtOrc)
+				{
+					if (InSegmentedBt)
+					{
+						int iSegment = GetBtSegIndexForVernChar(para, info.m_ich, wsBt);
+						SelectRangeOfChars(info.m_iBook, info.m_iSection, info.m_tag, info.m_iPara, iSegment,
+							0, 0, true, true, false, VwScrollSelOpts.kssoDefault);
+					}
+					else
+					{
+						ich = para.GetBtPosition(info.m_ich, wsBt);
+						SelectRangeOfChars(info.m_iBook, info.m_iSection, info.m_tag, info.m_iPara, ich, ich, true, true, false);
+					}
+					Control.Focus();
+					return true;
+				}
+
+				iBook = info.m_iBook;
+				iSection = info.m_iSection;
+				iPara = info.m_iPara;
+				ich = info.m_ich;
+				tag = info.m_tag;
+
+			} while (true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a non-range selection (i.e., a simple IP) in the vernacular corresponding to
+		/// the current active selection. If the current selection is in the back translation,
+		/// the position in the vernacular will be the begining of the current segment (in the
+		/// vernacular). If the current selection is in a BT but not in a paragraph, this will
+		/// return null.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static bool GetVernPosition(TeEditingHelper activeEditingHelper, out int iBook,
+			out int iSection, out int iPara, out int ich, out int tag)
+		{
+			SelectionHelper selHelper = activeEditingHelper.GetSelectionReducedToIp(
+				SelectionHelper.SelLimitType.Bottom);
+
+			ILocationTracker tracker = ((ITeView)activeEditingHelper.Control).LocationTracker;
+			iBook = tracker.GetBookIndex(selHelper, SelectionHelper.SelLimitType.Anchor);
+			iSection = tracker.GetSectionIndexInBook(selHelper, SelectionHelper.SelLimitType.Anchor);
+			ich = selHelper.IchAnchor;
+			IStText text;
+			IStTxtPara para = activeEditingHelper.GetPara(selHelper, out text, out iPara, out tag);
+			if (para == null)
+				return false;
+
+			if (activeEditingHelper.IsBackTranslation)
+			{
+				if (activeEditingHelper.InSegmentedBt)
+					ich = para.SegmentsOS[selHelper.LevelInfo[0].ihvo].BeginOffset;
+				else
+				{
+					ISegment seg = para.GetSegmentForOffsetInFreeTranslation(ich, selHelper.Ws);
+					ich = (seg == null ? 0 : seg.BeginOffset);
+				}
+			}
+			return true;
+		}
 		#endregion
 
 		#region Methods to support inserting annotations

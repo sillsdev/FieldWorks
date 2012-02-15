@@ -1614,7 +1614,10 @@
 		<Alt>What does it say about how people should live with one another?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What is faith/what does it mean to believe God?</Original>
+		<Original>Briefly tell in your own words what the author said. What is faith/what does it mean to believe God?</Original>
+		<Alt>Briefly tell in your own words what the author said.</Alt>
+		<Alt>Briefly tell in your own words what the author said. What is faith?</Alt>
+		<Alt>Briefly tell in your own words what the author said. What does it mean to believe God?</Alt>
 		<Alt>What is faith?</Alt>
 		<Alt>What does it mean to believe God?</Alt>
 	</Alternative>
@@ -1800,12 +1803,9 @@
 		<Alt>What do you think it means for people today to carry one's cross?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>Who did Jesus say would be the greatest/most important disciple?</Original>
+		<Original>Who did Jesus say would be the greatest/most important disciple? -OR- Who did Jesus say would be the greatest/most important person in the kingdom of God?</Original>
 		<Alt>Who did Jesus say would be the greatest disciple?</Alt>
 		<Alt>Who did Jesus say would be the most important disciple?</Alt>
-	</Alternative>
-	<Alternative>
-		<Original>Who did Jesus say would be the greatest/most important person in the kingdom of God?</Original>
 		<Alt>Who did Jesus say would be the greatest person in the kingdom of God?</Alt>
 		<Alt>Who did Jesus say would be the most important person in the kingdom of God?</Alt>
 	</Alternative>
@@ -2534,7 +2534,7 @@
 		<Alt>What is the reason that Jesus did not want people to worry about their future needs for food and clothing?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What do you think is the reason that Jesus asked them the question about who could live longer/add more days to their life by worrying?</Original>
+		<Original>(Ask this question only if verse 27 is in a question form after being translated.) What do you think is the reason that Jesus asked them the question about who could live longer/add more days to their life by worrying?</Original>
 		<Alt>What do you think is the reason that Jesus asked them the question about who could live longer by worrying?</Alt>
 		<Alt>What do you think is the reason that Jesus asked them the question about who could add more days to their life by worrying?</Alt>
 		<Alt>Why did Jesus ask them the question about who could live longer by worrying?</Alt>
@@ -2708,5 +2708,69 @@
 		<Original>What could Peter do with the keys to/authority over the kingdom of heaven?</Original>
 		<Alt>What could Peter do with the keys to the kingdom of heaven?</Alt>
 		<Alt>What could Peter do with the authority over the kingdom of heaven?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>The translator may need to have each doctrine read and ask what the reader understands by what is said there. An unbeliever especially will not fully understand these doctrines, but the surface meaning should be clear. At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
+		<Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>The translator may need to go back and ask what the reader understands by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age." At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
+		<Alt>What do you understand by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age."?</Alt>
+		<Alt>a) What do you understand by "they have come to understand God's Message"? b) What do you understand by "they have received the good things God gives his people"? c) What do you understand by "experienced the Holy Spirit in their lives" d) What do you understand by "seen God using his power as He will in the Coming Age."?</Alt>
+		<Alt>What do you understand by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age."? At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>a) What do you understand by "they have come to understand God's Message"? b) What do you understand by "they have received the good things God gives his people"? c) What do you understand by "experienced the Holy Spirit in their lives" d) What do you understand by "seen God using his power as He will in the Coming Age."? At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>What do you understand by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age."? Do you have any other comments to make about the passage just checked?</Alt>
+		<Alt>a) What do you understand by "they have come to understand God's Message"? b) What do you understand by "they have received the good things God gives his people"? c) What do you understand by "experienced the Holy Spirit in their lives" d) What do you understand by "seen God using his power as He will in the Coming Age."? e) Do you have any other comments to make about the passage just checked?</Alt>
+		<Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>The translator should probably get the reader to describe how he thinks all these things looked, things like the Chest of the Agreement, stone tablets, etc. At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
+		<Alt>The translator should probably get the reader to describe how he thinks all these things looked, things like the Chest of the Agreement, stone tablets, etc.</Alt>
+		<Alt>Describe how you think all these things (the Chest of the Agreement, stone tablets, etc.) looked.</Alt>
+		<Alt>Describe how you think all these things (the Chest of the Agreement, stone tablets, etc.) looked. Do you have any other comments to make about the passage just checked?</Alt>
+		<Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>The translator should probably discuss the ideas of "putting an operation into effect," "the wonderful things God promises his people," etc., with the reader to be sure the translation is clear enough. At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
+		<Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>Why do you think that it tells us that the curtain was torn from top to bottom? (Here you just want to be sure they don't understand the wrong thing and you may want to tell them why.) Ask the reader if he/she has any other comments to make about the passage just checked.</Original>
+		<Alt>Why do you think that it tells us that the curtain was torn from top to bottom? Do you have any other comments to make about the passage just checked?</Alt>
+		<Alt>Ask the reader if he/she has any other comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>The translator should be sure that the reader understands that all the references in these verses to the mountain, Mt. Sinai, etc., are referring to when God spoke to the ancestors of the Jews long ago and gave them the Old Agreement. Ask the reader if he/she has any other comments to make about the passage just checked.</Original>
+		<Alt>What is the meaning of the references in these verses to the mountain, Mt. Sinai, etc.?</Alt>
+		<Alt>What is the meaning of the references in these verses to the mountain, Mt. Sinai, etc.? Do you have any other comments to make about the passage just checked?</Alt>
+		<Alt>Ask the reader if he/she has any other comments to make about the passage just checked.</Alt>
+		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>(For) how long did Jacob work for Laban?</Original>
+		<Alt>For how long did Jacob work for Laban?</Alt>
+		<Alt>How long did Jacob work for Laban?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>(Some time later,) what did Tamar discover was the result of her union with Judah?</Original>
+		<Alt>Some time later, what did Tamar discover was the result of her union with Judah?</Alt>
+		<Alt>What did Tamar discover was the result of her union with Judah?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>(Then) what is the significance of Pharaoh having two dreams (rather than only one dream)?</Original>
+		<Alt>Then what is the significance of Pharaoh having two dreams rather than only one dream?</Alt>
+		<Alt>What is the significance of Pharaoh having two dreams rather than only one dream?</Alt>
+		<Alt>Then what is the significance of Pharaoh having two dreams?</Alt>
+		<Alt>What is the significance of Pharaoh having two dreams?</Alt>
+	</Alternative>
+	<Alternative>
+		<Original>Why would John not want to do (or, hesitate to do) even very simple work for such a person, like untying his shoes?</Original>
+		<Alt>Why would John not want to do even very simple work for such a person, like untying his shoes?</Alt>
+		<Alt>Why would John hesitate to do even very simple work for such a person, like untying his shoes?</Alt>
 	</Alternative>
 </QuestionAlternativeOverrides>

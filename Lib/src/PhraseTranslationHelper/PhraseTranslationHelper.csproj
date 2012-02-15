@@ -71,6 +71,13 @@
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="QuestionKey.cs" />
+	<Compile Include="NewQuestionDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="NewQuestionDlg.Designer.cs">
+	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+	</Compile>
 	<Compile Include="QuestionAlternativeOverrides.cs" />
 	<Compile Include="QuestionSections.cs" />
 	<Compile Include="Question.cs" />
@@ -151,6 +158,9 @@
 	<EmbeddedResource Include="AddRenderingDlg.resx">
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</EmbeddedResource>
+	<EmbeddedResource Include="NewQuestionDlg.resx">
+	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="EditQuestionDlg.resx">
 	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
 	</EmbeddedResource>
@@ -189,6 +199,12 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="Properties\Filtered.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Copy.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Paste.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

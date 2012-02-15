@@ -8,7 +8,7 @@
 -->
 
 <BiblicalTermsLocalizations Language="Spanish" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-0015c516d40f">
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1706E73F-DB03-4036-A790-3E18BC785356">
 
 
 <!-- In order to localize these Category Headings, first translate the Glosses below, and then uncomment this block
@@ -84,7 +84,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- ἀγαπάω-1 (agapaw-1) [KT] to have love for someone or something, based on sincere appreciation and high regard  -->
-<Localization Id="0016" Gloss="amor"></Localization>
+<Localization Id="0016" Gloss="amor; amar"></Localization>
 
 
 <!-- ἀγαπάω-2 (agapaw-2) [KT] a special type of communal meal having particular significance for early Christians as an expression of their mutual affection and concern  -->
@@ -244,7 +244,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- ἀετός (aetos) [FA]   -->
-<Localization Id="0056" Gloss="águila; buitre"></Localization> -->
+<Localization Id="0056" Gloss="águila; buitre"></Localization>
 
 
 <!-- Ἀζώρ (Azwr) [PN] a person in the genealogy of Jesus  -->
@@ -1964,7 +1964,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- εἰσφερω (eispherw) [KT] -  -->
-<!-- <Localization Id="0486" Gloss="load"></Localization> -->
+<Localization Id="0486" Gloss="guiar o llevar dentro"></Localization>
 
 
 <!-- ἐκκλησία (ekklèsia) [KT] -  -->
@@ -1980,7 +1980,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- ἐκλέγω-3 (eklegw-3) [KT] -  -->
-<!-- <Localization Id="0490" Gloss="chosen; selection; elect; election"></Localization> -->
+<Localization Id="0490" Gloss="elegigo; escogido"></Localization>
 
 
 <!-- ἐλαία-1 (elaia-1) [FL] olive tree  -->
@@ -1992,7 +1992,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- ἔλαιον (elaion) [RE] oil extracted from the fruit of olive trees  -->
-<Localization Id="0493" Gloss="aceite"></Localization>
+<Localization Id="0493" Gloss="aceite de olivo"></Localization>
 
 
 <!-- ἐλαιών (elaiwn) [FL] (derivative of ἐλαία[a] olive tree) a number of olive trees planted in a garden or grove  -->
@@ -3612,7 +3612,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- Κιλικία (Kilikia) [PN] a province in the southeast corner of Asia Minor  -->
-<!-- <Localization Id="0898" Gloss="Cilicia"></Localization> -->
+<Localization Id="0898" Gloss="Cilicia"></Localization>
 
 
 <!-- Κίς (Kis) [PN] the father of King Saul  -->
@@ -3644,7 +3644,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- κλῆμα (klèma) [FL] a more or less tender, flexible branch, as of a vine  -->
-<Localization Id="0906" Gloss="rama"></Localization>
+<Localization Id="0906" Gloss="rama; sarmiento; pámpano"></Localization>
 
 
 <!-- Κλήμης (Klèmès) [PN] a member of the church at Philippi  -->
@@ -3688,11 +3688,11 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- κοινός-3 (koinos-3) [KT] -  -->
-<!-- <Localization Id="0917" Gloss="share; participate"></Localization> -->
+<Localization Id="0917" Gloss="compartir; participar"></Localization>
 
 
 <!-- κοινός-4 (koinos-4) [KT] -  -->
-<!-- <Localization Id="0918" Gloss="fellowship; contribution; participation; sharing"></Localization> -->
+<Localization Id="0918" Gloss="comunión; contribución; participación; compartimiento"></Localization>
 
 
 <!-- κοινός-5 (koinos-5) [KT] -  -->
@@ -3700,7 +3700,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- κοινός-6 (koinos-6) [KT] -  -->
-<!-- <Localization Id="0920" Gloss="partner; partaker; sharer"></Localization> -->
+<Localization Id="0920" Gloss="partícipe"></Localization>
 
 
 <!-- κοινός-7 (koinos-7) [KT] -  -->
@@ -3972,7 +3972,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- λαλεω (lalew) [KT] -  -->
-<!-- <Localization Id="0988" Gloss="speaking"></Localization> -->
+<Localization Id="0988" Gloss="hablar (palabras en contra)"></Localization>
 
 
 <!-- Λάμεχ (Lamech) [PN] the father of Noah in the genealogy of Jesus  -->
@@ -13864,7 +13864,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- חֵץ (ḥēṣ) [KT]   -->
-<Localization Id="6633" Gloss="flecha"></Localization>
+<Localization Id="6633" Gloss="flecha">símbolo de violencia, castigo, o peligro</Localization>
 
 
 <!-- חָצוֹר חֲדַתָּה (ḥāṣôr ḥăḏattāh) [PN] location; territory of Judah  -->
@@ -14356,7 +14356,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- טמא-1 (ṭmʾ-1) [KT]   -->
-<!-- <Localization Id="6756" Gloss="to be (or: become; or: declare; or: treat as) ceremonially unclean (either or not intentionally)"></Localization> -->
+<Localization Id="6756" Gloss="inmundo">ser (o llegar a ser, declarar, o tratar como) ceremonialmente impuro (ya sea con intención o sin intención)</Localization>
 
 
 <!-- טמא-2 (ṭmʾ-2) [KT]   -->
@@ -18816,7 +18816,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- נבא-1 (nəḇô-1) [KT]   -->
-<!-- <Localization Id="7871" Gloss="to speak, to act as a prophet"></Localization> -->
+<Localization Id="7871" Gloss="hablar o actuar como profeta"></Localization>
 
 
 <!-- נבא-2 (nəḇô-2) [KT]   -->
@@ -19368,7 +19368,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 
 
 <!-- נשׂא-5 (nāśîʾ-5) [KT]   -->
-<!-- <Localization Id="8009" Gloss="to lift up (once face) = to show favor, have regard"></Localization> -->
+<Localization Id="8009" Gloss="mostrar favor o considerar"></Localization>
 
 
 <!-- נשׂא-6 (nāśîʾ-6) [KT]   -->
@@ -22103,7 +22103,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="ea7f74cf-c990-11e0-90af-00
 <Localization Id="8692" Gloss="Petahías"></Localization>
 
 
-<!-- פְּתַחְיָה-2 (peṯî-2) [PN] Levite; after exile  -->
+<!-- פּ��תַחְיָה-2 (peṯî-2) [PN] Levite; after exile  -->
 <Localization Id="8693" Gloss="Petahías"></Localization>
 
 

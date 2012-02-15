@@ -368,15 +368,24 @@ namespace SILUBS.PhraseTranslationHelper
 			dataGridUns.Refresh();
 		}
 
+		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
+		{
+			if (m_selectKeyboard != null)
+			{
+				m_selectKeyboard(dataGridUns.CurrentCell != null &&
+					dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index);
+			}
+		}
+
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 2 && m_selectKeyboard != null)
+			if (e.ColumnIndex == m_colTranslation.Index && m_selectKeyboard != null)
 				m_selectKeyboard(true);
 		}
 
 		private void dataGridUns_CellLeave(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 2 && m_selectKeyboard != null)
+			if (e.ColumnIndex == m_colTranslation.Index && m_selectKeyboard != null)
 				m_selectKeyboard(false);
 		}
 
@@ -399,7 +408,7 @@ namespace SILUBS.PhraseTranslationHelper
 			switch (e.ColumnIndex)
 			{
 				case 0: e.Value = m_helper[e.RowIndex].Reference; break;
-				case 1: e.Value = m_helper[e.RowIndex].PhraseInUse; break;
+				case 1: e.Value = m_helper[e.RowIndex].PhraseToDisplayInUI; break;
 				case 2: e.Value = m_helper[e.RowIndex].Translation; break;
 				case 3: e.Value = m_helper[e.RowIndex].HasUserTranslation; break;
 				case 4: e.Value = m_helper[e.RowIndex].Parts; break;
@@ -469,8 +478,6 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void txtFilterByPart_Enter(object sender, EventArgs e)
 		{
-			//if (m_selectKeyboard != null)
-			//    m_selectKeyboard(true);
 			RememberCurrentSelection();
 		}
 
@@ -642,10 +649,26 @@ namespace SILUBS.PhraseTranslationHelper
 				(from translatablePhrase in m_helper.UnfilteredPhrases
 				where translatablePhrase.HasUserTranslation
 				select new XmlTranslation(translatablePhrase)).ToList());
-			List<PhraseCustomization> customizations = (from translatablePhrase
-				in m_helper.UnfilteredPhrases
-				where translatablePhrase.IsCustomized
-				select new PhraseCustomization(translatablePhrase)).ToList();
+
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			foreach (TranslatablePhrase translatablePhrase in m_helper.UnfilteredPhrases)
+			{
+				if (translatablePhrase.IsExcludedOrModified)
+					customizations.Add(new PhraseCustomization(translatablePhrase));
+				if (translatablePhrase.InsertedPhraseBefore != null)
+				{
+					customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+						translatablePhrase.InsertedPhraseBefore,
+						PhraseCustomization.CustomizationType.InsertionBefore));
+				}
+				if (translatablePhrase.AddedPhraseAfter != null)
+				{
+					customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+						translatablePhrase.AddedPhraseAfter,
+						PhraseCustomization.CustomizationType.AdditionAfter));
+				}
+			}
+
 			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
 				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
 		}
@@ -669,9 +692,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
 		{
-			if (string.IsNullOrEmpty(GenTemplateSettings.Folder))
-				GenTemplateSettings.Folder = m_defaultLcfFolder;
-			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName,
+			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName, m_defaultLcfFolder,
 				GenTemplateSettings, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -765,7 +786,7 @@ namespace SILUBS.PhraseTranslationHelper
 							prevSectionStartRef = phrase.StartRef;
 							prevSectionEndRef = phrase.EndRef;
 
-							if (!phrase.HasUserTranslation && !dlg.m_rdoUseOriginal.Checked)
+							if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
 								continue; // skip this question
 
 							if (pendingSectionHead != null)
@@ -792,12 +813,12 @@ namespace SILUBS.PhraseTranslationHelper
 							}
 
 							sw.WriteLine("<p class=\"question\">" +
-								(phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseInUse).Normalize(NormalizationForm.FormC) + "</p>");
+								(phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
 
 							sw.WriteLine("<div class=\"extras\" lang=\"en\">");
-							if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation)
-								sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseInUse.Normalize(NormalizationForm.FormC) + "</p>");
-							Question answersAndComments = (Question)phrase.AdditionalInfo[0];
+							if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+								sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseToDisplayInUI.Normalize(NormalizationForm.FormC) + "</p>");
+							Question answersAndComments = phrase.QuestionInfo;
 							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
 							{
 								foreach (string answer in answersAndComments.Answers)
@@ -891,7 +912,8 @@ namespace SILUBS.PhraseTranslationHelper
 		private void phraseSubstitutionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (PhraseSubstitutionsDlg dlg = new PhraseSubstitutionsDlg(m_phraseSubstitutions,
-				m_helper.Phrases.Select(p => p.PhraseInUse), dataGridUns.CurrentRow.Index))
+				m_helper.Phrases.Where(tp => tp.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion).Select(p => p.PhraseInUse),
+				dataGridUns.CurrentRow.Index))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -900,7 +922,7 @@ namespace SILUBS.PhraseTranslationHelper
 					// Save items to file
 					XmlSerializationHelper.SerializeToFile(m_phraseSubstitutionsFile, m_phraseSubstitutions);
 
-					Reload();
+					Reload(false);
 				}
 			}
 		}
@@ -912,20 +934,67 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Reload();
+			Reload(false);
 		}
 
-		private void Reload()
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Reloads the data grid view and attempts to re-select the same cell of the same
+		/// question as was previously selected.
+		/// </summary>
+		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
+		/// <param name="key">The key of the question to try to select after reloading.</param>
+		/// ------------------------------------------------------------------------------------
+		private void Reload(bool fForceSave)
+		{
+			TranslatablePhrase phrase = dataGridUns.CurrentRow != null ? CurrentPhrase : null;
+			Reload(fForceSave, (phrase == null) ? null : phrase.PhraseKey, 0);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Reloads the specified f force save.
+		/// </summary>
+		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
+		/// <param name="key">The key of the question to try to select after reloading.</param>
+		/// <param name="fallBackRow">the index of the row to select if a question witht the
+		/// given key cannot be found.</param>
+		/// ------------------------------------------------------------------------------------
+		private void Reload(bool fForceSave, QuestionKey key, int fallBackRow)
 		{
 			using (new WaitCursor(this))
 			{
-				Save(false);
+				int iCol = dataGridUns.CurrentCell.ColumnIndex;
+				Save(fForceSave);
+
+				int iSortedCol = -1;
+				bool sortAscending = true;
+				for (int i = 0; i < dataGridUns.Columns.Count; i++)
+				{
+					switch (dataGridUns.Columns[i].HeaderCell.SortGlyphDirection)
+					{
+						case SortOrder.Ascending: iSortedCol = i; break;
+						case SortOrder.Descending: iSortedCol = i; sortAscending = false; break;
+						default:
+							continue;
+					}
+					break;
+				}
+
 				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
 				dataGridUns.RowCount = 0;
 				LoadTranslations();
 				ApplyFilter();
-				if (dataGridUns.SortedColumn != null)
-					SortByColumn(dataGridUns.SortedColumn.Index, dataGridUns.SortOrder != SortOrder.Descending);
+				if (iSortedCol >= 0)
+					SortByColumn(iSortedCol, sortAscending);
+				if (key != null)
+				{
+					int iRow = m_helper.FindPhrase(key);
+					if (iRow < 0)
+						iRow = fallBackRow;
+					if (iRow < dataGridUns.Rows.Count)
+						dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+				}
 			}
 		}
 
@@ -1002,33 +1071,65 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuIncludeQuestion or mnuExcludeQuestion control.
+		/// </summary>
+		/// <param name="sender">The menu that was the source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
 		private void mnuIncludeOrExcludeQuestion_Click(object sender, EventArgs e)
 		{
 			if (dataGridUns.CurrentRow == null)
 				return;
 
-			TranslatablePhrase phrase = CurrentPhrase;
-			string reference = phrase.Reference;
-			string question = phrase.PhraseInUse;
-			int iCol = dataGridUns.CurrentCell.ColumnIndex;
-			phrase.IsExcluded = (sender == mnuExcludeQuestion);
-			phrase = null;
-			Reload();
-			int iRow = m_helper.FindPhrase(reference, question);
-			if (iRow < 0)
-				iRow = 0;
-			dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+			CurrentPhrase.IsExcluded = (sender == mnuExcludeQuestion);
+			Reload(true);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuEditQuestion control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
 		private void mnuEditQuestion_Click(object sender, EventArgs e)
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
+			m_selectKeyboard(false);
 			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					phrase.ModifiedPhrase = dlg.ModifiedPhrase;
-					Reload();
+					Reload(true);
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuInsertQuestion or mnuAddQuestion control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
+		private void InsertOrAddQuestion(object sender, EventArgs e)
+		{
+			TranslatablePhrase phrase = CurrentPhrase;
+			m_selectKeyboard(false);
+			using (NewQuestionDlg dlg = new NewQuestionDlg(phrase.QuestionInfo))
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					if (sender == mnuInsertQuestion)
+						phrase.InsertedPhraseBefore = dlg.NewQuestion;
+					else
+						phrase.AddedPhraseAfter = dlg.NewQuestion;
+					string sRef = phrase.Reference;
+
+					Reload(true, dlg.NewQuestion, dataGridUns.CurrentRow.Index);
 				}
 			}
 		}
@@ -1069,6 +1170,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuReferenceRange_Click(object sender, EventArgs e)
 		{
+			m_selectKeyboard(false);
 			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(
 				new ScrReference(m_startRef), new ScrReference(m_endRef), m_availableBookIds))
 			{
@@ -1195,6 +1297,42 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles copying and pasting cell contents (TXL-100)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuCopy_Click(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Focused)
+				txtFilterByPart.Copy();
+			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
+				dataGridUns.CurrentCell.ColumnIndex != m_colUserTranslated.Index)
+			{
+				string text = dataGridUns.CurrentCell.Value as string;
+				if (text != null)
+					Clipboard.SetText(text);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles copying and pasting cell contents (TXL-100)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuPaste_Click(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Focused)
+				txtFilterByPart.Paste();
+			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
+				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index)
+			{
+				string text = Clipboard.GetText();
+				if (!string.IsNullOrEmpty(text))
+					m_helper[dataGridUns.CurrentCell.RowIndex].Translation = text; SaveNeeded = true;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Handles the Click event of the aboutTransceleratorToolStripMenuItem control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1275,7 +1413,7 @@ namespace SILUBS.PhraseTranslationHelper
 				{
 					foreach (XmlTranslation unsTranslation in translations)
 					{
-						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.OriginalPhrase);
+						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.PhraseKey);
 						if (phrase != null && !phrase.IsExcluded)
 							phrase.Translation = unsTranslation.Translation;
 					}
@@ -1485,14 +1623,14 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void LoadAnswerAndComment(int rowIndex)
 		{
-			object[] addlInfo = m_helper[rowIndex].AdditionalInfo;
-			if (addlInfo == null || addlInfo.Length == 0)
+			Question answersAndComments = m_helper[rowIndex].QuestionInfo;
+			if (answersAndComments == null || ((answersAndComments.Answers == null || answersAndComments.Answers.Length == 0) &&
+				(answersAndComments.Notes == null || answersAndComments.Notes.Length == 0)))
 			{
 				m_lblAnswerLabel.Visible = m_lblAnswers.Visible = false;
 				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
 				return;
 			}
-			Question answersAndComments = (Question)addlInfo[0];
 			PopulateAnswerOrCommentLabel(answersAndComments.Answers, m_lblAnswerLabel,
 				m_lblAnswers, Properties.Resources.kstidAnswersLabel);
 			PopulateAnswerOrCommentLabel(answersAndComments.Notes, m_lblCommentLabel,

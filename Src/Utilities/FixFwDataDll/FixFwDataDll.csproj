@@ -75,6 +75,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="SequenceFixer.cs" />
 	<Compile Include="FixErrorsDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>

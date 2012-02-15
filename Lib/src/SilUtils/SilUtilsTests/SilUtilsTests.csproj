@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
+	<Compile Include="PorterStemmerEnhancementTests.cs" />
 	<Compile Include="ListUtilsTests.cs" />
 	<Compile Include="ScreenUtilsTest.cs" />
 	<Compile Include="StringUtilsTests.cs" />

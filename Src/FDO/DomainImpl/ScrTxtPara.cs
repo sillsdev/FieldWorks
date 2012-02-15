@@ -262,10 +262,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return ((IScrBook)section.Owner).FindPrevFootnote(ref iSection, ref iPara,
 					ref ich, ref flid);
 			}
-			else if (text.Owner is IScrBook) // Title of a book
-				return (IScrFootnote)text.FindPreviousFootnote(ref iPara, ref ich, true);
-			else
-				throw new InvalidOperationException("Footnotes should only be found in Scripture Book titles, section heads, and contents");
+
+			if (text.Owner is IScrBook) // Title of a book
+				return text.FindPreviousFootnote(ref iPara, ref ich, true);
+
+			throw new InvalidOperationException("Footnotes should only be found in Scripture Book titles, section heads, and contents");
 		}
 		#endregion
 
@@ -2028,7 +2029,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Any footnotes that were deleted from this paragraph need to be deleted
 					IScrFootnote footnote = (IScrFootnote)footnoteRepo.GetFootnoteFromObjData(
 						originalValue.get_StringProperty(i, (int)FwTextPropType.ktptObjData));
-					if (footnote != null)
+					if (footnote != null && (footnote.ParaContainingOrcRA == null || footnote.ParaContainingOrcRA == this))
 					{
 						bool fFound = false;
 						for (int iNew = 0; iNew < newRunCount; iNew++)

@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.IText
 			internal FdoCache Cache;
 			internal IThreadedProgress Progress;
 			internal ImportInterlinearOptions ImportOptions;
+			internal int Version;
 		}
 
 		/// <summary>
@@ -112,20 +113,55 @@ namespace SIL.FieldWorks.IText
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
-						foreach (var word in phrase.WordsContent.Words)
+						if (textParams.Version == 0 && PhraseHasExactlyOneTxtItemNotAKnownWordform(newSegment.Cache, phrase))
 						{
-							//If the text of the phrase was not given in the document build it from the words.
+							// It might be a SayMore text that makes the whole segment a single txt item.
+							// We want to add the text anyway (unless a higher level did so), but we will skip making
+							// a wordform. Eventual parsing of the text will do so.
 							if (!textInFile)
 							{
-								UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, word, ref lastWasWord, space);
+								UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, phrase.WordsContent.Words[0], ref lastWasWord, space);
 							}
-							AddWordToSegment(newSegment, word, tsStrFactory);
+						}
+						else
+						{
+							foreach (var word in phrase.WordsContent.Words)
+							{
+								//If the text of the phrase was not given in the document build it from the words.
+								if (!textInFile)
+								{
+									UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, word, ref lastWasWord, space);
+								}
+								AddWordToSegment(newSegment, word, tsStrFactory);
+							}
 						}
 					}
 					UpdateParagraphTextForPhrase(newTextPara, ref offset, phraseText);
 				}
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Return true if the phrase has exactly one word which has exactly one item of type txt,
+		/// and that item is not a known wordform.
+		/// </summary>
+		/// <param name="fdoCache"></param>
+		/// <param name="phrase"></param>
+		/// <returns></returns>
+		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(FdoCache fdoCache, Phrase phrase)
+		{
+			if (phrase.WordsContent.Words.Length != 1 || phrase.WordsContent.Words[0].Items.Length != 1
+				|| phrase.WordsContent.Words[0].Items[0].type != "txt")
+				return false;
+			var wsFact = fdoCache.WritingSystemFactory;
+			var wordItem = phrase.WordsContent.Words[0].Items[0];
+			int ws = GetWsEngine(wsFact, wordItem.lang).Handle;
+			if (string.IsNullOrEmpty(wordItem.Value))
+				return true; // if it has no text, it can't be a known wordform...
+			var wf =
+				fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(ws, wordItem.Value);
+			return wf == null;
 		}
 
 		private static bool MergeTextWithBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
@@ -400,10 +436,25 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private static bool SomeLanguageSpecifiesVernacular(Interlineartext interlinText)
+		{
+			foreach (var lang in interlinText.languages.language)
+			{
+				if (lang.vernacularSpecified)
+					return true;
+			}
+			return false;
+		}
+
 		private static bool CheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			if (interlinText.languages != null)
 			{
+				if (!SomeLanguageSpecifiesVernacular(interlinText))
+				{
+					// Saymore file? something else that doesn't know to do this? We will confuse the user if we try to treat all as analysis.
+					SetVernacularLanguagesByUsage(interlinText);
+				}
 				foreach (var lang in interlinText.languages.language)
 				{
 					bool fIsVernacular;
@@ -465,6 +516,44 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+		private static void SetVernacularLanguagesByUsage(Interlineartext interlinText)
+		{
+			foreach (var para in interlinText.paragraphs)
+			{
+				foreach (var phrase in para.phrases)
+				{
+					foreach (var item in phrase.Items)
+					{
+						if (item.type == "txt")
+							EnsureVernacularLanguage(interlinText, item.lang);
+					}
+					foreach (var word in phrase.WordsContent.Words)
+					{
+						foreach (var item in word.Items)
+						{
+							if (item.type == "txt")
+								EnsureVernacularLanguage(interlinText, item.lang);
+						}
+						// We could dig into the morphemes, but any client generating morphemes probably
+						// does things right, and anyway we don't import that yet.
+					}
+				}
+			}
+		}
+
+		private static void EnsureVernacularLanguage(Interlineartext interlinText,string langName)
+		{
+			foreach (var lang in interlinText.languages.language)
+			{
+				if (lang.lang == langName)
+				{
+					lang.vernacularSpecified = true;
+					lang.vernacular = true;
+					return;
+				}
+			}
+		}
+
 		private static ILgWritingSystem SafelyGetWritingSystem(FdoCache cache, ILgWritingSystemFactory wsFactory,
 			Language lang, out bool fIsVernacular)
 		{
@@ -501,7 +590,7 @@ namespace SIL.FieldWorks.IText
 					{
 						case "txt":
 							wordForm = strFactory.MakeString(wordItem.Value,
-								GetWsEngine(wsFact, wordItem.lang).Handle);
+							GetWsEngine(wsFact, wordItem.lang).Handle);
 							analysis = WfiWordformServices.FindOrCreateWordform(newSegment.Cache, wordForm);
 							break;
 						case "punct":

@@ -845,6 +845,14 @@
 	<value>Go to Next Unfinished Paragraph</value>
 	<comment>The tooltip for the back translation Next unfinished paragraph menu/toolbar item</comment>
   </data>
+	<data name="kstidNextMissingBtFootnoteMkrItemName" xml:space="preserve">
+	<value>Go To Next Missing Footnote</value>
+	<comment>Text for the back translation Next Missing Footnote toolbar/menu item</comment>
+  </data>
+	<data name="kstidNextMissingBtFootnoteMkrToolTip" xml:space="preserve">
+	<value>Go to Next Missing Footnote</value>
+	<comment>The tooltip for the back translation Next Missing Footnote menu/toolbar item</comment>
+  </data>
   <data name="kstidAppHelpItemName" xml:space="preserve">
 	<value>Translation Editor...</value>
 	<comment>The text for the Translation Editor help menu/toolbar item</comment>

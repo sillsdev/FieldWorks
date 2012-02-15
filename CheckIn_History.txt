@@ -5705,3 +5705,36 @@ GordonM, 25 Jan 2012. Small changes in FDO and FixFwDataDllTests.
 GordonM, 25 Jan 2012. Changes to FixFwDataDll and tests project files, so tests work through VS.
 JohnT, 25 Jan 2012. Enhanced handling of incoming links to support figuring out a suitable default tool for most object types.
 	Later: Reverted 37331. This needs more investigation (the original purpose was not clear) but it was breaking tests.
+EberhardB, 26 Jan 2012. Integration Calgary/WW -> WW.
+BogleT, 26 Jan 2012.
+	TXL-84, TXL-86: Added more key term rules toprevent unhelpful matches. Did additional clean-up of questions, and added and
+		cleaned up some alternate forms for a few questions.  Enhanced the porter stemmer to prevent some bogus stemmings.
+	TE-9485, TE-9513: Fixed a few English glosses for key terms.
+	TXL-95: Fixed crash (Null reference exception) when a user tries to open dialog to generate checking script template for the first time
+BogleT, 27 Jan 2012. TE-9522: Fixed sporadic test failures in ExportParatextDlgTests.
+GordonM, 30 Jan 2012. LT-12533 Ensure that Send/Receive does not leave disallowed empty sequences.
+	later: forgot two files!
+JohnT, 30 Jan 2012. LT-12619, Crash in SF text import wizard
+JohnT, 31 Jan 2012. LT-12632, Crash on Click Copy to reversals
+	Later: LT-12629, New analysis lost after click another word and back to original word.
+TomB, 1 Feb 2012. TXL-27, TXL-78: Enabled the addition/insertion of new questions.
+	TXL-89: Came up with a *real* fix for the problem of losing the sort order when reloading.
+KenZ, 1 Feb 2012. Integrated FW7.2.2 changes to WW.
+GordonM, 1 Feb 2012. Fixed LT-12622 so picture properties dialog again has buttons.
+EricP, 2 Feb 2012. LT-12532 - Retain the Form of a WfiMorphBundle even when fully analyzed.
+GordonM, 2 Feb 2012. Fixed other half of LT-11922 and refactored code that finds the LiftBridge dll.
+JohnT, 2 Feb 2012. Second stage of LT-12561; made incoming links with tool 'default' work for all kinds of PossibilityList (that display in Flex).
+AlistairI, 2 Feb 2012. Tweaked build to allow Installer build to redirect output.
+KenZ, 3 Feb 2012. Finished Eric's LT-12532 migration by updating sample project files.
+JohnT, 3 Feb 2012. Last part of LT-12561; made TE able to handle incoming links (to guids owned by ScrBook or below).
+NaylorJ, 3 Feb 2012. Fix related to LT-12670, make sure that the fwdata file does not get mistakenly deleted in case of crashes writing out the project.
+GordonM, 3 Feb 2012. A couple small fixes to prevent crashes in AnalysisAdjuster with a corrupt file.
+TomB, 7 Feb 2012. TXL-100: Added copy and paste commands to allow copying of entire cells in the data grid.
+	TXL-105: When editing a question or otherwise reloading the data grid, made TXL select the same question after reloading.
+	TXL-106: Improved keyboard switching.
+	TXL-107: Added initial support for excluding user-added questions
+	Also, refactored to reduce redundant data storage and improve logic for key-matching.
+NaylorJ, 10 Feb 2012. Added the first 2 of 3 integration points to FieldworksBridge described in LT-12525
+TomB, 14 Feb 2012. TE-9529: Added a command to help user find places where a footnote marker is missing in the BT
+RickM, 14 Feb 2012. LT-12720 Clicking on "Import --> Lift Lexicon leads to crash.
+NaylorJ, 14 Feb 2012. Added the option for obtaining a project to the open project menu for LT-12693

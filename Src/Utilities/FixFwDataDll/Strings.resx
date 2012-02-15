@@ -168,5 +168,9 @@
   </data>
   <data name="ksRemovingDuplicateAlternative" xml:space="preserve">
 	<value>Removed alternative {0} from {1} of {2} because it has the same writing system as {3}</value>
+	<comment>{0} and {3} will both be chunks of XML, something like &lt;AUni ws="en"&gt;text&lt;/AUni&gt;. {1} will be a (property) name, and {2} a guid. For example, "Removed alternative &lt;AUni ws="en"&gt;bird&lt;/AUni&gt; from gloss of 6EF4EAD8-C4CB-4092-A519-23C713E10153 because it has the same writing system as &lt;AUni ws="en"&gt;feathered thing&lt;/Auni&gt;"</comment>
+  </data>
+  <data name="ksRemovingOwnerOfEmptySequence" xml:space="preserve">
+	<value>Removing owner of empty sequence (guid='{0}' class='{1}') from its owner (guid='{2}').</value>
   </data>
 </root>

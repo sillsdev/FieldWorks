@@ -58,6 +58,7 @@
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
+			this.numberOfTextsLabel = new System.Windows.Forms.Label();
 			this.tabSteps.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -235,6 +236,7 @@
 			//
 			// tabPage4
 			//
+			this.tabPage4.Controls.Add(this.numberOfTextsLabel);
 			this.tabPage4.Controls.Add(this.secretShiftText);
 			this.tabPage4.Controls.Add(this.label8);
 			this.tabPage4.Controls.Add(this.m_browseSaveSettingsFileButon);
@@ -284,6 +286,11 @@
 			//
 			resources.ApplyResources(this.label9, "label9");
 			this.label9.Name = "label9";
+			//
+			// numberOfTextsLabel
+			//
+			resources.ApplyResources(this.numberOfTextsLabel, "numberOfTextsLabel");
+			this.numberOfTextsLabel.Name = "numberOfTextsLabel";
 			//
 			// InterlinearSfmImportWizard
 			//
@@ -340,5 +347,6 @@
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label secretShiftText;
 		private System.Windows.Forms.LinkLabel m_useDefaultSettingsLink;
+		private System.Windows.Forms.Label numberOfTextsLabel;
 	}
 }

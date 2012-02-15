@@ -115,6 +115,51 @@ namespace SIL.Utils {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Additional information about your computer and project will be sent:.
+		/// </summary>
+		internal static string kstidAdditionalInfoSent {
+			get {
+				return ResourceManager.GetString("kstidAdditionalInfoSent", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Please email this report to the development team: {0}.
+		/// </summary>
+		internal static string kstidEmailReport {
+			get {
+				return ResourceManager.GetString("kstidEmailReport", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Please describe the steps necessary to make this problem appear:.
+		/// </summary>
+		internal static string kstidERProblemAndSteps {
+			get {
+				return ResourceManager.GetString("kstidERProblemAndSteps", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to An internal error has occurred. To help us fix the problem, please submit this error information to us..
+		/// </summary>
+		internal static string kstidERReportProblemNotification {
+			get {
+				return ResourceManager.GetString("kstidERReportProblemNotification", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to An error has occurred.
+		/// </summary>
+		internal static string kstidERTexts {
+			get {
+				return ResourceManager.GetString("kstidERTexts", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Error.
 		/// </summary>
 		internal static string kstidFieldWorksErrorCaption {
@@ -180,6 +225,24 @@ namespace SIL.Utils {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to &amp;Open an email containing this message using the default email client.
+		/// </summary>
+		internal static string kstidradEmail {
+			get {
+				return ResourceManager.GetString("kstidradEmail", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to &amp;Copy this information to the clipboard and I will paste it into an email message myself..
+		/// </summary>
+		internal static string kstidradSelf {
+			get {
+				return ResourceManager.GetString("kstidradSelf", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Report a Problem.
 		/// </summary>
 		internal static string kstidReportProblemCaption {
@@ -227,6 +290,15 @@ namespace SIL.Utils {
 		internal static string kstidSendFailedCaption {
 			get {
 				return ResourceManager.GetString("kstidSendFailedCaption", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to View Details.
+		/// </summary>
+		internal static string kstidViewDetailsLink {
+			get {
+				return ResourceManager.GetString("kstidViewDetailsLink", resourceCulture);
 			}
 		}
 	}

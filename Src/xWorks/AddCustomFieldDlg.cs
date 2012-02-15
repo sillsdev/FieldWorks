@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -194,6 +195,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Key is a list we found, value is an index in result.
 			var resultsByList = new Dictionary<ICmObject, int>();
+			var isBTEVersion = Directory.Exists(DirectoryFinder.TeFolder);
 			foreach (
 				XmlNode elt in
 					windowConfiguration.SelectNodes("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
@@ -221,7 +223,9 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					resultsByList[list] = result.Count;
-					result.Add(new IdAndString<Guid>(list.Guid, elt.Attributes["label"].Value));
+					var label = elt.Attributes["label"].Value;
+					if (isBTEVersion || label != "Scripture Note Categories")
+						result.Add(new IdAndString<Guid>(list.Guid, label));
 				}
 			}
 			result.Sort((x, y) => x.Name.CompareTo(y.Name));

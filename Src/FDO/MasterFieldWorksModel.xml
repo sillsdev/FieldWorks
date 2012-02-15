@@ -27,6 +27,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  30 January 2012 (7000052): No actual model change but a data migration to copy all linked Morph Forms to their WfiMorphBundle Forms. See LT-12532: Retain the Form of a WfiMorphBundle even when fully analyzed.
   14 January 2012 (7000051): No actual model change. Change Guid id on LangProject to ensure it really is unique between different projects.
   1 December 2011 (7000050): Add Speaker to Segment. (Only the do-nothing DM needed in C#.)
   17 November 2011 (7000049): Added CmMediaContainer, CmMediaURI classes, changed Segment to reference a CmMediaURI and include a begin and end time offset
@@ -142,7 +143,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000051" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000052" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

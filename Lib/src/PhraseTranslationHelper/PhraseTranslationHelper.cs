@@ -41,7 +41,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// For improved performance, outer lookup is by wordcount.</summary>
 		private readonly SortedDictionary<int, Dictionary<Word, List<Part>>> m_partsTable;
 		private List<TranslatablePhrase> m_filteredPhrases;
-		private readonly Dictionary<int, TranslatablePhrase> m_categories = new Dictionary<int, TranslatablePhrase>(2);
+		private readonly Dictionary<float, TranslatablePhrase> m_categories = new Dictionary<float, TranslatablePhrase>(2);
 		private readonly Dictionary<TypeOfPhrase, string> m_initialPunct = new Dictionary<TypeOfPhrase, string>();
 		private readonly Dictionary<TypeOfPhrase, string> m_finalPunct = new Dictionary<TypeOfPhrase, string>();
 		private bool m_justGettingStarted = true;
@@ -110,7 +110,7 @@ namespace SILUBS.PhraseTranslationHelper
 				m_phraseSubstitutions[substitutePhrase.RegEx] = substitutePhrase.RegExReplacementString;
 
 			m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
-			foreach (TranslatablePhrase phrase in phrases.Where(p => !string.IsNullOrEmpty(p.PhraseInUse)))
+			foreach (TranslatablePhrase phrase in phrases.Where(p => !string.IsNullOrEmpty(p.PhraseToDisplayInUI)))
 			{
 				if (!phrase.IsExcluded)
 				{
@@ -377,38 +377,29 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Public methods and properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (first) phrase in the collection that matches the given text.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase GetPhrase(string englishPhrase)
-		{
-			return GetPhrase(null, englishPhrase);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the (first) phrase in the collection that matches the given text.
+		/// Gets the (first) phrase in the collection that matches the given text for the given
+		/// reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase GetPhrase(string reference, string englishPhrase)
 		{
 			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
-			return m_phrases.FirstOrDefault(x => (reference == null || x.Reference == reference) && x.PhraseInUse == englishPhrase);
+			return m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
+				x.PhraseKey.Text == englishPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the index of the (first) phrase in the (filtered) collection that matches the
-		/// given reference and text.
+		/// given key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int FindPhrase(string reference, string englishPhrase)
+		public int FindPhrase(QuestionKey phraseKey)
 		{
-			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
 			for (int i = 0; i < FilteredSortedPhrases.Count; i++)
 			{
 				TranslatablePhrase phrase = FilteredSortedPhrases[i];
-				if (phrase.Reference == reference && phrase.PhraseInUse == englishPhrase)
+				if (phrase.PhraseKey.Matches(phraseKey))
 					return i;
 			}
 			return -1;
@@ -511,7 +502,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			string catName = m_categories[categoryId].Translation;
 			if (string.IsNullOrEmpty(catName))
-				catName = m_categories[categoryId].PhraseInUse;
+				catName = m_categories[categoryId].PhraseToDisplayInUI;
 			return catName;
 		}
 
