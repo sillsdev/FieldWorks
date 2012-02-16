@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var key = FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine;
 			if(key != null)
 				return GetDirectory(key, "InstallationDir", "");
-			return "";
+			return FWCodeDirectory; //Allow for the Executable to be in
 		}
 
 		/// ------------------------------------------------------------------------------------

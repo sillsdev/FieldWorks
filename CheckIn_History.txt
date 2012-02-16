@@ -5744,3 +5744,4 @@ TomB, 16 Feb 2012. TXL-109: After user enters a translation, if they immediately
 NaylorJ, 16 Feb 2012. Make missing FLExBridge registry key non-catastrophic.
 TomB, 16 Feb 2012. TXL-108: Fixed crash when trying to confirm a translation consisting only of initial and final punctuation.
 	(Also, went ahead and prevented confirmation of such a translation.)
+NaylorJ, 16 Feb 2012. Modified the key location for FLExBridge added a backup location of the CodeDir, now it sort of works. LT-12525
