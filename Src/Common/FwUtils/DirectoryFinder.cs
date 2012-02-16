@@ -364,7 +364,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string GetFLExBridgeFolderPath()
 		{
-			return GetDirectory(FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine, "InstallationDir", "");
+			var key = FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine;
+			if(key != null)
+				return GetDirectory(key, "InstallationDir", "");
+			return "";
 		}
 
 		/// ------------------------------------------------------------------------------------
