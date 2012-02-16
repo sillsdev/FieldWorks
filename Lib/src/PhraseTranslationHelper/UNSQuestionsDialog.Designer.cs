@@ -178,6 +178,7 @@ namespace SILUBS.PhraseTranslationHelper
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
 			resources.ApplyResources(this.dataGridUns, "dataGridUns");
+			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -200,6 +201,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridUns.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValueNeeded);
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellEndEdit);
+			this.dataGridUns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellClick);
 			this.dataGridUns.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValuePushed);
 			this.dataGridUns.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridUns_RowContextMenuStripNeeded);
 			this.dataGridUns.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridUns_EditingControlShowing);

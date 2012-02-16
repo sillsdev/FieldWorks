@@ -62,6 +62,9 @@ namespace SILUBS.PhraseTranslationHelper
 		private TranslatablePhrase m_currentPhrase = null;
 		private int m_iCurrentColumn = -1;
 		private int m_normalRowHeight = -1;
+		private int m_lastTranslationSet = -1;
+		private bool m_saving = false;
+		private bool m_postponeRefresh;
 		#endregion
 
 		#region Delegates
@@ -70,6 +73,25 @@ namespace SILUBS.PhraseTranslationHelper
 
 		#region Properties
 		private DataGridViewTextBoxEditingControl TextControl { get; set;}
+		private bool RefreshNeeded { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether to postpone refreshing the data grid.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool PostponeRefresh
+		{
+			get { return m_postponeRefresh; }
+			set
+			{
+				if (value && !m_postponeRefresh)
+					RefreshNeeded = false;
+				m_postponeRefresh = value;
+				if (!value && RefreshNeeded)
+					dataGridUns.Refresh();
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -365,7 +387,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void m_helper_TranslationsChanged()
 		{
-			dataGridUns.Refresh();
+			if (PostponeRefresh)
+				RefreshNeeded = true;
+			else
+				dataGridUns.Refresh();
 		}
 
 		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
@@ -381,6 +406,8 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (e.ColumnIndex == m_colTranslation.Index && m_selectKeyboard != null)
 				m_selectKeyboard(true);
+			if (e.ColumnIndex != m_colUserTranslated.Index || e.RowIndex != m_lastTranslationSet)
+				m_lastTranslationSet = -1;
 		}
 
 		private void dataGridUns_CellLeave(object sender, DataGridViewCellEventArgs e)
@@ -417,24 +444,41 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void dataGridUns_CellValuePushed(object sender, DataGridViewCellValueEventArgs e)
 		{
-			switch (e.ColumnIndex)
+			if (m_saving)
+				return;
+
+			PostponeRefresh = true;
+
+			if (e.ColumnIndex == m_colTranslation.Index)
 			{
-				case 2: m_helper[e.RowIndex].Translation = (string)e.Value; SaveNeeded = true;  break;
-				case 3:
-					m_helper[e.RowIndex].HasUserTranslation = (bool)e.Value; SaveNeeded = true;
-					dataGridUns.InvalidateRow(e.RowIndex);
-					break;
+				m_helper[e.RowIndex].Translation = (string)e.Value;
+				m_lastTranslationSet = e.RowIndex;
+				SaveNeeded = true;
 			}
+			else if (e.ColumnIndex == m_colUserTranslated.Index)
+			{
+				m_helper[e.RowIndex].HasUserTranslation = (bool)e.Value;
+				SaveNeeded = true;
+				dataGridUns.InvalidateRow(e.RowIndex);
+			}
+
+			PostponeRefresh = false;
 			UpdateCountsAndFilterStatus();
+		}
+
+		private void dataGridUns_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.ColumnIndex == m_colTranslation.Index)
+				dataGridUns.BeginEdit(true);
 		}
 
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == m_colUserTranslated.Index)
+			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet)
 			{
-				// Force commital of the check-box change.
-				dataGridUns.CommitEdit(DataGridViewDataErrorContexts.Commit);
-				dataGridUns.EndEdit();
+				m_helper[e.RowIndex].HasUserTranslation = !m_helper[e.RowIndex].HasUserTranslation;
+				SaveNeeded = true;
+				dataGridUns.InvalidateRow(e.RowIndex);
 			}
 		}
 
@@ -639,8 +683,9 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void Save(bool fForce)
 		{
-			if (!fForce && !SaveNeeded)
+			if (m_saving || (!fForce && !SaveNeeded))
 				return;
+			m_saving = true;
 			SaveNeeded = false;
 			m_lastSaveTime = DateTime.Now;
 			if (dataGridUns.IsCurrentCellInEditMode)
@@ -671,6 +716,8 @@ namespace SILUBS.PhraseTranslationHelper
 
 			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
 				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
+
+			m_saving = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1261,6 +1308,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
 		{
+			Debug.WriteLine("dataGridUns_EditingControlShowing: m_lastTranslationSet = " + m_lastTranslationSet);
 			TextControl = e.Control as DataGridViewTextBoxEditingControl;
 			if (TextControl == null)
 				return;
@@ -1274,6 +1322,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
+			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
 			if (TextControl != null)
 				TextControl.KeyDown -= txtControl_KeyDown;
 		}

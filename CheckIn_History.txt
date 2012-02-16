@@ -5740,3 +5740,4 @@ RickM, 14 Feb 2012. LT-12720 Clicking on "Import --> Lift Lexicon leads to crash
 NaylorJ, 14 Feb 2012. Added the option for obtaining a project to the open project menu for LT-12693
 EberhardB, 15 Feb 2012. Integration Calgary/WW -> WW.
 NaylorJ, 15 Feb 2012. Initial FLEx to FLExBridge communication, part of LT-12525
+TomB, 16 Feb 2012. TXL-109: After user enters a translation, if they immediately click Confirm, the checkbox is selected, not cleared.
