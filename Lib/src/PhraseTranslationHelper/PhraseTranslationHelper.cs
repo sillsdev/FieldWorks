@@ -696,46 +696,63 @@ namespace SILUBS.PhraseTranslationHelper
 					userTranslations.Add(toAdd);
 			}
 
-			string commonTranslation = GetSCommonSubstring(userTranslations);
-			if (commonTranslation != null && commonTranslation.Length > 5) // 5 is a "magic number" - We don't want to accept really small words without considering a possibly better match statistically
+			string commonTranslation = GetBestCommonPartTranslation(userTranslations);
+			if (commonTranslation != null)
 				part.Translation = commonTranslation;
-			else
-			{
-				Dictionary<string, double> commonSubstrings = new Dictionary<string, double>(userTranslations.Count * 2);
-				KeyValuePair<string, double> statisticallyBestSubstring = new KeyValuePair<string, double>(null, -1);
-				bool fCommonSubstringIsWholeWord = false;
-				bool fBestIsWholeWord = false;
-				for (int i = 0; i < userTranslations.Count - 1; i++)
-				{
-					for (int j = i + 1; j < userTranslations.Count; j++)
-					{
-						string sCommonSubstring = StringUtils.LongestUsefulCommonSubstring(userTranslations[i], userTranslations[j],
-							fCommonSubstringIsWholeWord, out fCommonSubstringIsWholeWord).Trim();
-						if (sCommonSubstring.Length > 1 || (sCommonSubstring.Length == 1 && Char.IsLetter(sCommonSubstring[0])))
-						{
-							double val;
-							commonSubstrings.TryGetValue(sCommonSubstring, out val);
-							val += Math.Sqrt(sCommonSubstring.Length);
-							commonSubstrings[sCommonSubstring] = val;
-							// A whole-word match always trumps a partial-word match.
-							if (val > statisticallyBestSubstring.Value || (!fBestIsWholeWord && fCommonSubstringIsWholeWord))
-							{
-								statisticallyBestSubstring = new KeyValuePair<string, double>(sCommonSubstring, val);
-								fBestIsWholeWord = fCommonSubstringIsWholeWord;
-							}
-						}
-					}
-				}
-				int totalComparisons = ((userTranslations.Count * userTranslations.Count) + userTranslations.Count) / 2;
-				part.Translation = (string.IsNullOrEmpty(commonTranslation) || statisticallyBestSubstring.Value > totalComparisons) ?
-					statisticallyBestSubstring.Key : commonTranslation;
-			}
 			if (originalTranslation.Length > 0 && (part.Translation.Length == 0 || originalTranslation.Contains(part.Translation)))
 			{
 				// The translation of the part has shrunk
 				return part.OwningPhrases.Where(phr => phr.HasUserTranslation).SelectMany(otherPhrases => otherPhrases.TranslatableParts).Distinct();
 			}
 			return new Part[0];
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a common or frequently appearing substring of the given user translations that
+		/// is deemed to be the most likely translation for a part that occurs in all the
+		/// phrases these translations represent.
+		/// </summary>
+		/// <param name="userTranslations">The user translations of all the translated phrases
+		/// which contain the part in question.</param>
+		/// ------------------------------------------------------------------------------------
+		private static string GetBestCommonPartTranslation(IList<string> userTranslations)
+		{
+			if (userTranslations.Count == 0)
+				return null;
+
+			string commonTranslation = GetSCommonSubstring(userTranslations);
+			if (commonTranslation != null && commonTranslation.Length > 5) // 5 is a "magic number" - We don't want to accept really small words without considering a possibly better match statistically
+				return commonTranslation;
+
+			Dictionary<string, double> commonSubstrings = new Dictionary<string, double>(userTranslations.Count * 2);
+			KeyValuePair<string, double> statisticallyBestSubstring = new KeyValuePair<string, double>(null, -1);
+			bool fCommonSubstringIsWholeWord = false;
+			bool fBestIsWholeWord = false;
+			for (int i = 0; i < userTranslations.Count - 1; i++)
+			{
+				for (int j = i + 1; j < userTranslations.Count; j++)
+				{
+					string sCommonSubstring = StringUtils.LongestUsefulCommonSubstring(userTranslations[i], userTranslations[j],
+						fCommonSubstringIsWholeWord, out fCommonSubstringIsWholeWord).Trim();
+					if (sCommonSubstring.Length > 1 || (sCommonSubstring.Length == 1 && Char.IsLetter(sCommonSubstring[0])))
+					{
+						double val;
+						commonSubstrings.TryGetValue(sCommonSubstring, out val);
+						val += Math.Sqrt(sCommonSubstring.Length);
+						commonSubstrings[sCommonSubstring] = val;
+						// A whole-word match always trumps a partial-word match.
+						if (val > statisticallyBestSubstring.Value || (!fBestIsWholeWord && fCommonSubstringIsWholeWord))
+						{
+							statisticallyBestSubstring = new KeyValuePair<string, double>(sCommonSubstring, val);
+							fBestIsWholeWord = fCommonSubstringIsWholeWord;
+						}
+					}
+				}
+			}
+			int totalComparisons = ((userTranslations.Count * userTranslations.Count) + userTranslations.Count) / 2;
+			return (string.IsNullOrEmpty(commonTranslation) || statisticallyBestSubstring.Value > totalComparisons) ?
+				statisticallyBestSubstring.Key : commonTranslation;
 		}
 
 		/// ------------------------------------------------------------------------------------

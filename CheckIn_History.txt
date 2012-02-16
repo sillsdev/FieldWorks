@@ -5742,3 +5742,5 @@ EberhardB, 15 Feb 2012. Integration Calgary/WW -> WW.
 NaylorJ, 15 Feb 2012. Initial FLEx to FLExBridge communication, part of LT-12525
 TomB, 16 Feb 2012. TXL-109: After user enters a translation, if they immediately click Confirm, the checkbox is selected, not cleared.
 NaylorJ, 16 Feb 2012. Make missing FLExBridge registry key non-catastrophic.
+TomB, 16 Feb 2012. TXL-108: Fixed crash when trying to confirm a translation consisting only of initial and final punctuation.
+	(Also, went ahead and prevented confirmation of such a translation.)

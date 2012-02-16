@@ -1294,6 +1294,31 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests setting the translation for a phrase when that whole phrase matches part of
+		/// another phrase. TXL-108
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetNewTranslation_AcceptTranslationConsistingOnlyOfInitialAndFinalPunctuation()
+		{
+			AddMockedKeyTerm("Paul", (string)null);
+			AddMockedKeyTerm("Judas", (string)null);
+			TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was Paul talking to?", "A", 1, 1), 1, 0);
+			TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Who was Judas kissing?", "A", 1, 1), 1, 0);
+			TranslatablePhrase phrase3 = new TranslatablePhrase(new TestQ("Why was Judas talking to Paul?", "B", 2, 2), 1, 0);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			phrase1.Translation = "\u00BFCon quie\u0301n estaba hablando Pablo?";
+			phrase2.HasUserTranslation = true;
+
+			Assert.AreEqual("\u00BF?", phrase2.Translation);
+			Assert.IsTrue(phrase2.HasUserTranslation);
+			Assert.AreEqual(phrase2.Translation, phrase3.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for a phrase when that whole phrase matches part of
 		/// another phrase, even if it has an untranslated key term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

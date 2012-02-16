@@ -476,9 +476,12 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet)
 			{
-				m_helper[e.RowIndex].HasUserTranslation = !m_helper[e.RowIndex].HasUserTranslation;
-				SaveNeeded = true;
-				dataGridUns.InvalidateRow(e.RowIndex);
+				if (m_helper[e.RowIndex].Translation.Any(Char.IsLetter))
+				{
+					m_helper[e.RowIndex].HasUserTranslation = !m_helper[e.RowIndex].HasUserTranslation;
+					SaveNeeded = true;
+					dataGridUns.InvalidateRow(e.RowIndex);
+				}
 			}
 		}
 
