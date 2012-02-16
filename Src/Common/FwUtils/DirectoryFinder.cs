@@ -115,6 +115,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetFWCodeSubDirectory(ksFlexFolderName); }
 		}
 
+		/// <summary>
+		/// Return the folder in which FlexBridge resides, or empty string if it is not installed.
+		/// </summary>
+		public static string FlexBridgeFolder
+		{
+			get { return GetFLExBridgeFolderPath(); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the path for storing user-specific application data.
@@ -352,6 +360,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetFWCodeSubDirectory(string subDirectory)
 		{
 			return GetSubDirectory(FWCodeDirectory, subDirectory);
+		}
+
+		private static string GetFLExBridgeFolderPath()
+		{
+			return GetDirectory(FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine, "InstallationDir", "");
 		}
 
 		/// ------------------------------------------------------------------------------------

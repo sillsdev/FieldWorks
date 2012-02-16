@@ -5739,3 +5739,4 @@ TomB, 14 Feb 2012. TE-9529: Added a command to help user find places where a foo
 RickM, 14 Feb 2012. LT-12720 Clicking on "Import --> Lift Lexicon leads to crash.
 NaylorJ, 14 Feb 2012. Added the option for obtaining a project to the open project menu for LT-12693
 EberhardB, 15 Feb 2012. Integration Calgary/WW -> WW.
+NaylorJ, 15 Feb 2012. Initial FLEx to FLExBridge communication, part of LT-12525

@@ -43,6 +43,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the read-only local machine Registry key for FieldWorks.
+		/// NOTE: This key is not opened for write access because it will fail on
+		/// non-administrator logins.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
+		{
+			get
+			{
+				return RegistryHelper.SettingsKeyLocalMachine("HKLM\\Software\\SIL\\FLEX 7 Bridge");
+			}
+		}
+
 		private static string FieldWorksRegistryKeyName
 		{
 			get { return string.Format("{0}.0", FwUtils.SuiteVersion); }
