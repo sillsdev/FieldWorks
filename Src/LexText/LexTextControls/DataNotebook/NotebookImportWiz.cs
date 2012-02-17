@@ -715,6 +715,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_btnCancel.Visible = true;
 			m_sFmtEncCnvLabel = lblMappingLanguagesInstructions.Text;
 
+			// Need to align SaveMapFile and QuickFinish to top of other dialog buttons (FWNX-833)
+			int normalDialogButtonTop = m_btnHelp.Top;
+			m_btnQuickFinish.Top = normalDialogButtonTop;
+			m_btnSaveMapFile.Top = normalDialogButtonTop;
+
 			// Disable all buttons that are enabled only by a selection being made in a list
 			// view.
 			m_btnModifyCharMapping.Enabled = false;
@@ -1045,12 +1050,16 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			base.OnResize(e);
 			// The wizard base class redraws the controls, so move the cancel button after it's
 			// done ...
+			m_OriginalCancelButtonLeft = m_btnHelp.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 			if (m_btnQuickFinish != null && m_btnBack != null && m_btnCancel != null &&
 				m_OriginalCancelButtonLeft != 0)
 			{
 				m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 				if (m_btnQuickFinish.Visible)
+				{
+					m_btnQuickFinish.Left = m_OriginalCancelButtonLeft;
 					m_btnCancel.Left = m_ExtraButtonLeft;
+				}
 				else
 					m_btnCancel.Left = m_OriginalCancelButtonLeft;
 			}
@@ -1594,6 +1603,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			base.OnBackButton();
 			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
+			OnResize(null);
 		}
 
 		protected override void OnNextButton()
@@ -1604,6 +1614,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			base.OnNextButton();
 			NextButtonEnabled = EnableNextButton();
 			AllowQuickFinishButton();		// make it visible if needed, or hidden if not
+			OnResize(null);
 		}
 
 		private void PrepareForNextTab(int nCurrent)
