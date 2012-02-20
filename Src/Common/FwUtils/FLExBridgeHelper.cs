@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -244,14 +245,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Monitor.Enter(waitObject);
 			try
 			{
-				var test = ((IFLExServiceChannel)iar.AsyncState).State;
-				((IFLExServiceChannel)iar.AsyncState).EndBridgeWorkOngoing(iar);
 				Monitor.Pulse(waitObject);
+				((IFLExServiceChannel)iar.AsyncState).EndBridgeWorkOngoing(iar);
 			}
 			catch(CommunicationException)
 			{
 				//Something went wrong with the communication to the Bridge. Possibly it died unexpectedly, wake up FLEx
 				Monitor.Pulse(waitObject);
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e); //Write the log entry, but likely not important
 			}
 			finally
 			{
