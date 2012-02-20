@@ -5747,3 +5747,4 @@ TomB, 16 Feb 2012. TXL-108: Fixed crash when trying to confirm a translation con
 NaylorJ, 16 Feb 2012. Modified the key location for FLExBridge added a backup location of the CodeDir, now it sort of works. LT-12525
 NaylorJ, 20 Feb 2012. Updated the service communication code. Should freeze and re-awaken flex on the bridge launch in all cases. LT-12525
 NaylorJ, 20 Feb 2012. Improve behavior on bridge green screen errors. LT-12525
+GordonM, 20 Feb 2012. LT-12650 improve IText handling of merge problems.

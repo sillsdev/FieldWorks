@@ -36,6 +36,9 @@ namespace FixFwDataDllTests
 
 			File.Copy(basePath + "SequenceFixer/Test.fwdata", basePath + "SequenceFixer/BasicFixup.fwdata", true);
 			File.SetAttributes(basePath + "SequenceFixer/BasicFixup.fwdata", FileAttributes.Normal);
+
+			File.Copy(basePath + "TagAndCellRefs/Test.fwdata", basePath + "TagAndCellRefs/BasicFixup.fwdata", true);
+			File.SetAttributes(basePath + "TagAndCellRefs/BasicFixup.fwdata", FileAttributes.Normal);
 		}
 
 		[TestFixtureTearDown]
@@ -53,6 +56,9 @@ namespace FixFwDataDllTests
 
 			File.Delete(basePath + "SequenceFixer/BasicFixup.fwdata");
 			File.Delete(basePath + "SequenceFixer/BasicFixup.bak");
+
+			File.Delete(basePath + "TagAndCellRefs/BasicFixup.fwdata");
+			File.Delete(basePath + "TagAndCellRefs/BasicFixup.bak");
 		}
 
 		[SetUp]
@@ -182,6 +188,65 @@ namespace FixFwDataDllTests
 			Assert.AreEqual("Removing owner of empty sequence (guid='" + sequenceContextGuid +
 				"' class='PhSequenceContext') from its owner (guid='" + segmentRuleRhsGuid + "').", errors[2],
 				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+		}
+
+		[Test]
+		public void TestDanglingTextTagAndChartReferences()
+		{
+			// This test checks that dangling reference guids are identified and removed
+			// and that an error message is produced for them.
+			// It also checks that TextTags and ChartCells with missing references have been cleaned up.
+			const string segmentGuid = "0157b3fd-b464-4983-a865-3eb9dbc7fa72"; // this Segment was deleted by the merge.
+			// This ConstChartWordGroup references the Segment that went away.
+			// Both BeginSegment and EndSegment are null (after Dangling Reference repair).
+			// Delete the word group.
+			const string chartCellGuid = "f864b36d-ecf0-4c22-9fac-ff91b009a8f8";
+			// This TextTag references the Segment that went away.
+			// Its BeginSegment is still okay, but its EndSegment is bad. Dangling Reference repair will
+			// delete the reference. Repair the tag.
+			// At this point, the UI can't make a tag that references more than one Segment, but it may someday.
+			const string textTagGuid = "fa0c3376-1dbc-42c0-b4ff-cd6bf0372b13";
+			const string chartRowGuid = "d2e52268-71bc-427e-a666-dbe66751b132";
+			const string chartGuid = "8fa53cdf-9950-4a23-ba1c-844723c2342d";
+			var data = new FwDataFixer(basePath + "TagAndCellRefs/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			// Check initial state of the test file
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"TextTag\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartWordGroup\"]", 3, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + segmentGuid + "\"]", 3, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 1, false);
+			// Check the repaired state of the test file
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"TextTag\"]", 1, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartWordGroup\"]", 2, false);
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + segmentGuid + "\"]", 0, false);
+			// check that the row has been deleted
+			AssertThatXmlIn.File(basePath + "TagAndCellRefs/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
+			Assert.AreEqual(6, errors.Count, "Unexpected number of errors found.");
+			Assert.AreEqual("Removing owner of empty sequence (guid='" + chartRowGuid +
+				"' class='ConstChartRow') from its owner (guid='" + chartGuid + "').", errors[0],
+				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+			Assert.True(errors[1].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			Assert.True(errors[2].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			Assert.True(errors[3].StartsWith("Removing reference to missing Segment by deleting analysis object guid='" +
+				chartCellGuid + "', class='ConstChartWordGroup'"),
+				"Error message is incorrect."); // SequenceFixer--ksRemovingBadAnalysisRefObj
+			Assert.True(errors[4].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='TextTag'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			Assert.True(errors[5].EndsWith("changing analysis object guid='" + textTagGuid +
+				"', class='TextTag', field='EndSegment'."),
+				"Error message is incorrect."); // SequenceFixer--ksAdjustingAnalysisRefObj
 		}
 	}
 }

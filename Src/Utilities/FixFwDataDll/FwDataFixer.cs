@@ -57,7 +57,8 @@ namespace SIL.FieldWorks.FixData
 			m_progress.Position = 0;
 			m_progress.Message = String.Format(Strings.ksReadingTheInputFile, m_filename);
 			m_crt = 0;
-			//The following fixers will be run on each rt element during FixErrorsAndSave()
+			// The following fixers will be run on each rt element during FixErrorsAndSave()
+			// N.B.: Order is important here!!!!!!!
 			m_rtLevelFixers.Add(new OriginalFixer());
 			m_rtLevelFixers.Add(new SequenceFixer());
 			using (XmlReader xrdr = XmlReader.Create(m_filename))
@@ -128,6 +129,8 @@ namespace SIL.FieldWorks.FixData
 						var rtXml = xrdr.ReadOuterXml();
 						var rt = XElement.Parse(rtXml);
 						// set flag to false if we don't want to write out this rt element, i.e. delete it!
+						// N.B.: Any deleting of owned objects requires two passes, so that the reference
+						// to the object being deleted can be cleaned up too!
 						var fwrite = true;
 						foreach (var fixer in m_rtLevelFixers)
 						{

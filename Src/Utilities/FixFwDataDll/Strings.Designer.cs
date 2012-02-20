@@ -70,6 +70,15 @@ namespace SIL.FieldWorks.FixData {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Adjusting reference to missing Segment by changing analysis object guid=&apos;{0}&apos;, class=&apos;{1}&apos;, field=&apos;{2}&apos;..
+		/// </summary>
+		internal static string ksAdjustingAnalysisRefObj {
+			get {
+				return ResourceManager.GetString("ksAdjustingAnalysisRefObj", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to If this utility fails, you will need to go back to a previously saved version of the chosen database..
 		/// </summary>
 		internal static string ksCannotUndo {
@@ -138,6 +147,15 @@ namespace SIL.FieldWorks.FixData {
 		internal static string ksReadingTheInputFile {
 			get {
 				return ResourceManager.GetString("ksReadingTheInputFile", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Removing reference to missing Segment by deleting analysis object guid=&apos;{0}&apos;, class=&apos;{1}&apos;, ownerguid=&apos;{2}&apos;..
+		/// </summary>
+		internal static string ksRemovingBadAnalysisRefObj {
+			get {
+				return ResourceManager.GetString("ksRemovingBadAnalysisRefObj", resourceCulture);
 			}
 		}
 

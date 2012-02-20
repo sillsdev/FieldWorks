@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.FixData
@@ -29,6 +28,17 @@ namespace SIL.FieldWorks.FixData
 	/// automatically, but in a Send/Receive situation FDO might not 'know' that one user deleted
 	/// a sequence element while another user deleted the other with the result on merging that
 	/// now both are gone. Usually the required fix is to delete the parent that holds the sequence.
+	///
+	/// This class also contains code to fix situations where merges have resulted in a Segment being
+	/// deleted and dangling references still exist in TextTag objects and ConstChartWordGroup
+	/// objects. In normal operation, FDO takes care of these situations automatically, but in a
+	/// Send/Receive situation FDO might not 'know' that one user deleted a Segment element while
+	/// another user created references to it, with the result on merging that now references to a
+	/// non-existent Segment exist. The Original Fixer will delete the dangling references to the
+	/// Segment, but the TextTag and WordGroup objects should not have empty Begin or EndSegment
+	/// references. If both Begin and EndSegment belong to missing Segments, we delete the object
+	/// in question. If only one belongs to a missing Segment, we replace its reference with a
+	/// reference to the other Segment.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class SequenceFixer : RtFixer
@@ -38,9 +48,15 @@ namespace SIL.FieldWorks.FixData
 		Dictionary<Guid, List<Guid>> m_rowsToDelete = new Dictionary<Guid, List<Guid>>();
 		Dictionary<Guid, List<Guid>> m_cellRefsToDelete = new Dictionary<Guid, List<Guid>>();
 		Dictionary<Guid, List<Guid>> m_phContextRefsToDelete = new Dictionary<Guid, List<Guid>>();
+		Dictionary<Guid, XElement> m_candidateForRefAdjustment = new Dictionary<Guid, XElement>();
+		List<Guid> m_objsToDelete = new List<Guid>();
+		List<Guid> m_objsToAdjust = new List<Guid>();
+		Dictionary<Guid, List<Guid>> m_ownerThatWillLoseOwnee = new Dictionary<Guid, List<Guid>>();
 		List<Guid> m_emptyClauseMarkers = new List<Guid>();
 		List<Guid> m_emptySequenceContexts = new List<Guid>();
 		const string kUnknown = "<unknown>";
+		private const string kBegSeg = "BeginSegment";
+		private const string kEndSeg = "EndSegment";
 
 		internal override void InspectElement(XElement rt)
 		{
@@ -77,6 +93,11 @@ namespace SIL.FieldWorks.FixData
 					break;
 				case "PhSegRuleRHS":
 					break;
+				case "TextTag":
+				case "ConstChartWordGroup":
+					// Possible candidate for Segment reference adjustment
+					m_candidateForRefAdjustment.Add(guid, rt);
+					break;
 				default:
 					break;
 			}
@@ -99,6 +120,31 @@ namespace SIL.FieldWorks.FixData
 		{
 			base.FinalFixerInitialization(owners, guids); // Sets base class member variables
 
+			// Find references to non-existent Segments
+			foreach (KeyValuePair<Guid, XElement> keyValuePair in m_candidateForRefAdjustment)
+			{
+				var guid = keyValuePair.Key;
+				var rt = keyValuePair.Value;
+				var result = AnalyzeSegmentReferences(rt);
+				switch (result)
+				{
+					case AnalysisResult.BothBad:
+						// Needs deleting
+						var ownerGuid = SafelyGetOwnerGuid(guid);
+						if (ownerGuid != Guid.Empty)
+							UpdateDictionaryOfOwnersLosingObjects(m_ownerThatWillLoseOwnee, ownerGuid, guid);
+						m_objsToDelete.Add(guid);
+						break;
+					case AnalysisResult.OneBad:
+						// One reference is bad; needs adjusting
+						m_objsToAdjust.Add(guid);
+						break;
+					default:
+						// Both of our Segment references are valid, so we can skip this one.
+						break;
+				}
+			}
+
 			// Determine who needs to die
 			foreach (var kvp in m_rows)
 			{
@@ -110,7 +156,7 @@ namespace SIL.FieldWorks.FixData
 				foreach (var xeCell in cellList)
 				{
 					var cellGuid = GetObjsurGuid(xeCell);
-					if (!m_emptyClauseMarkers.Contains(cellGuid))
+					if (!m_emptyClauseMarkers.Contains(cellGuid) && !m_objsToDelete.Contains(cellGuid))
 						continue;
 					refsToDeleteThisRow.Add(cellGuid);
 					ccellsRemaining--;
@@ -153,6 +199,54 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
+		private AnalysisResult AnalyzeSegmentReferences(XElement rt)
+		{
+			var beginRefIsValid = CheckSegmentReference(kBegSeg, rt);
+			var endRefIsValid = CheckSegmentReference(kEndSeg, rt);
+			if (beginRefIsValid && endRefIsValid)
+				return AnalysisResult.ValidRef;
+			if (beginRefIsValid || endRefIsValid)
+				return AnalysisResult.OneBad;
+			return AnalysisResult.BothBad;
+		}
+
+		private bool CheckSegmentReference(string propName, XElement rt)
+		{
+			var segRef = GetSegmentReference(propName, rt);
+			if (segRef == null)
+				return false;
+			var segGuid = GetObjsurGuid(segRef);
+			return m_guids.Contains(segGuid);
+		}
+
+		private XElement GetSegmentReference(string propName, XElement rt)
+		{
+			var segRefProperty = rt.Element(propName);
+			if (segRefProperty == null)
+				return null;
+			return segRefProperty.Element("objsur");
+		}
+
+		/// <summary>
+		/// Safely update a dictionary of Owners (StText or ConstChartRow) that are losing and object.
+		/// They will need to update their reference.
+		/// </summary>
+		/// <param name="dict"></param>
+		/// <param name="owner"></param>
+		/// <param name="ownee"></param>
+		private void UpdateDictionaryOfOwnersLosingObjects(Dictionary<Guid, List<Guid>> dict, Guid owner, Guid ownee)
+		{
+			List<Guid> rowsList;
+			if (dict.TryGetValue(owner, out rowsList))
+			{
+				rowsList.Add(ownee);
+				dict.Remove(owner);
+				dict.Add(owner, rowsList);
+			}
+			else
+				dict.Add(owner, new List<Guid> { ownee });
+		}
+
 		private static Guid GetObjsurGuid(XElement xeCell)
 		{
 			return new Guid(xeCell.Attribute("guid").Value);
@@ -185,21 +279,38 @@ namespace SIL.FieldWorks.FixData
 					rt.Descendants("objsur").Where(
 						objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
 					break;
+				case "StText":
+					// Check for cell refs to delete and remove reference.
+					if (m_ownerThatWillLoseOwnee.TryGetValue(guid, out danglingRefList))
+					{
+						rt.Descendants("objsur").Where(
+							objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
+					}
+					break;
 				case "ConstChartRow":
 					// Step 1: if row is set for deletion, remove, report, and return.
-					if (!m_rowsToDelete.TryGetValue(guidOwner, out danglingRefList))
-						return true; // this chart has no rows to delete.
-					if (danglingRefList.Contains(guid))
+					// guidOwner is chart, guid is row
+					if (m_rowsToDelete.TryGetValue(guidOwner, out danglingRefList))
 					{
-						ReportOwnerOfEmptySequence(guid, guidOwner, className, errorLogger);
-						return false; // delete this rt element
+						if (danglingRefList.Contains(guid))
+						{
+							ReportOwnerOfEmptySequence(guid, guidOwner, className, errorLogger);
+							return false; // delete this rt element
+						}
 					}
 
-					// Step 2: otherwise check for cell refs to delete and remove reference.
-					if (!m_cellRefsToDelete.TryGetValue(guid, out danglingRefList))
-						return true;
-					rt.Descendants("objsur").Where(
-						objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
+					// Step 2: check for cell refs to remove due to clause marker problem.
+					if (m_cellRefsToDelete.TryGetValue(guid, out danglingRefList))
+					{
+						rt.Descendants("objsur").Where(
+							objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
+					}
+					// Step 3: check for cell refs to delete because of Segment problem.
+					if (m_ownerThatWillLoseOwnee.TryGetValue(guid, out danglingRefList))
+					{
+						rt.Descendants("objsur").Where(
+							objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
+					}
 					break;
 				case "ConstChartClauseMarker":
 					// If marker guid is in m_emptyClauseMarkers remove and report.
@@ -207,6 +318,18 @@ namespace SIL.FieldWorks.FixData
 						return true;
 					ReportOwnerOfEmptySequence(guid, guidOwner, className, errorLogger);
 					return false; // delete this rt element
+				case "ConstChartWordGroup":
+				case "TextTag":
+					// If WordGroup or TextTag guid is in m_objsToDelete, remove it and report.
+					if (m_objsToDelete.Contains(guid))
+					{
+						ReportOwnerOfBadSegmentReferences(guid, guidOwner, className, errorLogger);
+						return false; // delete this rt element
+					}
+					// If WordGroup or TextTag guid is in m_objsToAdjust, adjust and report.
+					if (m_objsToAdjust.Contains(guid))
+						AdjustBadSegmentReferenceAndReport(rt, guid, guidOwner, className, errorLogger);
+					break;
 				case "PhSegRuleRHS":
 					// Check for sequence context refs to delete and remove reference.
 					if (!m_phContextRefsToDelete.TryGetValue(guid, out danglingRefList))
@@ -236,6 +359,48 @@ namespace SIL.FieldWorks.FixData
 				guid, className, guidOwner));
 		}
 
+		private void ReportOwnerOfBadSegmentReferences(Guid guid, Guid guidOwner, string className,
+			FwDataFixer.ErrorLogger errorLogger)
+		{
+			// Example: if guid, className, and rt belong to a "ConstChartWordGroup" that has no Begin
+			//          or EndSegment reference (being earlier deleted by OriginalFixer's dangling reference
+			//          repair), then this will remove the ConstChartWordGroup from the file and report it.
+			//			The objsur reference to the cell gets removed elsewhere.
+			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
+				String.Format(Strings.ksRemovingBadAnalysisRefObj, guid, className, guidOwner));
+		}
+
+		private void AdjustBadSegmentReferenceAndReport(XElement rt, Guid guid, Guid guidOwner,
+			string className, FwDataFixer.ErrorLogger errorLogger)
+		{
+			// Example: if guid, className, and rt belong to a "ConstChartWordGroup" that has only one valid
+			//          Begin or EndSegment reference (the other being earlier deleted by OriginalFixer's
+			//          dangling reference repair), then this will replace the missing Segment reference
+			//          with the valid one and report the repair.
+			var fieldModified = ReplaceMissingSegmentReferenceWithOtherOne(rt);
+			// TODO: Fix message string
+			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksAdjustingAnalysisRefObj,
+				guid, className, fieldModified));
+		}
+
+		private string ReplaceMissingSegmentReferenceWithOtherOne(XElement rt)
+		{
+			// Enhance: GJM-- if we know the correct direction, perhaps we should make sure we find
+			// the farthest valid Segment in that direction? Not immediately clear how to do that.
+			var begRef = GetSegmentReference(kBegSeg, rt);
+			var endRef = GetSegmentReference(kEndSeg, rt);
+			if (begRef == null)
+				ReplaceSegmentReference(rt, kBegSeg, endRef);
+			else
+				ReplaceSegmentReference(rt, kEndSeg, begRef);
+			return begRef == null ? kBegSeg : kEndSeg;
+		}
+
+		private void ReplaceSegmentReference(XElement rt, string propName, XElement otherReference)
+		{
+			rt.SetElementValue(propName, otherReference.ToString());
+		}
+
 		/// <summary>
 		/// Gets the guid of the owner. If not found, returns Guid.Empty.
 		/// </summary>
@@ -247,6 +412,13 @@ namespace SIL.FieldWorks.FixData
 			if (!m_owners.TryGetValue(guid, out guidOwner))
 				guidOwner = Guid.Empty;
 			return guidOwner;
+		}
+
+		private enum AnalysisResult
+		{
+			ValidRef,	// Segment references analyze as valid
+			OneBad,		// One Segment reference is missing; object needs adjusting
+			BothBad		// Both Segment references are missing; object needs deleting
 		}
 	}
 }
