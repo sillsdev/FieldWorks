@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Template|Win32">
+	  <Configuration>Template</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{3A80D14B-EFE3-4440-AFB4-A1D1C0F83FD1}</ProjectGuid>
+	<RootNamespace>PythonEC</RootNamespace>
+	<Keyword>AtlProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<UseOfAtl>false</UseOfAtl>
+	<CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<UseOfAtl>false</UseOfAtl>
+	<CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>../../../Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	  <TargetEnvironment>Win32</TargetEnvironment>
+	  <GenerateStublessProxies>true</GenerateStublessProxies>
+	  <TypeLibraryName>$(IntDir)$(TargetName).tlb</TypeLibraryName>
+	  <HeaderFileName>PythonEC.h</HeaderFileName>
+	  <DllDataFileName>
+	  </DllDataFileName>
+	  <InterfaceIdentifierFileName>PythonEC_i.c</InterfaceIdentifierFileName>
+	  <ProxyFileName>PythonEC_p.c</ProxyFileName>
+	</Midl>
+	<ClCompile>
+	  <Optimization>Disabled</Optimization>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Debug;../../Python/Python25/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>_DEBUG;_USRDLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MinimalRebuild>true</MinimalRebuild>
+	  <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+	  <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x0409</Culture>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;Python25.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)PythonEC25b.dll</OutputFile>
+	  <AdditionalLibraryDirectories>../../../Debug;../../Python24/libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+	  <ModuleDefinitionFile>.\PythonEC.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <AssemblyDebug>true</AssemblyDebug>
+	  <SubSystem>Windows</SubSystem>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(OutDir)PythonEC.lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Message>Performing registration</Message>
+	  <Command>set path=%path%%3b..\..\..\..\distfiles
+copy $(OutDir)$(TargetFileName) ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).tlb ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
+regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>../../../Release;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	  <TargetEnvironment>Win32</TargetEnvironment>
+	  <GenerateStublessProxies>true</GenerateStublessProxies>
+	  <TypeLibraryName>$(IntDir)$(TargetName).tlb</TypeLibraryName>
+	  <HeaderFileName>PythonEC.h</HeaderFileName>
+	  <DllDataFileName>
+	  </DllDataFileName>
+	  <InterfaceIdentifierFileName>PythonEC_i.c</InterfaceIdentifierFileName>
+	  <ProxyFileName>PythonEC_p.c</ProxyFileName>
+	</Midl>
+	<ClCompile>
+	  <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Release;../../Python/Python25/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <StringPooling>true</StringPooling>
+	  <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+	  <FunctionLevelLinking>true</FunctionLevelLinking>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x0409</Culture>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;Python25.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)PythonEC25b.dll</OutputFile>
+	  <AdditionalLibraryDirectories>../../../release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <ModuleDefinitionFile>.\PythonEC.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(OutDir)PythonEC.lib</ImportLibrary>
+	  <TargetMachine>NotSet</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Message>Performing registration</Message>
+	  <Command>set path=%path%%3b..\..\..\..\distfiles
+copy $(OutDir)$(TargetFileName) ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).tlb ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
+regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="PyScriptAutoConfigDlg.cpp" />
+	<ClCompile Include="PyScriptEncConverter.cpp" />
+	<ClCompile Include="PythonEC.cpp">
+	  <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BufferSecurityCheck>
+	</ClCompile>
+	<ClCompile Include="stdafx.cpp">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+	</ClCompile>
+	<ClCompile Include="dlldatax.c">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	  </PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	  </PrecompiledHeader>
+	</ClCompile>
+	<ClCompile Include="PythonEC_i.c">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	  </PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	  </PrecompiledHeader>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="PythonEC.def" />
+	<None Include="PyScriptEncConverter.rgs" />
+	<None Include="PyScriptEncConverterConfig.rgs" />
+	<None Include="PythonEC.rgs" />
+	<None Include="..\EncCnvtrs\lib\Trffc17.ico" />
+	<None Include="Help\Python Script Plug-in About box.htm">
+	  <DeploymentContent>true</DeploymentContent>
+	</None>
+	<None Include="..\..\..\..\Installer\PythonEC.mm.wxs" />
+	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\PythonEC25 3.1.0.0 Plugin Details.xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="PythonEC.idl" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="..\EncCnvtrs\lib\CppEncConverters.h" />
+	<ClInclude Include="dlldatax.h" />
+	<ClInclude Include="..\EncCnvtrs\lib\ECEncConverter.h" />
+	<ClInclude Include="..\EncCnvtrs\lib\ECResource.h" />
+	<ClInclude Include="PyScriptAutoConfigDlg.h" />
+	<ClInclude Include="PyScriptEncConverter.h" />
+	<ClInclude Include="PyScriptEncConverterConfig.h" />
+	<ClInclude Include="PythonEC.h" />
+	<ClInclude Include="Resource.h" />
+	<ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="..\EncCnvtrs\lib\ECEncCnvtrs.rc" />
+	<ResourceCompile Include="PythonEC.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+	<VisualStudio>
+	  <UserProperties RESOURCE_FILE="..\EncCnvtrs\lib\ECEncCnvtrs.rc" />
+	</VisualStudio>
+  </ProjectExtensions>
+</Project>

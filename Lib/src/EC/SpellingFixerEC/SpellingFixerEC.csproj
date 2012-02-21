@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<DebugSymbols>true</DebugSymbols>
 	<OutputPath>..\..\..\Release\</OutputPath>
@@ -11,6 +12,7 @@
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -38,7 +40,7 @@
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<SignAssembly>true</SignAssembly>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
 	<ApplicationManifest>app.manifest</ApplicationManifest>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
@@ -68,6 +70,7 @@
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">

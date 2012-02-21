@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{489135fe-fe1b-4209-b90c-28bb702001ab}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{7b6da204-1983-4cbb-b75a-522a1c0fb236}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{80ffaf4b-53f1-49e6-9650-b784156c0185}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+	<Filter Include="Generated Files">
+	  <UniqueIdentifier>{88ce332b-f948-4da5-a708-14e19c0926f0}</UniqueIdentifier>
+	  <SourceControlFiles>False</SourceControlFiles>
+	</Filter>
+	<Filter Include="Help Files">
+	  <UniqueIdentifier>{45531f0c-3624-4232-9fdd-c69a51f72474}</UniqueIdentifier>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="IcuConvAutoConfigDlg.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuConvEncConverterConfig.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuConverter.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuEC.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuRegexAutoConfigDlg.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuRegexEncConverter.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuRegexEncConverterConfig.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuTransAutoConfigDlg.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuTransEncConverterConfig.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuTranslit.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="stdafx.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="dlldatax.c">
+	  <Filter>Generated Files</Filter>
+	</ClCompile>
+	<ClCompile Include="IcuEC_i.c">
+	  <Filter>Generated Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="IcuEC.def">
+	  <Filter>Source Files</Filter>
+	</None>
+	<None Include="IcuConvECConfig.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuConverter.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuEC.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\IcuEC40 3.1.0.0 Plugin Details.xml">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuRegex.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuRegexECConfig.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuTransECConfig.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="IcuTranslit.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="Help\ICU Converters Plug-in About box.htm">
+	  <Filter>Help Files</Filter>
+	</None>
+	<None Include="Help\ICU Regular Expression Plug-in About box.htm">
+	  <Filter>Help Files</Filter>
+	</None>
+	<None Include="Help\ICU Transliterators Plug-in About box.htm">
+	  <Filter>Help Files</Filter>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="IcuEC.idl">
+	  <Filter>Source Files</Filter>
+	</Midl>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="dlldatax.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\EncCnvtrs\lib\ECEncConverter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\EncCnvtrs\lib\ECResource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuConvAutoConfigDlg.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuConvEncConverterConfig.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuConverter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuRegexAutoConfigDlg.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuRegexEncConverter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuRegexEncConverterConfig.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuTransAutoConfigDlg.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuTransEncConverterConfig.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuTranslit.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\..\icu\icu\source\i18n\unicode\regex.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="resource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="stdafx.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\icu\include\unicode\translit.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuEC.h">
+	  <Filter>Generated Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="..\EncCnvtrs\lib\ECEncCnvtrs.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="IcuEC.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+</Project>

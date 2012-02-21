@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Template|Win32">
+	  <Configuration>Template</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{9A5D6A7B-3176-4856-8B4F-72A36CFE1394}</ProjectGuid>
+	<RootNamespace>IcuEc</RootNamespace>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Keyword>AtlProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<UseOfAtl>false</UseOfAtl>
+	<CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<UseOfAtl>false</UseOfAtl>
+	<CharacterSet>Unicode</CharacterSet>
+	<CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>../../../Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	  <TargetEnvironment>Win32</TargetEnvironment>
+	  <GenerateStublessProxies>true</GenerateStublessProxies>
+	  <TypeLibraryName>$(IntDir)$(TargetName).tlb</TypeLibraryName>
+	  <HeaderFileName>IcuEC.h</HeaderFileName>
+	  <DllDataFileName>
+	  </DllDataFileName>
+	  <InterfaceIdentifierFileName>IcuEC_i.c</InterfaceIdentifierFileName>
+	  <ProxyFileName>IcuEC_p.c</ProxyFileName>
+	</Midl>
+	<ClCompile>
+	  <Optimization>Disabled</Optimization>
+	  <AdditionalIncludeDirectories>..\EncCnvtrs\lib;..\..\..\..\include;..\..\..\debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>_DEBUG;_USRDLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MinimalRebuild>true</MinimalRebuild>
+	  <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+	  <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	  <ShowIncludes>false</ShowIncludes>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x0409</Culture>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;icuucD.lib;icuinD.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)IcuEC40a.dll</OutputFile>
+	  <AdditionalLibraryDirectories>../../../Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+	  <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <AssemblyDebug>true</AssemblyDebug>
+	  <SubSystem>Windows</SubSystem>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(OutDir)IcuEC.lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Message>Performing registration</Message>
+	  <Command>set path=%path%%3b..\..\..\..\distfiles
+echo copy $(OutDir)$(TargetFileName) ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetFileName) ..\..\..\$(Configuration)
+echo copy $(OutDir)$(TargetName).tlb ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).tlb ..\..\..\$(Configuration)
+echo copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
+echo regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
+regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
+
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>../../../Release;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	  <TargetEnvironment>Win32</TargetEnvironment>
+	  <GenerateStublessProxies>true</GenerateStublessProxies>
+	  <TypeLibraryName>$(IntDir)$(TargetName).tlb</TypeLibraryName>
+	  <HeaderFileName>IcuEC.h</HeaderFileName>
+	  <DllDataFileName>
+	  </DllDataFileName>
+	  <InterfaceIdentifierFileName>IcuEC_i.c</InterfaceIdentifierFileName>
+	  <ProxyFileName>IcuEC_p.c</ProxyFileName>
+	</Midl>
+	<ClCompile>
+	  <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+	  <AdditionalIncludeDirectories>..\EncCnvtrs\lib;..\..\..\..\include;..\..\..\release;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <StringPooling>true</StringPooling>
+	  <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+	  <FunctionLevelLinking>true</FunctionLevelLinking>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x0409</Culture>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;icuuc.lib;icuin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)IcuEC40a.dll</OutputFile>
+	  <AdditionalLibraryDirectories>../../../release;../../..;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+	  <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(OutDir)IcuEC.lib</ImportLibrary>
+	  <TargetMachine>NotSet</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Message>Performing registration</Message>
+	  <Command>set path=%path%%3b..\..\..\..\distfiles
+copy $(OutDir)$(TargetFileName) ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).tlb ..\..\..\$(Configuration)
+copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
+regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="IcuConvAutoConfigDlg.cpp" />
+	<ClCompile Include="IcuConvEncConverterConfig.cpp" />
+	<ClCompile Include="IcuConverter.cpp" />
+	<ClCompile Include="IcuEC.cpp" />
+	<ClCompile Include="IcuRegexAutoConfigDlg.cpp" />
+	<ClCompile Include="IcuRegexEncConverter.cpp" />
+	<ClCompile Include="IcuRegexEncConverterConfig.cpp" />
+	<ClCompile Include="IcuTransAutoConfigDlg.cpp" />
+	<ClCompile Include="IcuTransEncConverterConfig.cpp" />
+	<ClCompile Include="IcuTranslit.cpp" />
+	<ClCompile Include="stdafx.cpp">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+	</ClCompile>
+	<ClCompile Include="dlldatax.c">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	  </PrecompiledHeader>
+	  <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level3</WarningLevel>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	  </PrecompiledHeader>
+	  <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level3</WarningLevel>
+	</ClCompile>
+	<ClCompile Include="IcuEC_i.c">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	  </PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	  </PrecompiledHeader>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="IcuEC.def" />
+	<None Include="IcuConvECConfig.rgs" />
+	<None Include="IcuConverter.rgs" />
+	<None Include="IcuEC.rgs" />
+	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\IcuEC40 3.1.0.0 Plugin Details.xml" />
+	<None Include="IcuRegex.rgs" />
+	<None Include="IcuRegexECConfig.rgs" />
+	<None Include="IcuTransECConfig.rgs" />
+	<None Include="IcuTranslit.rgs" />
+	<None Include="Help\ICU Converters Plug-in About box.htm">
+	  <DeploymentContent>true</DeploymentContent>
+	</None>
+	<None Include="Help\ICU Regular Expression Plug-in About box.htm">
+	  <DeploymentContent>true</DeploymentContent>
+	</None>
+	<None Include="Help\ICU Transliterators Plug-in About box.htm">
+	  <DeploymentContent>true</DeploymentContent>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="IcuEC.idl" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="dlldatax.h" />
+	<ClInclude Include="..\EncCnvtrs\lib\ECEncConverter.h" />
+	<ClInclude Include="..\EncCnvtrs\lib\ECResource.h" />
+	<ClInclude Include="IcuConvAutoConfigDlg.h" />
+	<ClInclude Include="IcuConvEncConverterConfig.h" />
+	<ClInclude Include="IcuConverter.h" />
+	<ClInclude Include="IcuRegexAutoConfigDlg.h" />
+	<ClInclude Include="IcuRegexEncConverter.h" />
+	<ClInclude Include="IcuRegexEncConverterConfig.h" />
+	<ClInclude Include="IcuTransAutoConfigDlg.h" />
+	<ClInclude Include="IcuTransEncConverterConfig.h" />
+	<ClInclude Include="IcuTranslit.h" />
+	<ClInclude Include="..\..\icu\icu\source\i18n\unicode\regex.h" />
+	<ClInclude Include="resource.h" />
+	<ClInclude Include="stdafx.h" />
+	<ClInclude Include="..\icu\include\unicode\translit.h" />
+	<ClInclude Include="IcuEC.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="..\EncCnvtrs\lib\ECEncCnvtrs.rc" />
+	<ResourceCompile Include="IcuEC.rc">
+	  <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir);..\EncCnvtrs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+	<VisualStudio>
+	  <UserProperties RESOURCE_FILE="\Src\fw\Lib\src\Ec\EncCnvtrs\lib\ECEncCnvtrs.rc" />
+	</VisualStudio>
+  </ProjectExtensions>
+</Project>
