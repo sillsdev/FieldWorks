@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FixData;
 using SIL.Utils;
 using XCore;
 
@@ -78,9 +79,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		public bool OnFLExBridge(object commandObject)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
-													Environment.UserName,
-													FLExBridgeHelper.SendReceive);
+			//Unlock project
+			ProjectLockingService.UnlockCurrentProject(Cache);
+			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+																	  Environment.UserName,
+																	  FLExBridgeHelper.SendReceive);
+			if(dataChanged)
+			{
+				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
+			}
+			//Re-lock project
+			ProjectLockingService.LockCurrentProject(Cache);
 			return true;
 		}
 		#region Implementation of IDisposable
@@ -118,5 +127,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool IsDisposed { get; set; }
 
 		#endregion
+
+		private static void logger(string guid, string date, string description)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

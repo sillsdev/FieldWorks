@@ -272,6 +272,12 @@
 	</Content>
 	<None Include="Resources\LexEntryParts.xml" />
   </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\Utilities\FixFwDataDll\FixFwDataDll.csproj">
+	  <Project>{9C534D8A-3445-4827-8D3B-957D98461533}</Project>
+	  <Name>FixFwDataDll</Name>
+	</ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PreBuildEvent>

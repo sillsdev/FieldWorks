@@ -38,7 +38,7 @@
 	<target name="LexTextDll" description="Build LexText DLL project."
 		depends="RootSite,xCoreInterfaces,xWorks,xCore,FDO,Framework,FwUtils,BasicUtils,FwControls,COMInterfaces,
 		FwCoreDlgs,ParserCore,DetailControls,XMLViews,XMLUtils,LexTextControls,ITextDll,
-		MessageBoxExLib,Reporting,ParserUI">
+		MessageBoxExLib,Reporting,ParserUI,FixFwDataDll">
 		<call target="LexTextDll-nodep" cascade="false"/>
 	</target>
 	<target name="LexTextDll-nodep" description="Build LexTextDll project.">
