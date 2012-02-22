@@ -15,13 +15,12 @@
 	</ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-	<ProjectGuid>{6AD98DAB-E6D9-4C8B-BE24-5F63D07E816A}</ProjectGuid>
+	<ProjectGuid>{C86CA2EB-81B5-4411-B5B7-E983314E02DA}</ProjectGuid>
 	<RootNamespace>views</RootNamespace>
 	<SccProjectName>Perforce Project</SccProjectName>
 	<SccLocalPath>..\..</SccLocalPath>
 	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Keyword>MakeFileProj</Keyword>
-	<ProjectName>views2008</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,21 +75,24 @@
 	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
 	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
 	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\outpu\debug\</OutDir>
-	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\obj\debug\</IntDir>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
 	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkvw.bat d</NMakeBuildCommandLine>
 	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkvw.bat d cc</NMakeReBuildCommandLine>
 	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
 	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\output\debug\views.dll</NMakeOutput>
 	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\..\Output\Common\Raw;$(ProjectDir)..\..\Output\Common;$(ProjectDir)..\Kernel;$(ProjectDir)\Lib;$(ProjectDir)..\Generic;$(ProjectDir);$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
 	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\..\Output\Common\Raw;$(ProjectDir)..\..\Output\Common;$(ProjectDir)..\Kernel;$(ProjectDir)\Lib;$(ProjectDir)..\Generic;$(ProjectDir);$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
 	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+	<ClInclude Include="lib\enchant++.h" />
+	<ClInclude Include="lib\enchant.h" />
+	<ClInclude Include="lib\EnchantWinconfig.h" />
 	<ClInclude Include="lib\FwGr.h" />
 	<ClInclude Include="lib\GrGraphics.h" />
 	<ClInclude Include="lib\GrJustifier.h" />

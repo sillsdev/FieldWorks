@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Bounds|Win32">
+	  <Configuration>Bounds</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{B151348E-57FF-436D-B3D7-7D5ACFC2EF7C}</ProjectGuid>
+	<RootNamespace>GrEngine</RootNamespace>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\mkgre.bat r</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\mkgre.bat r cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\output\release\graphite.dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\bin\mkgre.bat b</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\bin\mkgre.bat b cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\output\Bounds\graphite.dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkgre.bat</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkgre.bat cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\output\debug\graphite.dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Output\Common\Raw;..\..\..\Output\Common;..\..\Kernel;..\..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="FileInput.cpp" />
+	<ClCompile Include="Font.cpp" />
+	<ClCompile Include="FontCache.cpp" />
+	<ClCompile Include="FontFace.cpp" />
+	<ClCompile Include="FwGr.cpp" />
+	<ClCompile Include="FwGrEngine.cpp" />
+	<ClCompile Include="FwGrSegment.cpp" />
+	<ClCompile Include="GrCharStream.cpp" />
+	<ClCompile Include="GrClassTable.cpp" />
+	<ClCompile Include="GrEngine.cpp" />
+	<ClCompile Include="GrFeature.cpp" />
+	<ClCompile Include="GrFSM.cpp" />
+	<ClCompile Include="GrGlyphTable.cpp" />
+	<ClCompile Include="GrPass.cpp" />
+	<ClCompile Include="GrPassActionCode.cpp" />
+	<ClCompile Include="GrSegmentPlatform.cpp" />
+	<ClCompile Include="GrSlotState.cpp" />
+	<ClCompile Include="GrSlotStream.cpp" />
+	<ClCompile Include="GrTableManager.cpp" />
+	<ClCompile Include="Segment.cpp" />
+	<ClCompile Include="SegmentAux.cpp" />
+	<ClCompile Include="SegmentPainter.cpp" />
+	<ClCompile Include="TransductionLog.cpp" />
+	<ClCompile Include="WinFont.cpp" />
+	<ClCompile Include="WinSegmentPainter.cpp" />
+	<ClCompile Include="..\lib\FwGraphiteProcess.cpp" />
+	<ClCompile Include="..\lib\GrPlatform.cpp" />
+	<ClCompile Include="..\lib\GrUtil.cpp" />
+	<ClCompile Include="explicit_instantiations.cpp" />
+	<ClCompile Include="TestFSM.cpp" />
+	<ClCompile Include="TestPasses.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="..\..\..\..\silgraphite_2_0\graphite\include\GrMstypes.h" />
+	<ClInclude Include="FileInput.h" />
+	<ClInclude Include="Font.h" />
+	<ClInclude Include="FontCache.h" />
+	<ClInclude Include="FontFace.h" />
+	<ClInclude Include="FwGrEngine.h" />
+	<ClInclude Include="FwGrSegment.h" />
+	<ClInclude Include="GrCharStream.h" />
+	<ClInclude Include="GrClassTable.h" />
+	<ClInclude Include="GrConstants.h" />
+	<ClInclude Include="GrEngine.h" />
+	<ClInclude Include="GrEngineDebug.h" />
+	<ClInclude Include="GrFeature.h" />
+	<ClInclude Include="GrFeatureValues.h" />
+	<ClInclude Include="GrFSM.h" />
+	<ClInclude Include="GrGlyphTable.h" />
+	<ClInclude Include="GrPass.h" />
+	<ClInclude Include="GrPseudoMap.h" />
+	<ClInclude Include="GrSegmentDebug.h" />
+	<ClInclude Include="GrSegmentPlatform.h" />
+	<ClInclude Include="GrSlotState.h" />
+	<ClInclude Include="GrSlotStream.h" />
+	<ClInclude Include="GrTableManager.h" />
+	<ClInclude Include="Segment.h" />
+	<ClInclude Include="SegmentAux.h" />
+	<ClInclude Include="SegmentPainter.h" />
+	<ClInclude Include="WinFont.h" />
+	<ClInclude Include="WinSegmentPainter.h" />
+	<ClInclude Include="resource.h" />
+	<ClInclude Include="..\lib\FwGraphiteProcess.h" />
+	<ClInclude Include="..\lib\GraphiteProcess.h" />
+	<ClInclude Include="..\lib\GrPlatform.h" />
+	<ClInclude Include="..\lib\GrUtil.h" />
+	<ClInclude Include="IGrDebug.h" />
+	<ClInclude Include="ITraceControl.h" />
+	<ClInclude Include="Main.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="Graphite.rc" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="..\..\..\output\debug\graphite.bsc" />
+	<None Include="Graphite.def" />
+	<None Include="GrEngine.mak" />
+	<None Include="overview.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

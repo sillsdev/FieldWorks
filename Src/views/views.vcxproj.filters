@@ -2,10 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
 	<Filter Include="lib">
-	  <UniqueIdentifier>{fd55778a-df5d-4898-a1e0-86c09ce6d62f}</UniqueIdentifier>
+	  <UniqueIdentifier>{93082814-1f92-4f0a-8d50-4986e93800bb}</UniqueIdentifier>
 	</Filter>
   </ItemGroup>
   <ItemGroup>
+	<ClInclude Include="lib\enchant++.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="lib\enchant.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="lib\EnchantWinconfig.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
 	<ClInclude Include="lib\FwGr.h">
 	  <Filter>lib</Filter>
 	</ClInclude>
