@@ -2363,9 +2363,15 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-				m_viewProcess = Process.Start(
-					Path.Combine(DirectoryFinder.FWCodeDirectory, "ZEdit.exe"),
-					m_sSfmDataFile);
+				if (MiscUtils.IsUnix)
+					// Open SFM file from users default text editor (FWNX-834)
+					m_viewProcess = Process.Start(
+						"xdg-open",
+						m_sSfmDataFile);
+				else
+					m_viewProcess = Process.Start(
+						Path.Combine(DirectoryFinder.FWCodeDirectory, "ZEdit.exe"),
+						m_sSfmDataFile);
 			}
 		}
 
