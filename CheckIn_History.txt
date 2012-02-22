@@ -5750,4 +5750,6 @@ NaylorJ, 20 Feb 2012. Improve behavior on bridge green screen errors. LT-12525
 GordonM, 20 Feb 2012. LT-12650 improve IText handling of merge problems.
 NaylorJ, 21 Feb 2012. Manage lock file so that Send/Receive launched from FLEx works. LT-12525
 TomB, 21 Feb 2012. TE-9534 (part of TE-6013): Fixed USFM export so that footnotes from back translation will always be exported
-NaylorJ, 21 Feb 2012. Fixed bug in the SequenceFixer, handle reloading of project modified by Send/Receive,
+NaylorJ, 21 Feb 2012. Fixed bug in the SequenceFixer, handle reloading of project modified by Send/Receive.
+TomB, 21 Feb 2012. TXL-110: Changed TXL so the toolbar and answers pane are on by default (for new users).
+	TXL-111: Fixed crash when drawing key terms pane using certain complex-script fonts.
