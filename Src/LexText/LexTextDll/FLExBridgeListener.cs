@@ -10,7 +10,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
-	class FieldworksBridgeListener : IxCoreColleague, IFWDisposable
+	class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
 		private FdoCache Cache { get; set; }
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException("FieldworksBridgeListener already disposed.");
+				throw new ObjectDisposedException("FLExBridgeListener already disposed.");
 		}
 
 		/// <summary>
