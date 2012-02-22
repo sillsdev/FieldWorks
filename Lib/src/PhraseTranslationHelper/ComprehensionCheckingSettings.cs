@@ -81,9 +81,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		private ComprehensionCheckingSettings()
 		{
+			ShowToolbar = true;
+			ShowAnswersAndComments = true;
 		}
 
-		public ComprehensionCheckingSettings(string questionsFile)
+		public ComprehensionCheckingSettings(string questionsFile) : this()
 		{
 			QuestionsFile = questionsFile;
 		}
