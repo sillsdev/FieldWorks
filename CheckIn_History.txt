@@ -5753,3 +5753,4 @@ TomB, 21 Feb 2012. TE-9534 (part of TE-6013): Fixed USFM export so that footnote
 NaylorJ, 21 Feb 2012. Fixed bug in the SequenceFixer, handle reloading of project modified by Send/Receive.
 TomB, 21 Feb 2012. TXL-110: Changed TXL so the toolbar and answers pane are on by default (for new users).
 	TXL-111: Fixed crash when drawing key terms pane using certain complex-script fonts.
+NaylorJ, 22 Feb 2012. Renamed FieldworksBridge to FLExBridge.

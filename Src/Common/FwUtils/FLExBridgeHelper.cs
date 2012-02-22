@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ConflictViewer = "view_notes";
 
-		private const string FLExBridgeName = @"FieldWorksBridge.exe";
+		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object waitObject = new object();
 		private static bool receivedChanges;
