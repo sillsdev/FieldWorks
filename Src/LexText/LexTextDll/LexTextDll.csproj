@@ -273,6 +273,10 @@
 	<None Include="Resources\LexEntryParts.xml" />
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\..\Common\FieldWorks\FieldWorks.csproj">
+	  <Project>{7CE209AF-EB05-4584-9444-966C0978757F}</Project>
+	  <Name>FieldWorks</Name>
+	</ProjectReference>
 	<ProjectReference Include="..\..\Utilities\FixFwDataDll\FixFwDataDll.csproj">
 	  <Project>{9C534D8A-3445-4827-8D3B-957D98461533}</Project>
 	  <Name>FixFwDataDll</Name>

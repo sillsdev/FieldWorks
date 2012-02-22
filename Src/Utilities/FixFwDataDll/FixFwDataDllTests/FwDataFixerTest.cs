@@ -144,10 +144,14 @@ namespace FixFwDataDllTests
 			const string sequenceContextGuid = "09acafc4-33fd-4c12-a96d-af0d87c343d0";
 			// This is the sequence context's owner.
 			const string segmentRuleRhsGuid = "bd72b1c5-3067-433d-980d-5aae9271556d";
-			var data = new FwDataFixer(basePath + "SequenceFixer/BasicFixup.fwdata", new DummyProgressDlg(), LogErrors);
+			Assert.DoesNotThrow(() =>
+									{
+										var data = new FwDataFixer(basePath + "SequenceFixer/BasicFixup.fwdata", new DummyProgressDlg(),
+																   LogErrors);
 
-			// SUT
-			data.FixErrorsAndSave();
+										// SUT
+										data.FixErrorsAndSave();
+									}, "Exception running the data fixer on the sequence test data.");
 
 			// Verification
 			// check that the clause marker was there originally

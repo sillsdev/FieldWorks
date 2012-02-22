@@ -110,10 +110,10 @@ namespace SIL.FieldWorks.FixData
 		/// <param name="propertyName"> </param>
 		/// <param name="xeObject"></param>
 		/// <returns></returns>
-		private bool HoldsEmptySequence(string propertyName, XElement xeObject)
+		private static bool HoldsEmptySequence(string propertyName, XElement xeObject)
 		{
 			var xeProperty = xeObject.Element(propertyName);
-			return !(xeProperty.Descendants("objsur").Any());
+			return xeProperty == null || !(xeProperty.Descendants("objsur").Any());
 		}
 
 		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)

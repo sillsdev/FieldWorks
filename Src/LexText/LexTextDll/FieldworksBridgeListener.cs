@@ -87,9 +87,16 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if(dataChanged)
 			{
 				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
+				fixer.FixErrorsAndSave();
+				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				var manager = app.FwManager;
+				var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
+				manager.ReopenProject(Cache.ProjectId.Name, appArgs);
 			}
-			//Re-lock project
-			ProjectLockingService.LockCurrentProject(Cache);
+			else //Re-lock project if we aren't trying to close the app
+			{
+				ProjectLockingService.LockCurrentProject(Cache);
+			}
 			return true;
 		}
 		#region Implementation of IDisposable
@@ -130,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		private static void logger(string guid, string date, string description)
 		{
-			throw new NotImplementedException();
+			Console.WriteLine("Error reported, but not dealt with {0} {1} {2}", guid, date, description);
 		}
 	}
 }
