@@ -5,12 +5,12 @@
 	<pre-init>
 		<property name="FWMAJOR" value="7"/>
 		<property name="FWMINOR" value="2"/>
-		<property name="FWREVISION" value="2"/>
+		<property name="FWREVISION" value="3"/>
 		<property name="TEVERSION" value="7"/>
 		<property name="TEMILESTONE" value="2"/>
-		<property name="TEREVISION" value="2"/>
+		<property name="TEREVISION" value="3"/>
 		<property name="LTMAJOR" value="7"/>
 		<property name="LTMINOR" value="2"/>
-		<property name="LTREVISION" value="2"/>
+		<property name="LTREVISION" value="3"/>
 	</pre-init>
 </include>
