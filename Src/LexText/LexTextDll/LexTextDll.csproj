@@ -186,7 +186,7 @@
 	<Compile Include="AreaListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="FieldworksBridgeListener.cs" />
+	<Compile Include="FLExBridgeListener.cs" />
 	<Compile Include="FlexHelpTopicProvider.cs" />
 	<Compile Include="FlexStylesXmlAccessor.cs" />
 	<Compile Include="ImageHolder.cs">
