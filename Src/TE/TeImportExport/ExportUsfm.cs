@@ -1,17 +1,15 @@
 // ---------------------------------------------------------------------------------------------
-// Copyright (c) 2006, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2006' company='SIL International'>
-//	Copyright (c) 2006, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2012' company='SIL International'>
+//	Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //	Distributable under the terms of either the Common Public License or the
 //	GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
+#endregion
 //
 // File: ExportUsfm.cs
-// Responsibility: TeTeam
-//
-// <remarks>
-// </remarks>
+// Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
@@ -22,7 +20,6 @@ using System.Xml;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
-using Paratext;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -878,6 +875,21 @@ namespace SIL.FieldWorks.TE
 				m_exportParatextProjectFiles = (m_paratextProjFolder != null);
 				if (m_exportParatextProjectFiles)
 					m_pictureFilesToCopy = new List<string>();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether to convert chapter and verse numbers to use arabic
+		/// numerals instead of vernacular script digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool ConvertFromScriptDigits
+		{
+			get
+			{
+				return (MarkupSystem == MarkupType.Paratext && m_scr.UseScriptDigits) ||
+					m_scr.ConvertCVDigitsOnExport;
 			}
 		}
 		#endregion
@@ -2745,7 +2757,7 @@ namespace SIL.FieldWorks.TE
 			foreach (char ch in sNumber)
 			{
 				if (UnicodeCharProps.get_IsNumber(ch))
-					number = (number * 10) + (int)UnicodeCharProps.get_NumericValue(ch);
+					number = (number * 10) + UnicodeCharProps.get_NumericValue(ch);
 				else
 				{
 					//any non-digit means chapter number is invalid--but get any number that we can find.
@@ -2828,7 +2840,6 @@ namespace SIL.FieldWorks.TE
 			out bool invalidSyntax)
 		{
 			beginVerse = endVerse = 0;
-			invalidSyntax = false;
 
 			if (sVerseNumber == null)
 			{
@@ -2852,8 +2863,7 @@ namespace SIL.FieldWorks.TE
 			if (bridgeIndex == 0)
 			{
 				if (sVerseNumber.Length > 1)
-					beginVerse = endVerse = SimpleVerseNumStringToInt(
-						sVerseNumber.Substring(1), out invalidSyntax);
+					beginVerse = endVerse = SimpleVerseNumStringToInt(sVerseNumber.Substring(1), out invalidSyntax);
 				invalidSyntax = true;
 				return;
 			}
@@ -2892,7 +2902,7 @@ namespace SIL.FieldWorks.TE
 			// Evaluate the beginning and ending verse value of the verse bridge
 			bool beginVerseInvalid;
 			beginVerse = SimpleVerseNumStringToInt(
-					sVerseNumber.Substring(0, iEndStartVerse), out beginVerseInvalid);
+				sVerseNumber.Substring(0, iEndStartVerse), out beginVerseInvalid);
 			endVerse = SimpleVerseNumStringToInt(
 				sVerseNumber.Substring(iStartEndVerse), out invalidSyntax);
 
@@ -3009,10 +3019,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private bool WriteChapterTag(int number)
 		{
-			//			// if this \c field has already been written, don't do it again.
-			//			if (number == m_lastChapterWritten)
-			//				return false;
-
 			m_file.WriteLine(); //always start on new line
 
 			// if chapter is not numeric, don't output a record marker
@@ -3021,10 +3027,8 @@ namespace SIL.FieldWorks.TE
 
 			// If converting to arabic digits then just make an ASCII number string.
 			// Otherwise, use the scripture number formatter.
-			if (m_scr.ConvertCVDigitsOnExport)
-				m_file.WriteLine(@"\c " + number.ToString());
-			else
-				m_file.WriteLine(@"\c " + m_scr.ConvertToString(number));
+			m_file.WriteLine(@"\c " + (ConvertFromScriptDigits ? number.ToString() :
+				m_scr.ConvertToString(number)));
 
 			m_lastChapterWritten = number;
 			m_lastInvalidChapterWritten = null;
@@ -3045,13 +3049,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private bool WriteChapterTagInvalid(int number, string invalidChapterNumText)
 		{
-			//			invalidChapterNumText = invalidChapterNumText.Trim();
-
-			//			// if this \c field has already been written, don't do it again.
-			//			if (m_lastInvalidChapterWritten != null &&
-			//					invalidChapterNumText == m_lastInvalidChapterWritten)
-			//				return false;
-
 			m_file.WriteLine(); //always start on new line
 
 			// current requirements: skip the record marker when chapter num has no numeric value
@@ -3098,7 +3095,7 @@ namespace SIL.FieldWorks.TE
 			if (MarkupSystem == MarkupType.Toolbox)
 				WriteVerseRef(verseString);
 
-			m_file.Write(MakeVerseTag(verseString, m_scr.ConvertCVDigitsOnExport));
+			m_file.Write(MakeVerseTag(verseString, ConvertFromScriptDigits));
 			m_v1NeededForImplicitFirstVerse = false;
 		}
 
@@ -3149,7 +3146,7 @@ namespace SIL.FieldWorks.TE
 					newString.Append(ch);
 			}
 
-			return @"\v " + newString.ToString() + " ";
+			return @"\v " + newString + " ";
 		}
 		#endregion
 

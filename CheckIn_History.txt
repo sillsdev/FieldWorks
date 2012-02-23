@@ -5756,3 +5756,7 @@ TomB, 21 Feb 2012. TXL-110: Changed TXL so the toolbar and answers pane are on b
 NaylorJ, 22 Feb 2012. Renamed FieldworksBridge to FLExBridge.
 TomB, 23 Feb 2012. TE-9538: Prevented "database contains a corrupted record" message during normal shut-down of TE.
 	Improved handling of exceptions on the data loading thread.
+TomB, 23 Feb 2012. TE-9536, TE-9539: Removed (undocumented) option from Scripture Properties dialog box that false advertized
+	ability to convert script digits to Arabic numerals for (all) exports, and made the checkbox for this setting
+	in the Toolbox export dialog work correctly without crashing. Paratext exports now always do script digit
+	conversion because otherwise they won't work in Paratext.
