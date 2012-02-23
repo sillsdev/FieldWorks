@@ -81,7 +81,7 @@ namespace SILUBS.PhraseTranslationHelper
 				m_lbRenderings.Font = value;
 
 				m_lbRenderings.ItemHeight = Math.Max(Properties.Resources.check_circle.Height,
-					(int)Math.Ceiling(CreateGraphics().MeasureString("Q", value).Height)) + 2;
+					TextRenderer.MeasureText(CreateGraphics(), "Q", value).Height) + 2;
 			}
 		}
 		#endregion
@@ -195,7 +195,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (e.Index < 0)
 				return;
 
-			RectangleF rect = new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+			Rectangle rect = new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
 			rect.Inflate(-1, 0);
 			rect.X += 2;
 
@@ -213,11 +213,11 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 
 			item = item.Normalize(NormalizationForm.FormC);
-			SizeF textSize = e.Graphics.MeasureString(item, VernacularFont);
+			Size textSize = TextRenderer.MeasureText(e.Graphics, item, VernacularFont);
 
 			if (textSize.Height < rect.Height)
 			{
-				float diff = rect.Height - textSize.Height;
+				int diff = rect.Height - textSize.Height;
 				rect.Y += diff / 2;
 				rect.Height = textSize.Height;
 			}
@@ -226,14 +226,12 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				// In some cases where we go from a narrow size to a wide size really fast, debris can get left behind.
 				m_rectToInvalidateOnResize = Rectangle.Union(m_rectToInvalidateOnResize,
-					new Rectangle((int)Math.Floor(rect.X), (int)Math.Floor(rect.Y),
-					(int)Math.Ceiling(rect.Width), (int)Math.Ceiling(rect.Height)));
+					new Rectangle(rect.X, rect.Y, rect.Width, rect.Height));
 			}
 
 			// Draw the item's text, considering the item's selection state.
-			e.Graphics.DrawString(item, VernacularFont,
-				new SolidBrush(selected ? SystemColors.HighlightText : SystemColors.WindowText),
-				rect);
+			TextRenderer.DrawText(e.Graphics, item, VernacularFont, rect,
+				selected ? SystemColors.HighlightText : SystemColors.WindowText, TextFormatFlags.Left);
 		}
 
 		/// ------------------------------------------------------------------------------------

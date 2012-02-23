@@ -373,7 +373,7 @@
 	<value>m_cboScriptLanguages</value>
   </data>
   <data name="&gt;&gt;m_cboScriptLanguages.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.3.0.14941, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.3.0.16606, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cboScriptLanguages.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -434,33 +434,6 @@
   </data>
   <data name="&gt;&gt;m_btnLatinNumbers.ZOrder" xml:space="preserve">
 	<value>2</value>
-  </data>
-  <data name="m_chkUseLatinNumsOnExport.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_chkUseLatinNumsOnExport.Location" type="System.Drawing.Point, System.Drawing">
-	<value>16, 80</value>
-  </data>
-  <data name="m_chkUseLatinNumsOnExport.Size" type="System.Drawing.Size, System.Drawing">
-	<value>304, 24</value>
-  </data>
-  <data name="m_chkUseLatinNumsOnExport.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_chkUseLatinNumsOnExport.Text" xml:space="preserve">
-	<value>Use Arabic Numbers on E&amp;xport</value>
-  </data>
-  <data name="&gt;&gt;m_chkUseLatinNumsOnExport.Name" xml:space="preserve">
-	<value>m_chkUseLatinNumsOnExport</value>
-  </data>
-  <data name="&gt;&gt;m_chkUseLatinNumsOnExport.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_chkUseLatinNumsOnExport.Parent" xml:space="preserve">
-	<value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;m_chkUseLatinNumsOnExport.ZOrder" xml:space="preserve">
-	<value>3</value>
   </data>
   <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
 	<value>13, 221</value>
@@ -625,7 +598,7 @@
 	<value>m_cboVersification</value>
   </data>
   <data name="&gt;&gt;m_cboVersification.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.3.0.14941, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.3.0.16606, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cboVersification.Parent" xml:space="preserve">
 	<value>tpgChapVrsNumbers</value>
@@ -736,7 +709,7 @@
 	<value>fpsCrossRefOptions</value>
   </data>
   <data name="&gt;&gt;fpsCrossRefOptions.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.TE.FootnotePropertiesSelector, TeDialogs, Version=5.3.0.16008, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.TE.FootnotePropertiesSelector, TeDialogs, Version=7.3.0.18753, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;fpsCrossRefOptions.Parent" xml:space="preserve">
 	<value>grpCrossRefFootnotes</value>
@@ -784,7 +757,7 @@
 	<value>fpsFootnoteOptions</value>
   </data>
   <data name="&gt;&gt;fpsFootnoteOptions.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.TE.FootnotePropertiesSelector, TeDialogs, Version=5.3.0.16008, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.TE.FootnotePropertiesSelector, TeDialogs, Version=7.3.0.18753, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;fpsFootnoteOptions.Parent" xml:space="preserve">
 	<value>grpGeneralFootnotes</value>

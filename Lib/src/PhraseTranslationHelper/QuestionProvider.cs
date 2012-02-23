@@ -10,6 +10,7 @@
 //
 // File: QuestionProvider.cs
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,33 +105,20 @@ namespace SILUBS.PhraseTranslationHelper
 
 					if (category.Type != null && !processedCategories.Contains(category.Type.ToLowerInvariant()))
 					{
-						yield return new TranslatablePhrase(category.Type, -1, string.Empty,
-							ScrReference.StartOfBible(ScrVers.English).BBCCCVVV,
-							ScrReference.EndOfBible(ScrVers.English).BBCCCVVV, processedCategories.Count);
+						yield return new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, processedCategories.Count);
 						processedCategories.Add(category.Type.ToLowerInvariant());
 					}
 
 					for (int iQuestion = 0; iQuestion < category.Questions.Length; iQuestion++)
 					{
 						Question q = category.Questions[iQuestion];
-						string sRef;
-						int startRef, endRef;
 						if (q.ScriptureReference == null)
 						{
-							sRef = section.ScriptureReference;
-							startRef = section.StartRef;
-							endRef = section.EndRef;
+							q.ScriptureReference = section.ScriptureReference;
+							q.StartRef = section.StartRef;
+							q.EndRef = section.EndRef;
 						}
-						else
-						{
-							sRef = q.ScriptureReference;
-							startRef = q.StartRef;
-							endRef = q.EndRef;
-						}
-						if (q.Answers != null || q.Notes != null)
-							yield return new TranslatablePhrase(q.Text, iCat, sRef, startRef, endRef, iQuestion, q);
-						else
-							yield return new TranslatablePhrase(q.Text, iCat, sRef, startRef, endRef, iQuestion);
+						yield return new TranslatablePhrase(q, iCat, iQuestion + 1);
 					}
 				}
 			}
@@ -153,16 +141,65 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				if (m_customizations != null)
 				{
-					PhraseCustomization customization = m_customizations.FirstOrDefault(c => c.Reference == phrase.Reference && c.OriginalPhrase == phrase.OriginalPhrase);
-					if (customization != null)
-					{
-						if (customization.Type == PhraseCustomization.CustomizationType.Deletion)
-							phrase.IsExcluded = true;
-						else if (customization.Type == PhraseCustomization.CustomizationType.Modification)
-							phrase.ModifiedPhrase = customization.ModifiedPhrase;
-					}
+					foreach (TranslatablePhrase insertedPhrase in GetPhraseCustomizations(phrase, 0.25f))
+						yield return insertedPhrase;
 				}
-				yield return phrase;
+				else
+					yield return phrase;
+			}
+		}
+
+		private IEnumerable<TranslatablePhrase> GetPhraseCustomizations(TranslatablePhrase phrase, float seqOffset)
+		{
+			TranslatablePhrase addedPhrase = null;
+			foreach (PhraseCustomization customization in m_customizations.Where(c => phrase.PhraseKey.Matches(c.Reference, c.OriginalPhrase)))
+			{
+				switch (customization.Type)
+				{
+
+					case PhraseCustomization.CustomizationType.Deletion:
+						phrase.IsExcluded = true;
+						break;
+					case PhraseCustomization.CustomizationType.Modification:
+						if (phrase.ModifiedPhrase != null)
+						{
+							throw new InvalidOperationException("Only one modified version of a phrase is permitted. Phrase '" + phrase.OriginalPhrase +
+								"' has already been modied as '" + phrase.ModifiedPhrase + "'. Value of of subsequent modification attempt was: '" +
+								customization.ModifiedPhrase + "'.");
+						}
+						phrase.ModifiedPhrase = customization.ModifiedPhrase;
+						break;
+					case PhraseCustomization.CustomizationType.InsertionBefore:
+						if (phrase.InsertedPhraseBefore != null)
+						{
+							throw new InvalidOperationException("Only one phrase is permitted to be inserted. Phrase '" + phrase.OriginalPhrase +
+								"' already has a phrase inserted before it: '" + phrase.InsertedPhraseBefore + "'. Value of of subsequent insertion attempt was: '" +
+								customization.ModifiedPhrase + "'.");
+						}
+						Question addedQuestion = new Question(phrase.QuestionInfo, customization.ModifiedPhrase, customization.Answer);
+						phrase.InsertedPhraseBefore = addedQuestion;
+						TranslatablePhrase tpInserted = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.SequenceNumber - seqOffset);
+						foreach (TranslatablePhrase translatablePhrase in GetPhraseCustomizations(tpInserted, seqOffset / 4))
+							yield return translatablePhrase;
+						break;
+					case PhraseCustomization.CustomizationType.AdditionAfter:
+						if (phrase.AddedPhraseAfter != null)
+						{
+							throw new InvalidOperationException("Only one phrase is permitted to be added. Phrase '" + phrase.OriginalPhrase +
+								"' already has a phrase added after it: '" + phrase.AddedPhraseAfter + "'. Value of of subsequent addition attempt was: '" +
+								customization.ModifiedPhrase + "'.");
+						}
+						addedQuestion = new Question(phrase.QuestionInfo, customization.ModifiedPhrase, customization.Answer);
+						phrase.AddedPhraseAfter = addedQuestion;
+						addedPhrase = new TranslatablePhrase(addedQuestion, phrase.Category, phrase.SequenceNumber + seqOffset);
+						break;
+				}
+			}
+			yield return phrase;
+			if (addedPhrase != null)
+			{
+				foreach (TranslatablePhrase tpAdded in GetPhraseCustomizations(addedPhrase, seqOffset / 4))
+					yield return tpAdded;
 			}
 		}
 		#endregion

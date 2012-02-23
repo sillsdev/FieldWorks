@@ -217,13 +217,13 @@
 	<value>108, 27</value>
   </metadata>
   <data name="mnuExcludeQuestion.Size" type="System.Drawing.Size, System.Drawing">
-	<value>165, 22</value>
+	<value>200, 22</value>
   </data>
   <data name="mnuExcludeQuestion.Text" xml:space="preserve">
 	<value>E&amp;xclude Question</value>
   </data>
   <data name="mnuIncludeQuestion.Size" type="System.Drawing.Size, System.Drawing">
-	<value>165, 22</value>
+	<value>200, 22</value>
   </data>
   <data name="mnuIncludeQuestion.Text" xml:space="preserve">
 	<value>&amp;Include Question</value>
@@ -232,13 +232,25 @@
 	<value>False</value>
   </data>
   <data name="mnuEditQuestion.Size" type="System.Drawing.Size, System.Drawing">
-	<value>165, 22</value>
+	<value>200, 22</value>
   </data>
   <data name="mnuEditQuestion.Text" xml:space="preserve">
 	<value>&amp;Edit Question...</value>
   </data>
+  <data name="mnuInsertQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 22</value>
+  </data>
+  <data name="mnuInsertQuestion.Text" xml:space="preserve">
+	<value>Insert Question &amp;Above...</value>
+  </data>
+  <data name="mnuAddQuestion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 22</value>
+  </data>
+  <data name="mnuAddQuestion.Text" xml:space="preserve">
+	<value>Insert Question &amp;Below...</value>
+  </data>
   <data name="dataGridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-	<value>166, 70</value>
+	<value>201, 114</value>
   </data>
   <data name="&gt;&gt;dataGridContextMenu.Name" xml:space="preserve">
 	<value>dataGridContextMenu</value>
@@ -319,6 +331,36 @@
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
 	<value>&amp;File</value>
+  </data>
+  <data name="mnuCopy.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+	<value>Fuchsia</value>
+  </data>
+  <data name="mnuCopy.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+	<value>Ctrl+C</value>
+  </data>
+  <data name="mnuCopy.Size" type="System.Drawing.Size, System.Drawing">
+	<value>144, 22</value>
+  </data>
+  <data name="mnuCopy.Text" xml:space="preserve">
+	<value>&amp;Copy</value>
+  </data>
+  <data name="mnuPaste.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+	<value>Fuchsia</value>
+  </data>
+  <data name="mnuPaste.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+	<value>Ctrl+V</value>
+  </data>
+  <data name="mnuPaste.Size" type="System.Drawing.Size, System.Drawing">
+	<value>144, 22</value>
+  </data>
+  <data name="mnuPaste.Text" xml:space="preserve">
+	<value>&amp;Paste</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>39, 20</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+	<value>&amp;Edit</value>
   </data>
   <data name="mnuReferenceRange.Size" type="System.Drawing.Size, System.Drawing">
 	<value>307, 22</value>
@@ -1131,6 +1173,18 @@
   <data name="&gt;&gt;mnuEditQuestion.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuInsertQuestion.Name" xml:space="preserve">
+	<value>mnuInsertQuestion</value>
+  </data>
+  <data name="&gt;&gt;mnuInsertQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuAddQuestion.Name" xml:space="preserve">
+	<value>mnuAddQuestion</value>
+  </data>
+  <data name="&gt;&gt;mnuAddQuestion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;fileToolStripMenuItem.Name" xml:space="preserve">
 	<value>fileToolStripMenuItem</value>
   </data>
@@ -1177,6 +1231,24 @@
 	<value>closeToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;closeToolStripMenuItem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
+	<value>editToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuCopy.Name" xml:space="preserve">
+	<value>mnuCopy</value>
+  </data>
+  <data name="&gt;&gt;mnuCopy.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuPaste.Name" xml:space="preserve">
+	<value>mnuPaste</value>
+  </data>
+  <data name="&gt;&gt;mnuPaste.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;filterToolStripMenuItem.Name" xml:space="preserve">

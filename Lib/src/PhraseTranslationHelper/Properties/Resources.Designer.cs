@@ -67,6 +67,13 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 			}
 		}
 
+		internal static System.Drawing.Bitmap Copy {
+			get {
+				object obj = ResourceManager.GetObject("Copy", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
 		internal static System.Drawing.Bitmap Filtered {
 			get {
 				object obj = ResourceManager.GetObject("Filtered", resourceCulture);
@@ -315,6 +322,22 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 		internal static string kstidUntranslatedQuestionsWarning {
 			get {
 				return ResourceManager.GetString("kstidUntranslatedQuestionsWarning", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to User-added question with no English version.
+		/// </summary>
+		internal static string kstidUserAddedEmptyPhrase {
+			get {
+				return ResourceManager.GetString("kstidUserAddedEmptyPhrase", resourceCulture);
+			}
+		}
+
+		internal static System.Drawing.Bitmap Paste {
+			get {
+				object obj = ResourceManager.GetObject("Paste", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
 			}
 		}
 	}
