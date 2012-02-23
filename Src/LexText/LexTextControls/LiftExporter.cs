@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void WriteCustomFields(TextWriter w, ICmObject obj)
 		{
-			foreach (var flid in m_mdc.GetFields(obj.ClassID, false, (int)CellarPropertyTypeFilter.All))
+			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
 					continue;
@@ -1197,7 +1197,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void GenerateCustomFieldSpecs(TextWriter w, string className)
 		{
 			var clid = m_mdc.GetClassId(className);
-			foreach (var flid in m_mdc.GetFields(clid, false, (int)CellarPropertyTypeFilter.All))
+			foreach (var flid in m_mdc.GetFields(clid, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
 					continue;
@@ -2291,7 +2291,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Dictionary<Guid, String> GetCmPossibiityListsObjectReferences(ICmObject obj)
 		{
 			var cmPossibilityListsReferencedByFields = new Dictionary<Guid, String>();
-			foreach (var flid in m_mdc.GetFields(obj.ClassID, false, (int)CellarPropertyTypeFilter.All))
+			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var type = (CellarPropertyType) m_mdc.GetFieldType(flid);
 

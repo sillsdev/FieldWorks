@@ -918,7 +918,7 @@ namespace SIL.FieldWorks.Common.FXT
 					m_customFlids[sClass + sType] = new int[0];
 					return; // we don't know what to do!
 				}
-				int[] flidsT = m_mdc.GetFields(clid, false, (int)CellarPropertyTypeFilter.All);
+				int[] flidsT = m_mdc.GetFields(clid, true, (int)CellarPropertyTypeFilter.All);
 				List<int> rgcustom = new List<int>();
 				for (int i = 0; i < flidsT.Length; ++i)
 				{
