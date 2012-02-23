@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -196,9 +196,9 @@
 	  <Name>Sfm2Xml</Name>
 	  <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
 	</Reference>
-	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

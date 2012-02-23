@@ -26,7 +26,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;

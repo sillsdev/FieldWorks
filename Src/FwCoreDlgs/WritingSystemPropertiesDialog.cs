@@ -36,7 +36,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SilEncConverters31;
+using SilEncConverters40;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;

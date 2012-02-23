@@ -28,7 +28,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 
 

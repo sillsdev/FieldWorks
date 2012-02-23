@@ -1669,7 +1669,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ECInterfaces.IEncConverters encConverters = null;
 			try
 			{
-				encConverters = new SilEncConverters31.EncConverters();
+				encConverters = new SilEncConverters40.EncConverters();
 			}
 			catch (Exception e)
 			{
@@ -2265,7 +2265,7 @@ namespace SIL.FieldWorks.Common.Controls
 			try
 			{
 				string selectedItem = m_transduceProcessorCombo.SelectedItem as string;
-				ECInterfaces.IEncConverters encConverters = new SilEncConverters31.EncConverters();
+				ECInterfaces.IEncConverters encConverters = new SilEncConverters40.EncConverters();
 				m_transduceProcessorCombo.ClearItems();
 				foreach (string convName in encConverters.Keys)
 				{

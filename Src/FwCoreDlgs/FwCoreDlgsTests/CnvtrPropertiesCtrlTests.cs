@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -189,7 +189,7 @@ namespace AddConverterDlgTests
 			m_myDlg = new DummyAddCnvtrDlg();
 			m_myCtrl = new DummyCnvtrPropertiesCtrl();
 
-			SilEncConverters31.EncConverters encConverters = new SilEncConverters31.EncConverters();
+			SilEncConverters40.EncConverters encConverters = new SilEncConverters40.EncConverters();
 
 			string[] ccFileContents = {"'c' > 'C'"};
 			m_ccFileName = m_fileMaker.CreateFileNoID(ccFileContents, "cct");

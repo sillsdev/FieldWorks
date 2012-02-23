@@ -2826,7 +2826,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void FixSettingsForThisDatabase()
 		{
-			ECInterfaces.IEncConverters encConverters = new SilEncConverters31.EncConverters();
+			ECInterfaces.IEncConverters encConverters = new SilEncConverters40.EncConverters();
 			foreach (EncConverterChoice ecc in m_mapWsEncConv.Values)
 			{
 				if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)

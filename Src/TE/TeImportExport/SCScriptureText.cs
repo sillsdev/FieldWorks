@@ -19,7 +19,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
-using SilEncConverters31;
+using SilEncConverters40;
 using ECInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices

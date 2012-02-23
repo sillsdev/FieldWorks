@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 
 namespace Sfm2Xml
 {

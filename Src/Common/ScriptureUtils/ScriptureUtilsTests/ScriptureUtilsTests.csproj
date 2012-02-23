@@ -142,9 +142,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtilsTests.dll</HintPath>
 	</Reference>
-	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	  <HintPath>..\..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>

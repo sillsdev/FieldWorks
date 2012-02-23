@@ -8,7 +8,7 @@ using System.Resources;
 using System.Reflection;
 using ECInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SilEncConverters31;
+using SilEncConverters40;
 using System.Diagnostics;
 
 using SIL.Utils;
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// the main dialog's InitializeComponent method, before it sets the encConverters
 			// of the control.
 			if (m_encConverters == null)
-				m_encConverters = new SilEncConverters31.EncConverters();
+				m_encConverters = new SilEncConverters40.EncConverters();
 			cboConverter.Items.Clear();
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrCc, ConverterType.ktypeCC, EncConverters.strTypeSILcc));
 			if (!m_fOnlyUnicode)
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					bool fMatchedSpecs = false;
 					for (int i = 0; i < cboSpec.Items.Count; ++i)
 					{
-						// Note that SilEncConverters31 seems to convert specs to lower case
+						// Note that SilEncConverters40 seems to convert specs to lower case
 						// but the names we get from ICU often include upper case.
 						if (((CnvtrSpecComboItem)cboSpec.Items[i]).Specs.ToUpperInvariant() == m_specs.ToUpperInvariant())
 						{

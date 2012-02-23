@@ -145,9 +145,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="SilEncConverters30, Version=3.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	  <HintPath>..\..\Lib\debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="StructureMap, Version=2.5.4.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

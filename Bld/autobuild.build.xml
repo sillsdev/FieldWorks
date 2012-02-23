@@ -46,7 +46,7 @@
 				<exclude name="skybound.visualstyles.dll"/>
 				<exclude name="Interop.*.dll"/>
 				<exclude name="*Interop.dll"/>
-				<exclude name="SilEncConverters30.dll"/>
+				<exclude name="SilEncConverters*.dll"/>
 				<exclude name="ECInterfaces.dll"/>
 				<exclude name="AIGuesserEC.dll"/>
 				<exclude name="*Tests.dll"/>

@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.IText
 			// Copied from the LexImportWizard dlg Init (LexImportWizard.cs)
 			// Ensure that we have the default encoding converter (to/from MS Windows Code Page
 			// for Western European languages)
-			SilEncConverters31.EncConverters encConv = new SilEncConverters31.EncConverters();
+			SilEncConverters40.EncConverters encConv = new SilEncConverters40.EncConverters();
 			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			string sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
 			bool fMustCreateEncCnv = true;
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.IText
 						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
 						ECInterfaces.ProcessTypeFlags.CodePageConversion);
 				}
-				catch (SilEncConverters31.ECException exception)
+				catch (SilEncConverters40.ECException exception)
 				{
 					MessageBox.Show(exception.Message, ITextStrings.ksConvMapError,
 						MessageBoxButtons.OK);

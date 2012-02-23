@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
-using SilEncConverters31;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Multiple EncConverters objects are problematical because they don't all get
 			// updated when something changes.
 			if (m_encConverters == null)
-				m_encConverters = new SilEncConverters31.EncConverters();
+				m_encConverters = new SilEncConverters40.EncConverters();
 
 			using (InstalledFontCollection installedFontCollection = new InstalledFontCollection())
 			{

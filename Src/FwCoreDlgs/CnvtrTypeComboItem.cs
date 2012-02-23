@@ -1,6 +1,6 @@
 using System;
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -22,7 +22,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
-using SilEncConverters31;
+using SilEncConverters40;
 
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;

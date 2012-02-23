@@ -23,6 +23,7 @@
 		<if test="${fw-mkall-internal-error and (not property::exists('fw-build-error'))}">
 			<property name="fw-build-error" value="********* mkall failed ********"/>
 		</if>
+		<call target="EncConvertersDlls" failonerror="false"/>
 	</target>
 	<!-- -->
 	<target name="mkall-internal" description="Make all of FieldWorks - don't call directly">
@@ -166,14 +167,58 @@
 		</attrib>
 	</target>
 	<target name="EncConvertersDlls" description="Copy and Register the EncodingConverters files">
-		<copy todir="${dir.outputBase}">
-			<fileset basedir="${dir.fwoutputlibBase}">
-				<include name="SilEncConverters30.dll"/>
-				<include name="SilEncConverters30.pdb"/>
-				<include name="ECInterfaces.dll"/>
-				<include name="ECInterfaces.pdb"/>
-			</fileset>
-		</copy>
+		<choose>
+			<when test="${platform::is-unix()}">
+				<copy todir="${dir.outputBase}">
+					<fileset basedir="${dir.fwoutputlibLinuxBase}">
+						<include name="SilEncConverters40.dll"/>
+						<include name="SilEncConverters40.dll.mdb"/>
+						<include name="ECInterfaces.dll"/>
+						<include name="ECInterfaces.dll.mdb"/>
+						<include name="AIGuesserEC.dll"/>
+						<include name="AIGuesserEC.dll.mdb"/>
+						<include name="CcEC.dll"/>
+						<include name="CcEC.dll.mdb"/>
+						<include name="IcuEC.dll"/>
+						<include name="IcuEC.dll.mdb"/>
+						<include name="libIcuConvEC.so.1.0"/>
+						<include name="libIcuRegexEC.so.1.0"/>
+						<include name="libIcuTranslitEC.so.1.0"/>
+						<include name="libPyScriptEncConverter.so.1.0"/>
+						<include name="PerlExpressionEC.dll"/>
+						<include name="PerlExpressionEC.dll.mdb"/>
+						<include name="PyScriptEC.dll"/>
+						<include name="PyScriptEC.dll.mdb"/>
+					</fileset>
+				</copy>
+				<copy todir="${dir.outputBase}">
+					<fileset basedir="${dir.fwoutputlibLinux}">
+						<include name="SilEncConverters40.dll.config"/>
+					</fileset>
+				</copy>
+				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
+				<copy todir="${dir.outputBase}/EC/Plugins">
+					<fileset basedir="${dir.fwoutputlibLinux}/ECPlugins">
+						<include name="AI 4.0.0.0 Plugin Details.xml"/>
+						<include name="CC 4.0.0.0 Plugin Details.xml"/>
+						<include name="EC 4.0.0.0 Plugin Details.xml"/>
+						<include name="IcuEC 4.0.0.0 Plugin Details.xml"/>
+						<include name="PerlEC 4.0.0.0 Plugin Details.xml"/>
+						<include name="PythonEC 4.0.0.0 Plugin Details.xml"/>
+					</fileset>
+				</copy>
+			</when>
+			<otherwise>
+				<copy todir="${dir.outputBase}">
+					<fileset basedir="${dir.fwoutputlibBase}">
+						<include name="SilEncConverters40.dll"/>
+						<include name="SilEncConverters40.pdb"/>
+						<include name="ECInterfaces.dll"/>
+						<include name="ECInterfaces.pdb"/>
+					</fileset>
+				</copy>
+			</otherwise>
+		</choose>
 		<!-- I (KZ) switched to an external call to regsvr32 because comregisterex was doing strange things.
 			When registering with regsvr32 we call u_init in CIcuECModule which locks cnvalias.icu. Then
 			we call u_cleanup in DllRegisterServer which releases the lock, and finally CIcuECModule which
@@ -196,7 +241,7 @@
 			<when test="${user::is-admin()}">
 				<regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
 					<assemblies>
-						<include name="${dir.outputBase}/SilEncConverters30.dll"/>
+						<include name="${dir.outputBase}/SilEncConverters40.dll"/>
 						<include name="${dir.fwoutputlib}/${dir}/AIGuesserEC.dll"/>
 					</assemblies>
 				</regasm>
@@ -205,11 +250,11 @@
 			</when>
 			<otherwise>
 			<if test="${not platform::is-unix()}">
-				<regasm assembly="${dir.outputBase}\SilEncConverters30.dll"
-						regfile="${dir.outputBase}\SilEncConverters30.reg" unregister="false" failonerror="false"/>
-				<importregistry regfile="${dir.outputBase}\SilEncConverters30.reg"
+				<regasm assembly="${dir.outputBase}\SilEncConverters40.dll"
+						regfile="${dir.outputBase}\SilEncConverters40.reg" unregister="false" failonerror="false"/>
+				<importregistry regfile="${dir.outputBase}\SilEncConverters40.reg"
 								unregister="false" peruser="true" failonerror="false"/>
-				<delete file="${dir.outputBase}\SilEncConverters30.reg" failonerror="false"/>
+				<delete file="${dir.outputBase}\SilEncConverters40.reg" failonerror="false"/>
 				<regasm assembly="${fwroot}\Lib\${dir}\AIGuesserEC.dll"
 						regfile="${dir.outputBase}\AIGuesserEC.reg" unregister="false" failonerror="false"/>
 				<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
@@ -317,8 +362,8 @@
 					 verbose="${verbose}" />
 				<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\RootDir" value="${tmp}" verbose="${verbose}" />
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" />
 			</when>
 			<otherwise>
 				<readregistry property="rootCodeDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" failonerror="false" verbose="${verbose}"/>
@@ -326,8 +371,8 @@
 				<readregistry property="projectsDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\ProjectsDir" failonerror="false" verbose="${verbose}"/>
 				<readregistry property="icu40DataDir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" failonerror="false" verbose="${verbose}"/>
 				<readregistry property="icu40Dir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" failonerror="false" verbose="${verbose}"/>
-				<readregistry property="ecRootDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\RootDir" failonerror="false" verbose="${verbose}"/>
-				<readregistry property="ecPluginDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\PluginDir" failonerror="false" verbose="${verbose}"/>
+				<readregistry property="ecRootDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" failonerror="false" verbose="${verbose}"/>
+				<readregistry property="ecPluginDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" failonerror="false" verbose="${verbose}"/>
 				<property name="updateRegistry" value="${not property::exists('rootCodeDir') or not property::exists('rootDataDir') or not property::exists('projectsDir')
 						  or not property::exists('icu40DataDir') or not property::exists('icu40Dir') or not property::exists('ecRootDir')
 						  or not property::exists('ecPluginDir')}" verbose="${verbose}"/>
@@ -357,12 +402,12 @@
 
 					<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 					<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
-					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters31 /v RootDir /d "${tmp}" /f
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters40 /v RootDir /d "${tmp}" /f
 '
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>
 
 					<property name="tmp" value="${path::combine(tmp, 'Plugins')}"/>
-					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters31 /v PluginDir /d "${tmp}" /f
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters40 /v PluginDir /d "${tmp}" /f
 '
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>
 

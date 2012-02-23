@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		SilEncConverters31.EncConverters m_encConverters;
+		SilEncConverters40.EncConverters m_encConverters;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.

@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
 using ECInterfaces;
-using SilEncConverters31;
+using SilEncConverters40;
 
 using System.Data;
 using System.Resources;
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Take care of null values
 			if (encConverters == null)
-				m_encConverters = new SilEncConverters31.EncConverters();
+				m_encConverters = new SilEncConverters40.EncConverters();
 			else
 				m_encConverters = encConverters;
 

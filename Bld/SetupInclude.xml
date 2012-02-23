@@ -49,6 +49,12 @@
 	<if test="${not property::exists('dir.fwoutputlibBase')}">
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
 	</if>
+	<if test="${not property::exists('dir.fwoutputlibLinux')}">
+		<property name="dir.fwoutputlibLinux" value="${path::combine(dir.fwoutputlib, 'linux')}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutputlibLinuxBase')}">
+		<property name="dir.fwoutputlibLinuxBase" value="${path::combine(dir.fwoutputlibLinux, config)}"/>
+	</if>
 	<if test="${not property::exists('dir.fwinstall')}">
 		<property name="dir.fwinstall" value="${path::combine(dir.fwoutput, 'install')}"/>
 	</if>
