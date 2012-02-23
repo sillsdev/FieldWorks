@@ -133,7 +133,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			public void Test()
 			{
-				Result = Broker.Default.DictionaryExists(WsId);
+				try
+				{
+					Result = Broker.Default.DictionaryExists(WsId);
+				}
+				catch (Exception e)
+				{
+					// Enhance JohnT: See LT-12747. Would be better probably to catch only relevant exceptions?
+					// But note that failing to catch one here seems to lock up the whole system (and even the VS
+					// debugger).
+					Result = false; // Something is badly wrong with this ID, don't use it!
+				}
 			}
 		}
 

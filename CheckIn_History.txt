@@ -76,3 +76,4 @@ TomB, 10 Feb 2012. TE-8924/TE-9515: Fixed crash caused by re-entrancy in data gr
 		Application.DoEvents.
 	TE-931: Improved code for selecting offending characters in picture captions so at least it works properly when
 		the caption has not been edited.
+KenZ, 23 Feb 2012. Checked in an enhancement JohnT did related to Lt-12747, but not the final solution.
