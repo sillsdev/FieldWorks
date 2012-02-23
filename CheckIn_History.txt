@@ -80,3 +80,4 @@ KenZ, 23 Feb 2012. Checked in an enhancement JohnT did related to Lt-12747, but 
 JohnT, 23 Feb 2012. LT-12672, Project file fwdata gets obliterated on deleting custom list reference field from allomorph
 	Later: LT-12682, Make bak files visible in Open when fwdata is missing
 TomB, 23 Feb 2012. Integration of various TE fixes and TXL fixes and enhancements
+NaylorJ, 23 Feb 2012. Fixed LT-12765. Fixed the bug as suggested by Ken. Have no idea how to verify that there aren't any unwanted side affects. Advise heavy Ken testing.
