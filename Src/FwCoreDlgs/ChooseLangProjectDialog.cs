@@ -464,6 +464,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_hostsTreeView.SelectedNode == m_localhostNode)
 			{
 				Project = ((LanguageProjectInfo)m_lstLanguageProjects.SelectedItem).FullName;
+				if (Project.EndsWith(FwFileExtensions.ksFwDataFallbackFileExtension))
+				{
+					// The user chose a .bak file, only possible when the fwdata file is missing.
+					// Rename it and open it.
+					string bakFileName = Project;
+					Project = Path.ChangeExtension(bakFileName, FwFileExtensions.ksFwDataXmlFileExtension);
+					try
+					{
+						File.Move(bakFileName, Project);
+					}
+					catch (IOException)
+					{
+						// Source does not exist, or destination does. Maybe the user reinstated it? Go ahead and try to open it.
+						return;
+					}
+					catch (UnauthorizedAccessException)
+					{
+						Project = null;
+						MessageBox.Show(this, string.Format(FwCoreDlgs.ksUnauthorizedRenameBakFile, bakFileName),
+							FwCoreDlgs.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					}
+				}
 				Server = null;
 			}
 			else
