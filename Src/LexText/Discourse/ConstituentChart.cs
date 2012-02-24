@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			get
 			{
-				if (RootStText == null)
+				if (RootStText == null || !RootStText.IsValidObject)
 					return false;
 				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
