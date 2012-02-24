@@ -75,9 +75,6 @@
 	<None Include="IcuEC.rgs">
 	  <Filter>Resource Files</Filter>
 	</None>
-	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\IcuEC40 3.1.0.0 Plugin Details.xml">
-	  <Filter>Resource Files</Filter>
-	</None>
 	<None Include="IcuRegex.rgs">
 	  <Filter>Resource Files</Filter>
 	</None>
@@ -98,6 +95,12 @@
 	</None>
 	<None Include="Help\ICU Transliterators Plug-in About box.htm">
 	  <Filter>Help Files</Filter>
+	</None>
+	<None Include="..\..\..\release\EC\Plugins\IcuEC40 4.0.0.0 Plugin Details.xml">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="..\..\..\..\Installer\ICU040.mm.wxs">
+	  <Filter>Resource Files</Filter>
 	</None>
   </ItemGroup>
   <ItemGroup>

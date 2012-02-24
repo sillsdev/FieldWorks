@@ -1,21 +1,21 @@
 HKCR
 {
-	SilEncConverters31.PyScriptEncConverter.25b = s 'Python Script Converter Class'
+	SilEncConverters40.PyScriptEncConverter.27 = s 'Python Script Converter Class'
 	{
-		CLSID = s '{50E53D69-3187-4169-B26F-83258995FE56}'
+		CLSID = s '{EE62A6CB-B2CA-4D1F-90BE-FFA6569E550C}'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {50E53D69-3187-4169-B26F-83258995FE56} = s 'Python Script Converter Class'
+		ForceRemove {EE62A6CB-B2CA-4D1F-90BE-FFA6569E550C} = s 'Python Script Converter Class'
 		{
-			ProgID = s 'SilEncConverters31.PyScriptEncConverter.25b'
+			ProgID = s 'SilEncConverters40.PyScriptEncConverter.27'
 			ForceRemove 'Programmable'
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'
 			}
 			val AppID = s '%APPID%'
-			'TypeLib' = s '{640AC7A0-77F8-479b-B963-1A5D243E4059}'
+			'TypeLib' = s '{28A1F0A9-82F2-4B95-A3A6-BB69DB118D9C}'
 		}
 	}
 }

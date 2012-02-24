@@ -16,7 +16,7 @@ call ..\..\bin\_EnsureRoot.bat
 rem Checkout the libs/dlls, etc, from Perforce so the build can overwrite them
 if "%1"=="/build" call OpenLibFiles.bat %FWROOT%
 
-rem SilEncConverters31 dependency
+rem SilEncConverters40 dependency
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" %FWROOT%\Lib\src\EC\ECInterfaces\ECInterfaces.csproj %ACTION% Debug
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" %FWROOT%\Lib\src\EC\ECInterfaces\ECInterfaces.csproj %ACTION% Release
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" %FWROOT%\Lib\src\EC\EncCnvtrs\EncCnvtrs.csproj %ACTION% Debug

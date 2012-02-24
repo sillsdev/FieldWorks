@@ -61,7 +61,7 @@
 	  <Filter>Help Files</Filter>
 	</None>
 	<None Include="..\..\..\..\Installer\PythonEC.mm.wxs" />
-	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\PythonEC25 3.1.0.0 Plugin Details.xml" />
+	<None Include="..\..\..\release\EC\Plugins\PythonEC27 4.0.0.0 Plugin Details.xml" />
   </ItemGroup>
   <ItemGroup>
 	<Midl Include="PythonEC.idl">

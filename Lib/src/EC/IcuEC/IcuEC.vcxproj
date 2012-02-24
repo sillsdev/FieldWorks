@@ -50,11 +50,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
 	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug</OutDir>
 	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
 	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
 	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release</OutDir>
 	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
 	<IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
 	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
@@ -67,6 +67,10 @@
 	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
 	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
 	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+	<IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\release;$(IncludePath)</IncludePath>
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IcuEC40b</TargetName>
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IcuEC40b</TargetName>
+	<IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Debug;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<Midl>
@@ -101,7 +105,7 @@
 	</ResourceCompile>
 	<Link>
 	  <AdditionalDependencies>CppEncConverterCommon.lib;icuucD.lib;icuinD.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	  <OutputFile>$(OutDir)IcuEC40a.dll</OutputFile>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 	  <AdditionalLibraryDirectories>../../../Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
 	  <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
@@ -161,7 +165,7 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	</ResourceCompile>
 	<Link>
 	  <AdditionalDependencies>CppEncConverterCommon.lib;icuuc.lib;icuin.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	  <OutputFile>$(OutDir)IcuEC40a.dll</OutputFile>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 	  <AdditionalLibraryDirectories>../../../release;../../..;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
 	  <ModuleDefinitionFile>.\IcuEC.def</ModuleDefinitionFile>
@@ -173,7 +177,7 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	  <DataExecutionPrevention>
 	  </DataExecutionPrevention>
 	  <ImportLibrary>$(OutDir)IcuEC.lib</ImportLibrary>
-	  <TargetMachine>NotSet</TargetMachine>
+	  <TargetMachine>MachineX86</TargetMachine>
 	</Link>
 	<PostBuildEvent>
 	  <Message>Performing registration</Message>
@@ -184,6 +188,12 @@ copy $(OutDir)$(TargetName).pdb ..\..\..\$(Configuration)
 regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 </Command>
 	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+	<Link>
+	  <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
   </ItemDefinitionGroup>
   <ItemGroup>
 	<ClCompile Include="IcuConvAutoConfigDlg.cpp" />
@@ -216,11 +226,12 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	</ClCompile>
   </ItemGroup>
   <ItemGroup>
+	<None Include="..\..\..\..\Installer\ICU040.mm.wxs" />
+	<None Include="..\..\..\release\EC\Plugins\IcuEC40 4.0.0.0 Plugin Details.xml" />
 	<None Include="IcuEC.def" />
 	<None Include="IcuConvECConfig.rgs" />
 	<None Include="IcuConverter.rgs" />
 	<None Include="IcuEC.rgs" />
-	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\IcuEC40 3.1.0.0 Plugin Details.xml" />
 	<None Include="IcuRegex.rgs" />
 	<None Include="IcuRegexECConfig.rgs" />
 	<None Include="IcuTransECConfig.rgs" />

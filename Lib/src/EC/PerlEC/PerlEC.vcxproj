@@ -63,6 +63,8 @@
 	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
 	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
 	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PerlEC512</TargetName>
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PerlEC512</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<Midl>
@@ -95,8 +97,8 @@
 	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	</ResourceCompile>
 	<Link>
-	  <AdditionalDependencies>CppEncConverterCommon.lib;PXPerlWrap-ud.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	  <OutputFile>$(OutDir)PerlEC5100b.dll</OutputFile>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;PXPerlWrap-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 	  <AdditionalLibraryDirectories>../../../Debug; ../../../../DistFiles;../../perl/perl510/lib/CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
 	  <ModuleDefinitionFile>.\PerlEC.def</ModuleDefinitionFile>
@@ -150,9 +152,9 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	</ResourceCompile>
 	<Link>
-	  <AdditionalDependencies>CppEncConverterCommon.lib;PXPerlWrap-u.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;PXPerlWrap.lib;%(AdditionalDependencies)</AdditionalDependencies>
 	  <ShowProgress>NotSet</ShowProgress>
-	  <OutputFile>$(OutDir)PerlEC5100b.dll</OutputFile>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 	  <AdditionalLibraryDirectories>../../../release; ../../../../DistFiles;../../perl/Perl510/lib/CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <ModuleDefinitionFile>.\PerlEC.def</ModuleDefinitionFile>
 	  <GenerateDebugInformation>true</GenerateDebugInformation>

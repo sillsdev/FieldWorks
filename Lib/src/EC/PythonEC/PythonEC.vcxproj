@@ -63,6 +63,8 @@
 	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
 	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
 	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)27</TargetName>
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)27</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<Midl>
@@ -80,7 +82,7 @@
 	</Midl>
 	<ClCompile>
 	  <Optimization>Disabled</Optimization>
-	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Debug;../../Python/Python25/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Debug;../../Python/Python27/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>_DEBUG;_USRDLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	  <MinimalRebuild>true</MinimalRebuild>
 	  <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -95,9 +97,9 @@
 	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	</ResourceCompile>
 	<Link>
-	  <AdditionalDependencies>CppEncConverterCommon.lib;Python25.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	  <OutputFile>$(OutDir)PythonEC25b.dll</OutputFile>
-	  <AdditionalLibraryDirectories>../../../Debug;../../Python24/libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;Python27.lib;comsvcs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../../Debug;../../Python\Python27\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
 	  <ModuleDefinitionFile>.\PythonEC.def</ModuleDefinitionFile>
 	  <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -135,7 +137,7 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	</Midl>
 	<ClCompile>
 	  <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Release;../../Python/Python25/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;../../../Release;../../Python/Python27/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	  <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	  <StringPooling>true</StringPooling>
 	  <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -150,9 +152,9 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	  <AdditionalIncludeDirectories>../EncCnvtrs/lib;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 	</ResourceCompile>
 	<Link>
-	  <AdditionalDependencies>CppEncConverterCommon.lib;Python25.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	  <OutputFile>$(OutDir)PythonEC25b.dll</OutputFile>
-	  <AdditionalLibraryDirectories>../../../release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <AdditionalDependencies>CppEncConverterCommon.lib;Python27.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../../release;..\..\Python\Python27\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 	  <ModuleDefinitionFile>.\PythonEC.def</ModuleDefinitionFile>
 	  <GenerateDebugInformation>true</GenerateDebugInformation>
 	  <SubSystem>Windows</SubSystem>
@@ -198,6 +200,7 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	</ClCompile>
   </ItemGroup>
   <ItemGroup>
+	<None Include="..\..\..\release\EC\Plugins\PythonEC27 4.0.0.0 Plugin Details.xml" />
 	<None Include="PythonEC.def" />
 	<None Include="PyScriptEncConverter.rgs" />
 	<None Include="PyScriptEncConverterConfig.rgs" />
@@ -207,7 +210,6 @@ regsvr32 /s /c "..\..\..\$(Configuration)\$(TargetFileName)"
 	  <DeploymentContent>true</DeploymentContent>
 	</None>
 	<None Include="..\..\..\..\Installer\PythonEC.mm.wxs" />
-	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\PythonEC25 3.1.0.0 Plugin Details.xml" />
   </ItemGroup>
   <ItemGroup>
 	<Midl Include="PythonEC.idl" />

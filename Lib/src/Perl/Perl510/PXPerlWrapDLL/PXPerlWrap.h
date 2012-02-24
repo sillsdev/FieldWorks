@@ -134,8 +134,8 @@ For both licenses, group pricing exists.
 
 ///////////////// General Defines & typedef's, Library Stuff
 
-#define PXPW_VERSION		"3.1.0.0" /**< Current version. */
-#define PXPW_VERSION_DATE	"27 Aug 2009" /**< Version date. */
+#define PXPW_VERSION		"4.0.0.0" /**< Current version. */
+#define PXPW_VERSION_DATE	"23 Feb 2012" /**< Version date. */
 
 
 #ifndef PXPERL_API
@@ -146,10 +146,10 @@ For both licenses, group pricing exists.
 
 #	ifdef _DEBUG
 #		pragma message("  Linking with Debug version of Perl DLL")
-#		pragma comment(lib, "perl510.lib")
+#		pragma comment(lib, "perl512.lib")
 #	else
 #		pragma message("  Linking with Release version of Perl DLL")
-#		pragma comment(lib, "perl510.lib")
+#		pragma comment(lib, "perl512.lib")
 #	endif
 
 #	pragma comment(lib, "shlwapi.lib")

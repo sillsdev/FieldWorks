@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CIcuTranslit
 LPCTSTR clpszIcuTransImplType   = _T("ICU.trans");
-LPCTSTR clpszIcuTransProgId     = _T("SilEncConverters31.IcuECTransliterator.40");
+LPCTSTR clpszIcuTransProgId     = _T("SilEncConverters40.IcuECTransliterator.40");
 
 CIcuTranslit::CIcuTranslit()
   : CEncConverter(clpszIcuTransProgId, clpszIcuTransImplType)  // from IcuTranslit.rgs)
