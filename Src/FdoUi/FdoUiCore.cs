@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.FdoUi
 		private ICmObject GetCurrentCmObject()
 		{
 			ICmObject obj = null;
-			if (m_hostControl is XmlBrowseViewBase)
+			if (m_hostControl is XmlBrowseViewBase && !m_hostControl.IsDisposed)
 			{
 				// since we're getting the context menu by clicking on the browse view
 				// just use the current object of the browse view.
