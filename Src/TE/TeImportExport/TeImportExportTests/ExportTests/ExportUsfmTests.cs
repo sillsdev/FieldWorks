@@ -147,6 +147,127 @@ namespace SIL.FieldWorks.TE.ExportTests
 		}
 		#endregion
 
+		#region ConvertScriptDigits tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use normal digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_NormalDigits()
+		{
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_BengaliDigits_NoConvert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_BengaliDigits_Convert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_scr.ConvertCVDigitsOnExport = true;
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use normal digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_NormalDigits()
+		{
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is always true for Paratext export if using Script
+		/// digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_BengaliDigits_NoConvert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_BengaliDigits_Convert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_scr.ConvertCVDigitsOnExport = true;
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test exporting a paragraph with Paratext markup when there is a mid-paragraph
+		/// chapter marker.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ExportPara_Paratext_ScriptChapterAndVerseNumbers()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			IScrSection section = ExportHelper.CreateSection(this, m_book, "My section head");
+			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(para, "\u09e7", ScrStyleNames.ChapterNumber);
+			AddRunToMockedPara(para, "\u09e7", ScrStyleNames.VerseNumber);
+			AddRunToMockedPara(para, "Verse 1 text. ", m_wsVern);
+			AddRunToMockedPara(para, "\u09e8", ScrStyleNames.VerseNumber);
+			AddRunToMockedPara(para, "Verse 2 text.", m_wsVern);
+
+			// export
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			m_exporter.ExportScriptureDomain = true;
+			m_exporter.ExportParagraph(para);
+
+			// expect correct \c mid-paragraph and footnote refs
+			string[] expected = new [] {@"\c 1", @"\p",
+										@"\v 1 Verse 1 text.",
+										@"\v 2 Verse 2 text."};
+
+			m_exporter.FileWriter.VerifyOutput(expected);
+		}
+
+		#endregion
+
 		#region ExportBook Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
