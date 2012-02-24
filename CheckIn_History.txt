@@ -81,3 +81,4 @@ JohnT, 23 Feb 2012. LT-12672, Project file fwdata gets obliterated on deleting c
 	Later: LT-12682, Make bak files visible in Open when fwdata is missing
 TomB, 23 Feb 2012. Integration of various TE fixes and TXL fixes and enhancements
 NaylorJ, 23 Feb 2012. Fixed LT-12765. Fixed the bug as suggested by Ken. Have no idea how to verify that there aren't any unwanted side affects. Advise heavy Ken testing.
+NaylorJ, 24 Feb 2012. Fixed LT-12493. If the parser tries to update an interlinear view while the RootText is null it will no longer crash.

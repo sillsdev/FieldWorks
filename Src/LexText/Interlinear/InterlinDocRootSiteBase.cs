@@ -989,7 +989,9 @@ namespace SIL.FieldWorks.IText
 
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (SuspendResettingAnalysisCache)
+			//If the RootStText is null we are either in a place that doesn't care about parser related updates
+			// or we are not yet completely displaying the text, so we should be fine, I hope? (LT-12493)
+			if (SuspendResettingAnalysisCache || RootStText == null)
 				return;
 
 			switch (tag)
