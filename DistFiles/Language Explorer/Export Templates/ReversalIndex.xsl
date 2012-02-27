@@ -23,7 +23,7 @@
 
 <xsl:template match="ReversalIndexEntry_ReversalForm">
   <xsl:copy>
-	<xsl:text>&#13;&#10;            </xsl:text>
+	<xsl:text>&#13;&#10;  LT-12599  </xsl:text>
 	<AUni>
 	  <xsl:attribute name="ws"><xsl:value-of select="AStr/@ws"/></xsl:attribute>
 	  <xsl:value-of select="AStr/Run"/>

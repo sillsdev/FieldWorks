@@ -26,7 +26,7 @@
 	<target name="processLanguages" description="Main target for processing all .po files">
 		<tstamp/>
 		<exec program="ProcessLanguagesBld.exe"
-			commandline='${fwroot} ${dir.fwoutput}'
+			commandline='${config} ${fwroot} ${dir.fwoutput}'
 			failonerror="true" verbose="${verbose}"/>
 		<tstamp/>
 	</target>

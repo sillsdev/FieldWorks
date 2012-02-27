@@ -31,6 +31,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
@@ -392,7 +393,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (File.Exists(m_sHtmlFileName))
 			{
-				using (var dlg = new SaveFileDialog())
+				using (var dlg = new SaveFileDialogAdapter())
 				{
 					InitSaveAsWebpageDialog(dlg);
 					if (dlg.ShowDialog() == DialogResult.OK)
@@ -428,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 				File.SetAttributes(dlgFileName, FileAttributes.Normal);
 		}
 
-		private void DoAlsoSaveAs(SaveFileDialog dlg)
+		private void DoAlsoSaveAs(ISaveFileDialog dlg)
 		{
 			string sAlsoSaveFile = Path.ChangeExtension(dlg.FileName, "xml");
 			RemoveWriteProtection(sAlsoSaveFile);
@@ -465,7 +466,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void InitAlsoSaveDialog(SaveFileDialog dlg)
+		private void InitAlsoSaveDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Path.GetDirectoryName(dlg.FileName);
 			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
@@ -473,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 			dlg.FileName = Path.GetFileNameWithoutExtension(dlg.FileName);
 		}
 
-		private void InitSaveAsWebpageDialog(SaveFileDialog dlg)
+		private void InitSaveAsWebpageDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 			dlg.FileName =  m_mediator.StringTbl.GetString(m_sFileNameKey, m_sStringsPath);

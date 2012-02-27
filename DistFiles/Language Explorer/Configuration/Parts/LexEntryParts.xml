@@ -1166,7 +1166,7 @@
 			<seq field="VisibleComplexFormBackRefs" layout="publishStemComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>
 		</part>
 		<part id="LexEntry-Jt-ComplexFormsNotSubentries">
-			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef"/>
 		</part>
 		<part id="LexEntry-Jt-RootComplexFormsConfig">
 			<seq field="VisibleComplexFormBackRefs" layout="publishRootComplexFormRef" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>

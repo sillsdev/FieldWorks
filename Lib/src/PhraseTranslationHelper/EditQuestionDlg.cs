@@ -41,42 +41,33 @@ namespace SILUBS.PhraseTranslationHelper
 			InitializeComponent();
 			m_txtOriginal.Text = question.OriginalPhrase;
 			m_txtModified.Text = question.PhraseInUse;
-			if (question.AdditionalInfo.Length >= 1)
+			Question q = question.QuestionInfo;
+			if (q != null && q.AlternateForms != null)
 			{
-				Question q = question.AdditionalInfo[0] as Question;
-				if (q != null && q.AlternateForms != null)
-				{
-					System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
+				System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
 
-					foreach (string alternateForm in q.AlternateForms.Skip(1))
-					{
-						RadioButton newBtn = new RadioButton();
-						m_pnlAlternatives.Controls.Add(newBtn);
-						resources.ApplyResources(newBtn, "m_rdoAlternative");
-						m_pnlAlternatives.SetFlowBreak(newBtn, true);
-						newBtn.Text = alternateForm;
-						newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
-					}
-					m_rdoAlternative.Text = q.AlternateForms.First();
+				foreach (string alternateForm in q.AlternateForms.Skip(1))
+				{
+					RadioButton newBtn = new RadioButton();
+					m_pnlAlternatives.Controls.Add(newBtn);
+					resources.ApplyResources(newBtn, "m_rdoAlternative");
+					m_pnlAlternatives.SetFlowBreak(newBtn, true);
+					newBtn.Text = alternateForm;
+					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
+				m_rdoAlternative.Text = q.AlternateForms.First();
+				return;
 			}
-			else
-			{
-				m_pnlAlternatives.Hide();
-			}
+			m_pnlAlternatives.Hide();
 		}
 
 		private void m_txtModified_TextChanged(object sender, EventArgs e)
 		{
-			btnOk.Enabled = (m_txtModified.Text.Length > 0 && m_txtModified.Text != m_question.ModifiedPhrase);
+			btnOk.Enabled = ((m_txtModified.Text.Length > 0 || m_question.IsUserAdded) && m_txtModified.Text != m_question.PhraseInUse);
 			if (!m_pnlAlternatives.Visible)
 				return;
-			foreach (Control control in m_pnlAlternatives.Controls)
-			{
-				RadioButton rdoAlt = control as RadioButton;
-				if (rdoAlt != null)
-					rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text);
-			}
+			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
+				rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text);
 		}
 
 		private void m_rdoAlternative_CheckedChanged(object sender, EventArgs e)
@@ -86,6 +77,8 @@ namespace SILUBS.PhraseTranslationHelper
 
 		private void btnReset_Click(object sender, EventArgs e)
 		{
+			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
+				rdoAlt.Checked = false;
 			m_txtModified.Text = m_txtOriginal.Text;
 		}
 	}

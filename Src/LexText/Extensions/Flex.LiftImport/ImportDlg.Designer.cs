@@ -13,9 +13,11 @@ namespace SIL.FieldWorks.LexText
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing && !IsDisposed)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				openFileDialog1.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -36,7 +38,6 @@ namespace SIL.FieldWorks.LexText
 			this.btnBrowse = new System.Windows.Forms.Button();
 			this.tbPath = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
@@ -125,11 +126,6 @@ namespace SIL.FieldWorks.LexText
 			this.label1.TabIndex = 4;
 			this.label1.Text = "LIFT File:";
 			//
-			// openFileDialog1
-			//
-			this.openFileDialog1.Filter = "WeSay Files|*.wesay|All files|*.*";
-			this.openFileDialog1.Title = "Open WeSay Interchange File";
-			//
 			// WeSayImportDlg
 			//
 			this.AcceptButton = this.btnOK;
@@ -161,7 +157,6 @@ namespace SIL.FieldWorks.LexText
 		private System.Windows.Forms.Button btnBrowse;
 		private System.Windows.Forms.TextBox tbPath;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 
 	}
 }

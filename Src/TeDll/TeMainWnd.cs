@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
@@ -443,6 +444,7 @@ namespace SIL.FieldWorks.TE
 		private RegistryFloatSetting m_footnoteViewZoomSettingAlternate;
 		private const string kComprehensionCheckingToolSubKey = "ComprehensionCheckingTool";
 		private const string kCCSettings = "Settings";
+		FwLinkArgs m_startupLink;
 		#endregion
 
 		#region TeMainWnd Constructors, Initializers, Cleanup
@@ -473,10 +475,24 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="wndCopyFrom"></param>
+		/// <param name="startupLink">Optional link to jump to in OnFinishedInit</param>
 		/// -----------------------------------------------------------------------------------
-		public TeMainWnd(FwApp app, Form wndCopyFrom) : base(app, wndCopyFrom)
+		public TeMainWnd(FwApp app, Form wndCopyFrom, FwLinkArgs startupLink)
+			: base(app, wndCopyFrom)
 		{
+			m_startupLink = startupLink;
 			Init();
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the TeMainWnd class
+		/// </summary>
+		/// <param name="app"></param>
+		/// <param name="wndCopyFrom"></param>
+		/// -----------------------------------------------------------------------------------
+		public TeMainWnd(FwApp app, Form wndCopyFrom) : this(app, wndCopyFrom, null)
+		{
 		}
 
 		#region IDisposable override
@@ -1497,10 +1513,18 @@ namespace SIL.FieldWorks.TE
 			// If there are books in the project...
 			if (m_cache.LangProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0)
 			{
-				// When the TE window first opens, check if a book filter was enabled when
-				// the user last closed TE. If so, then show the user the book filter dialog.
-				if (TeProjectSettings.BookFilterEnabled)
-					OnBookFilter(null);
+				if (m_startupLink != null)
+				{
+					// This should automatically disabled any problem filters.
+					m_app.HandleIncomingLink(m_startupLink);
+				}
+				else
+				{
+					// When the TE window first opens, check if a book filter was enabled when
+					// the user last closed TE. If so, then show the user the book filter dialog.
+					if (TeProjectSettings.BookFilterEnabled)
+						OnBookFilter(null);
+				}
 
 				if (!ActiveViewHelper.IsViewVisible(ActiveView) && SIBAdapter != null)
 				{
@@ -1974,7 +1998,7 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the editing helper associatied with the active view
+		/// Gets the editing helper associated with the active view
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual TeEditingHelper ActiveEditingHelper
@@ -1982,11 +2006,8 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-
-				if (ActiveView == null || ActiveView.EditingHelper == null)
-					return null;
-				else
-					return ActiveView.EditingHelper.CastAs<TeEditingHelper>();
+				return ActiveView == null || ActiveView.EditingHelper == null ? null :
+					ActiveView.EditingHelper.CastAs<TeEditingHelper>();
 			}
 		}
 
@@ -2983,6 +3004,38 @@ namespace SIL.FieldWorks.TE
 		protected bool OnUpdateGoToNextFootnote(object args)
 		{
 			return UpdateGoToSubItems(args as TMItemProperties, true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnUpdateBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			TMItemProperties itemProps = args as TMItemProperties;
+
+			if (itemProps == null)
+				return false;
+
+			itemProps.Update = true;
+			itemProps.Enabled = false;
+			if (m_bookFilter.BookCount == 0 ||
+				ActiveEditingHelper == null ||
+				ActiveEditingHelper.CurrentSelection == null)
+			{
+				return true;
+			}
+
+			TeEditingHelper btDraftEditingHelper = ((TheBTSplitWrapper != null &&
+				(ActiveView == TheBTSplitWrapper.DraftView || ActiveView == TheBTSplitWrapper.BTDraftView)) ?
+				TheBTSplitWrapper.BTDraftView.TeEditingHelper : null);
+			itemProps.Enabled = (btDraftEditingHelper != null && btDraftEditingHelper.CurrentSelection != null);
+
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -7055,6 +7108,26 @@ namespace SIL.FieldWorks.TE
 			using (new WaitCursor(this))
 			{
 				ActiveEditingHelper.GoToNextFootnote();
+			}
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			// Move to the next paragraph corresponding to a vernacular paragraph which has a
+			// footnote that has not been inserted into this BT
+			using (new WaitCursor(this))
+			{
+				if (!TheBTSplitWrapper.BTDraftView.TeEditingHelper.GoToNextMissingBtFootnoteMkr(ActiveEditingHelper))
+					SystemSounds.Beep.Play();
 			}
 			return true;
 		}

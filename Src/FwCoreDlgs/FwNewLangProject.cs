@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnOK = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
 			this.m_txtName = new System.Windows.Forms.TextBox();
-			this.helpProvider1 = new HelpProvider();
+			this.helpProvider1 = new System.Windows.Forms.HelpProvider();
 			this.m_lblVernacularWrtSys = new System.Windows.Forms.Label();
 			this.m_cbVernWrtSys = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.m_cbAnalWrtSys = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
@@ -322,6 +322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_cbVernWrtSys
 			//
+			this.m_cbVernWrtSys.AllowSpaceInEditBox = false;
 			this.m_cbVernWrtSys.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.helpProvider1.SetHelpString(this.m_cbVernWrtSys, resources.GetString("m_cbVernWrtSys.HelpString"));
 			resources.ApplyResources(this.m_cbVernWrtSys, "m_cbVernWrtSys");
@@ -331,6 +332,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_cbAnalWrtSys
 			//
+			this.m_cbAnalWrtSys.AllowSpaceInEditBox = false;
 			this.m_cbAnalWrtSys.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.helpProvider1.SetHelpString(this.m_cbAnalWrtSys, resources.GetString("m_cbAnalWrtSys.HelpString"));
 			resources.ApplyResources(this.m_cbAnalWrtSys, "m_cbAnalWrtSys");
@@ -354,6 +356,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(m_lblTipText);
 			this.Controls.Add(lblTip);

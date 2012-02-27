@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using System.IO;
 using System.Collections.Generic;
@@ -154,7 +155,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// check for an exception to the exceptions?)
 						foreach (string badpath in invalidPaths)
 						{
-							if (newFolder.StartsWith(badpath))
+							// DriveInfo.GetDrives() sets Name to be "/", which adds it to invalidPath.
+							// Therefore, we need another test to get the OkButton to stay enabled.
+							if (newFolder.StartsWith(badpath) && badpath != "/" || newFolder == "/")
 							{
 								m_btnOK.Enabled = false;
 								return;
@@ -206,7 +209,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			string defaultPath = DirectoryFinder.ProjectsDirectory;
 
-			using (FolderBrowserDialog fldrBrowse = new FolderBrowserDialog())
+			using (var fldrBrowse = new FolderBrowserDialogAdapter())
 			{
 				fldrBrowse.ShowNewFolderButton = true;
 				fldrBrowse.Description = FwCoreDlgs.ksChooseProjectFolder;

@@ -295,7 +295,11 @@ namespace SIL.FieldWorks.FDO {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This database contains a corrupted record, which caused a program failure trying to load it. FieldWorks will have to close. Details: {0}. Record contains {1}.
+		///   Looks up a localized string similar to Project contains a corrupted record. FieldWorks will have to close.
+		///Project: {0}
+		///Error Details: {1}
+		///Corrupted Record:
+		///{2}.
 		/// </summary>
 		internal static string ksBadData {
 			get {

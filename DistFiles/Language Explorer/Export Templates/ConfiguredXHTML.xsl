@@ -163,11 +163,11 @@ display/printout!
 	  <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="_ComplexFormEntryBackRefs|_VisibleVariantEntryRefs|_VariantFormEntryBackRefs|_VisibleEntryRefs|_ComplexFormEntryRefs">
+  <xsl:template match="_ComplexFormEntryBackRefs|_VisibleVariantEntryRefs|_VariantFormEntryBackRefs|_VisibleEntryRefs|_ComplexFormEntryRefs|_ComplexFormsNotSubentries">
 	<xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry">
+  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry|LexEntryRefLink_NonTrivialEntryRoots">
 	  <xsl:apply-templates/>
   </xsl:template>
 
@@ -925,6 +925,18 @@ display/printout!
 			<xsl:call-template name="ProcessStTxtPara"></xsl:call-template>
 		</xsl:for-each>
 	  </div>
+	</xsl:if>
+	<!-- LT-12612: If the custom field is a possibility list, no previous mechanism
+	appeared to deal with it, so here goes... -->
+	<xsl:if test="CmLocationLink/CmPossibility_Name">
+	  <xsl:for-each select="CmLocationLink/CmPossibility_Name">
+		<!-- The separators between the items in the list are already in the XHTML
+		as literal strings, so the style sheet will not display them for us: -->
+		<xsl:if test="../preceding-sibling::LiteralString">
+		  <xsl:value-of select="../preceding-sibling::LiteralString/Str/Run"/>
+		</xsl:if>
+		<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	  </xsl:for-each>
 	</xsl:if>
   </xsl:template>
 

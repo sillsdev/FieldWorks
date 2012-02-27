@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2006, SIL International. All Rights Reserved.
-// <copyright from='2006' to='2006' company='SIL International'>
-//		Copyright (c) 2006, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2006' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -12,24 +12,15 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using Microsoft.Win32;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
 
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
+using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.TE
 {
@@ -38,7 +29,7 @@ namespace SIL.FieldWorks.TE
 	/// Dialog for exporting Toolbox USFM
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class ExportTbxDialog : ExportUsfmDialog
+	public partial class ExportTbxDialog
 	{
 		#region Member variables
 		private IScripture m_scr;
@@ -248,14 +239,16 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Final preparation before starting the export. Overridden to set
-		/// ConvertCVDigitsOnExport value and to create folder in the case where
-		/// export is to a single file.
+		/// ConvertCVDigitsOnExport value.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected override void PrepareToExport()
 		{
 			if (m_scr.UseScriptDigits)
-				m_scr.ConvertCVDigitsOnExport = chkArabicNumbers.Checked;
+			{
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
+					() => m_scr.ConvertCVDigitsOnExport = chkArabicNumbers.Checked);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

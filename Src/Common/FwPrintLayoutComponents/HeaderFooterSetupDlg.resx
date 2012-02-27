@@ -849,9 +849,6 @@
   <data name="m_lstBoxName.IntegralHeight" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_lstBoxName.ItemHeight" type="System.Int32, mscorlib">
-	<value>16</value>
-  </data>
   <data name="m_lstBoxName.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 16</value>
   </data>

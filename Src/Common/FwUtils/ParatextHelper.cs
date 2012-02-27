@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Paratext;
 using Paratext.DerivedTranslation;
@@ -137,6 +138,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				get
 				{
+					if (MiscUtils.IsUnix)
+					{
+						return Path.Combine(
+							Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+							"MyParatextProjects");
+					}
+
 					try
 					{
 						return ScrTextCollection.SettingsDirectory;

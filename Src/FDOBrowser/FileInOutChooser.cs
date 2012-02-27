@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using SIL.Utils.FileDialog;
 
 namespace FDOBrowser
 {
@@ -14,6 +15,10 @@ namespace FDOBrowser
 	/// </summary>
 	public partial class FileInOutChooser : Form
 	{
+		// expose these to hold returns
+		private OpenFileDialogAdapter Db4oFile;
+		// expose these to hold returns
+		private SaveFileDialogAdapter XmlFile;
 
 		/// <summary>
 		/// Class to choose input, output files for Db4o to XML conversion
@@ -22,18 +27,17 @@ namespace FDOBrowser
 		{
 			InitializeComponent();
 
+			Db4oFile = new OpenFileDialogAdapter();
+			Db4oFile.Filter = "Db4o Files|*.fwdb|All Files|*.*";
+
+			XmlFile = new SaveFileDialogAdapter();
+			XmlFile.DefaultExt = "fwxml";
 		}
-		private bool mDone;
-		private bool Done
-		{
-			get { return mDone; }
-			set { mDone = value; }
-		}
+
+		private bool Done { get; set; }
 
 		private void chooseDb4o_Click(object sender, EventArgs e)
 		{
-
-
 			Db4oFile.ShowDialog();
 			db4o.Text = Db4oFile.FileName;
 			if (Db4oFile.FileName != "")
@@ -42,22 +46,14 @@ namespace FDOBrowser
 
 				XmlFile.FileName = path;
 				xml.Text = path;
-
 			}
 		}
 
 		private void chooseXML_Click(object sender, EventArgs e)
 		{
-			string path;
-			string bse;
-
-
 			XmlFile.ShowDialog();
 			XmlFile.FileName = xml.Text;
-
 		}
-
-
 
 		private void done_Click(object sender, EventArgs e)
 		{
@@ -81,11 +77,6 @@ namespace FDOBrowser
 		private void cancel_Click(object sender, EventArgs e)
 		{
 			this.Hide();
-
 		}
-
-
-
-
 	}
 }

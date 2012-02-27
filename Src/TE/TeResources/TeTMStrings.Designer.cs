@@ -1906,6 +1906,24 @@ namespace SIL.FieldWorks.TE {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Go To Next Missing Footnote.
+		/// </summary>
+		public static string kstidNextMissingBtFootnoteMkrItemName {
+			get {
+				return ResourceManager.GetString("kstidNextMissingBtFootnoteMkrItemName", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Go to Next Missing Footnote.
+		/// </summary>
+		public static string kstidNextMissingBtFootnoteMkrToolTip {
+			get {
+				return ResourceManager.GetString("kstidNextMissingBtFootnoteMkrToolTip", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to No Filter.
 		/// </summary>
 		public static string kstidNoFilterItemName {

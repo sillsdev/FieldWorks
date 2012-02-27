@@ -33,6 +33,7 @@ namespace NMock.Dynamic
 		private string[] m_additonalReferences;
 		private string s_piaPath;
 		private string s_piaPath35;
+		private string s_wcfPath30;
 
 		public ClassGenerator(Type type, IInvocationHandler handler)
 			: this(type, handler, new ArrayList()) {}
@@ -100,6 +101,22 @@ namespace NMock.Dynamic
 					s_piaPath = (string)key.GetValue("");
 			}
 
+			if(s_wcfPath30 == null)
+			{
+				RegistryKey key = Registry.LocalMachine.OpenSubKey(
+						@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\NET Framework Setup\NDP\v3.0\Setup\Windows Communication Foundation");
+				if (key == null)
+					key = Registry.LocalMachine.OpenSubKey(
+						@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.0\Setup\Windows Communication Foundation");
+				if (key == null)
+				{
+					System.Diagnostics.Trace.WriteLineIf(Environment.OSVersion.Platform != PlatformID.Unix,
+						"Can't find path to WCF - build might not work correctly");
+				}
+				else
+					s_wcfPath30 = (string)key.GetValue("RuntimeInstallPath");
+			}
+
 			this.type = type;
 			this.handler = handler;
 			this.methodsToIgnore = methodsToIgnore;
@@ -163,6 +180,14 @@ namespace NMock.Dynamic
 						referencePath = Path.Combine(s_piaPath35, reference.Name + ".dll");
 						opts.ReferencedAssemblies.Add(referencePath);
 					}
+					else if (!string.IsNullOrEmpty(s_wcfPath30) &&
+						File.Exists(Path.Combine(s_wcfPath30, reference.Name + ".dll")))
+					{
+						// then try in the ".Net 3.5 Primary interop assemblies" directory (for things
+						// like System.Core.dll
+						referencePath = Path.Combine(s_wcfPath30, reference.Name + ".dll");
+						opts.ReferencedAssemblies.Add(referencePath);
+					}
 					else
 					{
 						// then try in the "legacy Primary interop assemblies" directory (for things like
@@ -171,8 +196,11 @@ namespace NMock.Dynamic
 							referencePath = Path.Combine(s_piaPath, reference.Name + ".dll");
 						if (File.Exists(referencePath))
 							opts.ReferencedAssemblies.Add(referencePath);
-						else // just add the filename without a path - it's hopefully in the GAC
+						else
+						{
+							//Add the assembly hoping it is in the GAC
 							opts.ReferencedAssemblies.Add(Path.GetFileName(referencePath));
+						}
 					}
 				}
 				foreach (string reference in m_additonalReferences)

@@ -97,6 +97,88 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Test various options of GetRealAnalysisMethod.GetBestGloss
+		/// </summary>
+		[Test]
+		public void GetBestGloss()
+		{
+			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
+			var wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
+			wf.AnalysesOC.Add(wa);
+			var sda = VwCacheDaClass.Create();
+			var wsIds = new List<int>();
+			wsIds.Add(Cache.DefaultAnalWs);
+			int hvoAbc = 123456;
+
+			// Basic check: no glosses, we don't find any.
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+
+			// Only possibility, everything blank, we want it.
+			var wgAbc = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
+			wa.MeaningsOC.Add(wgAbc);
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+
+			// Looking for a particular string and not finding one that has it, we fail
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("abc"));
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+
+			// Likewise, we won't return a gloss that has relevant alternatives, even if all the desired strings are empty.
+			// (An easy way to have all the SDA strings be empty is to use a different HVO.)
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("abc"));
+			wgAbc.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, 27), Is.Null);
+
+			// Simple success: the one and only WS matches.
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+
+			// It matches even if there is another, empty one.
+			var wgDef = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
+			wa.MeaningsOC.Add(wgDef);
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+
+			// Also if there is another one with a different value for the form
+			wgDef.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("def");
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+
+			// We can also find the def one.
+			int hvoDef = 123457;
+			sda.CacheStringAlt(hvoDef, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("def"));
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoDef), Is.EqualTo(wgDef));
+
+			// Now trying to match two writing systems. One with both correct should beat one with only one correct.
+			var wgAbc3 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
+			wa.MeaningsOC.Add(wgAbc3);
+			wgAbc3.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
+			var wsSpn = Cache.WritingSystemFactory.get_Engine("es").Handle;
+			var wsFrn = Cache.WritingSystemFactory.get_Engine("fr").Handle;
+			wgAbc3.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			wgAbc3.Form.set_String(wsFrn, Cache.TsStrFactory.MakeString("abcF", wsFrn));
+			wsIds.Add(wsSpn);
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
+
+			// Of two partial matches, prefer the one where other alternatives are empty.
+			// wgAbc2, wgAbc3 both match on English and Spanish. Neither matches on French, but wgAbc2 has no French
+			// at all and is thus a better match.
+			var wgAbc2 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
+			wa.MeaningsOC.Add(wgAbc2);
+			wgAbc2.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
+			wgAbc2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			wsIds.Add(wsFrn);
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, Cache.TsStrFactory.MakeString("abcOther", wsFrn));
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
+
+			// Of two perfect matches, we prefer the one that has no other information.
+			wsIds.Remove(wsFrn);
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
+
+			// We will not return one where the WfiGloss has a relevant non-empty alternative, even if the corresponding target is empty.
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("", wsSpn));
+			wa.MeaningsOC.Remove(wgAbc);
+			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+		}
+
+		/// <summary>
 		/// Make all the stuff we need to display Nihimbilira in the standard way.
 		/// </summary>
 		private SandboxBase SetupNihimbilira()

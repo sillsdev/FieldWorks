@@ -214,7 +214,497 @@
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="&gt;&gt;m_useDefaultSettingsLink.Name" xml:space="preserve">
+	<value>m_useDefaultSettingsLink</value>
+  </data>
+  <data name="&gt;&gt;m_useDefaultSettingsLink.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_useDefaultSettingsLink.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_useDefaultSettingsLink.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;label6.Name" xml:space="preserve">
+	<value>label6</value>
+  </data>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Name" xml:space="preserve">
+	<value>m_browseLoadSettingsFileButon</value>
+  </data>
+  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_browseLoadSettingsFileButon.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_loadSettingsFileBox.Name" xml:space="preserve">
+	<value>m_loadSettingsFileBox</value>
+  </data>
+  <data name="&gt;&gt;m_loadSettingsFileBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_loadSettingsFileBox.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_loadSettingsFileBox.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+	<value>label5</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_fileListBox.Name" xml:space="preserve">
+	<value>m_fileListBox</value>
+  </data>
+  <data name="&gt;&gt;m_fileListBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_fileListBox.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_fileListBox.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_browseInputFilesButton.Name" xml:space="preserve">
+	<value>m_browseInputFilesButton</value>
+  </data>
+  <data name="&gt;&gt;m_browseInputFilesButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_browseInputFilesButton.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_browseInputFilesButton.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>391, 273</value>
+  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+	<value>Import Files</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_modifyMappingButton.Name" xml:space="preserve">
+	<value>m_modifyMappingButton</value>
+  </data>
+  <data name="&gt;&gt;m_modifyMappingButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_modifyMappingButton.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_modifyMappingButton.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+	<value>label7</value>
+  </data>
+  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Name" xml:space="preserve">
+	<value>m_mappingsList</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>391, 273</value>
+  </data>
+  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+	<value>Mapping</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="numberOfTextsLabel.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="numberOfTextsLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 157</value>
+  </data>
+  <data name="numberOfTextsLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>173, 13</value>
+  </data>
+  <data name="numberOfTextsLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="numberOfTextsLabel.Text" xml:space="preserve">
+	<value>x texts will be imported from this file.</value>
+  </data>
+  <data name="&gt;&gt;numberOfTextsLabel.Name" xml:space="preserve">
+	<value>numberOfTextsLabel</value>
+  </data>
+  <data name="&gt;&gt;numberOfTextsLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numberOfTextsLabel.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;numberOfTextsLabel.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="secretShiftText.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="secretShiftText.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="secretShiftText.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 232</value>
+  </data>
+  <data name="secretShiftText.Size" type="System.Drawing.Size, System.Drawing">
+	<value>330, 26</value>
+  </data>
+  <data name="secretShiftText.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="secretShiftText.Text" xml:space="preserve">
+	<value>Hold SHIFT while clicking Finish to write out FieldWorks Interlinear XML file(s) instead of importing.</value>
+  </data>
+  <data name="secretShiftText.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;secretShiftText.Name" xml:space="preserve">
+	<value>secretShiftText</value>
+  </data>
+  <data name="&gt;&gt;secretShiftText.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;secretShiftText.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;secretShiftText.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="label8.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 28</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+	<value>314, 31</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+	<value>Your import settings will be saved to this file for use in any future imports.</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+	<value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.Location" type="System.Drawing.Point, System.Drawing">
+	<value>262, 59</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="m_browseSaveSettingsFileButon.Text" xml:space="preserve">
+	<value>Browse...</value>
+  </data>
+  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Name" xml:space="preserve">
+	<value>m_browseSaveSettingsFileButon</value>
+  </data>
+  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;m_browseSaveSettingsFileButon.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_saveSettingsFileBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_saveSettingsFileBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>15, 62</value>
+  </data>
+  <data name="m_saveSettingsFileBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>238, 20</value>
+  </data>
+  <data name="m_saveSettingsFileBox.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="&gt;&gt;m_saveSettingsFileBox.Name" xml:space="preserve">
+	<value>m_saveSettingsFileBox</value>
+  </data>
+  <data name="&gt;&gt;m_saveSettingsFileBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_saveSettingsFileBox.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;m_saveSettingsFileBox.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="label11.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label11.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label11.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 15</value>
+  </data>
+  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
+	<value>103, 13</value>
+  </data>
+  <data name="label11.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="label11.Text" xml:space="preserve">
+	<value>Save Settings as</value>
+  </data>
+  <data name="&gt;&gt;label11.Name" xml:space="preserve">
+	<value>label11</value>
+  </data>
+  <data name="&gt;&gt;label11.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 205</value>
+  </data>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
+	<value>149, 13</value>
+  </data>
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="label10.Text" xml:space="preserve">
+	<value>Click Finish to import the texts.</value>
+  </data>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+	<value>label10</value>
+  </data>
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 179</value>
+  </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+	<value>142, 13</value>
+  </data>
+  <data name="label9.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+	<value>You are now ready to import.</value>
+  </data>
+  <data name="&gt;&gt;label9.Name" xml:space="preserve">
+	<value>label9</value>
+  </data>
+  <data name="&gt;&gt;label9.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="tabPage4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>391, 273</value>
+  </data>
+  <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="tabPage4.Text" xml:space="preserve">
+	<value>Finish</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Name" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tabSteps.Size" type="System.Drawing.Size, System.Drawing">
+	<value>399, 302</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Name" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
   <data name="m_useDefaultSettingsLink.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -242,7 +732,6 @@
   <data name="&gt;&gt;m_useDefaultSettingsLink.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label6.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
@@ -522,33 +1011,6 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
 	<value>10</value>
   </data>
-  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 25</value>
-  </data>
-  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 3, 3, 3</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>391, 273</value>
-  </data>
-  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-	<value>Import Files</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
-	<value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
-	<value>tabSteps</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
   <data name="m_modifyMappingButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
   </data>
@@ -583,7 +1045,7 @@
 	<value>17, 15</value>
   </data>
   <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
-	<value>326, 46</value>
+	<value>316, 46</value>
   </data>
   <data name="label7.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
@@ -605,6 +1067,27 @@
   </data>
   <data name="m_mappingsList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="m_mappingsList.Location" type="System.Drawing.Point, System.Drawing">
+	<value>20, 64</value>
+  </data>
+  <data name="m_mappingsList.Size" type="System.Drawing.Size, System.Drawing">
+	<value>313, 156</value>
+  </data>
+  <data name="m_mappingsList.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Name" xml:space="preserve">
+	<value>m_mappingsList</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_mappingsList.ZOrder" xml:space="preserve">
+	<value>2</value>
   </data>
   <data name="Marker.Text" xml:space="preserve">
 	<value>Marker</value>
@@ -632,294 +1115,6 @@
   </data>
   <data name="Converter.Text" xml:space="preserve">
 	<value>Converter</value>
-  </data>
-  <data name="m_mappingsList.Location" type="System.Drawing.Point, System.Drawing">
-	<value>20, 64</value>
-  </data>
-  <data name="m_mappingsList.Size" type="System.Drawing.Size, System.Drawing">
-	<value>323, 156</value>
-  </data>
-  <data name="m_mappingsList.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_mappingsList.Name" xml:space="preserve">
-	<value>m_mappingsList</value>
-  </data>
-  <data name="&gt;&gt;m_mappingsList.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_mappingsList.Parent" xml:space="preserve">
-	<value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;m_mappingsList.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 25</value>
-  </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>391, 273</value>
-  </data>
-  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-	<value>Mapping</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
-	<value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
-	<value>tabSteps</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="secretShiftText.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="secretShiftText.Font" type="System.Drawing.Font, System.Drawing">
-	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="secretShiftText.Location" type="System.Drawing.Point, System.Drawing">
-	<value>24, 232</value>
-  </data>
-  <data name="secretShiftText.Size" type="System.Drawing.Size, System.Drawing">
-	<value>282, 26</value>
-  </data>
-  <data name="secretShiftText.TabIndex" type="System.Int32, mscorlib">
-	<value>14</value>
-  </data>
-  <data name="secretShiftText.Text" xml:space="preserve">
-	<value>Hold SHIFT while clicking Finish to write out FieldWorks Interlinear XML file(s) instead of importing.</value>
-  </data>
-  <data name="secretShiftText.Visible" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="&gt;&gt;secretShiftText.Name" xml:space="preserve">
-	<value>secretShiftText</value>
-  </data>
-  <data name="&gt;&gt;secretShiftText.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;secretShiftText.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;secretShiftText.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="label8.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Top, Left, Right</value>
-  </data>
-  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-	<value>12, 28</value>
-  </data>
-  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-	<value>324, 31</value>
-  </data>
-  <data name="label8.TabIndex" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
-  <data name="label8.Text" xml:space="preserve">
-	<value>Your import settings will be saved to this file for use in any future imports.</value>
-  </data>
-  <data name="&gt;&gt;label8.Name" xml:space="preserve">
-	<value>label8</value>
-  </data>
-  <data name="&gt;&gt;label8.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Top, Right</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.Location" type="System.Drawing.Point, System.Drawing">
-	<value>272, 59</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 23</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.TabIndex" type="System.Int32, mscorlib">
-	<value>12</value>
-  </data>
-  <data name="m_browseSaveSettingsFileButon.Text" xml:space="preserve">
-	<value>Browse...</value>
-  </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Name" xml:space="preserve">
-	<value>m_browseSaveSettingsFileButon</value>
-  </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="m_saveSettingsFileBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Top, Left, Right</value>
-  </data>
-  <data name="m_saveSettingsFileBox.Location" type="System.Drawing.Point, System.Drawing">
-	<value>15, 62</value>
-  </data>
-  <data name="m_saveSettingsFileBox.Size" type="System.Drawing.Size, System.Drawing">
-	<value>248, 20</value>
-  </data>
-  <data name="m_saveSettingsFileBox.TabIndex" type="System.Int32, mscorlib">
-	<value>11</value>
-  </data>
-  <data name="&gt;&gt;m_saveSettingsFileBox.Name" xml:space="preserve">
-	<value>m_saveSettingsFileBox</value>
-  </data>
-  <data name="&gt;&gt;m_saveSettingsFileBox.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_saveSettingsFileBox.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;m_saveSettingsFileBox.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="label11.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="label11.Font" type="System.Drawing.Font, System.Drawing">
-	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="label11.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
-	<value>12, 15</value>
-  </data>
-  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
-	<value>103, 13</value>
-  </data>
-  <data name="label11.TabIndex" type="System.Int32, mscorlib">
-	<value>10</value>
-  </data>
-  <data name="label11.Text" xml:space="preserve">
-	<value>Save Settings as</value>
-  </data>
-  <data name="&gt;&gt;label11.Name" xml:space="preserve">
-	<value>label11</value>
-  </data>
-  <data name="&gt;&gt;label11.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
-	<value>12, 205</value>
-  </data>
-  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
-	<value>149, 13</value>
-  </data>
-  <data name="label10.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="label10.Text" xml:space="preserve">
-	<value>Click Finish to import the texts.</value>
-  </data>
-  <data name="&gt;&gt;label10.Name" xml:space="preserve">
-	<value>label10</value>
-  </data>
-  <data name="&gt;&gt;label10.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
-	<value>5</value>
-  </data>
-  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-	<value>12, 179</value>
-  </data>
-  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-	<value>142, 13</value>
-  </data>
-  <data name="label9.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="label9.Text" xml:space="preserve">
-	<value>You are now ready to import.</value>
-  </data>
-  <data name="&gt;&gt;label9.Name" xml:space="preserve">
-	<value>label9</value>
-  </data>
-  <data name="&gt;&gt;label9.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-	<value>6</value>
-  </data>
-  <data name="tabPage4.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 25</value>
-  </data>
-  <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
-	<value>391, 273</value>
-  </data>
-  <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
-	<value>3</value>
-  </data>
-  <data name="tabPage4.Text" xml:space="preserve">
-	<value>Finish</value>
-  </data>
-  <data name="&gt;&gt;tabPage4.Name" xml:space="preserve">
-	<value>tabPage4</value>
-  </data>
-  <data name="&gt;&gt;tabPage4.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage4.Parent" xml:space="preserve">
-	<value>tabSteps</value>
-  </data>
-  <data name="&gt;&gt;tabPage4.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="tabSteps.Size" type="System.Drawing.Size, System.Drawing">
-	<value>399, 302</value>
-  </data>
-  <data name="&gt;&gt;tabSteps.Name" xml:space="preserve">
-	<value>tabSteps</value>
-  </data>
-  <data name="&gt;&gt;tabSteps.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabSteps.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;tabSteps.ZOrder" xml:space="preserve">
-	<value>5</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
@@ -979,6 +1174,6 @@
 	<value>InterlinearSfmImportWizard</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.WizardDialog, FwControls, Version=7.2.0.18338, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.WizardDialog, FwControls, Version=7.2.2.27539, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

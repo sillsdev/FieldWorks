@@ -1024,6 +1024,15 @@ namespace SIL.FieldWorks.Common.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Show Entry in Lexicon.
+		/// </summary>
+		internal static string ksShowEntryInLexicon {
+			get {
+				return ResourceManager.GetString("ksShowEntryInLexicon", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Sorry...that bulk edit function is not implemented yet.
 		/// </summary>
 		internal static string ksSorryNoEdit {

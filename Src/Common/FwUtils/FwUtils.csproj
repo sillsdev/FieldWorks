@@ -149,6 +149,9 @@
 	  <Name>System.Data</Name>
 	</Reference>
 	<Reference Include="System.Drawing" />
+	<Reference Include="System.ServiceModel">
+	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
+	</Reference>
 	<Reference Include="System.Web" />
 	<Reference Include="System.Windows.Forms">
 	  <Name>System.Windows.Forms</Name>
@@ -165,6 +168,7 @@
 	<None Include="AssemblyInfo.cs" />
 	<Compile Include="CaseFunctions.cs" />
 	<Compile Include="ConsoleProgress.cs" />
+	<Compile Include="FLExBridgeHelper.cs" />
 	<Compile Include="IProjectIdentifier.cs" />
 	<Compile Include="IThreadedProgress.cs" />
 	<Compile Include="DirectoryFinder.cs" />

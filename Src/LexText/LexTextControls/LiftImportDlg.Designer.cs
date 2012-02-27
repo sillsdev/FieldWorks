@@ -14,9 +14,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing && !IsDisposed)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				openFileDialog1.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -36,7 +38,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.btnBrowse = new System.Windows.Forms.Button();
 			this.tbPath = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.btnBackup = new System.Windows.Forms.Button();
 			this.tbBackup = new System.Windows.Forms.TextBox();
@@ -198,7 +199,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Button btnBrowse;
 		private System.Windows.Forms.TextBox tbPath;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Button btnBackup;
 		private System.Windows.Forms.TextBox tbBackup;

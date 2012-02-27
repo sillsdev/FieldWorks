@@ -337,6 +337,8 @@
 	<Compile Include="DomainServices\DataMigration\DataMigration7000041.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000042.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000044.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000051.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000052.cs" />
 	<Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
 	<Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
 	  <SubType>Form</SubType>
@@ -346,6 +348,7 @@
 	</Compile>
 	<Compile Include="DomainServices\DataMigration\ImportFrom6_0.cs" />
 	<Compile Include="DomainServices\Db4OServerFinder.cs" />
+	<Compile Include="DomainServices\FootnoteLocationInfo.cs" />
 	<Compile Include="DomainServices\FwProjectFinder.cs" />
 	<Compile Include="DomainServices\GlobalSettingServices.cs" />
 	<Compile Include="DomainServices\M3ModelExportServices.cs" />
@@ -390,6 +393,7 @@
 	<Compile Include="DomainServices\MorphServices.cs" />
 	<Compile Include="DomainServices\ParaNodeMap.cs" />
 	<Compile Include="DomainServices\ParatextProxy.cs" />
+	<Compile Include="DomainServices\ProjectLockingService.cs" />
 	<Compile Include="DomainServices\ReferenceAdjusterService.cs" />
 	<Compile Include="DomainServices\ReferenceTargetServices.cs" />
 	<Compile Include="DomainServices\ScrCheckingToken.cs" />

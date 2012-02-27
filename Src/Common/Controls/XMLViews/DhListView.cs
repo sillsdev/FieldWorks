@@ -98,10 +98,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));		// Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));		// Add descending arrow
 
-#if __MonoCS__ // FWNX-131
-			SmallImageList = m_imgList;
-#endif
-
 			m_checkMarkButton = new Button();
 			m_checkMarkButton.Click += new EventHandler(m_checkMarkButton_Click);
 			m_checkMarkButton.Image = ResourceHelper.CheckMarkHeader;
@@ -255,7 +251,6 @@ namespace SIL.FieldWorks.Common.Controls
 			set { m_suppressColumnWidthChanges = value; }
 		}
 
-#if !__MonoCS__ // FWNX-131
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// </summary>
@@ -419,7 +414,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_imgList.Draw(e.Graphics, e.Bounds.Right - 2 - size.Width, e.Bounds.Top + 2, imageIndex);
 			}
 		}
-#endif
 
 		internal void RecordCheckWidth(int val)
 		{

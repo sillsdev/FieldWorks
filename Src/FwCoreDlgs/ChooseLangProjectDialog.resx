@@ -129,7 +129,7 @@
 	<value>0, 0, 0, 0</value>
   </data>
   <data name="m_hostsTreeView.Size" type="System.Drawing.Size, System.Drawing">
-	<value>234, 178</value>
+	<value>234, 158</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_hostsTreeView.TabIndex" type="System.Int32, mscorlib">
@@ -163,7 +163,7 @@
 	<value>0, 0, 1, 0</value>
   </data>
   <data name="m_lstLanguageProjects.Size" type="System.Drawing.Size, System.Drawing">
-	<value>258, 249</value>
+	<value>258, 229</value>
   </data>
   <data name="m_lstLanguageProjects.TabIndex" type="System.Int32, mscorlib">
 	<value>3</value>
@@ -187,7 +187,7 @@
 	<value>GrowAndShrink</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>340, 270</value>
+	<value>423, 250</value>
   </data>
   <data name="m_btnCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>8, 5, 0, 0</value>
@@ -211,7 +211,7 @@
 	<value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
-	<value>4</value>
+	<value>5</value>
   </data>
   <data name="m_btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Right</value>
@@ -223,7 +223,7 @@
 	<value>False</value>
   </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
-	<value>257, 270</value>
+	<value>340, 250</value>
   </data>
   <data name="m_btnOk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>8, 5, 0, 0</value>
@@ -247,7 +247,7 @@
 	<value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnOk.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>3</value>
   </data>
   <data name="m_lblLookIn.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -313,7 +313,7 @@
 	<value>Fill</value>
   </data>
   <data name="m_txtAddHost.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 215</value>
+	<value>0, 195</value>
   </data>
   <data name="m_txtAddHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>0, 0, 0, 0</value>
@@ -346,7 +346,7 @@
 	<value>False</value>
   </data>
   <data name="m_btnAddHost.Location" type="System.Drawing.Point, System.Drawing">
-	<value>159, 239</value>
+	<value>159, 219</value>
   </data>
   <data name="m_btnAddHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>0, 4, 0, 0</value>
@@ -379,7 +379,7 @@
 	<value>GrowAndShrink</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>423, 270</value>
+	<value>91, 281</value>
   </data>
   <data name="m_btnHelp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>8, 5, 0, 0</value>
@@ -403,7 +403,7 @@
 	<value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-	<value>3</value>
+	<value>4</value>
   </data>
   <data name="m_lblAddNetworkComp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
@@ -412,7 +412,7 @@
 	<value>True</value>
   </data>
   <data name="m_lblAddNetworkComp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 199</value>
+	<value>3, 179</value>
   </data>
   <data name="m_lblAddNetworkComp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>3, 5, 3, 3</value>
@@ -445,7 +445,7 @@
 	<value>True</value>
   </data>
   <data name="m_linkOpenFwDataProject.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 274</value>
+	<value>3, 254</value>
   </data>
   <data name="m_linkOpenFwDataProject.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>3, 0, 0, 0</value>
@@ -470,6 +470,39 @@
   </data>
   <data name="&gt;&gt;m_linkOpenFwDataProject.ZOrder" xml:space="preserve">
 	<value>0</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.Location" type="System.Drawing.Point, System.Drawing">
+	<value>169, 254</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 0, 0, 0</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.Size" type="System.Drawing.Size, System.Drawing">
+	<value>163, 13</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_linkOpenBridgeProject.Text" xml:space="preserve">
+	<value>Receive project from a colleague</value>
+  </data>
+  <data name="&gt;&gt;m_linkOpenBridgeProject.Name" xml:space="preserve">
+	<value>m_linkOpenBridgeProject</value>
+  </data>
+  <data name="&gt;&gt;m_linkOpenBridgeProject.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_linkOpenBridgeProject.Parent" xml:space="preserve">
+	<value>m_tblLayoutOuter</value>
+  </data>
+  <data name="&gt;&gt;m_linkOpenBridgeProject.ZOrder" xml:space="preserve">
+	<value>1</value>
   </data>
   <data name="m_tblLayoutOuter.ColumnCount" type="System.Int32, mscorlib">
 	<value>4</value>
@@ -502,7 +535,7 @@
 	<value>0</value>
   </data>
   <data name="m_tblLayoutOuter.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_linkOpenFwDataProject" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_splitContainer" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_btnOk" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_btnHelp" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="m_btnCancel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_linkOpenFwDataProject" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_linkOpenBridgeProject" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_splitContainer" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_btnOk" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_btnHelp" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="m_btnCancel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="Percent,100,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="m_splitContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>Fill</value>
@@ -529,7 +562,7 @@
 	<value>5</value>
   </data>
   <data name="m_tblLayoutLocations.Size" type="System.Drawing.Size, System.Drawing">
-	<value>234, 265</value>
+	<value>234, 245</value>
   </data>
   <data name="m_tblLayoutLocations.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
@@ -577,7 +610,7 @@
 	<value>2</value>
   </data>
   <data name="m_tblLayoutProjects.Size" type="System.Drawing.Size, System.Drawing">
-	<value>258, 265</value>
+	<value>258, 245</value>
   </data>
   <data name="m_tblLayoutProjects.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
@@ -610,7 +643,7 @@
 	<value>1</value>
   </data>
   <data name="m_splitContainer.Size" type="System.Drawing.Size, System.Drawing">
-	<value>498, 265</value>
+	<value>498, 245</value>
   </data>
   <data name="m_splitContainer.SplitterDistance" type="System.Int32, mscorlib">
 	<value>234</value>
@@ -631,11 +664,14 @@
 	<value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_splitContainer.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>2</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>518, 316</value>
   </data>

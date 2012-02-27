@@ -13,13 +13,10 @@
 using System;
 using System.Resources;
 using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using SIL.Utils;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
 
 
@@ -747,8 +744,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (ValidToGoBackward())
 			{
-				m_CurrentStepNumber--;
-				m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 				this.OnBackButton();
 			}
 		}
@@ -777,10 +772,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				m_CurrentStepNumber++;
 				this.OnNextButton();
 			}
-			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -875,11 +868,16 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Extensions of the base class may choose to skip the call to the base class which
+		/// would abort the tab advance.
+		/// The preferred method of avoiding the change to the next pane is to use the ValidToGoForward
+		/// method but in some cases this is not the best design.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		protected virtual void OnNextButton()
 		{
+			m_CurrentStepNumber++;
+			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 			tabSteps.SelectedIndex++;
 		}
 
@@ -890,6 +888,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// -----------------------------------------------------------------------------------
 		protected virtual void OnBackButton()
 		{
+			m_CurrentStepNumber--;
+			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 			tabSteps.SelectedIndex--;
 		}
 

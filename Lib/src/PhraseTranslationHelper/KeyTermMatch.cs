@@ -215,9 +215,21 @@ namespace SILUBS.PhraseTranslationHelper
 			if (renderings.Count() == 1 || TranslatablePhrase.s_helper.TermRenderingSelectionRules == null)
 				return Translation;
 
+			List<string> renderingsList = null;
 			foreach (RenderingSelectionRule rule in TranslatablePhrase.s_helper.TermRenderingSelectionRules.Where(r => !r.Disabled))
 			{
-				string s = rule.ChooseRendering(phrase.PhraseInUse, Words, renderings);
+				if (renderingsList == null)
+				{
+					renderingsList = new List<string>();
+					foreach (string rendering in renderings)
+					{
+						if (rendering == Translation)
+							renderingsList.Insert(0, rendering);
+						else
+							renderingsList.Add(rendering);
+					}
+				}
+				string s = rule.ChooseRendering(phrase.PhraseInUse, Words, renderingsList);
 				if (!string.IsNullOrEmpty(s))
 					return s;
 			}
@@ -294,10 +306,16 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			get
 			{
+				//List<string> renderings = new List<string>();
+				//renderings.
+				//if (Translation == null)
+				// return renderings
+				// else
+				// renderings[0] = Translation;
 				IEnumerable<string> renderings = m_terms.SelectMany(keyTerm => keyTerm.Renderings.Where(r => r != null));
 				KeyTermRenderingInfo info = RenderingInfo;
 				if (info != null)
-					renderings = renderings.Union(RenderingInfo.AddlRenderings.Where(r => r != null));
+					renderings = renderings.Union(info.AddlRenderings.Where(r => r != null));
 				return renderings.Select(r => r.Normalize(NormalizationForm.FormD)).Distinct();
 			}
 		}
@@ -366,10 +384,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void UpdateRenderingInfoFile()
 		{
 			if (m_keyTermRenderingInfoFile != null)
-			{
-				UNSQuestionsDialog.EnsureDataFolderExists();
 				XmlSerializationHelper.SerializeToFile(m_keyTermRenderingInfoFile, m_keyTermRenderingInfo);
-			}
 		}
 		#endregion
 	}

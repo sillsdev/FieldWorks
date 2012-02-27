@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="frag"></param>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
-			FDO.IText text = null;
+			ICmObject text = null;
 			switch(frag)
 			{
 				case InterlinVc.kfragInterlinPara:
@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.IText
 					//here the m_hvoCurr object is an StText object, store the IText owner
 					//so that we can pull data from it to close out the interlinear-text element
 					//Naylor 11-2011
-					text = (FDO.IText)m_repoObj.GetObject(m_hvoCurr).Owner;
+					text = m_repoObj.GetObject(m_hvoCurr).Owner;
 					m_writer.WriteAttributeString("guid", text.Guid.ToString());
 					foreach (var mTssPendingTitle in pendingTitles)
 					{
@@ -568,11 +568,12 @@ namespace SIL.FieldWorks.IText
 					}
 					m_writer.WriteEndElement();	// languages
 					//Media files section
-					if (text != null && text.MediaFilesOA != null)
+					if (text != null && text is FDO.IText && ((FDO.IText)text).MediaFilesOA != null)
 					{
+						FDO.IText theText = (FDO.IText) text;
 						m_writer.WriteStartElement("media-files");
-						m_writer.WriteAttributeString("offset-type", text.MediaFilesOA.OffsetType);
-						foreach (var mediaFile in text.MediaFilesOA.MediaURIsOC)
+						m_writer.WriteAttributeString("offset-type", theText.MediaFilesOA.OffsetType);
+						foreach (var mediaFile in theText.MediaFilesOA.MediaURIsOC)
 						{
 							m_writer.WriteStartElement("media");
 							m_writer.WriteAttributeString("guid", mediaFile.Guid.ToString());

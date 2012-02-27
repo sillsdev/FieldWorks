@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{7CE209AF-EB05-4584-9444-966C0978757F}</ProjectGuid>
 	<OutputType>WinExe</OutputType>
@@ -260,6 +260,7 @@
   <ItemGroup>
 	<EmbeddedResource Include="ApplicationBusyDialog.resx">
 	  <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="MoveProjectsDlg.resx">
 	  <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
@@ -268,6 +269,7 @@
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="ShareProjectsFolderDlg.resx">
 	  <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
@@ -275,6 +277,7 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">
 	  <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -534,12 +534,12 @@ namespace SIL.FieldWorks.IText
 				en->"them" sp->"ellas"?
 				*/
 
-				// (LT-1428)
+				// (LT-1428, LT-12472)
 				// -----------------------------
 				// When the user edits a gloss,
 				// (1) If there is an existing gloss matching what they just changed it to
 				//		then switch this instance to point to that one.
-				// (2) Else if the gloss is used only in this instance
+				// (2) Else if the gloss is used only in this instance, or if it matches on all WSs that are not blank in the gloss,
 				//		then apply the edits directly to the gloss.
 				// (3) Else, create a new gloss.
 				//-------------------------------
@@ -832,31 +832,84 @@ namespace SIL.FieldWorks.IText
 			/// <returns></returns>
 			public IWfiGloss FindMatchingGloss()
 			{
-				foreach (IWfiGloss possibleGloss in m_wa.MeaningsOC)
+				var wsIds = m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+				var sda = m_sda;
+				var wfiAnalysis = m_wa;
+				var hvoWord = m_hvoSbWord;
+				return GetBestGloss(wfiAnalysis, wsIds, sda, hvoWord);
+			}
+
+			/// <summary>
+			/// Get the most appropriate WfiGloss from among those belonging to the given WfiAnalysis.
+			/// The goal is to match as closely as possible the strings found in sda.get_MultiStringAlt(hvoWord, ktagSbWordGloss, ws)
+			/// for each ws in wsIds. Ideally we find an alternative where all writing systems match exactly.
+			/// Failing that, one where as many as possible match, and the others are blank.
+			/// </summary>
+			/// <param name="wfiAnalysis"></param>
+			/// <param name="wsIds"></param>
+			/// <param name="sda"></param>
+			/// <param name="hvoWord"></param>
+			/// <returns></returns>
+			internal static IWfiGloss GetBestGloss(IWfiAnalysis wfiAnalysis, List<int> wsIds, ISilDataAccess sda, int hvoWord)
+			{
+				IWfiGloss best = null;
+				int cBestMatch = 0;
+				int cBestBlanks = 0; // number of non-matching alternatives that are blank, in the best match so far
+				foreach (IWfiGloss possibleGloss in wfiAnalysis.MeaningsOC)
 				{
-					bool fAlternativeFound = false; // OK if any gloss alternative matches.
-					bool fAllBlankMatched = true; // True until we find a non-blank line
-					foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+					int cMatch = 0;
+					int cBlanks = 0; // number of non-matching alternatives that are blank, in the current item.
+					foreach (int wsId in wsIds)
 					{
-						ITsString tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId);
+						ITsString tssGloss = sda.get_MultiStringAlt(hvoWord, ktagSbWordGloss, wsId);
 						ITsString tssMainGloss = possibleGloss.Form.get_String(wsId);
 						string sdaGloss = tssGloss.Text;
 						string smainGloss = tssMainGloss.Text;
 
-						if (tssGloss.Length != 0 || tssMainGloss.Length != 0)
+						if (tssGloss.Equals(tssMainGloss))
+							cMatch++;
+						else if (tssMainGloss.Length == 0)
+							cBlanks++;
+						else
 						{
-							fAllBlankMatched = false;
-						}
-						if (tssGloss.Length > 0 && tssGloss.Equals(tssMainGloss))
-						{
-							fAlternativeFound = true;
-							break;
+							cMatch = int.MinValue; // non-matching alternative on the WfiGloss, this one is no good for sure
+							cBlanks = int.MinValue;
 						}
 					}
-					if (fAlternativeFound || fAllBlankMatched)
-						return possibleGloss;
+					// This one is better if:
+					// - it has more matches
+					// - it has as many matches and more relevant empty alternatives
+					// - it is as good otherwise and has fewer non-relevant alternatives.
+					if (cMatch > cBestMatch
+						|| (cMatch == cBestMatch && cBlanks > cBestBlanks)
+						|| (cMatch == cBestMatch && cBlanks == cBestBlanks && best != null && AdditionalAlternatives(possibleGloss, wsIds) < AdditionalAlternatives(best, wsIds)))
+					{
+						cBestMatch = cMatch;
+						cBestBlanks = cBlanks;
+						best = possibleGloss;
+					}
 				}
-				return null;
+				// we won't return something where nothing matched, just because it had a blank alternative
+				return cBestMatch > 0 ? best : null;
+			}
+
+			/// <summary>
+			/// Count how many non-blank alternatives tss has that are not listed in wsIds.
+			/// </summary>
+			/// <param name="tss"></param>
+			/// <param name="wsIds"></param>
+			/// <returns></returns>
+			static int AdditionalAlternatives(IWfiGloss wg, List<int> wsIds)
+			{
+				int result = 0;
+				foreach (var ws in wg.Form.AvailableWritingSystemIds)
+				{
+					if (wsIds.Contains(ws))
+						continue;
+					if (wg.Form.get_String(ws).Length > 0)
+						result++;
+				}
+				return result;
 			}
 
 			/// <summary>

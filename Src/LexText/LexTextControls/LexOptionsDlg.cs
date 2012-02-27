@@ -197,6 +197,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string dir in Directory.GetDirectories(basePluginPath))
 			{
 				Debug.WriteLine(dir);
+				// Currently not offering Concorder plugin in FW7, therefore, we
+				// can remove the feature until we need to implement. (FWNX-755)
+				if(MiscUtils.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
+					continue;
 				string managerPath = Path.Combine(dir, "ExtensionManager.xml");
 				if (File.Exists(managerPath))
 				{

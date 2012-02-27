@@ -66,10 +66,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = File.Exists(LiftBridgeDll);
+			// LT-11922 & LT-12053 show that we need the CodeDirectory here and it's better
+			// to use the FileUtils version of FileExists for cross-platform reasons.
+			var fullDllName = FullLiftBridgeDllPath();
+			display.Enabled = FileUtils.FileExists(fullDllName);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
+		}
+
+		private static string FullLiftBridgeDllPath()
+		{
+			var fullDllName = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
+			return fullDllName;
 		}
 
 		/// <summary>
@@ -78,8 +87,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			m_fRefreshNeeded = false;
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var assembly = Assembly.LoadFrom(Path.Combine(baseDir, LiftBridgeDll));
+			var assembly = Assembly.LoadFrom(FullLiftBridgeDllPath());
 			var lbType = (assembly.GetTypes().Where(typeof(ILiftBridge).IsAssignableFrom)).First();
 			var constInfo = lbType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
 			using (var liftBridge = (ILiftBridge)constInfo.Invoke(BindingFlags.NonPublic, null, null, null))

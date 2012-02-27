@@ -778,6 +778,21 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void ProcessDictionaryTypeClasses()
 		{
+			if (m_dictClassData.ContainsKey("headref"))
+			{
+				WriteCssHeadref();
+				m_dictClassData.Remove("headref");
+			}
+			if (m_dictClassData.ContainsKey("headref-before"))
+			{
+				WriteCssHeadrefBefore();
+				m_dictClassData.Remove("headref-before");
+			}
+			if (m_dictClassData.ContainsKey("headref-after"))
+			{
+				WriteCssHeadrefAfter();
+				m_dictClassData.Remove("headref-after");
+			}
 			if (m_dictClassData.ContainsKey("dicBody"))
 			{
 				WriteCssEmptyDefinition("dicBody");
@@ -832,6 +847,11 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
+			}
+			if (m_dictClassData.ContainsKey("sensenumberref"))
+			{
+				WriteCssSenseNumberRef();
+				m_dictClassData.Remove("sensenumberref");
 			}
 			if (m_dictClassData.ContainsKey("pictureRight"))
 			{
@@ -1118,6 +1138,38 @@ namespace SIL.FieldWorks.Common.Framework
 			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
 			//}
 			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssSenseNumberRef()
+		{
+			m_writer.WriteLine(".sensenumberref {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "sensenumberref");
+			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssHeadref()
+		{
+			m_writer.WriteLine(".headref {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Headword", "headref");
+			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssHeadrefBefore()
+		{
+			List<String> texts;
+			m_writer.Write(".headref:before {content:\"");
+			m_dictClassData.TryGetValue("headref-before", out texts);
+			m_writer.Write(texts[0]); // only one text in the list
+			m_writer.WriteLine("\"}");
+		}
+
+		private void WriteCssHeadrefAfter()
+		{
+			List<String> texts;
+			m_writer.Write(".headref:after {content:\"");
+			m_dictClassData.TryGetValue("headref-after", out texts);
+			m_writer.Write(texts[0]); // only one text in the list
+			m_writer.WriteLine("\"}");
 		}
 
 		private void WriteCssCustomText()
@@ -2029,8 +2081,28 @@ namespace SIL.FieldWorks.Common.Framework
 										sFwStyle = sClass.Replace('_', ' ');		// just in case...
 									if (!m_dictClassData.TryGetValue(sFwStyle, out rgsLangs))
 									{
-										rgsLangs = new List<string>();
-										m_dictClassData.Add(sClass, rgsLangs);
+										string before = ExtractText(sLine, idxLim, " before", "\"");
+										string after = ExtractText(sLine, idxLim, " after", "\"");
+										if (!String.IsNullOrEmpty(before) || !String.IsNullOrEmpty(after))
+										{
+											if (!String.IsNullOrEmpty(before))
+											{
+												List<string> rgsBefores = new List<string>();
+												rgsBefores.Add(before); // sorry, literal text not a language
+												m_dictClassData.Add(sClass, rgsBefores);
+											}
+											if (!String.IsNullOrEmpty(after))
+											{
+												List<string> rgsAfters = new List<string>();
+												rgsAfters.Add(after); // sorry, literal text not a language
+												m_dictClassData.Add(sClass, rgsAfters);
+											}
+										}
+										else
+										{
+											rgsLangs = new List<string>();
+											m_dictClassData.Add(sClass, rgsLangs);
+										}
 									}
 								}
 								if (!String.IsNullOrEmpty(sLang) && !rgsLangs.Contains(sLang))
@@ -2045,6 +2117,32 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Extracts labeled text between two delimiters
+		/// ex:  str = 'stuff ... attrname = "delimited text" ... '
+		/// use: delimitedText = ExtractText(str, idxLim, "attrname", "\"");
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="fromHere"></param>
+		/// <param name="label"></param>
+		/// <param name="delimiter"></param>
+		/// <returns></returns>
+		private string ExtractText(string str, int fromHere, string label, string delimiter)
+		{
+			int horizon = 30;
+			if (fromHere > str.Length - 1) return null; // nothing to look for
+			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;
+			int start = str.IndexOf(label, fromHere, horizon, StringComparison.Ordinal);
+			if (start < 0) return null; // no label found
+			start += label.Length; // one char past label
+			int delim = str.IndexOf(delimiter, start, StringComparison.Ordinal); // pos of 1st delimiter
+			if (delim < 0) return null; // no text between delimiters
+			start = delim + delimiter.Length; // start of text between delimiters
+			int end = str.IndexOf(delimiter, start, StringComparison.Ordinal);
+			if (end < 0) return null; // no end delimiter on this line - should have used an xml parser ;-)
+			return str.Substring(start, end - start);
 		}
 	}
 }

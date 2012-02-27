@@ -555,7 +555,7 @@
 		</uptodate>
 		<echo message="Generating FDO files" unless="${uptodate}"/>
 		<echo message="Generated FDO files up to date" if="${uptodate}" />
-		<if test="${not uptodate}">
+		<if test="${(not uptodate) or property::exists('buildingInstallers')}">
 			<!-- generate C# files used in FDO -->
 			<fdogenerate
 					xml="${dir.srcProj}/MasterFieldWorksModel.xml"

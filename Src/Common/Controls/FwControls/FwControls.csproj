@@ -123,8 +123,6 @@
 	<Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="Framework, Version=7.2.0.17330, Culture=neutral, processorArchitecture=MSIL" />
-	<Reference Include="FwCoreDlgs, Version=7.2.0.17328, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FwResources, Version=5.3.0.27327, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -525,12 +523,6 @@
 	<Content Include="resources\GreyChecked.bmp" />
 	<None Include="resources\MissingGlyph.png" />
 	<Content Include="resources\Unchecked.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\xWorks\xWorks.csproj">
-	  <Project>{86B57733-A74B-43F1-863F-31A39E60F120}</Project>
-	  <Name>xWorks</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

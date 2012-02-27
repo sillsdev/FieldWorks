@@ -41,6 +41,7 @@
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_lblAddNetworkComp = new System.Windows.Forms.Label();
 			this.m_linkOpenFwDataProject = new System.Windows.Forms.LinkLabel();
+			this.m_linkOpenBridgeProject = new System.Windows.Forms.LinkLabel();
 			this.m_splitContainer = new System.Windows.Forms.SplitContainer();
 			this.m_tblLayoutLocations = new System.Windows.Forms.TableLayoutPanel();
 			this.m_tblLayoutProjects = new System.Windows.Forms.TableLayoutPanel();
@@ -128,6 +129,13 @@
 			this.m_linkOpenFwDataProject.TabStop = true;
 			this.m_linkOpenFwDataProject.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OpenFwDataProjectLinkClicked);
 			//
+			// m_linkOpenBridgeProject
+			//
+			resources.ApplyResources(this.m_linkOpenBridgeProject, "m_linkOpenBridgeProject");
+			this.m_linkOpenBridgeProject.Name = "m_linkOpenBridgeProject";
+			this.m_linkOpenBridgeProject.TabStop = true;
+			this.m_linkOpenBridgeProject.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OpenBridgeProjectLinkClicked);
+			//
 			// m_splitContainer
 			//
 			this.m_tblLayoutOuter.SetColumnSpan(this.m_splitContainer, 4);
@@ -163,6 +171,7 @@
 			//
 			resources.ApplyResources(this.m_tblLayoutOuter, "m_tblLayoutOuter");
 			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenFwDataProject, 0, 1);
+			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenBridgeProject, 0, 2);
 			this.m_tblLayoutOuter.Controls.Add(this.m_splitContainer, 0, 0);
 			this.m_tblLayoutOuter.Controls.Add(this.m_btnOk, 1, 1);
 			this.m_tblLayoutOuter.Controls.Add(this.m_btnHelp, 3, 1);
@@ -172,8 +181,9 @@
 			// ChooseLangProjectDialog
 			//
 			this.AcceptButton = this.m_btnOk;
-			this.CancelButton = this.m_btnCancel;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.m_btnCancel;
 			this.Controls.Add(this.m_tblLayoutOuter);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -207,6 +217,7 @@
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.Label m_lblAddNetworkComp;
 		private System.Windows.Forms.LinkLabel m_linkOpenFwDataProject;
+		private System.Windows.Forms.LinkLabel m_linkOpenBridgeProject;
 		private System.Windows.Forms.SplitContainer m_splitContainer;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutProjects;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutLocations;

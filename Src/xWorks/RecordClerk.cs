@@ -706,6 +706,7 @@ namespace SIL.FieldWorks.XWorks
 					// reset this property.
 					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
 						PropertyTable.SettingsGroup.LocalSettings);
+					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 
 			}
@@ -1987,7 +1988,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				return (m_recordBarHandler != null) && m_mediator.PropertyTable.GetValue("ActiveClerk") == this;
+				return (m_recordBarHandler != null) && m_mediator.PropertyTable.GetValue("ActiveClerk") == this && IsActiveInGui;
 			}
 		}
 
@@ -2039,6 +2040,10 @@ namespace SIL.FieldWorks.XWorks
 			if (m_recordBarHandler != null)
 				m_recordBarHandler.ReleaseRecordBar();
 			RemoveNotification();
+			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
+			// disappearing from filter), stop that now, so it won't affect any future use of the list.
+			if (m_list != null)
+				m_list.ListLoadingSuppressed = false;
 		}
 
 		/// <summary>

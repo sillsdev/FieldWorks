@@ -1064,10 +1064,16 @@ namespace SIL.CoreImpl
 					var variant = fwWs.VariantSubtag;
 					if (variant != null)
 					{
-						var variantName = variant.ToString();
-						if (variantName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							variantName = variantName.Substring(2);
-						fwWs.VariantName = variantName;
+						var stdVariant = LangTagUtils.GetVariantSubtag(variant.Code);
+						if (stdVariant.Name != null)
+							fwWs.VariantName = stdVariant.Name;
+						else
+						{
+							var variantName = variant.ToString();
+							if (variantName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								variantName = variantName.Substring(2);
+							fwWs.VariantName = variantName;
+						}
 					}
 				}
 				if (fwWs.RegionName == null)
@@ -1075,10 +1081,16 @@ namespace SIL.CoreImpl
 					var region = fwWs.RegionSubtag;
 					if (region != null)
 					{
-						var regionName = region.ToString();
-						if (regionName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							regionName = regionName.Substring(2);
-						fwWs.RegionName = regionName;
+						var stdRegion = LangTagUtils.GetRegionSubtag(region.Code);
+						if (stdRegion.Name != null)
+							fwWs.RegionName = stdRegion.Name;
+						else
+						{
+							var regionName = region.ToString();
+							if (regionName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								regionName = regionName.Substring(2);
+							fwWs.RegionName = regionName;
+						}
 					}
 				}
 				if (fwWs.ScriptName == null)
@@ -1086,10 +1098,16 @@ namespace SIL.CoreImpl
 					var script = fwWs.ScriptSubtag;
 					if (script != null)
 					{
-						var scriptName = script.ToString();
-						if (scriptName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
-							scriptName = scriptName.Substring(2);
-						fwWs.ScriptName = scriptName;
+						var stdScript = LangTagUtils.GetScriptSubtag(script.Code);
+						if (stdScript.Name != null)
+							fwWs.ScriptName = stdScript.Name;
+						else
+						{
+							var scriptName = script.ToString();
+							if (scriptName.StartsWith("x-", StringComparison.OrdinalIgnoreCase))
+								scriptName = scriptName.Substring(2);
+							fwWs.ScriptName = scriptName;
+						}
 					}
 				}
 				int lcid;

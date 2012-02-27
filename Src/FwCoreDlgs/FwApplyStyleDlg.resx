@@ -232,7 +232,7 @@
 	<value>m_lstStyles</value>
   </data>
   <data name="&gt;&gt;m_lstStyles.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.CaseSensitiveListBox, FwControls, Version=6.1.1.30363, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.CaseSensitiveListBox, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_lstStyles.Parent" xml:space="preserve">
 	<value>m_pnlMasterGrid</value>
@@ -319,7 +319,7 @@
 	<value>m_btnHelp</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwHelpButton, FwControls, Version=6.1.1.30363, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.FwHelpButton, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
 	<value>$this</value>

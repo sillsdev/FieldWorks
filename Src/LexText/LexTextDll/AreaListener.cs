@@ -347,6 +347,45 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+		/// <summary>
+		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
+		/// are in the wrong direction. It finds the name of the tool we need to invoke to edit a given list.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		public bool OnGetToolForList(object parameters)
+		{
+			var realParams = (object[]) parameters;
+			var list = (ICmPossibilityList)realParams[0];
+			var windowConfiguration = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			foreach (XmlNode tool in windowConfiguration.SelectSingleNode(GetListToolsXPath()).ChildNodes)
+			{
+				var toolName = XmlUtils.GetManditoryAttributeValue(tool, "value");
+				var paramsNode = tool.SelectSingleNode(".//control/parameters[@clerk]");
+				if (paramsNode == null)
+					continue;
+				var clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(paramsNode);
+				if (clerkNode == null)
+					continue;
+				var listNode = clerkNode.SelectSingleNode("recordList");
+				if (listNode == null)
+					continue;
+				var owner = XmlUtils.GetOptionalAttributeValue(listNode, "owner");
+				var listName = XmlUtils.GetOptionalAttributeValue(listNode, "property");
+				if (string.IsNullOrEmpty(owner) || string.IsNullOrEmpty(listName))
+					continue;
+				var possibleList = PossibilityRecordList.GetListFromOwnerAndProperty(list.Cache, owner, listName);
+				if (possibleList == list)
+				{
+					realParams[1] = toolName;
+					return true;
+				}
+			}
+			// If it's not a known list, try custom.
+			realParams[1] = GetCustomListToolName(list);
+			return true;
+		}
+
 		#region Custom List Methods
 
 		private static void AddToolNodeToDisplay(ICmPossibilityListRepository possRepo, FdoCache cache,
@@ -579,6 +618,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			//const string sbsview = "SideBySideView";
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
+
+		//public string GetToolForList(ICmPossibilityList list)
+		//{
+		//    foreach (var toolNode in windowConfig.SelectSingleNode(GetListClerksXPath()))
+		//}
 
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
@@ -1038,6 +1082,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				return "textsWords";
 			if (IsToolInArea(toolName, "lists", windowConfiguration))
 				return "lists";
+			if (IsToolInArea(toolName, "notebook", windowConfiguration))
+				return "notebook";
 			return null;
 		}
 	}

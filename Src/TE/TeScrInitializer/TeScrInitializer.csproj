@@ -161,7 +161,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=7.0.1.16512, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.0.6.18756, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="SimpleRootSite">

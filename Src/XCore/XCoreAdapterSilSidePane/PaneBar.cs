@@ -42,11 +42,6 @@ namespace XCore
 			}
 		}
 
-		public override string Text
-		{
-			get; set;
-		}
-
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);

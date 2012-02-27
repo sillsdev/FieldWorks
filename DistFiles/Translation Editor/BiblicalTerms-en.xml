@@ -13,7 +13,7 @@
 -->
 
 <BiblicalTermsLocalizations Language="English" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C8A325702CD">
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="E2A603A7-D7A2-4c70-BD76-E273D1113BD5">
 
 <Categories>
 	<Localization Id="KT" Gloss="Key terms" />
@@ -85,7 +85,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	one who customarily does good</Localization>
 
 <!-- ἀγαπάω-1 -->
-<Localization Id="0016" Gloss="love; love">
+<Localization Id="0016" Gloss="love; to love">
 	to have love for someone or something, based on sincere appreciation and high regard</Localization>
 
 <!-- ἀγαπάω-2 -->
@@ -1962,9 +1962,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="0485" Gloss="peacemaker">
 	-</Localization>
 
-<!-- εἰσφερω -->
-<Localization Id="0486" Gloss="load">
-	-</Localization>
+<!-- εἰσφερω (note: incorrectly glossed as "load" in master KT file) -->
+<Localization Id="0486" Gloss="lead (into)"></Localization>
 
 <!-- ἐκκλησία -->
 <Localization Id="0487" Gloss="church; assembly; congregation">
@@ -1991,8 +1990,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	the fruit of the olive tree</Localization>
 
 <!-- ἔλαιον -->
-<Localization Id="0493" Gloss="olive oil (used as food; medicine; for burning in lamps; and as perfume when mixed with sweet-smelling substances)">
-	oil extracted from the fruit of olive trees</Localization>
+<Localization Id="0493" Gloss="olive oil">
+	oil extracted from the fruit of olive trees (used as food and medicine, for burning in lamps, and as perfume when mixed with sweet-smelling substances)</Localization>
 
 <!-- ἐλαιών -->
 <Localization Id="0494" Gloss="olive grove; olive orchard">
@@ -3642,8 +3641,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	a believer whom Jesus met on the road to Emmaus</Localization>
 
 <!-- κλῆμα -->
-<Localization Id="0906" Gloss="branch (principally of grapevines). πᾶν κλῆμα ἐν ἐμοὶ μὴ φέρον καρπόν every branch of mine that does not bear fruit |sJHN.15:2|s*">
-	a more or less tender, flexible branch, as of a vine</Localization>
+<Localization Id="0906" Gloss="branch (principally of grapevines)">
+	a more or less tender, flexible branch, as of a vine.</Localization>
 
 <!-- Κλήμης -->
 <Localization Id="0907" Gloss="Clement">
@@ -3966,8 +3965,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	a beggar in a parable</Localization>
 
 <!-- λαλεω -->
-<Localization Id="0988" Gloss="speaking">
-	-</Localization>
+<Localization Id="0988" Gloss="speaking (words against)">
+	</Localization>
 
 <!-- Λάμεχ -->
 <Localization Id="0989" Gloss="Lamech">
@@ -13645,7 +13644,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="6632" Gloss="mole rat"></Localization>
 
 <!-- חֵץ -->
-<Localization Id="6633" Gloss="arrow, symbol of violence, punishment, danger"></Localization>
+<Localization Id="6633" Gloss="arrow">
+	symbol of violence, punishment, danger</Localization>
 
 <!-- חָצוֹר חֲדַתָּה -->
 <Localization Id="6634" Gloss="Hazor-Hadattah">
@@ -14119,7 +14119,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	various men</Localization>
 
 <!-- טמא-1 -->
-<Localization Id="6756" Gloss="to be (or: become; or: declare; or: treat as) ceremonially unclean (either or not intentionally)"></Localization>
+<Localization Id="6756" Gloss="ceremonially unclean">
+	to be (or become, declare, or treat as) ceremonially unclean (whether intentionally or not)</Localization>
 
 <!-- טמא-2 -->
 <Localization Id="6757" Gloss="unclean"></Localization>
@@ -18454,7 +18455,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; for priests; territory of Benjamin</Localization>
 
 <!-- נבא-1 -->
-<Localization Id="7871" Gloss="to speak, to act as a prophet"></Localization>
+<Localization Id="7871" Gloss="speak or act as a prophet"></Localization>
 
 <!-- נבא-2 -->
 <Localization Id="7872" Gloss="prophet"></Localization>
@@ -18973,7 +18974,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8008" Gloss="to lift up (one's hand, heart, or soul) = to worship, pray"></Localization>
 
 <!-- נשׂא-5 -->
-<Localization Id="8009" Gloss="to lift up (once face) = to show favor, have regard"></Localization>
+<Localization Id="8009" Gloss="to lift up (one's face) = to show favor, have regard"></Localization>
 
 <!-- נשׂא-6 -->
 <Localization Id="8010" Gloss="to lift up (one's face) = to be partial"></Localization>

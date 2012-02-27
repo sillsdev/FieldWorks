@@ -308,6 +308,7 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="FootnoteViewTests.cs" />
+	<Compile Include="SegmentedBtDraftViewTests.cs" />
 	<Compile Include="SyncedDraftViewTests.cs" />
 	<Compile Include="DraftViewFindBtTests.cs">
 	  <SubType>Code</SubType>

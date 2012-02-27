@@ -25,6 +25,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -87,6 +88,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ChooseLangProjectDialog()
 		{
 			InitializeComponent();
+			//hide the FLExBridge related link if unavailable
+			m_linkOpenBridgeProject.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -123,7 +126,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// TODO-Linux: FWNX-606: remove workaround when mono bug is fixed.
 			m_tblLayoutOuter.LayoutSettings.SetColumnSpan(m_splitContainer, 4);
 #endif
-
 			if (helpTopicProvider == null)
 				m_btnHelp.Enabled = false;
 
@@ -134,6 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_lblChoosePrj.Font = SystemFonts.IconTitleFont;
 			m_lblLookIn.Font = SystemFonts.IconTitleFont;
 			m_linkOpenFwDataProject.Font = SystemFonts.IconTitleFont;
+			m_linkOpenBridgeProject.Font = SystemFonts.IconTitleFont;
 			m_lstLanguageProjects.Font = SystemFonts.IconTitleFont;
 			m_hostsTreeView.Font = SystemFonts.IconTitleFont;
 		}
@@ -404,6 +407,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ClientServerServices.Current.BeginFindProjects(host, AddProject,
 				HandleProjectFindingExceptions, showLocalProjects);
 		}
+
 		#endregion
 
 		#region Event handlers
@@ -491,7 +495,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// Use 'el cheapo' .Net dlg to find LangProj.
-			using (var dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				Hide();
 				dlg.CheckFileExists = true;
@@ -504,6 +508,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DialogResult = dlg.ShowDialog(Owner);
 				Project = dlg.FileName;
 			}
+		}
+
+		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain);
 		}
 
 		private void HelpButtonClick(object sender, EventArgs e)

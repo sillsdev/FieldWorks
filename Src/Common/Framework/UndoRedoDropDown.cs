@@ -156,7 +156,6 @@ namespace SIL.FieldWorks.Common.Framework
 			this.m_Actions.HorizontalScrollbar = ((bool)(resources.GetObject("m_Actions.HorizontalScrollbar")));
 			this.m_Actions.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("m_Actions.ImeMode")));
 			this.m_Actions.IntegralHeight = ((bool)(resources.GetObject("m_Actions.IntegralHeight")));
-			this.m_Actions.ItemHeight = ((int)(resources.GetObject("m_Actions.ItemHeight")));
 			this.m_Actions.Location = ((System.Drawing.Point)(resources.GetObject("m_Actions.Location")));
 			this.m_Actions.Name = "m_Actions";
 			this.m_Actions.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("m_Actions.RightToLeft")));

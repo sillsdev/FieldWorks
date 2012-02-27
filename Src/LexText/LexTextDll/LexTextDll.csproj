@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{1DCA1070-7701-4DC9-9042-A4F3209E55D5}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -188,6 +188,7 @@
 	<Compile Include="AreaListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
+	<Compile Include="FLExBridgeListener.cs" />
 	<Compile Include="FlexHelpTopicProvider.cs" />
 	<Compile Include="FlexStylesXmlAccessor.cs" />
 	<Compile Include="ImageHolder.cs">
@@ -272,6 +273,16 @@
 	  <Link>XML\Word\Text\toolConfiguration.xml</Link>
 	</Content>
 	<None Include="Resources\LexEntryParts.xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\Common\FieldWorks\FieldWorks.csproj">
+	  <Project>{7CE209AF-EB05-4584-9444-966C0978757F}</Project>
+	  <Name>FieldWorks</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\..\Utilities\FixFwDataDll\FixFwDataDll.csproj">
+	  <Project>{9C534D8A-3445-4827-8D3B-957D98461533}</Project>
+	  <Name>FixFwDataDll</Name>
+	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

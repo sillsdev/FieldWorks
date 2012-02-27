@@ -16,7 +16,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -361,12 +360,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 		}
 
-		private static FileStream LockProject(string projectPath)
+		internal static FileStream LockProject(string projectPath)
 		{
 			return File.Open(projectPath + ".lock", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		private void UnlockProject()
+		internal void UnlockProject()
 		{
 			if (m_lockFile != null)
 			{
@@ -642,6 +641,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private void CopyTempFileToOriginal(bool fUseLocalTempFile, string mainPathname, string tempPathname)
 		{
+			if(!File.Exists(tempPathname))
+			{
+				//There is no temp file to copy, there was probably an error previous to this call.
+				//Nothing to do here, so move along.
+				return;
+			}
 			try
 			{
 				if (fUseLocalTempFile)

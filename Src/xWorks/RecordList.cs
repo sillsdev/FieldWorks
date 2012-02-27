@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			m_flid  = CmPossibilityListTags.kflidPossibilities;
 		}
 
-		internal static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
+		public static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
 		{
 			ICmObject obj = null;
 
@@ -2174,6 +2174,12 @@ namespace SIL.FieldWorks.XWorks
 					ReloadList();
 					return;
 				}
+				if (cvDel > 0)
+				{
+					// Before we try to insert a new one, need to delete any items for deleted stuff,
+					// otherwise it may crash as it tries to compare the new item with an invalid one.
+					ClearOutInvalidItems();
+				}
 				if (ivMin < cList)
 				{
 					int hvoReplaced = VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, ivMin);
@@ -2188,6 +2194,29 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ReloadList();
 			}
+		}
+
+		private void ClearOutInvalidItems()
+		{
+			for (int i = 0; i < SortedObjects.Count; ) // not foreach: we may modify the list
+			{
+				if (IsInvalidItem((ManyOnePathSortItem)SortedObjects[i]))
+					SortedObjects.RemoveAt(i);
+				else
+					i++;
+			}
+		}
+
+		private bool IsInvalidItem(ManyOnePathSortItem item)
+		{
+			if (!Cache.ServiceLocator.IsValidObjectId(item.KeyObject))
+				return true;
+			for (int i = 0; i < item.PathLength; i++)
+			{
+				if (!Cache.ServiceLocator.IsValidObjectId(item.PathObject(i)))
+					return true;
+			}
+			return false;
 		}
 
 		protected internal virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)

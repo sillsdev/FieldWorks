@@ -844,6 +844,15 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to {0} texts will be imported from this SFM file..
+		/// </summary>
+		internal static string ksImportSFMInterlinTextCount {
+			get {
+				return ResourceManager.GetString("ksImportSFMInterlinTextCount", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to  is used in this text as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  Click &quot;OK&quot; to add it or &quot;Cancel&quot; to skip this text..
 		/// </summary>
 		internal static string ksImportVernacLangMissing {

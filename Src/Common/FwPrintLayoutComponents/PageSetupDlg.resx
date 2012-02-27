@@ -1110,9 +1110,6 @@
   <data name="&gt;&gt;pbDraft.ZOrder" xml:space="preserve">
 	<value>10</value>
   </data>
-  <data name="fwOverrideComboBox1.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="fwOverrideComboBox1.Items" xml:space="preserve">
 	<value>12</value>
   </data>
@@ -1510,9 +1507,6 @@
   </data>
   <data name="&gt;&gt;m_udmPaperWidth.ZOrder" xml:space="preserve">
 	<value>20</value>
-  </data>
-  <data name="cbPaperSize.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="cbPaperSize.Location" type="System.Drawing.Point, System.Drawing">
 	<value>78, 131</value>
@@ -2231,9 +2225,6 @@
   <data name="&gt;&gt;btnHeaderFooter.ZOrder" xml:space="preserve">
 	<value>12</value>
   </data>
-  <data name="m_cboSeparator.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="m_cboSeparator.Items" xml:space="preserve">
 	<value>None</value>
   </data>
@@ -2317,9 +2308,6 @@
   </data>
   <data name="&gt;&gt;m_ckbDiffEvenHF.ZOrder" xml:space="preserve">
 	<value>16</value>
-  </data>
-  <data name="m_cbBookStart.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
   </data>
   <data name="m_cbBookStart.Items" xml:space="preserve">
 	<value>Continuous</value>

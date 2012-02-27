@@ -3120,9 +3120,33 @@ namespace SIL.FieldWorks.LexText.Controls {
 		/// <summary>
 		///   Looks up a localized string similar to {0} warnings found in {1}.
 		/// </summary>
-		internal static string ksXWarningsInY {
-			get {
+		internal static string ksXWarningsInY
+		{
+			get
+			{
 				return ResourceManager.GetString("ksXWarningsInY", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		/// Looks up a localized string similar to Open Lexicon Interchange FormaT File.
+		/// </summary>
+		internal static string openFileDialog1_Title
+		{
+			get
+			{
+				return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		/// Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
+		/// </summary>
+		internal static string openFileDialog1_Filter
+		{
+			get
+			{
+				return ResourceManager.GetString("openFileDialog1_Filter", resourceCulture);
 			}
 		}
 	}

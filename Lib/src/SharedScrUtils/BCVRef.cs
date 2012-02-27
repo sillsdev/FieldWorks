@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2008, SIL International. All Rights Reserved.
-// <copyright from='2005' to='2008' company='SIL International'>
-//		Copyright (c) 2008, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2005' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -12,7 +12,6 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -1283,4 +1282,55 @@ namespace SILUBS.SharedScrUtils
 		}
 		#endregion
 	}
+
+	#region RefRange class
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Represents a reference range
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class RefRange
+	{
+		/// <summary>Location info that hasn't been set</summary>
+		public static readonly RefRange EMPTY = new RefRange(0, 0);
+
+		/// <summary>Starting Scripture reference</summary>
+		private BCVRef m_startRef;
+		/// <summary>Ending Scripture reference</summary>
+		private BCVRef m_endRef;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="startRef">The start reference</param>
+		/// <param name="endRef">The end reference</param>
+		/// ------------------------------------------------------------------------------------
+		public RefRange(BCVRef startRef, BCVRef endRef)
+		{
+			m_startRef = new BCVRef(startRef);
+			m_endRef = new BCVRef(endRef);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the start reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public BCVRef StartRef
+		{
+			get { return new BCVRef(m_startRef); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the end reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public BCVRef EndRef
+		{
+			get { return new BCVRef(m_endRef); }
+		}
+	}
+	#endregion
 }

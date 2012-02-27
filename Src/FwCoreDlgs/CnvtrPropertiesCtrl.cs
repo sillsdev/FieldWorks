@@ -12,6 +12,7 @@ using SilEncConverters40;
 using System.Diagnostics;
 
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Resources;
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwOverrideComboBox cboConverter;
 		/// <summary></summary>
 		public FwOverrideComboBox cboSpec;
-		private OpenFileDialog ofDlg = new OpenFileDialog();
+		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
 		public event EventHandler ConverterFileChanged;
@@ -203,18 +204,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
-				{
+				if (components != null)
 					components.Dispose();
-				}
+
+				if (ofDlg != null)
+					ofDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			ofDlg = null;
+			components = null;
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code

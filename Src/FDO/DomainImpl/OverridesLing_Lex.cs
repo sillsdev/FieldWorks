@@ -973,29 +973,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (e.Flid)
 			{
 				case LexEntryTags.kflidSenses:
-			{
-				// The virtual property LexSenseOutline may be changed for the senses after the deleted one
-				// and their subsenses.
-				if (!Cache.ObjectsBeingDeleted.Contains(this))
-				{
-					SensesChangedPosition(e.Index);
-					NumberOfSensesChanged(false);
-					UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
-				}
-			}
+					{
+						// The virtual property LexSenseOutline may be changed for the senses after the deleted one
+						// and their subsenses.
+						if (!Cache.ObjectsBeingDeleted.Contains(this))
+						{
+							SensesChangedPosition(e.Index);
+							NumberOfSensesChanged(false);
+							UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
+						}
+					}
 					break;
 				case LexEntryTags.kflidAlternateForms:
 					if (e.Index == 0)
-			{
-				if (!Cache.ObjectsBeingDeleted.Contains(this))
-				{
-					string newVal = AlternateFormsOS.Count > 0
+					{
+						if (!Cache.ObjectsBeingDeleted.Contains(this))
+						{
+							var newVal = AlternateFormsOS.Count > 0
 										? AlternateFormsOS[0].Form.VernacularDefaultWritingSystem.Text
 										: "";
-					FirstAlternateFormChanged(((IMoForm) e.ObjectRemoved).Form.VernacularDefaultWritingSystem.Text,
-						newVal);
-				}
-			}
+							FirstAlternateFormChanged(
+								((IMoForm)e.ObjectRemoved).Form.VernacularDefaultWritingSystem.Text,
+								newVal);
+						}
+					}
 					break;
 				case LexEntryTags.kflidDoNotPublishIn:
 					{

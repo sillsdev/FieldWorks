@@ -34,6 +34,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using System.Reflection;
 using System.Globalization;
 using SIL.FieldWorks.Common.RootSites;
@@ -68,8 +69,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IStTxtParaFactory m_factPara;
 		private ICmPossibilityListRepository m_repoList;
 
-		bool m_fCanceling = false;
-		bool m_fDirtySettings = false;
+		private bool m_fCanceling = false;
+		private bool m_fDirtySettings = false;
+		private OpenFileDialogAdapter openFileDialog;
 
 		/// <summary>
 		/// This class defines an encapsulation of factories for ICmPossibility and its
@@ -702,6 +704,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		public NotebookImportWiz()
 		{
 			InitializeComponent();
+
+			openFileDialog = new OpenFileDialogAdapter();
+
 			m_sStdImportMap = String.Format(DirectoryFinder.FWCodeDirectory +
 				"{0}Language Explorer{0}Import{0}NotesImport.map", Path.DirectorySeparatorChar);
 			m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
@@ -1578,6 +1583,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		protected override void OnBackButton()
 		{
+			base.OnBackButton();
 			ShowSaveButtonOrNot();
 			if (m_QuickFinish)
 			{
@@ -1587,7 +1593,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				UpdateStepLabel();
 				m_QuickFinish = false;	// going back, so turn off flag
 			}
-			base.OnBackButton();
 			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
 		}
@@ -1596,8 +1601,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			ShowSaveButtonOrNot();
 
-			PrepareForNextTab(CurrentStepNumber);
 			base.OnNextButton();
+			PrepareForNextTab(CurrentStepNumber);
 			NextButtonEnabled = EnableNextButton();
 			AllowQuickFinishButton();		// make it visible if needed, or hidden if not
 		}

@@ -443,12 +443,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 #if !__MonoCS__
 				m_splashScreen.ShowDialog();
 #else
-				// Mono Winforms can't create Forms that are not on the Main thread.
-				// REVIEW (TimS): Are these 2 lines actually needed? We set the message to
-				// empty string in Show() above.
-				//m_splashScreen.CreateControl();
-				//m_splashScreen.Message = string.Empty;
-				m_splashScreen.Show();
+			// Mono Winforms can't create Forms that are not on the Main thread.
+			m_splashScreen.CreateControl();
+			m_splashScreen.Message = string.Empty;
+			m_splashScreen.Show();
 #endif
 			}
 		}

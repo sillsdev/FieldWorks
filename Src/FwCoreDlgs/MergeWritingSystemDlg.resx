@@ -314,8 +314,8 @@
   <data name="$this.AccessibleName" xml:space="preserve">
 	<value>MergeWritingSystemDlg</value>
   </data>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>361, 347</value>

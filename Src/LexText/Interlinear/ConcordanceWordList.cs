@@ -100,8 +100,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (selectionChanged || CurrentIndex == -1)
 			{
+				reloadRequested = selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
 				base.ReloadList();
-				reloadRequested = selectionChanged = false;
 			}
 			else
 			{

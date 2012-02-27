@@ -29,19 +29,32 @@ namespace SILUBS.PhraseTranslationHelper
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot(Namespace = "", IsNullable = false)]
-	public class Question
+	public class Question : QuestionKey
 	{
+		public const string kGuidPrefix = "GUID: ";
+		private string m_text;
+
 		[XmlAttribute("scrref")]
-		public string ScriptureReference { get; set; }
+		public override string ScriptureReference { get; set; }
 
 		[XmlAttribute("startref")]
-		public int StartRef { get; set; }
+		public override int StartRef { get; set; }
 
 		[XmlAttribute("endref")]
-		public int EndRef { get; set; }
+		public override int EndRef { get; set; }
 
 		[XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
-		public string Text {get; set; }
+		public override string Text
+		{
+			get { return m_text; }
+			set
+			{
+				if (String.IsNullOrEmpty(value))
+					m_text = kGuidPrefix + Guid.NewGuid();
+				else
+					m_text = value;
+			}
+		}
 
 		[XmlElement("A", Form = XmlSchemaForm.Unqualified, IsNullable = false)]
 		public string[] Answers { get; set; }
@@ -51,6 +64,32 @@ namespace SILUBS.PhraseTranslationHelper
 
 		[XmlElement("Alternative", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
 		public string[] AlternateForms { get; set; }
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Question"/> class, needed
+		/// for XML serialization.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public Question()
+		{
+		}
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor to make a new Question.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public Question(Question baseQuestion, string newQuestion, string answer)
+		{
+			ScriptureReference = baseQuestion.ScriptureReference;
+			StartRef = baseQuestion.StartRef;
+			EndRef = baseQuestion.EndRef;
+			Text = newQuestion;
+
+			if (!string.IsNullOrEmpty(answer))
+				Answers = new [] { answer };
+		}
 	}
 	#endregion
 }

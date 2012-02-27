@@ -2550,7 +2550,7 @@ namespace SIL.FieldWorks
 					if (s_teApp == null)
 					{
 						s_teApp = (FwApp)DynamicLoader.CreateObject(DirectoryFinder.TeDll,
-							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev));
+							FwUtils.ksFullTeAppObjectName, s_fwManager, GetHelpTopicProvider(appAbbrev), args);
 						s_teAppKey = s_teApp.SettingsKey;
 					}
 					return s_teApp;
@@ -3253,6 +3253,24 @@ namespace SIL.FieldWorks
 			{
 				s_fSingleProcessMode = false;
 			}
+		}
+
+		internal static void ReopenProject(string project, FwAppArgs appArgs)
+		{
+			ExecuteWithAppsShutDown("FLEx", ()=>
+												{
+													try
+													{
+														HandleLinkRequest(appArgs);
+															return s_projectId ??
+																new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(project), null);
+													}
+													catch (Exception e)
+													{
+														//This is not good.
+													}
+													return null;
+												});
 		}
 
 		/// ------------------------------------------------------------------------------------

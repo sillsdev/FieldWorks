@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
 			BaseInit(cache, mediator, recordListNode);
 			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
-			m_flid = ObjectListPublisher.OwningFlid;
+			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
 			int rih = GetReversalIndexHvo(mediator);
 			if (rih > 0)
 			{

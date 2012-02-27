@@ -1,17 +1,15 @@
 // ---------------------------------------------------------------------------------------------
-// Copyright (c) 2006, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2006' company='SIL International'>
-//	Copyright (c) 2006, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2012' company='SIL International'>
+//	Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //	Distributable under the terms of either the Common Public License or the
 //	GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
+#endregion
 //
 // File: ExportUsfm.cs
-// Responsibility: TeTeam
-//
-// <remarks>
-// </remarks>
+// Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
@@ -22,7 +20,6 @@ using System.Xml;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
-using Paratext;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -392,7 +389,8 @@ namespace SIL.FieldWorks.TE
 		#region Member variables
 		/// <summary>The cache</summary>
 		protected readonly FdoCache m_cache;
-		private readonly IScripture m_scr;
+		/// <summary>The Scripture object</summary>
+		protected readonly IScripture m_scr;
 		/// <summary></summary>
 		protected FilteredScrBooks m_bookFilter;
 		bool m_overwriteAll = false;
@@ -879,6 +877,21 @@ namespace SIL.FieldWorks.TE
 					m_pictureFilesToCopy = new List<string>();
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether to convert chapter and verse numbers to use arabic
+		/// numerals instead of vernacular script digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool ConvertFromScriptDigits
+		{
+			get
+			{
+				return (MarkupSystem == MarkupType.Paratext && m_scr.UseScriptDigits) ||
+					m_scr.ConvertCVDigitsOnExport;
+			}
+		}
 		#endregion
 
 		#region other properties
@@ -1074,7 +1087,7 @@ namespace SIL.FieldWorks.TE
 			// Write out the title of the book
 			m_currentParaIsHeading = true;
 			foreach (IStTxtPara para in book.TitleOA.ParagraphsOS)
-				ExportParagraph(para);
+				ExportParagraph(para, book);
 
 			// determine if we should explicitly output an implicit chapter number 1 for
 			// this book: i.e. if there is more than one chapter in the book.
@@ -1087,7 +1100,7 @@ namespace SIL.FieldWorks.TE
 				ExportSection(progressDlg, section, outputImplicitChapter);
 
 			// Finish up any pending annotations for the book.
-			ExportNotesForPriorVerse(RefElement.Book, m_currentBookOrd + 1);
+			ExportNotesForPriorVerse(RefElement.Book, m_currentBookOrd + 1, null);
 			Debug.Assert(!ExportNotesDomain || m_annotationList.Count == 0);//if list exists, should now be empty
 		}
 
@@ -1150,12 +1163,12 @@ namespace SIL.FieldWorks.TE
 			// Write out the section heading paragraphs
 			m_currentParaIsHeading = true;
 			foreach (IStTxtPara para in section.HeadingOA.ParagraphsOS)
-				ExportParagraph(para);
+				ExportParagraph(para, (IScrBook)section.Owner);
 
 			// Write out the section contents
 			m_currentParaIsHeading = false;
 			foreach (IStTxtPara para in section.ContentOA.ParagraphsOS)
-				ExportParagraph(para);
+				ExportParagraph(para, (IScrBook)section.Owner);
 
 			progressDlg.Step(0);
 		}
@@ -1165,17 +1178,22 @@ namespace SIL.FieldWorks.TE
 		/// Export a paragraph of a title, section heading, or section contents.
 		/// </summary>
 		/// <param name="para">the given paragraph</param>
+		/// <param name="owningBook">The book that owns the paragraph</param>
 		/// ------------------------------------------------------------------------------------
-		protected void ExportParagraph(IStTxtPara para)
+		protected void ExportParagraph(IStTxtPara para, IScrBook owningBook)
 		{
 			ExportMode exportMode = ExportMode.VernacularOnly;
 			ITsString paraText;
+			List<IScrFootnote> footnotes = null;
 			if (m_exportScripture)
 				paraText = para.Contents;
 			else
 			{	// get the tss of the requested back translation
 				if (!m_exportBackTrans)
 					return;
+
+				footnotes = owningBook.FootnotesOS.Where(f => f.ParaContainingOrcRA == para).ToList();
+
 				ICmTranslation trans = para.GetBT();
 				paraText = (trans != null ?
 					trans.Translation.get_String(m_nonInterleavedBtWs) : null);
@@ -1234,7 +1252,7 @@ namespace SIL.FieldWorks.TE
 			string paraMarker = GetMarkerForStyle(styleName);
 
 			// Get the back translation if it exists and the options are enabled to export it
-			//  interleaved with scripture.
+			// interleaved with scripture.
 			ICmTranslation backTranslation = null;
 			if (m_markupSystem == MarkupType.Toolbox && m_exportScripture && m_exportBackTrans)
 			{
@@ -1244,7 +1262,7 @@ namespace SIL.FieldWorks.TE
 
 			// Export the fields of the paragraph,
 			//  also the interleaved back translation if appropriate
-			ExportParagraphDetails(paraMarker, paraText, backTranslation, para.Hvo, exportMode);
+			ExportParagraphDetails(paraMarker, paraText, backTranslation, para.Hvo, exportMode, footnotes);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1271,13 +1289,13 @@ namespace SIL.FieldWorks.TE
 			if (runTypeFound == RefElement.Verse)
 			{
 				if (number > 0)
-					ExportNotesForPriorVerse(RefElement.Verse, number);
+					ExportNotesForPriorVerse(RefElement.Verse, number, null);
 				else
 				{
 					// Verse is non-numeric, output notes for previous end verse
 					if (m_textOutputBegunInCurrentSection)
 						//						if (m_lastNumericEndVerseNum > 0) // only if numeric verse previously found
-						ExportNotesForPriorVerse(runTypeFound, m_lastNumericEndVerseNum + 1);
+						ExportNotesForPriorVerse(runTypeFound, m_lastNumericEndVerseNum + 1, null);
 				}
 			}
 
@@ -1287,7 +1305,7 @@ namespace SIL.FieldWorks.TE
 			{
 				bool wroteNumericTag;
 				wroteNumericTag = OutputChapterNumberAndRelated(number, invalidSyntax, numText,
-					sectionVerseRefStart);
+					sectionVerseRefStart, null);
 
 				// See if the chapter we just wrote out needs to output a \v 1 for an
 				//  implicit first verse.
@@ -1402,12 +1420,15 @@ namespace SIL.FieldWorks.TE
 		/// vernacular paragraph.</param>
 		/// <param name="paraHvo">Hvo for the vernacular paragraph</param>
 		/// <param name="exportMode">The export mode.</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// <remarks>For heading paragraphs we do not interleave the back translation
 		/// verse-by-verse (it has no verses, silly) but rather we output the BT after the
 		/// paragraph string.</remarks>
 		/// ------------------------------------------------------------------------------------
 		private void ExportParagraphDetails(string paraMarker, ITsString tssPara,
-			ICmTranslation backTranslation, int paraHvo, ExportMode exportMode)
+			ICmTranslation backTranslation, int paraHvo, ExportMode exportMode,
+			List<IScrFootnote> vernFootnotes)
 		{
 			// If we are exporting interleaved back translation, we assume that toolbox markers
 			//  are necessary and also that we have info on analysis writing systems.
@@ -1498,7 +1519,7 @@ namespace SIL.FieldWorks.TE
 				{
 					// Handle run with verse number style specially
 					OutputVerseNumberRun(runText, fEnableVerseInterleaved, backTranslation,
-						btVersesByWs);
+						btVersesByWs, vernFootnotes);
 					//					m_textOutputBegunInCurrentSection = true; //remember that verse output has begun
 					prevCharStyle = null;
 					fLastRunWasOrc = false;
@@ -1507,7 +1528,7 @@ namespace SIL.FieldWorks.TE
 				{
 					// Handle run with chapter number style specially
 					if (OutputChapterNumberRun(runText, fEnableVerseInterleaved, backTranslation,
-						btVersesByWs))
+						btVersesByWs, vernFootnotes))
 					{
 						// See if the chapter we just wrote out needs to get an
 						//  implicit first verse marker.
@@ -1526,7 +1547,7 @@ namespace SIL.FieldWorks.TE
 						//  this case.
 						m_currentVerseNumString = m_scr.ConvertToString(1);
 						m_lastNumericBeginVerseNum = m_lastNumericEndVerseNum = 1;
-						OutputVerseNumberRun(m_currentVerseNumString, false, null, btVersesByWs);
+						OutputVerseNumberRun(m_currentVerseNumString, false, null, btVersesByWs, vernFootnotes);
 					}
 
 					if (charStyleName != null)
@@ -1544,7 +1565,7 @@ namespace SIL.FieldWorks.TE
 						// check to see if the run is an ORC.
 						if (runText.Length == 1 && runText[0] == StringUtils.kChObject)
 						{
-							ExportOrcRun(runProps, exportMode, (exportMode == ExportMode.BackTransOnly) ? 0 : -1);
+							ExportOrcRun(runProps, exportMode, (exportMode == ExportMode.BackTransOnly) ? 0 : -1, vernFootnotes);
 							fLastRunWasOrc = true;
 						}
 						else //no character style, and not a valid ORC--export as plain paragraph run
@@ -1558,12 +1579,19 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
-			// Close out the last line (for Paratext markup).
-			m_file.WriteLine();
+			// Finish up remaining footnotes for this paragraph.
+			if (vernFootnotes != null)
+			{
+				foreach (IScrFootnote footnote in vernFootnotes)
+					ExportFootnote(footnote, ExportMode.BackTransOnly, 0);
+				vernFootnotes.Clear();
+			}
 
 			// In case the paragraph string is empty, we still need to output the lone para marker
 			if (!fParaMarkerWritten)
 				m_file.WriteLine(paraMarker);
+			else
+				m_file.WriteLine(); // Close out the last line (for Paratext markup).
 
 			// Finish up the back translation if needed
 			if (backTranslation != null)
@@ -1572,7 +1600,7 @@ namespace SIL.FieldWorks.TE
 				{
 					// output any remaining verse-by-verse back translation fields, within the
 					//  current paragraph.
-					ExportBackTransForPriorVerse(backTranslation, btVersesByWs, RefElement.None, string.Empty);
+					ExportBackTransForPriorVerse(backTranslation, btVersesByWs, RefElement.None, string.Empty, vernFootnotes);
 				}
 				else
 				{
@@ -1600,9 +1628,12 @@ namespace SIL.FieldWorks.TE
 		/// vernacular paragraph</param>
 		/// <param name="btVersesByWs">Array with an element for each desired writing system.
 		/// Each element is a List of ChapterVerseInfo objects.</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// ------------------------------------------------------------------------------------
 		private void OutputVerseNumberRun(string runText, bool fEnableVerseInterleaved,
-			ICmTranslation backTranslation, List<ChapterVerseInfo>[] btVersesByWs)
+			ICmTranslation backTranslation, List<ChapterVerseInfo>[] btVersesByWs,
+			List<IScrFootnote> vernFootnotes)
 		{
 			runText = runText.Trim();
 
@@ -1618,20 +1649,20 @@ namespace SIL.FieldWorks.TE
 				if (backTranslation != null)
 				{
 					ExportBackTransForPriorVerse(backTranslation, btVersesByWs, RefElement.Verse,
-						BuildArabicString(runText));
+						BuildArabicString(runText), vernFootnotes);
 				}
 			}
 
 			// Export Notes for prior verses
 			if (beginVerse >= m_lastNumericEndVerseNum) //note: equal is ok because sequential verse segments all have the same int value, e.g. 2a 2b
-				ExportNotesForPriorVerse(RefElement.Verse, beginVerse);
+				ExportNotesForPriorVerse(RefElement.Verse, beginVerse, vernFootnotes);
 			else
 			{
 				// since beginVerse is not in order (or zero), use the last verse num to export the annotations
 				//  if we have actually processed verse text (i.e. don't do this on first verse in a section
 				//   if the verse num is invalid)
 				if (m_textOutputBegunInCurrentSection)
-					ExportNotesForPriorVerse(RefElement.Verse, m_lastNumericEndVerseNum + 1);
+					ExportNotesForPriorVerse(RefElement.Verse, m_lastNumericEndVerseNum + 1, vernFootnotes);
 			}
 
 			// Remember the new current verse, for exporting vrefs and annotation refs
@@ -1661,10 +1692,13 @@ namespace SIL.FieldWorks.TE
 		/// vernacular paragraph</param>
 		/// <param name="btVersesByWs">Array with an element for each desired writing system.
 		/// Each element is a List of ChapterVerseInfo objects.</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// <returns>True if a numeric chapter field is really written.</returns>
 		/// ------------------------------------------------------------------------------------
 		private bool OutputChapterNumberRun(string runText, bool fEnableVerseInterleaved,
-			ICmTranslation backTranslation, List<ChapterVerseInfo>[] btVersesByWs)
+			ICmTranslation backTranslation, List<ChapterVerseInfo>[] btVersesByWs,
+			List<IScrFootnote> vernFootnotes)
 		{
 			runText = runText.Trim();
 			bool invalidChapter;
@@ -1681,12 +1715,12 @@ namespace SIL.FieldWorks.TE
 				if (backTranslation != null)
 				{
 					ExportBackTransForPriorVerse(backTranslation, btVersesByWs, RefElement.Chapter,
-						BuildArabicString(runText));
+						BuildArabicString(runText), vernFootnotes);
 				}
 			}
 
 			// Output the chapter number field, and related stuff
-			return OutputChapterNumberAndRelated(chapterNum, invalidChapter, runText, 0);
+			return OutputChapterNumberAndRelated(chapterNum, invalidChapter, runText, 0, vernFootnotes);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1701,10 +1735,12 @@ namespace SIL.FieldWorks.TE
 		/// <param name="numText">the text of the chapter number run</param>
 		/// <param name="sectionVerseRefStart"> if we are processing the start of a section,
 		/// VerseRefStart information for the section; zero otherwise</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// <returns>True if a numeric chapter field is really written.</returns>
 		/// ------------------------------------------------------------------------------------
 		private bool OutputChapterNumberAndRelated(int chapterNum, bool invalidSyntax, string numText,
-			int sectionVerseRefStart)
+			int sectionVerseRefStart, List<IScrFootnote> vernFootnotes)
 		{
 			// if this chapter number has already been preprocessed, don't do it again.
 			if (!invalidSyntax)
@@ -1718,11 +1754,11 @@ namespace SIL.FieldWorks.TE
 			// Export Notes for prior chapter
 			// if chapter is in-order
 			if (chapterNum >= m_lastChapterWritten) // equal should not occur
-				ExportNotesForPriorVerse(RefElement.Chapter, chapterNum);
+				ExportNotesForPriorVerse(RefElement.Chapter, chapterNum, vernFootnotes);
 			else
 			{
 				// since chapterNum is not in order (or is zero), use the last chapter num written to export the annotations
-				ExportNotesForPriorVerse(RefElement.Chapter, m_lastChapterWritten + 1);
+				ExportNotesForPriorVerse(RefElement.Chapter, m_lastChapterWritten + 1, vernFootnotes);
 			}
 
 			// Remember the new current chapter/verse ref state, for exporting vrefs and annotations.
@@ -1793,8 +1829,11 @@ namespace SIL.FieldWorks.TE
 		/// <param name="iWs">index into the available analysis writing systems (should be -1 if
 		/// exportMode is ExportMode.VernacularOnly; should  be 0 if exportMode is
 		/// ExportMode.BackTransOnly)</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// ------------------------------------------------------------------------------------
-		private void ExportOrcRun(ITsTextProps ttp, ExportMode exportMode, int iWs)
+		private void ExportOrcRun(ITsTextProps ttp, ExportMode exportMode, int iWs,
+			List<IScrFootnote> vernFootnotes)
 		{
 			Debug.Assert(exportMode != ExportMode.VernacularOnly || iWs == -1);
 			Debug.Assert(exportMode != ExportMode.BackTransOnly || iWs == 0);
@@ -1814,7 +1853,11 @@ namespace SIL.FieldWorks.TE
 						Guid footnoteGuid = MiscUtils.GetGuidFromObjData(objData.Substring(1));
 						IScrFootnote footnote;
 						if (m_cache.ServiceLocator.GetInstance<IScrFootnoteRepository>().TryGetFootnote(footnoteGuid, out footnote))
+						{
 							ExportFootnote(footnote, exportMode, iWs);
+							if (vernFootnotes != null)
+								vernFootnotes.Remove(footnote);
+						}
 						break;
 					}
 				case (char)FwObjDataTypes.kodtGuidMoveableObjDisp:
@@ -1881,9 +1924,11 @@ namespace SIL.FieldWorks.TE
 		/// </param>
 		/// <param name="givenNumber">current chapter or verse number to match. All back
 		/// translation fields up until this chapter/verse will be output.</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// ------------------------------------------------------------------------------------
 		private void ExportBackTransForPriorVerse(ICmTranslation cmTrans, List<ChapterVerseInfo>[] btVersesByWs,
-			RefElement type, string givenNumber)
+			RefElement type, string givenNumber, List<IScrFootnote> vernFootnotes)
 		{
 			givenNumber = givenNumber.Trim();
 
@@ -1973,7 +2018,7 @@ namespace SIL.FieldWorks.TE
 				// check to see if the run is an ORC.
 				if (runText.Length > 0 && runText[0] == StringUtils.kChObject)
 				{
-					ExportOrcRun(runProps, ExportMode.InterleavedVernAndBt, iWs);
+					ExportOrcRun(runProps, ExportMode.InterleavedVernAndBt, iWs, null /* TODO: consider passing footnotes used in vern verse*/);
 					fLastRunWasOrc = true;
 				}
 				else // not an ORC
@@ -2438,18 +2483,22 @@ namespace SIL.FieldWorks.TE
 		#region Annotations
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Export annotations for verse(s) prior to reference represented by the given number.
+		/// Export annotations and footnotes for verse(s) prior to reference represented by the
+		/// given number.
 		/// </summary>
 		/// <param name="type">The type of number we must try to match: Chapter, Verse, or Book.
 		/// </param>
 		/// <param name="nextNumber">current chapter, verse number or book number to match.
 		/// All note fields prior to this chapter/verse/book will be output.</param>
+		/// <param name="vernFootnotes">If this is a non-interleaved back translation, this is
+		/// the list of footnotes in the (vernacular) paragraph being exported.</param>
 		/// <remarks>Annotations are sorted by reference, but annotations to a single reference
 		/// are not necessarily in the order they were added.</remarks>
 		/// ------------------------------------------------------------------------------------
-		private void ExportNotesForPriorVerse(RefElement type, int nextNumber)
+		private void ExportNotesForPriorVerse(RefElement type, int nextNumber,
+			List<IScrFootnote> vernFootnotes)
 		{
-			if (!ExportNotesDomain)
+			if (!ExportNotesDomain && (vernFootnotes == null || vernFootnotes.Count == 0))
 				return;
 
 			// Determine the next begin ref
@@ -2480,6 +2529,22 @@ namespace SIL.FieldWorks.TE
 					nextBeginRef = new ScrReference(nextNumber, 0, 0, m_scr.Versification);
 					break;
 			}
+
+			if (vernFootnotes != null)
+			{
+				for (int iFn = 0; iFn < vernFootnotes.Count; iFn++)
+				{
+					IScrFootnote footnote = vernFootnotes[iFn];
+					if (footnote.EndRef < nextBeginRef)
+					{
+						ExportFootnote(footnote, ExportMode.BackTransOnly, 0);
+						vernFootnotes.RemoveAt(iFn--);
+					}
+				}
+			}
+
+			if (!ExportNotesDomain)
+				return;
 
 			// loop through the relevant annotations
 			IScrScriptureNote annotation;
@@ -2692,7 +2757,7 @@ namespace SIL.FieldWorks.TE
 			foreach (char ch in sNumber)
 			{
 				if (UnicodeCharProps.get_IsNumber(ch))
-					number = (number * 10) + (int)UnicodeCharProps.get_NumericValue(ch);
+					number = (number * 10) + UnicodeCharProps.get_NumericValue(ch);
 				else
 				{
 					//any non-digit means chapter number is invalid--but get any number that we can find.
@@ -2775,7 +2840,6 @@ namespace SIL.FieldWorks.TE
 			out bool invalidSyntax)
 		{
 			beginVerse = endVerse = 0;
-			invalidSyntax = false;
 
 			if (sVerseNumber == null)
 			{
@@ -2799,8 +2863,7 @@ namespace SIL.FieldWorks.TE
 			if (bridgeIndex == 0)
 			{
 				if (sVerseNumber.Length > 1)
-					beginVerse = endVerse = SimpleVerseNumStringToInt(
-						sVerseNumber.Substring(1), out invalidSyntax);
+					beginVerse = endVerse = SimpleVerseNumStringToInt(sVerseNumber.Substring(1), out invalidSyntax);
 				invalidSyntax = true;
 				return;
 			}
@@ -2839,7 +2902,7 @@ namespace SIL.FieldWorks.TE
 			// Evaluate the beginning and ending verse value of the verse bridge
 			bool beginVerseInvalid;
 			beginVerse = SimpleVerseNumStringToInt(
-					sVerseNumber.Substring(0, iEndStartVerse), out beginVerseInvalid);
+				sVerseNumber.Substring(0, iEndStartVerse), out beginVerseInvalid);
 			endVerse = SimpleVerseNumStringToInt(
 				sVerseNumber.Substring(iStartEndVerse), out invalidSyntax);
 
@@ -2956,10 +3019,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private bool WriteChapterTag(int number)
 		{
-			//			// if this \c field has already been written, don't do it again.
-			//			if (number == m_lastChapterWritten)
-			//				return false;
-
 			m_file.WriteLine(); //always start on new line
 
 			// if chapter is not numeric, don't output a record marker
@@ -2968,10 +3027,8 @@ namespace SIL.FieldWorks.TE
 
 			// If converting to arabic digits then just make an ASCII number string.
 			// Otherwise, use the scripture number formatter.
-			if (m_scr.ConvertCVDigitsOnExport)
-				m_file.WriteLine(@"\c " + number.ToString());
-			else
-				m_file.WriteLine(@"\c " + m_scr.ConvertToString(number));
+			m_file.WriteLine(@"\c " + (ConvertFromScriptDigits ? number.ToString() :
+				m_scr.ConvertToString(number)));
 
 			m_lastChapterWritten = number;
 			m_lastInvalidChapterWritten = null;
@@ -2992,13 +3049,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private bool WriteChapterTagInvalid(int number, string invalidChapterNumText)
 		{
-			//			invalidChapterNumText = invalidChapterNumText.Trim();
-
-			//			// if this \c field has already been written, don't do it again.
-			//			if (m_lastInvalidChapterWritten != null &&
-			//					invalidChapterNumText == m_lastInvalidChapterWritten)
-			//				return false;
-
 			m_file.WriteLine(); //always start on new line
 
 			// current requirements: skip the record marker when chapter num has no numeric value
@@ -3045,7 +3095,7 @@ namespace SIL.FieldWorks.TE
 			if (MarkupSystem == MarkupType.Toolbox)
 				WriteVerseRef(verseString);
 
-			m_file.Write(MakeVerseTag(verseString, m_scr.ConvertCVDigitsOnExport));
+			m_file.Write(MakeVerseTag(verseString, ConvertFromScriptDigits));
 			m_v1NeededForImplicitFirstVerse = false;
 		}
 
@@ -3096,7 +3146,7 @@ namespace SIL.FieldWorks.TE
 					newString.Append(ch);
 			}
 
-			return @"\v " + newString.ToString() + " ";
+			return @"\v " + newString + " ";
 		}
 		#endregion
 

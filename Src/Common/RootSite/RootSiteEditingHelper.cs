@@ -474,11 +474,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (IsBackTranslation)
 				{
+					// TODO (TE-8956): Implement this
 					SelectionHelper helper = CurrentSelection;
 					SelLevInfo info;
 					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
 					{
-						// TODO: Implement this
 						//ISegment segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
 					}
 
@@ -741,7 +741,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>A selection helper representing an IP, or <c>null</c> if the given
 		/// selection cannot be reduced to an IP</returns>
 		/// ------------------------------------------------------------------------------------
-		protected SelectionHelper GetSelectionReducedToIp(SelectionHelper.SelLimitType selLimit)
+		public SelectionHelper GetSelectionReducedToIp(SelectionHelper.SelLimitType selLimit)
 		{
 			SelectionHelper selHelper = CurrentSelection.ReduceSelectionToIp(
 				SelectionHelper.SelLimitType.Top, false, false);

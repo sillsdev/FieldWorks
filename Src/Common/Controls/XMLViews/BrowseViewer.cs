@@ -3672,6 +3672,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if(RefreshCompleted != null)
 				RefreshCompleted(this, new EventArgs());
+			SetListModificationInProgress(false);
 			return false;
 		}
 

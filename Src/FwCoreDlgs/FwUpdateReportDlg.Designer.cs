@@ -40,7 +40,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lblWarning = new System.Windows.Forms.Label();
 			this.printDialog1 = new System.Windows.Forms.PrintDialog();
 			this.printDocument = new System.Drawing.Printing.PrintDocument();
-			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.lblImportant = new System.Windows.Forms.Label();
 			this.lblProjectName = new System.Windows.Forms.Label();
 			spearatorLine = new System.Windows.Forms.Label();
@@ -111,12 +110,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.printDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument_PrintPage);
 			this.printDocument.BeginPrint += new System.Drawing.Printing.PrintEventHandler(this.printDocument_BeginPrint);
 			//
-			// saveFileDialog
-			//
-			this.saveFileDialog.DefaultExt = "txt";
-			resources.ApplyResources(this.saveFileDialog, "saveFileDialog");
-			this.saveFileDialog.SupportMultiDottedExtensions = true;
-			//
 			// lblImportant
 			//
 			resources.ApplyResources(this.lblImportant, "lblImportant");
@@ -163,8 +156,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary></summary>
 		protected System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ListView lvItems;
-		/// <summary></summary>
-		protected System.Windows.Forms.SaveFileDialog saveFileDialog;
 		/// <summary></summary>
 		protected System.Drawing.Printing.PrintDocument printDocument;
 		private System.Windows.Forms.Label lblProjectName;

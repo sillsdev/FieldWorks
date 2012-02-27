@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <window label="FieldWorks Language Explorer" settingsId="Language Explorer">
 
@@ -31,6 +31,8 @@
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
 		<command id="CmdLiftBridge" label="Send/Receive LIFT" message="LiftBridge" />
+		<command id="CmdFLExBridge" label="Send/Receive Project" message="FLExBridge" />
+		<command id="CmdShowConflictReport" label="Conflict Report" message="ShowConflictReport" />
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
@@ -429,6 +431,7 @@
 			</menu>
 			<item command="CmdExport"/>
 			<item command="CmdLiftBridge" />
+			<item command="CmdFLExBridge" />
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
 			<!--item command="CmdSynch"/-->
 			<!-- needs more work to implement. -->
@@ -474,19 +477,15 @@
 			<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local"/>
+			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<item label="-" translate="do not translate"/>
 			<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local"/>
-			<!-- WANTPORT JohnT: these did little useful even in 6.0, apparently place-holders for unimplemented features. See FWR-657.
-			<menu id="ViewChoices" list="ListViews" b4InsertMenu="true" inline="true"/>
-WANTPORT -->
-			<!-- Too many bug possibilities, so put this off: <item label="_Sidebar" boolProperty="ShowSidebar"/>  -->
-			<!-- <item label="_Record List" boolProperty="ShowTreeBar" /> -->
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='View']/*"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdShowConflictReport" defaultVisible="false"/>
 		</menu>
 
 		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
@@ -875,6 +874,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
+		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.FLExBridgeListener"/>
 		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>

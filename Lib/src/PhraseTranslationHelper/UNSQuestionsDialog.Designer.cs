@@ -70,6 +70,8 @@ namespace SILUBS.PhraseTranslationHelper
 			this.mnuExcludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuIncludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInsertQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuAddQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mainMenu = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +81,9 @@ namespace SILUBS.PhraseTranslationHelper
 			this.mnuGenerateTemplate = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuPaste = new System.Windows.Forms.ToolStripMenuItem();
 			this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuReferenceRange = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuKtFilter = new System.Windows.Forms.ToolStripMenuItem();
@@ -173,6 +178,7 @@ namespace SILUBS.PhraseTranslationHelper
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
 			resources.ApplyResources(this.dataGridUns, "dataGridUns");
+			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -195,6 +201,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridUns.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValueNeeded);
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellEndEdit);
+			this.dataGridUns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellClick);
 			this.dataGridUns.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValuePushed);
 			this.dataGridUns.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridUns_RowContextMenuStripNeeded);
 			this.dataGridUns.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridUns_EditingControlShowing);
@@ -246,7 +253,9 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.mnuExcludeQuestion,
 			this.mnuIncludeQuestion,
-			this.mnuEditQuestion});
+			this.mnuEditQuestion,
+			this.mnuInsertQuestion,
+			this.mnuAddQuestion});
 			this.dataGridContextMenu.Name = "dataGridContextMenu";
 			resources.ApplyResources(this.dataGridContextMenu, "dataGridContextMenu");
 			this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
@@ -269,10 +278,23 @@ namespace SILUBS.PhraseTranslationHelper
 			resources.ApplyResources(this.mnuEditQuestion, "mnuEditQuestion");
 			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
 			//
+			// mnuInsertQuestion
+			//
+			this.mnuInsertQuestion.Name = "mnuInsertQuestion";
+			resources.ApplyResources(this.mnuInsertQuestion, "mnuInsertQuestion");
+			this.mnuInsertQuestion.Click += new System.EventHandler(this.InsertOrAddQuestion);
+			//
+			// mnuAddQuestion
+			//
+			this.mnuAddQuestion.Name = "mnuAddQuestion";
+			resources.ApplyResources(this.mnuAddQuestion, "mnuAddQuestion");
+			this.mnuAddQuestion.Click += new System.EventHandler(this.InsertOrAddQuestion);
+			//
 			// m_mainMenu
 			//
 			this.m_mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.fileToolStripMenuItem,
+			this.editToolStripMenuItem,
 			this.filterToolStripMenuItem,
 			this.viewToolStripMenuItem,
 			this.optionsToolStripMenuItem,
@@ -335,6 +357,28 @@ namespace SILUBS.PhraseTranslationHelper
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
 			resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+			//
+			// editToolStripMenuItem
+			//
+			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuCopy,
+			this.mnuPaste});
+			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+			resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+			//
+			// mnuCopy
+			//
+			this.mnuCopy.Image = global::SILUBS.PhraseTranslationHelper.Properties.Resources.Copy;
+			resources.ApplyResources(this.mnuCopy, "mnuCopy");
+			this.mnuCopy.Name = "mnuCopy";
+			this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
+			//
+			// mnuPaste
+			//
+			this.mnuPaste.Image = global::SILUBS.PhraseTranslationHelper.Properties.Resources.Paste;
+			resources.ApplyResources(this.mnuPaste, "mnuPaste");
+			this.mnuPaste.Name = "mnuPaste";
+			this.mnuPaste.Click += new System.EventHandler(this.mnuPaste_Click);
 			//
 			// filterToolStripMenuItem
 			//
@@ -596,6 +640,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.MainMenuStrip = this.m_mainMenu;
 			this.Name = "UNSQuestionsDialog";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
+			this.Activated += new System.EventHandler(this.UNSQuestionsDialog_Activated);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();
 			this.dataGridContextMenu.ResumeLayout(false);
 			this.m_mainMenu.ResumeLayout(false);
@@ -650,11 +695,6 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem mnuHelpAbout;
 		private ToolStripMenuItem biblicalTermsRenderingSelectionRulesToolStripMenuItem;
-		private DataGridViewTextBoxColumn m_colReference;
-		private DataGridViewTextBoxColumn m_colEnglish;
-		private DataGridViewTextBoxColumn m_colTranslation;
-		private DataGridViewCheckBoxColumn m_colUserTranslated;
-		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripLabel lblFilterIndicator;
 		private ToolStripLabel lblRemainingWork;
 		private ToolStripMenuItem mnuViewExcludedQuestions;
@@ -663,5 +703,15 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem mnuExcludeQuestion;
 		private ToolStripMenuItem mnuIncludeQuestion;
 		private ToolStripMenuItem mnuEditQuestion;
+		private ToolStripMenuItem mnuAddQuestion;
+		private ToolStripMenuItem mnuInsertQuestion;
+		private DataGridViewTextBoxColumn m_colReference;
+		private DataGridViewTextBoxColumn m_colEnglish;
+		private DataGridViewTextBoxColumn m_colTranslation;
+		private DataGridViewCheckBoxColumn m_colUserTranslated;
+		private DataGridViewTextBoxColumn m_colDebugInfo;
+		private ToolStripMenuItem editToolStripMenuItem;
+		private ToolStripMenuItem mnuCopy;
+		private ToolStripMenuItem mnuPaste;
 	}
 }

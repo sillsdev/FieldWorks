@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2007, SIL International. All Rights Reserved.
-// <copyright from='2004' to='2007' company='SIL International'>
-//		Copyright (c) 2007, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2004' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -58,7 +58,6 @@ namespace SIL.FieldWorks.TE
 		/// Required designer variable.
 		/// </summary>
 		private Container components = null;
-		private CheckBox m_chkUseLatinNumsOnExport;
 
 		/// <summary>maintains a map of language names to base digits.  The key is the language
 		/// name and the values are the base digits ('0' character) for the language.</summary>
@@ -128,18 +127,12 @@ namespace SIL.FieldWorks.TE
 			if (m_scr.UseScriptDigits)
 			{
 				m_btnScriptNumbers.Checked = true;
-				m_chkUseLatinNumsOnExport.Checked =
-					m_scr.ConvertCVDigitsOnExport;
 				string language = m_baseDigitMap[(char)m_scr.ScriptDigitZero];
 				m_cboScriptLanguages.SelectedIndex =
 					m_cboScriptLanguages.FindString(language);
 			}
 			else
-			{
 				m_btnLatinNumbers.Checked = true;
-				m_chkUseLatinNumsOnExport.Checked = false;
-				m_chkUseLatinNumsOnExport.Enabled = false;
-			}
 
 			// Fill in the reference separator fields to edit
 			m_txtRefSep.Text = m_scr.RefSepr;
@@ -197,7 +190,6 @@ namespace SIL.FieldWorks.TE
 			LoadOneLanguage("kstidKhmer", '\u17e0');
 			LoadOneLanguage("kstidMongolian", '\u1810');
 
-			// TODO: Once the database has a setting, set the default language
 			m_cboScriptLanguages.SelectedIndex = 0;
 		}
 
@@ -241,7 +233,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -283,7 +275,6 @@ namespace SIL.FieldWorks.TE
 			this.m_cboScriptLanguages = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.m_btnScriptNumbers = new System.Windows.Forms.RadioButton();
 			this.m_btnLatinNumbers = new System.Windows.Forms.RadioButton();
-			this.m_chkUseLatinNumsOnExport = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_cboVersification = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -373,12 +364,12 @@ namespace SIL.FieldWorks.TE
 			groupBox1.Controls.Add(this.m_cboScriptLanguages);
 			groupBox1.Controls.Add(this.m_btnScriptNumbers);
 			groupBox1.Controls.Add(this.m_btnLatinNumbers);
-			groupBox1.Controls.Add(this.m_chkUseLatinNumsOnExport);
 			groupBox1.Name = "groupBox1";
 			groupBox1.TabStop = false;
 			//
 			// m_cboScriptLanguages
 			//
+			this.m_cboScriptLanguages.AllowSpaceInEditBox = false;
 			this.m_cboScriptLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.m_cboScriptLanguages, "m_cboScriptLanguages");
 			this.m_cboScriptLanguages.Name = "m_cboScriptLanguages";
@@ -395,11 +386,6 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.m_btnLatinNumbers, "m_btnLatinNumbers");
 			this.m_btnLatinNumbers.Name = "m_btnLatinNumbers";
 			this.m_btnLatinNumbers.CheckedChanged += new System.EventHandler(this.m_btnLatinNumbers_CheckedChanged);
-			//
-			// m_chkUseLatinNumsOnExport
-			//
-			resources.ApplyResources(this.m_chkUseLatinNumsOnExport, "m_chkUseLatinNumsOnExport");
-			this.m_chkUseLatinNumsOnExport.Name = "m_chkUseLatinNumsOnExport";
 			//
 			// m_btnOK
 			//
@@ -427,6 +413,7 @@ namespace SIL.FieldWorks.TE
 			//
 			// m_cboVersification
 			//
+			this.m_cboVersification.AllowSpaceInEditBox = false;
 			this.m_cboVersification.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.m_cboVersification, "m_cboVersification");
 			this.m_cboVersification.Name = "m_cboVersification";
@@ -578,7 +565,6 @@ namespace SIL.FieldWorks.TE
 		{
 			// get the settings from the dialog.
 			bool useScriptNumbers = m_btnScriptNumbers.Checked;
-			bool convertToLatinOnExport = m_chkUseLatinNumsOnExport.Checked;
 			string languageName = (string)m_cboScriptLanguages.SelectedItem;
 			char baseChar =
 				useScriptNumbers ? m_languageMap[languageName] : '\0';
@@ -588,17 +574,7 @@ namespace SIL.FieldWorks.TE
 				m_scr.ScriptDigitZero != baseChar)
 			{
 				m_scr.UseScriptDigits = useScriptNumbers;
-				if (useScriptNumbers)
-				{
-					m_scr.ScriptDigitZero = baseChar;
-					m_scr.ConvertCVDigitsOnExport =
-						convertToLatinOnExport;
-				}
-				else
-				{
-					m_scr.ScriptDigitZero = 0;
-					m_scr.ConvertCVDigitsOnExport = false;
-				}
+				m_scr.ScriptDigitZero = useScriptNumbers ? baseChar : 0;
 
 				ConvertChapterVerseNumbers();
 				return true;
@@ -675,31 +651,21 @@ namespace SIL.FieldWorks.TE
 			{
 				// If the resequence option has changed then the footnotes in the database
 				// need to be recalculated.
-				if (m_scr.RestartFootnoteSequence != fpsFootnoteOptions.RestartFootnoteSequence)
-					m_scr.RestartFootnoteSequence = fpsFootnoteOptions.RestartFootnoteSequence;
+				m_scr.RestartFootnoteSequence = fpsFootnoteOptions.RestartFootnoteSequence;
 
-				if (m_scr.FootnoteMarkerType != fpsFootnoteOptions.FootnoteMarkerType)
-					m_scr.FootnoteMarkerType = fpsFootnoteOptions.FootnoteMarkerType;
-				if (m_scr.FootnoteMarkerSymbol != fpsFootnoteOptions.FootnoteMarkerSymbol)
-					m_scr.FootnoteMarkerSymbol = fpsFootnoteOptions.FootnoteMarkerSymbol;
-				if (m_scr.DisplayFootnoteReference != fpsFootnoteOptions.ShowScriptureReference)
-					m_scr.DisplayFootnoteReference = fpsFootnoteOptions.ShowScriptureReference;
-				if (m_scr.DisplaySymbolInFootnote != fpsFootnoteOptions.ShowCustomSymbol)
-					m_scr.DisplaySymbolInFootnote = fpsFootnoteOptions.ShowCustomSymbol;
+				m_scr.FootnoteMarkerType = fpsFootnoteOptions.FootnoteMarkerType;
+				m_scr.FootnoteMarkerSymbol = fpsFootnoteOptions.FootnoteMarkerSymbol;
+				m_scr.DisplayFootnoteReference = fpsFootnoteOptions.ShowScriptureReference;
+				m_scr.DisplaySymbolInFootnote = fpsFootnoteOptions.ShowCustomSymbol;
 
-				if (m_scr.CrossRefsCombinedWithFootnotes != m_fCombineFootnotes)
-					m_scr.CrossRefsCombinedWithFootnotes = m_fCombineFootnotes;
+				m_scr.CrossRefsCombinedWithFootnotes = m_fCombineFootnotes;
 
 				if (fpsCrossRefOptions.Enabled)
 				{
-					if (m_scr.CrossRefMarkerType != fpsCrossRefOptions.FootnoteMarkerType)
-						m_scr.CrossRefMarkerType = fpsCrossRefOptions.FootnoteMarkerType;
-					if (m_scr.CrossRefMarkerSymbol != fpsCrossRefOptions.FootnoteMarkerSymbol)
-						m_scr.CrossRefMarkerSymbol = fpsCrossRefOptions.FootnoteMarkerSymbol;
-					if (m_scr.DisplayCrossRefReference != fpsCrossRefOptions.ShowScriptureReference)
-						m_scr.DisplayCrossRefReference = fpsCrossRefOptions.ShowScriptureReference;
-					if (m_scr.DisplaySymbolInCrossRef != fpsCrossRefOptions.ShowCustomSymbol)
-						m_scr.DisplaySymbolInCrossRef = fpsCrossRefOptions.ShowCustomSymbol;
+					m_scr.CrossRefMarkerType = fpsCrossRefOptions.FootnoteMarkerType;
+					m_scr.CrossRefMarkerSymbol = fpsCrossRefOptions.FootnoteMarkerSymbol;
+					m_scr.DisplayCrossRefReference = fpsCrossRefOptions.ShowScriptureReference;
+					m_scr.DisplaySymbolInCrossRef = fpsCrossRefOptions.ShowCustomSymbol;
 				}
 
 				//// Now restore the selection in the given root site
@@ -723,17 +689,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void m_btnLatinNumbers_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if (m_btnLatinNumbers.Checked)
-			{
-				m_chkUseLatinNumsOnExport.Enabled = false;
-				m_chkUseLatinNumsOnExport.Checked = false;
-				m_cboScriptLanguages.Enabled = false;
-			}
-			else
-			{
-				m_chkUseLatinNumsOnExport.Enabled = true;
-				m_cboScriptLanguages.Enabled = true;
-			}
+			m_cboScriptLanguages.Enabled = !m_btnLatinNumbers.Checked;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1005,7 +961,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void UpdateVerseBridgesInParagraph(IScrTxtPara para, string oldBridge, string newBridge)
 		{
-			int styleNameProp = (int)FwTextPropType.ktptNamedStyle;
+			const int kStyleNameProp = (int)FwTextPropType.ktptNamedStyle;
 			ITsString paraContents = para.Contents;
 			ITsStrBldr bldr = null;
 
@@ -1017,7 +973,7 @@ namespace SIL.FieldWorks.TE
 				ITsTextProps props = paraContents.FetchRunInfo(i, out runInfo);
 
 				// Check if the run is a verse number run.
-				if (props.GetStrPropValue(styleNameProp) == ScrStyleNames.VerseNumber)
+				if (props.GetStrPropValue(kStyleNameProp) == ScrStyleNames.VerseNumber)
 				{
 					// Look to see if this verse is a bridge. If so, then reform it
 					// with the new verse bridge string.

@@ -333,9 +333,6 @@
   <data name="&gt;&gt;txtPrefix.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
-  <data name="cboScheme.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboScheme.Location" type="System.Drawing.Point, System.Drawing">
 	<value>120, 40</value>
   </data>

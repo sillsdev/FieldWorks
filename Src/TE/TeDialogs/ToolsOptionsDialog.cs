@@ -179,20 +179,14 @@ namespace SIL.FieldWorks.TE
 			// Use the following code block to set the checked values for experimental features.
 #if DEBUG
 			m_cboExperimentalFeatures.SetItemChecked(kVerticalDraftView, Options.UseVerticalDraftView);
-			m_cboExperimentalFeatures.SetItemChecked(kTranslateUnsQuestions, Options.ShowTranslateUnsQuestions);
 #endif
 			m_origInterLinearBTValue = Options.UseInterlinearBackTranslation;
 			m_cboExperimentalFeatures.SetItemChecked(kInterlinearBackTranslation, m_origInterLinearBTValue);
 			m_cboExperimentalFeatures.SetItemChecked(kXhtmlExport, Options.UseXhtmlExport);
+			m_cboExperimentalFeatures.SetItemChecked(kTranslateUnsQuestions, Options.ShowTranslateUnsQuestions);
 #if !DEBUG
-			m_cboExperimentalFeatures.Items.RemoveAt(kVerticalDraftView);
-			// The UNS translation feature is only available in release mode if the required files are present.
-			string unsUserDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "UNS Questions");
-			if (Directory.Exists(unsUserDataFolder) && File.Exists(Path.Combine(unsUserDataFolder, "QTTallBooks.sfm")))
-				m_cboExperimentalFeatures.SetItemChecked(kTranslateUnsQuestions, Options.ShowTranslateUnsQuestions);
-			else
-				m_cboExperimentalFeatures.Items.RemoveAt(kTranslateUnsQuestions);
 			// The vertical view is only available in Debug mode
+			m_cboExperimentalFeatures.Items.RemoveAt(kVerticalDraftView);
 #endif
 			// Execute this block if there are no experimental features (or none we want the user to see in a release build).
 			//{
@@ -519,6 +513,7 @@ namespace SIL.FieldWorks.TE
 			//
 			this.AcceptButton = this.btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(btnHelp);
 			this.Controls.Add(btnCancel);

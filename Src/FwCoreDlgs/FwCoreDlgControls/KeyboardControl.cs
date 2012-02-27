@@ -16,8 +16,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary></summary>
 	public class KeyboardControl : UserControl, IFWDisposable
 	{
-		private System.Windows.Forms.Label m_langIdLabel;
-		private System.Windows.Forms.Label m_keyboardLabel;
 		private FwOverrideComboBox m_keyboardComboBox;
 		private FwOverrideComboBox m_langIdComboBox;
 		private bool m_fKeymanInitErrorReported;
@@ -108,24 +106,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyboardControl));
+			System.Windows.Forms.Label m_langIdLabel;
+			System.Windows.Forms.Label m_keyboardLabel;
 			this.m_keyboardComboBox = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.m_langIdComboBox = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.m_helpProvider = new System.Windows.Forms.HelpProvider();
-			this.m_langIdLabel = new System.Windows.Forms.Label();
-			this.m_keyboardLabel = new System.Windows.Forms.Label();
+			m_langIdLabel = new System.Windows.Forms.Label();
+			m_keyboardLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			//
-			// m_langIdLabel
-			//
-			resources.ApplyResources(this.m_langIdLabel, "m_langIdLabel");
-			this.m_langIdLabel.BackColor = System.Drawing.Color.Transparent;
-			this.m_langIdLabel.Name = "m_langIdLabel";
-			//
-			// m_keyboardLabel
-			//
-			resources.ApplyResources(this.m_keyboardLabel, "m_keyboardLabel");
-			this.m_keyboardLabel.BackColor = System.Drawing.Color.Transparent;
-			this.m_keyboardLabel.Name = "m_keyboardLabel";
 			//
 			// m_keyboardComboBox
 			//
@@ -149,12 +137,24 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			this.m_langIdComboBox.Sorted = true;
 			this.m_langIdComboBox.SelectedIndexChanged += new System.EventHandler(this.m_cbLangId_SelectedIndexChanged);
 			//
+			// m_langIdLabel
+			//
+			resources.ApplyResources(m_langIdLabel, "m_langIdLabel");
+			m_langIdLabel.BackColor = System.Drawing.Color.Transparent;
+			m_langIdLabel.Name = "m_langIdLabel";
+			//
+			// m_keyboardLabel
+			//
+			resources.ApplyResources(m_keyboardLabel, "m_keyboardLabel");
+			m_keyboardLabel.BackColor = System.Drawing.Color.Transparent;
+			m_keyboardLabel.Name = "m_keyboardLabel";
+			//
 			// KeyboardControl
 			//
 			this.Controls.Add(this.m_keyboardComboBox);
 			this.Controls.Add(this.m_langIdComboBox);
-			this.Controls.Add(this.m_keyboardLabel);
-			this.Controls.Add(this.m_langIdLabel);
+			this.Controls.Add(m_keyboardLabel);
+			this.Controls.Add(m_langIdLabel);
 			this.Name = "KeyboardControl";
 			resources.ApplyResources(this, "$this");
 			this.ResumeLayout(false);

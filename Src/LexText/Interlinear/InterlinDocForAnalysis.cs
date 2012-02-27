@@ -1925,6 +1925,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			// The base method does this too, but some paths in this method don't go through the base!
 			RemoveContextButtonIfPresent();
 			if (e.Button == MouseButtons.Right)
 			{
@@ -2134,12 +2135,17 @@ namespace SIL.FieldWorks.IText
 			// The elements of rgvsli from itagSegments onwards form a path to the segment.
 			// In the segment we want the note propery, specifically the new one we just made.
 			// We want to select at the start of it.
-			SelLevInfo[] rgvsliNew = new SelLevInfo[rgvsli.Length - itagSegments + 1];
-			for (int i = 1; i < rgvsliNew.Length; i++)
-				rgvsliNew[i] = rgvsli[i + itagSegments - 1];
+			// LT-12613: We're adding an extra segment here:
+			SelLevInfo[] rgvsliNew = new SelLevInfo[rgvsli.Length - itagSegments + 2];
+			for (int i = 2; i < rgvsliNew.Length; i++)
+				rgvsliNew[i] = rgvsli[i + itagSegments - 2];
 			rgvsliNew[0].ihvo = seg.NotesOS.Count - 1;
 			rgvsliNew[0].tag = SegmentTags.kflidNotes;
 			rgvsliNew[0].cpropPrevious = 0;
+			// LT-12613: Define extra segment here:
+			rgvsliNew[1].ihvo = 0;
+			rgvsliNew[1].tag = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+			rgvsliNew[1].cpropPrevious = 0;
 			RootBox.MakeTextSelInObj(0, rgvsliNew.Length, rgvsliNew, 0, null, true, true, false, false, true);
 			// Don't steal the focus from another window.  See FWR-1795.
 			if (ParentForm == Form.ActiveForm)
