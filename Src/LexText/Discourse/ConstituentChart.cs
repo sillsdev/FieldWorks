@@ -642,7 +642,12 @@ namespace SIL.FieldWorks.Discourse
 		private void GetAndScrollToBookmark()
 		{
 			if (m_chart.RowsOS.Count <= 0)
+			{
+				// Reset bookmark to prevent LT-12666
+				if (m_bookmark != null && m_mediator != null)
+					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner, m_mediator);
 				return;
+			}
 			// no rows in chart; no selection necessary
 			m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
 			m_logic.RaiseRibbonChgEvent();
