@@ -838,4 +838,29 @@
 	<value>{0} of {1} Texts</value>
 	<comment>Used for status bar message when some non-Scripture texts are excluded.</comment>
   </data>
+  <data name="ksMergeDuplicateWordforms" xml:space="preserve">
+	<value>Merge Duplicate Wordforms</value>
+	<comment>label for one of the tasks in the Utilities dialog</comment>
+  </data>
+  <data name="ksMergeWordformsAttemptsTo" xml:space="preserve">
+	<value>This utility finds groups of wordforms which have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to correct if any of the old wordforms is correct, otherwise incorrect if any old form is incorrect (otherwise it stays undecided).</value>
+	<comment>Help information for the merge wordform option in Utilies.</comment>
+  </data>
+  <data name="ksUseMergeWordformsWhen" xml:space="preserve">
+	<value>Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text</value>
+	<comment>Help information for the merge wordform option in Utilies.</comment>
+  </data>
+  <data name="ksMergeWordformsWarning" xml:space="preserve">
+	<value>Merging wordforms is not undoable. We recommend making a backup first. You may need to Refresh some views to see the full effect of this fix.</value>
+  </data>
+  <data name="ksRedoMergeWordforms" xml:space="preserve">
+	<value>Redo Merge Wordforms</value>
+  </data>
+  <data name="ksUndoMergeWordforms" xml:space="preserve">
+	<value>Undo Merge Wordforms</value>
+  </data>
+  <data name="ksWordformMergeFailures" xml:space="preserve">
+	<value>Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}</value>
+	<comment>{0} is a list of space-separated words (possibly only one).</comment>
+  </data>
 </root>

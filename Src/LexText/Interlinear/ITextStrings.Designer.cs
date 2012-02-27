@@ -1132,6 +1132,33 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Merge Duplicate Wordforms.
+		/// </summary>
+		internal static string ksMergeDuplicateWordforms {
+			get {
+				return ResourceManager.GetString("ksMergeDuplicateWordforms", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to This utility finds groups of wordforms which have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to correct if any of the old wordforms is correct, otherwise incorrect if any old form is incorrect (otherwise it stays undecided)..
+		/// </summary>
+		internal static string ksMergeWordformsAttemptsTo {
+			get {
+				return ResourceManager.GetString("ksMergeWordformsAttemptsTo", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Merging wordforms is not undoable. We recommend making a backup first. You may need to Refresh some views to see the full effect of this fix..
+		/// </summary>
+		internal static string ksMergeWordformsWarning {
+			get {
+				return ResourceManager.GetString("ksMergeWordformsWarning", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Morphemes.
 		/// </summary>
 		internal static string ksMorphemes {
@@ -1497,6 +1524,15 @@ namespace SIL.FieldWorks.IText {
 		internal static string ksRedoLinkWords {
 			get {
 				return ResourceManager.GetString("ksRedoLinkWords", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Redo Merge Wordforms.
+		/// </summary>
+		internal static string ksRedoMergeWordforms {
+			get {
+				return ResourceManager.GetString("ksRedoMergeWordforms", resourceCulture);
 			}
 		}
 
@@ -1933,6 +1969,15 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Undo Merge Wordforms.
+		/// </summary>
+		internal static string ksUndoMergeWordforms {
+			get {
+				return ResourceManager.GetString("ksUndoMergeWordforms", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Undo insert Translation.
 		/// </summary>
 		internal static string ksUndoSetTransFromWordGlosses {
@@ -1969,6 +2014,15 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text.
+		/// </summary>
+		internal static string ksUseMergeWordformsWhen {
+			get {
+				return ResourceManager.GetString("ksUseMergeWordformsWhen", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Variant of....
 		/// </summary>
 		internal static string ksVariantOf_ {
@@ -2001,6 +2055,15 @@ namespace SIL.FieldWorks.IText {
 		internal static string ksWordCat {
 			get {
 				return ResourceManager.GetString("ksWordCat", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}.
+		/// </summary>
+		internal static string ksWordformMergeFailures {
+			get {
+				return ResourceManager.GetString("ksWordformMergeFailures", resourceCulture);
 			}
 		}
 
