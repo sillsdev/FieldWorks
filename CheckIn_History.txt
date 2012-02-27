@@ -85,3 +85,4 @@ NaylorJ, 24 Feb 2012. Fixed LT-12493. If the parser tries to update an interline
 NaylorJ, 24 Feb 2012. Fixed LT-12708. The ChartIsRtL property will no longer blow up if the text is invalid.
 NaylorJ, 24 Feb 2012. Fixed LT-12584. Right clicking on whitespace will no longer cause a crash.
 JohnT, 27 Feb 2012. LT-12684, Doubled bullets in Reversal Index, and UI problem in Configure dialog
+Gordonm, 27 Feb 2012. LT-12726 Crash changing text language.

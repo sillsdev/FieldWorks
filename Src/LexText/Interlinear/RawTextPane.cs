@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -315,29 +316,68 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public override void OnPropertyChanged(string name)
 		{
+			var wsBefore = 0;
+			// We want to know below whether a base class changed the ws or not.
+			if (name == "WritingSystemHvo")
+			{
+				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			}
+
 			base.OnPropertyChanged(name);
-			if (name == "ShowInvisibleSpaces")
+			bool newVal; // used in two cases below
+			switch (name)
 			{
-				var newVal = ShowInvisibleSpaces;
-				if (newVal != m_showSpaceDa.ShowSpaces)
-				{
-					m_showSpaceDa.ShowSpaces = newVal;
-					var saveSelection = SelectionHelper.Create(this);
-					m_rootb.Reconstruct();
-					saveSelection.SetSelection(true);
-				}
-				if (!newVal && ClickInvisibleSpace)
-					TurnOffClickInvisibleSpace();
+				case "WritingSystemHvo":
+					if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+					{
+						int hvo, tag, ws, ichMin, ichLim;
+						ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+						if (ws != wsBefore) // writing system changed!
+						{
+							if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
+							{
+								if (tag != StTxtParaTags.kflidContents)
+									return;
+
+								var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+								// force this paragraph to recognize it might need reparsing.
+								SetParaToReparse(para);
+							}
+						}
+					}
+					break;
+				case "ShowInvisibleSpaces":
+					newVal = ShowInvisibleSpaces;
+					if (newVal != m_showSpaceDa.ShowSpaces)
+					{
+						m_showSpaceDa.ShowSpaces = newVal;
+						var saveSelection = SelectionHelper.Create(this);
+						m_rootb.Reconstruct();
+						saveSelection.SetSelection(true);
+					}
+					if (!newVal && ClickInvisibleSpace)
+						TurnOffClickInvisibleSpace();
+					break;
+				case "ClickInvisibleSpace":
+					newVal = ClickInvisibleSpace;
+					if (newVal == m_fClickInsertsZws)
+						return;
+					m_fClickInsertsZws = newVal;
+					if (newVal && !ShowInvisibleSpaces)
+						TurnOnShowInvisibleSpaces();
+					break;
+				default:
+					break;
 			}
-			else if (name == "ClickInvisibleSpace")
-			{
-				var newVal = ClickInvisibleSpace;
-				if (newVal == m_fClickInsertsZws)
-					return;
-				m_fClickInsertsZws = newVal;
-				if (newVal && !ShowInvisibleSpaces)
-					TurnOnShowInvisibleSpaces();
-			}
+		}
+
+		private void SetParaToReparse(IStTxtPara para)
+		{
+			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
+				para.ParseIsCurrent = false;
+			else
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => para.ParseIsCurrent = false);
 		}
 
 		private void TurnOnShowInvisibleSpaces()
@@ -686,7 +726,7 @@ namespace SIL.FieldWorks.IText
 		/// button is disabled when there's nothing to select and look up.  Otherwise, crashes
 		/// can result when it's clicked but there's nothing there to process!  It's misleading
 		/// to the user if nothing else.  It would be nice if the processing could be minimized,
-		/// but this seems to be minimal.
+		/// but this seems to be minimal. (GJM - 23 Feb 2012 Is that better? LT-12726)
 		/// </summary>
 		/// <returns>true</returns>
 		public bool LexiconLookupEnabled()
@@ -696,10 +736,12 @@ namespace SIL.FieldWorks.IText
 			if (m_rootb == null)
 				return false;
 			IVwSelection sel = m_rootb.Selection;
-			if (sel == null)
+			if (sel == null || !sel.IsValid)
 				return false;
-			IWfiWordform wordform;
-			return GetSelectedWordform(sel, out wordform);
+			// out variables for GetSelectedWordPos
+			int hvo, tag, ws, ichMin, ichLim;
+			// We just need to see if it's possible
+			return GetSelectedWordPos(sel, out hvo, out tag, out ws, out ichMin, out ichLim);
 		}
 
 		private bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
@@ -730,19 +772,15 @@ namespace SIL.FieldWorks.IText
 			if (tag != StTxtParaTags.kflidContents)
 				return false;
 
-			IStTxtPara para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-			IAnalysis anal = null;
-			foreach (ISegment seg in para.SegmentsOS)
+			var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+			if (!para.ParseIsCurrent)
 			{
-				if (seg.BeginOffset <= ichMin && seg.EndOffset >= ichLim)
-				{
-					bool exact;
-					AnalysisOccurrence occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
-					if (occurrence != null)
-						anal = occurrence.Analysis;
-					break;
-				}
+				if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
+					ReparseParagraph(para);
+				else
+					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
 			}
+			var anal = FindClosestWagParsed(para, ichMin, ichLim);
 			if (anal != null && anal.HasWordform)
 			{
 				wordform = anal.Wordform;
@@ -751,8 +789,31 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
-		public bool OnDisplayGuessWordBreaks(object commandObject,
-	ref UIItemDisplayProperties display)
+		private void ReparseParagraph(IStTxtPara para)
+		{
+			using (var parser = new ParagraphParser(para))
+			{
+				parser.Parse(para);
+			}
+		}
+
+		private static IAnalysis FindClosestWagParsed(IStTxtPara para, int ichMin, int ichLim)
+		{
+			IAnalysis anal = null;
+			foreach (var seg in para.SegmentsOS)
+			{
+				if (seg.BeginOffset > ichMin || seg.EndOffset < ichLim)
+					continue;
+				bool exact;
+				var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
+				if (occurrence != null)
+					anal = occurrence.Analysis;
+				break;
+			}
+			return anal;
+		}
+
+		public bool OnDisplayGuessWordBreaks(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
