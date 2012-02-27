@@ -2552,7 +2552,7 @@ namespace SIL.FieldWorks.XWorks
 			if (IsSubsenseNode)
 				HideSenseConfigControls();
 			else
-				m_cfgSenses.Visible = true;
+				ShowSenseConfigControls();
 
 			m_cfgSenses.DisplaySenseInPara = m_current.ShowSenseAsPara;
 			// Otherwise, sometimes Context controls come up invisible when they shouldn't.
@@ -2640,6 +2640,16 @@ namespace SIL.FieldWorks.XWorks
 			// Restore the original position of the surrounding context controls if
 			// necessary.
 			PlaceContextControls(null);
+		}
+
+		private void ShowSenseConfigControls()
+		{
+			m_cfgSenses.Visible = true;
+			// These controls should never show when the sense config is, but the code that
+			// displays them runs before the code that decides whether to display sense config.
+			// The easiest thing is just to make sure that they are not showing when sense config is.
+			// Sense config has its own control for the style of sense paragraphs if any.
+			HideStyleControls();
 		}
 
 		/// <summary>
@@ -3085,11 +3095,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				m_lblCharStyle.Visible = false;
-				m_cbCharStyle.Visible = false;
-				m_btnStyles.Visible = false;
-				return;
+				HideStyleControls();
 			}
+		}
+
+		private void HideStyleControls()
+		{
+			m_lblCharStyle.Visible = false;
+			m_cbCharStyle.Visible = false;
+			m_btnStyles.Visible = false;
 		}
 
 		private void SetCharacterStyles()

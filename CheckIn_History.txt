@@ -84,3 +84,4 @@ NaylorJ, 23 Feb 2012. Fixed LT-12765. Fixed the bug as suggested by Ken. Have no
 NaylorJ, 24 Feb 2012. Fixed LT-12493. If the parser tries to update an interlinear view while the RootText is null it will no longer crash.
 NaylorJ, 24 Feb 2012. Fixed LT-12708. The ChartIsRtL property will no longer blow up if the text is invalid.
 NaylorJ, 24 Feb 2012. Fixed LT-12584. Right clicking on whitespace will no longer cause a crash.
+JohnT, 27 Feb 2012. LT-12684, Doubled bullets in Reversal Index, and UI problem in Configure dialog
