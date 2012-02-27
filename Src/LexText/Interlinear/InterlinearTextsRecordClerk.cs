@@ -358,7 +358,11 @@ namespace SIL.FieldWorks.IText
 			int wsText = PrevTextWs;
 			if (wsText != 0)
 			{
-				if (Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
+				if (Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count == 1)
+				{
+					wsText = Cache.DefaultVernWs;
+				}
+				else
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
