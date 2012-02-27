@@ -185,10 +185,4 @@
 	<PostBuildEvent>
 	</PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\Common\Utils\Utils.csproj">
-	  <Project>{C6783865-65DF-4AB3-8C40-895BA7292CEB}</Project>
-	  <Name>Utils</Name>
-	</ProjectReference>
-  </ItemGroup>
 </Project>
