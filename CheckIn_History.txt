@@ -91,3 +91,4 @@ GordonM, 27 Feb 2012. LT-12610 New text ws dialog uses only checked ones.
 JohnT, 27 Feb 2012. LT-12766: Wordlist creates new entries for existing words: part 2, added new utility to clean up the mess.
 RickM, 28 Feb 2012. LT-12682 Make bak files visible in Open when fwdata is missing
 JohnT, 28 Feb 2012. LT-12666, Crash when switching between texts on the Text Charts tab
+	Later: LT-11566, Merging Senses results in crash
