@@ -89,11 +89,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							m_projectFoundCallback(file);
 						else
 						{
-							// See if there is a .bak file
-							string backupFile = Path.ChangeExtension(file, FwFileExtensions.ksFwDataFallbackFileExtension);
-							if (FileUtils.FileExists(backupFile))
-								m_projectFoundCallback(backupFile);
-
+							string db4oFile = Path.Combine(dir, DirectoryFinder.GetDb4oDataFileName(Path.GetFileName(dir)));
+							//If the db4o file exists it will be added to the list later and therefore we do not want to
+							//show the .bak file to the user in the open project dialog
+							if (!FileUtils.FileExists(db4oFile))
+							{
+								// See if there is a .bak file
+								string backupFile = Path.ChangeExtension(file, FwFileExtensions.ksFwDataFallbackFileExtension);
+								if (FileUtils.FileExists(backupFile))
+									m_projectFoundCallback(backupFile);
+							}
 						}
 						if (m_forceStop)
 							return;
