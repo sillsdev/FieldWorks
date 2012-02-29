@@ -13,7 +13,7 @@
 -->
 
 <BiblicalTermsLocalizations Language="English" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C8A325702CD">
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="86DD3FB2-00A5-43dc-8E64-49DAB8F6E00A">
 
 <Categories>
 	<Localization Id="KT" Gloss="Key terms" />
@@ -85,7 +85,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	one who customarily does good</Localization>
 
 <!-- ἀγαπάω-1 -->
-<Localization Id="0016" Gloss="love; love">
+<Localization Id="0016" Gloss="love; to love">
 	to have love for someone or something, based on sincere appreciation and high regard</Localization>
 
 <!-- ἀγαπάω-2 -->
@@ -1962,9 +1962,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="0485" Gloss="peacemaker">
 	-</Localization>
 
-<!-- εἰσφερω -->
-<Localization Id="0486" Gloss="load">
-	-</Localization>
+<!-- εἰσφερω (note: incorrectly glossed as "load" in master KT file) -->
+<Localization Id="0486" Gloss="lead (into)"></Localization>
 
 <!-- ἐκκλησία -->
 <Localization Id="0487" Gloss="church; assembly; congregation">
@@ -1991,8 +1990,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	the fruit of the olive tree</Localization>
 
 <!-- ἔλαιον -->
-<Localization Id="0493" Gloss="olive oil (used as food; medicine; for burning in lamps; and as perfume when mixed with sweet-smelling substances)">
-	oil extracted from the fruit of olive trees</Localization>
+<Localization Id="0493" Gloss="olive oil">
+	oil extracted from the fruit of olive trees (used as food and medicine, for burning in lamps, and as perfume when mixed with sweet-smelling substances)</Localization>
 
 <!-- ἐλαιών -->
 <Localization Id="0494" Gloss="olive grove; olive orchard">
@@ -3642,8 +3641,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	a believer whom Jesus met on the road to Emmaus</Localization>
 
 <!-- κλῆμα -->
-<Localization Id="0906" Gloss="branch (principally of grapevines). πᾶν κλῆμα ἐν ἐμοὶ μὴ φέρον καρπόν every branch of mine that does not bear fruit |sJHN.15:2|s*">
-	a more or less tender, flexible branch, as of a vine</Localization>
+<Localization Id="0906" Gloss="branch (principally of grapevines)">
+	a more or less tender, flexible branch, as of a vine.</Localization>
 
 <!-- Κλήμης -->
 <Localization Id="0907" Gloss="Clement">
@@ -3966,8 +3965,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	a beggar in a parable</Localization>
 
 <!-- λαλεω -->
-<Localization Id="0988" Gloss="speaking">
-	-</Localization>
+<Localization Id="0988" Gloss="speaking (words against)">
+	</Localization>
 
 <!-- Λάμεχ -->
 <Localization Id="0989" Gloss="Lamech">
@@ -4129,7 +4128,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	-</Localization>
 
 <!-- λόγχη -->
-<Localization Id="1029" Gloss="spear (or possibly in |sJHN.19:34|s* spear point). εἷς τῶν στρατιωτῶν λόγχω αὐτοῦ τὴν πλευρὰν ἔνυξεν one of the soldiers pierced his side with his spear |sJHN.19:34|s*">
+<Localization Id="1029" Gloss="spear (or possibly spear point)">
 	a long weapon with sharpened end used for piercing by thrusting or as a projectile by hurling</Localization>
 
 <!-- Λουκᾶς -->
@@ -4868,8 +4867,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	wood as a substance used to burn for heat</Localization>
 
 <!-- ξύλον-3 -->
-<Localization Id="1214" Gloss="tree.">
-	tree.</Localization>
+<Localization Id="1214" Gloss="tree">
+	</Localization>
 
 <!-- ξύλον-4 -->
 <Localization Id="1215" Gloss="club">
@@ -5632,7 +5631,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	to make unjust distinctions between people by treating one person better than another</Localization>
 
 <!-- προσωπολημπτέω-2 -->
-<Localization Id="1406" Gloss="one one who shows favoritism; respecter of persons">
+<Localization Id="1406" Gloss="one who shows favoritism; respecter of persons">
 	(derivative of προσωπολημπτέω to show favoritism) one who unjustly treats one person better than another</Localization>
 
 <!-- προσωπολημπτέω-3 -->
@@ -7324,10 +7323,10 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	eunuch; servant of king Ahasuerus (Xerxes)</Localization>
 
 <!-- אֵבֶה -->
-<Localization Id="5003" Gloss="papyrus (FF 171,172)"></Localization>
+<Localization Id="5003" Gloss="papyrus">(FF 171,172)</Localization>
 
 <!-- אֲבַטִּיחַ -->
-<Localization Id="5004" Gloss="melons (FF 141)"></Localization>
+<Localization Id="5004" Gloss="melons">(FF 141)</Localization>
 
 <!-- אֲבִי הָעֶזְרִי -->
 <Localization Id="5005" Gloss="Abiezrite">
@@ -7621,7 +7620,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	descendant of Agag</Localization>
 
 <!-- אֱגוֹז -->
-<Localization Id="5078" Gloss="walnut (FF 192)"></Localization>
+<Localization Id="5078" Gloss="walnut">(FF 192)</Localization>
 
 <!-- אָגוּר -->
 <Localization Id="5079" Gloss="Agur">
@@ -7632,7 +7631,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; Moab</Localization>
 
 <!-- אַגְמוֹן -->
-<Localization Id="5081" Gloss="rush, bulrush (FF 171,174)"></Localization>
+<Localization Id="5081" Gloss="rush, bulrush">(FF 171,174)</Localization>
 
 <!-- אַדְבְּאֵל -->
 <Localization Id="5082" Gloss="Adbeel">
@@ -7798,7 +7797,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	woman; symbol of Samaria</Localization>
 
 <!-- אֲהָלוֹת -->
-<Localization Id="5124" Gloss="aloes; an aromatic resin, from the Aquilaria ahallocha (eaglewood), a large tree which may reach a height of 36 m.; it is native to south-east Asia and northern India"></Localization>
+<Localization Id="5124" Gloss="aloes">An aromatic resin, from the Aquilaria ahallocha (eaglewood), a large tree which may reach a height of 36 m.; it is native to south-east Asia and northern India</Localization>
 
 <!-- אָהֳלִיאָב -->
 <Localization Id="5125" Gloss="Oholiab">
@@ -7969,7 +7968,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	father of Naarai, warrior, time of king David</Localization>
 
 <!-- אֵזוֹב -->
-<Localization Id="5169" Gloss="hyssop (origanum maru); plant with a shrub-like base and stems which are erect, stiff and strong. When it grows from the ground it reaches a height of just under one meter. It may also spring out of crevices in walls, cliffs and rocks. Its leaves and branches are hairy, and its flowers white. The plant is aromatic, and the dried leaves are used as a condiments in Israel and Egypt, where it grows. It belongs to the mint family. The leaves and little branches, when collected in bunches, were suitable for sprinkling purposes, as the hairy surface would hold the liquid. For this reason the plant was used in the ritual purification of the Jews."></Localization>
+<Localization Id="5169" Gloss="hyssop (origanum maru)">Plant with a shrub-like base and stems which are erect, stiff and strong. When it grows from the ground it reaches a height of just under one meter. It may also spring out of crevices in walls, cliffs and rocks. Its leaves and branches are hairy, and its flowers white. The plant is aromatic, and the dried leaves are used as a condiments in Israel and Egypt, where it grows. It belongs to the mint family. The leaves and little branches, when collected in bunches, were suitable for sprinkling purposes, as the hairy surface would hold the liquid. For this reason the plant was used in the ritual purification of the Jews.</Localization>
 
 <!-- אַזְכָּרָה -->
 <Localization Id="5170" Gloss="memorial or token portion; the part of the grain offering that is burnt on the altar as a reminder that in fact all of it belongs to the Lord"></Localization>
@@ -8306,14 +8305,14 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	king of Persia</Localization>
 
 <!-- אָטָד-1 -->
-<Localization Id="5255" Gloss="thorn, thistle, brier (FF 184,185,186)"></Localization>
+<Localization Id="5255" Gloss="thorn, thistle, brier">(FF 184,185,186)</Localization>
 
 <!-- אָטָד-2 -->
 <Localization Id="5256" Gloss="Atad">
 	location</Localization>
 
 <!-- אֵטוּן -->
-<Localization Id="5257" Gloss="flax; linen (FF 120)"></Localization>
+<Localization Id="5257" Gloss="flax; linen">(FF 120)</Localization>
 
 <!-- אָטֵר-1 -->
 <Localization Id="5258" Gloss="Ater">
@@ -8493,7 +8492,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Midian, son of Keturah, wife of Abraham</Localization>
 
 <!-- אֵלָה-1 -->
-<Localization Id="5304" Gloss="= terebinth; tree with a broad crown, heavy branches, and thick trunk; may reach a height of 7.5 to 9 m.; sheds its leaves; has small an inconspicuous flowers; ◄ pictacia terebinthus; ► its stem contains aromatic turpentine, a resinous juice, which flows out when the bark is cut; it provides pleasant shade; ≈ imposing tree, preferred place to sit under and enjoy the shade, associated with cultic worship (FF 154,182,183)"></Localization>
+<Localization Id="5304" Gloss="terebinth">tree with a broad crown, heavy branches, and thick trunk; may reach a height of 7.5 to 9 m.; sheds its leaves; has small an inconspicuous flowers; ◄ pictacia terebinthus; ► its stem contains aromatic turpentine, a resinous juice, which flows out when the bark is cut; it provides pleasant shade; ≈ imposing tree, preferred place to sit under and enjoy the shade, associated with cultic worship (FF 154,182,183)</Localization>
 
 <!-- אֵלָה-2 -->
 <Localization Id="5305" Gloss="Elah">
@@ -8526,14 +8525,14 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	tree; between Ramah and Gibea</Localization>
 
 <!-- אַלּוֹן-1 -->
-<Localization Id="5313" Gloss="oak tree (FF 154,155)"></Localization>
+<Localization Id="5313" Gloss="oak tree">(FF 154,155)</Localization>
 
 <!-- אַלּוֹן-2 -->
 <Localization Id="5314" Gloss="Allon">
 	son of Jedaya; tribe of Simeon</Localization>
 
 <!-- אֵלוֹן-1 -->
-<Localization Id="5315" Gloss="oak tree (FF 154,155,183)"></Localization>
+<Localization Id="5315" Gloss="oak tree">(FF 154,155,183)</Localization>
 
 <!-- אֵלוֹן-2 -->
 <Localization Id="5316" Gloss="Elon">
@@ -9460,7 +9459,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	Jebusite</Localization>
 
 <!-- אֶרֶז -->
-<Localization Id="5550" Gloss="cedar tree (FF 108)"></Localization>
+<Localization Id="5550" Gloss="cedar tree">(FF 108)</Localization>
 
 <!-- אָרַח-1 -->
 <Localization Id="5551" Gloss="Arah">
@@ -9546,7 +9545,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Dishan; descendant of Seir</Localization>
 
 <!-- אֹרֶן-1 -->
-<Localization Id="5572" Gloss="pine tree, fir tree (FF 108,133,134)"></Localization>
+<Localization Id="5572" Gloss="pine tree, fir tree">(FF 108,133,134)</Localization>
 
 <!-- אֹרֶן-2 -->
 <Localization Id="5573" Gloss="Oren">
@@ -9668,7 +9667,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="5603" Gloss="raisin-cake; made of dried, compressed grapes"></Localization>
 
 <!-- אֶשְׁכּוֹל-1 -->
-<Localization Id="5604" Gloss="cluster (e.g. of grapes; FF 162,191)"></Localization>
+<Localization Id="5604" Gloss="cluster (e.g., of grapes)">(FF 162,191)</Localization>
 
 <!-- אֶשְׁכּוֹל-2 -->
 <Localization Id="5605" Gloss="Eshcol">
@@ -9687,7 +9686,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	area and people; Armenia</Localization>
 
 <!-- אֶשֶׁל -->
-<Localization Id="5609" Gloss="tamarisk tree (FF 182)"></Localization>
+<Localization Id="5609" Gloss="tamarisk tree">(FF 182)</Localization>
 
 <!-- אָשָׁם -->
 <Localization Id="5610" Gloss="guilt-offering"></Localization>
@@ -9737,7 +9736,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location</Localization>
 
 <!-- אָשֻׁר -->
-<Localization Id="5623" Gloss="box tree, cypress (FF 99,115,116)"></Localization>
+<Localization Id="5623" Gloss="box tree, cypress">(FF 99,115,116)</Localization>
 
 <!-- אֲשֵׁרָה -->
 <Localization Id="5624" Gloss="Asherah">
@@ -9847,7 +9846,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	inhabitant of Beeroth, territory of Benjamin</Localization>
 
 <!-- בָּאְשָׁה -->
-<Localization Id="5651" Gloss="foul weeds (FF 195)"></Localization>
+<Localization Id="5651" Gloss="foul weeds">(FF 195)</Localization>
 
 <!-- בֵּבַי -->
 <Localization Id="5652" Gloss="Bebai">
@@ -9882,7 +9881,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	man; married foreign wife; after exile</Localization>
 
 <!-- בְּדֹלַח -->
-<Localization Id="5660" Gloss="bdellium gum (FF 96)"></Localization>
+<Localization Id="5660" Gloss="bdellium gum">(FF 96)</Localization>
 
 <!-- בְּדָן-1 -->
 <Localization Id="5661" Gloss="Bedan">
@@ -9993,7 +9992,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Gad</Localization>
 
 <!-- בָּטְנִים -->
-<Localization Id="5690" Gloss="pistachio nuts (FF 165)"></Localization>
+<Localization Id="5690" Gloss="pistachio nuts">(FF 165)</Localization>
 
 <!-- בין -->
 <Localization Id="5691" Gloss="to perceive, notice, consider, understand; judicious"></Localization>
@@ -10215,13 +10214,13 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; Egypt</Localization>
 
 <!-- בָּכָא -->
-<Localization Id="5746" Gloss="mulberry tree? balsam tree? aspen? (FF 145)"></Localization>
+<Localization Id="5746" Gloss="mulberry tree? balsam tree? aspen?">(FF 145)</Localization>
 
 <!-- בִּכּוּרָה -->
-<Localization Id="5747" Gloss="early fig (FF 118-119)"></Localization>
+<Localization Id="5747" Gloss="early fig">(FF 118-119)</Localization>
 
 <!-- בִּכּוּרִים -->
-<Localization Id="5748" Gloss="first-fruits (FF 118,119)"></Localization>
+<Localization Id="5748" Gloss="first-fruits">(FF 118,119)</Localization>
 
 <!-- בְּכוֹרַת -->
 <Localization Id="5749" Gloss="Becorath">
@@ -10749,7 +10748,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	family head; after exile</Localization>
 
 <!-- בָּצָל -->
-<Localization Id="5882" Gloss="onion (FF 159)"></Localization>
+<Localization Id="5882" Gloss="onion">(FF 159)</Localization>
 
 <!-- בְּצַלְאֵל-1 -->
 <Localization Id="5883" Gloss="Bezalel">
@@ -10850,7 +10849,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Neriah; secretary of prophet Jeremiah</Localization>
 
 <!-- בְּרוֹשׁ -->
-<Localization Id="5908" Gloss="pine tree? cypress tree? (FF 116,132,162,164)"></Localization>
+<Localization Id="5908" Gloss="pine tree? cypress tree?">(FF 116,132,162,164)</Localization>
 
 <!-- בֵּרוֹתָה -->
 <Localization Id="5909" Gloss="Berothah">
@@ -10969,7 +10968,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	family head; temple servants; after exile</Localization>
 
 <!-- בַּרְקָן -->
-<Localization Id="5939" Gloss="thorn, thistle, brier (FF 184,185,186)"></Localization>
+<Localization Id="5939" Gloss="thorn, thistle, brier">(FF 184,185,186)</Localization>
 
 <!-- בִּרְשַׁע -->
 <Localization Id="5940" Gloss="Birsha">
@@ -10988,7 +10987,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	stream</Localization>
 
 <!-- בֹּשֶׂם -->
-<Localization Id="5944" Gloss="balsam tree (FF 177,178); balsam oil"></Localization>
+<Localization Id="5944" Gloss="balsam tree; balsam oil">(FF 177,178)</Localization>
 
 <!-- בָּשְׂמַת-1 -->
 <Localization Id="5945" Gloss="Basemath">
@@ -11002,7 +11001,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="5947" Gloss="flesh"></Localization>
 
 <!-- בָּשָׂר-2 -->
-<Localization Id="5948" Gloss="all flesh > all creatures"></Localization>
+<Localization Id="5948" Gloss="all flesh; all creatures"></Localization>
 
 <!-- בִּשְׁלָם -->
 <Localization Id="5949" Gloss="Bishlam">
@@ -11145,7 +11144,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location</Localization>
 
 <!-- גַּד -->
-<Localization Id="5986" Gloss="coriander (FF 110)"></Localization>
+<Localization Id="5986" Gloss="coriander">(FF 110)</Localization>
 
 <!-- גֻּדְגֹּדָה -->
 <Localization Id="5987" Gloss="Gudgodah">
@@ -11419,7 +11418,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location; near Bethel</Localization>
 
 <!-- גַּלְגַּל -->
-<Localization Id="6056" Gloss="tumbleweed (FF 187)"></Localization>
+<Localization Id="6056" Gloss="tumbleweed">(FF 187)</Localization>
 
 <!-- גָּלִיל -->
 <Localization Id="6057" Gloss="Galilee">
@@ -11470,7 +11469,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	inhabitant or descendant of Gilead; tribe of Manasseh</Localization>
 
 <!-- גֹּמֶא -->
-<Localization Id="6069" Gloss="papyrus (FF 171)"></Localization>
+<Localization Id="6069" Gloss="papyrus">(FF 171)</Localization>
 
 <!-- גַּמָּד -->
 <Localization Id="6070" Gloss="Gamad">
@@ -11540,10 +11539,10 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Eliphaz; descendant of Esau</Localization>
 
 <!-- גֶּפֶן -->
-<Localization Id="6087" Gloss="vine (FF 188,190)"></Localization>
+<Localization Id="6087" Gloss="vine">(FF 188,190)</Localization>
 
 <!-- גֹּפֶר -->
-<Localization Id="6088" Gloss="cypress? (FF 123)"></Localization>
+<Localization Id="6088" Gloss="cypress?">(FF 123)</Localization>
 
 <!-- גֵּר -->
 <Localization Id="6089" Gloss="sojourner, stranger"></Localization>
@@ -11743,7 +11742,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Jesse; king of Israel</Localization>
 
 <!-- דּוּדָאִים -->
-<Localization Id="6140" Gloss="mandrake, love apple (FF 138)"></Localization>
+<Localization Id="6140" Gloss="mandrake, love apple">(FF 138)</Localization>
 
 <!-- דּוֹדוֹ-1 -->
 <Localization Id="6141" Gloss="Dodo">
@@ -11961,7 +11960,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	family head; servants of Solomon; after exile</Localization>
 
 <!-- דֶּשֶׁא -->
-<Localization Id="6197" Gloss="grass (FF 125)"></Localization>
+<Localization Id="6197" Gloss="grass">(FF 125)</Localization>
 
 <!-- דָּתָן -->
 <Localization Id="6198" Gloss="Dathan">
@@ -11980,7 +11979,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Adam</Localization>
 
 <!-- הָבְנִים -->
-<Localization Id="6202" Gloss="ebony tree (FF 117)"></Localization>
+<Localization Id="6202" Gloss="ebony tree">(FF 117)</Localization>
 
 <!-- הֵגַי -->
 <Localization Id="6203" Gloss="Hegai">
@@ -12027,7 +12026,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	warrior; time of king David</Localization>
 
 <!-- הֲדַס -->
-<Localization Id="6214" Gloss="myrtle; native of Asia Minor and the Mediterranean countries, where it grows mostly in valleys on moist soil. It is an evergreen tree or bush, which may reach a height of 1.5 m. The dark glossy leaves are dense on the branches, and the flowers are white or pink. The whole plant gives off an agreeable odour. It was used by the Jews in the Feast of Tabernacles (neh 8:15)."></Localization>
+<Localization Id="6214" Gloss="myrtle">Native of Asia Minor and the Mediterranean countries, where it grows mostly in valleys on moist soil. It is an evergreen tree or bush, which may reach a height of 1.5 m. The dark glossy leaves are dense on the branches, and the flowers are white or pink. The whole plant gives off an agreeable odour. It was used by the Jews in the Feast of Tabernacles (neh 8:15).</Localization>
 
 <!-- הֲדַסָּה -->
 <Localization Id="6215" Gloss="Hadassah">
@@ -12467,7 +12466,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	inhabitants of Ziph</Localization>
 
 <!-- זַיִת -->
-<Localization Id="6326" Gloss="olive tree (FF 156,157)"></Localization>
+<Localization Id="6326" Gloss="olive tree">(FF 156,157)</Localization>
 
 <!-- זֵיתָן -->
 <Localization Id="6327" Gloss="Zetan">
@@ -12632,7 +12631,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	father of Joah, Levite, time of king Hezekiah</Localization>
 
 <!-- זְמוֹרָה -->
-<Localization Id="6368" Gloss="brance of a vine (FF 188-192)"></Localization>
+<Localization Id="6368" Gloss="branch of a vine">(FF 188-192)</Localization>
 
 <!-- זַמְזֻמִּים -->
 <Localization Id="6369" Gloss="Zamzummites">
@@ -12866,7 +12865,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	father of Amasa, chief, tribe of Ephraim, time of king Ahaz</Localization>
 
 <!-- חֵדֶק -->
-<Localization Id="6428" Gloss="plant with thorns (FF 184,185)"></Localization>
+<Localization Id="6428" Gloss="plant with thorns">(FF 184,185)</Localization>
 
 <!-- חִדֶּקֶל -->
 <Localization Id="6429" Gloss="Tigris">
@@ -13183,7 +13182,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; Syria</Localization>
 
 <!-- חֶלְבְּנָה -->
-<Localization Id="6511" Gloss="galbanum (fragrant resin; FF 123,149)"></Localization>
+<Localization Id="6511" Gloss="galbanum">fragrant resin or gum, the produce of the Ferula Galbanifera, growing in Syria and Arabia. (FF 123,149)</Localization>
 
 <!-- חֵלֶד -->
 <Localization Id="6512" Gloss="Heled">
@@ -13233,7 +13232,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	priest; time of prophet Zechariah</Localization>
 
 <!-- חַלָּמוּת -->
-<Localization Id="6525" Gloss="purslane (desert plant; FF 170)"></Localization>
+<Localization Id="6525" Gloss="purslane; desert plant">(FF 170)</Localization>
 
 <!-- חֵלֹן -->
 <Localization Id="6526" Gloss="Helon">
@@ -13645,7 +13644,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="6632" Gloss="mole rat"></Localization>
 
 <!-- חֵץ -->
-<Localization Id="6633" Gloss="arrow, symbol of violence, punishment, danger"></Localization>
+<Localization Id="6633" Gloss="arrow">
+	symbol of violence, punishment, danger</Localization>
 
 <!-- חָצוֹר חֲדַתָּה -->
 <Localization Id="6634" Gloss="Hazor-Hadattah">
@@ -13668,7 +13668,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	kingdom</Localization>
 
 <!-- חָצִיר-1 -->
-<Localization Id="6639" Gloss="grass, herb, hay (FF 125,126,159,160)"></Localization>
+<Localization Id="6639" Gloss="grass, herb, hay">(FF 125,126,159,160)</Localization>
 
 <!-- חָצִיר-2 -->
 <Localization Id="6640" Gloss="reed"></Localization>
@@ -14008,7 +14008,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location along route of exodus</Localization>
 
 <!-- חֲשַׁשׁ -->
-<Localization Id="6727" Gloss="grass, herb, hay (FF 125)"></Localization>
+<Localization Id="6727" Gloss="grass, herb, hay">(FF 125)</Localization>
 
 <!-- חֻשָׁתִי -->
 <Localization Id="6728" Gloss="of Hushah">
@@ -14119,7 +14119,8 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	various men</Localization>
 
 <!-- טמא-1 -->
-<Localization Id="6756" Gloss="to be (or: become; or: declare; or: treat as) ceremonially unclean (either or not intentionally)"></Localization>
+<Localization Id="6756" Gloss="ceremonially unclean">
+	to be (or become, declare, or treat as) ceremonially unclean (whether intentionally or not)</Localization>
 
 <!-- טמא-2 -->
 <Localization Id="6757" Gloss="unclean"></Localization>
@@ -16544,7 +16545,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	deity; of Moab</Localization>
 
 <!-- כַּמֹּן -->
-<Localization Id="7375" Gloss="cummin (plant; seeds are used as spices; FF 114,115,117)"></Localization>
+<Localization Id="7375" Gloss="cummin">Plant whose seeds are used as spices (FF 114,115,117)</Localization>
 
 <!-- כֵּן, כִּנָּם -->
 <Localization Id="7376" Gloss="mosquito"></Localization>
@@ -16649,7 +16650,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location; Babylonia</Localization>
 
 <!-- כַּף -->
-<Localization Id="7403" Gloss="leaf of palm tree (FF 160)"></Localization>
+<Localization Id="7403" Gloss="leaf of palm tree">(FF 160)</Localization>
 
 <!-- כִּפָּה -->
 <Localization Id="7404" Gloss="palm branch; together with 'rush' it builds an idiomatic expression for 'great and small things'; 'noble and ignoble people'"></Localization>
@@ -16704,7 +16705,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	brook; east of Jordan</Localization>
 
 <!-- כַּרְכֹּם -->
-<Localization Id="7419" Gloss="saffron plant (FF 174,175)"></Localization>
+<Localization Id="7419" Gloss="saffron plant">(FF 174,175)</Localization>
 
 <!-- כַּרְכְּמִישׁ -->
 <Localization Id="7420" Gloss="Carchemish">
@@ -16718,13 +16719,13 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="7422" Gloss="camel, dromedary"></Localization>
 
 <!-- כֶּרֶם -->
-<Localization Id="7423" Gloss="vineyard (FF 188,190)"></Localization>
+<Localization Id="7423" Gloss="vineyard">(FF 188,190)</Localization>
 
 <!-- כַּרְמִי-1 -->
 <Localization Id="7424" Gloss="Carmi(te)">
 	son of Reuben</Localization>
 
-<!-- כַּרְמִי-2 -->
+<!-- כַּרְמ����י-2 -->
 <Localization Id="7425" Gloss="Carmi(te)">
 	father of Achan; tribe of Judah</Localization>
 
@@ -16824,7 +16825,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Simeon</Localization>
 
 <!-- לְבוֹנָה-1 -->
-<Localization Id="7451" Gloss="frankincense; type of resin (FF 121,122)"></Localization>
+<Localization Id="7451" Gloss="frankincense; type of resin">(FF 121,122)</Localization>
 
 <!-- לְבוֹנָה-2 -->
 <Localization Id="7452" Gloss="Lebonah">
@@ -16842,7 +16843,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	family head; temple servants; after exile</Localization>
 
 <!-- לִבְנֶה -->
-<Localization Id="7456" Gloss="storax tree (FF 178)"></Localization>
+<Localization Id="7456" Gloss="storax tree">(FF 178)</Localization>
 
 <!-- לִבְנָה-1 -->
 <Localization Id="7457" Gloss="Libnah">
@@ -16901,7 +16902,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	people; descendants of Mizraim</Localization>
 
 <!-- לוּז-1 -->
-<Localization Id="7471" Gloss="almond tree (FF 89,90)"></Localization>
+<Localization Id="7471" Gloss="almond tree">(FF 89,90)</Localization>
 
 <!-- לוּז-2 -->
 <Localization Id="7472" Gloss="Luz">
@@ -16942,7 +16943,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Judah</Localization>
 
 <!-- לֹט -->
-<Localization Id="7482" Gloss="myrrh or stacte (type of resin; FF 147-149,178)"></Localization>
+<Localization Id="7482" Gloss="myrrh or stacte">type of resin (FF 147-149,178)</Localization>
 
 <!-- לְטָאָה -->
 <Localization Id="7483" Gloss="lizard"></Localization>
@@ -17002,7 +17003,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	descendant of Gershon; tribe of Levi</Localization>
 
 <!-- לַעֲנָה -->
-<Localization Id="7498" Gloss="wormwood (plant; the juice of its leaves tastes bitter and functions as medicine; FF 198)"></Localization>
+<Localization Id="7498" Gloss="wormwood">plant; the juice of its leaves tastes bitter and functions as medicine (FF 198)</Localization>
 
 <!-- לַפִּידוֹת -->
 <Localization Id="7499" Gloss="Lappidoth">
@@ -17578,7 +17579,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="7645" Gloss="installation of a priest"></Localization>
 
 <!-- מַלּוּחַ -->
-<Localization Id="7646" Gloss="mallow (plant; FF 136,137)"></Localization>
+<Localization Id="7646" Gloss="mallow">plant (FF 136,137)</Localization>
 
 <!-- מַלּוּךְ-1 -->
 <Localization Id="7647" Gloss="Malluch">
@@ -17779,7 +17780,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location along route of exodus</Localization>
 
 <!-- מְסוּכָה -->
-<Localization Id="7697" Gloss="thorn, thistle, brier (FF 186)"></Localization>
+<Localization Id="7697" Gloss="thorn, thistle, brier">(FF 186)</Localization>
 
 <!-- מִסְפָּר -->
 <Localization Id="7698" Gloss="Mispar">
@@ -18045,7 +18046,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Judah</Localization>
 
 <!-- מֹר -->
-<Localization Id="7765" Gloss="myrrh (FF 147,148)"></Localization>
+<Localization Id="7765" Gloss="myrrh">(FF 147,148)</Localization>
 
 <!-- מָרָא -->
 <Localization Id="7766" Gloss="Mara">
@@ -18171,7 +18172,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	village; territory of Zebulun</Localization>
 
 <!-- מָרֹר -->
-<Localization Id="7798" Gloss="bitter; bitter herbs (FF 98)"></Localization>
+<Localization Id="7798" Gloss="bitter; bitter herbs">(FF 98)</Localization>
 
 <!-- מְרָרִי-1 -->
 <Localization Id="7799" Gloss="Merari(te)">
@@ -18201,7 +18202,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="7805" Gloss="utterance, oracle"></Localization>
 
 <!-- מְשֻׂכָה -->
-<Localization Id="7806" Gloss="thorn, thistle, brier (FF 184,186)"></Localization>
+<Localization Id="7806" Gloss="thorn, thistle, brier">(FF 184,186)</Localization>
 
 <!-- מִשְׂרְפוֹת מַיִם -->
 <Localization Id="7807" Gloss="Misrephoth-Maim">
@@ -18454,7 +18455,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; for priests; territory of Benjamin</Localization>
 
 <!-- נבא-1 -->
-<Localization Id="7871" Gloss="to speak, to act as a prophet"></Localization>
+<Localization Id="7871" Gloss="speak or act as a prophet"></Localization>
 
 <!-- נבא-2 -->
 <Localization Id="7872" Gloss="prophet"></Localization>
@@ -18716,7 +18717,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location; territory of Judah</Localization>
 
 <!-- נָטָף -->
-<Localization Id="7940" Gloss="stacte (type of resin; FF 178)"></Localization>
+<Localization Id="7940" Gloss="stacte">type of resin (FF 178)</Localization>
 
 <!-- נֵיבַי -->
 <Localization Id="7941" Gloss="Nebai">
@@ -18954,7 +18955,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	deity of Cuth</Localization>
 
 <!-- נֵרְדְּ -->
-<Localization Id="8003" Gloss="nard (fragrant plant; FF 151,152)"></Localization>
+<Localization Id="8003" Gloss="nard">fragrant plant (FF 151,152)</Localization>
 
 <!-- נֵרִיָּה -->
 <Localization Id="8004" Gloss="Neriah">
@@ -18973,7 +18974,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8008" Gloss="to lift up (one's hand, heart, or soul) = to worship, pray"></Localization>
 
 <!-- נשׂא-5 -->
-<Localization Id="8009" Gloss="to lift up (once face) = to show favor, have regard"></Localization>
+<Localization Id="8009" Gloss="to lift up (one's face) = to show favor, have regard"></Localization>
 
 <!-- נשׂא-6 -->
 <Localization Id="8010" Gloss="to lift up (one's face) = to be partial"></Localization>
@@ -19130,7 +19131,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	father of Gaddi, spy; ribe of Manasseh</Localization>
 
 <!-- סוּף-1 -->
-<Localization Id="8050" Gloss="reeds, rushes; seaweeds? (FF 171)"></Localization>
+<Localization Id="8050" Gloss="reeds, rushes; seaweeds?">(FF 171)</Localization>
 
 <!-- סוּף-2 -->
 <Localization Id="8051" Gloss="Suph">
@@ -19244,7 +19245,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	father of Zimri</Localization>
 
 <!-- סַלּוֹן -->
-<Localization Id="8079" Gloss="thorn, thistle, brier (FF 184-186)"></Localization>
+<Localization Id="8079" Gloss="thorn, thistle, brier">(FF 184-186)</Localization>
 
 <!-- סלח -->
 <Localization Id="8080" Gloss="to forgive"></Localization>
@@ -19299,7 +19300,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	rocky crag</Localization>
 
 <!-- סְנֶה -->
-<Localization Id="8094" Gloss="thorn, thistle, brier (FF 184-186)"></Localization>
+<Localization Id="8094" Gloss="thorn, thistle, brier">(FF 184-186)</Localization>
 
 <!-- סַנְחֵרִיב -->
 <Localization Id="8095" Gloss="Sennacherib">
@@ -19364,7 +19365,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	owner of cistern</Localization>
 
 <!-- סִרְפָּד -->
-<Localization Id="8111" Gloss="thorn, thistle, brier (FF 184,185)"></Localization>
+<Localization Id="8111" Gloss="thorn, thistle, brier">(FF 184,185)</Localization>
 
 <!-- סְתוּר -->
 <Localization Id="8112" Gloss="Sethur">
@@ -20694,7 +20695,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Judah</Localization>
 
 <!-- עֵנָב -->
-<Localization Id="8450" Gloss="grape (FF 188,191)"></Localization>
+<Localization Id="8450" Gloss="grape">(FF 188,191)</Localization>
 
 <!-- עֲנָה-1 -->
 <Localization Id="8451" Gloss="Anah">
@@ -20925,7 +20926,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	king of Midian</Localization>
 
 <!-- עֲרָבָה -->
-<Localization Id="8509" Gloss="poplar tree (FF 170)"></Localization>
+<Localization Id="8509" Gloss="poplar tree">(FF 170)</Localization>
 
 <!-- עֲרָבִי -->
 <Localization Id="8510" Gloss="Arab">
@@ -20973,7 +20974,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8521" Gloss="to be (or: act) crafty, prudent, cunning"></Localization>
 
 <!-- עֶרְמוֹן -->
-<Localization Id="8522" Gloss="plane-tree (FF 166)"></Localization>
+<Localization Id="8522" Gloss="plane-tree">(FF 166)</Localization>
 
 <!-- עֵרָן -->
 <Localization Id="8523" Gloss="Eran">
@@ -20988,7 +20989,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Reuben</Localization>
 
 <!-- עַרְעָר -->
-<Localization Id="8526" Gloss="juniper tree? (FF 131)"></Localization>
+<Localization Id="8526" Gloss="juniper tree?">(FF 131)</Localization>
 
 <!-- עָרְפָּה -->
 <Localization Id="8527" Gloss="Orpah">
@@ -21030,7 +21031,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8536" Gloss="Asaiah">
 	man; tribe of Simeon</Localization>
 
-<!-- עֲשָׂיָה-3 -->
+<!-- עֲשָׂיָ����-3 -->
 <Localization Id="8537" Gloss="Asaiah">
 	son of Haggiah; descendant of Merari; tribe of Levi</Localization>
 
@@ -21129,7 +21130,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	desert</Localization>
 
 <!-- פַּג -->
-<Localization Id="8562" Gloss="early fig (FF 118,119)"></Localization>
+<Localization Id="8562" Gloss="early fig">(FF 118,119)</Localization>
 
 <!-- פַּגְעִיאֵל -->
 <Localization Id="8563" Gloss="Pagiel">
@@ -21477,7 +21478,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Menahem; king of Israel (742/41-740/39)</Localization>
 
 <!-- פַּקֻּעֹת -->
-<Localization Id="8651" Gloss="gourd (FF 124)"></Localization>
+<Localization Id="8651" Gloss="gourd">(FF 124)</Localization>
 
 <!-- פָּר, פָּרָה -->
 <Localization Id="8652" Gloss="young bull or cow, used for sacrifice"></Localization>
@@ -22071,7 +22072,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Jeduthun; temple singer; time of king David</Localization>
 
 <!-- צֳרִי -->
-<Localization Id="8808" Gloss="Jericho balm (desert plant; FF 93,94)"></Localization>
+<Localization Id="8808" Gloss="Jericho balm">desert plant (FF 93,94)</Localization>
 
 <!-- צֹרִי -->
 <Localization Id="8809" Gloss="Tyrian">
@@ -22140,7 +22141,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	location along route of Exodus</Localization>
 
 <!-- קִדָּה -->
-<Localization Id="8827" Gloss="cassia tree (FF 104,105)"></Localization>
+<Localization Id="8827" Gloss="cassia tree">(FF 104,105)</Localization>
 
 <!-- קֵדְמָה -->
 <Localization Id="8828" Gloss="Kedemah">
@@ -22292,7 +22293,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Enosh; descendant of Seth</Localization>
 
 <!-- קִיקָיוֹן -->
-<Localization Id="8867" Gloss="castor oil plant (FF 106,107)"></Localization>
+<Localization Id="8867" Gloss="castor oil plant">(FF 106,107)</Localization>
 
 <!-- קִיר -->
 <Localization Id="8868" Gloss="Kir">
@@ -22383,7 +22384,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8890" Gloss="ardour, passion, zeal"></Localization>
 
 <!-- קָנֶה-1 -->
-<Localization Id="8891" Gloss="reeds, rushes (FF 171,172)"></Localization>
+<Localization Id="8891" Gloss="reeds, rushes">(FF 171,172)</Localization>
 
 <!-- קָנֶה-2 -->
 <Localization Id="8892" Gloss="(aromatic) cane, calamus"></Localization>
@@ -22421,7 +22422,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	clan; tribe of Judah</Localization>
 
 <!-- קִנָּמוֹן -->
-<Localization Id="8901" Gloss="cinnamon tree, of which the inner bark is used for the preparation of cinnamon (FF 108,109)"></Localization>
+<Localization Id="8901" Gloss="cinnamon tree, of which the inner bark is used for the preparation of cinnamon">(FF 108,109)</Localization>
 
 <!-- קְנָת -->
 <Localization Id="8902" Gloss="Kenath">
@@ -22444,7 +22445,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="8907" Gloss="nutmeg flower (black cummin); FF 117,153"></Localization>
 
 <!-- קְצִיעָה-1 -->
-<Localization Id="8908" Gloss="cassia tree, of which the bark is used as spice (FF 104,105)"></Localization>
+<Localization Id="8908" Gloss="cassia tree, of which the bark is used as spice">(FF 104,105)</Localization>
 
 <!-- קְצִיעָה-2 -->
 <Localization Id="8909" Gloss="Keziah">
@@ -22557,7 +22558,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town of refuge; territory of Naphtali</Localization>
 
 <!-- קִשֻּׁאָה -->
-<Localization Id="8938" Gloss="cucumber (FF 112,113)"></Localization>
+<Localization Id="8938" Gloss="cucumber">(FF 112,113)</Localization>
 
 <!-- קְשֵׁה־עֹרֶף -->
 <Localization Id="8939" Gloss="literally: stiff-necked; hence: stubborn, rebellious"></Localization>
@@ -22609,7 +22610,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	village; territory of Simeon</Localization>
 
 <!-- רֹאשׁ-1 -->
-<Localization Id="8952" Gloss="hemlock; poisonous plant (FF 167,198)"></Localization>
+<Localization Id="8952" Gloss="hemlock; poisonous plant">(FF 167,198)</Localization>
 
 <!-- רֹאשׁ-2 -->
 <Localization Id="8953" Gloss="Rosh">
@@ -22827,7 +22828,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="9007" Gloss="deceit, fraud"></Localization>
 
 <!-- רִמּוֹן-1 -->
-<Localization Id="9008" Gloss="pomegranate (FF 168)"></Localization>
+<Localization Id="9008" Gloss="pomegranate">(FF 168)</Localization>
 
 <!-- רִמּוֹן-2 -->
 <Localization Id="9009" Gloss="Rimmon">
@@ -23050,7 +23051,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Rephah; ancestor of Joshua; tribe of Ephraim</Localization>
 
 <!-- רֹתֶם -->
-<Localization Id="9065" Gloss="broom (type of bush; FF 100,132)"></Localization>
+<Localization Id="9065" Gloss="broom plant; juniper tree">type of bush (FF 100,132)</Localization>
 
 <!-- רִתְמָה -->
 <Localization Id="9066" Gloss="Rithmah">
@@ -23217,7 +23218,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	wife of Abraham</Localization>
 
 <!-- שָׂרִיג -->
-<Localization Id="9110" Gloss="vine (FF 188-190)"></Localization>
+<Localization Id="9110" Gloss="vine">(FF 188-190)</Localization>
 
 <!-- שָׂרִיד -->
 <Localization Id="9111" Gloss="Sarid">
@@ -23274,7 +23275,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	man; tribe of Judah</Localization>
 
 <!-- שֹׂרֵק-1 -->
-<Localization Id="9125" Gloss="vine (FF 188,190,191)"></Localization>
+<Localization Id="9125" Gloss="vine">(FF 188,190,191)</Localization>
 
 <!-- שֹׂרֵק-2 -->
 <Localization Id="9126" Gloss="Sorek">
@@ -23489,7 +23490,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	woman; inhabitant of Shulem (= Shunem?)</Localization>
 
 <!-- שׁוּמִים -->
-<Localization Id="9181" Gloss="garlic (FF 159)"></Localization>
+<Localization Id="9181" Gloss="garlic">(FF 159)</Localization>
 
 <!-- שׁוֹמֵר-1 -->
 <Localization Id="9182" Gloss="Shomer">
@@ -23607,7 +23608,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="9212" Gloss="to be, become corrupted"></Localization>
 
 <!-- שִׁטָּה -->
-<Localization Id="9213" Gloss="acacia tree (FF 87)"></Localization>
+<Localization Id="9213" Gloss="acacia tree">(FF 87)</Localization>
 
 <!-- שִׁטִּים -->
 <Localization Id="9214" Gloss="Shittim">
@@ -24538,13 +24539,13 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	midwife</Localization>
 
 <!-- שָׁקֵד -->
-<Localization Id="9450" Gloss="almond tree (FF 89,90)"></Localization>
+<Localization Id="9450" Gloss="almond tree">(FF 89,90)</Localization>
 
 <!-- שִׁקּוּץ -->
 <Localization Id="9451" Gloss="abomination, something detestable; usually referring to idol"></Localization>
 
 <!-- שִׁקְמָה -->
-<Localization Id="9452" Gloss="sycamore tree (FF 179,181,182)"></Localization>
+<Localization Id="9452" Gloss="sycamore tree">(FF 179,181,182)</Localization>
 
 <!-- שֵׁרֵבְיָה -->
 <Localization Id="9453" Gloss="Sherebiah">
@@ -24635,7 +24636,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="9475" Gloss="oryx"></Localization>
 
 <!-- תְּאֵנָה -->
-<Localization Id="9476" Gloss="fig tree, fig (FF 118,119)"></Localization>
+<Localization Id="9476" Gloss="fig tree, fig">(FF 118,119)</Localization>
 
 <!-- תַּאֲנַת שִׁלֹה -->
 <Localization Id="9477" Gloss="Taanath-Shiloh">
@@ -24646,7 +24647,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Micah; tribe of Benjamin</Localization>
 
 <!-- תְּאַשּׁוּר -->
-<Localization Id="9479" Gloss="box tree, cypress (FF 99,115,116)"></Localization>
+<Localization Id="9479" Gloss="box tree, cypress">(FF 99,115,116)</Localization>
 
 <!-- תָּבוֹר-1 -->
 <Localization Id="9480" Gloss="Tabor">
@@ -24680,7 +24681,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	son of Gomer; descendant of Japheth</Localization>
 
 <!-- תִּדְהָר -->
-<Localization Id="9488" Gloss="pine tree (FF 128,164,165,167)"></Localization>
+<Localization Id="9488" Gloss="pine tree">(FF 128,164,165,167)</Localization>
 
 <!-- תַּדְמֹר -->
 <Localization Id="9489" Gloss="Tadmor">
@@ -24939,7 +24940,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Ephraim</Localization>
 
 <!-- תָּמָר-1 -->
-<Localization Id="9557" Gloss="date-palm (FF 160-162)"></Localization>
+<Localization Id="9557" Gloss="date-palm">(FF 160-162)</Localization>
 
 <!-- תָּמָר-2 -->
 <Localization Id="9558" Gloss="Tamar">
@@ -24992,7 +24993,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 	town; territory of Manasseh</Localization>
 
 <!-- תַּפּוּחַ -->
-<Localization Id="9572" Gloss="apricot, apple (FF 92,93)"></Localization>
+<Localization Id="9572" Gloss="apricot, apple">(FF 92,93)</Localization>
 
 <!-- תַּפּוּח-1 -->
 <Localization Id="9573" Gloss="Tappuah">
@@ -25052,7 +25053,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="7FD377DF-7A60-4fa3-B9A4-3C
 <Localization Id="9587" Gloss="shout, alarm"></Localization>
 
 <!-- תִּרְזָה -->
-<Localization Id="9588" Gloss="holm oak tree (FF 116,128)"></Localization>
+<Localization Id="9588" Gloss="holm oak tree">(FF 116,128)</Localization>
 
 <!-- תֶּרַח-1 -->
 <Localization Id="9589" Gloss="Terah">

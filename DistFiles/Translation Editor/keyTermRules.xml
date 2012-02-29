@@ -10,20 +10,29 @@
 	<Alternate name="blessed"/>
 	<Alternate name="blessing"/>
   </KeyTermRule>
+  <KeyTermRule id="asp">
+	<Alternate name="viper"/>
+	<Alternate name="vipers"/>
+  </KeyTermRule>
   <KeyTermRule id="call" rule="MatchForRefOnly" />
   <KeyTermRule id="concern, care, complaint" rule="MatchForRefOnly"/>
   <KeyTermRule id="say" rule="Exclude" />
   <KeyTermRule id="castor oil plant (FF 106,107)" rule="Exclude">
 	<Alternate name="castor oil plant" />
   </KeyTermRule>
-  <KeyTermRule id="to lift up (one's hand, heart, or soul) = to worship, pray" rule="Exclude">
-	<Alternate name="worship"/>
-	<Alternate name="pray"/>
-	<Alternate name="worships"/>
-	<Alternate name="prays"/>
-	<Alternate name="worshipped"/>
-	<Alternate name="prayed"/>
+  <KeyTermRule id="horn, as symbol of: strength, courage" rule="Exclude"/>
+  <KeyTermRule id="to lift up (one's face) = to show favor, have regard" rule="MatchForRefOnly"/>
+  <KeyTermRule id="to lift up (one's hand, heart, or soul) = to worship, pray" rule="Exclude"/>
+  <KeyTermRule id="idol, demon (with the figure of goats)" rule="Exclude"/>
+  <KeyTermRule id="unclean spirit">
+	<Alternate name="unclean spirits"/>
+	<Alternate name="evil spirit"/>
+	<Alternate name="evil spirits"/>
+	<Alternate name="demon"/>
+	<Alternate name="demons"/>
   </KeyTermRule>
+  <KeyTermRule id="'sword and bow' = military strength, achievement" rule="Exclude"/>
+  <KeyTermRule id="to remember for good = be gracious, have mercy" rule="MatchForRefOnly"/>
   <KeyTermRule id="(Lord, LORD, God of) hosts" rule="Exclude">
 	<Alternate name="lord of hosts"/>
 	<Alternate name="god of hosts"/>
@@ -31,8 +40,32 @@
   <KeyTermRule id="Jesus">
 	<Alternate name="Jesus Christ"/>
   </KeyTermRule>
+  <KeyTermRule id="inner man, soul" rule="Exclude">
+	<Alternate name="soul"/>
+  </KeyTermRule>
+  <KeyTermRule id="soul">
+	<Alternate name="souls"/>
+	<Alternate name="life"/>
+	<Alternate name="lives"/>
+  </KeyTermRule>
+  <KeyTermRule id="Judas">
+	<Alternate name="Jude"/>
+  </KeyTermRule>
   <KeyTermRule id="Christ">
 	<Alternate name="Christ Jesus"/>
+  </KeyTermRule>
+  <KeyTermRule id="resentment" rule="Exclude">
+	<Alternate name="jealousy"/>
+	<Alternate name="jealous"/>
+  </KeyTermRule>
+  <KeyTermRule id="to support, sustain, aid" rule="Exclude" />
+  <KeyTermRule id="delight, satisfaction" rule="Exclude">
+	<Alternate name="acceptable"/>
+	<Alternate name="accepted"/>
+	<Alternate name="favor"/>
+  </KeyTermRule>
+  <KeyTermRule id="covenant">
+	<Alternate name="agreement"/>
   </KeyTermRule>
   <KeyTermRule id="so" rule="MatchForRefOnly" />
   <KeyTermRule id="official" rule="MatchForRefOnly" />
@@ -57,10 +90,37 @@
 	<Alternate name="sinner"/>
 	<Alternate name="sinners"/>
   </KeyTermRule>
+  <KeyTermRule id="sinful">
+	<Alternate name="sinner"/>
+	<Alternate name="sinners"/>
+  </KeyTermRule>
+  <KeyTermRule id="sin against">
+	<Alternate name="sinned against"/>
+	<Alternate name="sinning against"/>
+  </KeyTermRule>
+  <KeyTermRule id="unbeliever">
+	<Alternate name="sinful"/>
+	<Alternate name="unjust"/>
+  </KeyTermRule>
+  <KeyTermRule id="universe">
+	<Alternate name="world"/>
+	<Alternate name="age"/>
+  </KeyTermRule>
+  <KeyTermRule id="to lie with somebody (to have sexual relations)" rule="Exclude">
+	<Alternate name="having intercourse"/>
+	<Alternate name="had sexual relations"/>
+	<Alternate name="have sexual relations"/>
+	<Alternate name="having sexual relations"/>
+	<Alternate name="have sexual union"/>
+	<Alternate name="sleep with"/>
+  </KeyTermRule>
   <KeyTermRule id="serve">
 	<Alternate name="serves"/>
   </KeyTermRule>
   <KeyTermRule id="have" rule="Exclude" />
+  <KeyTermRule id="passing" rule="Exclude" />
+  <KeyTermRule id="glory, presence of God" rule="Exclude" />
+  <KeyTermRule id="something that has been devoted to idols and so made unclean" rule="Exclude" />
   <KeyTermRule id="to be, become guilty" rule="Exclude">
 	<Alternate name="is guilty"/>
 	<Alternate name="was guilty"/>
@@ -72,14 +132,82 @@
 	<Alternate name="become guilty"/>
 	<Alternate name="to become guilty"/>
   </KeyTermRule>
+  <KeyTermRule id="drape">
+	<Alternate name="curtain"/>
+	<Alternate name="veil"/>
+  </KeyTermRule>
+  <KeyTermRule id="possession">
+	<Alternate name="possessions"/>
+	<Alternate name="inheritance"/>
+	<Alternate name="property"/>
+	<Alternate name="portion"/>
+  </KeyTermRule>
+  <KeyTermRule id="to be, become wise" rule="Exclude">
+	<Alternate name="wise"/>
+  </KeyTermRule>
+  <KeyTermRule id="to remember for evil = punish" rule="Exclude">
+	<Alternate name="punish"/>
+	<Alternate name="punishes"/>
+	<Alternate name="punished"/>
+	<Alternate name="punishing"/>
+	<Alternate name="punishment"/>
+  </KeyTermRule>
+  <KeyTermRule id="transgression, sin" rule="Exclude">
+	<Alternate name="transgression"/>
+	<Alternate name="sin"/>
+	<Alternate name="sins"/>
+	<Alternate name="punish"/>
+	<Alternate name="punishes"/>
+	<Alternate name="punished"/>
+	<Alternate name="punishing"/>
+	<Alternate name="punishment"/>
+  </KeyTermRule>
+  <KeyTermRule id="judgment, sentence, decision" rule="Exclude">
+	<Alternate name="judgment"/>
+	<Alternate name="laws"/>
+  </KeyTermRule>
+   <KeyTermRule id="sentence" rule="MatchForRefOnly"/>
+  <KeyTermRule id="to perform the ritual of removing the state of guilt or uncleanness from oneself" rule="Exclude">
+	<Alternate name="purify"/>
+	<Alternate name="purifies"/>
+	<Alternate name="purified"/>
+	<Alternate name="purifying"/>
+  </KeyTermRule>
+  <KeyTermRule id="unclean">
+	<Alternate name="impure"/>
+	<Alternate name="impurities"/>
+  </KeyTermRule>
+  <KeyTermRule id="impurity">
+	<Alternate name="impurities"/>
+  </KeyTermRule>
+  <KeyTermRule id="uncleanness">
+	<Alternate name="impurity"/>
+	<Alternate name="impurities"/>
+  </KeyTermRule>
+  <KeyTermRule id="to be, become corrupted" rule="Exclude">
+	<Alternate name="corrupt"/>
+  </KeyTermRule>
+  <KeyTermRule id="have power" rule="Exclude" />
   <KeyTermRule id="speaking" rule="Exclude" />
+  <KeyTermRule id="kind, sort" rule="Exclude" />
   <KeyTermRule id="timothy">
 	<Alternate name="about timothy"/>
 	<Alternate name="for timothy"/>
 	<Alternate name="to timothy"/>
   </KeyTermRule>
+  <KeyTermRule id="genus, kind (of animals)" rule="Exclude">
+	<Alternate name="family"/>
+	<Alternate name="families"/>
+	<Alternate name="generation"/>
+	<Alternate name="clan"/>
+	<Alternate name="tribe"/>
+	<Alternate name="kind of animal"/>
+  </KeyTermRule>
   <KeyTermRule id="wick" rule="MatchForRefOnly">
 	<Alternate name="linen"/>
+  </KeyTermRule>
+  <KeyTermRule id="scroll">
+	<Alternate name="book"/>
   </KeyTermRule>
   <KeyTermRule id="name" rule="MatchForRefOnly" />
   <KeyTermRule id="figurative extension of meaning of 'sword': violence, warfare, death" rule="MatchForRefOnly">
@@ -89,4 +217,245 @@
 	<Alternate name="war"/>
 	<Alternate name="death"/>
   </KeyTermRule>
+  <KeyTermRule id="sow" rule="MatchForRefOnly" />
+  <KeyTermRule id="to act, treat as a priest" rule="Exclude">
+	<Alternate name="minister as priest"/>
+	<Alternate name="minister as a priest"/>
+	<Alternate name="serve as priest"/>
+	<Alternate name="serve as a priest"/>
+  </KeyTermRule>
+  <KeyTermRule id="instruction, law" rule="Exclude">
+	<Alternate name="law"/>
+	<Alternate name="laws"/>
+  </KeyTermRule>
+  <KeyTermRule id="chief priest">
+	<Alternate name="high priest"/>
+  </KeyTermRule>
+  <KeyTermRule id="distinguish">
+	<Alternate name="doubt"/>
+  </KeyTermRule>
+  <KeyTermRule id="honest">
+	<Alternate name="good"/>
+  </KeyTermRule>
+  <KeyTermRule id="do good; perform good deeds; good works" rule="Exclude">
+	<Alternate name="does good"/>
+	<Alternate name="lives good"/>
+	<Alternate name="does good things"/>
+	<Alternate name="doing good"/>
+	<Alternate name="doing good things"/>
+	<Alternate name="doing the good things"/>
+	<Alternate name="do good things"/>
+	<Alternate name="doing good deeds"/>
+	<Alternate name="do good"/>
+	<Alternate name="do be good"/>
+	<Alternate name="be good"/>
+	<Alternate name="to do good"/>
+	<Alternate name="do what is good right"/>
+	<Alternate name="do what is good"/>
+	<Alternate name="do what is right"/>
+	<Alternate name="do good deeds"/>
+	<Alternate name="to do good things"/>
+	<Alternate name="done good things"/>
+	<Alternate name="doing any good deeds"/>
+	<Alternate name="perform good deeds"/>
+	<Alternate name="performs good deeds"/>
+  </KeyTermRule>
+  <KeyTermRule id="one who does good; one who benefits others">
+	<Alternate name="anyone who does good"/>
+	<Alternate name="someone who does good things"/>
+	<Alternate name="someone who does good"/>
+	<Alternate name="those who do good"/>
+	<Alternate name="people who do good things"/>
+  </KeyTermRule>
+  <KeyTermRule id="fellowship meal">
+	<Alternate name="love feast"/>
+  </KeyTermRule>
+  <KeyTermRule id="(Most) Holy Place" rule="Exclude">
+	<Alternate name="Most Holy Place"/>
+  </KeyTermRule>
+  <KeyTermRule id="purify; purification">
+	<Alternate name="purifies"/>
+	<Alternate name="made clean"/>
+	<Alternate name="clean from sin"/>
+  </KeyTermRule>
+  <KeyTermRule id="redeem; set free" rule="Exclude">
+	<Alternate name="saved redeemed"/>
+	<Alternate name="saved"/>
+	<Alternate name="redeemed"/>
+	<Alternate name="redeem"/>
+	<Alternate name="to redeem"/>
+  </KeyTermRule>
+  <KeyTermRule id="court; court of justice" rule="Exclude"/>
+  <KeyTermRule id="to be (or show oneself) just, in the right" rule="Exclude"/>
+  <KeyTermRule id="change one's mind" rule="Exclude">
+	<Alternate name="change his mind"/>
+	<Alternate name="repent"/>
+	<Alternate name="regret"/>
+	<Alternate name="regrets"/>
+  </KeyTermRule>
+  <KeyTermRule id="glory">
+	<Alternate name="greatness"/>
+	<Alternate name="glorious"/>
+  </KeyTermRule>
+  <KeyTermRule id="cloth of fine linen">
+	<Alternate name="fine linen"/>
+  </KeyTermRule>
+  <KeyTermRule id="jail">
+	<Alternate name="prison"/>
+  </KeyTermRule>
+  <KeyTermRule id="save">
+	<Alternate name="saved"/>
+	<Alternate name="saving"/>
+	<Alternate name="healed"/>
+	<Alternate name="healing"/>
+	<Alternate name="rescue"/>
+	<Alternate name="rescued"/>
+  </KeyTermRule>
+  <KeyTermRule id="wild animal" rule="MatchForRefOnly"/>
+  <KeyTermRule id="just" rule="MatchForRefOnly"/>
+  <KeyTermRule id="decided" rule="MatchForRefOnly"/>
+  <KeyTermRule id="anim" rule="MatchForRefOnly"/>
+  <KeyTermRule id="soil" rule="MatchForRefOnly"/>
+  <KeyTermRule id="on" rule="MatchForRefOnly"/>
+  <KeyTermRule id="hundred" rule="MatchForRefOnly"/>
+  <KeyTermRule id="hen" rule="MatchForRefOnly"/>
+  <KeyTermRule id="section" rule="MatchForRefOnly"/>
+  <KeyTermRule id="high" rule="Exclude"/>
+  <KeyTermRule id="straight, right, successful" rule="Exclude"/>
+  <KeyTermRule id="say" rule="Exclude"/>
+  <KeyTermRule id="saying" rule="Exclude"/>
+  <KeyTermRule id="write" rule="Exclude"/>
+  <KeyTermRule id="wrong" rule="Exclude"/>
+  <KeyTermRule id="indeed" rule="Exclude"/>
+  <KeyTermRule id="flock, herd" rule="Exclude"/>
+  <KeyTermRule id="living" rule="Exclude"/>
+  <KeyTermRule id="things" rule="Exclude"/>
+  <KeyTermRule id="share in" rule="Exclude"/>
+  <KeyTermRule id="opposite of holy: profane, unholy, common" rule="Exclude"/>
+  <KeyTermRule id="strength, power, might" rule="Exclude">
+	<Alternate name="strength"/>
+	<Alternate name="power"/>
+  </KeyTermRule>
+  <KeyTermRule id="interpret; examine; test; approve" rule="Exclude">
+	<Alternate name="test"/>
+	<Alternate name="approve"/>
+	<Alternate name="prove"/>
+  </KeyTermRule>
+  <KeyTermRule id="lead (into)" rule="MatchForRefOnly"/>
+  <KeyTermRule id="bear" rule="MatchForRefOnly"/>
+  <KeyTermRule id="bear witness">
+	<Alternate name="testify"/>
+  </KeyTermRule>
+  <KeyTermRule id="to carry, bear = to forgive" rule="Exclude">
+	<Alternate name="forgive"/>
+  </KeyTermRule>
+  <KeyTermRule id="to keep, watch, observe, obey" rule="Exclude">
+	<Alternate name="observe"/>
+	<Alternate name="observing"/>
+	<Alternate name="obey"/>
+	<Alternate name="obeyed"/>
+	<Alternate name="obeying"/>
+	<Alternate name="guard"/>
+	<Alternate name="guarded"/>
+  </KeyTermRule>
+  <KeyTermRule id="female fallow deer" rule="Exclude">
+	<Alternate name="wild deer"/>
+  </KeyTermRule>
+  <KeyTermRule id="bird" rule="MatchForRefOnly">
+	<Alternate name="mother hen"/>
+  </KeyTermRule>
+  <KeyTermRule id="inspiring awe and respect because of one's beauty, size, strength, or status" rule="Exclude">
+	<Alternate name="powerful"/>
+	<Alternate name="mighty"/>
+  </KeyTermRule>
+  <KeyTermRule id="mighty, violent, ruthless" rule="Exclude">
+	<Alternate name="powerful"/>
+	<Alternate name="mighty"/>
+	<Alternate name="violent"/>
+	<Alternate name="violently"/>
+	<Alternate name="strong"/>
+  </KeyTermRule>
+  <KeyTermRule id="sprout" rule="MatchForRefOnly">
+	<Alternate name="grass"/>
+	<Alternate name="spear grass"/>
+  </KeyTermRule>
+  <KeyTermRule id="stick">
+	<Alternate name="walking stick"/>
+	<Alternate name="scepter"/>
+  </KeyTermRule>
+  <KeyTermRule id="interjection expression a strong conclusion: never, (be it) far from" rule="Exclude"/>
+  <KeyTermRule id="gathering, congregation, band" rule="Exclude">
+	<Alternate name="congregation"/>
+	<Alternate name="group"/>
+  </KeyTermRule>
+  <KeyTermRule id="Arpachshad">
+	<Alternate name="Arphaxad"/>
+  </KeyTermRule>
+  <KeyTermRule id="carnal">
+	<Alternate name="worldly"/>
+	<Alternate name="bodily"/>
+  </KeyTermRule>
+  <KeyTermRule id="material (things)">
+	<Alternate name="worldly"/>
+	<Alternate name="bodily"/>
+  </KeyTermRule>
+  <KeyTermRule id="bodily" rule="Exclude"/>
+  <KeyTermRule id="natural" rule="MatchForRefOnly"/>
+  <KeyTermRule id="body">
+	<Alternate name="bodies"/>
+  </KeyTermRule>
+  <KeyTermRule id="fornication">
+	<Alternate name="sexual immorality"/>
+	<Alternate name="sexual sins"/>
+  </KeyTermRule>
+  <KeyTermRule id="branch of a vine">
+	<Alternate name="branch"/>
+  </KeyTermRule>
+  <KeyTermRule id="hole (used in the NT only with reference to the so-called eye of a needle)" rule="Exclude">
+	<Alternate name="eye"/>
+  </KeyTermRule>
+  <KeyTermRule id="descendants, generation, genealogy" rule="Exclude">
+	<Alternate name="descendant"/>
+	<Alternate name="descendants"/>
+	<Alternate name="generation"/>
+	<Alternate name="generations"/>
+  </KeyTermRule>
+  <KeyTermRule id="sabbath, (day of) rest" rule="Exclude">
+	<Alternate name="sabbath"/>
+	<Alternate name="sabbath day"/>
+	<Alternate name="sabbath rest day"/>
+	<Alternate name="rest day"/>
+  </KeyTermRule>
+  <KeyTermRule id="disgusting">
+	<Alternate name="revolting"/>
+	<Alternate name="nauseating"/>
+	<Alternate name="disgusting revolting nauseating"/>
+	<Alternate name="shameful forbidden"/>
+  </KeyTermRule>
+  <KeyTermRule id="rely on">
+	<Alternate name="to trust"/>
+	<Alternate name="trust"/>
+	<Alternate name="trusts"/>
+	<Alternate name="trusted"/>
+	<Alternate name="trusting"/>
+	<Alternate name="rely on put confidence in"/>
+	<Alternate name="put confidence in"/>
+	<Alternate name="be confident"/>
+	<Alternate name="been confident"/>
+	<Alternate name="confident"/>
+  </KeyTermRule>
+  <KeyTermRule id="to lean on, to trust, to have confidence" rule="Exclude">
+	<Alternate name="to trust"/>
+	<Alternate name="trust"/>
+	<Alternate name="trusts"/>
+	<Alternate name="trusted"/>
+	<Alternate name="trusting"/>
+	<Alternate name="put confidence in"/>
+	<Alternate name="be confident"/>
+	<Alternate name="been confident"/>
+	<Alternate name="confident"/>
+  </KeyTermRule>
+  <KeyTermRule id="group of servants" rule="Exclude"/>
+  <KeyTermRule id="to have a vision" rule="Exclude"/>
+  <KeyTermRule id="to be straight, tomake straight (one's way)" rule="Exclude"/>
 </KeyTermRules>

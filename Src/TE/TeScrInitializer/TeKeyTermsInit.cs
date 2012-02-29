@@ -737,7 +737,7 @@ namespace SIL.FieldWorks.TE
 		{
 			string[] glosses = termLoc.Gloss.Split(new [] { ';' }, 2);
 			SetLocalizedInfo(term, ws, glosses[0].Trim(), termLoc.DescriptionText == null ? null :
-				termLoc.DescriptionText.Trim(), (glosses.Length == 2) ? glosses[1].Trim() : null);
+				termLoc.DescriptionText.Trim().Trim('-'), (glosses.Length == 2) ? glosses[1].Trim() : null);
 		}
 
 		/// ------------------------------------------------------------------------------------

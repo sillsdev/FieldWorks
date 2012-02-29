@@ -602,6 +602,107 @@ namespace SIL.FieldWorks.TE
 			Assert.IsTrue(fFoundResource);
 		}
 
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test creating a key term when the description is a dash with a preceding tab.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void KeyTermInit_DashDescription()
+		{
+			BiblicalTermsList terms = new BiblicalTermsList();
+			terms.Version = Guid.NewGuid();
+			terms.KeyTerms = new List<Term>();
+			terms.KeyTerms.Add(new Term(56, "FA", "\u1F00\u03B5\u03C4\u1F79\u03C2", "Greek",
+				"eagle; vulture", null, null,
+				4002402809, 4201703717, 6600400728, 6600801306, 6601201409));
+
+			List<BiblicalTermsLocalization> localizations = new List<BiblicalTermsLocalization>(1);
+			BiblicalTermsLocalization loc = new BiblicalTermsLocalization(1);
+			loc.WritingSystemHvo = m_wsEn;
+			loc.Categories.Add(new CategoryLocalization("FA", "Fauna"));
+			loc.Terms.Add(new TermLocalization(56, "eagle; vulture", "\t-"));
+			localizations.Add(loc);
+
+			ICmPossibilityList chkTermsList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			m_lp.CheckListsOC.Add(chkTermsList);
+
+			// Load the term
+			m_actionHandler.EndUndoTask();
+			try
+			{
+				using (NonUndoableUnitOfWorkHelper undoHelper = new NonUndoableUnitOfWorkHelper(m_actionHandler))
+				{
+					DummyTeKeyTermsInit.CallLoadKeyTerms(chkTermsList, terms, localizations);
+
+					undoHelper.RollBack = false;
+				}
+			}
+			finally
+			{
+				m_actionHandler.BeginUndoTask("bla", "bla");
+			}
+
+			int wsGreek = m_wsf.GetWsFromStr("grc");
+
+			// Make sure there is one category (possibility)
+			Assert.AreEqual(1, chkTermsList.PossibilitiesOS.Count);
+			ICmPossibility faCategory = chkTermsList.PossibilitiesOS[0];
+			Assert.AreEqual("FA", faCategory.Abbreviation.get_String(m_wsEn).Text);
+
+			// Make sure there is one entry in the Fauna category
+			Assert.AreEqual(1, faCategory.SubPossibilitiesOS.Count);
+
+			// Look at the contents of the ChkTerm
+			IChkTerm keyterm = (IChkTerm)faCategory.SubPossibilitiesOS[0];
+			Assert.AreEqual(56, keyterm.TermId);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), keyterm.Name.get_String(wsGreek).Text);
+			Assert.AreEqual("eagle", keyterm.Name.get_String(m_wsEn).Text);
+			Assert.IsNull(keyterm.Description.get_String(m_wsEn).Text);
+			Assert.AreEqual("vulture", keyterm.SeeAlso.get_String(m_wsEn).Text);
+			Assert.AreEqual(0, keyterm.RenderingsOC.Count);
+
+			// There should be 5 references for this key term
+			Assert.AreEqual(5, keyterm.OccurrencesOS.Count);
+
+			IChkRef reference = keyterm.OccurrencesOS[0];
+			Assert.AreEqual(40024028, reference.Ref);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), reference.KeyWord.Text);
+			Assert.AreEqual(9, reference.Location);
+
+			reference = keyterm.OccurrencesOS[1];
+			Assert.AreEqual(42017037, reference.Ref);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), reference.KeyWord.Text);
+			Assert.AreEqual(17, reference.Location);
+
+			reference = keyterm.OccurrencesOS[2];
+			Assert.AreEqual(66004007, reference.Ref);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), reference.KeyWord.Text);
+			Assert.AreEqual(28, reference.Location);
+
+			reference = keyterm.OccurrencesOS[3];
+			Assert.AreEqual(66008013, reference.Ref);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), reference.KeyWord.Text);
+			Assert.AreEqual(6, reference.Location);
+
+			reference = keyterm.OccurrencesOS[4];
+			Assert.AreEqual(66012014, reference.Ref);
+			Assert.AreEqual("\u1F00\u03B5\u03C4\u1F79\u03C2".Normalize(NormalizationForm.FormD), reference.KeyWord.Text);
+			Assert.AreEqual(9, reference.Location);
+
+			bool fFoundResource = false;
+			foreach (ICmResource resource in m_lp.TranslatedScriptureOA.ResourcesOC)
+			{
+				if (resource.Name == "BiblicalTerms")
+				{
+					Assert.AreEqual(terms.Version, resource.Version);
+					fFoundResource = true;
+				}
+			}
+			Assert.IsTrue(fFoundResource);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test reading key terms in different categories

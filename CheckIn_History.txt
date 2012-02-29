@@ -92,3 +92,6 @@ JohnT, 27 Feb 2012. LT-12766: Wordlist creates new entries for existing words: p
 RickM, 28 Feb 2012. LT-12682 Make bak files visible in Open when fwdata is missing
 JohnT, 28 Feb 2012. LT-12666, Crash when switching between texts on the Text Charts tab
 	Later: LT-11566, Merging Senses results in crash
+TomB, 28 Feb 2012. LT-12800, Integration (TomB): Fixed problem with unwanted indentations being written
+	out for modified objects in the XML.
+	Integration of changes to improve/enhance biblical terms and and alternate form overrides for Transcelerator.

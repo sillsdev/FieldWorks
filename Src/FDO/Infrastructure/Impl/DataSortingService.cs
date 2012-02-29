@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					if (foundOptionalFirstElement)
 					{
 						// Step 2A: Write out custom property declaration(s).
-						WriteElement(writer, readerSettings, SortCustomPropertiesRecord(record));
+						WriteElement(writer, SortCustomPropertiesRecord(record));
 						foundOptionalFirstElement = false;
 					}
 					else
@@ -187,14 +187,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				propertyElement.Add(kvp.Value);
 		}
 
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, XElement element)
+		internal static void WriteElement(XmlWriter writer, XElement element)
 		{
-			WriteElement(writer, readerSettings, element.ToString());
-		}
-
-		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, string element)
-		{
-			WriteElement(writer, readerSettings, Utf8.GetBytes(element));
+			element.WriteTo(writer);
 		}
 
 		internal static void WriteElement(XmlWriter writer, XmlReaderSettings readerSettings, byte[] element)

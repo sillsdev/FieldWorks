@@ -367,10 +367,11 @@ namespace SIL.Utils
 			}
 		}
 
-		/* step2() turns terminal y to i when there is another vowel in the stem. */
+		/* step2() turns terminal y to i when there is another vowel in the stem, unless the
+		 * immediately preceding letter is a vowel. */
 		private void step2()
 		{
-			if (ends("y") && vowelinstem())
+			if (ends("y") && (k > 0 && cons(k -1 )) && vowelinstem())
 				b[k] = 'i';
 		}
 
@@ -470,7 +471,8 @@ namespace SIL.Utils
 					if (ends("ic")) break; return;
 				case 'l':
 					if (ends("able")) break;
-					if (ends("ible")) break; return;
+					if (ends("ible")) break;
+					if (ends("ple")) break; return;
 				case 'n':
 					if (ends("ant")) break;
 					if (ends("ement")) break;
@@ -507,6 +509,8 @@ namespace SIL.Utils
 
 			if (b[k] == 'e')
 			{
+				if (ends("ple") || ends("ttle"))
+					return;
 				int a = m();
 				if ((a > 1 || a == 1 && !cvc(k-1)) && b[k-1] != 'e')
 					k--;
