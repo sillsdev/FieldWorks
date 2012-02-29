@@ -95,3 +95,5 @@ JohnT, 28 Feb 2012. LT-12666, Crash when switching between texts on the Text Cha
 TomB, 28 Feb 2012. LT-12800, Integration (TomB): Fixed problem with unwanted indentations being written
 	out for modified objects in the XML.
 	Integration of changes to improve/enhance biblical terms and and alternate form overrides for Transcelerator.
+DamienD, 29 Feb 2012. LT-10635: Hermit Crab: does not handle "derivation outside of inflection". Fixed incorrect
+	display of parser analyses in Analysis tab.
