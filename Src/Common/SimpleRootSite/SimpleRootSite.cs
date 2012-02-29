@@ -3165,6 +3165,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			string sKeymanKbd = KeyboardHelper.ActiveKeymanKeyboard;
 
 			int wsMatch = -1;
+			int countNoKeymanKeyboard = 0;
+			foreach (int ws in vws)
+			{
+				if (ws == 0)
+					continue;
+				ILgWritingSystem lgws = wsf.get_EngineOrNull(ws);
+				if (lgws == null)
+					continue;
+				if (string.IsNullOrEmpty(lgws.Keyboard))
+					countNoKeymanKeyboard++;
+			}
 			foreach (int ws in vws)
 			{
 				// Don't consider switching to the default, dummy writing system.
@@ -3186,6 +3197,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			if (wsMatch == -1) // no known writing system uses this keyboard
+				return;
+
+			// Don't switch to some writing system just on the strength of not using a keyman
+			// keyboard at all, unless it is the only active one that does not.
+			if (string.IsNullOrEmpty(sKeymanKbd) && countNoKeymanKeyboard > 1)
 				return;
 
 			m_wsPending = -1;
