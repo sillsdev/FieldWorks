@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+	</Filter>
+	<Filter Include="Generated Files">
+	  <UniqueIdentifier>{8ff942b1-738a-424c-ad8f-54a824a552b9}</UniqueIdentifier>
+	  <SourceControlFiles>False</SourceControlFiles>
+	</Filter>
+	<Filter Include="Help Files">
+	  <UniqueIdentifier>{33ac62e8-044c-426f-bd9a-a0d085edacb4}</UniqueIdentifier>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="BrowseForStrings.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="InPlaceCtrls.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="listboxex.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="PerlEC.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="PerlExpressionAutoConfigDlg.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="PerlExpressionEncConverter.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="PerlExpressionEncConverterConfig.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="SHBrowseDlg.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="stdafx.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="dlldatax.c">
+	  <Filter>Generated Files</Filter>
+	</ClCompile>
+	<ClCompile Include="PerlEC_i.c">
+	  <Filter>Generated Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="PerlEC.def">
+	  <Filter>Source Files</Filter>
+	</None>
+	<None Include="PerlEC.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="PerlExpressionEncConverter.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="PerlExpressionEncConverterConfig.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="..\EncCnvtrs\lib\Trffc17.ico">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="Help\Perl Expression Plug-in About box.htm">
+	  <Filter>Help Files</Filter>
+	</None>
+	<None Include="..\..\..\..\Installer\PerlEC.mm.wxs" />
+	<None Include="..\..\..\release\Plugins\IEC3.1.0.0\PerlEC510 3.1.0.0 Plugin Details.xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="PerlEC.idl">
+	  <Filter>Source Files</Filter>
+	</Midl>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="BrowseForStrings.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\EncCnvtrs\lib\CppEncConverters.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="dlldatax.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\EncCnvtrs\lib\ECEncConverter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\EncCnvtrs\lib\ECResource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="listboxex.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="PerlEC.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="PerlExpressionAutoConfigDlg.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="PerlExpressionEncConverter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="PerlExpressionEncConverterConfig.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\..\Perl\Perl510\PXPerlWrapDLL\PXPerlWrap.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Resource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="stdafx.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="..\EncCnvtrs\lib\ECEncCnvtrs.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="PerlEC.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -113,7 +113,7 @@ HRESULT InitPerl()
 {
 	// since we may have been installed without an actual distribution, query the user
 	//  for its location (if we don't already know it)
-	//  _T("SOFTWARE\\SIL\\SilEncConverters31\\ConvertersSupported\\SIL.PerlExpression\\PerlPaths")
+	//  _T("SOFTWARE\\SIL\\SilEncConverters40\\ConvertersSupported\\SIL.PerlExpression\\PerlPaths")
 	CRegKey keyReg;
 	if( keyReg.Open(HKEY_CURRENT_USER, PERLEXPR_PATHS_KEY) != ERROR_SUCCESS )
 	{

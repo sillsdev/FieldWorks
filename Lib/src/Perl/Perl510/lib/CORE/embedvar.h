@@ -3,7 +3,7 @@
  *    embedvar.h
  *
  *    Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999,
- *    2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, by Larry Wall and others
+ *    2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -71,10 +71,10 @@
 #define PL_basetime		(vTHX->Ibasetime)
 #define PL_beginav		(vTHX->Ibeginav)
 #define PL_beginav_save		(vTHX->Ibeginav_save)
-#define PL_bitcount		(vTHX->Ibitcount)
 #define PL_body_arenas		(vTHX->Ibody_arenas)
 #define PL_body_roots		(vTHX->Ibody_roots)
 #define PL_bodytarget		(vTHX->Ibodytarget)
+#define PL_breakable_sub_gen	(vTHX->Ibreakable_sub_gen)
 #define PL_checkav		(vTHX->Icheckav)
 #define PL_checkav_save		(vTHX->Icheckav_save)
 #define PL_chopset		(vTHX->Ichopset)
@@ -211,10 +211,11 @@
 #define PL_numeric_name		(vTHX->Inumeric_name)
 #define PL_numeric_radix_sv	(vTHX->Inumeric_radix_sv)
 #define PL_numeric_standard	(vTHX->Inumeric_standard)
-#define PL_ofs_sv		(vTHX->Iofs_sv)
+#define PL_ofsgv		(vTHX->Iofsgv)
 #define PL_oldname		(vTHX->Ioldname)
 #define PL_op			(vTHX->Iop)
 #define PL_op_mask		(vTHX->Iop_mask)
+#define PL_opfreehook		(vTHX->Iopfreehook)
 #define PL_opsave		(vTHX->Iopsave)
 #define PL_origalen		(vTHX->Iorigalen)
 #define PL_origargc		(vTHX->Iorigargc)
@@ -235,7 +236,6 @@
 #define PL_pidstatus		(vTHX->Ipidstatus)
 #define PL_ppid			(vTHX->Ippid)
 #define PL_preambleav		(vTHX->Ipreambleav)
-#define PL_preprocess		(vTHX->Ipreprocess)
 #define PL_profiledata		(vTHX->Iprofiledata)
 #define PL_psig_name		(vTHX->Ipsig_name)
 #define PL_psig_pend		(vTHX->Ipsig_pend)
@@ -248,6 +248,7 @@
 #define PL_regex_pad		(vTHX->Iregex_pad)
 #define PL_regex_padav		(vTHX->Iregex_padav)
 #define PL_reginterp_cnt	(vTHX->Ireginterp_cnt)
+#define PL_registered_mros	(vTHX->Iregistered_mros)
 #define PL_regmatch_slab	(vTHX->Iregmatch_slab)
 #define PL_regmatch_state	(vTHX->Iregmatch_state)
 #define PL_rehash_seed		(vTHX->Irehash_seed)
@@ -264,6 +265,7 @@
 #define PL_scopestack		(vTHX->Iscopestack)
 #define PL_scopestack_ix	(vTHX->Iscopestack_ix)
 #define PL_scopestack_max	(vTHX->Iscopestack_max)
+#define PL_scopestack_name	(vTHX->Iscopestack_name)
 #define PL_screamfirst		(vTHX->Iscreamfirst)
 #define PL_screamnext		(vTHX->Iscreamnext)
 #define PL_secondgv		(vTHX->Isecondgv)
@@ -301,6 +303,7 @@
 #define PL_sv_no		(vTHX->Isv_no)
 #define PL_sv_objcount		(vTHX->Isv_objcount)
 #define PL_sv_root		(vTHX->Isv_root)
+#define PL_sv_serial		(vTHX->Isv_serial)
 #define PL_sv_undef		(vTHX->Isv_undef)
 #define PL_sv_yes		(vTHX->Isv_yes)
 #define PL_sys_intern		(vTHX->Isys_intern)
@@ -321,8 +324,17 @@
 #define PL_unitcheckav_save	(vTHX->Iunitcheckav_save)
 #define PL_unlockhook		(vTHX->Iunlockhook)
 #define PL_unsafe		(vTHX->Iunsafe)
+#define PL_utf8_X_L		(vTHX->Iutf8_X_L)
+#define PL_utf8_X_LV		(vTHX->Iutf8_X_LV)
+#define PL_utf8_X_LVT		(vTHX->Iutf8_X_LVT)
+#define PL_utf8_X_LV_LVT_V	(vTHX->Iutf8_X_LV_LVT_V)
+#define PL_utf8_X_T		(vTHX->Iutf8_X_T)
+#define PL_utf8_X_V		(vTHX->Iutf8_X_V)
+#define PL_utf8_X_begin		(vTHX->Iutf8_X_begin)
+#define PL_utf8_X_extend	(vTHX->Iutf8_X_extend)
+#define PL_utf8_X_non_hangul	(vTHX->Iutf8_X_non_hangul)
+#define PL_utf8_X_prepend	(vTHX->Iutf8_X_prepend)
 #define PL_utf8_alnum		(vTHX->Iutf8_alnum)
-#define PL_utf8_alnumc		(vTHX->Iutf8_alnumc)
 #define PL_utf8_alpha		(vTHX->Iutf8_alpha)
 #define PL_utf8_ascii		(vTHX->Iutf8_ascii)
 #define PL_utf8_cntrl		(vTHX->Iutf8_cntrl)
@@ -332,6 +344,9 @@
 #define PL_utf8_idstart		(vTHX->Iutf8_idstart)
 #define PL_utf8_lower		(vTHX->Iutf8_lower)
 #define PL_utf8_mark		(vTHX->Iutf8_mark)
+#define PL_utf8_perl_space	(vTHX->Iutf8_perl_space)
+#define PL_utf8_perl_word	(vTHX->Iutf8_perl_word)
+#define PL_utf8_posix_digit	(vTHX->Iutf8_posix_digit)
 #define PL_utf8_print		(vTHX->Iutf8_print)
 #define PL_utf8_punct		(vTHX->Iutf8_punct)
 #define PL_utf8_space		(vTHX->Iutf8_space)
@@ -383,10 +398,10 @@
 #define PL_Ibasetime		PL_basetime
 #define PL_Ibeginav		PL_beginav
 #define PL_Ibeginav_save	PL_beginav_save
-#define PL_Ibitcount		PL_bitcount
 #define PL_Ibody_arenas		PL_body_arenas
 #define PL_Ibody_roots		PL_body_roots
 #define PL_Ibodytarget		PL_bodytarget
+#define PL_Ibreakable_sub_gen	PL_breakable_sub_gen
 #define PL_Icheckav		PL_checkav
 #define PL_Icheckav_save	PL_checkav_save
 #define PL_Ichopset		PL_chopset
@@ -523,10 +538,11 @@
 #define PL_Inumeric_name	PL_numeric_name
 #define PL_Inumeric_radix_sv	PL_numeric_radix_sv
 #define PL_Inumeric_standard	PL_numeric_standard
-#define PL_Iofs_sv		PL_ofs_sv
+#define PL_Iofsgv		PL_ofsgv
 #define PL_Ioldname		PL_oldname
 #define PL_Iop			PL_op
 #define PL_Iop_mask		PL_op_mask
+#define PL_Iopfreehook		PL_opfreehook
 #define PL_Iopsave		PL_opsave
 #define PL_Iorigalen		PL_origalen
 #define PL_Iorigargc		PL_origargc
@@ -547,7 +563,6 @@
 #define PL_Ipidstatus		PL_pidstatus
 #define PL_Ippid		PL_ppid
 #define PL_Ipreambleav		PL_preambleav
-#define PL_Ipreprocess		PL_preprocess
 #define PL_Iprofiledata		PL_profiledata
 #define PL_Ipsig_name		PL_psig_name
 #define PL_Ipsig_pend		PL_psig_pend
@@ -560,6 +575,7 @@
 #define PL_Iregex_pad		PL_regex_pad
 #define PL_Iregex_padav		PL_regex_padav
 #define PL_Ireginterp_cnt	PL_reginterp_cnt
+#define PL_Iregistered_mros	PL_registered_mros
 #define PL_Iregmatch_slab	PL_regmatch_slab
 #define PL_Iregmatch_state	PL_regmatch_state
 #define PL_Irehash_seed		PL_rehash_seed
@@ -576,6 +592,7 @@
 #define PL_Iscopestack		PL_scopestack
 #define PL_Iscopestack_ix	PL_scopestack_ix
 #define PL_Iscopestack_max	PL_scopestack_max
+#define PL_Iscopestack_name	PL_scopestack_name
 #define PL_Iscreamfirst		PL_screamfirst
 #define PL_Iscreamnext		PL_screamnext
 #define PL_Isecondgv		PL_secondgv
@@ -613,6 +630,7 @@
 #define PL_Isv_no		PL_sv_no
 #define PL_Isv_objcount		PL_sv_objcount
 #define PL_Isv_root		PL_sv_root
+#define PL_Isv_serial		PL_sv_serial
 #define PL_Isv_undef		PL_sv_undef
 #define PL_Isv_yes		PL_sv_yes
 #define PL_Isys_intern		PL_sys_intern
@@ -633,8 +651,17 @@
 #define PL_Iunitcheckav_save	PL_unitcheckav_save
 #define PL_Iunlockhook		PL_unlockhook
 #define PL_Iunsafe		PL_unsafe
+#define PL_Iutf8_X_L		PL_utf8_X_L
+#define PL_Iutf8_X_LV		PL_utf8_X_LV
+#define PL_Iutf8_X_LVT		PL_utf8_X_LVT
+#define PL_Iutf8_X_LV_LVT_V	PL_utf8_X_LV_LVT_V
+#define PL_Iutf8_X_T		PL_utf8_X_T
+#define PL_Iutf8_X_V		PL_utf8_X_V
+#define PL_Iutf8_X_begin	PL_utf8_X_begin
+#define PL_Iutf8_X_extend	PL_utf8_X_extend
+#define PL_Iutf8_X_non_hangul	PL_utf8_X_non_hangul
+#define PL_Iutf8_X_prepend	PL_utf8_X_prepend
 #define PL_Iutf8_alnum		PL_utf8_alnum
-#define PL_Iutf8_alnumc		PL_utf8_alnumc
 #define PL_Iutf8_alpha		PL_utf8_alpha
 #define PL_Iutf8_ascii		PL_utf8_ascii
 #define PL_Iutf8_cntrl		PL_utf8_cntrl
@@ -644,6 +671,9 @@
 #define PL_Iutf8_idstart	PL_utf8_idstart
 #define PL_Iutf8_lower		PL_utf8_lower
 #define PL_Iutf8_mark		PL_utf8_mark
+#define PL_Iutf8_perl_space	PL_utf8_perl_space
+#define PL_Iutf8_perl_word	PL_utf8_perl_word
+#define PL_Iutf8_posix_digit	PL_utf8_posix_digit
 #define PL_Iutf8_print		PL_utf8_print
 #define PL_Iutf8_punct		PL_utf8_punct
 #define PL_Iutf8_space		PL_utf8_space
@@ -693,6 +723,8 @@
 #define PL_Ginterp_size		(my_vars->Ginterp_size)
 #define PL_interp_size_5_10_0	(my_vars->Ginterp_size_5_10_0)
 #define PL_Ginterp_size_5_10_0	(my_vars->Ginterp_size_5_10_0)
+#define PL_keyword_plugin	(my_vars->Gkeyword_plugin)
+#define PL_Gkeyword_plugin	(my_vars->Gkeyword_plugin)
 #define PL_malloc_mutex		(my_vars->Gmalloc_mutex)
 #define PL_Gmalloc_mutex	(my_vars->Gmalloc_mutex)
 #define PL_mmap_page_size	(my_vars->Gmmap_page_size)
@@ -772,6 +804,7 @@
 #define PL_Ghints_mutex		PL_hints_mutex
 #define PL_Ginterp_size		PL_interp_size
 #define PL_Ginterp_size_5_10_0	PL_interp_size_5_10_0
+#define PL_Gkeyword_plugin	PL_keyword_plugin
 #define PL_Gmalloc_mutex	PL_malloc_mutex
 #define PL_Gmmap_page_size	PL_mmap_page_size
 #define PL_Gmy_ctx_mutex	PL_my_ctx_mutex

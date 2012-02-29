@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +29,7 @@
 	<MyType>WindowsFormsWithCustomSubMain</MyType>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
 	<ApplicationManifest>My Project\app.manifest</ApplicationManifest>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
@@ -54,11 +55,12 @@
 	<OutputPath>..\..\..\Debug\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
 	<WarningLevel>1</WarningLevel>
-	<NoWarn>42016,42017,42018,42019,42032</NoWarn>
+	<NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.vb</CodeAnalysisModuleSuppressionsFile>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -67,11 +69,12 @@
 	<BaseAddress>285212672</BaseAddress>
 	<Optimize>true</Optimize>
 	<WarningLevel>1</WarningLevel>
-	<NoWarn>42016,42017,42018,42019,42032</NoWarn>
+	<NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
 	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.vb</CodeAnalysisModuleSuppressionsFile>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">

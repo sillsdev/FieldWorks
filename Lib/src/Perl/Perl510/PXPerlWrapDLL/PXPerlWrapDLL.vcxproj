@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug Unicode|Win32">
+	  <Configuration>Debug Unicode</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release Unicode|Win32">
+	  <Configuration>Release Unicode</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{7E5985EC-9B2B-41D6-A86D-1C7557A0245F}</ProjectGuid>
+	<RootNamespace>PXPerlWrapDLL</RootNamespace>
+	<SccProjectName>SAK</SccProjectName>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccProvider>SAK</SccProvider>
+	<Keyword>MFCDLLProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<UseOfAtl>Static</UseOfAtl>
+	<CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseOfMfc>Dynamic</UseOfMfc>
+	<CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">$(Configuration)\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">$(Configuration)\</IntDir>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">false</LinkIncremental>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">$(Configuration)\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">$(Configuration)\</IntDir>
+	<LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</LinkIncremental>
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'" />
+	<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">PXPerlWrap-d</TargetName>
+	<TargetName Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">PXPerlWrap</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	</Midl>
+	<ClCompile>
+	  <Optimization>Disabled</Optimization>
+	  <AdditionalIncludeDirectories>../../perl510/lib/CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;PXPERL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MinimalRebuild>true</MinimalRebuild>
+	  <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+	  <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x040c</Culture>
+	  <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <ShowProgress>NotSet</ShowProgress>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../Perl510/Lib/Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <ModuleDefinitionFile>.\PXPerlWrapDLL.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(Configuration)/PXPerlWrap-d.lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	</Midl>
+	<ClCompile>
+	  <Optimization>MaxSpeed</Optimization>
+	  <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+	  <IntrinsicFunctions>true</IntrinsicFunctions>
+	  <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+	  <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+	  <AdditionalIncludeDirectories>../../perl510/lib/CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;PXPERL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x040c</Culture>
+	  <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <ShowProgress>NotSet</ShowProgress>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../Perl510/Lib/Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <ModuleDefinitionFile>.\PXPerlWrapDLL.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(Configuration)/PXPerlWrap.lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	</Midl>
+	<ClCompile>
+	  <Optimization>MaxSpeed</Optimization>
+	  <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+	  <IntrinsicFunctions>true</IntrinsicFunctions>
+	  <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+	  <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+	  <AdditionalIncludeDirectories>../../perl510/lib/CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;PXPERL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x040c</Culture>
+	  <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <ShowProgress>NotSet</ShowProgress>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../Perl510/Lib/Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <ModuleDefinitionFile>.\PXPerlWrapDLL.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Command>copy "$(TargetPath)" ..\..\..\..\..\DistFiles
+copy "$(TargetDir)$(TargetName).lib" ..\..\..\..\release
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">
+	<Midl>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MkTypLibCompatible>false</MkTypLibCompatible>
+	</Midl>
+	<ClCompile>
+	  <Optimization>Disabled</Optimization>
+	  <AdditionalIncludeDirectories>../../perl510/lib/CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;PXPERL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <MinimalRebuild>true</MinimalRebuild>
+	  <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+	  <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+	  <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <WarningLevel>Level3</WarningLevel>
+	  <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+	</ClCompile>
+	<ResourceCompile>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <Culture>0x040c</Culture>
+	  <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	</ResourceCompile>
+	<Link>
+	  <ShowProgress>NotSet</ShowProgress>
+	  <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+	  <AdditionalLibraryDirectories>../../Perl510/Lib/Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	  <ModuleDefinitionFile>.\PXPerlWrapDLL.def</ModuleDefinitionFile>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <SubSystem>Windows</SubSystem>
+	  <RandomizedBaseAddress>false</RandomizedBaseAddress>
+	  <DataExecutionPrevention>
+	  </DataExecutionPrevention>
+	  <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+	  <TargetMachine>MachineX86</TargetMachine>
+	</Link>
+	<PostBuildEvent>
+	  <Command>copy "$(TargetPath)" ..\..\..\..\..\DistFiles
+copy "$(TargetDir)$(TargetName).lib" ..\..\..\..\debug
+</Command>
+	</PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="PXPerlWrap.cpp" />
+	<ClCompile Include="PXPerlWrapDLL.cpp" />
+	<ClCompile Include="stdafx.cpp">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="PXPerlWrapDLL.def" />
+	<None Include="res\PXPerlWrapDLL.rc2" />
+	<CustomBuildStep Include="perlsistent_bot.pl">
+	  <FileType>Document</FileType>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</CustomBuildStep>
+	<CustomBuild Include="perlsistent_top.pl">
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	  <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd  ..\src
+%PXPERL%\bin\perl make_perlsistent_header.pl
+</Command>
+	  <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">perlsistent.h;%(Outputs)</Outputs>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</CustomBuild>
+	<None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="perlsistent.h" />
+	<ClInclude Include="PXPerlWrap.h" />
+	<ClInclude Include="PXPerlWrapDLL.h" />
+	<ClInclude Include="Resource.h" />
+	<ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="PXPerlWrapDLL.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
@@ -32,6 +32,8 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -44,10 +46,9 @@
 	<MapFileExtensions>true</MapFileExtensions>
 	<ApplicationRevision>0</ApplicationRevision>
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -70,6 +71,7 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
@@ -92,6 +94,7 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -247,20 +250,28 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AdhocCoProhibAtomicLauncher.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AdhocCoProhibAtomicReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AdhocCoProhibVectorLauncher.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AdhocCoProhibVectorReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AffixRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AffixRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="AnalysisInterlinearRS.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="BasicIPASymbolSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="ConcordanceDlg.cs">
 	  <SubType>Form</SubType>
@@ -278,6 +289,7 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="InflAffixTemplateControl.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="InflAffixTemplateEventArgs.cs">
 	  <SubType>Code</SubType>
@@ -286,8 +298,10 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="InflAffixTemplateSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="InterlinearSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="MasterCatDlgListener.cs">
 	  <SubType>Code</SubType>
@@ -301,13 +315,16 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="MetaRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="MetaRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="MorphologyListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="OneAnalysisSandbox.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="OneAnalysisSandbox.Designer.cs">
 	  <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
@@ -316,6 +333,7 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="PhEnvStrRepresentationSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="MEStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>
@@ -326,8 +344,10 @@
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="RegRuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="RegRuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="RespellerDlg.cs">
 	  <SubType>Form</SubType>
@@ -337,15 +357,19 @@
 	</Compile>
 	<Compile Include="RespellerDlgListener.cs" />
 	<Compile Include="RuleFormulaControl.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="RuleFormulaSlice.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="RuleFormulaView.cs">
+	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="RuleInsertionControl.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="WordformGoDlg.cs">
+	  <SubType>Form</SubType>
 	</Compile>
 	<EmbeddedResource Include="AdhocCoProhibAtomicLauncher.resx">
 	  <DependentUpon>AdhocCoProhibAtomicLauncher.cs</DependentUpon>
@@ -402,7 +426,7 @@
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
-	  <ProductName>.NET Framework Client Profile</ProductName>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

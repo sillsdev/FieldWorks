@@ -90,6 +90,10 @@
 	</target>
 
 	<target name="FwWixCompile" description="Compile the FW WIX sources." depends="TestWixPresent,FwWixPreprocess">
+		<call target="FwWixCompile-nodep"/>
+	</target>
+
+	<target name="FwWixCompile-nodep" description="Directly compile the FW WIX sources.">
 		<echo message="Deleting previous FW WIX compiled objects..."/>
 		<delete failonerror="false">
 			<fileset basedir="${fwroot}/Installer">
@@ -140,6 +144,10 @@
 	</target>
 
 	<target name="BuildFwInstaller" description="Build the FW installer" depends="TestWixPresent,FwWixCompile,BuildFwMergeModules">
+		<call target="LinkFwInstaller"/>
+	</target>
+
+	<target name="BuildFwInstaller-nodep" description="Compile and link the FW installer" depends="FwWixCompile-nodep">
 		<call target="LinkFwInstaller"/>
 	</target>
 

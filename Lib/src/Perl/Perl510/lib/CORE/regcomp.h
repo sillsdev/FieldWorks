@@ -18,6 +18,25 @@ typedef OP OP_4tree;			/* Will be redefined later. */
 /* Be really agressive about optimising patterns with trie sequences? */
 #define PERL_ENABLE_EXTENDED_TRIE_OPTIMISATION 1
 
+/* Use old style unicode mappings for perl and posix character classes
+ *
+ * NOTE: Enabling this essentially breaks character class matching against unicode
+ * strings, so that POSIX char classes match when they shouldn't, and \d matches
+ * way more than 10 characters, and sometimes a charclass and its complement either
+ * both match or neither match.
+ * NOTE: Disabling this will cause various backwards compatibility issues to rear
+ * their head, and tests to fail. However it will make the charclass behaviour
+ * consistant regardless of internal string type, and make character class inversions
+ * consistant. The tests that fail in the regex engine are basically broken tests.
+ *
+ * Personally I think 5.12 should disable this for sure. Its a bit more debatable for
+ * 5.10, so for now im leaving it enabled.
+ * XXX: It is now enabled for 5.11/5.12
+ *
+ * -demerphq
+ */
+#define PERL_LEGACY_UNICODE_CHARCLASS_MAPPINGS 1
+
 /* Should the optimiser take positive assertions into account? */
 #define PERL_ENABLE_POSITIVE_ASSERTION_STUDY 0
 
@@ -178,7 +197,7 @@ struct regnode_2 {
 
 
 #define ANYOF_BITMAP_SIZE	32	/* 256 b/(8 b/B) */
-#define ANYOF_CLASSBITMAP_SIZE	 4	/* up to 40 (8*5) named classes */
+#define ANYOF_CLASSBITMAP_SIZE	 4	/* up to 32 (8*4) named classes */
 
 /* also used by trie */
 struct regnode_charclass {
@@ -317,9 +336,9 @@ struct regnode_charclass_class {	/* has [[:blah:]] classes */
 #define ANYOF_NALNUM	 1
 #define ANYOF_SPACE	 2	/* \s */
 #define ANYOF_NSPACE	 3
-#define ANYOF_DIGIT	 4
+#define ANYOF_DIGIT	 4	/* \d */
 #define ANYOF_NDIGIT	 5
-#define ANYOF_ALNUMC	 6	/* isalnum(3), utf8::IsAlnum, ALNUMC */
+#define ANYOF_ALNUMC	 6	/* [[:alnum:]] isalnum(3), utf8::IsAlnum, ALNUMC */
 #define ANYOF_NALNUMC	 7
 #define ANYOF_ALPHA	 8
 #define ANYOF_NALPHA	 9
@@ -528,7 +547,10 @@ struct reg_data {
 #define check_offset_max substrs->data[2].max_offset
 #define check_end_shift substrs->data[2].end_shift
 
-
+#define RX_ANCHORED_SUBSTR(rx)	(((struct regexp *)SvANY(rx))->anchored_substr)
+#define RX_ANCHORED_UTF8(rx)	(((struct regexp *)SvANY(rx))->anchored_utf8)
+#define RX_FLOAT_SUBSTR(rx)	(((struct regexp *)SvANY(rx))->float_substr)
+#define RX_FLOAT_UTF8(rx)	(((struct regexp *)SvANY(rx))->float_utf8)
 
 /* trie related stuff */
 
@@ -707,6 +729,7 @@ re.pm, especially to the documentation.
 #define RE_DEBUG_EXTRA_STATE       0x080000
 #define RE_DEBUG_EXTRA_OPTIMISE    0x100000
 #define RE_DEBUG_EXTRA_BUFFERS     0x400000
+#define RE_DEBUG_EXTRA_GPOS        0x800000
 /* combined */
 #define RE_DEBUG_EXTRA_STACK       0x280000
 
@@ -762,6 +785,8 @@ re.pm, especially to the documentation.
 #define DEBUG_TRIE_r(x) DEBUG_r( \
 	if (re_debug_flags & (RE_DEBUG_COMPILE_TRIE \
 		| RE_DEBUG_EXECUTE_TRIE )) x )
+#define DEBUG_GPOS_r(x) DEBUG_r( \
+	if (re_debug_flags & RE_DEBUG_EXTRA_GPOS) x )
 
 /* initialization */
 /* get_sv() can return NULL during global destruction. */
@@ -813,3 +838,13 @@ re.pm, especially to the documentation.
 #define RE_SV_TAIL(ItEm)
 
 #endif /* DEBUG RELATED DEFINES */
+
+/*
+ * Local variables:
+ * c-indentation-style: bsd
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ *
+ * ex: set ts=8 sts=4 sw=4 noet:
+ */

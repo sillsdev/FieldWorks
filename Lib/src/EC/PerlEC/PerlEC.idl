@@ -8,9 +8,9 @@ import "oaidl.idl";
 import "ocidl.idl";
 
 [
-	uuid(85811A3D-27F5-4141-9A24-50914E87A964),
-	version(3.1),
-	helpstring("Perl IEncConverter implementation 3.1 Type Library")
+	uuid(82391711-76EE-4266-8BC2-66615BAB2437),
+	version(4.0),
+	helpstring("Perl IEncConverter implementation 4.0 Type Library")
 ]
 library PerlECLib
 {
@@ -18,7 +18,7 @@ library PerlECLib
 	importlib("ECInterfaces.tlb");
 
 	[
-		uuid(4830EC45-B4E7-4554-AE3C-F4E87484B18A)
+		uuid(78F6933B-BEB4-4CAF-9E51-45BE4860BA07)
 		, helpstring("Perl Expression IEncConverter implementation class")
 		, hidden
 	]
@@ -28,7 +28,7 @@ library PerlECLib
 	};
 
 	[
-		uuid(C027C2C5-D99C-47d0-A1C4-2CDC851C30EC)
+		uuid(0EED2654-90A6-4CED-84EE-7C0F93B60250)
 		, helpstring("Perl Expression IEncConverterConfig implementation class")
 		, hidden
 	]

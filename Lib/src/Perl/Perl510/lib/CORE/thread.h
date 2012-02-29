@@ -100,7 +100,11 @@
 
 #ifdef __VMS
   /* Default is 1024 on VAX, 8192 otherwise */
-#  define THREAD_CREATE_NEEDS_STACK (32*1024)
+#  ifdef __ia64
+#    define THREAD_CREATE_NEEDS_STACK (48*1024)
+#  else
+#    define THREAD_CREATE_NEEDS_STACK (32*1024)
+#  endif
 #endif
 
 #ifdef I_MACH_CTHREADS
@@ -156,7 +160,7 @@
 #define THREAD_RET_CAST(x)	((any_t) x)
 
 #define DETACH(t)		cthread_detach(t->self)
-#define JOIN(t, avp)		(*(avp) = (AV *)cthread_join(t->self))
+#define JOIN(t, avp)		(*(avp) = MUTABLE_AV(cthread_join(t->self)))
 
 #define PERL_SET_CONTEXT(t)	cthread_set_data(cthread_self(), t)
 #define PERL_GET_CONTEXT	cthread_data(cthread_self())
@@ -408,46 +412,6 @@
 #  define COND_DESTROY(c)
 #endif
 
-#ifndef LOCK_SV_MUTEX
-#  define LOCK_SV_MUTEX
-#endif
-
-#ifndef UNLOCK_SV_MUTEX
-#  define UNLOCK_SV_MUTEX
-#endif
-
-#ifndef LOCK_STRTAB_MUTEX
-#  define LOCK_STRTAB_MUTEX
-#endif
-
-#ifndef UNLOCK_STRTAB_MUTEX
-#  define UNLOCK_STRTAB_MUTEX
-#endif
-
-#ifndef LOCK_CRED_MUTEX
-#  define LOCK_CRED_MUTEX
-#endif
-
-#ifndef UNLOCK_CRED_MUTEX
-#  define UNLOCK_CRED_MUTEX
-#endif
-
-#ifndef LOCK_FDPID_MUTEX
-#  define LOCK_FDPID_MUTEX
-#endif
-
-#ifndef UNLOCK_FDPID_MUTEX
-#  define UNLOCK_FDPID_MUTEX
-#endif
-
-#ifndef LOCK_SV_LOCK_MUTEX
-#  define LOCK_SV_LOCK_MUTEX
-#endif
-
-#ifndef UNLOCK_SV_LOCK_MUTEX
-#  define UNLOCK_SV_LOCK_MUTEX
-#endif
-
 #ifndef LOCK_DOLLARZERO_MUTEX
 #  define LOCK_DOLLARZERO_MUTEX
 #endif
@@ -472,3 +436,13 @@
 #ifndef INIT_THREADS
 #  define INIT_THREADS NOOP
 #endif
+
+/*
+ * Local variables:
+ * c-indentation-style: bsd
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ *
+ * ex: set ts=8 sts=4 sw=4 noet:
+ */

@@ -42,7 +42,7 @@ END
 
 3 TEXTINCLUDE
 BEGIN
-	"1 TYPELIB ""PerlEC5100b.tlb""\r\n"
+	"1 TYPELIB ""PerlEC512.tlb""\r\n"
 	"\0"
 END
 
@@ -183,7 +183,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "PerlEC5100b.tlb"
+1 TYPELIB "PerlEC512.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

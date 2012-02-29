@@ -1,21 +1,21 @@
 HKCR
 {
-	SilEncConverters31.IcuECRegexConfig.40 = s 'ICU Regular Expression Configurator Class'
+	SilEncConverters40.IcuECRegexConfig.40 = s 'ICU Regular Expression Configurator Class'
 	{
-		CLSID = s '{19CD5989-296C-45ce-8856-3600648D3B1C}'
+		CLSID = s '{B0F99E0B-80F7-4C0D-94ED-5D9C7C58C21A}'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {19CD5989-296C-45ce-8856-3600648D3B1C} = s 'ICU Regular Expression Configurator Class'
+		ForceRemove {B0F99E0B-80F7-4C0D-94ED-5D9C7C58C21A} = s 'ICU Regular Expression Configurator Class'
 		{
-			ProgID = s 'SilEncConverters31.IcuECRegexConfig.40'
+			ProgID = s 'SilEncConverters40.IcuECRegexConfig.40'
 			ForceRemove 'Programmable'
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'
 			}
 			val AppID = s '%APPID%'
-			TypeLib = s '{6E560CF3-4FCB-4f1f-B686-273F5999F855}'
+			TypeLib = s '{6748E0F4-4B1B-4AF2-81F5-F0DF0E175C8C}'
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CIcuRegexEncConverter
 LPCTSTR clpszIcuRegexImplType   = _T("ICU.regex");
-LPCTSTR clpszIcuRegexProgId     = _T("SilEncConverters31.IcuECRegex.40");
+LPCTSTR clpszIcuRegexProgId     = _T("SilEncConverters40.IcuECRegex.40");
 
 CIcuRegexEncConverter::CIcuRegexEncConverter()
   : CEncConverter(clpszIcuRegexProgId, clpszIcuRegexImplType)  // from IcuRegex.rgs)

@@ -33,6 +33,25 @@ namespace XCore
 	{
 	}
 
+	/// <summary>
+	/// A comparer for the tuples used - the default comparer for tuples requires
+	/// all items to implement IComparable.
+	/// </summary>
+	internal class TupleComparer : IComparer<Tuple<int, IxCoreColleague>>
+	{
+		#region IComparer<Tuple<int,IxCoreColleague>> Members
+
+		public int Compare(Tuple<int, IxCoreColleague> x, Tuple<int, IxCoreColleague> y)
+		{
+			int c = x.Item1 - y.Item1;
+			if (c != 0)
+				return c;
+			return x.Item2.GetHashCode() - y.Item2.GetHashCode();
+		}
+
+		#endregion
+	}
+
 	/// <summary></summary>
 	public sealed class Mediator : Component, IFWDisposable
 	{
@@ -145,7 +164,7 @@ namespace XCore
 		private PropertyTable m_propertyTable;
 		private CommandSet m_commandSet;
 //		private bool m_allowCommandsToExecute;
-		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>();
+		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>(new TupleComparer());
 		private IxCoreColleague m_temporaryColleague;
 		private Dictionary<string, string> m_pathVariables = new Dictionary<string, string>();
 		private Dictionary<Type, Dictionary<string, MethodInfo>> m_TypeMethodInfo = new Dictionary<Type, Dictionary<string, MethodInfo>>();

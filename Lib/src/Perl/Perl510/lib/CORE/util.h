@@ -32,12 +32,18 @@
 	(*(f) == '/'							\
 	 || ((f)[0] && (f)[1] == ':'))		/* drive name */
 #    else	/* NEITHER DOSISH NOR EPOCISH NOR SYMBIANISH */
-#      ifdef MACOS_TRADITIONAL
-#        define PERL_FILE_IS_ABSOLUTE(f)	(strchr(f, ':') && *(f) != ':')
-#      else /* !MACOS_TRADITIONAL */
-#        define PERL_FILE_IS_ABSOLUTE(f)	(*(f) == '/')
-#      endif /* MACOS_TRADITIONAL */
+#      define PERL_FILE_IS_ABSOLUTE(f)	(*(f) == '/')
 #    endif	/* DOSISH */
 #   endif	/* NETWARE */
 #  endif	/* WIN32 */
 #endif		/* VMS */
+
+/*
+ * Local variables:
+ * c-indentation-style: bsd
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ *
+ * ex: set ts=8 sts=4 sw=4 noet:
+ */

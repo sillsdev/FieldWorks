@@ -5760,3 +5760,4 @@ TomB, 23 Feb 2012. TE-9536, TE-9539: Removed (undocumented) option from Scriptur
 	ability to convert script digits to Arabic numerals for (all) exports, and made the checkbox for this setting
 	in the Toolbox export dialog work correctly without crashing. Paratext exports now always do script digit
 	conversion because otherwise they won't work in Paratext.
+AlistairI, 29 Feb 2012. Integration from WW_VS2010: Upgrade to VS2010.

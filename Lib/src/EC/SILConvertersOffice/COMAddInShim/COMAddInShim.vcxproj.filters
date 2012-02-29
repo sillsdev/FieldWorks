@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{4eb22eb7-3ab3-49b4-a564-e49d01cec386}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{a1f6284b-6de2-4a66-9c2d-97c8467fbc2c}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{02883c00-b36b-409d-97c6-d957477efa1d}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+	<Filter Include="Generated Files">
+	  <UniqueIdentifier>{73ad7472-c3bb-4e45-ad47-b7576d5f7d0f}</UniqueIdentifier>
+	  <SourceControlFiles>False</SourceControlFiles>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="CLRLoader.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="COMAddInShim.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="ConnectProxy.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="ShimConfig.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="stdafx.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="COMAddInShim_i.c">
+	  <Filter>Generated Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="COMAddInShim.def">
+	  <Filter>Source Files</Filter>
+	</None>
+	<None Include="ConnectProxy.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="COMAddInShim.idl">
+	  <Filter>Source Files</Filter>
+	</Midl>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="CLRLoader.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="ConnectProxy.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Resource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="ShimConfig.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="stdafx.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="COMAddInShim.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+</Project>
