@@ -105,3 +105,4 @@ JohnT, March 1, 2012. Repaired fault caused by recent VwNotifier changes, which 
 	LT-12689, Reversal Index should be initialized to "Sorted by Form"
 KenZ, 1 Mar 2012. Added new list localizations from Beth for fr, th, km, ne.
 LastufkaM, 1 Mar 2012. LT-12658 XHTML contains large gaps between items.
+JohnT, 1 Mar 2012. LT-12671, Crash adding a component to a lexical entry.

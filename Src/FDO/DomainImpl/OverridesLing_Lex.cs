@@ -7245,6 +7245,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// For correct handling of some virtual properties, we must not allow the type of a LER
+		/// to be changed once it has components.
+		/// (If we need to change this, note that various virtual properties, such as VariantFormEntries,
+		/// will need to update automatically when type changes and components is non-empty. See LT-12671.
+		/// </summary>
+		partial void ValidateRefType(ref int newValue)
+		{
+			if (newValue == RefType)
+				return; // no change, no problem
+			if (ComponentLexemesRS.Count != 0)
+				throw new InvalidOperationException("Must not change EntryType after setting component lexemes");
+		}
+
+		/// <summary>
 		/// The headword of the owning entry.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.String)]
