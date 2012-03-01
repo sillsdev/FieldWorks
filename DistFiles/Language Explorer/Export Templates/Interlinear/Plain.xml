@@ -1,4 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <FxtDocumentDescription dataLabel="FLExText Format" formatLabel="FLEXTEXT" defaultExtension="flextext" filter="FLExText files (*.flextext)|*.flextext|XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="elan">
-Export to the FLExText Interlinear XML format suitable for importing baseline and translations back into FieldWorks.
-</FxtDocumentDescription>
+Export to the FLExText Interlinear XML format suitable for importing baseline and translations back into FieldWorks.  This format is suitable for importing into other programs, such as SayMore and ELAN.
+
+To open this file in some programs, you might need to change the filename extension from *.flextext to *.xml.
+ </FxtDocumentDescription>
