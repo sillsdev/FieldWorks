@@ -98,3 +98,4 @@ TomB, 28 Feb 2012. LT-12800, Integration (TomB): Fixed problem with unwanted ind
 DamienD, 29 Feb 2012. LT-10635: Hermit Crab: does not handle "derivation outside of inflection". Fixed incorrect
 	display of parser analyses in Analysis tab.
 AnnB, March 1, 2012. LT-12797: Enhance description of Export option in Export Interlinear dialog box.
+AnnB, March 1, 2012. LT-12797: Enhance description of Export option in Export Interlinear dialog box take 2.
