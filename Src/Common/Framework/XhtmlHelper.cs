@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".entry {");
 			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Normal", "entry");
-			WriteParaStyleInfoToCss(esi);
+			WriteParaStyleInfoToCss(esi, true);
 			m_writer.WriteLine("    counter-reset: sense;");
 			m_writer.WriteLine("}");
 		}
@@ -1669,6 +1669,11 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi)
 		{
+			WriteParaStyleInfoToCss(esi, false);
+		}
+
+		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent)
+		{
 			string sLeading;
 			string sTrailing;
 			WriteHorizontalPaddingValues(esi, out sLeading, out sTrailing);
@@ -1709,7 +1714,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (esi.HasBorderColor)
 				m_writer.WriteLine("    border-color: rgb({0},{1},{2});",
 					esi.BorderColor.R, esi.BorderColor.G, esi.BorderColor.B);
-			if (esi.HasFirstLineIndent)
+			if (esi.HasFirstLineIndent && hangingIndent)
 			{
 				m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(esi.FirstLineIndent));
 				m_writer.Write("    margin-{0}: ", sLeading);
