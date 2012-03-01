@@ -103,3 +103,4 @@ JohnT, March 1, 2012. Repaired fault caused by recent VwNotifier changes, which 
 	(continuation of fix to LT-11566, Merging Senses results in crash).
 	LT-11564, configuring Component References/Components is a mess
 	LT-12689, Reversal Index should be initialized to "Sorted by Form"
+KenZ, 1 Mar 2012. Added new list localizations from Beth for fr, th, km, ne.
