@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2012-03-01T21:37:38" />
+		<language
+			type="km" />
+	</identity>
+	<characters>
+		<exemplarCharacters>[៌ ៎ ៏ ៑ ័ ៈ ់ ៉ ៊ ៍ ក ខ គ ឃ ង ច ឆ ជ ឈ ញ ដ ឋ ឌ ឍ ណ ត ថ ទ ធ ន ប ផ ព ភ ម យ រ ឫ ឬ ល ឭ ឮ វ ស ហ ឡ អ {អា} ឥ ឦ ឧ {ឧក} ឪ ឩ ឯ ឰ ឱ ឲ ឳ ា ិ ី ឹ ឺ ុ ូ ួ ើ ឿ ៀ េ ែ ៃ ោ ៅ ំ ះ ្]</exemplarCharacters>
+	</characters>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Khm" />
+		<palaso:defaultFontFamily
+			value="DaunPenh" />
+		<palaso:languageName
+			value="Khmer" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:windowsLCID
+			value="1107" />
+	</special>
+</ldml>
