@@ -99,3 +99,7 @@ DamienD, 29 Feb 2012. LT-10635: Hermit Crab: does not handle "derivation outside
 	display of parser analyses in Analysis tab.
 AnnB, March 1, 2012. LT-12797: Enhance description of Export option in Export Interlinear dialog box.
 AnnB, March 1, 2012. LT-12797: Enhance description of Export option in Export Interlinear dialog box take 2.
+JohnT, March 1, 2012. Repaired fault caused by recent VwNotifier changes, which caused a unit test failure.
+	(continuation of fix to LT-11566, Merging Senses results in crash).
+	LT-11564, configuring Component References/Components is a mess
+	LT-12689, Reversal Index should be initialized to "Sorted by Form"

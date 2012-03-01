@@ -24,6 +24,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
+using Palaso.WritingSystems.Collation;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -352,13 +353,9 @@ namespace SIL.FieldWorks.Filters
 			/// <summary></summary>
 			protected string m_propertyName;
 			/// <summary></summary>
-			protected System.Collections.Hashtable m_values;
-			/// <summary></summary>
-			protected ILgCollatingEngine m_lce;
+			protected ICollator m_collater;
 			/// <summary></summary>
 			protected bool m_fUseKeys = false;
-			/// <summary></summary>
-			protected System.Collections.Hashtable m_values2;
 
 			private FdoCache m_cache;
 
@@ -386,9 +383,7 @@ namespace SIL.FieldWorks.Filters
 
 			private void Init()
 			{
-				m_values = new System.Collections.Hashtable();
-				m_values2 = new System.Collections.Hashtable();
-				m_lce = null;
+				m_collater = null;
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -456,15 +451,7 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public void OpenCollatingEngine(string sWs)
 			{
-				if (m_lce == null)
-				{
-					m_lce = LgIcuCollatorClass.Create();
-				}
-				else
-				{
-					m_lce.Close();
-				}
-				m_lce.Open(sWs);
+				m_collater = m_cache.ServiceLocator.WritingSystemManager.Get(sWs).Collator;
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -474,11 +461,6 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public void CloseCollatingEngine()
 			{
-				if (m_lce != null)
-				{
-					m_lce.Close();
-					m_lce = null;
-				}
 			}
 
 			ICmObject GetObjFromItem(object x)
@@ -500,129 +482,28 @@ namespace SIL.FieldWorks.Filters
 			/// </returns>
 			/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
 			/// --------------------------------------------------------------------------------
-			public int Compare(object x,object y)
+			public int Compare(object x, object y)
 			{
-				try
-				{
-					if (x == y)
-						return 0;
-					if (x == null)
-						return -1;
-					if (y == null)
-						return 1;
+				if (x == y)
+					return 0;
+				if (x == null)
+					return -1;
+				if (y == null)
+					return 1;
 
-					// Enhance JohnT: this could be significantly optimized. In particular
-					// we don't need to make an ICmObject of the key if we've already cached
-					// the key for that HVO. But is this comparer used enough to be worth it?
+				// Enhance JohnT: this could be significantly optimized. In particular
+				// we don't need to make an ICmObject of the key if we've already cached
+				// the key for that HVO. But is this comparer used enough to be worth it?
 
-					//	string property = "ShortName";
-					var a = GetObjFromItem(x);
-					var b = GetObjFromItem(y);
+				//	string property = "ShortName";
+				var a = GetObjFromItem(x);
+				var b = GetObjFromItem(y);
 
-					if (m_fUseKeys)		// m_property == "ShortName"
-					{
-						byte[] ka = null;
-						byte[] kb = null;
-						if (m_values.Count == 0)
-							OpenCollatingEngine(a.SortKeyWs);
-						if (m_values.Contains(a.Hvo))
-						{
-							ka = (byte[])m_values[a.Hvo];
-						}
-						else
-						{
-							ka = (byte[])m_lce.get_SortKeyVariant(a.SortKey,
-								LgCollatingOptions.fcoDefault);
-							m_values.Add(a.Hvo, ka);
-						}
-						if (m_values.Contains(b.Hvo))
-						{
-							kb = (byte[])m_values[b.Hvo];
-						}
-						else
-						{
-							kb = (byte[])m_lce.get_SortKeyVariant(b.SortKey,
-								LgCollatingOptions.fcoDefault);
-							m_values.Add(b.Hvo, kb);
-						}
-						// This is what m_lce.CompareVariant(ka,kb,...) would do.
-						// Simulate strcmp on the two NUL-terminated byte strings.
-						// This avoids marshalling back and forth.
-						// JohnT: but apparently the strings are not null-terminated if the input was empty.
-						int nVal = 0;
-						if (ka.Length == 0)
-							nVal = -kb.Length; // zero if equal, neg if b is longer (considered larger)
-						else if (kb.Length == 0)
-							nVal = 1; // ka is longer and considered larger.
-						else
-						{
-							// Normal case, null termination should be present.
-							int ib;
-							for (ib = 0; ka[ib] == kb[ib] && ka[ib] != 0; ++ib)
-							{
-								// skip merrily along until strings differ or end.
-							}
-							nVal = (int)(ka[ib] - kb[ib]);
-						}
-						if (nVal == 0)
-						{
-							// Need to get secondary sort keys.
-							int na;
-							if (m_values2.Contains(a.Hvo))
-							{
-								na = (int)m_values2[a.Hvo];
-							}
-							else
-							{
-								na = a.SortKey2;
-								m_values2.Add(a.Hvo, na);
-							}
-							int nb;
-							if (m_values2.Contains(b.Hvo))
-							{
-								nb = (int)m_values2[b.Hvo];
-							}
-							else
-							{
-								nb = b.SortKey2;
-								m_values2.Add(b.Hvo, nb);
-							}
-							return na - nb;
-						}
-						else
-						{
-							return nVal;
-						}
-					}
-					else // use default C# string comparisons
-					{
-						string sa = null;
-						string sb = null;
-						if (m_values.Contains(a.Hvo))
-						{
-							sa = (string)m_values[a.Hvo];
-						}
-						else
-						{
-							sa = (string)GetProperty(a, m_propertyName);
-							m_values.Add(a.Hvo, sa);
-						}
-						if (m_values.Contains(b.Hvo))
-						{
-							sb = (string)m_values[b.Hvo];
-						}
-						else
-						{
-							sb = (string)GetProperty(b, m_propertyName);
-							m_values.Add(b.Hvo, sb);
-						}
-						return sa.CompareTo(sb);
-					}
-				}
-				catch (Exception)
-				{
-					throw;
-				}
+				if (m_collater == null)
+					OpenCollatingEngine(a.SortKeyWs);
+				if (m_fUseKeys)
+					return m_collater.Compare(a.SortKey, b.SortKey);
+				return m_collater.Compare((string) GetProperty(a, m_propertyName), (string) GetProperty(b, m_propertyName));
 			}
 
 			/// <summary>
@@ -639,46 +520,10 @@ namespace SIL.FieldWorks.Filters
 				FdoCompare that = (FdoCompare)obj;
 				if (this.m_fUseKeys != that.m_fUseKeys)
 					return false;
-				if (this.m_lce != that.m_lce)
+				if (this.m_collater != that.m_collater)
 					return false;
 				if (this.m_propertyName != that.m_propertyName)
 					return false;
-				if (m_values == null)
-				{
-					if (that.m_values != null)
-						return false;
-				}
-				else
-				{
-					if (that.m_values == null)
-						return false;
-					if (this.m_values.Count != that.m_values.Count)
-						return false;
-					IDictionaryEnumerator ie = that.m_values.GetEnumerator();
-					while (ie.MoveNext())
-					{
-						if (!m_values.ContainsKey(ie.Key) || m_values[ie.Key] != ie.Value)
-							return false;
-					}
-				}
-				if (m_values2 == null)
-				{
-					if (that.m_values2 != null)
-						return false;
-				}
-				else
-				{
-					if (that.m_values2 == null)
-						return false;
-					if (this.m_values2.Count != that.m_values2.Count)
-						return false;
-					IDictionaryEnumerator ie = that.m_values2.GetEnumerator();
-					while (ie.MoveNext())
-					{
-						if (!m_values2.ContainsKey(ie.Key) || m_values2[ie.Key] != ie.Value)
-							return false;
-					}
-				}
 				return true;
 			}
 
@@ -691,14 +536,10 @@ namespace SIL.FieldWorks.Filters
 				int hash = GetType().GetHashCode();
 				if (m_fUseKeys)
 					hash *= 3;
-				if (m_lce != null)
-					hash += m_lce.GetHashCode();
+				if (m_collater != null)
+					hash += m_collater.GetHashCode();
 				if (m_propertyName != null)
 					hash *= m_propertyName.GetHashCode();
-				if (m_values != null)
-					hash += m_values.Count * 17;
-				if (m_values2 != null)
-					hash += m_values2.Count * 53;
 				return hash;
 			}
 		}

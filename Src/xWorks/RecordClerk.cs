@@ -571,6 +571,7 @@ namespace SIL.FieldWorks.XWorks
 				if (sorterNode != null)
 				{
 					sorter = PropertyRecordSorter.Create(cache, sorterNode);
+					m_sortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
 				}
 			}
 			// If sorter is null, allow any sorter which may have been installed during

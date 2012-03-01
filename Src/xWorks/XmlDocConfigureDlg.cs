@@ -625,9 +625,9 @@ namespace SIL.FieldWorks.XWorks
 							FixLexRelationTypeList(ltn);
 						if (!String.IsNullOrEmpty(ltn.EntryType))
 							FixEntryTypeList(ltn, ltnParent.LayoutName);
-						if (fMerging)
-							((LayoutTreeNode)ltnParent.Nodes[iNode]).MergedNodes.Add(ltn);
-						else
+						//if (fMerging)
+							//((LayoutTreeNode)ltnParent.Nodes[iNode]).MergedNodes.Add(ltn);
+						//else
 							ltnParent.Nodes.Add(ltn);
 					}
 					else

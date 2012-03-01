@@ -876,7 +876,15 @@ Cleanup:
 		int tag = pnoteNextOuter->Tags()[m_ipropParent];
 		int index = ObjectIndex();
 		int chvo;
-		CheckHr(prootb->GetDataAccess()->get_VecSize(hvoOuter, tag, &chvo));
+		HRESULT hr;
+		IgnoreHr(hr = prootb->GetDataAccess()->get_VecSize(hvoOuter, tag, &chvo));
+		if (hr != S_OK)
+		{
+			// Presumably not a sequence, must(?) be atomic
+			HVO hvo;
+			CheckHr(prootb->GetDataAccess()->get_ObjectProp(hvoOuter, tag, &hvo));
+			chvo = hvo == 0 ? 0 : 1;
+		}
 		if (index >= chvo)
 			return S_OK;
 		return pnoteNextOuter->PropChanged(hvoOuter, tag, index, 1, 1);
