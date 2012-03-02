@@ -793,7 +793,14 @@ Main template
 		<xsl:choose>
 			<xsl:when test="../@ignore">
 				<xsl:element name="Run">
-					 <xsl:value-of select="."/>
+					 <!-- If there is no ws then include the one from the parent -->
+					<xsl:choose>
+						<xsl:when test="../@ws"><xsl:attribute name="ws"><xsl:value-of select="../@ws"/></xsl:attribute></xsl:when>
+						<xsl:when test="../../@ws"><xsl:attribute name="ws"><xsl:value-of select="../../@ws"/></xsl:attribute></xsl:when>
+						<xsl:when test="../../../@ws"><xsl:attribute name="ws"><xsl:value-of select="../../../@ws"/></xsl:attribute></xsl:when>
+						<xsl:otherwise><xsl:attribute name="ws"><xsl:value-of select="../../../../@ws"/></xsl:attribute></xsl:otherwise>
+					</xsl:choose>
+					<xsl:value-of select="."/>
 				 </xsl:element>
 			</xsl:when>
 			<xsl:otherwise>
@@ -821,7 +828,7 @@ Main template
 
 	<xsl:template match="text()" mode="Run">
 		 <xsl:choose>
-			<xsl:when test="string-length(normalize-space(.))='0'">    <!-- Dont put out a run for an empty string -->
+			<xsl:when test="string-length(.)='0'">    <!-- Dont put out a run for an empty string -->
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:element name="Run">
