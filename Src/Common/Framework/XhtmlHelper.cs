@@ -1674,6 +1674,8 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent)
 		{
+			if (esi == null)
+				return; // If the style was not defined in our stylesheet, we can't write anything for it.
 			string sLeading;
 			string sTrailing;
 			WriteHorizontalPaddingValues(esi, out sLeading, out sTrailing);
