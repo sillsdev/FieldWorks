@@ -65,6 +65,8 @@ namespace SILUBS.PhraseTranslationHelper
 		private int m_lastTranslationSet = -1;
 		private bool m_saving = false;
 		private bool m_postponeRefresh;
+		private int m_maximumHeightOfKeyTermsPane;
+		private bool m_loadingBiblicalTermsPane = false;
 		#endregion
 
 		#region Delegates
@@ -74,6 +76,11 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Properties
 		private DataGridViewTextBoxEditingControl TextControl { get; set;}
 		private bool RefreshNeeded { get; set; }
+		internal int MaximumHeightOfKeyTermsPane
+		{
+			get { return m_maximumHeightOfKeyTermsPane; }
+			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -276,6 +283,7 @@ namespace SILUBS.PhraseTranslationHelper
 			GenTemplateSettings = settings.GenTemplateSettings;
 			ReceiveScrRefs = settings.ReceiveScrRefs;
 			ShowAnswersAndComments = settings.ShowAnswersAndComments;
+			MaximumHeightOfKeyTermsPane = settings.MaximumHeightOfKeyTermsPane;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -1332,6 +1340,17 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the Resize event of the m_biblicalTermsPane control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void m_biblicalTermsPane_Resize(object sender, EventArgs e)
+		{
+			if (!m_loadingBiblicalTermsPane)
+				MaximumHeightOfKeyTermsPane = m_biblicalTermsPane.Height;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Handles the KeyDown event of the dataGridUns control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1485,9 +1504,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void LoadKeyTermsPane(int rowIndex)
 		{
+			m_loadingBiblicalTermsPane = true;
 			m_biblicalTermsPane.SuspendLayout();
 			ClearBiblicalTermsPane();
 			int col = 0;
+			int longestListHeight = 0;
 			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
 			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>().Where(ktm => ktm.Renderings.Any()))
 			{
@@ -1510,14 +1531,21 @@ namespace SILUBS.PhraseTranslationHelper
 				}
 				ktRenderCtrl.Dock = DockStyle.Fill;
 				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
+				if (ktRenderCtrl.NaturalHeight > longestListHeight)
+				{
+					longestListHeight = ktRenderCtrl.NaturalHeight;
+					m_biblicalTermsPane.MinimumSize = ktRenderCtrl.MinimumSize;
+				}
 				ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
 				ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
 				col++;
 			}
+			m_biblicalTermsPane.Height = Math.Min(longestListHeight, MaximumHeightOfKeyTermsPane);
 			m_biblicalTermsPane.ColumnCount = col;
 			ResizeKeyTermPaneColumns();
 			m_biblicalTermsPane.Visible = m_biblicalTermsPane.ColumnCount > 0;
 			m_biblicalTermsPane.ResumeLayout();
+			m_loadingBiblicalTermsPane = false;
 		}
 
 		/// ------------------------------------------------------------------------------------

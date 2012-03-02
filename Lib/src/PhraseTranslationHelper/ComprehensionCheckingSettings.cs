@@ -73,6 +73,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>The settings used for initializing the GenerateTempletDlg</summary>
 		[XmlElement("GenTemplateSettings")]
 		public GenerateTemplateSettings GenTemplateSettings { get; set; }
+
+		/// <summary>The maximum height of the key terms pane</summary>
+		[XmlElement("maxHeightOfTermsPane")]
+		public int MaximumHeightOfKeyTermsPane { get; set; }
 		#endregion
 
 		#region Constructors
@@ -83,6 +87,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			ShowToolbar = true;
 			ShowAnswersAndComments = true;
+			MaximumHeightOfKeyTermsPane = 76;
 		}
 
 		public ComprehensionCheckingSettings(string questionsFile) : this()
@@ -102,6 +107,7 @@ namespace SILUBS.PhraseTranslationHelper
 			SendScrRefs = dlg.SendScrRefs;
 			ReceiveScrRefs = dlg.ReceiveScrRefs;
 			ShowAnswersAndComments = dlg.ShowAnswersAndComments;
+			MaximumHeightOfKeyTermsPane = dlg.MaximumHeightOfKeyTermsPane;
 		}
 		#endregion
 

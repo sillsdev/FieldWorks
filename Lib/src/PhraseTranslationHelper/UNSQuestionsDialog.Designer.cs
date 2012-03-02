@@ -55,10 +55,10 @@ namespace SILUBS.PhraseTranslationHelper
 			System.Windows.Forms.ToolStripMenuItem mnuViewDebugInfo;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
 			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -117,6 +117,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lblCommentLabel = new System.Windows.Forms.Label();
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
+			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -154,14 +155,14 @@ namespace SILUBS.PhraseTranslationHelper
 			this.dataGridUns.AllowUserToDeleteRows = false;
 			this.dataGridUns.AllowUserToResizeRows = false;
 			this.dataGridUns.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle21.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle21.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle21.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle21.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle21;
 			this.dataGridUns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dataGridUns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 			this.m_colReference,
@@ -169,26 +170,26 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_colTranslation,
 			this.m_colUserTranslated,
 			this.m_colDebugInfo});
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle23.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle23.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle23.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle23;
 			resources.ApplyResources(this.dataGridUns, "dataGridUns");
 			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle24.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle24.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle24.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle24.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle24.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle24;
 			this.dataGridUns.RowHeadersVisible = false;
 			this.dataGridUns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
 			this.dataGridUns.VirtualMode = true;
@@ -221,8 +222,8 @@ namespace SILUBS.PhraseTranslationHelper
 			// m_colEnglish
 			//
 			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle22;
 			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
 			this.m_colEnglish.Name = "m_colEnglish";
 			this.m_colEnglish.ReadOnly = true;
@@ -597,6 +598,7 @@ namespace SILUBS.PhraseTranslationHelper
 			resources.ApplyResources(this.m_biblicalTermsPane, "m_biblicalTermsPane");
 			this.m_biblicalTermsPane.MinimumSize = new System.Drawing.Size(240, 0);
 			this.m_biblicalTermsPane.Name = "m_biblicalTermsPane";
+			this.m_biblicalTermsPane.Resize += new System.EventHandler(this.m_biblicalTermsPane_Resize);
 			//
 			// m_lblAnswerLabel
 			//
@@ -606,6 +608,7 @@ namespace SILUBS.PhraseTranslationHelper
 			// m_lblAnswers
 			//
 			resources.ApplyResources(this.m_lblAnswers, "m_lblAnswers");
+			this.m_lblAnswers.BackColor = System.Drawing.SystemColors.Control;
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			//
 			// m_lblCommentLabel
@@ -628,10 +631,18 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.m_pnlAnswersAndComments_VisibleChanged);
 			//
+			// m_hSplitter
+			//
+			this.m_hSplitter.Cursor = System.Windows.Forms.Cursors.HSplit;
+			resources.ApplyResources(this.m_hSplitter, "m_hSplitter");
+			this.m_hSplitter.Name = "m_hSplitter";
+			this.m_hSplitter.TabStop = false;
+			//
 			// UNSQuestionsDialog
 			//
 			resources.ApplyResources(this, "$this");
 			this.Controls.Add(this.dataGridUns);
+			this.Controls.Add(this.m_hSplitter);
 			this.Controls.Add(this.m_biblicalTermsPane);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.m_mainMenu);
@@ -713,5 +724,6 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem editToolStripMenuItem;
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
+		private Splitter m_hSplitter;
 	}
 }

@@ -82,6 +82,9 @@ namespace SILUBS.PhraseTranslationHelper
 
 				m_lbRenderings.ItemHeight = Math.Max(Properties.Resources.check_circle.Height,
 					TextRenderer.MeasureText(CreateGraphics(), "Q", value).Height) + 2;
+				MinimumSize = new Size(MinimumSize.Width, m_lbRenderings.Top + m_lbRenderings.ItemHeight +
+					(m_lbRenderings.Height - m_lbRenderings.ClientRectangle.Height) +
+					(Height - ClientRectangle.Height));
 			}
 		}
 		#endregion
@@ -95,6 +98,17 @@ namespace SILUBS.PhraseTranslationHelper
 		public IEnumerable<string> Renderings
 		{
 			get { return Term.Renderings; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the height that the control would need to have to show all the renderings
+		/// without a vertical scroll bar.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public int NaturalHeight
+		{
+			get { return m_lbRenderings.Top + m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight + (Height - ClientRectangle.Height); }
 		}
 
 		/// ------------------------------------------------------------------------------------
