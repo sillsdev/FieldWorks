@@ -104,6 +104,9 @@ namespace SIL.FieldWorks.IText
 			//for each interesting text
 			foreach(var text in textList.InterestingTexts)
 			{
+				//if a text is deleted in Interlinear there could be a text in this list which has invalid data.
+				if (text.Hvo < 0)
+					continue;
 				//for every paragraph in the interesting text
 				for(int index = 0; index < text.ParagraphsOS.Count; ++index)
 				{
