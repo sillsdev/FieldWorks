@@ -109,3 +109,4 @@ JohnT, 1 Mar 2012. LT-12671, Crash adding a component to a lexical entry.
 GordonM, 2 Mar 2012. Fixed at least most of LT-12479 ws for custom list reference field.
 JohnT, 2 Mar 2012. LT-11534, Duplicate IDs in XHTML export
 TomB, 2 Mar 2012. TXL-98: Made it possible to resize the key term renderings pane.
+AnnB, March 2, 2012.  Add languages Thai (th) and Khmer (km) to FieldWorks.
