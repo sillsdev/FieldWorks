@@ -930,6 +930,36 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Get a string showing the type of writing system to use.
+		/// N.B. For use with lists of Custom items.
+		/// </summary>
+		/// <returns></returns>
+		public string GetWsString()
+		{
+			string ws;
+			switch (WsSelector)
+			{
+				case WritingSystemServices.kwsAnal: // fall through; shouldn't happen
+				case WritingSystemServices.kwsAnals:
+					ws = "best analysis";
+					break;
+				case WritingSystemServices.kwsVern: // fall through; shouldn't happen
+				case WritingSystemServices.kwsVerns:
+					ws = "best vernacular";
+					break;
+				case WritingSystemServices.kwsAnalVerns:
+					ws = "best analorvern";
+					break;
+				case WritingSystemServices.kwsVernAnals:
+					ws = "best vernoranal";
+					break;
+				default:
+					throw new Exception("Unknown writing system code found.");
+			}
+			return ws;
+		}
+
+		/// <summary>
 		/// Name or, if missing, abbreviation is the best name for a possibility list to show in a chooser.
 		/// </summary>
 		public override ITsString ChooserNameTS
@@ -1188,6 +1218,62 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public override string ItemTypeName(StringTable strTable)
 		{
 			return strTable.GetString(GetType().Name, "ClassNames");
+		}
+
+		/// <summary>
+		/// Gets an ITsString that represents the shortname of this object.
+		/// </summary>
+		/// <value></value>
+		/// <remarks>
+		/// Subclasses DID override this property,
+		/// because they wanted to show something other than
+		/// the regular ShortName string.
+		/// </remarks>
+		public override ITsString ShortNameTSS
+		{
+			get
+			{
+				var wsString = OwningList.GetWsString();
+				ITsString tss = null;
+				switch (wsString)
+				{
+					case "best vernacular":
+						tss = BestVernacularName();
+						break;
+					case "best analorvern":
+						tss = BestAnalysisOrVernName(m_cache, this);
+						break;
+					case "best vernoranal":
+						tss = BestVernOrAnalysisName();
+						break;
+					default:
+						tss = BestAnalysisName(m_cache, this);
+						break;
+				}
+				return tss;
+			}
+		}
+
+		/// <summary>
+		/// Return the name for the specified CmPossibility (or '???' if it has no name
+		/// or pss is null). Return the best available analysis or vernacular name (in that order).
+		/// </summary>
+		/// <returns></returns>
+		private ITsString BestVernOrAnalysisName()
+		{
+			return BestAlternative(m_cache, this, WritingSystemServices.kwsFirstVernOrAnal,
+								   CmPossibilityTags.kflidName, Strings.ksQuestions);
+		}
+
+		/// <summary>
+		/// Return the name for the specified CmPossibility (or '???' if it has no name
+		/// or pss is null). Return the best available analysis or vernacular name (in that order).
+		/// </summary>
+		/// <returns></returns>
+		private ITsString BestVernacularName()
+		{
+			return BestAlternative(m_cache, this, WritingSystemServices.kwsFirstVern,
+								   CmPossibilityTags.kflidName, Strings.ksQuestions);
 		}
 	}
 	#endregion
@@ -1558,10 +1644,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			return BestAlternative(cache, pss,
 								   WritingSystemServices.kwsFirstAnalOrVern,
-								   (int)CmPossibilityTags.kflidName, defValue);
+								   CmPossibilityTags.kflidName, defValue);
 		}
 
-		private static ITsString BestAlternative(FdoCache cache, ICmPossibility pss, int wsMagic, int flid, string defValue)
+		protected static ITsString BestAlternative(FdoCache cache, ICmPossibility pss, int wsMagic, int flid, string defValue)
 		{
 			ITsString tss = null;
 			if (pss != null)

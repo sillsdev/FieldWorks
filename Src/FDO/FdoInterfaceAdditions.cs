@@ -1504,6 +1504,13 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
+		/// Get a string showing the type of writing system to use.
+		/// N.B. For use with lists of Custom items.
+		/// </summary>
+		/// <returns></returns>
+		string GetWsString();
+
+		/// <summary>
 		///
 		/// </summary>
 		/// <param name="stringTbl"></param>

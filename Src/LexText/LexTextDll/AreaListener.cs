@@ -4,12 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;
-using SIL.FieldWorks.FDO.Application;
-using HvoFlidKey = SIL.FieldWorks.FDO.HvoFlidKey;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -723,7 +720,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var clerk = GetCustomListClerkName(curList);
 			var hierarchy = curList.Depth > 1 ? "true" : "false";
 			var includeAbbr = curList.DisplayOption == (int)PossNameType.kpntName ? false : true;
-			string ws = GetWsString(curList);
+			string ws = curList.GetWsString();
 			var xmlString =
 				"<clerk id=\"" + XmlUtils.MakeSafeXmlAttribute(clerk) + "\">"
 				+ "<recordList owner=\"unowned\" property=\"" + curList.Guid + "\">"
@@ -746,31 +743,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var doc = new XmlDocument();
 			doc.LoadXml(xmlString);
 			return doc.DocumentElement;
-		}
-
-		private static string GetWsString(ICmPossibilityList curList)
-		{
-			string ws;
-			switch (curList.WsSelector)
-			{
-				case WritingSystemServices.kwsAnal: // fall through; shouldn't happen
-				case WritingSystemServices.kwsAnals:
-					ws = "best analysis";
-					break;
-				case WritingSystemServices.kwsVern: // fall through; shouldn't happen
-				case WritingSystemServices.kwsVerns:
-					ws = "best vernacular";
-					break;
-				case WritingSystemServices.kwsAnalVerns:
-					ws = "best analorvern";
-					break;
-				case WritingSystemServices.kwsVernAnals:
-					ws = "best vernoranal";
-					break;
-				default:
-					throw new Exception("Unknown writing system code found.");
-			}
-			return ws;
 		}
 
 		private static XmlNode CreateCustomControlNode(ICmPossibilityList curList)
