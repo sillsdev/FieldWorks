@@ -1117,7 +1117,7 @@
 </value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-	<value>80, 80</value>
+	<value>180, 150</value>
   </data>
   <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
 	<value>3, 3, 3, 3</value>

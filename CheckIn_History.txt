@@ -112,3 +112,5 @@ TomB, 2 Mar 2012. TXL-98: Made it possible to resize the key term renderings pan
 AnnB, March 2, 2012.  Add languages Thai (th) and Khmer (km) to FieldWorks.
 RickM, March 2, 2012 LT-12560 Crash on "statistics" pane after deleting text.
 JohnT, 2 Mar 2012. LT-12580, Spaces lost in SFM dictionary import after in-line character markers
+TomB, 2 Mar 2012. TXL-114: Limited height of answers pane relative to main question grid to prevent crash
+	when shrinking the width of the Transcelerator window.

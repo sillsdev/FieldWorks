@@ -1740,6 +1740,12 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 		#endregion
+
+		private void UNSQuestionsDialog_Resize(object sender, EventArgs e)
+		{
+			dataGridUns.MinimumSize = new Size(dataGridUns.MinimumSize.Width, Height / 2);
+			m_pnlAnswersAndComments.MaximumSize = new Size(dataGridUns.Width, dataGridUns.Height);
+		}
 	}
 	#endregion
 
