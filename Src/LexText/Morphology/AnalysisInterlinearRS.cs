@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using System.ComponentModel;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -252,28 +253,46 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				if (IsEditable)
 				{
-					if (CanSaveAnalysis())
-					{
-						// Collect up the old MSAs, since they need to go away, if they are unused afterwards.
-						var msaSet = new HashSet<IMoMorphSynAnalysis>();
-						m_wfiAnalysis.CollectReferencedMsas(msaSet);
-						m_oneAnalSandbox.UpdateAnalysis(m_wfiAnalysis);
-						foreach (var msa in msaSet)
-						{
-							if (msa != null && msa.CanDelete)
-							{
-								// TODO: Add UOW? Probably use one for all that are to be deleted (collect them into one list).
-								m_fdoCache.MainCacheAccessor.DeleteObj(msa.Hvo);
-							}
-						}
-						//m_fdoCache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
-						Debug.Assert(m_wfiAnalysis.ApprovalStatusIcon == 1, "Analysis must be approved, since it started that way.");
-					}
-
+					SaveChanges();
 					m_oneAnalSandbox.Visible = false;
 					InitSandbox();
 				}
 			}
+		}
+
+		void SaveChanges()
+		{
+			if (IsEditable)
+			{
+				if (CanSaveAnalysis())
+				{
+					// Collect up the old MSAs, since they need to go away, if they are unused afterwards.
+					var msaSet = new HashSet<IMoMorphSynAnalysis>();
+					m_wfiAnalysis.CollectReferencedMsas(msaSet);
+					m_oneAnalSandbox.UpdateAnalysis(m_wfiAnalysis);
+					foreach (var msa in msaSet)
+					{
+						if (msa != null && msa.CanDelete)
+						{
+							// TODO: Add UOW? Probably use one for all that are to be deleted (collect them into one list).
+							m_fdoCache.MainCacheAccessor.DeleteObj(msa.Hvo);
+						}
+					}
+					//m_fdoCache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
+					Debug.Assert(m_wfiAnalysis.ApprovalStatusIcon == 1, "Analysis must be approved, since it started that way.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// This method seems to get called when we are switching to another tool (or area, or slice) AND when the
+		/// program is shutting down. This makes it a good point to save our changes.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnValidating(CancelEventArgs e)
+		{
+			base.OnValidating(e);
+			SaveChanges();
 		}
 
 		private void TurnOnSandbox()

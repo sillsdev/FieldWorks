@@ -4105,22 +4105,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// This method seems to get called when we are switching to another tool (or area) AND when the
-		/// program is shutting down. This makes it a good point to notify the current slice that it is
-		/// no longer current (in case it wants to save something, like the InterlinearSlice).
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnValidating(CancelEventArgs e)
-		{
-			base.OnValidating(e);
-			if (m_currentSlice != null)
-			{
-				m_currentSlice.SetCurrentState(false);
-				m_currentSlice = null;
-			}
-		}
-
-		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
 		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)

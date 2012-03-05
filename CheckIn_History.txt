@@ -119,6 +119,7 @@ TomB, 5 Mar 2012. TXL-115: Made it so that when there are too many terms in a qu
 	display them all at once, a horizontal scroll bar appears, temporarily increasing the height of
 	the key terms pane.
 GordonM, 5 Mar 2012. Finished up LT-12479 with JohnT's help.
-JohnT, 2 Mar 2012. LT-12753, Keyboard not selected properly in focus box
+JohnT, 3 Mar 2012. LT-12753, Keyboard not selected properly in focus box
 GordonM, 5 Mar 2012. LT-12251 Crash deleting custom list
 RickM, 5 Mar 2012. LT-11689 Crash on custom column when Selecting "Greater than 0" in Lexicon edit pane.
+JohnT, 3 Mar 2012. LT-12733, Style selection not working in data entry slices.
