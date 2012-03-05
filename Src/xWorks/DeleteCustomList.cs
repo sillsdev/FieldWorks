@@ -20,7 +20,6 @@ using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -61,9 +60,9 @@ namespace SIL.FieldWorks.XWorks
 		///     any references to those possibilities.
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
-		public void Run(ICmPossibilityList listToDelete)
+		public void Run(ICmPossibilityList curList)
 		{
-			m_listToDelete = listToDelete;
+			m_listToDelete = curList;
 
 			// Make sure list is a CUSTOM list!
 			var owner = m_listToDelete.Owner; // Custom lists are unowned!
@@ -72,6 +71,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Make sure user knows if any possibilities owned by this list are referenced
 			// by anything else!
+			GetCustomFieldsReferencingList(m_listToDelete.Guid);
 			ICmPossibility poss;
 			if (HasPossibilityReferences(out poss) > 0)
 			{
@@ -80,12 +80,13 @@ namespace SIL.FieldWorks.XWorks
 				if (CheckWithUser(name) != DialogResult.Yes)
 					return;
 			}
-			DeleteList(listToDelete);
+			DeleteList(m_listToDelete);
 		}
 
 		private int HasPossibilityReferences(out ICmPossibility poss1)
 		{
-			var refs = m_listToDelete.ReallyReallyAllPossibilities.Where(poss => poss.ReferringObjects.Count > 0);
+			var refs = m_listToDelete.ReallyReallyAllPossibilities.Where(
+				poss => poss.ReferringObjects.Count > 0);
 			poss1 = refs.FirstOrDefault();
 			return refs.Count();
 		}
@@ -93,15 +94,15 @@ namespace SIL.FieldWorks.XWorks
 		private void DeleteList(ICmPossibilityList listToDelete)
 		{
 			// Delete any custom fields that reference this list
-			DeleteCustomFieldsReferencingList(listToDelete.Guid);
+			DeleteCustomFieldsReferencingList();
 			// Delete the Custom list
 			m_ddbf.DeleteObj(listToDelete.Hvo);
 		}
 
-		private void DeleteCustomFieldsReferencingList(Guid listGuid)
+		private void DeleteCustomFieldsReferencingList()
 		{
 			// Get all the custom fields
-			GetCustomFieldsReferencingList(listGuid);
+			//GetCustomFieldsReferencingList(listGuid); now done earlier
 			if (m_customFields.Count == 0)
 				return;
 			foreach (var fd in m_customFields)

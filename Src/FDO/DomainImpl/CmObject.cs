@@ -3436,8 +3436,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return; // can't have refs from objects that aren't fluffed up if it is new.
 			var objrepo = (ICmObjectRepositoryInternal)Services.ObjectRepository;
 			var mdc = Services.MetaDataCache;
-			foreach (int flid in mdc.GetIncomingFields(ClassID, (int)CellarPropertyTypeFilter.AllReference))
-				objrepo.EnsureCompleteIncomingRefsFrom(flid);
+			foreach (var flid in mdc.GetIncomingFields(ClassID, (int)CellarPropertyTypeFilter.AllReference))
+			{
+				try
+				{
+					objrepo.EnsureCompleteIncomingRefsFrom(flid);
+				}
+				catch (FDOInvalidFieldException e)
+				{
+					// This could happen if the (custom) flid was deleted during this session.
+					// Go to the next flid.
+				}
+			}
 		}
 
 		/// <summary>

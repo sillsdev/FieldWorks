@@ -22,7 +22,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -97,6 +96,17 @@ namespace SIL.FieldWorks.XWorks
 				};
 			fd.UpdateCustomField();
 			return fd;
+		}
+
+		private void DeleteCustomField(FieldDescription fd)
+		{
+			// delete custom field that was added to a LexEntry for testing
+			if (fd.IsCustomField && fd.IsInstalled)
+			{
+				fd.MarkForDeletion = true;
+				fd.UpdateCustomField();
+			}
+			FieldDescription.ClearDataAbout();
 		}
 
 		private ILexEntry CreateLexicalEntry(ILexDb lexDb)
@@ -264,6 +274,44 @@ namespace SIL.FieldWorks.XWorks
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
+		/// 'User' responds to dialog with 'Yes'.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void DeleteCustomList_OnePossibilityReferencingDeletedCustomField_Yes()
+		{
+			// Setup
+			const string newPossName = "Test Possibility";
+			var clists = m_listRepo.Count;
+			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
+			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
+			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			m_helper.ExpectedTestResponse = DialogResult.Yes;
+
+			// Create a custom field in LexEntry
+			var fd = CreateCustomField(m_testList.Guid);
+			// Create a lexical entry
+			var lexEntry = CreateLexicalEntry(Cache.LangProject.LexDbOA);
+			// Create a reference to the possibility
+			Cache.DomainDataByFlid.SetObjProp(lexEntry.Hvo, fd.Id, newPoss.Hvo);
+			// Delete the custom field
+			DeleteCustomField(fd);
+			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
+				"Custom Field should have been deleted.");
+
+			// SUT
+			m_helper.Run(m_testList);
+
+			// Verify
+			Assert.AreEqual(clists - 1, m_listRepo.Count,
+				"'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
+				"Name of possibility found is not the one we put in there!");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
 		/// 'User' responds to dialog with 'No'.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
@@ -344,10 +392,6 @@ namespace SIL.FieldWorks.XWorks
 		public DeleteListHelper(FdoCache cache) : base(cache)
 		{
 			PossNameInDlg = "";
-		}
-
-		~DeleteListHelper()
-		{
 		}
 
 		protected override DialogResult CheckWithUser(string name)
