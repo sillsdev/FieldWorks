@@ -3565,6 +3565,26 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// Decide whether to display the Configure menu command for changing browse view column choices.
+		/// </summary>
+		/// <param name="commandObject"> </param>
+		/// <param name="display"> </param>
+		/// <returns></returns>
+		public bool OnDisplayConfigureColumns(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			// Anytime we have a BrowseViewer or one of its subclasses,
+			// we ought to have this menu command available. LT-12752
+			var result = true;
+			display.Enabled = result;
+			display.Visible = result;
+
+			return result;
+		}
+
+		/// <summary>
 		/// Launch dialog for configuring browse view column choices.
 		/// </summary>
 		/// <param name="sender">Command</param>
