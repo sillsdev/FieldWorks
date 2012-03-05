@@ -108,7 +108,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public int NaturalHeight
 		{
-			get { return m_lbRenderings.Top + m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight + (Height - ClientRectangle.Height); }
+			get { return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
+				(Height - m_lbRenderings.ClientRectangle.Height); }
 		}
 
 		/// ------------------------------------------------------------------------------------

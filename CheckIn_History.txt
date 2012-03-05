@@ -115,3 +115,6 @@ JohnT, 2 Mar 2012. LT-12580, Spaces lost in SFM dictionary import after in-line 
 TomB, 2 Mar 2012. TXL-114: Limited height of answers pane relative to main question grid to prevent crash
 	when shrinking the width of the Transcelerator window.
 JohnT, 2 Mar 2012. Part of LT-12401, crash when deleting last text in analysis view.
+TomB, 5 Mar 2012. TXL-115: Made it so that when there are too many terms in a question to be able to
+	display them all at once, a horizontal scroll bar appears, temporarily increasing the height of
+	the key terms pane.

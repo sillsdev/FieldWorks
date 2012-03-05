@@ -74,7 +74,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lblKeyTermColHead.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.m_lblKeyTermColHead.Location = new System.Drawing.Point(0, 0);
 			this.m_lblKeyTermColHead.Name = "m_lblKeyTermColHead";
-			this.m_lblKeyTermColHead.Size = new System.Drawing.Size(148, 20);
+			this.m_lblKeyTermColHead.Size = new System.Drawing.Size(100, 20);
 			this.m_lblKeyTermColHead.TabIndex = 1;
 			this.m_lblKeyTermColHead.Text = "#";
 			this.m_lblKeyTermColHead.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -87,7 +87,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lbRenderings.IntegralHeight = false;
 			this.m_lbRenderings.Location = new System.Drawing.Point(0, 20);
 			this.m_lbRenderings.Name = "m_lbRenderings";
-			this.m_lbRenderings.Size = new System.Drawing.Size(148, 18);
+			this.m_lbRenderings.Size = new System.Drawing.Size(100, 20);
 			this.m_lbRenderings.Sorted = true;
 			this.m_lbRenderings.TabIndex = 2;
 			this.m_lbRenderings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lbRenderings_MouseUp);
@@ -123,7 +123,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.MinimumSize = new System.Drawing.Size(100, 40);
 			this.Name = "TermRenderingCtrl";
-			this.Size = new System.Drawing.Size(148, 38);
+			this.Size = new System.Drawing.Size(100, 40);
 			this.contextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 

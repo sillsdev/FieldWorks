@@ -258,7 +258,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 			InitializeComponent();
 
-			m_biblicalTermsPane.Controls.Clear();
+			ClearBiblicalTermsPane();
 
 			Text = String.Format(Text, projectName);
 			HelpButton = (m_helpDelegate != null);
@@ -1107,6 +1107,20 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the Resize event of the main window.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void UNSQuestionsDialog_Resize(object sender, EventArgs e)
+		{
+			dataGridUns.MinimumSize = new Size(dataGridUns.MinimumSize.Width, Height / 2);
+			m_biblicalTermsPane.SuspendLayout();
+			m_pnlAnswersAndComments.MaximumSize = new Size(dataGridUns.Width, dataGridUns.Height);
+			ResizeKeyTermPaneColumns();
+			m_biblicalTermsPane.ResumeLayout();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Handles the Resize event of the dataGridUns control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1340,6 +1354,19 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the SplitterMoving event of the m_hSplitter control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.Forms.SplitterEventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
+		private void m_hSplitter_SplitterMoving(object sender, SplitterEventArgs e)
+		{
+			if (e.SplitY < dataGridUns.Top + dataGridUns.MinimumSize.Height)
+				e.SplitY = dataGridUns.Top + dataGridUns.MinimumSize.Height;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Handles the Resize event of the m_biblicalTermsPane control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1507,6 +1534,7 @@ namespace SILUBS.PhraseTranslationHelper
 			m_loadingBiblicalTermsPane = true;
 			m_biblicalTermsPane.SuspendLayout();
 			ClearBiblicalTermsPane();
+			m_biblicalTermsPane.Height = MaximumHeightOfKeyTermsPane;
 			int col = 0;
 			int longestListHeight = 0;
 			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
@@ -1532,17 +1560,14 @@ namespace SILUBS.PhraseTranslationHelper
 				ktRenderCtrl.Dock = DockStyle.Fill;
 				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
 				if (ktRenderCtrl.NaturalHeight > longestListHeight)
-				{
 					longestListHeight = ktRenderCtrl.NaturalHeight;
-					m_biblicalTermsPane.MinimumSize = ktRenderCtrl.MinimumSize;
-				}
 				ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
 				ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
 				col++;
 			}
-			m_biblicalTermsPane.Height = Math.Min(longestListHeight, MaximumHeightOfKeyTermsPane);
 			m_biblicalTermsPane.ColumnCount = col;
 			ResizeKeyTermPaneColumns();
+			m_biblicalTermsPane.Height = Math.Min(longestListHeight, MaximumHeightOfKeyTermsPane);
 			m_biblicalTermsPane.Visible = m_biblicalTermsPane.ColumnCount > 0;
 			m_biblicalTermsPane.ResumeLayout();
 			m_loadingBiblicalTermsPane = false;
@@ -1558,12 +1583,18 @@ namespace SILUBS.PhraseTranslationHelper
 			int columnsToFit = m_biblicalTermsPane.ColumnCount;
 			if (columnsToFit == 0)
 				return;
-			int colWidth = m_biblicalTermsPane.ClientSize.Width / columnsToFit;
+			int colWidth = (m_biblicalTermsPane.ClientSize.Width) / columnsToFit;
+			SizeType type = SizeType.Percent;
+			if (colWidth < m_biblicalTermsPane.Controls[0].MinimumSize.Width)
+			{
+				type = SizeType.AutoSize;
+				colWidth = m_biblicalTermsPane.Controls[0].MinimumSize.Width;
+			}
 			m_biblicalTermsPane.ColumnStyles.Clear();
 			for (int iCol = 0; iCol < columnsToFit; iCol++)
 			{
 				m_biblicalTermsPane.ColumnStyles.Add(new ColumnStyle(
-					SizeType.Percent, colWidth));
+					type, colWidth));
 			}
 		}
 
@@ -1740,12 +1771,6 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 		}
 		#endregion
-
-		private void UNSQuestionsDialog_Resize(object sender, EventArgs e)
-		{
-			dataGridUns.MinimumSize = new Size(dataGridUns.MinimumSize.Width, Height / 2);
-			m_pnlAnswersAndComments.MaximumSize = new Size(dataGridUns.Width, dataGridUns.Height);
-		}
 	}
 	#endregion
 
