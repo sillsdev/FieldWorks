@@ -1028,9 +1028,14 @@ namespace SIL.FieldWorks.IText
 			else
 				RootStText = null;
 			// one way or another it's the Text by now.
+			ShowTabView();
+			// I (JohnT) no longer know why we need to update the TC pane (but not any of the others?) even if it
+			// is not the current pane. But it IS essential to do so AFTER updating the current one.
+			// When deleting the last text, the following call can result in a resize call to the current (e.g., analysis)
+			// pane, and if ShowTabView has not already cleared the current pane's knowledge of the deleted text,
+			// we can get a crash (e.g., second stack in LT-12401).
 			if (m_tcPane != null)
 				SetupInterlinearTabControlForStText(m_tcPane);
-			ShowTabView();
 		}
 
 		// If the Clerk's object is an annotation, select the corresponding thing in whatever pane
