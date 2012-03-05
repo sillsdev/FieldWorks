@@ -3635,6 +3635,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+		/// <summary>
+		/// Marker interface which a window (e.g., FocusBoxController) may implement to indicate
+		/// that when focus switches there from a root box, we should NOT restore the default keyboard.
+		/// </summary>
+		public interface ISuppressDefaultKeyboardOnKillFocus
+		{
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the current keyboard status so that we can restore this state.

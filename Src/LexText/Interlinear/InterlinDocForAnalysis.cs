@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.IText
 				// if we edit something that deletes the current wordform in a concordance view.
 				// In that case we don't want to steal the focus.
 				if (ParentForm == Form.ActiveForm)
-					FocusBox.Focus();
+					FocusBox.FocusSandbox();
 			}
 
 			if (fMakeDefaultSelection)

@@ -3155,8 +3155,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			// view in the context of the other one, with bad consequences.
 			// We don't want to do this if we're switching to a different application. Windows
 			// will take care of switching the keyboard.
-			if ((newFocusedControl == null || !(newFocusedControl is IRootSite)) && fIsChildWindow)
+			if ((ShouldRestoreKeyboardSwitchingTo(newFocusedControl)) && fIsChildWindow)
 				ActivateDefaultKeyboard();
+		}
+
+		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl)
+		{
+			if (newFocusedControl is IRootSite)
+				return false;
+			if (newFocusedControl is SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus)
+				return false;
+			return true;
 		}
 
 		/// <summary>
