@@ -118,3 +118,4 @@ JohnT, 2 Mar 2012. Part of LT-12401, crash when deleting last text in analysis v
 TomB, 5 Mar 2012. TXL-115: Made it so that when there are too many terms in a question to be able to
 	display them all at once, a horizontal scroll bar appears, temporarily increasing the height of
 	the key terms pane.
+GordonM, 5 Mar 2012. Finished up LT-12479 with JohnT's help.

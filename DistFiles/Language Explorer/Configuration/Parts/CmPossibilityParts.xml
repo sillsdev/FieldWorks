@@ -97,8 +97,7 @@
 	  </string>
 	</part>
 	<part id="CmPossibility-Jt-Name" type="JtView">
-	  <string field="Name" ws="best analysis">
-	  </string>
+	  <string field="Name" ws="best analorvern" />
 	</part>
 	<part id="CmPossibility-Jt-PossibilityName" type="jtview">
 	  <para>
