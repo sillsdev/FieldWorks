@@ -3946,17 +3946,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					if (owner != null &&
 						owner.ClassID == RnGenericRecTags.kClassId)
-					{
 						return owner.Guid;
+					if (CurrentSlice.Object is IText)
+					{
+						// Text is not already owned by a notebook record. So there's nothing yet to jump to.
+						// If the user is really doing the jump we need to make it now.
+						// Otherwise we just need to return something non-null to indicate the jump
+						// is possible (though this is not currently used).
+						if (forEnableOnly)
+							return CurrentSlice.Object.Guid;
+						((IText) CurrentSlice.Object).MoveToNotebook(true);
+						return CurrentSlice.Object.Owner.Guid;
 					}
-					// Not already owned by a notebook record. So there's nothing yet to jump to.
-					// If the user is really doing the jump we need to make it now.
-					// Otherwise we just need to return something non-null to indicate the jump
-					// is possible (though this is not currently used).
-					if (forEnableOnly)
-						return CurrentSlice.Object.Guid;
-					((IText)CurrentSlice.Object).MoveToNotebook(true);
-					return CurrentSlice.Object.Owner.Guid;
+					// Try TargetId by default
 				}
 				else if (tool == "interlinearEdit")
 				{
