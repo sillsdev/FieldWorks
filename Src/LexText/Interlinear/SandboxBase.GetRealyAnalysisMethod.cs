@@ -225,6 +225,7 @@ namespace SIL.FieldWorks.IText
 								}
 								// Don't have an old gloss, create one.
 								var newGloss = oldAnalysis.Services.GetInstance<IWfiGlossFactory>().Create();
+								oldAnalysis.MeaningsOC.Add(newGloss);
 								CopyGlossesToWfiGloss(newGloss);
 								return newGloss;
 							}
