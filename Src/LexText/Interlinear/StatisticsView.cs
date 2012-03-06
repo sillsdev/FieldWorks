@@ -20,16 +20,15 @@ namespace SIL.FieldWorks.IText
 
 		private string _areaName;
 		private Mediator mediator;
-		private InterlinearTextsRecordClerk clerk;
+		private InterlinearTextsRecordClerk m_clerk;
 
 		public StatisticsView()
 		{
 			InitializeComponent();
 
 			ContextMenu cm = new ContextMenu();
-			MenuItem mi = new MenuItem("Cut");
 
-			mi = new MenuItem("Copy");
+			var mi = new MenuItem("Copy");
 			mi.Click += new EventHandler(mi_Copy);
 			cm.MenuItems.Add(mi);
 
@@ -65,11 +64,13 @@ namespace SIL.FieldWorks.IText
 			this.mediator = mediator; //allows the Cache property to function
 
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
-			clerk = (InterlinearTextsRecordClerk) (RecordClerk.FindClerk(mediator, name) ??
-												   RecordClerkFactory.CreateClerk(mediator, configurationParameters, true));
+			var clerk = RecordClerk.FindClerk(mediator, name);
+			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
+				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, configurationParameters, true) :
+				(InterlinearTextsRecordClerk)clerk;
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).
-			clerk.ActivateUI(true);
+			m_clerk.ActivateUI(true);
 			_areaName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "area", "unknown");
 			RebuildStatisticsTable();
 			//add ourselves so that we can receive messages (related to the text selection currently misnamed AddTexts)
@@ -222,14 +223,14 @@ namespace SIL.FieldWorks.IText
 		public bool OnDisplayAddTexts(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = clerk != null;
+			display.Enabled = m_clerk != null;
 			display.Visible = display.Enabled;
 			return true;
 		}
 
 		public bool OnAddTexts(object args)
 		{
-			bool result = clerk.OnAddTexts(args);
+			bool result = m_clerk.OnAddTexts(args);
 			if(result)
 			{
 				RebuildStatisticsTable();

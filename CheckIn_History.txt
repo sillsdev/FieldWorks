@@ -127,3 +127,4 @@ GordonM, 5 Mar 2012. LT-12752 Reappearance of Tools-Configure-Columns menu item.
 JohnT, 6 Mar 2012. LT-12700, Crash while clicking the Delete button when we are in the Print View Tab in Texts & Words-->Interlinear Texts
 NaylorJ, 6 Mar 2012. Fixed LT-12652. Added the WfiGloss that was created while following the bug steps to an analysis.
 GordonM, 6 Mar 2012. Fixed LT-12817 so links from one DataNotebook record to another work.
+	later: Fixed LT-12781 so Statistics after Concordance doesn't crash.
