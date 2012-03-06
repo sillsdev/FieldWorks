@@ -899,6 +899,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			get
 			{
+				if (!IsValid)
+					return null;
 				bool fExact; // dummy
 				return Segment.FindWagform(GetMyBeginOffsetInPara() - Segment.BeginOffset,
 					GetMyEndOffsetInPara() - Segment.BeginOffset, out fExact);

@@ -129,3 +129,4 @@ NaylorJ, 6 Mar 2012. Fixed LT-12652. Added the WfiGloss that was created while f
 GordonM, 6 Mar 2012. Fixed LT-12817 so links from one DataNotebook record to another work.
 	later: Fixed LT-12781 so Statistics after Concordance doesn't crash.
 NaylorJ, 6 Mar 2012. Fixed LT-11925. Detect and eliminate problematic spurious writing system entries during a ws merge.
+GordonM, 6 Mar 2012. Fixed LT-12657 so clicking on a concordance entry won't crash.
