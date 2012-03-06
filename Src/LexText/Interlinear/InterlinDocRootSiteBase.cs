@@ -317,7 +317,9 @@ namespace SIL.FieldWorks.IText
 				for (; i > 0; i--)
 				{
 					// get the container for whatever is selected at this level.
-					var container = m_objRepo.GetObject(rgvsli[i].hvo);
+					ICmObject container;
+					if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out container))
+						return null; // may fail, e.g., trying to get bookmark for text just deleted.
 
 					seg = container as ISegment;
 					if (seg != null)

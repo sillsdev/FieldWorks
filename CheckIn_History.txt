@@ -122,5 +122,6 @@ GordonM, 5 Mar 2012. Finished up LT-12479 with JohnT's help.
 JohnT, 3 Mar 2012. LT-12753, Keyboard not selected properly in focus box
 GordonM, 5 Mar 2012. LT-12251 Crash deleting custom list
 RickM, 5 Mar 2012. LT-11689 Crash on custom column when Selecting "Greater than 0" in Lexicon edit pane.
-JohnT, 3 Mar 2012. LT-12733, Style selection not working in data entry slices.
+JohnT, 5 Mar 2012. LT-12733, Style selection not working in data entry slices.
 GordonM, 5 Mar 2012. LT-12752 Reappearance of Tools-Configure-Columns menu item.
+JohnT, 6 Mar 2012. LT-12700, Crash while clicking the Delete button when we are in the Print View Tab in Texts & Words-->Interlinear Texts

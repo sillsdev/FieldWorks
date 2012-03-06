@@ -298,9 +298,6 @@ namespace SIL.FieldWorks.IText
 					var info = type.GetMethod("GetUnchartedWordForBookmark");
 					Debug.Assert(info != null);
 					curAnalysis = (AnalysisOccurrence)info.Invoke(m_constChartPane, null);
-					if (curAnalysis == null || !curAnalysis.IsValid)
-						// This result means the Chart doesn't want to save a bookmark
-						return;
 					break;
 				case ktpsTagging:
 					if (m_taggingPane != null)
@@ -324,6 +321,10 @@ namespace SIL.FieldWorks.IText
 					Debug.Fail("Unhandled tab index.");
 					break;
 			}
+			if (curAnalysis == null || !curAnalysis.IsValid)
+				// This result means the Chart doesn't want to save a bookmark,
+				// or that something else went wrong (e.g., we couldn't make a bookmark because we just deleted the text).
+				return;
 
 			if (!fSaved)
 			{
