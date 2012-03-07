@@ -27,6 +27,9 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  7 March 2012 (7000053): Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+	No data migration necessary because default is false (rule/template is Enabled/Active.)
+	See LT-10471 "Allow user ability to turn phonological rules on or off".
   30 January 2012 (7000052): No actual model change but a data migration to copy all linked Morph Forms to their WfiMorphBundle Forms. See LT-12532: Retain the Form of a WfiMorphBundle even when fully analyzed.
   14 January 2012 (7000051): No actual model change. Change Guid id on LangProject to ensure it really is unique between different projects.
   1 December 2011 (7000050): Add Speaker to Segment. (Only the do-nothing DM needed in C#.)
@@ -143,7 +146,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000052" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000053" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -2870,6 +2873,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>AdjacentToLeft and AdjacentToRight: The second (and later) morpheme (or allomorph) is constrained from appearing immediately to the left (right) of the first morpheme (respectively, allomorph) in the same word.</para>
 		  </comment>
 		</basic>
+		<basic num="3" id="Disabled" sig="Boolean">
+		  <comment>
+			<para>Indicates whether the rule is currently active and therefore will be used by the parser (false) or if it is not active (true) and therefore ignored by the parser (but still available for the user to see).</para>
+			<para>The default value is false.</para>
+		  </comment>
+		</basic>
 	  </props>
 	</class>
 	<class num="27" id="MoAffixAllomorph" abstract="false" abbr="aalo" base="MoAffixForm" depth="2">
@@ -3008,6 +3017,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>Changed from ToProductivityRestrictions.</para>
 		  </comment>
 		</rel>
+		<basic num="9" id="Disabled" sig="Boolean">
+		  <comment>
+			<para>Indicates whether the rule is currently active and therefore will be used by the parser (false) or if it is not active (true) and therefore ignored by the parser (but still available for the user to see).</para>
+			<para>The default value is false.</para>
+		  </comment>
+		</basic>
 	  </props>
 	</class>
 	<class num="31" id="MoDerivAffMsa" abstract="false" abbr="damsa" base="MoMorphSynAnalysis" depth="1">
@@ -3276,6 +3291,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>To model this, we need the regular verbal template (including tense) and a template that has all but tense. When the former is applied to a stem, it produces a well-formed word. The latter is not. </para>
 			<para>If we add a boolean to MoInflAffixTemplate that indicates that the template is non-final, then we can have our word grammar reject an analysis that ends with the non-final template (i.e. it does not have the required derivation and inflection). The default value for this boolean would indicate "final". </para>
 			<para>The attribute could be called Final (with a default value of "true").</para>
+		  </comment>
+		</basic>
+		<basic num="9" id="Disabled" sig="Boolean">
+		  <comment>
+			<para>Indicates whether the template is currently active and therefore will be used by the parser (false) or if it is not active (true) and therefore ignored by the parser (but still available for the user to see).</para>
+			<para>The default value is false.</para>
 		  </comment>
 		</basic>
 	  </props>
@@ -4910,6 +4931,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>For regular rules, this is the structural description of the rule (i.e the A in the general formula of A -&gt; B / C _ D). If A is missing, then this is an insertion (epenthetic) rule. For metathesis rules, this is the structural description (i.e. the input) of the rule. Each ordered PhSimpleContext corresponds to a number (the index) that can be referred to in the structural change attribute.</para>
 		  </comment>
 		</owning>
+		<basic num="7" id="Disabled" sig="Boolean">
+		  <comment>
+			<para>Indicates whether the rule is currently active and therefore will be used by the parser (false) or if it is not active (true) and therefore ignored by the parser (but still available for the user to see).</para>
+			<para>The default value is false.</para>
+		  </comment>
+		</basic>
 	  </props>
 	</class>
 	<class num="129" id="PhRegularRule" abstract="false" abbr="phregrule" base="PhSegmentRule" depth="1">

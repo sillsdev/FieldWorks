@@ -5763,3 +5763,5 @@ TomB, 23 Feb 2012. TE-9536, TE-9539: Removed (undocumented) option from Scriptur
 AlistairI, 29 Feb 2012. Integration from WW_VS2010: Upgrade to VS2010.
 KenZ, 29 Feb 2012. JohnT fixed LT-12471 on my machine where it was occurring.
 RandyR, 5 March 2012. Add the offical FLEx Bridge installer and remove the older placeholder installer.
+EricP, 7 March 2012. Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+	(LT-10471 "Allow user ability to turn phonological rules on or off")
