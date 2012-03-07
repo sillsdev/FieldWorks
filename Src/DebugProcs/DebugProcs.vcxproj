@@ -11,11 +11,9 @@
 	</ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-	<ProjectName>FwKernel2008</ProjectName>
-	<ProjectGuid>{D727858D-7B7F-4E42-832C-6E5A97AD8A26}</ProjectGuid>
-	<RootNamespace>FwKernel</RootNamespace>
+	<ProjectGuid>{E76E8661-15FF-4E9D-AA76-66C4669E5164}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..</SccLocalPath>
+	<SccLocalPath>.</SccLocalPath>
 	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
@@ -40,23 +38,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
 	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\Output\Debug\</OutDir>
-	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\obj\Debug\</IntDir>
-	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk cc</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FwKernel.dll</NMakeOutput>
-	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Lib\debug;..\..\Obj\Common;..\..\Output\Common\Raw;..\..\Output\Common;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp ec</NMakeCleanCommandLine>
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DebugProcs.dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
 	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
 	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
 	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
 	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
 	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r cc</NMakeReBuildCommandLine>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
 	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Kernel.exe</NMakeOutput>
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DebugProcs.exe</NMakeOutput>
 	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
 	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
 	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
@@ -66,41 +64,13 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-	<ClCompile Include="ActionHandler.cpp" />
-	<ClCompile Include="DebugReport.cpp" />
-	<ClCompile Include="dlldatax.c" />
-	<ClCompile Include="KernelGlobals.cpp" />
-	<ClCompile Include="TextServ.cpp" />
-	<ClCompile Include="TsMultiStr.cpp" />
-	<ClCompile Include="TsPropsFactory.cpp" />
-	<ClCompile Include="TsStrFactory.cpp" />
-	<ClCompile Include="TsString.cpp" />
-	<ClCompile Include="TsTextProps.cpp" />
+	<ClCompile Include="DebugProcs.cpp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="FwKernel.def" />
-	<None Include="FwKernel.idh" />
-	<None Include="FwKernel.mak" />
-	<None Include="TextServ.idh" />
+	<ClInclude Include="DebugProcs.h" />
   </ItemGroup>
   <ItemGroup>
-	<Midl Include="FwKernelPs.idl" />
-	<Midl Include="FwKernelTlb.idl" />
-  </ItemGroup>
-  <ItemGroup>
-	<ClInclude Include="ActionHandler.h" />
-	<ClInclude Include="DebugReport.h" />
-	<ClInclude Include="KernelGlobals.h" />
-	<ClInclude Include="Main.h" />
-	<ClInclude Include="TextServ.h" />
-	<ClInclude Include="TsMultiStr.h" />
-	<ClInclude Include="TsPropsFactory.h" />
-	<ClInclude Include="TsStrFactory.h" />
-	<ClInclude Include="TsString.h" />
-	<ClInclude Include="TsTextProps.h" />
-  </ItemGroup>
-  <ItemGroup>
-	<ResourceCompile Include="FwKernel.rc" />
+	<None Include="DebugProcs.mak" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

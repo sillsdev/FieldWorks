@@ -5765,3 +5765,4 @@ KenZ, 29 Feb 2012. JohnT fixed LT-12471 on my machine where it was occurring.
 RandyR, 5 March 2012. Add the offical FLEx Bridge installer and remove the older placeholder installer.
 EricP, 7 March 2012. Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
 	(LT-10471 "Allow user ability to turn phonological rules on or off")
+KenZ, 7 Mar 2012. Updated vcproj files to VS2010.
