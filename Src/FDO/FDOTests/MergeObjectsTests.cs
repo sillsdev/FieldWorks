@@ -597,12 +597,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// Tests we can merge an entry with another, where the merged (deleted) entry has as a component
-		/// the entry it is merging with. This is a special case because if we didn't treat it specially,
-		/// the LexEntryRef would be moved to the merged entry, making it a component of itself.
+		/// Tests we can merge an entry with another, where the surviving entry has as a component
+		/// the entry that is being merged (delted). This is a special case because if we didn't treat it specially,
+		/// the reference would be changed to point at the merged entry, making it a component of itself.
 		/// </summary>
 		[Test]
-		public void MergeEntryWithComponent()
+		public void MergeEntryWhereSourceIsComponentOfDest()
 		{
 			// For some reason kick2 is a complex form in which kick1 is a component.
 			var kick1 = MakeEntry("kick");
@@ -616,6 +616,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(leRef2.IsValidObject);
 			Assert.That(leRef2.ComponentLexemesRS[0], Is.EqualTo(kick2));
 			Assert.That(leRef2.PrimaryLexemesRS[0], Is.EqualTo(kick2));
+		}
+
+		/// <summary>
+		/// Tests we can merge an entry with another, where the merged (deleted) entry has as a component
+		/// the entry it is merging with. This is a special case because if we didn't treat it specially,
+		/// the LexEntryRef would be moved to the merged entry, making it a component of itself.
+		/// </summary>
+		[Test]
+		public void MergeEntryWhereDestIsComponentOfSource()
+		{
+			// For some reason kick2 is a complex form in which kick1 is a component.
+			var kick1 = MakeEntry("kick");
+			var kick2 = MakeEntry("kick");
+			var kickBucket = MakeEntry("kick the bucket"); // we also have a proper CF, which should survive
+			var leRef1 = MakeEntryRef(kick2, new ICmObject[] { kick1 }, new ICmObject[] { kick1 }, LexEntryRefTags.krtComplexForm);
+			var leRef2 = MakeEntryRef(kickBucket, new ICmObject[] { kick2 }, new ICmObject[] { kick2 }, LexEntryRefTags.krtComplexForm);
+			kick1.MergeObject(kick2);
+			// An object can't be a component of itself so this LERef should have gone away.
+			Assert.That(leRef1.IsValidObject, Is.False);
+			Assert.That(leRef2.IsValidObject);
+			Assert.That(leRef2.ComponentLexemesRS[0], Is.EqualTo(kick1));
+			Assert.That(leRef2.PrimaryLexemesRS[0], Is.EqualTo(kick1));
 		}
 
 		/// <summary>

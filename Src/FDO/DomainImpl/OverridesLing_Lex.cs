@@ -2935,25 +2935,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// If this has entry refs to the merged entry or any of its senses, clear them out, since an object can't
 			// have itself or its own senses as components. If that results in an empty entryRef, delete it.
-			var badTargets = new HashSet<ICmObject>(le.AllSenses.Cast<ICmObject>());
-			badTargets.Add(le);
-			for (int iEntry = EntryRefsOS.Count - 1; iEntry >= 0; iEntry-- )
-			{
-				var ler = EntryRefsOS[iEntry];
-				for (int j = ler.ComponentLexemesRS.Count - 1; j >= 0; j--)
-				{
-					var target = ler.ComponentLexemesRS[j];
-					if (badTargets.Contains(target))
-					{
-						ler.ComponentLexemesRS.RemoveAt(j);
-						ler.PrimaryLexemesRS.Remove(target);
-					}
-				}
-				if (ler.ComponentLexemesRS.Count == 0)
-					EntryRefsOS.RemoveAt(iEntry);
-			}
+			// Likewise references in the opposite direction must go.
+			RemoveCrossRefsBetween(this, le);
+			RemoveCrossRefsBetween(le, this);
 
-			// If there are LexEntryRefs that reference this entry, we need to fix them explicitly.
+			// If there are LexEntryRefs that reference the entry being merged, we need to fix them explicitly.
 			// Base.MergeObject would make an attempt, but it can't handle the interaction between
 			// ComponentLexemes and PrimaryLexemes. (Removing the old object from component lexemes
 			// removes it from PrimaryLexemes, and then it isn't there as expected to replace, which crashes.
@@ -3035,6 +3021,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// However, it doesn't cost much to check, and the computation of HF can be complex in some cases,
 			// So just in case, adjust things if it somehow has changed.
 			UpdateHomographs(homoForm);
+		}
+
+		/// <summary>
+		/// Remove any LexEntryRef connections from source to dest (or its senses).
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="dest"></param>
+		private void RemoveCrossRefsBetween(ILexEntry source, ILexEntry dest)
+		{
+			var badTargets = new HashSet<ICmObject>(dest.AllSenses.Cast<ICmObject>());
+			badTargets.Add(dest);
+			for (int iEntry = source.EntryRefsOS.Count - 1; iEntry >= 0; iEntry--)
+			{
+				var ler = source.EntryRefsOS[iEntry];
+				for (int j = ler.ComponentLexemesRS.Count - 1; j >= 0; j--)
+				{
+					var target = ler.ComponentLexemesRS[j];
+					if (badTargets.Contains(target))
+					{
+						ler.ComponentLexemesRS.RemoveAt(j);
+						ler.PrimaryLexemesRS.Remove(target);
+					}
+				}
+				if (ler.ComponentLexemesRS.Count == 0)
+					source.EntryRefsOS.RemoveAt(iEntry);
+			}
 		}
 
 		internal void UpdateMorphoSyntaxAnalysesOfLexEntryRefs()
