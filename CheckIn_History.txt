@@ -133,3 +133,4 @@ GordonM, 6 Mar 2012. Fixed LT-12657 so clicking on a concordance entry won't cra
 GordonM, 7 Mar 2012. Fixed LT-12676 so unsupported Cultures don't crash the system.
 JohnT, 7 Mar 2012. LT-12811, Crash on merging entries which have same component
 	Later: found another problem merging entries which reference each other.
+	Later: LT-12803, Crash on configuring columns in the Words Analysis Tool.
