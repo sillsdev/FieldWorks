@@ -222,6 +222,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			var liftPathname = parameters[0].ToString();
 			var mergeStyle = (FlexLiftMerger.MergeStyle)parameters[1];
+			// If we use true while importing changes from repo it will fail to copy any pix/aud files that have changed.
+			var fTrustModTimes = mergeStyle == FlexLiftMerger.MergeStyle.MsKeepOnlyNew ? false : true;
 			if (_progressDlg == null)
 				_progressDlg = progressDialog;
 			progressDialog.Minimum = 0;
@@ -245,7 +247,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						sFilename = liftPathname;
 					}
 					progressDialog.Message = ResourceHelper.GetResourceString("kstidLoadingListInfo");
-					var flexImporter = new FlexLiftMerger(_cache, mergeStyle, true);
+					var flexImporter = new FlexLiftMerger(_cache, mergeStyle, fTrustModTimes);
 					var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 					parser.SetTotalNumberSteps += ParserSetTotalNumberSteps;
 					parser.SetStepsCompleted += ParserSetStepsCompleted;
