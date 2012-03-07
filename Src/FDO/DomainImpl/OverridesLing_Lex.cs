@@ -2933,12 +2933,34 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				le.LexemeFormOA = null;
 			}
 
+			// If this has entry refs to the merged entry or any of its senses, clear them out, since an object can't
+			// have itself or its own senses as components. If that results in an empty entryRef, delete it.
+			var badTargets = new HashSet<ICmObject>(le.AllSenses.Cast<ICmObject>());
+			badTargets.Add(le);
+			for (int iEntry = EntryRefsOS.Count - 1; iEntry >= 0; iEntry-- )
+			{
+				var ler = EntryRefsOS[iEntry];
+				for (int j = ler.ComponentLexemesRS.Count - 1; j >= 0; j--)
+				{
+					var target = ler.ComponentLexemesRS[j];
+					if (badTargets.Contains(target))
+					{
+						ler.ComponentLexemesRS.RemoveAt(j);
+						ler.PrimaryLexemesRS.Remove(target);
+					}
+				}
+				if (ler.ComponentLexemesRS.Count == 0)
+					EntryRefsOS.RemoveAt(iEntry);
+			}
+
 			// If there are LexEntryRefs that reference this entry, we need to fix them explicitly.
 			// Base.MergeObject would make an attempt, but it can't handle the interaction between
 			// ComponentLexemes and PrimaryLexemes. (Removing the old object from component lexemes
 			// removes it from PrimaryLexemes, and then it isn't there as expected to replace, which crashes.
 			// See FWR-3535.)
-			foreach (LexEntryRef leref in (from item in objSrc.ReferringObjects where item is LexEntryRef select item))
+			// Also, it may be that the object we are merging with references this (or one of its senses) as a component.
+			// That would become circular so we have to remove it.
+			foreach (LexEntryRef leref in (from item in objSrc.ReferringObjects where item is LexEntryRef select item).ToArray())
 			{
 				leref.ReplaceComponent(le, this);
 			}

@@ -131,3 +131,4 @@ GordonM, 6 Mar 2012. Fixed LT-12817 so links from one DataNotebook record to ano
 NaylorJ, 6 Mar 2012. Fixed LT-11925. Detect and eliminate problematic spurious writing system entries during a ws merge.
 GordonM, 6 Mar 2012. Fixed LT-12657 so clicking on a concordance entry won't crash.
 GordonM, 7 Mar 2012. Fixed LT-12676 so unsupported Cultures don't crash the system.
+JohnT, 7 Mar 2012. LT-12811, Crash on merging entries which have same component
