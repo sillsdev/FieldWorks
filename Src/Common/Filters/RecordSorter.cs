@@ -21,6 +21,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
@@ -46,6 +47,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class PropertyRecordSorter : RecordSorter
 	{
+		private IComparer m_comp;
 		/// <summary></summary>
 		protected string m_propertyName;
 
@@ -157,7 +159,18 @@ namespace SIL.FieldWorks.Filters
 			DateTime dt1 = DateTime.Now;
 			int tc1 = Environment.TickCount;
 #endif
-			records.Sort(getComparer());
+			m_comp = getComparer();
+			if (m_comp is FdoCompare)
+			{
+				//(m_comp as FdoCompare).Init();
+				(m_comp as FdoCompare).ComparisonNoter = this;
+				m_comparisonsDone = 0;
+				m_percentDone = 0;
+				// Make sure at least 1 so we don't divide by zero.
+				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
+			}
+
+			records.Sort(m_comp);
 
 #if DEBUG
 			// only do this if the timing switch is info or verbose
@@ -356,6 +369,8 @@ namespace SIL.FieldWorks.Filters
 			protected ICollator m_collater;
 			/// <summary></summary>
 			protected bool m_fUseKeys = false;
+			internal INoteComparision ComparisonNoter { get; set; }
+			private Dictionary<object, string> m_sortKeyCache;
 
 			private FdoCache m_cache;
 
@@ -371,6 +386,7 @@ namespace SIL.FieldWorks.Filters
 				Init();
 				m_propertyName= propertyName;
 				m_fUseKeys = propertyName == "ShortName";
+				m_sortKeyCache = new Dictionary<object, string>();
 			}
 
 			/// <summary>
@@ -484,6 +500,9 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public int Compare(object x, object y)
 			{
+				if (ComparisonNoter != null)
+					ComparisonNoter.ComparisonOccurred(); // for progress reporting.
+
 				if (x == y)
 					return 0;
 				if (x == null)
@@ -491,19 +510,30 @@ namespace SIL.FieldWorks.Filters
 				if (y == null)
 					return 1;
 
-				// Enhance JohnT: this could be significantly optimized. In particular
-				// we don't need to make an ICmObject of the key if we've already cached
-				// the key for that HVO. But is this comparer used enough to be worth it?
+				// One time overhead
+				if (m_collater == null)
+					OpenCollatingEngine((GetObjFromItem(x)).SortKeyWs);
 
 				//	string property = "ShortName";
-				var a = GetObjFromItem(x);
-				var b = GetObjFromItem(y);
+				var a = GetObjFromCacheOrItem(x);
+				var b = GetObjFromCacheOrItem(y);
 
-				if (m_collater == null)
-					OpenCollatingEngine(a.SortKeyWs);
-				if (m_fUseKeys)
-					return m_collater.Compare(a.SortKey, b.SortKey);
-				return m_collater.Compare((string) GetProperty(a, m_propertyName), (string) GetProperty(b, m_propertyName));
+				return m_collater.Compare(a, b);
+			}
+
+			private string GetObjFromCacheOrItem(object item)
+			{
+				var item1 = (ManyOnePathSortItem) item;
+				string cachedKey;
+				if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
+				{
+					if (m_fUseKeys)
+						cachedKey = GetObjFromItem(item).SortKey;
+					else
+						cachedKey = (string) GetProperty(GetObjFromItem(item), m_propertyName);
+					m_sortKeyCache.Add(item1, cachedKey);
+				}
+				return cachedKey;
 			}
 
 			/// <summary>
