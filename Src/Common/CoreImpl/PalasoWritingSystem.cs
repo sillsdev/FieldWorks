@@ -342,11 +342,24 @@ namespace SIL.CoreImpl
 						// so just default to en-US.
 						if (MiscUtils.IsUnix)
 							return new CultureInfo("en-US").LCID;
-						InputLanguage defaultLang = MiscUtils.IsUnix ? null : InputLanguage.DefaultInputLanguage;
+						var defaultLang = InputLanguage.DefaultInputLanguage;
 
-						InputLanguage inputLanguage = InputLanguage.InstalledInputLanguages.Cast<InputLanguage>().FirstOrDefault(
-							lang => lang.Culture.IetfLanguageTag == Id)
-													  ?? InputLanguage.DefaultInputLanguage;
+						InputLanguage first = null;
+						foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
+						{
+							try
+							{
+								if (lang.Culture.IetfLanguageTag != Id)
+									continue;
+								first = lang;
+								break;
+							}
+							catch (ArgumentException e)
+							{
+								// Skip unsupported cultures.
+							}
+						}
+						var inputLanguage = first ?? InputLanguage.DefaultInputLanguage;
 						return inputLanguage.Culture.LCID;
 					}
 					return m_lcid;
