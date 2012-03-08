@@ -60,6 +60,27 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 			}
 		}
 
+		internal static System.Drawing.Bitmap _1321382935_plus {
+			get {
+				object obj = ResourceManager.GetObject("_1321382935_plus", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap _1321385905_dialog_close {
+			get {
+				object obj = ResourceManager.GetObject("_1321385905_dialog_close", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap _1330980033_search_button {
+			get {
+				object obj = ResourceManager.GetObject("_1330980033_search_button", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
 		internal static System.Drawing.Bitmap check_circle {
 			get {
 				object obj = ResourceManager.GetObject("check_circle", resourceCulture);

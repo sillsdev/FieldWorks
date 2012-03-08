@@ -9,6 +9,14 @@
 #endregion
 //
 // File: TermRenderingCtrl.cs
+//
+// Some icons used in this dialog box were downloaded from http://www.iconfinder.com
+// The Add Rendering icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons
+// License: http://creativecommons.org/licenses/by/3.0/
+// The Delete Rendering icon was developed by Rodolphe and is covered by the GNU General Public
+// License: http://www.gnu.org/copyleft/gpl.html
+// The Find icon was developed by Liam McKay and is free for commercial use:
+// http://www.woothemes.com/2009/09/woofunction-178-amazing-web-design-icons/
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -31,6 +39,9 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly KeyTermMatch m_term;
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<bool> m_selectKeyboard;
+		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTerm;
+
+		internal static string s_AppName;
 		#endregion
 
 		#region Events and Delegates
@@ -46,17 +57,21 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTermMatch term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard)
+			Action<bool> selectKeyboard, Action<IEnumerable<IKeyTerm>> lookupTerm)
 		{
 			InitializeComponent();
 
 			DoubleBuffered = true;
 			m_term = term;
 			m_selectKeyboard = selectKeyboard;
+			m_lookupTerm = lookupTerm;
 			m_lblKeyTermColHead.Text = term.Term;
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			m_lbRenderings.Items.AddRange(term.Renderings.Distinct().ToArray());
 			term.BestRenderingChanged += term_BestRenderingChanged;
+
+			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
 		}
 		#endregion
 
@@ -158,6 +173,16 @@ namespace SILUBS.PhraseTranslationHelper
 			m_lbRenderings.Invalidate();
 			if (BestRenderingsChanged != null)
 				BestRenderingsChanged();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuSetAsDefault control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void LookUpTermInHostApplicaton(object sender, EventArgs e)
+		{
+			m_lookupTerm(m_term.AllTerms);
 		}
 
 		/// ------------------------------------------------------------------------------------

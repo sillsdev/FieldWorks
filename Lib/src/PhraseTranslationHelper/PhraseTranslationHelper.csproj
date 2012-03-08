@@ -206,6 +206,15 @@
   <ItemGroup>
 	<None Include="Properties\Paste.bmp" />
   </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1321385905_dialog-close.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1321382935_plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1330980033_search_button.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

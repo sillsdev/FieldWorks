@@ -137,3 +137,5 @@ JohnT, 7 Mar 2012. LT-12811, Crash on merging entries which have same component
 KenZ, 7 Mar 2012. Fixed LT-12773 ensuring picture/audio copies on Send/Receive from changed repo.
 	Also added CopyLiftBridge target, called from remakew to restore LiftBridge files when present.
 GordonM, 7 Mar 2012. Optimized Categorized Entry initial sort.
+TomB 8 mAR 2012. TXL-20: Added capability for Transcelarator to request other TE to display a particular key term.
+	TE-9541: Made TE re-select previously selected key term when TE restarts.

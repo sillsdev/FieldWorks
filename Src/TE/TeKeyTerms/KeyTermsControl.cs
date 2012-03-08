@@ -15,6 +15,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.RootSites;
@@ -299,8 +300,16 @@ namespace SIL.FieldWorks.TE
 				if (tree == null)
 					return;
 
-				int hvo = (int)key.GetValue("SelectedKeyTermHvo", -1);
-				TreeNode node = tree.FindNodeWithHvo(hvo);
+				Guid guid = Guid.Empty;
+				try
+				{
+					guid = new Guid((string)key.GetValue("SelectedKeyTerm", string.Empty));
+
+				}
+				catch
+				{
+				}
+				TreeNode node = tree.FindNode(guid);
 				if (node != null)
 					tree.SelectedNode = node;
 			}
@@ -317,9 +326,9 @@ namespace SIL.FieldWorks.TE
 		{
 			KeyTermsTree tree = MainPanelContent as KeyTermsTree;
 			if (tree != null && tree.SelectedNode != null && tree.SelectedNode.Tag != null &&
-				tree.SelectedNode.Tag.GetType() == typeof(int))
+				tree.SelectedNode.Tag is IChkTerm)
 			{
-				key.SetValue("SelectedKeyTermHvo", (int)tree.SelectedNode.Tag);
+				key.SetValue("SelectedKeyTerm", ((IChkTerm)tree.SelectedNode.Tag).Guid);
 			}
 			base.OnSaveSettings(key);
 		}

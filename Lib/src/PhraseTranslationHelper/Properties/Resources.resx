@@ -217,4 +217,13 @@
   <data name="Paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
 	<value>Paste.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="_1321382935_plus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>1321382935_plus.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1321385905_dialog_close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>1321385905_dialog-close.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1330980033_search_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>1330980033_search_button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

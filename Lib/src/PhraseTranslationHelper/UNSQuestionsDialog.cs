@@ -40,6 +40,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly string m_vernIcuLocale;
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action m_helpDelegate;
+		private readonly Action<IEnumerable<IKeyTerm>, int, int> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
 		private readonly string m_translationsFile;
 		private readonly string m_phraseCustomizationsFile;
@@ -241,7 +242,8 @@ namespace SILUBS.PhraseTranslationHelper
 		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string sDefaultLcfFolder,
 			ComprehensionCheckingSettings settings, string appName, ScrReference startRef,
-			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate)
+			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate,
+			Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
 		{
 			if (startRef != ScrReference.Empty && endRef != ScrReference.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
@@ -251,8 +253,10 @@ namespace SILUBS.PhraseTranslationHelper
 			m_vernIcuLocale = VernIcuLocale;
 			m_selectKeyboard = selectKeyboard;
 			m_helpDelegate = helpDelegate;
+			m_lookupTermDelegate = lookupTermDelegate;
 			m_defaultLcfFolder = sDefaultLcfFolder;
 			m_appName = appName;
+			TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
 			m_endRef = endRef;
 
@@ -1453,9 +1457,10 @@ namespace SILUBS.PhraseTranslationHelper
 				Environment.NewLine + copyRight + Environment.NewLine + Environment.NewLine +
 				"Distributable under the terms of either the Common Public License or the GNU Lesser General Public License" + Environment.NewLine +
 				Environment.NewLine + "Some icons were downloaded from http://www.iconfinder.com and are covered by their respective licenses:" +
-				Environment.NewLine + "The Add Rule icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons License: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Copy Rule icon was developed by Momenticons and is covered by this Creative Commons Licence: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Delete Rule icon was developed by Rodolphe and is covered by the GNU General Public License: http://www.gnu.org/copyleft/gpl.html",
+				Environment.NewLine + "The Add icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons License: http://creativecommons.org/licenses/by/3.0/" +
+				Environment.NewLine + "The Copy icon was developed by Momenticons and is covered by this Creative Commons Licence: http://creativecommons.org/licenses/by/3.0/" +
+				Environment.NewLine + "The Delete icon was developed by Rodolphe and is covered by the GNU General Public License: http://www.gnu.org/copyleft/gpl.html" +
+				Environment.NewLine + "The Find icon was developed by Liam McKay and is free for commercial use: http://www.woothemes.com/2009/09/woofunction-178-amazing-web-design-icons/",
 				"Transcelerator");
 		}
 		#endregion
@@ -1543,7 +1548,7 @@ namespace SILUBS.PhraseTranslationHelper
 				int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
 				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
-					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard);
+					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard, LookupTerm);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
 				SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
@@ -1571,6 +1576,11 @@ namespace SILUBS.PhraseTranslationHelper
 			m_biblicalTermsPane.Visible = m_biblicalTermsPane.ColumnCount > 0;
 			m_biblicalTermsPane.ResumeLayout();
 			m_loadingBiblicalTermsPane = false;
+		}
+
+		private void LookupTerm(IEnumerable<IKeyTerm> terms)
+		{
+			m_lookupTermDelegate(terms, CurrentPhrase.StartRef, CurrentPhrase.EndRef);
 		}
 
 		/// ------------------------------------------------------------------------------------
