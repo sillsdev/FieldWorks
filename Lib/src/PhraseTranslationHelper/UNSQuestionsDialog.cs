@@ -223,6 +223,34 @@ namespace SILUBS.PhraseTranslationHelper
 				return m_helper[dataGridUns.CurrentRow.Index];
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether a cell in the Translation column is the current cell.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool InTranslationCell
+		{
+			get
+			{
+				return dataGridUns.CurrentCell != null &&
+				  dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether the grid is in edit mode in a cell in the
+		/// Translation column.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool EditingTranslation
+		{
+			get
+			{
+				return InTranslationCell && !dataGridUns.IsCurrentCellInEditMode;
+			}
+		}
 		#endregion
 
 		#region Constructors
@@ -408,10 +436,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
 		{
 			if (m_selectKeyboard != null)
-			{
-				m_selectKeyboard(dataGridUns.CurrentCell != null &&
-					dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index);
-			}
+				m_selectKeyboard(InTranslationCell);
 		}
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -1342,6 +1367,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (TextControl == null)
 				return;
 			TextControl.KeyDown += txtControl_KeyDown;
+			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1353,7 +1379,10 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
 			if (TextControl != null)
+			{
 				TextControl.KeyDown -= txtControl_KeyDown;
+				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1387,14 +1416,25 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void txtControl_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index &&
-				(e.Modifiers & Keys.Alt) > 0 && e.Shift &&
-				(e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
+			if (EditingTranslation && e.Alt && e.Shift && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
 			{
-				DataGridViewTextBoxEditingControl txt = (DataGridViewTextBoxEditingControl)dataGridUns.EditingControl;
-				e.SuppressKeyPress = txt.MoveSelectedWord(e.KeyCode == Keys.Right);
+				e.SuppressKeyPress = TextControl.MoveSelectedWord(e.KeyCode == Keys.Right);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the PreviewKeyDown event of the txtControl control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void txtControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (!InTranslationCell || e.Shift || e.Control)
+				return;
+			if (e.KeyCode == Keys.Home)
+				TextControl.Select(0, 0);
+			else if (e.KeyCode == Keys.End)
+				TextControl.Select(TextControl.TextLength, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1406,8 +1446,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (txtFilterByPart.Focused)
 				txtFilterByPart.Copy();
-			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex != m_colUserTranslated.Index)
+			else if (EditingTranslation)
 			{
 				string text = dataGridUns.CurrentCell.Value as string;
 				if (text != null)
@@ -1424,8 +1463,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (txtFilterByPart.Focused)
 				txtFilterByPart.Paste();
-			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index)
+			else if (EditingTranslation)
 			{
 				string text = Clipboard.GetText();
 				if (!string.IsNullOrEmpty(text))
