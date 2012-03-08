@@ -981,7 +981,8 @@ namespace SIL.FieldWorks.IText
 					var para = point.Segment.Paragraph;
 					hvoRoot = para.Owner.Hvo;
 				}
-				var text = Cache.ServiceLocator.GetObject(hvoRoot);
+				ICmObject text;
+				Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
 				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
 				{
 					InterAreaBookmark mark;

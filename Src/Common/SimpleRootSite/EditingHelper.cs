@@ -770,6 +770,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					e.KeyChar == (int)VwSpecialChars.kscDelForward ||
 					e.KeyChar == '\r');
 			}
+			// Ignore control characters (most can only be generated using control key, see above; but Escape otherwise gets through...)
+			// One day we might want to allow tab, though I don't think it comes through this method anyway...
+			if (e.KeyChar < 0x20 && e.KeyChar != '\r' && e.KeyChar != '\b')
+				return true;
 
 			return ignoredKey;
 		}
