@@ -1292,17 +1292,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(!m_current.IsTopLevel);
 			StoreNodeData(m_current);	// Ensure duplicate has current data.
 			LayoutTreeNode ltnDup;
-			if (String.IsNullOrEmpty(m_current.Param))
-			{
-				Debug.Assert(m_current.Nodes.Count == 0);
-				ltnDup = m_current.CreateCopy();
-			}
-			else
-			{
-				ltnDup = DuplicateLayoutSubtree();
-				if (ltnDup == null)
-					return;
-			}
+
 			// Generate a unique label to identify this as the n'th duplicate in the list.
 			var rgsLabels = new List<string>();
 			string sBaseLabel = null;
@@ -1323,6 +1313,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				++cDup;
 				sLabel = String.Format("{0} ({1})", sBaseLabel, cDup);
+			}
+			if (String.IsNullOrEmpty(m_current.Param))
+			{
+				Debug.Assert(m_current.Nodes.Count == 0);
+				ltnDup = m_current.CreateCopy();
+			}
+			else
+			{
+				ltnDup = DuplicateLayoutSubtree(cDup);
+				if (ltnDup == null)
+					return;
 			}
 			ltnDup.Label = sLabel;		// sets Text as well.
 			var sDup = ltnDup.DupString;
@@ -1350,7 +1351,7 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < nodes.Count; ++i)
 			{
 				var ltn = (LayoutTreeNode)nodes[i];
-				if (ltn.Configuration == m_current.Configuration &&
+				if (ltn.Configuration["ref"] == m_current.Configuration["ref"] &&
 					ltn.LayoutName == m_current.LayoutName &&
 					ltn.PartName == m_current.PartName)
 				{
@@ -1362,13 +1363,9 @@ namespace SIL.FieldWorks.XWorks
 			return sBaseLabel;
 		}
 
-		private LayoutTreeNode DuplicateLayoutSubtree()
+		private LayoutTreeNode DuplicateLayoutSubtree(int iDup)
 		{
-			var dupKeys = m_layouts.ExistingDuplicateKeys();
-			var iDup = 1;
 			var sDupKey = String.Format("{0:D2}", iDup);
-			while (dupKeys.Contains(sDupKey))
-				sDupKey = String.Format("{0:D2}", ++iDup);
 
 			var suffixCode = String.Format("{0}{1}", Inventory.kcMarkNodeCopy, sDupKey);
 			var sRef = XmlUtils.GetOptionalAttributeValue(m_current.Configuration, "ref");
@@ -1430,6 +1427,14 @@ namespace SIL.FieldWorks.XWorks
 			return info.ItemGuid == m_unspecComplexFormType ? m_noComplexEntryTypeLabel : m_noVariantTypeLabel;
 		}
 
+		/// <summary>
+		/// Processes any part children for duplication purposes, does nothing on empty xmlNodeLists
+		/// </summary>
+		/// <param name="className"></param>
+		/// <param name="xnCaller"></param>
+		/// <param name="xmlNodeList"></param>
+		/// <param name="suffixCode"></param>
+		/// <param name="duplicates"></param>
 		private void ProcessPartChildrenForDuplication(string className, XmlNode xnCaller,
 			XmlNodeList xmlNodeList, string suffixCode, List<XmlNode> duplicates)
 		{
@@ -1558,7 +1563,16 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var sRef = XmlUtils.GetManditoryAttributeValue(partref, "ref");
 						var xnPart = m_parts.GetElement("part", new[] {String.Format("{0}-Jt-{1}", className, sRef)});
-						ProcessPartChildrenForDuplication(className, partref, xnPart.ChildNodes, suffixCode, duplicates);
+						if (xnPart == null)
+						{
+							Debug.Assert(xnPart != null, @"XMLDocConfigure::DuplicateLayout - Failed to process "
+										+ String.Format("{0}-Jt-{1}", className, sRef)
+										+ @" likely an invalid layout.");
+						}
+						else
+						{
+							ProcessPartChildrenForDuplication(className, partref, xnPart.ChildNodes, suffixCode, duplicates);
+						}
 						AdjustAttributeValue(partref, "param", suffixCode);
 					}
 				}
@@ -4435,10 +4449,14 @@ namespace SIL.FieldWorks.XWorks
 					if (m_xnHiddenNode != null)
 					{
 						string sNewName = String.Format("{0}_{1}",
-							XmlUtils.GetManditoryAttributeValue(m_xnParentLayout, "name"), m_sDup);
+														XmlUtils.GetManditoryAttributeValue(m_xnParentLayout, "name"),
+														m_sDup);
+						string sNewParam = String.Format("{0}_{1}",
+														XmlUtils.GetManditoryAttributeValue(m_xnHiddenNode, "param"),
+														m_sDup);
 						m_xnHiddenNode = m_xnHiddenNode.CloneNode(true);
 						UpdateAttribute(m_xnHiddenNode, "dup", m_sDup);
-						UpdateAttribute(m_xnHiddenNode, "param", sNewName);
+						UpdateAttribute(m_xnHiddenNode, "param", sNewParam);
 						m_xnParentLayout = m_xnParentLayout.CloneNode(true);
 						UpdateAttribute(m_xnParentLayout, "name", sNewName);
 						//for (var ipc = 1; ipc < m_hiddenPartCallers.Count; ++ipc)
