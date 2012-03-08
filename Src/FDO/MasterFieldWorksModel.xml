@@ -27,6 +27,9 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  8 March 2012 (7000054): Added "ProcliticSlots" and "EncliticSlots" reference sequence properties to MoInflAffixTemplate.
+	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
+	See LT-9137 "Allow proclitics or enclitics to be constrained by order".
   7 March 2012 (7000053): Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
 	No data migration necessary because default is false (rule/template is Enabled/Active.)
 	See LT-10471 "Allow user ability to turn phonological rules on or off".
@@ -146,7 +149,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000053" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000054" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -2500,6 +2503,11 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>The FromPartsOfSpeech lists the categories (POSes) of words that this clitic may attach to. It can delimit a subset of categories if need be or it can be empty.</para>
 		  </comment>
 		</rel>
+		<rel num="8" id="Slots" card="col" sig="MoInflAffixSlot">
+		  <comment>
+			<para>The Slots property applies only to clitics and refers to the inflectional affix slots in affix templates.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="2" id="LexEntry" abstract="false" abbr="ent" base="CmObject" depth="0" owner="none">
@@ -3299,6 +3307,18 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>The default value is false.</para>
 		  </comment>
 		</basic>
+		<rel num="10" id="ProcliticSlots" card="seq" sig="MoInflAffixSlot">
+		  <comment>
+			<para>Refers to an ordered seq of MoInflAffixSlot, i.e. those slots which correspond to proclitics. The order is from the innermost proclitic out, i.e. right-to-left.</para>
+			<para>The reason for this attribute (and for the EncliticSlots property) is that the Slots attribute is a derivation order, i.e. the order in which the proclitics are applied during a derivation.</para>
+		  </comment>
+		</rel>
+		<rel num="11" id="EncliticSlots" card="seq" sig="MoInflAffixSlot">
+		  <comment>
+			<para>Refers to an ordered seq of MoInflAffixSlot, i.e. those slots which correspond to enclitics. The order is from the innermost enclitic out, i.e. left-to-right.</para>
+			<para>The reason for this attribute (and for the ProcliticSlots property) is that the Slots attribute is a derivation order, i.e. the order in which the enclitics are applied during a derivation.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="38" id="MoInflAffMsa" abstract="false" abbr="amsa" base="MoMorphSynAnalysis" depth="1">

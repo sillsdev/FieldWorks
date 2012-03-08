@@ -5766,3 +5766,6 @@ RandyR, 5 March 2012. Add the offical FLEx Bridge installer and remove the older
 EricP, 7 March 2012. Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
 	(LT-10471 "Allow user ability to turn phonological rules on or off")
 KenZ, 7 Mar 2012. Updated vcproj files to VS2010.
+EricP, 8 Mar 2012. See LT-9137 "Allow proclitics or enclitics to be constrained by order".
+	Model Change (7000054): Added "ProcliticSlots" and "EncliticSlots" reference sequence properties to MoInflAffixTemplate.
+	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
