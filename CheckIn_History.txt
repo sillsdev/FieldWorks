@@ -144,3 +144,4 @@ NaylorJ, 8 Mar 2012. Fixed LT-12842, and perhaps a host of others, it will no lo
 TomB 8 mAR 2012. TXL-35: Removed some user-interaction speed bumps when editing translations by making the Home
 	and End keys work when in edit mode and entire cell contents are selected.
 JohnT, 8 Mar 2012. LT-12692 Inserting a paragraph break as the first-ever edit to Notebook text imported from 6.0 crashes
+JohnW, 8 Mar 2012. Update copyright date.
