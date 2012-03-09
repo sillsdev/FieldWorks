@@ -152,3 +152,4 @@ NaylorJ, 9 Mar 2012. Modified JohnT's fix for LT-12747 to allow for the undersco
 TomB 9 mAR 2012. TXL-18: Made a splash screen and a real Help About dialog and made everything use the nice
 	logo for Transcelerator that Karl Rascher designed.
 NaylorJ, 9 Mar 2012. Fixed LT-12837. Minor entry reference types should now behave as expected.
+LastufkaM, 9 Mar 2012. LT-12651 Referenced Complex Forms ordering only used temporarily in Dictionary view.
