@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -60,6 +59,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var foreignDirtballIds = new HashSet<ICmObjectId>(from obj in m_foreignDirtballs select obj.Id);
 			var ourDirtballIds = new HashSet<ICmObjectId>(from obj in dirtballs select obj.Id);
 			var commonDirtballs = new HashSet<ICmObjectId>(ourDirtballIds.Intersect(foreignDirtballIds));
+
+			// have we both tried to delete the same object?
+			if(goners.Intersect(m_foreignGoners).FirstOrDefault() != null)
+				return false;
+			// have we both modified the same objects in an irreconcilable manner?
 			if (commonDirtballs.FirstOrDefault() != null && !OkToReconcileCommonDirtballs(commonDirtballs))
 				return false; // todo: allow certain conflicts in owning collections.
 			// Have we deleted anything they modified?
