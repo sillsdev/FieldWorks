@@ -149,3 +149,5 @@ NaylorJ, 8 Mar 2012. Fixed some bugs related to network collaboration related to
 JohnT, 9 Mar 2012. LT-12747, Better reporting of invalid spell checking IDs.
 NaylorJ, 9 Mar 2012. Fixed LT-12843. Crashes will no longer occur when trying to convert ghost slices of reversal entries on deleted entries.
 NaylorJ, 9 Mar 2012. Modified JohnT's fix for LT-12747 to allow for the underscore character.
+TomB 9 mAR 2012. TXL-18: Made a splash screen and a real Help About dialog and made everything use the nice
+	logo for Transcelerator that Karl Rascher designed.

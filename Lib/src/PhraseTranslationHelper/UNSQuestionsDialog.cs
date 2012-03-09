@@ -290,6 +290,10 @@ namespace SILUBS.PhraseTranslationHelper
 
 			InitializeComponent();
 
+			TxlSplashScreen splashScreen = new TxlSplashScreen();
+			splashScreen.Show(Screen.FromPoint(settings.Location));
+			splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
+
 			ClearBiblicalTermsPane();
 
 			Text = String.Format(Text, projectName);
@@ -352,11 +356,13 @@ namespace SILUBS.PhraseTranslationHelper
 			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
 			KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
 
-			LoadTranslations();
+			LoadTranslations(splashScreen);
 
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = settings.KeyTermFilterType;
 			SendScrRefs = settings.SendScrRefs;
+
+			splashScreen.Close();
 		}
 		#endregion
 
@@ -1070,7 +1076,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
 				dataGridUns.RowCount = 0;
-				LoadTranslations();
+				LoadTranslations(null);
 				ApplyFilter();
 				if (iSortedCol >= 0)
 					SortByColumn(iSortedCol, sortAscending);
@@ -1478,28 +1484,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuHelpAbout_Click(object sender, EventArgs e)
 		{
-			// Get copyright information from assembly info. By doing this we don't have
-			// to update the splash screen each year.
-			string copyRight;
-			var assembly = Assembly.GetExecutingAssembly();
-			object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-			if (attributes.Length > 0)
-				copyRight = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-			else
+			using (HelpAboutDlg dlg = new HelpAboutDlg())
 			{
-				// if we can't find it in the assembly info, use generic one (which might be out of date)
-				copyRight = "Copyright (c) 2011, SIL International";
+				dlg.ShowDialog();
 			}
-			copyRight = string.Format(Properties.Resources.kstidCopyrightFmt, copyRight.Replace("(C)", "©"));
-			MessageBox.Show("Transcelerator is in alpha. Currently under development by Tom Bogle." +
-				Environment.NewLine + copyRight + Environment.NewLine + Environment.NewLine +
-				"Distributable under the terms of either the Common Public License or the GNU Lesser General Public License" + Environment.NewLine +
-				Environment.NewLine + "Some icons were downloaded from http://www.iconfinder.com and are covered by their respective licenses:" +
-				Environment.NewLine + "The Add icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons License: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Copy icon was developed by Momenticons and is covered by this Creative Commons Licence: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Delete icon was developed by Rodolphe and is covered by the GNU General Public License: http://www.gnu.org/copyleft/gpl.html" +
-				Environment.NewLine + "The Find icon was developed by Liam McKay and is free for commercial use: http://www.woothemes.com/2009/09/woofunction-178-amazing-web-design-icons/",
-				"Transcelerator");
 		}
 		#endregion
 
@@ -1525,8 +1513,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Loads the translations.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LoadTranslations()
+		private void LoadTranslations(TxlSplashScreen splashScreen)
 		{
+			if (splashScreen != null)
+				splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
 			Exception e;
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
 			if (e != null)
@@ -1547,6 +1537,9 @@ namespace SILUBS.PhraseTranslationHelper
 			m_availableBookIds = qp.AvailableBookIds;
 			if (File.Exists(m_translationsFile))
 			{
+				if (splashScreen != null)
+					splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingTranslations;
+
 				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_translationsFile, out e);
 				if (e != null)
 					MessageBox.Show(e.ToString());
