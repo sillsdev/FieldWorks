@@ -151,3 +151,4 @@ NaylorJ, 9 Mar 2012. Fixed LT-12843. Crashes will no longer occur when trying to
 NaylorJ, 9 Mar 2012. Modified JohnT's fix for LT-12747 to allow for the underscore character.
 TomB 9 mAR 2012. TXL-18: Made a splash screen and a real Help About dialog and made everything use the nice
 	logo for Transcelerator that Karl Rascher designed.
+NaylorJ, 9 Mar 2012. Fixed LT-12837. Minor entry reference types should now behave as expected.

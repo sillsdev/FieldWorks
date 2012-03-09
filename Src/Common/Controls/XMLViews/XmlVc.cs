@@ -2857,16 +2857,20 @@ namespace SIL.FieldWorks.Common.Controls
 								switch (entryref.RefType)
 								{
 									case LexEntryRefTags.krtComplexForm:
-										fOk = validTypes.Contains(m_unspecComplexFormType);
 										if (!fOk && entryref.ComplexEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)))
+											type => validTypes.Contains(type.Guid)) ||
+											(entryref.ComplexEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecComplexFormType)))
+										{
 											fOk = true;
+										}
 										break;
 									case LexEntryRefTags.krtVariant:
-										fOk = validTypes.Contains(m_unspecVariantType);
 										if (!fOk && entryref.VariantEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)))
+											type => validTypes.Contains(type.Guid)) ||
+											(entryref.VariantEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecVariantType)))
+										{
 											fOk = true;
+										}
 										break;
 									default:
 										Debug.Fail(String.Format("Unknown LexEntryRef type: {0}", entryref.RefType));
