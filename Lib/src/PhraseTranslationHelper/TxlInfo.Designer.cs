@@ -28,35 +28,34 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Label lblAppVersion;
 			System.Windows.Forms.Label lblProductName;
 			System.Windows.Forms.Label developerInfo;
+			this.m_lblAppVersion = new System.Windows.Forms.Label();
 			this.m_lblCopyright = new System.Windows.Forms.Label();
 			this.m_pnlCredits = new System.Windows.Forms.FlowLayoutPanel();
+			this.label6 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.m_picLogo = new System.Windows.Forms.PictureBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			lblAppVersion = new System.Windows.Forms.Label();
 			lblProductName = new System.Windows.Forms.Label();
 			developerInfo = new System.Windows.Forms.Label();
 			this.m_pnlCredits.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_picLogo)).BeginInit();
 			this.SuspendLayout();
 			//
-			// lblAppVersion
+			// m_lblAppVersion
 			//
-			lblAppVersion.AutoSize = true;
-			lblAppVersion.BackColor = System.Drawing.Color.Transparent;
-			lblAppVersion.Location = new System.Drawing.Point(417, 71);
-			lblAppVersion.Name = "lblAppVersion";
-			lblAppVersion.Size = new System.Drawing.Size(167, 13);
-			lblAppVersion.TabIndex = 19;
-			lblAppVersion.Text = "Pre-alpha (distributed in FW 7.2.3)";
-			lblAppVersion.UseMnemonic = false;
+			this.m_lblAppVersion.BackColor = System.Drawing.Color.Transparent;
+			this.m_lblAppVersion.Location = new System.Drawing.Point(371, 71);
+			this.m_lblAppVersion.Name = "m_lblAppVersion";
+			this.m_lblAppVersion.Size = new System.Drawing.Size(259, 13);
+			this.m_lblAppVersion.TabIndex = 19;
+			this.m_lblAppVersion.Text = "Pre-alpha (distributed in FW {0})";
+			this.m_lblAppVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblAppVersion.UseMnemonic = false;
 			//
 			// lblProductName
 			//
@@ -70,6 +69,15 @@ namespace SILUBS.PhraseTranslationHelper
 			lblProductName.TabIndex = 21;
 			lblProductName.Text = "Transcelerator";
 			lblProductName.UseMnemonic = false;
+			//
+			// developerInfo
+			//
+			developerInfo.Location = new System.Drawing.Point(378, 151);
+			developerInfo.Name = "developerInfo";
+			developerInfo.Size = new System.Drawing.Size(243, 45);
+			developerInfo.TabIndex = 24;
+			developerInfo.Text = "Under development by Tom Bogle. Please send feedback or questions to tom_bogle@si" +
+				"l.org.";
 			//
 			// m_lblCopyright
 			//
@@ -93,6 +101,25 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_pnlCredits.Name = "m_pnlCredits";
 			this.m_pnlCredits.Size = new System.Drawing.Size(243, 149);
 			this.m_pnlCredits.TabIndex = 22;
+			//
+			// label6
+			//
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(3, 0);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(203, 26);
+			this.label6.TabIndex = 5;
+			this.label6.Text = "Thanks to Karl Rascher for designing the Transcelerator logo.";
+			//
+			// label5
+			//
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(3, 26);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(219, 39);
+			this.label5.TabIndex = 4;
+			this.label5.Text = "Some icons were downloaded from http://www.iconfinder.com (covered by their respe" +
+				"ctive licenses).";
 			//
 			// label1
 			//
@@ -148,34 +175,6 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_picLogo.TabIndex = 18;
 			this.m_picLogo.TabStop = false;
 			//
-			// developerInfo
-			//
-			developerInfo.Location = new System.Drawing.Point(378, 151);
-			developerInfo.Name = "developerInfo";
-			developerInfo.Size = new System.Drawing.Size(243, 45);
-			developerInfo.TabIndex = 24;
-			developerInfo.Text = "Under development by Tom Bogle. Please send feedback or questions to tom_bogle@si" +
-				"l.org.";
-			//
-			// label5
-			//
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(3, 26);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(219, 39);
-			this.label5.TabIndex = 4;
-			this.label5.Text = "Some icons were downloaded from http://www.iconfinder.com (covered by their respe" +
-				"ctive licenses).";
-			//
-			// label6
-			//
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(3, 0);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(203, 26);
-			this.label6.TabIndex = 5;
-			this.label6.Text = "Thanks to Karl Rascher for designing the Transcelerator logo.";
-			//
 			// TxlInfo
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,7 +183,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.Controls.Add(developerInfo);
 			this.Controls.Add(this.m_pnlCredits);
 			this.Controls.Add(this.m_picLogo);
-			this.Controls.Add(lblAppVersion);
+			this.Controls.Add(this.m_lblAppVersion);
 			this.Controls.Add(this.m_lblCopyright);
 			this.Controls.Add(lblProductName);
 			this.Name = "TxlInfo";
@@ -208,5 +207,6 @@ namespace SILUBS.PhraseTranslationHelper
 		private System.Windows.Forms.Label m_lblCopyright;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label m_lblAppVersion;
 	}
 }
