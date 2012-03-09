@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (c > 0x7f)
 					return false;
-				if (!Char.IsLetterOrDigit(c))
+				if (!Char.IsLetterOrDigit(c) && c != '_') //underscore seems to be valid according to the RawDictionaryId code
 					return false;
 			}
 			return true;
