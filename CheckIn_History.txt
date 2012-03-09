@@ -146,3 +146,4 @@ TomB 8 mAR 2012. TXL-35: Removed some user-interaction speed bumps when editing 
 JohnT, 8 Mar 2012. LT-12692 Inserting a paragraph break as the first-ever edit to Notebook text imported from 6.0 crashes
 JohnW, 8 Mar 2012. Update copyright date.
 NaylorJ, 8 Mar 2012. Fixed some bugs related to network collaboration related to bug LT-12734
+JohnT, 8 Mar 2012. LT-12747, Better reporting of invalid spell checking IDs.
