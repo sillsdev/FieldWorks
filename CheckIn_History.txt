@@ -147,3 +147,4 @@ JohnT, 8 Mar 2012. LT-12692 Inserting a paragraph break as the first-ever edit t
 JohnW, 8 Mar 2012. Update copyright date.
 NaylorJ, 8 Mar 2012. Fixed some bugs related to network collaboration related to bug LT-12734
 JohnT, 8 Mar 2012. LT-12747, Better reporting of invalid spell checking IDs.
+NaylorJ, 9 Mar 2012. Fixed LT-12843. Crashes will no longer occur when trying to convert ghost slices of reversal entries on deleted entries.
