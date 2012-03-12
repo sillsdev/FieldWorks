@@ -843,8 +843,8 @@
 	<comment>label for one of the tasks in the Utilities dialog</comment>
   </data>
   <data name="ksMergeWordformsAttemptsTo" xml:space="preserve">
-	<value>This utility finds groups of wordforms which have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to correct if any of the old wordforms is correct, otherwise incorrect if any old form is incorrect (otherwise it stays undecided).</value>
-	<comment>Help information for the merge wordform option in Utilies.</comment>
+	<value>This utility finds groups of wordforms that have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to Correct if any of the old wordforms is Correct, otherwise Incorrect if any old form is Incorrect; otherwise it stays Undecided.</value>
+	<comment>Help information for the Merge Wordform option in Utilities.</comment>
   </data>
   <data name="ksUseMergeWordformsWhen" xml:space="preserve">
 	<value>Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text</value>
