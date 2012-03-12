@@ -5771,3 +5771,4 @@ EricP, 8 Mar 2012. See LT-9137 "Allow proclitics or enclitics to be constrained 
 	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
 RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10".
 RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10" (again, but this timew for DM 7000054).
+RandyR, 12 March 2012. Added comment to model file about the need to also change the MDC in FLEx bridge.

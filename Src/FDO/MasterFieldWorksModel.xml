@@ -23,6 +23,12 @@
 	  1. Must be one or more <para> elements, and
 	  2. <para> elements must not have newlines in them. (The build will likely fail, otherwise.)
 
+   WARNING 4: Any update of the model number *requires* a matching update in the FLEx Bridge metadata cache.
+	That MDC is designed to adjsut to the model number of the given data set, starting from DM37.
+	Updates here also need to be made in the other MDC, along with tests for the new model.
+	1. MetadataCache (FLEx_ChorusPlugin.Infrastructure), and
+	2. UpdateMetaDataCacheTests (FLEx_ChorusPluginTests.Integration).
+
 The original version number was: 7000000. Be sure it has the right number of zeros after
 editing it.
 
