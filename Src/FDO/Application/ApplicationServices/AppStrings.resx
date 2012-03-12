@@ -172,7 +172,7 @@
 	<value>Semantic Domain</value>
   </data>
   <data name="ksPartsOfSpeech" xml:space="preserve">
-	<value>Grammatical Categories</value>
+	<value>Parts of Speech</value>
   </data>
   <data name="ksLocation" xml:space="preserve">
 	<value>Location</value>
