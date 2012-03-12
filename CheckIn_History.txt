@@ -153,3 +153,4 @@ TomB 9 mAR 2012. TXL-18: Made a splash screen and a real Help About dialog and m
 	logo for Transcelerator that Karl Rascher designed.
 NaylorJ, 9 Mar 2012. Fixed LT-12837. Minor entry reference types should now behave as expected.
 LastufkaM, 9 Mar 2012. LT-12651 Referenced Complex Forms ordering only used temporarily in Dictionary view.
+KenZ, 12 Mar 2012. Made minimal fix for LT-12706 to use MultiUnicode for new custom string fields from WeSay.

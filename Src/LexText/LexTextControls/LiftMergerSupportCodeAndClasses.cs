@@ -1393,7 +1393,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					sDesc = String.Empty;
 				}
 			}
-			var type = CellarPropertyType.MultiBigString;
+			var type = CellarPropertyType.MultiUnicode;
 			var wsSelector = WritingSystemServices.kwsAnalVerns;
 			var clidDst = 0;
 			if (!String.IsNullOrEmpty(sSpec))
@@ -1407,7 +1407,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				type = GetCustomFieldType(rgsDef);
 				if (type == CellarPropertyType.Nil)
-					type = CellarPropertyType.MultiBigString;
+					type = CellarPropertyType.MultiUnicode;
 				wsSelector = GetCustomFieldWsSelector(rgsDef);
 				clidDst = GetCustomFieldDstCls(rgsDef, out sDstCls);
 				possListGuid = GetCustomFieldPossListGuid(rgsDef);
@@ -1472,7 +1472,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case CellarPropertyType.ReferenceSequence:
 					break;
 				default:
-					type = CellarPropertyType.MultiBigString;
+					type = CellarPropertyType.MultiUnicode;
 					if (wsSelector == 0)
 						wsSelector = WritingSystemServices.kwsAnalVerns;
 					clidDst = -1;
