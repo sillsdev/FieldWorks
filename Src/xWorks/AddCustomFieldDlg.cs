@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -477,26 +478,106 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// If any configured layouts use a deleted custom field, remove all references to the
 		/// deleted custom field.  Otherwise, bad things happen (LT-5781).
+		/// Better also explicitly delete any cached references from vectors that point to this field.
+		/// (LT-12251)
 		/// </summary>
-		private bool UpdateLayoutsForDeletions()
+		private bool UpdateCacheAndLayoutsForDeletions()
 		{
-			bool didUpdate = false;
-			foreach (FDWrapper fdw in m_customFields)
+			var didUpdate = false;
+
+			// Query syntax seemed clearer here somehow.
+			var deletedFieldList = from fdw in m_customFields
+					   where fdw.Fd.IsCustomField && fdw.Fd.MarkForDeletion
+					   select fdw.Fd;
+			foreach (var fd in deletedFieldList)
 			{
-				FieldDescription fd = fdw.Fd;
-				if (fd.IsCustomField && fd.MarkForDeletion)
-				{
-					string className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(fd.Class);
-					List<XmlNode> xnlLayouts = FindAffectedLayouts(fd.Userlabel, fd.Name, className);
-					foreach (XmlNode xnLayout in xnlLayouts)
-					{
-						DeleteMatchingDescendants(xnLayout, fd);
-						m_layouts.PersistOverrideElement(xnLayout);
-						didUpdate = true;
-					}
-				}
+				didUpdate = UpdateLayouts(fd);
+				didUpdate |= UpdateCachedObjects(m_cache, fd);
 			}
 			return didUpdate;
+		}
+
+		public static bool UpdateCachedObjects(FdoCache cache, FieldDescription fd)
+		{
+			// We need to find every instance of a reference from this flid to that custom list and delete it!
+			// I can't figure out any other way of ensuring that EnsureCompleteIncomingRefs doesn't try to refer
+			// to a non-existent flid at some point.
+			var owningListGuid = fd.ListRootId;
+			if (owningListGuid == Guid.Empty)
+				return false;
+
+			// This is only a problem for fields referencing a custom list
+			if (!IsCustomList(cache, owningListGuid))
+				return false;
+			bool fchanged;
+			var type = fd.Type;
+			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var objClass = fd.Class;
+			var flid = fd.Id;
+			var ddbf = cache.DomainDataByFlid;
+
+			switch (type)
+			{
+				case CellarPropertyType.ReferenceSequence: // drop through
+				case CellarPropertyType.ReferenceCollection:
+					// Handle multiple reference fields
+					// Is there a way to do this in LINQ without repeating the get_VecSize call?
+					var tupleList = new List<Tuple<int, int>>();
+					tupleList.AddRange(
+						from obj in objRepo.AllInstances(objClass)
+							where ddbf.get_VecSize(obj.Hvo, flid) > 0
+							select new Tuple<int, int> (obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
+
+					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var partResult in tupleList)
+							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
+					});
+
+					fchanged = tupleList.Any();
+					break;
+				case CellarPropertyType.ReferenceAtomic:
+					// Handle atomic reference fields
+					// If there's a value for (Hvo, flid), nullify it!
+					var objsWithDataThisFlid = new List<int>();
+					objsWithDataThisFlid.AddRange(
+						from obj in objRepo.AllInstances(objClass)
+							where ddbf.get_ObjectProp(obj.Hvo, flid) > 0
+							select obj.Hvo);
+
+					// Delete these references
+					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var hvo in objsWithDataThisFlid)
+							ddbf.SetObjProp(hvo, flid, FdoCache.kNullHvo);
+					});
+
+					fchanged = objsWithDataThisFlid.Any();
+					break;
+				default:
+					fchanged = false;
+					break;
+			}
+			return fchanged;
+		}
+
+		private static bool IsCustomList(FdoCache cache, Guid owningListGuid)
+		{
+			// Custom lists are unowned.
+			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
+			return list.Owner == null;
+		}
+
+		private bool UpdateLayouts(FieldDescription fd)
+		{
+			var className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(fd.Class);
+			var xnlLayouts = FindAffectedLayouts(fd.Userlabel, fd.Name, className);
+			foreach (var xnLayout in xnlLayouts)
+			{
+				DeleteMatchingDescendants(xnLayout, fd);
+				m_layouts.PersistOverrideElement(xnLayout);
+			}
+			return xnlLayouts.Count > 0;
 		}
 
 		private static void DeleteMatchingDescendants(XmlNode xnLayout, FieldDescription fd)
@@ -737,7 +818,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// save any new or modified custom field(s)
 				changed |= AdjustLayoutsForNewLabels();
-				changed |= UpdateLayoutsForDeletions();
+				changed |= UpdateCacheAndLayoutsForDeletions();
 				changed |= SaveCustomFieldsToDB();
 			}
 			if (changed)	// only fire the 'big gun' if something has actually changed

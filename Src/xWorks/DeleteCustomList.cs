@@ -86,9 +86,9 @@ namespace SIL.FieldWorks.XWorks
 		private int HasPossibilityReferences(out ICmPossibility poss1)
 		{
 			var refs = m_listToDelete.ReallyReallyAllPossibilities.Where(
-				poss => poss.ReferringObjects.Count > 0);
+				poss => poss.ReferringObjects.Count > 0).ToList();
 			poss1 = refs.FirstOrDefault();
-			return refs.Count();
+			return refs.Count;
 		}
 
 		private void DeleteList(ICmPossibilityList listToDelete)

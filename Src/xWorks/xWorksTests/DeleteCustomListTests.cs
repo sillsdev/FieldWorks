@@ -81,7 +81,15 @@ namespace SIL.FieldWorks.XWorks
 			m_testList.Depth = 127;
 		}
 
-		private FieldDescription CreateCustomField(Guid listGuid)
+		private ICmCustomItem CreateCustomItemAddToList(ICmPossibilityList owningList, string itemName)
+		{
+			var item = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create();
+			owningList.PossibilitiesOS.Add(item);
+			item.Name.set_String(m_userWs, m_tsFact.MakeString(itemName, m_userWs));
+			return item;
+		}
+
+		private FieldDescription CreateCustomAtomicReferenceFieldInLexEntry(Guid listGuid)
 		{
 			// create new custom field for a LexEntry for testing
 			var fd = new FieldDescription(Cache)
@@ -98,13 +106,51 @@ namespace SIL.FieldWorks.XWorks
 			return fd;
 		}
 
+		private FieldDescription CreateCustomAtomicReferenceFieldToCustomListInLexEntry(Guid listGuid)
+		{
+			// create new custom field for a LexEntry for testing
+			var fd = new FieldDescription(Cache)
+			{
+				Userlabel = "New Test Custom Field",
+				HelpString = string.Empty,
+				Class = LexEntryTags.kClassId,
+				Type = CellarPropertyType.ReferenceAtomic,
+				WsSelector = 0,
+				DstCls = CmPossibilityTags.kClassId,
+				ListRootId = listGuid
+			};
+			fd.UpdateCustomField();
+			return fd;
+		}
+
+		private FieldDescription CreateCustomMultipleRefFieldInLexSense(Guid listGuid)
+		{
+			// create new custom field for a LexSense for testing
+			var fd = new FieldDescription(Cache)
+			{
+				Userlabel = "New Test Custom Field",
+				HelpString = string.Empty,
+				Class = LexSenseTags.kClassId,
+				Type = CellarPropertyType.ReferenceCollection,
+				WsSelector = 0,
+				DstCls = CmPossibilityTags.kClassId,
+				ListRootId = listGuid
+			};
+			fd.UpdateCustomField();
+			return fd;
+		}
+
 		private void DeleteCustomField(FieldDescription fd)
 		{
 			// delete custom field that was added to a LexEntry for testing
 			if (fd.IsCustomField && fd.IsInstalled)
 			{
 				fd.MarkForDeletion = true;
+				AddCustomFieldDlg.UpdateCachedObjects(Cache, fd);
+
+				Cache.ActionHandlerAccessor.BeginUndoTask("UndoUpdateCustomField", "RedoUpdateCustomField");
 				fd.UpdateCustomField();
+				Cache.ActionHandlerAccessor.EndUndoTask();
 			}
 			FieldDescription.ClearDataAbout();
 		}
@@ -112,6 +158,12 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry CreateLexicalEntry(ILexDb lexDb)
 		{
 			return Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(new Guid(), lexDb);
+		}
+
+		private ILexSense CreateLexicalEntryWithSense(ILexDb lexDb)
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(new Guid(), lexDb);
+			return Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(new Guid(), entry);
 		}
 
 		#endregion
@@ -253,7 +305,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.ExpectedTestResponse = DialogResult.Yes;
 
 			// Create a custom field in LexEntry
-			var fd = CreateCustomField(m_testList.Guid);
+			var fd = CreateCustomAtomicReferenceFieldInLexEntry(m_testList.Guid);
 			// Create a lexical entry
 			var lexEntry = CreateLexicalEntry(Cache.LangProject.LexDbOA);
 			// Create a reference to the possibility
@@ -274,6 +326,7 @@ namespace SIL.FieldWorks.XWorks
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
+		/// The Custom field is in Entry and is of type Reference Atomic.
 		/// 'User' responds to dialog with 'Yes'.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
@@ -284,18 +337,22 @@ namespace SIL.FieldWorks.XWorks
 			const string newPossName = "Test Possibility";
 			var clists = m_listRepo.Count;
 			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
-			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			var newPoss = CreateCustomItemAddToList(m_testList, newPossName);
 			m_helper.ExpectedTestResponse = DialogResult.Yes;
 
 			// Create a custom field in LexEntry
-			var fd = CreateCustomField(m_testList.Guid);
+			var fd = CreateCustomAtomicReferenceFieldToCustomListInLexEntry(m_testList.Guid);
 			// Create a lexical entry
 			var lexEntry = CreateLexicalEntry(Cache.LangProject.LexDbOA);
 			// Create a reference to the possibility
 			Cache.DomainDataByFlid.SetObjProp(lexEntry.Hvo, fd.Id, newPoss.Hvo);
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			// The delete custom field has its own task
 			// Delete the custom field
 			DeleteCustomField(fd);
+			// apparently the delete field and delete list need to be separate tasks
+			// in order to make the bug appear (LT-12251)
+			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
 			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
 				"Custom Field should have been deleted.");
 
@@ -305,8 +362,51 @@ namespace SIL.FieldWorks.XWorks
 			// Verify
 			Assert.AreEqual(clists - 1, m_listRepo.Count,
 				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
+				"This test shouldn't go through the dialog.");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
+		/// The Custom field is in Sense and is of type Reference Collection.
+		/// 'User' responds to dialog with 'Yes'.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void DeleteCustomList_OnePossibilityReferencingDeletedCustomField_RefMultipleField_Yes()
+		{
+			// Setup
+			const string newPossName = "Test Possibility";
+			var clists = m_listRepo.Count;
+			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
+			var newPoss = CreateCustomItemAddToList(m_testList, newPossName);
+			//m_helper.ExpectedTestResponse = DialogResult.Yes; // Doesn't go through the dialog
+
+			// Create a custom field in LexSense
+			var fd = CreateCustomMultipleRefFieldInLexSense(m_testList.Guid);
+			// Create a lexical entry
+			var lexSense = CreateLexicalEntryWithSense(Cache.LangProject.LexDbOA);
+			// Create a reference to the possibility
+			Cache.DomainDataByFlid.Replace(lexSense.Hvo, fd.Id, 0, 0, new [] { newPoss.Hvo }, 1);
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			// The delete custom field has its own task
+			// Delete the custom field
+			DeleteCustomField(fd);
+			// apparently the delete field and delete list need to be separate tasks
+			// in order to make the bug appear (LT-12251)
+			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
+			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
+				"Custom Field should have been deleted.");
+
+			// SUT
+			m_helper.Run(m_testList);
+
+			// Verify
+			Assert.AreEqual(clists - 1, m_listRepo.Count,
+				"'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
+				"This test shouldn't go through the dialog.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -327,7 +427,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.ExpectedTestResponse = DialogResult.No;
 
 			// Create a custom field in LexEntry
-			var fd = CreateCustomField(m_testList.Guid);
+			var fd = CreateCustomAtomicReferenceFieldInLexEntry(m_testList.Guid);
 			// Create a lexical entry
 			var lexEntry = CreateLexicalEntry(Cache.LangProject.LexDbOA);
 			// Create a reference to the possibility
