@@ -5,8 +5,8 @@
                    Priority="3"
                    DisplayName="Perl Expression"
                    ConfiguratorProgId="SilEncConverters40.PerlExpressionEncConverterConfig"
-                   DefiningExtension=".pl"
+                   DefiningProcessType="512"
                    AssemblyReference="PerlExpressionEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null"
 />
-                   <!--DefiningProcessType="512" -->
+                   <!--DefiningExtension=".pl"-->
 </EncConverterPlugins>

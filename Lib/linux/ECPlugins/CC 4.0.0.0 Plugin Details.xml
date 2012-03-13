@@ -6,5 +6,5 @@
 		DisplayName="CC Table"
 		ConfiguratorProgId="SilEncConverters40.CcEncConverterConfig"
 		DefiningExtension=".cct"
-		AssemblyReference="CcEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		AssemblyReference="CcEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
 </EncConverterPlugins>

@@ -144,7 +144,7 @@
 	</Reference>
 	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	  <HintPath>..\..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
