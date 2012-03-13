@@ -43,9 +43,16 @@
 	<layout class="MoStemMsa" type="detail" name="Category">
 		<part ref="Category"/>
 	</layout>
+	<layout class="MoStemMsa" type="detail" name="CategoryDisabled">
+		<part ref="CategoryDisabled"/>
+	</layout>
 	<layout class="MoStemMsa" type="detail" name="Result">
 		<part ref="Category"/>
 		<part ref="InflectionClass"/>
+	</layout>
+	<layout class="MoStemMsa" type="detail" name="ResultDisabled">
+		<part ref="CategoryDisabled"/>
+		<part ref="InflectionClassDisabled"/>
 	</layout>
 
 
@@ -189,6 +196,7 @@
 	<layout class="MoInflAffixTemplate" type="detail" name="default">
 		<part ref="NameAllA" label="Template Name"   menu="mnuDataTree-POS-AffixTemplate"/>
 		<part ref="DescriptionAllA"/>
+		<part ref="Active"/>
 		<part ref="TemplateTable"/>
 		<part ref="Message" param="SpecialNote" label="Note"/>
 		<part ref="Final"/>
@@ -395,6 +403,7 @@
 		<part ref="FirstAllomorph"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfAllos"/>
+		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoMorphAdhocProhib" type="detail" name="Edit">
@@ -402,35 +411,39 @@
 		<part ref="FirstMorpheme"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfMorphs"/>
+		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoAdhocProhibGr" type="detail" name="Edit">
 		<part ref="Name"/>
 		<part ref="Description"/>
+		<part ref="Active"/>
 		<part ref="MembersSection" expansion="expanded" label="Members" menu="mnuDataTree-Adhoc-Group-Members">
 			<indent>
 						<part ref="Members" expansion="expanded" />
 			</indent>
 		</part>
-
 	</layout>
 
 	<layout class="MoAlloAdhocProhib" type="detail" name="EditAdHocGroup">
 		<part ref="FirstAllomorph" menu="mnuDataTree-Delete-Adhoc-Allomorph"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfAllos"/>
+		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoMorphAdhocProhib" type="detail" name="EditAdHocGroup">
 		<part ref="FirstMorpheme" menu="mnuDataTree-Delete-Adhoc-Morpheme"/>
 		<part ref="Adjacency"/>
 		<part ref="RestOfMorphs"/>
+		<part ref="Active"/>
 	</layout>
 
 	<layout class="MoAdhocProhibGr" type="detail" name="EditAdHocGroup">
 		<part ref="NestedGroupName" label="Nested Group Name" menu="mnuDataTree-Delete-Adhoc-Group">
 			<indent indent="true">
 				<part ref="Description" label="Nested Group Description"/>
+				<part ref="Active"/>
 				<part ref="NestedMembersSection" expansion="expanded" label="Nested Group Members" menu="mnuDataTree-Adhoc-Group-Members">
 					<indent>
 						<part ref="IndentedMembers" expansion="expanded" />
@@ -469,6 +482,7 @@
 	<layout class="MoEndoCompound" type="detail" name="Edit">
 	 <part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
 		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+		<part ref="Active"/>
 		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
 			<indent>
 				<part ref="LeftMember"/>
@@ -490,6 +504,7 @@
 	<layout class="MoExoCompound" type="detail" name="Edit">
 		<part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
 		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+		<part ref="Active"/>
 		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
 			<indent>
 				<part ref="LeftMember"/>
@@ -543,6 +558,7 @@
 		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
 		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
 		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>
 				<part ref="RuleFormula" expansion="expanded"/>
@@ -559,6 +575,7 @@
 		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
 		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
 		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>
 				<part ref="RuleFormula" expansion="expanded"/>

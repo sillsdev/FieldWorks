@@ -3141,7 +3141,7 @@
 	<xsl:template name="AdhocAlloRules">
 		<xsl:param name="formId"/>
 
-		<xsl:variable name="adhocAlloRules" select="$root/AdhocCoProhibitions/MoAlloAdhocProhib[FirstAllomorph/@dst = $formId]"/>
+		<xsl:variable name="adhocAlloRules" select="$root/AdhocCoProhibitions/descendant-or-self::MoAlloAdhocProhib[FirstAllomorph/@dst = $formId]"/>
 		<xsl:variable name="validAdhocRules">
 			<xsl:call-template name="HasValidAdhocAlloRule">
 				<xsl:with-param name="adhocAlloRules" select="$adhocAlloRules"/>
@@ -3379,7 +3379,7 @@
 	<xsl:template name="AdhocMorphRules">
 		<xsl:param name="msaId"/>
 
-		<xsl:variable name="adhocMorphRules" select="$root/AdhocCoProhibitions/MoMorphAdhocProhib[FirstMorpheme/@dst = $msaId]"/>
+		<xsl:variable name="adhocMorphRules" select="$root/AdhocCoProhibitions/descendant-or-self::MoMorphAdhocProhib[FirstMorpheme/@dst = $msaId]"/>
 		<xsl:variable name="validAdhocRules">
 			<xsl:call-template name="HasValidAdhocMorphRule">
 				<xsl:with-param name="adhocMorphRules" select="$adhocMorphRules"/>

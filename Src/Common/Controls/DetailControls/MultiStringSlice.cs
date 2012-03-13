@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-			((LabeledMultiStringView)Control).FinishInit();
+			((LabeledMultiStringView)Control).FinishInit(ConfigurationNode);
 		}
 
 		void view_LostFocus(object sender, EventArgs e)

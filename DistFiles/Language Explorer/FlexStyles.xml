@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- IMPORTANT NOTE TO MAINTAINERS
 	*********************************************************************************************
 	ANY change to this Stylesheet must be accompanied by the generation of a new version using
@@ -6,7 +6,7 @@
 	*********************************************************************************************
 -->
 <Styles date="2011-04-01" DTDver="7E9FC46B-A1F9-4e31-A548-D1FBE4232387" label="Flex Dictionary">
-	<markup version="27F103CB-D3DB-433b-8AF9-8DFEA80D25A0">
+	<markup version="D27B4B8B-AAF0-4B08-9500-3B88886E3D42">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -53,6 +53,11 @@
 			<help category="Paragraph_Elements"/>
 			<font/>
 			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="36 pt" indentRight="36 pt"/>
+		</tag>
+		<tag id="Disabled_Text" userlevel="1" context="general" type="character">
+			<usage wsId="en">Material marked as being disabled (no longer active)</usage>
+			<help category="Paragraph_Elements"/>
+			<font color="GrayText"/>
 		</tag>
 		<tag id="Emphasized_Text" userlevel="1" context="general" type="character">
 			<usage wsId="en">Material to be emphasized</usage>

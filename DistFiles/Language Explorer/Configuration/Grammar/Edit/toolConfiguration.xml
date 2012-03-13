@@ -47,6 +47,7 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural">
 									<columns>
+										<column label="Active" width="10%" layout="Active" editable="true"/>
 										<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
 										<column label="Description" width="15%" layout="Description" ws="$ws=best analysis" field="Description"/>
 										<column label="Left Member" width="20%" layout="LeftMsa"/>
@@ -220,11 +221,12 @@
 						<parameters id="PhonologicalRuleList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural">
+								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural" selectColumn="false">
 									<columns>
+										<column label="Active" width="10%" layout="Active" editable="true"/>
 										<column label="Order" width="15%" layout="Order" editable="true"/>
 										<column label="Name" width="35%" layout="Name" ws="$ws=best analysis" field="Name"/>
-										<column label="Description" width="50%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Description" width="40%" layout="Description" ws="$ws=best analysis" field="Description"/>
 									</columns>
 								</parameters>
 							</control>
@@ -255,10 +257,11 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 								<parameters id="AdhocCoprohibList" filterBar="true" editable="false" clerk="adhocCoprohibitions" altTitleId="MoAdhocProhib-Plural">
 									<columns>
+										<column label="Active" width="10%" layout="Active" editable="true"/>
 										<column label="Type" width="10%" layout="Type"/>
-										<column label="Key Item" width="35%" layout="KeyItem"/>
+										<column label="Key Item" width="30%" layout="KeyItem"/>
 										<column label="Cannot Occur" width="20%" layout="CannotOccur"/>
-										<column label="Other Items" width="35%" multipara="true" layout="OtherItems"/>
+										<column label="Other Items" width="30%" multipara="true" layout="OtherItems"/>
 									</columns>
 								</parameters>
 							</control>

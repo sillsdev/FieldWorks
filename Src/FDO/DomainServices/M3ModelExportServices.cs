@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					new XElement("MoMorphData",
 						ExportCompoundRules(servLoc.GetInstance<IMoEndoCompoundRepository>(),
 							servLoc.GetInstance<IMoExoCompoundRepository>(), mode),
-						ExportAdhocCoProhibitionsGrammarSketch(morphologicalData, mode),
+						ExportAdhocCoProhibitions(morphologicalData, mode),
 						ExportProdRestrict(morphologicalData, mode)),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
@@ -66,8 +66,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportParserParameters(morphologicalData, mode),
 					ExportCompoundRules(servLoc.GetInstance<IMoEndoCompoundRepository>(),
 						servLoc.GetInstance<IMoExoCompoundRepository>(), mode),
-					ExportAdhocCoProhibitions(servLoc.GetInstance<IMoAlloAdhocProhibRepository>(),
-						servLoc.GetInstance<IMoMorphAdhocProhibRepository>()),
+					ExportAdhocCoProhibitions(morphologicalData, mode),
 					ExportProdRestrict(morphologicalData, mode),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
@@ -121,6 +120,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		static bool IsValidTemplate(IMoInflAffixTemplate template)
 		{
+			if (template.Disabled)
+				return false;
 			return
 				(from affixSlot in template.PrefixSlotsRS.Concat(template.SuffixSlotsRS)
 				 where IsValidSlot(affixSlot)
@@ -188,6 +189,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return new XElement("CompoundRules",
 				from endoCompound in endoCmpRepository.AllInstances()
+				where !endoCompound.Disabled
 				select new XElement("MoEndoCompound",
 					new XAttribute("Id", endoCompound.Hvo),
 					new XAttribute("HeadLast", endoCompound.HeadLast ? 1 : 0),
@@ -199,6 +201,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					select ExportItemAsReference(prod, "ToProdRestrict"),
 					ExportItemAsReference(endoCompound.OverridingMsaOA, "OverridingMsa")),
 				from exoCompound in exoCmpRepository.AllInstances()
+				where !exoCompound.Disabled
 				select new XElement("MoExoCompound",
 					new XAttribute("Id", exoCompound.Hvo),
 					ExportBestAnalysis(exoCompound.Name, "Name", mode),
@@ -210,19 +213,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportItemAsReference(exoCompound.ToMsaOA, "ToMsa")));
 		}
 
-		private static XElement ExportAdhocCoProhibitions(IRepository<IMoAlloAdhocProhib> alloRepository, IRepository<IMoMorphAdhocProhib> morphRepository)
-		{
-			return new XElement("AdhocCoProhibitions",
-				from allo in alloRepository.AllInstances()
-				select ExportAlloAdhocCoProhibition(allo),
-				from morph in morphRepository.AllInstances()
-				select ExportMorphAdhocCoProhibition(morph));
-		}
-
-		private static XElement ExportAdhocCoProhibitionsGrammarSketch(IMoMorphData morphData, Icu.UNormalizationMode mode)
+		private static XElement ExportAdhocCoProhibitions(IMoMorphData morphData, Icu.UNormalizationMode mode)
 		{
 			return new XElement("AdhocCoProhibitions",
 				from adhocCoProhib in morphData.AdhocCoProhibitionsOC
+				where !adhocCoProhib.Disabled
 				select ExportAdhocCoProhibition(adhocCoProhib, mode));
 		}
 
@@ -247,6 +242,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				ExportBestAnalysis(adhocProhibGr.Name, "Name", mode),
 				ExportBestAnalysis(adhocProhibGr.Description, "Description", mode),
 				from adhocCoProhib in adhocProhibGr.MembersOC
+				where !adhocCoProhib.Disabled
 				select ExportAdhocCoProhibition(adhocCoProhib, mode));
 		}
 
@@ -465,6 +461,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private static XElement ExportPhonRule(IPhSegmentRule phonRule, Icu.UNormalizationMode mode)
 		{
 			XElement retVal = null;
+			if (phonRule.Disabled)
+				return retVal;
 			switch (phonRule.ClassName)
 			{
 				case "PhMetathesisRule":

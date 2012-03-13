@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_cb.GotFocus += m_cb_GotFocus;
 		}
 
-		public void OnChanged(Object obj, EventArgs args)
+		public virtual void OnChanged(Object obj, EventArgs args)
 		{
 			CheckDisposed();
 			if (!Object.IsValidObject) return;
@@ -264,6 +264,32 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		////    base.OnGotFocus (e);
 		////    ContainingDataTree.CurrentSlice = this;
 		////}
+	}
+
+	/// <summary>
+	/// Summary description for Checkbox.
+	/// </summary>
+	public class CheckboxRefreshSlice : CheckboxSlice
+	{
+
+
+		public CheckboxRefreshSlice(FdoCache cache, ICmObject obj, int flid, XmlNode node)
+			: base(cache, obj, flid, node)
+		{
+		}
+		public override void OnChanged(Object obj, EventArgs args)
+		{
+			CheckDisposed();
+			if (!Object.IsValidObject) return;
+
+			base.OnChanged(obj, args);
+			var dt = ContainingDataTree;
+			var result = dt.RefreshDisplay();
+			if (result)
+			{
+				dt.RefreshList(true);
+			}
+		}
 	}
 
 	/// <summary>

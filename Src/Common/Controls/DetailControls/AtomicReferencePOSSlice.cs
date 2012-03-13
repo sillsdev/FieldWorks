@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.CoreImpl;
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private POSPopupTreeManager m_pOSPopupTreeManager;
 		private IPartOfSpeech m_pos;
 		private bool m_handlingMessage = false;
-		private TreeCombo m_tree;
+		protected TreeCombo m_tree;
 
 		private TreeCombo Tree
 		{
@@ -274,5 +275,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_handlingMessage = false;
 			}
 		}
+	}
+	/// <summary>
+	/// This class shows the POS slice as being disabled.
+	/// </summary>
+	public class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
+	{
+				/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="obj">CmObject that is being displayed.</param>
+		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
+		/// // cache, obj, flid, node, persistenceProvider, stringTbl
+		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid,
+			IPersistenceProvider persistenceProvider, Mediator mediator)
+			: base(cache, obj, flid, persistenceProvider, mediator)
+				{
+					if (m_tree != null)
+						m_tree.ForeColor = SystemColors.GrayText;
+				}
 	}
 }
