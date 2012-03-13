@@ -969,6 +969,19 @@ namespace SIL.CoreImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets a TsString made from the ashes of the input parameter which has:
+		/// 1) only one run
+		/// 2) uses the ws of the 1st run of the input TsString.
+		/// </summary>
+		/// <param name="tss">structured text string</param>
+		/// ------------------------------------------------------------------------------------
+		public static ITsString GetCleanSingleRunTsString(ITsString tss)
+		{
+			return MakeTss(tss.Text, tss.get_WritingSystem(0));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets a TsString with no: 1) ORCs corresponding to special runs, or 2) clipboard-
 		/// style footnote or picture runs.
 		/// </summary>
