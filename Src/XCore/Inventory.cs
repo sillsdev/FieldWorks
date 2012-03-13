@@ -243,7 +243,7 @@ namespace XCore
 					sPattern = String.Format("default$${0}", m_filePattern);
 				else
 					sPattern = m_filePattern;
-				AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(path, sPattern), version);
+				AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(path, sPattern), version, true);
 			}
 		}
 
@@ -1044,14 +1044,15 @@ namespace XCore
 
 		protected void AddElementsFromFiles(string[] filePaths)
 		{
-			AddElementsFromFiles(filePaths, m_version);
+			AddElementsFromFiles(filePaths, m_version, false);
 		}
 
 		/// <summary>
 		/// Collect all of the elements up from an array of files.
 		/// </summary>
 		/// <param name="filePaths">Collection of pathnames to individual XDE template files.</param>
-		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version)
+		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
+		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
 			Debug.Assert(m_mainDoc != null);
@@ -1063,7 +1064,7 @@ namespace XCore
 					continue;
 				var nodeList = LoadOneInventoryFile(path);
 				bool wasMerged;
-				List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged);
+				List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, loadUserOverRides);
 				LoadNodeList(cleanedNodes, version, root);
 				if (wasMerged)
 				{
@@ -1083,7 +1084,7 @@ namespace XCore
 			xdoc.LoadXml(input);
 			var nodeList = xdoc.SelectNodes(m_xpathElementsWanted);
 			bool wasMerged;
-			List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged);
+			List<XmlNode> cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, false);
 			LoadNodeList(cleanedNodes, version, root);
 		}
 
@@ -1128,8 +1129,9 @@ namespace XCore
 		/// <param name="nodeList"></param>
 		/// <param name="version"></param>
 		/// <param name="wasMerged">This parameter will be set to true if any nodes were merged to the latest version</param>
+		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
 		/// <returns></returns>
-		private List<XmlNode> MergeAndUpdateNodes(XmlNodeList nodeList, int version, out bool wasMerged)
+		private List<XmlNode> MergeAndUpdateNodes(XmlNodeList nodeList, int version, out bool wasMerged, bool loadUserOverRides)
 		{
 			wasMerged = false;
 			List<XmlNode> survivors = new List<XmlNode>();
@@ -1140,7 +1142,17 @@ namespace XCore
 				// None of our installer provided files have a version number.
 				// That is why we check for an optional version attribute.
 
-				int fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString()));
+				// LT-12778 revealed a bug related to version number. In previous versions of FieldWorks the version attribute
+				// was not being added to the user configuration files. Therefore many layout elements were being processed
+				// as if they were in the default configuration files.  Therefore the loadUserOverRides boolean was added to ensure
+				// version number is added to the elements in the user configuration files.
+
+				int fileVersion;
+				if (loadUserOverRides)
+					fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", "0"));
+				else
+					fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString()));
+
 				if (fileVersion != version && Merger != null && XmlUtils.GetOptionalAttributeValue(node, "base") == null)
 				{
 					string[] keyAttrs;
@@ -1149,6 +1161,8 @@ namespace XCore
 					if (m_getElementTable.TryGetValue(key, out current))
 					{
 						XmlNode merged = Merger.Merge(current, node, m_mainDoc);
+						if (loadUserOverRides)
+							XmlUtils.SetAttribute(merged, "version", version.ToString());
 						survivors.Add(merged);
 						wasMerged = true;
 					}
@@ -1169,6 +1183,8 @@ namespace XCore
 								{
 									XmlNode merged = Merger.Merge(current, node, m_mainDoc);
 									XmlUtils.SetAttribute(merged, "name", copyName); // give it the name fro
+									if (loadUserOverRides)
+										XmlUtils.SetAttribute(merged, "version", version.ToString());
 									survivors.Add(merged);
 									wasMerged = true;
 								}
