@@ -416,14 +416,19 @@ namespace SIL.FieldWorks.Common.Controls
 				// For displaying reversal indexes, we need to know the reversal index
 				// language (writing system).
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-				if (obj is IReversalIndex)
-					m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
+				SetReversalWritingSystemFromRootObject(obj);
 				vwenv.AddLazyVecItems(m_mainFlid, this, kRootFragId);
 				return;
 			}
 
 			DisplayCommand dispCommand = m_idToDisplayCommand[fragId];
 			dispCommand.PerformDisplay(this, fragId, hvo, vwenv);
+		}
+
+		internal void SetReversalWritingSystemFromRootObject(object obj)
+		{
+			if (obj is IReversalIndex)
+				m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
 		}
 
 		internal bool CanGetMainCallerDisplayCommand(int fragId, out MainCallerDisplayCommand cmd)

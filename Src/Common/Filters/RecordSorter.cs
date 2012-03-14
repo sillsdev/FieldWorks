@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -897,11 +897,11 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// See whether the comparer can preload. Currently we only know about one kind that can.
 		/// </summary>
-		public override void Preload()
+		public override void Preload(object rootObj)
 		{
-			base.Preload();
+			base.Preload(rootObj);
 			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Preload();
+				(m_comp as StringFinderCompare).Preload(rootObj);
 		}
 
 		/// <summary>
@@ -1262,9 +1262,10 @@ namespace SIL.FieldWorks.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload()
+		/// <param name="rootObj">Typically a CmObject, the root object of the whole view we are sorting for</param>
+		public virtual void Preload(object rootObj)
 		{
-			m_finder.Preload();
+			m_finder.Preload(rootObj);
 		}
 
 		/// ------------------------------------------------------------------------------------

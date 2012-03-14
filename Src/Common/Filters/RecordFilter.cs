@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// May be used to preload data for efficient filtering of many instances.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -1540,7 +1540,7 @@ namespace SIL.FieldWorks.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing.
 		/// </summary>
-		void Preload();
+		void Preload(object rootObj);
 
 		/// <summary>
 		/// Called if we need to ensure that a particular (typically decorator) DA is used to
@@ -1643,7 +1643,7 @@ namespace SIL.FieldWorks.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing, as in this default implementation.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -2406,9 +2406,9 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Let your finder preload whatever it wants to.
 		/// </summary>
-		public override void Preload()
+		public override void Preload(object rootObj)
 		{
-			m_finder.Preload();
+			m_finder.Preload(rootObj);
 		}
 
 		/// <summary>

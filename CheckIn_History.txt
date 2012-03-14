@@ -157,3 +157,4 @@ KenZ, 12 Mar 2012. Made minimal fix for LT-12706 to use MultiUnicode for new cus
 GordonM, 13 Mar 2012. Fixed LT-12251 Deleting custom field and custom list crash.
 GordonM, 13 Mar 2012. Fixed LT-12821 Error message or crash when creating a phrase in Texts area.
 RickM, 13 Mar 2012. LT-12778 Bullets not showing in reversal xhtml view
+JohnT, 14 Mar 2012. LT-12878, Reversal index sorting doesn't 'stick'
