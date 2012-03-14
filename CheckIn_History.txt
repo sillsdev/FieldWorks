@@ -158,3 +158,6 @@ GordonM, 13 Mar 2012. Fixed LT-12251 Deleting custom field and custom list crash
 GordonM, 13 Mar 2012. Fixed LT-12821 Error message or crash when creating a phrase in Texts area.
 RickM, 13 Mar 2012. LT-12778 Bullets not showing in reversal xhtml view
 JohnT, 14 Mar 2012. LT-12878, Reversal index sorting doesn't 'stick'
+	Later: To help with LT-12849, added a new utility to "Force Rechecking Word Breaks"
+
+Change Spelling is causing data to get trashed

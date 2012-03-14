@@ -304,6 +304,24 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Force Rechecking Word Breaks.
+		/// </summary>
+		internal static string ksClearParseIsCurrent {
+			get {
+				return ResourceManager.GetString("ksClearParseIsCurrent", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to This utility clears an internal flag that FLEx uses to track texts where its analysis is up-to-date. The effect will be that each text is re-parsed into words the next time this information is needed. Work you have done analyzing texts will not be affected, except possibly where word alignment is actually wrong. You may see a longer delay than usual the next time you want a concordance..
+		/// </summary>
+		internal static string ksClearParseIsCurrentDoes {
+			get {
+				return ResourceManager.GetString("ksClearParseIsCurrentDoes", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to concordance.
 		/// </summary>
 		internal static string ksConcordance {
@@ -1141,7 +1159,7 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This utility finds groups of wordforms which have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to correct if any of the old wordforms is correct, otherwise incorrect if any old form is incorrect (otherwise it stays undecided)..
+		///   Looks up a localized string similar to This utility finds groups of wordforms that have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to Correct if any of the old wordforms is Correct, otherwise Incorrect if any old form is Incorrect; otherwise it stays Undecided..
 		/// </summary>
 		internal static string ksMergeWordformsAttemptsTo {
 			get {
@@ -1299,6 +1317,15 @@ namespace SIL.FieldWorks.IText {
 		internal static string ksNt {
 			get {
 				return ResourceManager.GetString("ksNt", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Clearing these flags is not undoable. We believe it is very safe, but you may wish to make a backup first. However, if things are out of alignment, the effects of leaving them that way are almost certainly worse than any effects of re-parsing..
+		/// </summary>
+		internal static string ksParseIsCurrentWarning {
+			get {
+				return ResourceManager.GetString("ksParseIsCurrentWarning", resourceCulture);
 			}
 		}
 
@@ -2001,6 +2028,15 @@ namespace SIL.FieldWorks.IText {
 		internal static string ksUnknown {
 			get {
 				return ResourceManager.GetString("ksUnknown", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the respellling dialog in FLEx 7.0 through 7.2.2. One symptom is an incorrect wordlist concordance, where what is highlighted for an occurrence is not the right word..
+		/// </summary>
+		internal static string ksUseClearParseIsCurrentWhen {
+			get {
+				return ResourceManager.GetString("ksUseClearParseIsCurrentWhen", resourceCulture);
 			}
 		}
 
