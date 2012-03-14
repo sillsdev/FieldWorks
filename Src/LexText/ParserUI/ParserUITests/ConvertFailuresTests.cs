@@ -17,13 +17,12 @@ using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
 
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-#if WANTTESTPORT
 	/// <summary>
 	/// Summary description for ConvertFailuresTests.
 	/// </summary>
@@ -37,8 +36,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Location of simple test FXT files
 		/// </summary>
-		protected string m_sTestPath = Path.Combine(SIL.FieldWorks.Common.Utils.DirectoryFinder.FwSourceDirectory,
-			@"LexText/ParserUI/ParserUITests");
+		protected string m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+			"LexText/ParserUI/ParserUITests");
 
 		[TestFixtureSetUp]
 		public void FixtureInit()
@@ -185,5 +184,4 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 	}
-#endif
 }

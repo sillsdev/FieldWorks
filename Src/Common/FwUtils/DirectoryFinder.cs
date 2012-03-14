@@ -546,6 +546,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetDirectory("RootDataDir", CommonAppDataFolder(string.Format("FieldWorks {0}", FwUtils.SuiteVersion))); }
 		}
 
+		private static string m_srcdir;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the src dir (for running tests)
@@ -555,20 +557,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string rootDir = null;
-				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
-				if (string.IsNullOrEmpty(rootDir))
+				if (!String.IsNullOrEmpty(m_srcdir))
+					return m_srcdir;
+				if (MiscUtils.IsUnix)
 				{
-					throw new ApplicationException(
-						string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-						FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+					// Linux doesn't have the registry setting, at least while running tests,
+					// so we'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
+					// and the source dir is $FW/Src.
+					Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+					dir = Path.Combine(dir, "Src");
+					if (!Directory.Exists(dir))
+						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
+					m_srcdir = dir;
 				}
-				string fw = Directory.GetParent(rootDir).FullName;
-				string src = Path.Combine(fw, "Src");
-				if (!Directory.Exists(src))
-					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-				return src;
+				else
+				{
+					string rootDir = null;
+					if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+						rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
+					if (string.IsNullOrEmpty(rootDir))
+					{
+						throw new ApplicationException(
+							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+					}
+					string fw = Directory.GetParent(rootDir).FullName;
+					string src = Path.Combine(fw, "Src");
+					if (!Directory.Exists(src))
+						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
+					m_srcdir = src;
+				}
+				return m_srcdir;
 			}
 		}
 

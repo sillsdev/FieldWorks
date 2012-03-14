@@ -426,7 +426,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportScriptureNote_Unresolved()
 		{
 			IScrSection section = AddSectionToMockedBook(m_book);
@@ -480,7 +479,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportScriptureNote_Resolved()
 		{
 			IScrSection section = AddSectionToMockedBook(m_book);
@@ -535,7 +533,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportScripture_NotesOutOfOrder()
 		{
 			IScrSection section = AddSectionToMockedBook(m_book);
@@ -618,7 +615,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportScriptureNote_IgnoredCheckingError()
 		{
 			IScrSection section = AddSectionToMockedBook(m_book);
@@ -674,7 +670,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportScriptureNote_UnknownWsForBt()
 		{
 			IScrSection section = AddSectionToMockedBook(m_book);
@@ -732,7 +727,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportBookSection_IntroWithNotes()
 		{
 			IScrSection introSection = AddSectionToMockedBook(m_book, true);
@@ -795,7 +789,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: mono bug https://bugzilla.novell.com/show_bug.cgi?id=594490")]
 		public void ExportBookSection_BTIntroWithNotes()
 		{
 			int wsAnal = Cache.DefaultAnalWs;
