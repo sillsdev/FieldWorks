@@ -239,7 +239,7 @@ install-tree:
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/fieldworks-movies
 	install -d $(DESTDIR)/usr/share/fieldworks-examples
-	install -d $(DESTDIR)/usr/share/SIL/EC/Plugins/IEC3.1.0.0
+	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -m 1777 -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 $(OUT_DIR)/*.so $(DESTDIR)/usr/lib/fieldworks
@@ -248,6 +248,7 @@ install-tree:
 	install -m 644 DistFiles/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	# Install read-only configuration files
 	install -m 644 $(OUT_DIR)/remoting_tcp_server.config $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
