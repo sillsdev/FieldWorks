@@ -51,6 +51,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -2693,10 +2694,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			get
 			{
-				foreach (RecordFilter f in m_filters)
-					if (f.IsUserVisible)
-						return true;
-				return false;
+				return m_filters.Cast<RecordFilter>().Any(f => f.IsUserVisible);
 			}
 		}
 
