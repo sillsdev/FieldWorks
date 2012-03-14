@@ -5202,12 +5202,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (cws < 2)
 				return;	// no writing systems to work with
 
-			int[] vwsTemp = new int[0];
-			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
-			{
-				wsf.GetWritingSystems(ptr, cws);
-				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
-			}
+			var vwsTemp = GetPossibleWritingSystemsToSelectByInputLanguage(wsf);
 
 			// resize the array leaving slot 0 empty
 			int[] vws = new int[++cws];
@@ -5335,8 +5330,27 @@ namespace SIL.FieldWorks.Common.RootSites
 				(int)FwTextPropVar.ktpvDefault, wsMatch);
 			vttp[0] = tpb.GetTextProps();
 			vwsel.SetSelectionProps(cttp, vttp);
-			SelectionChanged(m_rootb, vwsel);
+			SelectionChanged(m_rootb, m_rootb.Selection); // might NOT be vwsel any more
 		}
+
+		/// <summary>
+		/// get the writing systems we should consider as candidates to be selected whent the user makes an
+		/// external choice of keyboard. overridden in root site to use only active ones.
+		/// </summary>
+		/// <param name="wsf"></param>
+		/// <returns></returns>
+		protected virtual int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
+		{
+			int cws = wsf.NumberOfWs;
+			int[] vwsTemp = new int[0];
+			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
+			{
+				wsf.GetWritingSystems(ptr, cws);
+				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
+			}
+			return vwsTemp;
+		}
+
 		#endregion // Other virtual methods
 
 		#region Other non-virtual methods

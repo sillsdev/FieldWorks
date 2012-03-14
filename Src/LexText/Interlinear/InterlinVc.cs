@@ -1214,6 +1214,8 @@ namespace SIL.FieldWorks.IText
 
 		internal void SetActiveFreeform(int hvo, int flid, int ws, int cpropPrevious)
 		{
+			if (hvo == m_hvoActiveFreeform && flid == ActiveFreeformFlid)
+				return; // no changes; don't want to generate spurious selection changes which may trigger unwanted WS changes.
 			var helper = SelectionHelper.Create(m_rootsite);
 			int hvoOld = m_hvoActiveFreeform;
 			int flidOld = ActiveFreeformFlid;
