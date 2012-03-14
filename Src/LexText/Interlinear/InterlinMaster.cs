@@ -420,7 +420,15 @@ namespace SIL.FieldWorks.IText
 			}
 			if (iPara >= 0)
 			{
-				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true, m_mediator);
+				//if there is a bookmark for this text with this tool, then save it, if not some logic error brought us here,
+				//but simply not saving a bookmark which doesn't exist seems better than crashing. naylor 3/2012
+				var key = new Tuple<string, Guid>(CurrentTool, RootStText.Guid);
+				if (m_bookmarks.ContainsKey(key))
+				{
+					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true,
+										  m_mediator);
+				}
+
 				return true;
 			}
 			return false;

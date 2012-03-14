@@ -88,6 +88,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.IsTrue(m_actionHandler.CanUndo());
 		}
 
+		[Test]
+		public void CanRespellShortenWord()
+		{
+			IStTxtPara para;
+			const string ksParaText = "somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
+			const string ksWordToReplace = "somelongwords";
+			const string ksNewWord = "s";
+
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, false, out para);
+
+			respellUndoaction.AllChanged = false;
+			respellUndoaction.KeepAnalyses = true;
+			respellUndoaction.UpdateLexicalEntries = true;
+
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
+
+			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
+			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
+			Assert.IsTrue(m_actionHandler.CanUndo());
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test simulating multiple spelling changes in multiple segments in a single

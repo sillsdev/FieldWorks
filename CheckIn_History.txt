@@ -161,3 +161,4 @@ JohnT, 14 Mar 2012. LT-12878, Reversal index sorting doesn't 'stick'
 	Later: To help with LT-12849, added a new utility to "Force Rechecking Word Breaks"
 GordonM, 14 Mar 2012. LT-12786 Turn off all filters not becoming enabled in Word List Concordance.
 JohnT, 14 Mar 2012. LT-12697, Multiple Keyboards not working in Text Notes and Free Translation fields
+NaylorJ, 14 Mar 2012. Fix for LT-12849. The respeller will no longer mess up the analysis lists in a segment.

@@ -719,6 +719,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
+		/// Reset the offsets by using the base occurence call, this will effectively 'clear the cache' for this
+		/// LocatedAnalysisOccurrence
+		/// </summary>
+		public void ResetSegmentOffsets()
+		{
+			SetMyBeginOffsetInPara(base.GetMyBeginOffsetInPara());
+			SetMyEndOffsetInPara(base.GetMyEndOffsetInPara());
+		}
+
+		/// <summary>
 		/// Same as base, but faster (and settable).
 		/// </summary>
 		/// <returns></returns>
