@@ -5774,3 +5774,4 @@ RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBrid
 RandyR, 12 March 2012. Added comment to model file about the need to also change the MDC in FLEx bridge.
 Andy Black, 13 Mar 2012. LT-10471 "Allow user ability to turn phonological rules on or off".
 	Also did this for affix templates, compound rules, and ad hoc rules.
+TomB, 14 Mar 2012. Upgraded additional project and Designer files fo VS 2010.
