@@ -2984,6 +2984,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected internal bool IsColumnShowing(XmlNode colSpec)
 		{
+			if(colSpec == null || colSpec.Attributes == null)
+				return false;
 			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value, null) != null;
 		}
 
