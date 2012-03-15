@@ -31,6 +31,7 @@ using System.Linq;
 
 using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Keyboarding;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -2388,6 +2389,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void WritingSystemPropertiesDialog_Activated(object sender, EventArgs e)
 		{
+			KeyboardController.Manager.Reset(); // we want to see any keyboards added while we were not active.
 			m_KeyboardControl.Reset();
 		}
 
