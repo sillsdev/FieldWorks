@@ -1826,14 +1826,24 @@ namespace XCore
 			if (ActiveForm != this && OwnedForms.All(f => ActiveForm != f))
 				return;
 
-			// The sidebar and toolbar have special needs because things need to become disabled now and then.
-			if(m_rebarAdapter!=null)
-				m_rebarAdapter.OnIdle();
-			if(m_sidebarAdapter!=null)
-				m_sidebarAdapter.OnIdle();
+			UpdateControls();
 
 			// call OnIdle () on any colleagues that implement it.
 			m_mediator.SendMessage("Idle", null);
+		}
+
+		/// <summary>
+		/// Update controls to a suitable state. This is done regularly during idle time while the window is active.
+		/// Ideally it should be done once at startup (otherwise the toolbar may not appear, LT-12845) at startup,
+		/// even if the window does NOT become active.
+		/// </summary>
+		public void UpdateControls()
+		{
+			// The sidebar and toolbar have special needs because things need to become disabled now and then.
+			if (m_rebarAdapter != null)
+				m_rebarAdapter.OnIdle();
+			if (m_sidebarAdapter != null)
+				m_sidebarAdapter.OnIdle();
 		}
 
 		#region IxCoreColleague implementation

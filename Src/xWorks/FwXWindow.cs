@@ -2017,6 +2017,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (m_startupLink != null)
 				m_mediator.SendMessage("FollowLink", m_startupLink);
+			UpdateControls();
 			return true;
 		}
 

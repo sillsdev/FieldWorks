@@ -168,3 +168,4 @@ LastufkaM, 15 Mar 2012. LT-12658 XHTML contains large gaps between items: Mostly
 JohnT, 15 Mar 2012. LT-12816, New Windows input systems cannot be used until Flex is restarted
 KenZ, 15 Mar 2012. Fixed LT-12888 to show inflection class in dictionary view.
 NaylorJ, 15 Mar 2012. Additional repairs related to LT-12820. Respeller dialog now reparses out of date paragraphs.
+JohnT, 15 Mar 2012. LT-12845, Toolbar not being drawn until click
