@@ -688,6 +688,7 @@ namespace SIL.FieldWorks.Common.Controls
 				Logger.WriteEvent(String.Format("Sort on {0} {1} ({2})",
 						m_lvHeader.Columns[iHeaderColumn].Text, order, i));
 			}
+			m_lvHeader.Refresh();
 		}
 
 		// Sets the sort arrow for the given header column. Also sets the current column if
