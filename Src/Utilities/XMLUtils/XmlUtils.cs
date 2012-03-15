@@ -821,7 +821,7 @@ namespace SIL.Utils
 				// load input file
 				using (var reader = new XmlTextReader(sInputPath))
 				{
-#if NET_4_0 && !__MonoCS__
+#if !__MonoCS__
 					reader.DtdProcessing = DtdProcessing.Parse;
 #else
 					reader.ProhibitDtd = false;

@@ -138,7 +138,6 @@
 	<Compile Include="Unicode.cs" />
 	<Compile Include="Utils.cs" />
 	<Compile Include="ViewSizeEvents.cs" />
-	<Compile Include="Tuple.cs" />
 	<Compile Include="LinuxPackageUtils.cs" />
 	<Compile Include="DirectoryUtils.cs" />
 	<Compile Include="StopClock.cs" />

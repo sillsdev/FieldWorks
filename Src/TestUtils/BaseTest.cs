@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -14,7 +14,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -22,9 +21,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
-#if !NET_4_0
-[assembly:SecurityPermissionAttribute(SecurityAction.RequestMinimum, UnmanagedCode=true)]
-#endif
 namespace SIL.FieldWorks.Test.TestUtils
 {
 	/// ----------------------------------------------------------------------------------------
