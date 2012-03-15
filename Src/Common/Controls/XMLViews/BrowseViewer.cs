@@ -2984,8 +2984,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected internal bool IsColumnShowing(XmlNode colSpec)
 		{
-			if(colSpec == null || colSpec.Attributes == null)
-				return false;
+			//for some reason column specs may not have a layout set, fall back to the old test
+			if (colSpec == null || colSpec.Attributes == null || colSpec.Attributes["layout"] == null)
+				return XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, colSpec) >= 0;
+			//Be as non-specific about the column as we can, writing system options and width and other things may give false negatives
 			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value, null) != null;
 		}
 
