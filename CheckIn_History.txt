@@ -164,3 +164,4 @@ JohnT, 14 Mar 2012. LT-12697, Multiple Keyboards not working in Text Notes and F
 NaylorJ, 14 Mar 2012. Fix for LT-12849. The respeller will no longer mess up the analysis lists in a segment.
 JohnT, 15 Mar 2012. LT-12820, Sorting triangles at top of columns are hidden when you first set the sort and the mouse is still hovering over the top of the column heading.
 NaylorJ, 15 Mar 2012. Fixed LT-12799. Modified the IsColumnVisible method to match on layout only.
+LastufkaM, 15 Mar 2012. LT-12658 XHTML contains large gaps between items: Mostly finished the previously incomplete implementation of minor entries in xHtml export.
