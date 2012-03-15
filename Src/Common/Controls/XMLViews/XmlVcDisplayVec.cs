@@ -153,9 +153,10 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_viewConstructor.ShouldFilterByGuid)
 			{  // order by vector item type guids
 				// Don't reorder LexEntry VisibleComplexFormBackRefs vector if the user overrode it manually.
-				ILexEntry lexEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_hvo) as ILexEntry;
-				if (lexEntry != null)
+				var obj = m_cache.ServiceLocator.GetObject(m_hvo);
+				if (obj is ILexEntry)
 				{
+					var lexEntry = obj as ILexEntry;
 					if (m_flid == m_cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", false))
 					{
 						if (!VirtualOrderingServices.HasVirtualOrdering(lexEntry, "VisibleComplexFormBackRefs"))
