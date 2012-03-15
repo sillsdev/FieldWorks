@@ -166,3 +166,4 @@ JohnT, 15 Mar 2012. LT-12820, Sorting triangles at top of columns are hidden whe
 NaylorJ, 15 Mar 2012. Fixed LT-12799. Modified the IsColumnVisible method to match on layout only.
 LastufkaM, 15 Mar 2012. LT-12658 XHTML contains large gaps between items: Mostly finished the previously incomplete implementation of minor entries in xHtml export.
 JohnT, 15 Mar 2012. LT-12816, New Windows input systems cannot be used until Flex is restarted
+KenZ, 15 Mar 2012. Fixed LT-12888 to show inflection class in dictionary view.
