@@ -4721,6 +4721,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (m_ich > m_length)
 			{
 				Debug.Fail("Paragraph is supposedly parsed correctly, but analysis list is inconsistent with content");
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_segment.Cache.ActionHandlerAccessor,
+					() => m_segment.Paragraph.ParseIsCurrent = false); //We don't think the parse is right, flag for reparsing.
 				m_ich = m_length; // May prevent crash (see FWR-3221).
 			}
 			m_ianalysis++;

@@ -23,6 +23,7 @@ using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.IText;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -273,6 +274,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			m_wfClerk = (RecordClerk)mediator.PropertyTable.GetValue("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
+
+			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
+			if(m_wfClerk is InterlinearTextsRecordClerk)
+			{
+				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
+				//(this clerk and its list are not visible in this dialog, so there will be no future reload)
+				m_wfClerk.ListLoadingSuppressed = false;
+				(m_wfClerk as InterlinearTextsRecordClerk).ParseInterstingTextsIfNeeded(); //Trigger the parsing
+			}
 			m_srcwfiWordform = (IWfiWordform)m_wfClerk.CurrentObject;
 			if (m_fDisposeMediator && m_mediator != null)
 				m_mediator.Dispose();
