@@ -828,11 +828,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			int cumulativeLengthOfBt = 0;
 
+			int space = 0;
 			foreach (ISegment segment in SegmentsOS)
 			{
-				ITsString tss = segment.FreeTranslation.get_String(ws);
-				int cchSegTrans = (tss == null ? 0 : tss.Length);
-				if (ich >= cumulativeLengthOfBt && ich < cchSegTrans)
+				int cchSegTrans = 0;
+				if (segment.IsLabel)
+				{
+					cchSegTrans = segment.Length + space;
+					space = 1;
+				}
+				else
+				{
+					ITsString tss = segment.FreeTranslation.get_String(ws);
+					if (tss != null && tss.Length > 0)
+					{
+						cchSegTrans = tss.Length;
+						space = 0;
+					}
+				}
+				if (ich >= cumulativeLengthOfBt && ich < cumulativeLengthOfBt + cchSegTrans)
 					return segment;
 				cumulativeLengthOfBt += cchSegTrans;
 			}

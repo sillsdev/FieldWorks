@@ -1249,6 +1249,24 @@ namespace SIL.FieldWorks.Resources {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to A caller for the footnote you are attempting to paste is already present in this back translation..
+		/// </summary>
+		internal static string kstidFootnoteCallerAlreadyInBt {
+			get {
+				return ResourceManager.GetString("kstidFootnoteCallerAlreadyInBt", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to The footnote caller you are attempting to paste does not belong in this back translation segment..
+		/// </summary>
+		internal static string kstidFootnoteNotInVernacular {
+			get {
+				return ResourceManager.GetString("kstidFootnoteNotInVernacular", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Background Color.
 		/// </summary>
 		internal static string kstidFormatBackgroundColorToolTip {

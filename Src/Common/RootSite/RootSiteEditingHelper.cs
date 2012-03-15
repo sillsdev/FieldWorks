@@ -14,6 +14,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 using Enchant;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -441,7 +442,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new object, given a text representation (e.g., from the clipboard).
-		///
 		/// </summary>
 		/// <param name="cache">FDO cache representing the DB connection to use</param>
 		/// <param name="sTextRep">Text representation of object</param>
@@ -450,7 +450,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// letter)</param>
 		/// <param name="kodt">The object data type to use for embedding the new object
 		/// </param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public virtual Guid MakeObjFromText(FdoCache cache, string sTextRep,
 			IVwSelection selDst, out int kodt)
@@ -474,15 +473,40 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (IsBackTranslation)
 				{
-					// TODO (TE-8956): Implement this
-					SelectionHelper helper = CurrentSelection;
-					SelLevInfo info;
-					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
-					{
-						//ISegment segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
-					}
-
 					kodt = (int)FwObjDataTypes.kodtNameGuidHot;
+					SelectionHelper helper = SelectionHelper.Create(selDst, null);
+					IStFootnoteRepository repo = cache.ServiceLocator.GetInstance<IStFootnoteRepository>();
+					SelLevInfo info;
+					ISegment segment;
+					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
+						segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+					else
+					{
+						SelLevInfo paraLevInfo;
+						helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo);
+						IStTxtPara para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(paraLevInfo.hvo);
+						segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), helper.Ws);
+					}
+					ITsString tssVernSegment = segment.BaselineText;
+					foreach (Guid guid in tssVernSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtOwnNameGuidHot))
+					{
+						IStFootnote footnote;
+						if (repo.TryGetObject(guid, out footnote) && footnote.TextRepresentation == sTextRep)
+						{
+							// Now we know the footnote being pasted corresponds to one in the proper place in the
+							// vernacular. Next we have to make sure it's not already somewhere else in the BT.
+							ITsString tssBtSegment = segment.FreeTranslation.get_String(helper.Ws);
+							if (tssBtSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtNameGuidHot).Any(
+								guidBtFn => repo.TryGetObject(guidBtFn, out footnote) && footnote.TextRepresentation == sTextRep))
+							{
+								DisplayMessage(ResourceHelper.GetResourceString("kstidFootnoteCallerAlreadyInBt"));
+								return Guid.Empty;
+							}
+							return guid;
+						}
+					}
+					DisplayMessage(ResourceHelper.GetResourceString("kstidFootnoteNotInVernacular"));
+					return Guid.Empty;
 				}
 			}
 			catch
@@ -490,6 +514,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			throw new ArgumentException("Unexpected object representation string: " + sTextRep, "stextRep");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Overridable method to display a simple application message to the user.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public virtual void DisplayMessage(string message)
+		{
+			MessageBox.Show(Control, message, Application.ProductName, MessageBoxButtons.OK);
 		}
 
 		/// ------------------------------------------------------------------------------------

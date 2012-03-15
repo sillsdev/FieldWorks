@@ -5776,3 +5776,5 @@ Andy Black, 13 Mar 2012. LT-10471 "Allow user ability to turn phonological rules
 	Also did this for affix templates, compound rules, and ad hoc rules.
 TomB, 14 Mar 2012. Upgraded additional project and Designer files fo VS 2010.
 KenZ, 15 Mar 2012. Updated FlexBridge installer (0.3.13) from Randy.
+TomB, 15 Mar 2012. TE-8956, TE-9543, TE-9533, TE-9542: Enabled pasting of footnote callers in back translations.
+	Also removed preprocessor directives that relied on the definition of NET_4_0.

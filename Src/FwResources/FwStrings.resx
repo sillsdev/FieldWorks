@@ -1421,4 +1421,12 @@ To restore from this backup, install version {1} of FieldWorks.
 	<value>Interlinear SFM files</value>
 	<comment>Used in the list of file times in file open/save dialogs</comment>
   </data>
+  <data name="kstidFootnoteCallerAlreadyInBt" xml:space="preserve">
+	<value>A caller for the footnote you are attempting to paste is already present in this back translation.</value>
+	<comment>Error message when paste is disallowed</comment>
+  </data>
+  <data name="kstidFootnoteNotInVernacular" xml:space="preserve">
+	<value>The footnote caller you are attempting to paste does not belong in this back translation segment.</value>
+	<comment>Error message when paste is disallowed</comment>
+  </data>
 </root>

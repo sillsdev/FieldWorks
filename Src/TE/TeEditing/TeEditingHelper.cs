@@ -2362,13 +2362,7 @@ namespace SIL.FieldWorks.TE
 				catch (InvalidStructureException e)
 				{
 					// Cancel the request if chapter or verse numbers are present.
-					// display message box if not running in a test
-					if (!MiscUtils.RunningTests)
-					{
-						MessageBox.Show(Control,
-							TeResourceHelper.GetResourceString("kstidParaHasNumbers"),
-							m_app.ApplicationName, MessageBoxButtons.OK);
-					}
+					DisplayMessage(TeResourceHelper.GetResourceString("kstidParaHasNumbers"));
 					return;
 				}
 
@@ -2380,6 +2374,18 @@ namespace SIL.FieldWorks.TE
 					true, true, selHelper.AssocPrev);
 			}
 			return;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Method to display a simple application message to the user.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void DisplayMessage(string message)
+		{
+			// display message box if not running in a test
+			if (!MiscUtils.RunningTests)
+				MessageBox.Show(Control, message, m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// ------------------------------------------------------------------------------------
