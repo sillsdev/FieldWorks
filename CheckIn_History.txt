@@ -174,3 +174,4 @@ RickM, 15 Mar 2012. LT-12716 Going through the free translation field using the 
 	the end position and goes to the next line.
 RickM, 16 Mar 2012. NEEDED To Remove a comment line: LT-12716 Going through the free translation field using the right arrow key skips
 	the end position and goes to the next line.
+KenZ, 16 Mar 2012. Integrated FW7.2.3 changes to WW.
