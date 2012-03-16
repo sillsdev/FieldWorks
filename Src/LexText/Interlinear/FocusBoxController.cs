@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -13,7 +14,7 @@ using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public partial class FocusBoxController : UserControl, ISelectOccurrence
+	public partial class FocusBoxController : UserControl, ISelectOccurrence, SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus
 	{
 		internal IAnalysisControlInternal m_sandbox;
 		protected Mediator m_mediator;
@@ -254,6 +255,16 @@ namespace SIL.FieldWorks.IText
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
+			FocusSandbox();
+		}
+
+		/// <summary>
+		/// Call this rather than "FocusBox.Focus()" because we don't want focus passing through this
+		/// to the sandbox if we can help it. One problem can be that as the main view loses focus it
+		/// resets the default keyboard.
+		/// </summary>
+		internal void FocusSandbox()
+		{
 			if (m_sandbox != null && m_sandbox is UserControl)
 				(m_sandbox as UserControl).Focus();
 		}

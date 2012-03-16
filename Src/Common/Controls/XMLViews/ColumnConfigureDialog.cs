@@ -641,8 +641,10 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 
 			var origDisplayCategory = TranslateWsParamToLocalizedDisplayCategory(origWs);
-			var layoutName = XmlUtils.GetManditoryAttributeValue(node, "layout");
-			if (CurrentColumnsContainsOriginalDefault(layoutName, origWs))
+			var origLabel = XmlUtils.GetOptionalAttributeValue(node, "originalLabel");
+			if (string.IsNullOrEmpty(origLabel))
+				return false; // trash this bizarre column!
+			if (CurrentColumnsContainsOriginalDefault(origLabel, origWs))
 				return false;
 
 			var dispName = UpdateNodeToReflectDefaultWs(node, origWs);
@@ -678,14 +680,14 @@ namespace SIL.FieldWorks.Common.Controls
 			return result;
 		}
 
-		private bool CurrentColumnsContainsOriginalDefault(string layoutName, string origWs)
+		private bool CurrentColumnsContainsOriginalDefault(string label, string origWs)
 		{
-			// Search through m_currentColumns for one that has the same layout attribute
+			// Search through m_currentColumns for one that has the same label attribute
 			// and original writing system.
 			foreach (var col in m_currentColumns)
 			{
-				var colLayout = XmlUtils.GetManditoryAttributeValue(col, "layout");
-				if (layoutName != colLayout)
+				var colLabel = XmlUtils.GetOptionalAttributeValue(col, "label");
+				if (label != colLabel)
 					continue;
 				var wsParam = XmlViewsUtils.FindWsParam(col);
 				if (wsParam == origWs)

@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.IText
 			m_helpTopicProvider = helpTopicProvider;
 			m_ws = wsCurrent;
 			int iSel = 0;
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_cbWritingSystems.Items.Add(ws);
 				if (ws.Handle == wsCurrent)

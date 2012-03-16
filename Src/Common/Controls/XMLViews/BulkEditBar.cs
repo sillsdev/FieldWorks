@@ -6045,7 +6045,7 @@ namespace SIL.FieldWorks.Common.Controls
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
 				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				ISilDataAccess sda = m_cache.DomainDataByFlid;
+				//ISilDataAccess sda = m_cache.DomainDataByFlid; // used DataAccess, is that okay?
 
 				var chosenObjs = m_chosenObjs;
 				int i = 0;
@@ -6076,11 +6076,11 @@ namespace SIL.FieldWorks.Common.Controls
 					if (Atomic)
 					{
 						var newHvo = newHvos.Length > 0 ? newHvos[0] : 0;
-						sda.SetObjProp(realTarget, m_flid, newHvo);
+						DataAccess.SetObjProp(realTarget, m_flid, newHvo);
 					}
 					else
 					{
-						sda.Replace(realTarget, m_flid, 0, oldVals.Count, newHvos, newHvos.Length);
+						DataAccess.Replace(realTarget, m_flid, 0, oldVals.Count, newHvos, newHvos.Length);
 					}
 				}
 			});

@@ -21,9 +21,11 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
+using Palaso.WritingSystems.Collation;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -45,6 +47,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class PropertyRecordSorter : RecordSorter
 	{
+		private IComparer m_comp;
 		/// <summary></summary>
 		protected string m_propertyName;
 
@@ -156,7 +159,18 @@ namespace SIL.FieldWorks.Filters
 			DateTime dt1 = DateTime.Now;
 			int tc1 = Environment.TickCount;
 #endif
-			records.Sort(getComparer());
+			m_comp = getComparer();
+			if (m_comp is FdoCompare)
+			{
+				//(m_comp as FdoCompare).Init();
+				(m_comp as FdoCompare).ComparisonNoter = this;
+				m_comparisonsDone = 0;
+				m_percentDone = 0;
+				// Make sure at least 1 so we don't divide by zero.
+				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
+			}
+
+			records.Sort(m_comp);
 
 #if DEBUG
 			// only do this if the timing switch is info or verbose
@@ -326,7 +340,7 @@ namespace SIL.FieldWorks.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -352,13 +366,11 @@ namespace SIL.FieldWorks.Filters
 			/// <summary></summary>
 			protected string m_propertyName;
 			/// <summary></summary>
-			protected System.Collections.Hashtable m_values;
-			/// <summary></summary>
-			protected ILgCollatingEngine m_lce;
+			protected ICollator m_collater;
 			/// <summary></summary>
 			protected bool m_fUseKeys = false;
-			/// <summary></summary>
-			protected System.Collections.Hashtable m_values2;
+			internal INoteComparision ComparisonNoter { get; set; }
+			private Dictionary<object, string> m_sortKeyCache;
 
 			private FdoCache m_cache;
 
@@ -374,6 +386,7 @@ namespace SIL.FieldWorks.Filters
 				Init();
 				m_propertyName= propertyName;
 				m_fUseKeys = propertyName == "ShortName";
+				m_sortKeyCache = new Dictionary<object, string>();
 			}
 
 			/// <summary>
@@ -386,9 +399,7 @@ namespace SIL.FieldWorks.Filters
 
 			private void Init()
 			{
-				m_values = new System.Collections.Hashtable();
-				m_values2 = new System.Collections.Hashtable();
-				m_lce = null;
+				m_collater = null;
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -456,15 +467,7 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public void OpenCollatingEngine(string sWs)
 			{
-				if (m_lce == null)
-				{
-					m_lce = LgIcuCollatorClass.Create();
-				}
-				else
-				{
-					m_lce.Close();
-				}
-				m_lce.Open(sWs);
+				m_collater = m_cache.ServiceLocator.WritingSystemManager.Get(sWs).Collator;
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -474,11 +477,6 @@ namespace SIL.FieldWorks.Filters
 			/// --------------------------------------------------------------------------------
 			public void CloseCollatingEngine()
 			{
-				if (m_lce != null)
-				{
-					m_lce.Close();
-					m_lce = null;
-				}
 			}
 
 			ICmObject GetObjFromItem(object x)
@@ -500,129 +498,42 @@ namespace SIL.FieldWorks.Filters
 			/// </returns>
 			/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
 			/// --------------------------------------------------------------------------------
-			public int Compare(object x,object y)
+			public int Compare(object x, object y)
 			{
-				try
+				if (ComparisonNoter != null)
+					ComparisonNoter.ComparisonOccurred(); // for progress reporting.
+
+				if (x == y)
+					return 0;
+				if (x == null)
+					return -1;
+				if (y == null)
+					return 1;
+
+				// One time overhead
+				if (m_collater == null)
+					OpenCollatingEngine((GetObjFromItem(x)).SortKeyWs);
+
+				//	string property = "ShortName";
+				var a = GetObjFromCacheOrItem(x);
+				var b = GetObjFromCacheOrItem(y);
+
+				return m_collater.Compare(a, b);
+			}
+
+			private string GetObjFromCacheOrItem(object item)
+			{
+				var item1 = (ManyOnePathSortItem) item;
+				string cachedKey;
+				if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
 				{
-					if (x == y)
-						return 0;
-					if (x == null)
-						return -1;
-					if (y == null)
-						return 1;
-
-					// Enhance JohnT: this could be significantly optimized. In particular
-					// we don't need to make an ICmObject of the key if we've already cached
-					// the key for that HVO. But is this comparer used enough to be worth it?
-
-					//	string property = "ShortName";
-					var a = GetObjFromItem(x);
-					var b = GetObjFromItem(y);
-
-					if (m_fUseKeys)		// m_property == "ShortName"
-					{
-						byte[] ka = null;
-						byte[] kb = null;
-						if (m_values.Count == 0)
-							OpenCollatingEngine(a.SortKeyWs);
-						if (m_values.Contains(a.Hvo))
-						{
-							ka = (byte[])m_values[a.Hvo];
-						}
-						else
-						{
-							ka = (byte[])m_lce.get_SortKeyVariant(a.SortKey,
-								LgCollatingOptions.fcoDefault);
-							m_values.Add(a.Hvo, ka);
-						}
-						if (m_values.Contains(b.Hvo))
-						{
-							kb = (byte[])m_values[b.Hvo];
-						}
-						else
-						{
-							kb = (byte[])m_lce.get_SortKeyVariant(b.SortKey,
-								LgCollatingOptions.fcoDefault);
-							m_values.Add(b.Hvo, kb);
-						}
-						// This is what m_lce.CompareVariant(ka,kb,...) would do.
-						// Simulate strcmp on the two NUL-terminated byte strings.
-						// This avoids marshalling back and forth.
-						// JohnT: but apparently the strings are not null-terminated if the input was empty.
-						int nVal = 0;
-						if (ka.Length == 0)
-							nVal = -kb.Length; // zero if equal, neg if b is longer (considered larger)
-						else if (kb.Length == 0)
-							nVal = 1; // ka is longer and considered larger.
-						else
-						{
-							// Normal case, null termination should be present.
-							int ib;
-							for (ib = 0; ka[ib] == kb[ib] && ka[ib] != 0; ++ib)
-							{
-								// skip merrily along until strings differ or end.
-							}
-							nVal = (int)(ka[ib] - kb[ib]);
-						}
-						if (nVal == 0)
-						{
-							// Need to get secondary sort keys.
-							int na;
-							if (m_values2.Contains(a.Hvo))
-							{
-								na = (int)m_values2[a.Hvo];
-							}
-							else
-							{
-								na = a.SortKey2;
-								m_values2.Add(a.Hvo, na);
-							}
-							int nb;
-							if (m_values2.Contains(b.Hvo))
-							{
-								nb = (int)m_values2[b.Hvo];
-							}
-							else
-							{
-								nb = b.SortKey2;
-								m_values2.Add(b.Hvo, nb);
-							}
-							return na - nb;
-						}
-						else
-						{
-							return nVal;
-						}
-					}
-					else // use default C# string comparisons
-					{
-						string sa = null;
-						string sb = null;
-						if (m_values.Contains(a.Hvo))
-						{
-							sa = (string)m_values[a.Hvo];
-						}
-						else
-						{
-							sa = (string)GetProperty(a, m_propertyName);
-							m_values.Add(a.Hvo, sa);
-						}
-						if (m_values.Contains(b.Hvo))
-						{
-							sb = (string)m_values[b.Hvo];
-						}
-						else
-						{
-							sb = (string)GetProperty(b, m_propertyName);
-							m_values.Add(b.Hvo, sb);
-						}
-						return sa.CompareTo(sb);
-					}
+					if (m_fUseKeys)
+						cachedKey = GetObjFromItem(item).SortKey;
+					else
+						cachedKey = (string) GetProperty(GetObjFromItem(item), m_propertyName);
+					m_sortKeyCache.Add(item1, cachedKey);
 				}
-				catch (Exception)
-				{
-					throw;
-				}
+				return cachedKey;
 			}
 
 			/// <summary>
@@ -639,46 +550,10 @@ namespace SIL.FieldWorks.Filters
 				FdoCompare that = (FdoCompare)obj;
 				if (this.m_fUseKeys != that.m_fUseKeys)
 					return false;
-				if (this.m_lce != that.m_lce)
+				if (this.m_collater != that.m_collater)
 					return false;
 				if (this.m_propertyName != that.m_propertyName)
 					return false;
-				if (m_values == null)
-				{
-					if (that.m_values != null)
-						return false;
-				}
-				else
-				{
-					if (that.m_values == null)
-						return false;
-					if (this.m_values.Count != that.m_values.Count)
-						return false;
-					IDictionaryEnumerator ie = that.m_values.GetEnumerator();
-					while (ie.MoveNext())
-					{
-						if (!m_values.ContainsKey(ie.Key) || m_values[ie.Key] != ie.Value)
-							return false;
-					}
-				}
-				if (m_values2 == null)
-				{
-					if (that.m_values2 != null)
-						return false;
-				}
-				else
-				{
-					if (that.m_values2 == null)
-						return false;
-					if (this.m_values2.Count != that.m_values2.Count)
-						return false;
-					IDictionaryEnumerator ie = that.m_values2.GetEnumerator();
-					while (ie.MoveNext())
-					{
-						if (!m_values2.ContainsKey(ie.Key) || m_values2[ie.Key] != ie.Value)
-							return false;
-					}
-				}
 				return true;
 			}
 
@@ -691,14 +566,10 @@ namespace SIL.FieldWorks.Filters
 				int hash = GetType().GetHashCode();
 				if (m_fUseKeys)
 					hash *= 3;
-				if (m_lce != null)
-					hash += m_lce.GetHashCode();
+				if (m_collater != null)
+					hash += m_collater.GetHashCode();
 				if (m_propertyName != null)
 					hash *= m_propertyName.GetHashCode();
-				if (m_values != null)
-					hash += m_values.Count * 17;
-				if (m_values2 != null)
-					hash += m_values2.Count * 53;
 				return hash;
 			}
 		}
@@ -1026,11 +897,11 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// See whether the comparer can preload. Currently we only know about one kind that can.
 		/// </summary>
-		public override void Preload()
+		public override void Preload(object rootObj)
 		{
-			base.Preload();
+			base.Preload(rootObj);
 			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Preload();
+				(m_comp as StringFinderCompare).Preload(rootObj);
 		}
 
 		/// <summary>
@@ -1391,9 +1262,10 @@ namespace SIL.FieldWorks.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload()
+		/// <param name="rootObj">Typically a CmObject, the root object of the whole view we are sorting for</param>
+		public virtual void Preload(object rootObj)
 		{
-			m_finder.Preload();
+			m_finder.Preload(rootObj);
 		}
 
 		/// ------------------------------------------------------------------------------------

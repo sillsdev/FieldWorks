@@ -73,7 +73,7 @@
 		<part id="LexSense-Jt-OwningEntry" type="jtview">
 			<obj class="LexSense" field="OwningEntry"/>
 		</part>
-	<part id="LexSense-Jt-DomainsAbbrAndName" type="jtview">
+		<part id="LexSense-Jt-DomainsAbbrAndName" type="jtview">
 	  <span>
 		<properties>
 		  <editable value="false"/>
@@ -298,7 +298,7 @@
 		<part id="LexSense-Jt-AnthropologyCategoriesForSense" type="jtview">
 	  <seq field="AnthroCodes" layout="PossibilityAbbrAndName"/>
 	</part>
-	<part id="LexSense-Jt-AcademicDomainsForSense" type="jtview">
+		<part id="LexSense-Jt-AcademicDomainsForSense" type="jtview">
 			<seq field="DomainTypes" layout="Name" sep=", "/>
 		</part>
 		<part id="LexSense-Jt-SenseTypeForSense" type="jtview">
@@ -369,6 +369,9 @@
 	  </seq>
 	</part>
 
+	<part id="LexSense-Jt-RootComplexFormsConfig">
+		<seq field="VisibleComplexFormBackRefs" layout="publishRootComplexFormRef" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+	</part>
 	<!-- *********************************************************************************** -->
 		<!-- Overrides of otherwise generated parts -->
 		<!-- *********************************************************************************** -->

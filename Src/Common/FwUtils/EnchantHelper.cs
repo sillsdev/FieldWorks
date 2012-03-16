@@ -106,11 +106,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// thread with a timeout. Not sure whether this is enough protection, other calls may be at risk also, but if
 		/// we can confirm the dictionary exists at least it isn't spuriously locked when we first consider it.
 		/// </summary>
-		private static bool DictionaryExists(string wsId)
+		private static bool DictionaryExists(string wsId, int ws, ILgWritingSystemFactory wsf)
 		{
 			bool result;
 			if (s_existingDictionaries.TryGetValue(wsId, out result))
 				return result;
+			if (!ValidEnchantId(wsId))
+			{
+				var wsName = wsf.GetStrFromWs(ws);
+				var msg = string.Format(FwUtilsStrings.kstidInvalidDictId, wsName, wsId);
+				MessageBox.Show(msg, FwUtilsStrings.kstidCantDoDictExistsCaption,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return false;
+			}
+
 			var tester = new ExistsTester() {WsId = wsId};
 			var newThread = new Thread(tester.Test);
 			newThread.Start();
@@ -126,6 +135,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return result;
 		}
 
+		private static bool ValidEnchantId(string wsId)
+		{
+			if (string.IsNullOrEmpty(wsId))
+				return false;
+			foreach (var c in wsId.ToCharArray())
+			{
+				if (c > 0x7f)
+					return false;
+				if (!Char.IsLetterOrDigit(c) && c != '_') //underscore seems to be valid according to the RawDictionaryId code
+					return false;
+			}
+			return true;
+		}
+
 		class ExistsTester
 		{
 			public bool Result;
@@ -133,7 +156,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			public void Test()
 			{
-				Result = Broker.Default.DictionaryExists(WsId);
+				try
+				{
+					Result = Broker.Default.DictionaryExists(WsId);
+				}
+				catch (Exception e)
+				{
+					// Enhance JohnT: See LT-12747. Would be better probably to catch only relevant exceptions?
+					// But note that failing to catch one here seems to lock up the whole system (and even the VS
+					// debugger).
+					Result = false; // Something is badly wrong with this ID, don't use it!
+				}
 			}
 		}
 
@@ -149,7 +182,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string wsId = RawDictionaryId(ws, wsf);
 			if (String.IsNullOrEmpty(wsId))
 				return null;
-			if (DictionaryExists(wsId))
+			if (DictionaryExists(wsId, ws, wsf))
 			{
 				return wsId;
 			}

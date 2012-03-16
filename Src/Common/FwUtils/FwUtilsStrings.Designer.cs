@@ -223,6 +223,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to  The writing system {0} specifies an invalid spelling dictionary ({1}). Valid spelling dictionary IDs must only contain ASCII alphanumeric characters or underline. Spell checking will not work for this writing system until you correct this in the Writing System Properties dialog..
+		/// </summary>
+		internal static string kstidInvalidDictId {
+			get {
+				return ResourceManager.GetString("kstidInvalidDictId", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to  mm.
 		/// </summary>
 		internal static string kstidMm {

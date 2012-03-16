@@ -3946,17 +3946,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					if (owner != null &&
 						owner.ClassID == RnGenericRecTags.kClassId)
-					{
 						return owner.Guid;
+					if (CurrentSlice.Object is IText)
+					{
+						// Text is not already owned by a notebook record. So there's nothing yet to jump to.
+						// If the user is really doing the jump we need to make it now.
+						// Otherwise we just need to return something non-null to indicate the jump
+						// is possible (though this is not currently used).
+						if (forEnableOnly)
+							return CurrentSlice.Object.Guid;
+						((IText) CurrentSlice.Object).MoveToNotebook(true);
+						return CurrentSlice.Object.Owner.Guid;
 					}
-					// Not already owned by a notebook record. So there's nothing yet to jump to.
-					// If the user is really doing the jump we need to make it now.
-					// Otherwise we just need to return something non-null to indicate the jump
-					// is possible (though this is not currently used).
-					if (forEnableOnly)
-						return CurrentSlice.Object.Guid;
-					((IText)CurrentSlice.Object).MoveToNotebook(true);
-					return CurrentSlice.Object.Owner.Guid;
+					// Try TargetId by default
 				}
 				else if (tool == "interlinearEdit")
 				{
@@ -4101,22 +4103,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (!slice.IsDisposed && slice.ContainingDataTree == this && slice.TakeFocus(false))
 					break;
-			}
-		}
-
-		/// <summary>
-		/// This method seems to get called when we are switching to another tool (or area) AND when the
-		/// program is shutting down. This makes it a good point to notify the current slice that it is
-		/// no longer current (in case it wants to save something, like the InterlinearSlice).
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnValidating(CancelEventArgs e)
-		{
-			base.OnValidating(e);
-			if (m_currentSlice != null)
-			{
-				m_currentSlice.SetCurrentState(false);
-				m_currentSlice = null;
 			}
 		}
 

@@ -1935,6 +1935,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually..
+		/// </summary>
+		public static string ksUnauthorizedRenameBakFile {
+			get {
+				return ResourceManager.GetString("ksUnauthorizedRenameBakFile", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Utilities.
 		/// </summary>
 		public static string ksUtilities {

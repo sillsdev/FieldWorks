@@ -194,18 +194,18 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the key terms tree node with the specified hvo.
+		/// Finds the key terms tree node for the specified object (given its GUID).
 		/// </summary>
-		/// <param name="hvo">hvo of node to find.</param>
+		/// <param name="guid">GUID of term whose node is being sought.</param>
 		/// <returns>The node with the specified hvo.</returns>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode FindNodeWithHvo(int hvo)
+		public TreeNode FindNode(Guid guid)
 		{
-			if (hvo < 0)
+			if (guid == Guid.Empty)
 				return null;
 
-			return AllNodes.Where(treeNode => treeNode.Tag != null &&
-				treeNode.Tag.GetType() == typeof(int)).FirstOrDefault(treeNode => (int)treeNode.Tag == hvo);
+			return AllNodes.Where(treeNode => treeNode.Tag != null && treeNode.Tag is IChkTerm).
+				FirstOrDefault(treeNode => ((IChkTerm)treeNode.Tag).Guid == guid);
 		}
 
 		/// ------------------------------------------------------------------------------------

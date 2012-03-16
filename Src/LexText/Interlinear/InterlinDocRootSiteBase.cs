@@ -317,7 +317,9 @@ namespace SIL.FieldWorks.IText
 				for (; i > 0; i--)
 				{
 					// get the container for whatever is selected at this level.
-					var container = m_objRepo.GetObject(rgvsli[i].hvo);
+					ICmObject container;
+					if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out container))
+						return null; // may fail, e.g., trying to get bookmark for text just deleted.
 
 					seg = container as ISegment;
 					if (seg != null)
@@ -989,7 +991,9 @@ namespace SIL.FieldWorks.IText
 
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (SuspendResettingAnalysisCache)
+			//If the RootStText is null we are either in a place that doesn't care about parser related updates
+			// or we are not yet completely displaying the text, so we should be fine, I hope? (LT-12493)
+			if (SuspendResettingAnalysisCache || RootStText == null)
 				return;
 
 			switch (tag)

@@ -537,7 +537,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									(customFieldInfo.Label != customFieldInfo.m_fieldname) ? new XAttribute("label", customFieldInfo.Label) : null));
 							}
 							DataSortingService.SortCustomPropertiesRecord(customPropertyDeclarations);
-							DataSortingService.WriteElement(writer, reader.Settings, customPropertyDeclarations);
+							DataSortingService.WriteElement(writer, customPropertyDeclarations);
 						}
 
 						var sortableProperties = m_mdcInternal.GetSortableProperties();
@@ -553,7 +553,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							foreach (var newbyXml in workItem.Newbies.Values)
 							{
 								DataSortingService.WriteElement(writer,
-									reader.Settings,
 									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbyXml)));
 							}
 						}
@@ -585,7 +584,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 								foreach (var newbieXml in DataSortingService.GetLessorNewbies(currentGuid, workItem.Newbies))
 								{
 									DataSortingService.WriteElement(writer,
-										reader.Settings,
 										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
 								}
 
@@ -605,7 +603,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									keepReading = reader.IsStartElement();
 									// But, add updated data for the modified record.
 									DataSortingService.WriteElement(writer,
-										reader.Settings,
 										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(dirtballXml)));
 									workItem.Dirtballs.Remove(currentGuid);
 									transferUntouched = false;
@@ -621,7 +618,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							foreach (var newbieXml in workItem.Newbies.Values)
 							{
 								DataSortingService.WriteElement(writer,
-									reader.Settings,
 									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
 							}
 						}

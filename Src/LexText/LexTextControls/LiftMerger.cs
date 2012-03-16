@@ -3146,6 +3146,39 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		private string CopyPronunciationFile(string sFile)
+		{
+			/*string sLiftDir = */
+			Path.GetDirectoryName(m_sLiftFile);
+			// Paths to try for resolving given filename:
+			// {directory of LIFT file}/audio/filename
+			// {FW LinkedFilesRootDir}/filename
+			// {FW LinkedFilesRootDir}/Media/filename
+			// {FW DataDir}/filename
+			// {FW DataDir}/Media/filename
+			// give up and store relative path Pictures/filename (even though it doesn't exist)
+			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
+				String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
+			sPath = CopyFileToLinkedFiles(sFile, sPath, DirectoryFinder.ksMediaDir);
+			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
+			{
+				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
+				if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
+				{
+					sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir,
+						String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
+					if (!File.Exists(sPath))
+					{
+						sPath = Path.Combine(DirectoryFinder.FWDataDirectory, sFile);
+						if (!File.Exists(sPath))
+							sPath = Path.Combine(DirectoryFinder.FWDataDirectory,
+								String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
+					}
+				}
+			}
+			return sPath;
+		}
+
 		private void MergePronunciationMedia(ILexPronunciation pron, CmLiftPhonetic phon)
 		{
 			AddNewWsToBothVernAnal();
@@ -3171,33 +3204,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					media = CreateNewCmMedia();
 					pron.MediaFilesOS.Add(media);
-					/*string sLiftDir = */Path.GetDirectoryName(m_sLiftFile);
-					// Paths to try for resolving given filename:
-					// {directory of LIFT file}/audio/filename
-					// {FW LinkedFilesRootDir}/filename
-					// {FW LinkedFilesRootDir}/Media/filename
-					// {FW DataDir}/filename
-					// {FW DataDir}/Media/filename
-					// give up and store relative path Pictures/filename (even though it doesn't exist)
-					string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
-						String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
-					sPath = CopyFileToLinkedFiles(sFile, sPath, DirectoryFinder.ksMediaDir);
-					if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
-					{
-						sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
-						if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
-						{
-							sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir,
-								String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
-							if (!File.Exists(sPath))
-							{
-								sPath = Path.Combine(DirectoryFinder.FWDataDirectory, sFile);
-								if (!File.Exists(sPath))
-									sPath = Path.Combine(DirectoryFinder.FWDataDirectory,
-										String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile));
-							}
-						}
-					}
+					string sPath = CopyPronunciationFile(sFile);
 					try
 					{
 						if (!String.IsNullOrEmpty(sLabel))
@@ -3257,6 +3264,12 @@ namespace SIL.FieldWorks.LexText.Controls
 						media.MediaFileRA.InternalPath =
 							String.Format("Media{0}{1}", Path.DirectorySeparatorChar, sFile);
 					}
+				}
+				else
+				{
+					// When doing Send/Receive we should copy existing media in case they changed.
+					if (m_msImport == MergeStyle.MsKeepOnlyNew)
+						CopyPronunciationFile(sFile);
 				}
 				AddNewWsToBothVernAnal();
 				MergeInMultiString(media.Label, CmMediaTags.kflidLabel, uref.Label, media.Guid);
@@ -5386,16 +5399,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Create a picture, adding it to the lex sense.  The filename is used to guess a full path,
-		/// and the label from uref is used to set the caption.
+		/// Copy a picture file from the LIFT source location to the project pictures folder.
+		/// Return the path to the copied picture.
 		/// </summary>
-		/// <param name="ls"></param>
-		/// <param name="uref"></param>
-		/// <param name="sFile"></param>
-		/// <param name="ws"></param>
-		private void CreatePicture(ILexSense ls, LiftUrlRef uref, string sFile, int ws)
+		/// <param name="sFile">path of file to copy, which may be nested</param>
+		private string CopyPicture(string sFile)
 		{
-			string sFolder = CmFolderTags.LocalPictures;
 			// Paths to try for resolving given filename:
 			// {directory of LIFT file}/pictures/filename
 			// {FW LinkedFilesRootDir}/filename
@@ -5433,6 +5442,21 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 			}
+			return sPath;
+		}
+
+		/// <summary>
+		/// Create a picture, adding it to the lex sense.  The filename is used to guess a full path,
+		/// and the label from uref is used to set the caption.
+		/// </summary>
+		/// <param name="ls"></param>
+		/// <param name="uref"></param>
+		/// <param name="sFile"></param>
+		/// <param name="ws"></param>
+		private void CreatePicture(ILexSense ls, LiftUrlRef uref, string sFile, int ws)
+		{
+			string sPath = CopyPicture(sFile);
+			string sFolder = CmFolderTags.LocalPictures;
 
 			ICmPicture pict = CreateNewCmPicture();
 			ls.PicturesOS.Add(pict);
@@ -5470,7 +5494,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				var linkedFilesSubDir = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, fwDirectory);
 				var fwPath = Path.Combine(linkedFilesSubDir, sFile);
 				Directory.CreateDirectory(Path.GetDirectoryName(fwPath));
-				File.Copy(sPath, fwPath, true);
+				try
+				{
+					File.Copy(sPath, fwPath, true);
+				}
+				catch (IOException e)
+				{
+					// We will get an IOException if Flex has an open entry displaying a picture we are trying to copy.
+					// Ignore the copy in this case assuming the picture probably didn't change anyway.
+				}
 				sPath = fwPath; // Make the linke to the copied file.
 			}
 			return sPath;
@@ -5516,6 +5548,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					AddNewWsToAnalysis();
 					MergeInMultiString(pict.Caption, CmPictureTags.kflidCaption, uref.Label, pict.Guid);
+					// When doing Send/Receive we should copy existing pictures in case they changed.
+					if (m_msImport == MergeStyle.MsKeepOnlyNew)
+						CopyPicture(uref.Url);
 				}
 			}
 		}

@@ -82,7 +82,7 @@
 	<command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
 	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
 	</command>
-	 <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Copy Affix Template" message="DataTreeCopy">
+	 <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
 		<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
 	 </command>
 	 <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">

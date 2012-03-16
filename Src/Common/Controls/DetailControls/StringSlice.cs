@@ -160,10 +160,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// string is RTL.
 					if (m_cache != null)
 					{
-			ITsString tss = m_cache.DomainDataByFlid.get_StringProp(hvo, m_flid);
+						ITsString tss = m_cache.DomainDataByFlid.get_StringProp(hvo, m_flid);
 						ITsTextProps ttp = tss.get_Properties(0);
 						int var;
-			int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+						int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 						if (ws == 0)
 							ws = m_wsDefault;
 						if (ws == 0)
@@ -487,22 +487,38 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					CheckDisposed();
 					if (!value)
 					{
-						// This may be called in the process of deleting the object after the object
-						// has been partially cleared out and thus would certainly fail the constraint
-						// check, then try to instantiate an error annotation which wouldn't have an
-						// owner, causing bad things to happen.
-						if (m_obj != null && m_obj.IsValidObject)
-						{
-							ConstraintFailure failure;
-							if (m_obj is IPhEnvironment)
-							{
-								(m_obj as IPhEnvironment).CheckConstraints(m_flid, true, out failure, /* adjust squiggly line */ true);
-							}
-							else
-								m_obj.CheckConstraints(m_flid, true, out failure);
-						}
+						DoValidation();
 					}
 				}
+			}
+
+			private void DoValidation()
+			{
+				// This may be called in the process of deleting the object after the object
+				// has been partially cleared out and thus would certainly fail the constraint
+				// check, then try to instantiate an error annotation which wouldn't have an
+				// owner, causing bad things to happen.
+				if (m_obj != null && m_obj.IsValidObject)
+				{
+					ConstraintFailure failure;
+					if (m_obj is IPhEnvironment)
+					{
+						(m_obj as IPhEnvironment).CheckConstraints(m_flid, true, out failure, /* adjust squiggly line */ true);
+					}
+					else
+						m_obj.CheckConstraints(m_flid, true, out failure);
+				}
+			}
+
+			/// <summary>
+			/// This method seems to get called when we are switching to another tool (or area, or slice) AND when the
+			/// program is shutting down. This makes it a good point to check constraints, since in some of these
+			/// cases, SliceIsCurrent may not get set false.
+			/// </summary>
+			protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+			{
+				base.OnValidating(e);
+				DoValidation();
 			}
 
 			#endregion INotifyControlInCurrentSlice implementation

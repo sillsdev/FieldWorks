@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
 <!-- IMPORTANT NOTE TO MAINTAINERS
 	*********************************************************************************************
 	ANY change to this Stylesheet must be accompanied by the generation of a new version using
@@ -6,7 +6,7 @@
 	*********************************************************************************************
 -->
 <Styles date="2011-04-01" DTDver="7E9FC46B-A1F9-4e31-A548-D1FBE4232387" label="Flex Dictionary">
-	<markup version="D27B4B8B-AAF0-4B08-9500-3B88886E3D42">
+	<markup version="13C213B9-E409-41FC-8782-7CA0EE983B2C">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -112,6 +112,12 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+		</tag>
+		<tag id="Dictionary-Minor" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Each paragraph of Minor entry information that is added to the entry if there are minor entries.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="9 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Headword" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">The main headword at the very start of the entry.</usage>

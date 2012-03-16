@@ -770,6 +770,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					e.KeyChar == (int)VwSpecialChars.kscDelForward ||
 					e.KeyChar == '\r');
 			}
+			// Ignore control characters (most can only be generated using control key, see above; but Escape otherwise gets through...)
+			// One day we might want to allow tab, though I don't think it comes through this method anyway...
+			if (e.KeyChar < 0x20 && e.KeyChar != '\r' && e.KeyChar != '\b')
+				return true;
 
 			return ignoredKey;
 		}
@@ -3155,8 +3159,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			// view in the context of the other one, with bad consequences.
 			// We don't want to do this if we're switching to a different application. Windows
 			// will take care of switching the keyboard.
-			if ((newFocusedControl == null || !(newFocusedControl is IRootSite)) && fIsChildWindow)
+			if ((ShouldRestoreKeyboardSwitchingTo(newFocusedControl)) && fIsChildWindow)
 				ActivateDefaultKeyboard();
+		}
+
+		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl)
+		{
+			if (newFocusedControl is IRootSite)
+				return false;
+			if (newFocusedControl is SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus)
+				return false;
+			return true;
 		}
 
 		/// <summary>

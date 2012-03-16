@@ -60,9 +60,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <returns></returns>
 		internal static XmlReader CreateReader(string xmlPathname)
 		{
-			XmlTextReader textReader = new XmlTextReader(xmlPathname);
-			textReader.WhitespaceHandling = WhitespaceHandling.Significant;
-			return XmlReader.Create(textReader, ReaderSettings);
+			return XmlReader.Create(xmlPathname, ReaderSettings);
 		}
 
 		/// <summary>

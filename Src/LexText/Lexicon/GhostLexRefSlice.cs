@@ -100,7 +100,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// Adapted from part of DtMenuHandler.AddNewLexEntryRef.
 					ILexEntryRef ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
 					ent.EntryRefsOS.Add(ler);
-					ler.ComponentLexemesRS.Add(newObj);
 					if (fForVariant)
 					{
 						// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
@@ -125,6 +124,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// ler.ShowComplexFormsInRS.Add(newObj);
 						ent.ChangeRootToStem();
 					}
+					// Must do this AFTER setting the RefType (so dependent virtual properties can be updated properly)
+					ler.ComponentLexemesRS.Add(newObj);
 				});
 			}
 			catch (ArgumentException)

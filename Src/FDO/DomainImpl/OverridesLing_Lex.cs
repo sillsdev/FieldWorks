@@ -2934,12 +2934,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				le.LexemeFormOA = null;
 			}
 
-			// If there are LexEntryRefs that reference this entry, we need to fix them explicitly.
+			// If this has entry refs to the merged entry or any of its senses, clear them out, since an object can't
+			// have itself or its own senses as components. If that results in an empty entryRef, delete it.
+			// Likewise references in the opposite direction must go.
+			RemoveCrossRefsBetween(this, le);
+			RemoveCrossRefsBetween(le, this);
+
+			// If there are LexEntryRefs that reference the entry being merged, we need to fix them explicitly.
 			// Base.MergeObject would make an attempt, but it can't handle the interaction between
 			// ComponentLexemes and PrimaryLexemes. (Removing the old object from component lexemes
 			// removes it from PrimaryLexemes, and then it isn't there as expected to replace, which crashes.
 			// See FWR-3535.)
-			foreach (LexEntryRef leref in (from item in objSrc.ReferringObjects where item is LexEntryRef select item))
+			// Also, it may be that the object we are merging with references this (or one of its senses) as a component.
+			// That would become circular so we have to remove it.
+			foreach (LexEntryRef leref in (from item in objSrc.ReferringObjects where item is LexEntryRef select item).ToArray())
 			{
 				leref.ReplaceComponent(le, this);
 			}
@@ -3014,6 +3022,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// However, it doesn't cost much to check, and the computation of HF can be complex in some cases,
 			// So just in case, adjust things if it somehow has changed.
 			UpdateHomographs(homoForm);
+		}
+
+		/// <summary>
+		/// Remove any LexEntryRef connections from source to dest (or its senses).
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="dest"></param>
+		private void RemoveCrossRefsBetween(ILexEntry source, ILexEntry dest)
+		{
+			var badTargets = new HashSet<ICmObject>(dest.AllSenses.Cast<ICmObject>());
+			badTargets.Add(dest);
+			for (int iEntry = source.EntryRefsOS.Count - 1; iEntry >= 0; iEntry--)
+			{
+				var ler = source.EntryRefsOS[iEntry];
+				for (int j = ler.ComponentLexemesRS.Count - 1; j >= 0; j--)
+				{
+					var target = ler.ComponentLexemesRS[j];
+					if (badTargets.Contains(target))
+					{
+						ler.ComponentLexemesRS.RemoveAt(j);
+						ler.PrimaryLexemesRS.Remove(target);
+					}
+				}
+				if (ler.ComponentLexemesRS.Count == 0)
+					source.EntryRefsOS.RemoveAt(iEntry);
+			}
 		}
 
 		internal void UpdateMorphoSyntaxAnalysesOfLexEntryRefs()
@@ -7243,6 +7277,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					break;
 			}
 			base.ValidateAddObjectInternal(e);
+		}
+
+		/// <summary>
+		/// For correct handling of some virtual properties, we must not allow the type of a LER
+		/// to be changed once it has components.
+		/// (If we need to change this, note that various virtual properties, such as VariantFormEntries,
+		/// will need to update automatically when type changes and components is non-empty. See LT-12671.
+		/// </summary>
+		partial void ValidateRefType(ref int newValue)
+		{
+			if (newValue == RefType)
+				return; // no change, no problem
+			if (ComponentLexemesRS.Count != 0)
+				throw new InvalidOperationException("Must not change EntryType after setting component lexemes");
 		}
 
 		/// <summary>

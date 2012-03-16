@@ -840,15 +840,24 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (ttp != null)
 			{
-				int var;
-				int hvoWs = ttp.GetIntPropValues((int) FwTextPropType.ktptWs, out var);
-				string wsName = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs).DisplayLabel;
-				string undo, redo;
-				ResourceHelper.MakeUndoRedoLabels("kstidUndoWritingSystemChanges", out undo, out redo);
-				undo = string.Format(undo, wsName);
-				redo = string.Format(redo, wsName);
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo,
-					Cache.ServiceLocator.GetInstance<IActionHandler>(), () => CallBaseChangeWritingSystem(sel, props, numProps));
+				if (sel.IsRange)
+				{
+					int var;
+					int hvoWs = ttp.GetIntPropValues((int) FwTextPropType.ktptWs, out var);
+					string wsName = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs).DisplayLabel;
+					string undo, redo;
+					ResourceHelper.MakeUndoRedoLabels("kstidUndoWritingSystemChanges", out undo, out redo);
+					undo = string.Format(undo, wsName);
+					redo = string.Format(redo, wsName);
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo,
+						Cache.ServiceLocator.GetInstance<IActionHandler>(), () => CallBaseChangeWritingSystem(sel, props, numProps));
+				}
+				else
+				{
+					// insertion point, won't make any actual data change, better not to make a UOW
+					// (e.g., see LT-12697)
+					CallBaseChangeWritingSystem(sel, props, numProps);
+				}
 			}
 		}
 

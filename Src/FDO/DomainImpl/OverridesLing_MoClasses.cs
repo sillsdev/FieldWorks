@@ -36,12 +36,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class MoMorphSynAnalysis
 	{
 		private int m_MLPartOfSpeechFlid;
+		private int m_MLInflectionClassFlid;
 
 		protected override void SetDefaultValuesAfterInit()
 		{
 			base.SetDefaultValuesAfterInit();
 
 			m_MLPartOfSpeechFlid = Cache.MetaDataCache.GetFieldId("MoMorphSynAnalysis", "MLPartOfSpeech", false);
+			m_MLInflectionClassFlid = Cache.MetaDataCache.GetFieldId("MoMorphSynAnalysis", "MLInflectionClass", false);
 		}
 
 		/// <summary>
@@ -328,11 +330,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Makes the target method accessible to XmlViews clients.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiString)]
+		public VirtualStringAccessor MLInflectionClass
+		{
+			get { return new VirtualStringAccessor(this, m_MLInflectionClassFlid, InflectionClassForWsTSS); }
+		}
+
+		/// <summary>
 		/// Virtual method to give part of speech depending on type of MSA.
 		/// </summary>
 		/// <param name="ws"></param>
 		/// <returns></returns>
 		public virtual ITsString PartOfSpeechForWsTSS(int ws)
+		{
+			return Cache.TsStrFactory.EmptyString(ws);
+		}
+
+		/// <summary>
+		/// Virtual method to give Inflection Class on type of MSA.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns></returns>
+		public virtual ITsString InflectionClassForWsTSS(int ws)
 		{
 			return Cache.TsStrFactory.EmptyString(ws);
 		}
@@ -835,6 +856,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get { return InterlinearNameTSS; }
 		}
+
 		/// <summary>
 		/// Get the part of speech ITsString for this MSA.
 		/// </summary>
@@ -874,6 +896,52 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return tisb.GetString();
 			}
 			return base.PartOfSpeechForWsTSS(ws);
+		}
+
+		/// <summary>
+		/// Get the inflection class ITsString for this MSA.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns>The inflection class abbreviation as a TsString for the given writing system,
+		/// or null if the inflection class is undefined.</returns>
+		/// Note. This is not really the right answer for MoDerivAffMsa. This, along with the POS produces
+		/// something like V>N(I>III), while what would really be desired is V(I)>N(III). There are actually
+		/// 5 From attributes that need to be nested together with desired order and decorations before the
+		/// wedge, and then followed by 4 To attributes again nested together with desired order and decorations.
+		/// This kind of change is going to require more massive changes to support.
+		public override ITsString InflectionClassForWsTSS(int ws)
+		{
+			var icFrom = FromInflectionClassRA;
+			var icTo = ToInflectionClassRA;
+			if (icFrom != null || icTo != null)
+			{
+				var tisb = TsIncStrBldrClass.Create();
+				if (icFrom != null)
+				{
+					var tssIC = icFrom.Abbreviation.get_String(ws);
+					if (tssIC == null || String.IsNullOrEmpty(tssIC.Text))
+						tssIC = icFrom.Abbreviation.BestAnalysisVernacularAlternative;
+					tisb.AppendTsString(tssIC);
+				}
+				else
+				{
+					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+				}
+				tisb.AppendTsString(m_cache.MakeUserTss(" > "));
+				if (icTo != null)
+				{
+					var tssIC = icTo.Abbreviation.get_String(ws);
+					if (tssIC == null || String.IsNullOrEmpty(tssIC.Text))
+						tssIC = icTo.Abbreviation.BestAnalysisVernacularAlternative;
+					tisb.AppendTsString(tssIC);
+				}
+				else
+				{
+					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+				}
+				return tisb.GetString();
+			}
+			return base.InflectionClassForWsTSS(ws);
 		}
 
 		partial void FromPartOfSpeechRASideEffects(IPartOfSpeech oldObjValue, IPartOfSpeech newObjValue)
@@ -1268,6 +1336,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return InterlinAbbrTSS(WritingSystemServices.kwsFirstAnalOrVern);
 			}
 		}
+
 		/// <summary>
 		/// Get the part of speech ITsString for this MSA.
 		/// </summary>
@@ -1287,6 +1356,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			else
 			{
 				return base.PartOfSpeechForWsTSS(ws);
+			}
+		}
+
+		/// <summary>
+		/// Get the inflection class ITsString for this MSA.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns>The inflection class abbreviation as a TsString for the given writing system,
+		/// or null if the inflection class is undefined.</returns>
+		public override ITsString InflectionClassForWsTSS(int ws)
+		{
+			var ic = InflectionClassRA;
+			if (ic != null)
+			{
+				var tssIC = ic.Abbreviation.get_String(ws);
+				if (tssIC == null || String.IsNullOrEmpty(tssIC.Text))
+					tssIC = ic.Abbreviation.BestAnalysisVernacularAlternative;
+				return tssIC;
+			}
+			else
+			{
+				return base.InflectionClassForWsTSS(ws);
 			}
 		}
 
@@ -2116,6 +2207,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get { throw new Exception("The method or operation is not implemented."); }
 		}
+
 		/// <summary>
 		/// Get the part of speech ITsString for this MSA.
 		/// </summary>
@@ -2135,6 +2227,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			else
 			{
 				return base.PartOfSpeechForWsTSS(ws);
+			}
+		}
+
+		/// <summary>
+		/// Get the inflection class ITsString for this MSA.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns>The inflection class abbreviation as a TsString for the given writing system,
+		/// or null if the inflection class is undefined.</returns>
+		public override ITsString InflectionClassForWsTSS(int ws)
+		{
+			var ic = InflectionClassRA;
+			if (ic != null)
+			{
+				var tssIC = ic.Abbreviation.get_String(ws);
+				if (tssIC == null || String.IsNullOrEmpty(tssIC.Text))
+					tssIC = ic.Abbreviation.BestAnalysisVernacularAlternative;
+				return tssIC;
+			}
+			else
+			{
+				return base.InflectionClassForWsTSS(ws);
 			}
 		}
 

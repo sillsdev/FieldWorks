@@ -688,6 +688,7 @@ namespace SIL.FieldWorks.Common.Controls
 				Logger.WriteEvent(String.Format("Sort on {0} {1} ({2})",
 						m_lvHeader.Columns[iHeaderColumn].Text, order, i));
 			}
+			m_lvHeader.Refresh();
 		}
 
 		// Sets the sort arrow for the given header column. Also sets the current column if
@@ -2983,7 +2984,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected internal bool IsColumnShowing(XmlNode colSpec)
 		{
-			return XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, colSpec) >= 0;
+			//for some reason column specs may not have a layout set, fall back to the old test
+			if (colSpec == null || colSpec.Attributes == null || colSpec.Attributes["layout"] == null)
+				return XmlViewsUtils.FindIndexOfMatchingNode(ColumnSpecs, colSpec) >= 0;
+			//Be as non-specific about the column as we can, writing system options and width and other things may give false negatives
+			return XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "layout", colSpec.Attributes["layout"].Value, null) != null;
 		}
 
 		/// <summary>
@@ -3562,6 +3567,26 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_filterBar != null)
 				m_filterBar.RemoveAllFilters();
+		}
+
+		/// <summary>
+		/// Decide whether to display the Configure menu command for changing browse view column choices.
+		/// </summary>
+		/// <param name="commandObject"> </param>
+		/// <param name="display"> </param>
+		/// <returns></returns>
+		public bool OnDisplayConfigureColumns(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			// Anytime we have a BrowseViewer or one of its subclasses,
+			// we ought to have this menu command available. LT-12752
+			var result = true;
+			display.Enabled = result;
+			display.Visible = result;
+
+			return result;
 		}
 
 		/// <summary>

@@ -287,6 +287,7 @@
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />
 	<Compile Include="DummyProgressDlg.cs" />
+	<Compile Include="DuplicateWordformFixerTests.cs" />
 	<Compile Include="FwSetupFixtureClass.cs" />
 	<Compile Include="Ling_WfiTests.cs" />
 	<Compile Include="CmCellTests.cs" />

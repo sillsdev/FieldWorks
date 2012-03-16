@@ -60,6 +60,27 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 			}
 		}
 
+		internal static System.Drawing.Bitmap _1321382935_plus {
+			get {
+				object obj = ResourceManager.GetObject("_1321382935_plus", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap _1321385905_dialog_close {
+			get {
+				object obj = ResourceManager.GetObject("_1321385905_dialog_close", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap _1330980033_search_button {
+			get {
+				object obj = ResourceManager.GetObject("_1330980033_search_button", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
 		internal static System.Drawing.Bitmap check_circle {
 			get {
 				object obj = ResourceManager.GetObject("check_circle", resourceCulture);
@@ -109,7 +130,7 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to {0}. All rights reserved..
+		///   Looks up a localized string similar to {0}. All rights reserved. Distributable under the terms of either the Common Public License or the GNU Lesser General Public License..
 		/// </summary>
 		internal static string kstidCopyrightFmt {
 			get {
@@ -308,6 +329,33 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Initializing....
+		/// </summary>
+		internal static string kstidSplashMsgInitializing {
+			get {
+				return ResourceManager.GetString("kstidSplashMsgInitializing", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Loading questions....
+		/// </summary>
+		internal static string kstidSplashMsgLoadingQuestions {
+			get {
+				return ResourceManager.GetString("kstidSplashMsgLoadingQuestions", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Loading translations....
+		/// </summary>
+		internal static string kstidSplashMsgLoadingTranslations {
+			get {
+				return ResourceManager.GetString("kstidSplashMsgLoadingTranslations", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Template generation complete!.
 		/// </summary>
 		internal static string kstidTemplateGenerationComplete {
@@ -337,6 +385,20 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
 		internal static System.Drawing.Bitmap Paste {
 			get {
 				object obj = ResourceManager.GetObject("Paste", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap Transcelerator {
+			get {
+				object obj = ResourceManager.GetObject("Transcelerator", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
+		internal static System.Drawing.Bitmap wait22trans {
+			get {
+				object obj = ResourceManager.GetObject("wait22trans", resourceCulture);
 				return ((System.Drawing.Bitmap)(obj));
 			}
 		}

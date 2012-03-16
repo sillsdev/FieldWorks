@@ -3,4 +3,6 @@
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.HomographResetter"/>
 	<utility assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.ParserAnalysisRemover"/>
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.ErrorFixer"/>
+	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.DuplicateWordformFixer"/>
+	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ParseIsCurrentFixer"/>
 </utilityCatalog>

@@ -867,8 +867,27 @@ Cleanup:
 		// side effects? Should we have a special ivMin value to signal a pseudo-change like
 		// this? It is probably OK because it would be treated as replacing the object with
 		// itself, which should be harmless.
-		return pnoteNextOuter->PropChanged(pnoteNextOuter->Object(), pnoteNextOuter->Tags()[m_ipropParent],
-			ObjectIndex(), 1, 1);
+
+		// However, it's possible (see e.g. LT-11566) that we are modifying an object that
+		// has moved, as when merging two senses and keeping the second. If the index is invalid,
+		// assume that we will be re-displaying the whole outer sequence as a result of its own
+		// changes, and don't bother doing it as a way of showing this change.
+		int hvoOuter = pnoteNextOuter->Object();
+		int tag = pnoteNextOuter->Tags()[m_ipropParent];
+		int index = ObjectIndex();
+		int chvo;
+		HRESULT hr;
+		IgnoreHr(hr = prootb->GetDataAccess()->get_VecSize(hvoOuter, tag, &chvo));
+		if (hr != S_OK)
+		{
+			// Presumably not a sequence, must(?) be atomic
+			HVO hvo;
+			CheckHr(prootb->GetDataAccess()->get_ObjectProp(hvoOuter, tag, &hvo));
+			chvo = hvo == 0 ? 0 : 1;
+		}
+		if (index >= chvo)
+			return S_OK;
+		return pnoteNextOuter->PropChanged(hvoOuter, tag, index, 1, 1);
 	}
 
 	END_COM_METHOD(g_fact, IID_IVwNotifyChange);

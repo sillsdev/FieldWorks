@@ -40,6 +40,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly string m_vernIcuLocale;
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action m_helpDelegate;
+		private readonly Action<IEnumerable<IKeyTerm>, int, int> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
 		private readonly string m_translationsFile;
 		private readonly string m_phraseCustomizationsFile;
@@ -65,6 +66,8 @@ namespace SILUBS.PhraseTranslationHelper
 		private int m_lastTranslationSet = -1;
 		private bool m_saving = false;
 		private bool m_postponeRefresh;
+		private int m_maximumHeightOfKeyTermsPane;
+		private bool m_loadingBiblicalTermsPane = false;
 		#endregion
 
 		#region Delegates
@@ -74,6 +77,11 @@ namespace SILUBS.PhraseTranslationHelper
 		#region Properties
 		private DataGridViewTextBoxEditingControl TextControl { get; set;}
 		private bool RefreshNeeded { get; set; }
+		internal int MaximumHeightOfKeyTermsPane
+		{
+			get { return m_maximumHeightOfKeyTermsPane; }
+			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -215,6 +223,34 @@ namespace SILUBS.PhraseTranslationHelper
 				return m_helper[dataGridUns.CurrentRow.Index];
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether a cell in the Translation column is the current cell.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool InTranslationCell
+		{
+			get
+			{
+				return dataGridUns.CurrentCell != null &&
+				  dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a value indicating whether the grid is in edit mode in a cell in the
+		/// Translation column.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool EditingTranslation
+		{
+			get
+			{
+				return InTranslationCell && !dataGridUns.IsCurrentCellInEditMode;
+			}
+		}
 		#endregion
 
 		#region Constructors
@@ -234,7 +270,8 @@ namespace SILUBS.PhraseTranslationHelper
 		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string sDefaultLcfFolder,
 			ComprehensionCheckingSettings settings, string appName, ScrReference startRef,
-			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate)
+			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate,
+			Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
 		{
 			if (startRef != ScrReference.Empty && endRef != ScrReference.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
@@ -244,14 +281,20 @@ namespace SILUBS.PhraseTranslationHelper
 			m_vernIcuLocale = VernIcuLocale;
 			m_selectKeyboard = selectKeyboard;
 			m_helpDelegate = helpDelegate;
+			m_lookupTermDelegate = lookupTermDelegate;
 			m_defaultLcfFolder = sDefaultLcfFolder;
 			m_appName = appName;
+			TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
 			m_endRef = endRef;
 
 			InitializeComponent();
 
-			m_biblicalTermsPane.Controls.Clear();
+			TxlSplashScreen splashScreen = new TxlSplashScreen();
+			splashScreen.Show(Screen.FromPoint(settings.Location));
+			splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
+
+			ClearBiblicalTermsPane();
 
 			Text = String.Format(Text, projectName);
 			HelpButton = (m_helpDelegate != null);
@@ -276,6 +319,7 @@ namespace SILUBS.PhraseTranslationHelper
 			GenTemplateSettings = settings.GenTemplateSettings;
 			ReceiveScrRefs = settings.ReceiveScrRefs;
 			ShowAnswersAndComments = settings.ShowAnswersAndComments;
+			MaximumHeightOfKeyTermsPane = settings.MaximumHeightOfKeyTermsPane;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -312,11 +356,13 @@ namespace SILUBS.PhraseTranslationHelper
 			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
 			KeyTermMatch.RenderingInfoFile = Path.Combine(s_unsDataFolder, string.Format("Key term rendering info - {0}.xml", projectName));
 
-			LoadTranslations();
+			LoadTranslations(splashScreen);
 
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = settings.KeyTermFilterType;
 			SendScrRefs = settings.SendScrRefs;
+
+			splashScreen.Close();
 		}
 		#endregion
 
@@ -396,10 +442,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
 		{
 			if (m_selectKeyboard != null)
-			{
-				m_selectKeyboard(dataGridUns.CurrentCell != null &&
-					dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index);
-			}
+				m_selectKeyboard(InTranslationCell);
 		}
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -1033,7 +1076,7 @@ namespace SILUBS.PhraseTranslationHelper
 
 				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
 				dataGridUns.RowCount = 0;
-				LoadTranslations();
+				LoadTranslations(null);
 				ApplyFilter();
 				if (iSortedCol >= 0)
 					SortByColumn(iSortedCol, sortAscending);
@@ -1095,6 +1138,20 @@ namespace SILUBS.PhraseTranslationHelper
 		private void dataGridUns_RowLeave(object sender, DataGridViewCellEventArgs e)
 		{
 			dataGridUns.Rows[e.RowIndex].Height = m_normalRowHeight;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Resize event of the main window.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void UNSQuestionsDialog_Resize(object sender, EventArgs e)
+		{
+			dataGridUns.MinimumSize = new Size(dataGridUns.MinimumSize.Width, Height / 2);
+			m_biblicalTermsPane.SuspendLayout();
+			m_pnlAnswersAndComments.MaximumSize = new Size(dataGridUns.Width, dataGridUns.Height);
+			ResizeKeyTermPaneColumns();
+			m_biblicalTermsPane.ResumeLayout();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1316,6 +1373,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (TextControl == null)
 				return;
 			TextControl.KeyDown += txtControl_KeyDown;
+			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1327,7 +1385,34 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
 			if (TextControl != null)
+			{
 				TextControl.KeyDown -= txtControl_KeyDown;
+				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the SplitterMoving event of the m_hSplitter control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.Forms.SplitterEventArgs"/> instance containing the event data.</param>
+		/// ------------------------------------------------------------------------------------
+		private void m_hSplitter_SplitterMoving(object sender, SplitterEventArgs e)
+		{
+			if (e.SplitY < dataGridUns.Top + dataGridUns.MinimumSize.Height)
+				e.SplitY = dataGridUns.Top + dataGridUns.MinimumSize.Height;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Resize event of the m_biblicalTermsPane control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void m_biblicalTermsPane_Resize(object sender, EventArgs e)
+		{
+			if (!m_loadingBiblicalTermsPane)
+				MaximumHeightOfKeyTermsPane = m_biblicalTermsPane.Height;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1337,14 +1422,25 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void txtControl_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index &&
-				(e.Modifiers & Keys.Alt) > 0 && e.Shift &&
-				(e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
+			if (EditingTranslation && e.Alt && e.Shift && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
 			{
-				DataGridViewTextBoxEditingControl txt = (DataGridViewTextBoxEditingControl)dataGridUns.EditingControl;
-				e.SuppressKeyPress = txt.MoveSelectedWord(e.KeyCode == Keys.Right);
+				e.SuppressKeyPress = TextControl.MoveSelectedWord(e.KeyCode == Keys.Right);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the PreviewKeyDown event of the txtControl control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void txtControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (!InTranslationCell || e.Shift || e.Control)
+				return;
+			if (e.KeyCode == Keys.Home)
+				TextControl.Select(0, 0);
+			else if (e.KeyCode == Keys.End)
+				TextControl.Select(TextControl.TextLength, 0);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1356,8 +1452,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (txtFilterByPart.Focused)
 				txtFilterByPart.Copy();
-			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex != m_colUserTranslated.Index)
+			else if (EditingTranslation)
 			{
 				string text = dataGridUns.CurrentCell.Value as string;
 				if (text != null)
@@ -1374,8 +1469,7 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (txtFilterByPart.Focused)
 				txtFilterByPart.Paste();
-			else if (dataGridUns.CurrentCell != null && !dataGridUns.IsCurrentCellInEditMode &&
-				dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index)
+			else if (EditingTranslation)
 			{
 				string text = Clipboard.GetText();
 				if (!string.IsNullOrEmpty(text))
@@ -1390,27 +1484,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void mnuHelpAbout_Click(object sender, EventArgs e)
 		{
-			// Get copyright information from assembly info. By doing this we don't have
-			// to update the splash screen each year.
-			string copyRight;
-			var assembly = Assembly.GetExecutingAssembly();
-			object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-			if (attributes.Length > 0)
-				copyRight = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-			else
+			using (HelpAboutDlg dlg = new HelpAboutDlg())
 			{
-				// if we can't find it in the assembly info, use generic one (which might be out of date)
-				copyRight = "Copyright (c) 2011, SIL International";
+				dlg.ShowDialog();
 			}
-			copyRight = string.Format(Properties.Resources.kstidCopyrightFmt, copyRight.Replace("(C)", "©"));
-			MessageBox.Show("Transcelerator is in alpha. Currently under development by Tom Bogle." +
-				Environment.NewLine + copyRight + Environment.NewLine + Environment.NewLine +
-				"Distributable under the terms of either the Common Public License or the GNU Lesser General Public License" + Environment.NewLine +
-				Environment.NewLine + "Some icons were downloaded from http://www.iconfinder.com and are covered by their respective licenses:" +
-				Environment.NewLine + "The Add Rule icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons License: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Copy Rule icon was developed by Momenticons and is covered by this Creative Commons Licence: http://creativecommons.org/licenses/by/3.0/" +
-				Environment.NewLine + "The Delete Rule icon was developed by Rodolphe and is covered by the GNU General Public License: http://www.gnu.org/copyleft/gpl.html",
-				"Transcelerator");
 		}
 		#endregion
 
@@ -1436,8 +1513,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Loads the translations.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LoadTranslations()
+		private void LoadTranslations(TxlSplashScreen splashScreen)
 		{
+			if (splashScreen != null)
+				splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
 			Exception e;
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
 			if (e != null)
@@ -1458,6 +1537,9 @@ namespace SILUBS.PhraseTranslationHelper
 			m_availableBookIds = qp.AvailableBookIds;
 			if (File.Exists(m_translationsFile))
 			{
+				if (splashScreen != null)
+					splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingTranslations;
+
 				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_translationsFile, out e);
 				if (e != null)
 					MessageBox.Show(e.ToString());
@@ -1485,16 +1567,19 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void LoadKeyTermsPane(int rowIndex)
 		{
+			m_loadingBiblicalTermsPane = true;
 			m_biblicalTermsPane.SuspendLayout();
 			ClearBiblicalTermsPane();
+			m_biblicalTermsPane.Height = MaximumHeightOfKeyTermsPane;
 			int col = 0;
+			int longestListHeight = 0;
 			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
 			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>().Where(ktm => ktm.Renderings.Any()))
 			{
 				int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
 				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
-					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard);
+					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard, LookupTerm);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
 				SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
@@ -1510,14 +1595,23 @@ namespace SILUBS.PhraseTranslationHelper
 				}
 				ktRenderCtrl.Dock = DockStyle.Fill;
 				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
+				if (ktRenderCtrl.NaturalHeight > longestListHeight)
+					longestListHeight = ktRenderCtrl.NaturalHeight;
 				ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
 				ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
 				col++;
 			}
 			m_biblicalTermsPane.ColumnCount = col;
 			ResizeKeyTermPaneColumns();
+			m_biblicalTermsPane.Height = Math.Min(longestListHeight, MaximumHeightOfKeyTermsPane);
 			m_biblicalTermsPane.Visible = m_biblicalTermsPane.ColumnCount > 0;
 			m_biblicalTermsPane.ResumeLayout();
+			m_loadingBiblicalTermsPane = false;
+		}
+
+		private void LookupTerm(IEnumerable<IKeyTerm> terms)
+		{
+			m_lookupTermDelegate(terms, CurrentPhrase.StartRef, CurrentPhrase.EndRef);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1530,12 +1624,18 @@ namespace SILUBS.PhraseTranslationHelper
 			int columnsToFit = m_biblicalTermsPane.ColumnCount;
 			if (columnsToFit == 0)
 				return;
-			int colWidth = m_biblicalTermsPane.ClientSize.Width / columnsToFit;
+			int colWidth = (m_biblicalTermsPane.ClientSize.Width) / columnsToFit;
+			SizeType type = SizeType.Percent;
+			if (colWidth < m_biblicalTermsPane.Controls[0].MinimumSize.Width)
+			{
+				type = SizeType.AutoSize;
+				colWidth = m_biblicalTermsPane.Controls[0].MinimumSize.Width;
+			}
 			m_biblicalTermsPane.ColumnStyles.Clear();
 			for (int iCol = 0; iCol < columnsToFit; iCol++)
 			{
 				m_biblicalTermsPane.ColumnStyles.Add(new ColumnStyle(
-					SizeType.Percent, colWidth));
+					type, colWidth));
 			}
 		}
 

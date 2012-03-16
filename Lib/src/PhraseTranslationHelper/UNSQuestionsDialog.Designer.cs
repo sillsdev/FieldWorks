@@ -117,6 +117,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_lblCommentLabel = new System.Windows.Forms.Label();
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
+			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -595,8 +596,9 @@ namespace SILUBS.PhraseTranslationHelper
 			// m_biblicalTermsPane
 			//
 			resources.ApplyResources(this.m_biblicalTermsPane, "m_biblicalTermsPane");
-			this.m_biblicalTermsPane.MinimumSize = new System.Drawing.Size(240, 0);
+			this.m_biblicalTermsPane.MinimumSize = new System.Drawing.Size(100, 40);
 			this.m_biblicalTermsPane.Name = "m_biblicalTermsPane";
+			this.m_biblicalTermsPane.Resize += new System.EventHandler(this.m_biblicalTermsPane_Resize);
 			//
 			// m_lblAnswerLabel
 			//
@@ -606,6 +608,7 @@ namespace SILUBS.PhraseTranslationHelper
 			// m_lblAnswers
 			//
 			resources.ApplyResources(this.m_lblAnswers, "m_lblAnswers");
+			this.m_lblAnswers.BackColor = System.Drawing.SystemColors.Control;
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			//
 			// m_lblCommentLabel
@@ -628,10 +631,19 @@ namespace SILUBS.PhraseTranslationHelper
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.m_pnlAnswersAndComments_VisibleChanged);
 			//
+			// m_hSplitter
+			//
+			this.m_hSplitter.Cursor = System.Windows.Forms.Cursors.HSplit;
+			resources.ApplyResources(this.m_hSplitter, "m_hSplitter");
+			this.m_hSplitter.Name = "m_hSplitter";
+			this.m_hSplitter.TabStop = false;
+			this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
+			//
 			// UNSQuestionsDialog
 			//
 			resources.ApplyResources(this, "$this");
 			this.Controls.Add(this.dataGridUns);
+			this.Controls.Add(this.m_hSplitter);
 			this.Controls.Add(this.m_biblicalTermsPane);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.m_mainMenu);
@@ -641,6 +653,7 @@ namespace SILUBS.PhraseTranslationHelper
 			this.Name = "UNSQuestionsDialog";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
 			this.Activated += new System.EventHandler(this.UNSQuestionsDialog_Activated);
+			this.Resize += new System.EventHandler(this.UNSQuestionsDialog_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();
 			this.dataGridContextMenu.ResumeLayout(false);
 			this.m_mainMenu.ResumeLayout(false);
@@ -713,5 +726,6 @@ namespace SILUBS.PhraseTranslationHelper
 		private ToolStripMenuItem editToolStripMenuItem;
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
+		private Splitter m_hSplitter;
 	}
 }

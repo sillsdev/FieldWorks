@@ -481,61 +481,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		//protected override void OnMouseDown(MouseEventArgs e)
-		//{
-		//    if (e.Button == MouseButtons.Right)
-		//    {
-		//        var areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
-		//        if (areaChoice != "lists")
-		//            return;
-		//        // Get currently selected list
-		//        if (Clerk == null || Clerk.OwningObject == null || !(Clerk.OwningObject is ICmPossibilityList))
-		//            return;
-		//        MakeContextMenuIfAppropriate(e, Clerk.OwningObject as ICmPossibilityList);
-		//    }
-		//    base.OnMouseDown(e);
-		//}
-
-		//private void MakeContextMenuIfAppropriate(MouseEventArgs e, ICmPossibilityList curList)
-		//{
-		//    if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
-		//    {
-		//        // Consider bringing up another menu only if we weren't already showing one.
-		//        // The above time test seems to be the only way to find out whether this click closed the last one.
-		//        if (curList != null)
-		//        {
-		//            m_contextMenu = MakeListContextMenu(curList);
-		//            m_contextMenu.Closed += new ToolStripDropDownClosedEventHandler(m_contextMenu_Closed);
-		//            m_contextMenu.Show(this, e.X, e.Y);
-		//        }
-		//    }
-		//}
-
-		//private ContextMenuStrip MakeListContextMenu(ICmPossibilityList curList)
-		//{
-		//    var menu = new ContextMenuStrip();
-
-		//    // Menu item allowing the user to delete a Custom list.
-		//    var delCustomListCmd = new ListMenuItem(xWorksStrings.ksDeleteListMenuItem, curList);
-		//    delCustomListCmd.Click += new EventHandler(delList_Click);
-		//    menu.Items.Add(delCustomListCmd);
-
-		//    return menu;
-		//}
-
-		///// <summary>
-		///// Invoked when the user chooses the "Delete Custom List" menu item.
-		///// Sender is a ListMenuItem indicating the selected List area list.
-		///// </summary>
-		///// <param name="sender"></param>
-		///// <param name="e"></param>
-		//void delList_Click(object sender, EventArgs e)
-		//{
-		//    var curList = (sender as ListMenuItem).List;
-		//    DoDeleteCustomListCmd(curList);
-		//    ReloadListsArea(); // Redisplay lists without this one
-		//}
-
 		private void ReloadListsArea()
 		{
 			m_mediator.SendMessage("ReloadAreaTools", "lists");
@@ -546,11 +491,6 @@ namespace SIL.FieldWorks.XWorks
 			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoDeleteCustomList, xWorksStrings.ksRedoDeleteCustomList,
 										Cache.ActionHandlerAccessor, () => new DeleteCustomList(Cache).Run(curList));
 		}
-
-		//private void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		//{
-		//    m_ticksWhenContextMenuClosed = DateTime.Now.Ticks;
-		//}
 
 		#endregion Event handlers
 
@@ -753,22 +693,4 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IxCoreColleague Event handlers
 	}
-
-	//class ListMenuItem : ToolStripMenuItem
-	//{
-	//    readonly ICmPossibilityList m_list;
-	//    public ListMenuItem(string label, ICmPossibilityList clickedList)
-	//        : base(label)
-	//    {
-	//        m_list = clickedList;
-	//    }
-
-	//    /// <summary>
-	//    /// The selected list that was clicked on.
-	//    /// </summary>
-	//    public ICmPossibilityList List
-	//    {
-	//        get { return m_list; }
-	//    }
-	//}
 }

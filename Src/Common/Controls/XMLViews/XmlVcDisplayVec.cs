@@ -22,6 +22,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -150,7 +151,27 @@ namespace SIL.FieldWorks.Common.Controls
 			// Determine if sequence should be filtered by a stored list of Guids.
 			// Note that if we filter, we replace rghvo with the filtered list.
 			if (m_viewConstructor.ShouldFilterByGuid)
-				chvo = ApplyFilterToSequence(ref rghvo);
+			{  // order by vector item type guids
+				// Don't reorder LexEntry VisibleComplexFormBackRefs vector if the user overrode it manually.
+				var obj = m_cache.ServiceLocator.GetObject(m_hvo);
+				if (obj is ILexEntry)
+				{
+					var lexEntry = obj as ILexEntry;
+					if (m_flid == m_cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", false))
+					{
+						if (!VirtualOrderingServices.HasVirtualOrdering(lexEntry, "VisibleComplexFormBackRefs"))
+							chvo = ApplyFilterToSequence(ref rghvo);
+					}
+					else
+					{
+						chvo = ApplyFilterToSequence(ref rghvo);
+					}
+				}
+				else
+				{
+					chvo = ApplyFilterToSequence(ref rghvo);
+				}
+			}
 
 			// Check whether the user wants the grammatical information to appear only once, preceding any
 			// sense numbers, if there is only one set of grammatical information, and all senses refer to

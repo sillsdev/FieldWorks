@@ -59,7 +59,7 @@
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishForReversal_AsPara">
-		<sublayout name="publishForReversal" group="para"/>
+		<sublayout name="publishForReversal"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishForReversal" tagForWs="true">
 		<part ref="RIEHeadword" label="Headword" before=" " sep=" " after="" ws="vernacular" wsType="vernacular" css="headref" style="Dictionary-Headword"

@@ -408,6 +408,9 @@
 	<Alternate name="sexual immorality"/>
 	<Alternate name="sexual sins"/>
   </KeyTermRule>
+  <KeyTermRule id="branch of a vine">
+	<Alternate name="branch"/>
+  </KeyTermRule>
   <KeyTermRule id="hole (used in the NT only with reference to the so-called eye of a needle)" rule="Exclude">
 	<Alternate name="eye"/>
   </KeyTermRule>

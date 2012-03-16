@@ -596,6 +596,100 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(keeper.Name, goodFilter);
 		}
 
+		/// <summary>
+		/// Tests we can merge an entry with another, where the surviving entry has as a component
+		/// the entry that is being merged (delted). This is a special case because if we didn't treat it specially,
+		/// the reference would be changed to point at the merged entry, making it a component of itself.
+		/// </summary>
+		[Test]
+		public void MergeEntryWhereSourceIsComponentOfDest()
+		{
+			// For some reason kick2 is a complex form in which kick1 is a component.
+			var kick1 = MakeEntry("kick");
+			var kick2 = MakeEntry("kick");
+			var kickBucket = MakeEntry("kick the bucket"); // we also have a proper CF, which should survive
+			var leRef1 = MakeEntryRef(kick2, new ICmObject[] {kick1}, new ICmObject[] {kick1}, LexEntryRefTags.krtComplexForm);
+			var leRef2 = MakeEntryRef(kickBucket, new ICmObject[] { kick1 }, new ICmObject[] { kick1 }, LexEntryRefTags.krtComplexForm);
+			kick2.MergeObject(kick1);
+			// An object can't be a component of itself so this LERef should have gone away.
+			Assert.That(leRef1.IsValidObject, Is.False);
+			Assert.That(leRef2.IsValidObject);
+			Assert.That(leRef2.ComponentLexemesRS[0], Is.EqualTo(kick2));
+			Assert.That(leRef2.PrimaryLexemesRS[0], Is.EqualTo(kick2));
+		}
+
+		/// <summary>
+		/// Tests we can merge an entry with another, where the merged (deleted) entry has as a component
+		/// the entry it is merging with. This is a special case because if we didn't treat it specially,
+		/// the LexEntryRef would be moved to the merged entry, making it a component of itself.
+		/// </summary>
+		[Test]
+		public void MergeEntryWhereDestIsComponentOfSource()
+		{
+			// For some reason kick2 is a complex form in which kick1 is a component.
+			var kick1 = MakeEntry("kick");
+			var kick2 = MakeEntry("kick");
+			var kickBucket = MakeEntry("kick the bucket"); // we also have a proper CF, which should survive
+			var leRef1 = MakeEntryRef(kick2, new ICmObject[] { kick1 }, new ICmObject[] { kick1 }, LexEntryRefTags.krtComplexForm);
+			var leRef2 = MakeEntryRef(kickBucket, new ICmObject[] { kick2 }, new ICmObject[] { kick2 }, LexEntryRefTags.krtComplexForm);
+			kick1.MergeObject(kick2);
+			// An object can't be a component of itself so this LERef should have gone away.
+			Assert.That(leRef1.IsValidObject, Is.False);
+			Assert.That(leRef2.IsValidObject);
+			Assert.That(leRef2.ComponentLexemesRS[0], Is.EqualTo(kick1));
+			Assert.That(leRef2.PrimaryLexemesRS[0], Is.EqualTo(kick1));
+		}
+
+		/// <summary>
+		/// Tests we can merge an entry with another, where the merged (deleted) entry has as a component
+		/// a sense of the entry it is merging with. This is a special case because if we didn't treat it specially,
+		/// the LexEntryRef would be moved to the merged entry, making one of its components be one of its own senses.
+		/// </summary>
+		[Test]
+		public void MergeEntryWithComponentSense()
+		{
+			// For some reason kick2 is a complex form in which kick1 is a component.
+			var kick1 = MakeEntry("kick");
+			var kick2 = MakeEntry("kick");
+			var strike = MakeSense(kick1, "strike with foot");
+			var kickBucket = MakeEntry("kick the bucket"); // we also have a proper CF, which should survive
+			var leRef1 = MakeEntryRef(kick2, new ICmObject[] { strike }, new ICmObject[] { strike }, LexEntryRefTags.krtComplexForm);
+			var leRef2 = MakeEntryRef(kickBucket, new ICmObject[] { strike }, new ICmObject[] { strike }, LexEntryRefTags.krtComplexForm);
+			kick2.MergeObject(kick1);
+			// An object can't be a component of itself so this LERef should have gone away.
+			Assert.That(leRef1.IsValidObject, Is.False);
+			Assert.That(leRef2.IsValidObject);
+			Assert.That(leRef2.ComponentLexemesRS[0], Is.EqualTo(strike));
+			Assert.That(leRef2.PrimaryLexemesRS[0], Is.EqualTo(strike));
+			Assert.That(strike.Owner, Is.EqualTo(kick2));
+		}
+
+		private ILexSense MakeSense(ILexEntry entry, string gloss)
+		{
+			var sense = MakeSense(entry);
+			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			return sense;
+		}
+
+		private ILexSense MakeSense(ILexEntry owningEntry)
+		{
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			owningEntry.SensesOS.Add(sense);
+			return sense;
+		}
+
+		private ILexEntryRef MakeEntryRef(ILexEntry owner, ICmObject[] components, ICmObject[] primaryComponents, int type)
+		{
+			var result = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			owner.EntryRefsOS.Add(result);
+			result.RefType = type;
+			foreach (var obj in components)
+				result.ComponentLexemesRS.Add(obj);
+			foreach (var obj in primaryComponents)
+				result.PrimaryLexemesRS.Add(obj);
+			return result;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the MergeObject method for MultiUnicode and MultiBigUnicode values.

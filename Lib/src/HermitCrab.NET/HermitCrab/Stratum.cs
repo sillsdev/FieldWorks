@@ -513,14 +513,8 @@ namespace SIL.HermitCrab
 
 			LexicalLookup(wa, candidates);
 
-			Set<WordAnalysis> tempOutput = new Set<WordAnalysis>();
-			tempOutput.Add(wa);
-			UnapplyTemplates(wa, tempOutput, candidates);
-
 			Set<WordAnalysis> output = new Set<WordAnalysis>();
-			// TODO: handle cyclicity
-			foreach (WordAnalysis analysis in tempOutput)
-				UnapplyMorphologicalRules(analysis, m_mrules.Count - 1, 0, candidates, output);
+			UnapplyMorphologicalRulesAndTemplates(wa, output, candidates);
 
 			return output;
 		}
@@ -598,10 +592,21 @@ namespace SIL.HermitCrab
 						break;
 
 					case MRuleOrder.UNORDERED:
-						// start over from the very beginning
-						UnapplyMorphologicalRules(ruleOutput, m_mrules.Count - 1, 0, candidates, output);
+						UnapplyMorphologicalRulesAndTemplates(ruleOutput, output, candidates);
 						break;
 				}
+			}
+		}
+
+		void UnapplyMorphologicalRulesAndTemplates(WordAnalysis wa, Set<WordAnalysis> output, ICollection<WordSynthesis> candidates)
+		{
+			Set<WordAnalysis> tempOutput = new Set<WordAnalysis>();
+			tempOutput.Add(wa);
+			UnapplyTemplates(wa, tempOutput, candidates);
+			foreach (WordAnalysis analysis in tempOutput)
+			{
+				// start over from the very beginning
+				UnapplyMorphologicalRules(analysis, m_mrules.Count - 1, 0, candidates, output);
 			}
 		}
 
@@ -724,15 +729,32 @@ namespace SIL.HermitCrab
 				}
 			}
 
-			ApplyTemplates(input, output);
+			switch (m_mruleOrder)
+			{
+				case MRuleOrder.LINEAR:
+					ApplyTemplates(input, output);
+					break;
+
+				case MRuleOrder.UNORDERED:
+					Set<WordSynthesis> tempOutput = new Set<WordSynthesis>();
+					if (ApplyTemplates(input, tempOutput))
+					{
+						if (tempOutput.Remove(input))
+							output.Add(input);
+						foreach (WordSynthesis synthesis in tempOutput)
+							ApplyMorphologicalRules(synthesis, 0, output);
+					}
+					output.AddMany(tempOutput);
+					break;
+			}
 		}
 
-		void ApplyTemplates(WordSynthesis input, Set<WordSynthesis> output)
+		bool ApplyTemplates(WordSynthesis input, Set<WordSynthesis> output)
 		{
 			// if this word synthesis is not compatible with the realizational features,
 			// then skip it
 			if (!input.RealizationalFeatures.IsCompatible(input.HeadFeatures))
-				return;
+				return false;
 
 			WordSynthesis ws = ChooseInflStem(input);
 			bool applicableTemplate = false;
@@ -751,6 +773,8 @@ namespace SIL.HermitCrab
 
 			if (!applicableTemplate)
 				output.Add(ws);
+
+			return applicableTemplate;
 		}
 
 		/// <summary>

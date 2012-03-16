@@ -13,6 +13,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -356,6 +357,7 @@ namespace SIL.FieldWorks.TE
 		private const string kChkEditChecksSBItemName = "ChkEditChecksItem";
 		/// <summary>Internal name of keyterms button in the checking taskbar tab</summary>
 		private const string kChkKeyTermsSBItemName = "ChkKeyTermsItem";
+		SBTabItemProperties m_keyTermsViewItemProps;
 		/// <summary>Internal name of vertical draft view button in the Scripture taskbar tab</summary>
 		private const string kScrVerticalViewSBItemName = "ScrVertDraftViewItem";
 
@@ -993,13 +995,13 @@ namespace SIL.FieldWorks.TE
 		protected virtual void AddKeyTermsView(string viewName)
 		{
 			// Add this user view to the Checking sidebar tab.
-			SBTabItemProperties itemProps = new SBTabItemProperties(this);
-			itemProps.Name = kChkKeyTermsSBItemName;
-			itemProps.Text = viewName;
-			itemProps.ImageIndex = (int)TeResourceHelper.SideBarIndices.KeyTerms;
-			itemProps.Tag = TeViewType.KeyTerms;
-			itemProps.Message = "SwitchActiveView";
-			AddSideBarTabItem(kChkSBTabName, itemProps);
+			m_keyTermsViewItemProps = new SBTabItemProperties(this);
+			m_keyTermsViewItemProps.Name = kChkKeyTermsSBItemName;
+			m_keyTermsViewItemProps.Text = viewName;
+			m_keyTermsViewItemProps.ImageIndex = (int)TeResourceHelper.SideBarIndices.KeyTerms;
+			m_keyTermsViewItemProps.Tag = TeViewType.KeyTerms;
+			m_keyTermsViewItemProps.Message = "SwitchActiveView";
+			AddSideBarTabItem(kChkSBTabName, m_keyTermsViewItemProps);
 			m_uncreatedViews.Add(TeViewType.KeyTerms, new TeSelectableViewFactory(viewName,
 				TeViewType.KeyTerms, CreateKeyTermsView));
 		}
@@ -5452,7 +5454,8 @@ namespace SIL.FieldWorks.TE
 					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
 					App.ApplicationName, start, end,
 					vern => KeyboardHelper.ActivateKeyboard(vern ? vernWs.LCID : defaultWs.LCID),
-					() => ShowHelp.ShowHelpTopic(m_app, "khptBookProperties")); // TODO: Come up with a Help topic
+					() => ShowHelp.ShowHelpTopic(m_app, "khtpNoHelpTopic"),
+					LookupTerm); // TODO: Come up with a Help topic
 
 				m_transceleratorWindow.GetAvailableBooks = () => m_bookFilter.BookIds;
 				m_transceleratorWindow.Closed += SaveComprehensionCheckingSettings;
@@ -5505,6 +5508,28 @@ namespace SIL.FieldWorks.TE
 				string englishTerm = kt.Term;
 				if (englishTerm != null)
 					keyTerms.Add(kt);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempts to look up and select one of the given terms, if possible, selecting one
+		/// that has an occurrence in the given reference range.
+		/// </summary>
+		/// <param name="terms">One or more (more-or-less related) terms.</param>
+		/// <param name="startRef">The start reference (a BBCCCVVV integer).</param>
+		/// <param name="endRef">The end reference (a BBCCCVVV integer).</param>
+		/// ------------------------------------------------------------------------------------
+		private void LookupTerm(IEnumerable<IKeyTerm> terms, int startRef, int endRef)
+		{
+			if (!KeyTermsViewIsCreated)
+				m_sibAdapter.SetCurrentTabItem(kChkSBTabName, kChkKeyTermsSBItemName, true);
+
+			if (TheKeyTermsWrapper.SelectTerm(terms.Cast<IChkTerm>(), startRef, endRef))
+			{
+				if (!KeyTermsViewIsVisible)
+					m_sibAdapter.SetCurrentTabItem(kChkSBTabName, kChkKeyTermsSBItemName, true);
+				Activate();
 			}
 		}
 

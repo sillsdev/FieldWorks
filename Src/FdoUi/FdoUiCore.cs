@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.FdoUi
 		private ICmObject GetCurrentCmObject()
 		{
 			ICmObject obj = null;
-			if (m_hostControl is XmlBrowseViewBase)
+			if (m_hostControl is XmlBrowseViewBase && !m_hostControl.IsDisposed)
 			{
 				// since we're getting the context menu by clicking on the browse view
 				// just use the current object of the browse view.
@@ -1849,7 +1849,8 @@ namespace SIL.FieldWorks.FdoUi
 						owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
 						if (owner is ILexSense)
 						{
-							hvoMsa = (owner as ILexSense).MorphoSyntaxAnalysisRA.Hvo;
+							var ls = owner as ILexSense;
+							hvoMsa = GetSafeHvoMsa(cache, ls);
 						}
 						else if (owner is ILexEntry)
 						{
@@ -1865,7 +1866,7 @@ namespace SIL.FieldWorks.FdoUi
 						if (copyFrom < chvo)
 						{
 							var ls = cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(cache.DomainDataByFlid.get_VecItem(hvoOwner, flid, copyFrom));
-							hvoMsa = ls.MorphoSyntaxAnalysisRA.Hvo;
+							hvoMsa = GetSafeHvoMsa(cache, ls);
 						}
 					}
 					owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
@@ -1884,6 +1885,57 @@ namespace SIL.FieldWorks.FdoUi
 					result = new LexSenseUi(newSense);
 				});
 			return result;
+		}
+
+		/// <summary>
+		/// This method will get an hvo for the MSA which the senses MorphoSyntaxAnalysisRA points to.
+		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="ls">LexSense whose MSA we will use/change</param>
+		/// <param name="hvoMsa"></param>
+		/// <returns></returns>
+		private static int GetSafeHvoMsa(FdoCache cache, ILexSense ls)
+		{
+			if (ls.MorphoSyntaxAnalysisRA != null)
+				return ls.MorphoSyntaxAnalysisRA.Hvo; //situation normal, return
+
+			//Situation not normal.
+			int hvoMsa;
+			var isAffixType = ls.Entry.PrimaryMorphType.IsAffixType;
+			foreach(var msa in ls.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
+			{
+				if(!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)
+				{
+					ls.MorphoSyntaxAnalysisRA = msa;
+				}
+				else if (msa is IMoUnclassifiedAffixMsa && (msa as IMoUnclassifiedAffixMsa).PartOfSpeechRA == null)
+				{
+					ls.MorphoSyntaxAnalysisRA = msa;
+				}
+			}
+			if(ls.MorphoSyntaxAnalysisRA == null) //if we didn't find an appropriately unspecific MSA in the list add one
+			{
+				IMoMorphSynAnalysis item;
+				if(isAffixType)
+				{
+					var factory = cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>();
+					item = factory.Create();
+				}
+				else
+				{
+					var factory = cache.ServiceLocator.GetInstance<IMoStemMsaFactory>();
+					item = factory.Create();
+				}
+				ls.Entry.MorphoSyntaxAnalysesOC.Add(item);
+				ls.MorphoSyntaxAnalysisRA = item;
+				hvoMsa = item.Hvo;
+			}
+			else
+			{
+				hvoMsa = ls.MorphoSyntaxAnalysisRA.Hvo;
+			}
+			return hvoMsa;
 		}
 	}
 

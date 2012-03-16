@@ -1302,6 +1302,27 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			TestPublishIn(heKicked, () => heKicked.PublishIn, heKicked.DoNotPublishInRC);
 		}
 
+		/// <summary>
+		/// For correct handling of some virtual properties, we must not allow the type of a LER
+		/// to be changed once it has components.
+		/// (If we need to change this, note that various virtual properties, such as VariantFormEntries,
+		/// need to update automatically when type changes and components is non-empty. See LT-12671.
+		/// </summary>
+		[Test]
+		public void LexEntryRefTypeThrowsIfComponentsNonEmpty()
+		{
+			var kickbucket = MakeEntry("kick the bucket", "die");
+			var kick = MakeEntry("kick", "strike with foot");
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+					{
+						var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+						kickbucket.EntryRefsOS.Add(ler);
+						ler.ComponentLexemesRS.Add(kick);
+						Assert.Throws(typeof (InvalidOperationException), () => ler.RefType = LexEntryRefTags.krtComplexForm);
+					});
+		}
+
 		void TestPublishIn<T>(ICmObject lexItem, Func<IEnumerable<T>> reader, IFdoReferenceCollection<ICmPossibility> doNotPublish)
 		{
 			var mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];

@@ -92,6 +92,22 @@
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ComprehensionCheckingSettings.cs" />
+	<Compile Include="HelpAboutDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="HelpAboutDlg.Designer.cs">
+	  <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="RealSplashScreen.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="TxlInfo.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="TxlInfo.Designer.cs">
+	  <DependentUpon>TxlInfo.cs</DependentUpon>
+	</Compile>
+	<Compile Include="TxlSplashScreen.cs" />
 	<Compile Include="QuestionKey.cs" />
 	<Compile Include="NewQuestionDlg.cs">
 	  <SubType>Form</SubType>
@@ -179,17 +195,24 @@
 	<EmbeddedResource Include="AddRenderingDlg.resx">
 	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
 	</EmbeddedResource>
+	<EmbeddedResource Include="HelpAboutDlg.resx">
+	  <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="NewQuestionDlg.resx">
 	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="EditQuestionDlg.resx">
 	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
 	</EmbeddedResource>
+	<EmbeddedResource Include="RealSplashScreen.resx">
+	  <DependentUpon>RealSplashScreen.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="RulesWizardDlg.resx">
 	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
 	  <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="ScrReferenceFilterDlg.resx">
 	  <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
@@ -210,6 +233,9 @@
 	<EmbeddedResource Include="TermRenderingCtrl.resx">
 	  <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
 	</EmbeddedResource>
+	<EmbeddedResource Include="TxlInfo.resx">
+	  <DependentUpon>TxlInfo.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="UNSQuestionsDialog.resx">
 	  <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>
@@ -226,6 +252,21 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="Properties\Paste.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1321385905_dialog-close.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1321382935_plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\1330980033_search_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\wait22trans.gif" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\Transcelerator.png" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

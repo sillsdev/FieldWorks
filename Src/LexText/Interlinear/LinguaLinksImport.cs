@@ -260,6 +260,7 @@ namespace SIL.FieldWorks.IText
 				progress.Message = ITextStrings.ksInterlinImportPhase1of2;
 				var serializer = new XmlSerializer(typeof(BIRDDocument));
 				doc = (BIRDDocument)serializer.Deserialize(birdData);
+				Normalize(doc);
 				int version = 0;
 				if (!string.IsNullOrEmpty(doc.version))
 					int.TryParse(doc.version, out version);
@@ -362,6 +363,46 @@ namespace SIL.FieldWorks.IText
 			}
 			return retValue;
 
+		}
+
+		/// <summary>
+		/// We want everything to be NFD, particularly so we match wordforms correctly.
+		/// </summary>
+		/// <param name="doc"></param>
+		private void Normalize(BIRDDocument doc)
+		{
+			foreach (var text in doc.interlineartext)
+			{
+				NormalizeItems(text.Items);
+				if (text.paragraphs == null)
+					continue;
+				foreach (var para in text.paragraphs)
+				{
+					if (para.phrases != null)
+					{
+						foreach (var phrase in para.phrases)
+						{
+							NormalizeItems(phrase.Items);
+							if (phrase.WordsContent == null || phrase.WordsContent.Words == null)
+								continue;
+							foreach (var word in phrase.WordsContent.Words)
+								NormalizeItems(word.Items);
+						}
+					}
+				}
+			}
+		}
+
+		private static void NormalizeItems(item[] items)
+		{
+			if (items == null)
+				return;
+			foreach (var item in items)
+			{
+				if (item.Value == null)
+					continue;
+				item.Value = item.Value.Normalize(NormalizationForm.FormD);
+			}
 		}
 
 		/// <summary>

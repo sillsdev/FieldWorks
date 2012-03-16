@@ -416,14 +416,19 @@ namespace SIL.FieldWorks.Common.Controls
 				// For displaying reversal indexes, we need to know the reversal index
 				// language (writing system).
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-				if (obj is IReversalIndex)
-					m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
+				SetReversalWritingSystemFromRootObject(obj);
 				vwenv.AddLazyVecItems(m_mainFlid, this, kRootFragId);
 				return;
 			}
 
 			DisplayCommand dispCommand = m_idToDisplayCommand[fragId];
 			dispCommand.PerformDisplay(this, fragId, hvo, vwenv);
+		}
+
+		internal void SetReversalWritingSystemFromRootObject(object obj)
+		{
+			if (obj is IReversalIndex)
+				m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
 		}
 
 		internal bool CanGetMainCallerDisplayCommand(int fragId, out MainCallerDisplayCommand cmd)
@@ -2857,16 +2862,20 @@ namespace SIL.FieldWorks.Common.Controls
 								switch (entryref.RefType)
 								{
 									case LexEntryRefTags.krtComplexForm:
-										fOk = validTypes.Contains(m_unspecComplexFormType);
 										if (!fOk && entryref.ComplexEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)))
+											type => validTypes.Contains(type.Guid)) ||
+											(entryref.ComplexEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecComplexFormType)))
+										{
 											fOk = true;
+										}
 										break;
 									case LexEntryRefTags.krtVariant:
-										fOk = validTypes.Contains(m_unspecVariantType);
 										if (!fOk && entryref.VariantEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)))
+											type => validTypes.Contains(type.Guid)) ||
+											(entryref.VariantEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecVariantType)))
+										{
 											fOk = true;
+										}
 										break;
 									default:
 										Debug.Fail(String.Format("Unknown LexEntryRef type: {0}", entryref.RefType));

@@ -51,6 +51,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -217,7 +218,7 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// May be used to preload data for efficient filtering of many instances.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -1540,7 +1541,7 @@ namespace SIL.FieldWorks.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing.
 		/// </summary>
-		void Preload();
+		void Preload(object rootObj);
 
 		/// <summary>
 		/// Called if we need to ensure that a particular (typically decorator) DA is used to
@@ -1643,7 +1644,7 @@ namespace SIL.FieldWorks.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing, as in this default implementation.
 		/// </summary>
-		public virtual void Preload()
+		public virtual void Preload(object rootObj)
 		{
 		}
 
@@ -2406,9 +2407,9 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Let your finder preload whatever it wants to.
 		/// </summary>
-		public override void Preload()
+		public override void Preload(object rootObj)
 		{
-			m_finder.Preload();
+			m_finder.Preload(rootObj);
 		}
 
 		/// <summary>
@@ -2693,10 +2694,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			get
 			{
-				foreach (RecordFilter f in m_filters)
-					if (f.IsUserVisible)
-						return true;
-				return false;
+				return m_filters.Cast<RecordFilter>().Any(f => f.IsUserVisible);
 			}
 		}
 

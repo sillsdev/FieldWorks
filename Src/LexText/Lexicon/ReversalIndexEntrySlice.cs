@@ -312,10 +312,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// should have lost focus and saved before doing anything that would cause a regenerate.
 				// But let's not crash.
 				var extensions = m_fdoCache.ActionHandlerAccessor as IActionHandlerExtensions;
-				if (extensions != null && !extensions.CanStartUow)
+				if ((extensions != null && !extensions.CanStartUow) ||
+					!m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 				{
 					return 0;
 				}
+
 				List<int> currentEntries = new List<int>();
 				int countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
 				int hvoReal = 0;

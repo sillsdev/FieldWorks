@@ -261,18 +261,6 @@
   <data name="toolStrip1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>None</value>
   </data>
-  <data name="btnNew.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-	<value>
-		iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-		YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFYSURBVDhPtZG7L4NhFMaPSzpI0Y9Wqm1CigjVRNOJusQl
-		4lbqliAiahMTu81i6GIQ32AhdY+FmOseHAmDpDYjf8XjvF9Ck6Ya3+Akv+SX877Pkzd5if5t9h06HTrY
-		QLnp2bNz9HMZcx9LIHHTeYrbefJ9AQrl5gu2NR55m0ckGQWJmy/Y0rjvZRq9z1Mg8ewFuk2nTbmURtfj
-		ODruR5HpjFTmZzZsHH6dRTdPQIU6H8aMYPPlAJou+tF2O4zWmyG0XIcRuho0nCSTKlgvZvXU9ruIgQqo
-		YP1pCJUHAQN3vAGuHR88cT+8R0GQZFIFsUKdYlZOx3Pih+vYh0xnpDJZZ83KzvM6lJ3VgsTN/8Kqle2J
-		GpQmqkHi5gtWCrjkqQoae0Hi5gsWLawlvVCQ+F8K8uWSW2gUgtSTs0szuWygXO2IAkKFYMlUmCvLIsEp
-		uH6hXPY2Ie+74AvGtKxvWfujRgAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="btnNew.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
 	<value>Magenta</value>
   </data>
@@ -285,18 +273,18 @@
   <data name="btnEdit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
 		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
-		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
+		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
 </value>
   </data>
   <data name="btnEdit.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -333,23 +321,6 @@
   </data>
   <data name="btnCopy.Text" xml:space="preserve">
 	<value>Copy...</value>
-  </data>
-  <data name="btnDelete.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-	<value>
-		iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-		YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKaSURBVDhPdZNbSxtRFIVPJheNPvmgiOCDCqIIgviQ1qqp
-		Wu+aIloRb+CLiiIK4gXFPyD+BY3WJvg/LL70pSWRgJdmxsTUyc2CJtO31XXSxlbRA8MMc/b+9tprnyPE
-		3+UR4vWhEH4+Tdl/T9+MqZcxH4VofbTHDafHYkl96eiAfH8SovlpMpMcbpPp7qSuDu68vPQDhB/tHrs9
-		dbm4CH17Gxezs/BYrSkJzUIIfONRlHt/ZyeuJidx2t+PI7vdyEAY6Ps2Nobozg5CU1PQt7ZwKSE2m1TS
-		klV3NjiIa8Zd1NRAGx3FcXU1ZDvCK0TdUW7ufXBlJZMcmZhAbGMDKiF7OTlpt82W/s5/N4Sr9fW4Hh6G
-		r7UVuyaTbMORUcmPBtmGtrqK2OYmblghsbaG8Pw8wnNziM/MINLUhJvxcZxRvsdk+iP//0U5bW67PR0m
-		JEEFsZER3C4vI0lIlObGmRwcGsKh2fyLbfU/OylCXPv5+Wmd1X+uryM5MICEw4F4Vxci9ODQapXJYy+N
-		WdC09/TD0KnidmEBMRqVrKpCku7rBBzQExaZeRbAnrqObDYjtLSE+PQ0ImVlSLDfZF8f9PJyRKlC6+3F
-		vsWSpooPjyByXHtmczrQ1oZwSwu0khLo3d1QmawREu3pQbi0FD+o5IwxXkUxqKTj3wQUJeVvbobqdOKi
-		sBDX7e0I8PGazYY07ZyJERoZLC5GiO/TxkY5iRQhr+RBUj9XViLISoGCAmhU4CdoV1Fkv2+53yNBAc4+
-		xOrnRUW4ornHFRXgGToV0nkeU8NHqkrI14aGbPLDpSLknYT4qFJzuSDVyhw5+kwbEuK1WAx5PKU0efaf
-		uYlOqeqkthYyVpr+9CC5DoS4zPT1wpJXnrJVFujLhvwGe613gL5xnM0AAAAASUVORK5CYII=
-</value>
   </data>
   <data name="btnDelete.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
 	<value>Magenta</value>
