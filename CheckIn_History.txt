@@ -5770,7 +5770,7 @@ EricP, 8 Mar 2012. See LT-9137 "Allow proclitics or enclitics to be constrained 
 	Model Change (7000054): Added "ProcliticSlots" and "EncliticSlots" reference sequence properties to MoInflAffixTemplate.
 	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
 RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10".
-RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10" (again, but this timew for DM 7000054).
+RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10" (again, but this time for DM 7000054).
 RandyR, 12 March 2012. Added comment to model file about the need to also change the MDC in FLEx bridge.
 Andy Black, 13 Mar 2012. LT-10471 "Allow user ability to turn phonological rules on or off".
 	Also did this for affix templates, compound rules, and ad hoc rules.
@@ -5783,3 +5783,4 @@ EricP, 16 Mar 2012. LT-7581 "Have parser know about inflectional variant entries
 	Model Change (7000055): Created class LexEntryInflType (num 133 in Ling) based on LexEntryType.
 	Added atomic reference attribute InflType to WfiMorphBundle with target of LexEntryInflType.
 	No data migration needed.
+RandyR, 8 March 2012. Updated FLEx Bridge installer (0.3.15) which adds suport for FW's DM 7000055.
