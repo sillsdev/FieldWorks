@@ -33,6 +33,9 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  16 March 2012 (7000055): Created class LexEntryInflType (num 133 in Ling) based on LexEntryType.
+	Added atomic reference attribute InflType to WfiMorphBundle with target of LexEntryInflType.
+	See LT-7581 "Have parser know about inflectional variant entries". No data migration needed.
   8 March 2012 (7000054): Added "ProcliticSlots" and "EncliticSlots" reference sequence properties to MoInflAffixTemplate.
 	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
 	See LT-9137 "Allow proclitics or enclitics to be constrained by order".
@@ -155,7 +158,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000054" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000055" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -4626,6 +4629,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<rel num="2" id="Morph" card="atomic" sig="MoForm"/>
 		<rel num="3" id="Msa" card="atomic" sig="MoMorphSynAnalysis"/>
 		<rel num="4" id="Sense" card="atomic" sig="LexSense"/>
+		<rel num="5" id="InflType" card="atomic" sig="LexEntryInflType">
+		  <comment>
+			<para>This will provide a place for both the manual interlinearizer and the parser filer to store the link to the gloss in the inflection type.</para>
+			<para>It is optional in that we do not need to store it for every morpheme bundle, only those that need it.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="113" id="LexEtymology" abstract="false" abbr="ety" base="CmObject" depth="0">
@@ -5048,6 +5057,41 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This refers to a CmObject, where that CmObject would probably be a MoInflClass (e.g. a conjugation class), an FsSymFeatVal (e.g. feminine gender), or a CmPossibility (for an exception "feature").</para>
 			<para>Any such MoInflClass would be owned by a PartOfSpeech (or by a nested MoInflClass within a PartOfSpeech); any such FsSymFeatVal would be owned by an FsClosedFeature;</para>
 			<para>and the exception "feature" CmPossibility would be in the possibility list owned by MoMorphData:ProdRestrict.</para>
+		  </comment>
+		</rel>
+	  </props>
+	</class>
+	<class num="133" id="LexEntryInflType" abstract="false" abbr="leit" base="LexEntryType" depth="1">
+	  <comment>
+		<para>Just as our the model allows a user to tag multiple irregularly inflected forms as all being of the same kind (e.g. perfective or (nominal) plural),</para>
+		<para>this subclass will do the same, but will capture more generalizations:  rather than the user having to add a custom sense/gloss for each form, merely by saying that this form is of this (new) type,</para>
+		<para>the user gets not only the consistent gloss string attached (e.g. -perf or +pl), s/he also gets the actual inflectional features of that item and can have the automated parser still parse inflected words containing these irregularly inflected forms.</para>
+		<para>To try and say it a different way, every irregularly inflected form which is tagged as being, say, perfective, will get a consistent gloss, a consistent set of inflection features, and allow the automated parsers to correctly parse them (assuming the user has correctly filled in the information!).</para>
+	  </comment>
+	  <props>
+		<basic num="1" id="GlossPrepend" sig="MultiUnicode">
+		  <comment>
+			<para>Any gloss string which will be added before the gloss of the stem.</para>
+		  </comment>
+		</basic>
+		<basic num="2" id="GlossAppend" sig="MultiUnicode">
+		  <comment>
+			<para>Any gloss string which will be added after the gloss of the stem.</para>
+		  </comment>
+		</basic>
+		<owning num="3" id="InflFeats" card="atomic" sig="FsFeatStruc">
+		  <comment>
+			<para>These are the inflectional features of the inflection type.  For example, if the type is perfective, then this will be [aspect:perfective].</para>
+			<para>If it is (nominal) plural, then this will be [noun_agreement:[number:plural]]. </para>
+			<para>These features are added to the inflected form (in the word grammar, this is with the rule corresponding to the inflectional template).</para>
+		  </comment>
+		</owning>
+		<rel num="4" id="Slots" card="col" sig="MoInflAffixSlot">
+		  <comment>
+			<para>This indicates any slot(s) in inflectional templates which would normally be filled by an inflectional affix bearing the same inflectional feature(s) as those in InflFeats.</para>
+			<para>That is, regularly inflected forms will usually have an inflectional affix filling some slot.  These irregularly inflected forms will not have that inflectional affix (this is why they are irregular)</para>
+			<para>but the automated parsers will still need to know which slot(s) should be considered filled.</para>
+			<para>For example, if the type is perfective and regularly inflected verbs have a perfective prefix in the aspect slot (which happens to be the second slot before the stem), the user would indicate that second, aspect slot here</para>
 		  </comment>
 		</rel>
 	  </props>

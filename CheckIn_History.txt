@@ -5779,3 +5779,7 @@ KenZ, 15 Mar 2012. Updated FlexBridge installer (0.3.13) from Randy.
 TomB, 15 Mar 2012. TE-8956, TE-9543, TE-9533, TE-9542: Enabled pasting of footnote callers in back translations.
 	Also removed preprocessor directives that relied on the definition of NET_4_0.
 KenZ, 15 Mar 2012. Updated FlexBridge installer (0.3.14) from Randy.
+EricP, 16 Mar 2012. LT-7581 "Have parser know about inflectional variant entries".
+	Model Change (7000055): Created class LexEntryInflType (num 133 in Ling) based on LexEntryType.
+	Added atomic reference attribute InflType to WfiMorphBundle with target of LexEntryInflType.
+	No data migration needed.
