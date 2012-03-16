@@ -1,4 +1,4 @@
-
+#if USE_THIS
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -433,3 +433,4 @@ namespace SidebarLibrary.Menus
 		}
 	}
 }
+#endif
