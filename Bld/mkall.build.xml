@@ -182,9 +182,13 @@
 						<include name="IcuEC.dll"/>
 						<include name="IcuEC.dll.mdb"/>
 						<include name="libIcuConvEC.so.1.0"/>
+						<include name="libIcuConvEC_64.so.1.0"/>
 						<include name="libIcuRegexEC.so.1.0"/>
+						<include name="libIcuRegexEC_64.so.1.0"/>
 						<include name="libIcuTranslitEC.so.1.0"/>
+						<include name="libIcuTranslitEC_64.so.1.0"/>
 						<include name="libPyScriptEncConverter.so.1.0"/>
+						<include name="libPyScriptEncConverter_64.so.1.0"/>
 						<include name="PerlExpressionEC.dll"/>
 						<include name="PerlExpressionEC.dll.mdb"/>
 						<include name="PyScriptEC.dll"/>
@@ -194,6 +198,8 @@
 				<copy todir="${dir.outputBase}">
 					<fileset basedir="${dir.fwoutputlibLinux}">
 						<include name="SilEncConverters40.dll.config"/>
+						<include name="IcuEC.dll.config"/>
+						<include name="PyScriptEC.dll.config"/>
 					</fileset>
 				</copy>
 				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
