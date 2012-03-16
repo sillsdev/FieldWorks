@@ -126,10 +126,6 @@
 	  <Name>FwUtils</Name>
 	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="MenuExtender">
-	  <Name>MenuExtender</Name>
-	  <HintPath>..\..\..\Output\Debug\MenuExtender.dll</HintPath>
-	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>

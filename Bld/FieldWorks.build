@@ -412,7 +412,7 @@
 		to get rid of that dependency. -->
 	<target name="Framework" description="Build Framework project." depends="FwResources,COMInterfaces,CoreImpl,copy-nmockDll,
 		FDO,FwControls,FwCoreDlgs,FwCoreDlgControls,BasicUtils,RootSite,FwUtils,xCoreInterfaces,mkfwk,SimpleRootSite,copy-uiAutomation,
-		MenuExtender,UIAdapterInterfaces,Design,TestUtils,SilUtils,
+		UIAdapterInterfaces,Design,TestUtils,SilUtils,
 		Reporting,Widgets,XMLUtils">
 		<!-- ScriptureUtils,TestUtils are only used for the tests. -->
 		<call target="Framework-nodep" cascade="false"/>

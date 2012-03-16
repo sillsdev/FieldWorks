@@ -126,10 +126,6 @@
 	  <HintPath>..\..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="MenuExtender, Version=5.5.0.18264, Culture=neutral, processorArchitecture=MSIL">
-	  <HintPath>..\..\..\Output\Debug\MenuExtender.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
