@@ -172,3 +172,5 @@ JohnT, 15 Mar 2012. LT-12845, Toolbar not being drawn until click
 GordonM, 15 Mar 2012. LT-12884 Dictionary Configuration doesn't crash now.
 RickM, 15 Mar 2012. LT-12716 Going through the free translation field using the right arrow key skips
 	the end position and goes to the next line.
+RickM, 16 Mar 2012. NEEDED To Remove a comment line: LT-12716 Going through the free translation field using the right arrow key skips
+	the end position and goes to the next line.

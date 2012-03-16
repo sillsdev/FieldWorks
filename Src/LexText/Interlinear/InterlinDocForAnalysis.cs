@@ -1371,7 +1371,6 @@ namespace SIL.FieldWorks.IText
 			if (selStart <= 0)
 				return WhichEnd.Left;
 			//if (isRightToLeft ? selStart <= 0 : selEnd >= selLength - 1)
-			//if (selEnd >= selLength - 1)
 			if (selEnd >= selLength)
 				return WhichEnd.Right; // this happens with punctuation at end!
 			return WhichEnd.Neither;
