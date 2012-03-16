@@ -170,3 +170,5 @@ KenZ, 15 Mar 2012. Fixed LT-12888 to show inflection class in dictionary view.
 NaylorJ, 15 Mar 2012. Additional repairs related to LT-12820. Respeller dialog now reparses out of date paragraphs.
 JohnT, 15 Mar 2012. LT-12845, Toolbar not being drawn until click
 GordonM, 15 Mar 2012. LT-12884 Dictionary Configuration doesn't crash now.
+RickM, 15 Mar 2012. LT-12716 Going through the free translation field using the right arrow key skips
+	the end position and goes to the next line.
