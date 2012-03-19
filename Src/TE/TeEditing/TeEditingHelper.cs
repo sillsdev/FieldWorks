@@ -6863,7 +6863,8 @@ namespace SIL.FieldWorks.TE
 			int iPara = info.ihvo;
 			IStTxtPara para = m_repoScrTxtPara.GetObject(paraHvo);
 			int tag, hvo;
-			Debug.Assert(GetSelectedScrElement(out tag, out hvo));
+			bool fGotSelectedScrElement = GetSelectedScrElement(out tag, out hvo);
+			Debug.Assert(fGotSelectedScrElement);
 
 			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(helper,
 			SelectionHelper.SelLimitType.Anchor);
