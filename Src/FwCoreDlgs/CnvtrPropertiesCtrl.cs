@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
@@ -9,7 +11,6 @@ using System.Reflection;
 using ECInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-using System.Diagnostics;
 
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -356,8 +357,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This provides a reasonable sort order for Code Pages supported as encodings.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See comment below")]
 		private int CompareEncInfo(System.Text.EncodingInfo x, System.Text.EncodingInfo y)
 		{
+			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
+			// but this doesn't matter in this case.
 			int c = x.DisplayName.ToLowerInvariant().CompareTo(y.DisplayName.ToLowerInvariant());
 			if (c == 0)
 				c = x.CodePage - y.CodePage;
@@ -372,6 +377,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void cboConverter_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			txtMapFile.Text = "";
@@ -453,6 +460,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						encodings.Sort(CompareEncInfo);
 						foreach (var enc in encodings)
 						{
+							// TODO-Linux: EncodingInfo.DisplayName simply returns Name on Mono.
+							// Need to review if this is sufficient here.
 							cboSpec.Items.Add(new CnvtrSpecComboItem(String.Format(FwCoreDlgs.ksCodePageDisplay,
 								enc.DisplayName, enc.CodePage), enc.CodePage.ToString()));
 						}

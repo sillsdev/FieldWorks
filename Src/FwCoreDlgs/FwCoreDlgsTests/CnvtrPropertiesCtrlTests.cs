@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -166,6 +167,8 @@ namespace AddConverterDlgTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test. m_myDlg gets disposed in FixtureTearDown method.")]
 	public class CnvtrPropertiesControlTests : BaseTest
 	{
 		private DummyAddCnvtrDlg m_myDlg;
