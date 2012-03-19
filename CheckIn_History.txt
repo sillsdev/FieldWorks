@@ -5785,3 +5785,6 @@ EricP, 16 Mar 2012. LT-7581 "Have parser know about inflectional variant entries
 	No data migration needed.
 RandyR, 8 March 2012. Updated FLEx Bridge installer (0.3.15) which adds support for FW's DM 7000055.
 RandyR, 18 March 2012. Updated FLEx Bridge installer (0.3.17) which fixes a few actual and potential validation bugs.
+TomB, 15 Mar 2012. TE-9038: Enabled displaying pictures in the BT so captions can be edited.
+	TE-9544: Enabled deleting picture ORC in the BT and handling deletion of BT picture ORCs when a picture is
+	deleted in the vernacular.

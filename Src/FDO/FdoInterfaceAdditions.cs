@@ -2888,6 +2888,17 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Finds the ORC of the specified picture and deletes it from the paragraph and any
+		/// back translations and deletes the object itself.
+		/// </summary>
+		/// <param name="hvoPic">The HVO of the picture to delete</param>
+		/// <returns>The character offset of the location where the ORC was found in this
+		/// paragraph for the gievn picture. If not found, returns -1.</returns>
+		/// ------------------------------------------------------------------------------------
+		int DeletePicture(int hvoPic);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets a List of all TextTags that only reference Segments in this paragraph.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -2957,6 +2968,16 @@ namespace SIL.FieldWorks.FDO
 		/// Collects the HashSet of the unique wordforms in the paragraph.
 		/// </summary>
 		void CollectUniqueWordforms(HashSet<IWfiWordform> wordforms);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the character offset in the free translation (CmTranslation) corresponding to
+		/// the start of the given segment.
+		/// </summary>
+		/// <param name="segment">The character offset in the free translation.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		int GetOffsetInFreeTranslationForStartOfSegment(ISegment segment, int ws);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3250,12 +3271,12 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Remove all footnote reference ORCs that reference the specified footnote in all
-		/// writing systems for the back translation of the given (vernacular) paragraph.
+		/// Remove all ORCs that reference the specified object in all writing systems for the
+		/// back translation of the given (vernacular) paragraph.
 		/// </summary>
-		/// <param name="footnoteGuid">guid for the specified footnote</param>
+		/// <param name="guid">guid for the specified object</param>
 		/// ------------------------------------------------------------------------------------
-		void DeleteAnyBtMarkersForFootnote(Guid footnoteGuid);
+		void DeleteAnyBtMarkersForObject(Guid guid);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

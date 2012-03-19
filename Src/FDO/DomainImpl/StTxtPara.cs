@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -127,6 +128,40 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Finds the ORC of the specified picture and deletes it from the paragraph and any
+		/// back translations and deletes the object itself.
+		/// </summary>
+		/// <param name="hvoPic">The HVO of the picture to delete</param>
+		/// <returns>The character offset of the location where the ORC was found in this
+		/// paragraph for the gievn picture. If not found, returns -1.</returns>
+		/// ------------------------------------------------------------------------------------
+		public int DeletePicture(int hvoPic)
+		{
+			ITsString contents = Contents;
+			Guid guidPic = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic).Guid;
+			for (int i = 0; i < contents.RunCount; i++)
+			{
+				string str = contents.get_Properties(i).GetStrPropValue((int)FwTextPropType.ktptObjData);
+
+				if (str != null)
+				{
+					if (MiscUtils.GetGuidFromObjData(str.Substring(1)) == guidPic)
+					{
+						int startOfRun = contents.get_MinOfRun(i);
+						int limOfRun = contents.get_LimOfRun(i);
+						RemoveOwnedObjectsForString(startOfRun, limOfRun);
+						ITsStrBldr bldr = contents.GetBldr();
+						bldr.Replace(startOfRun, limOfRun, string.Empty, null);
+						Contents = bldr.GetString();
+						return startOfRun;
+					}
+				}
+			}
+			return -1;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Delete any objects whose guids are owned by the given portion of the paragraph
 		/// Contents. Use this when part of a string is about to be deleted (except when being
 		/// done thru a VwSelection).
@@ -152,37 +187,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				Guid guid = TsStringUtils.GetOwnedGuidFromRun(Contents, iRun, out odt);
 				if (guid != Guid.Empty)
 				{
-					IScrFootnoteRepository repo = m_cache.ServiceLocator.GetInstance<IScrFootnoteRepository>();
-					IScrFootnote footnote;
-					if (repo.TryGetFootnote(guid, out footnote))
+					ICmObjectRepository repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+					ICmObject obj;
+					if (repo.TryGetObject(guid, out obj))
 					{
-						IScrBook owner = (IScrBook)footnote.Owner;
-
-						owner.FootnotesOS.Remove(footnote);
-
-						DeleteAnyBtMarkersForFootnote(guid);
+						if (obj is IScrFootnote)
+							((IScrBook)obj.Owner).FootnotesOS.Remove((IScrFootnote)obj);
+						else if (obj is ICmPicture)
+							m_cache.DomainDataByFlid.DeleteObj(obj.Hvo);
 					}
+					DeleteAnyBtMarkersForObject(guid);
 				}
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Remove all footnote reference ORCs that reference the specified footnote in all
+		/// Remove all embedded ORCs that reference the specified object in all
 		/// writing systems for the back translation of the given (vernacular) paragraph.
 		/// </summary>
-		/// <param name="footnoteGuid">guid for the specified footnote</param>
+		/// <param name="guid">guid of object (footnote or picture)</param>
 		/// ------------------------------------------------------------------------------------
-		public void DeleteAnyBtMarkersForFootnote(Guid footnoteGuid)
+		public void DeleteAnyBtMarkersForObject(Guid guid)
 		{
-			BackTranslationAndFreeTranslationUpdateHelper.Do(this, () => DeleteAnyBtMarkersForFootnoteInternal(footnoteGuid));
+			BackTranslationAndFreeTranslationUpdateHelper.Do(this, () => DeleteAnyBtMarkersForObjectInternal(guid));
 		}
 
 		/// <summary>
 		/// Helper method so that deletion of ORCs can be wrapped within BackTranslationAndFreeTranslationUpdateHelper
 		/// call.
 		/// </summary>
-		private void DeleteAnyBtMarkersForFootnoteInternal(Guid footnoteGuid)
+		private void DeleteAnyBtMarkersForObjectInternal(Guid guid)
 		{
 			// ENHANCE: Someday may need to do this for other translations, not just BT (will
 			// need to rename this method).
@@ -190,26 +225,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			if (trans != null)
 			{
-				// Delete the reference ORCs for this footnote in the back translation
+				// Delete the reference ORCs for this object in the back translation
 			   for (int i = 0; i < trans.Translation.StringCount; i++)
-					RemoveOrc(trans.Translation, i, footnoteGuid);
+					RemoveOrc(trans.Translation, i, guid);
 			}
 
 			foreach (var segment in SegmentsOS)
 			{
 				for (int i = 0; i < segment.FreeTranslation.StringCount; i++)
-					RemoveOrc(segment.FreeTranslation, i, footnoteGuid);
+					RemoveOrc(segment.FreeTranslation, i, guid);
 			}
 		}
 
-		private void RemoveOrc(IMultiString trans, int i, Guid footnoteGuid)
+		private void RemoveOrc(IMultiString trans, int i, Guid guid)
 		{
 			int ws;
 			ITsString btTss = trans.GetStringFromIndex(i, out ws);
 			if (btTss.RunCount > 0 && btTss.Text != null)
 			{
 				ITsStrBldr btTssBldr = btTss.GetBldr();
-				if (TsStringUtils.DeleteOrcFromBuilder(btTssBldr, footnoteGuid) >= 0)
+				if (TsStringUtils.DeleteOrcFromBuilder(btTssBldr, guid) >= 0)
 					trans.set_String(ws, btTssBldr.GetString());
 			}
 		}
@@ -816,6 +851,41 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#endregion
 
 		#region Segment handling code
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the character offset in the free translation (CmTranslation) corresponding to
+		/// the start of the given segment.
+		/// </summary>
+		/// <param name="segment">The character offset in the free translation.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		public int GetOffsetInFreeTranslationForStartOfSegment(ISegment segment, int ws)
+		{
+			int cumulativeLengthOfBt = 0;
+
+			int space = 0;
+			foreach (ISegment seg in SegmentsOS.TakeWhile(s => s != segment))
+			{
+				int cchSegTrans = 0;
+				if (seg.IsLabel)
+				{
+					cchSegTrans = seg.Length + space;
+					space = 1;
+				}
+				else
+				{
+					ITsString tss = seg.FreeTranslation.get_String(ws);
+					if (tss != null && tss.Length > 0)
+					{
+						cchSegTrans = tss.Length;
+						space = 0;
+					}
+				}
+				cumulativeLengthOfBt += cchSegTrans;
+			}
+			return cumulativeLengthOfBt;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the segment corresponding to the given character offset in the specified free

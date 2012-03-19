@@ -1876,27 +1876,6 @@ namespace SIL.FieldWorks.TE
 				DeletePicture();
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Return true if the deleting of text (or a picture) is possible.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public override bool CanDelete()
-		{
-			if (!base.CanDelete())
-				return false;
-			if (Callbacks.EditedRootBox.Selection.SelType != VwSelType.kstPicture)
-				return true;
-
-			if (ContentType != StVc.ContentTypes.kctNormal)
-				return false; // can't delete pictures in BT views.
-
-			// Also can't delete in BT side of parallel side-by-side view.
-			SelLevInfo info;
-			return (!CurrentSelection.GetLevelInfoForTag(StTxtParaTags.kflidSegments,
-				SelectionHelper.SelLimitType.Anchor, out info));
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Deletes a footnote when the selection is on a footnote marker.
@@ -6857,10 +6836,16 @@ namespace SIL.FieldWorks.TE
 			string redo;
 			TeResourceHelper.MakeUndoRedoLabels("kstidDeletePicture", out undo, out redo);
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo,
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(), ()=>
+				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				DeletePicture(CurrentSelection, CurrentSelection.LevelInfo[0].hvo);
 			});
+
+			if (Callbacks != null && Callbacks.EditedRootBox != null) // may not exist in tests.
+			{
+				Callbacks.EditedRootBox.Site.ScrollSelectionIntoView(
+					Callbacks.EditedRootBox.Selection, VwScrollSelOpts.kssoNearTop);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -6872,40 +6857,57 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void DeletePicture(SelectionHelper helper, int hvoPic)
 		{
-			int paraHvo = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs).hvo;
+			SelLevInfo info = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs);
+			int paraHvo = info.hvo;
 			Debug.Assert(paraHvo != 0);
-
-			int iBook, iSection;
-
-			iBook = ((ITeView)Control).LocationTracker.GetBookIndex(helper,
-				SelectionHelper.SelLimitType.Anchor);
-
-			iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(helper,
-				SelectionHelper.SelLimitType.Anchor);
-
+			int iPara = info.ihvo;
 			IStTxtPara para = m_repoScrTxtPara.GetObject(paraHvo);
+			int tag, hvo;
+			Debug.Assert(GetSelectedScrElement(out tag, out hvo));
 
-			// Find the ORC and delete it from the paragraph
-			ITsString contents = para.Contents;
-			int startOfRun = 0;
-			for (int i = 0; i < contents.RunCount; i++)
+			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(helper,
+			SelectionHelper.SelLimitType.Anchor);
+
+			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(helper,
+			SelectionHelper.SelLimitType.Anchor);
+
+			int ichOrc = -1;
+			int iSegment = -1;
+
+			if (IsBackTranslation)
 			{
-				string str = contents.get_Properties(i).GetStrPropValue(
-					(int)FwTextPropType.ktptObjData);
-
-				if (str != null)
+				ICmPictureRepository repo = Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+				ISegment segment;
+				if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
 				{
-					Guid guid = MiscUtils.GetGuidFromObjData(str.Substring(1));
-					if (m_repoCmObject.GetObject(guid).Hvo == hvoPic)
+					segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+					iSegment = segment.IndexInOwner;
+				}
+				else
+					segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), RootVcDefaultWritingSystem);
+				ITsString contents = segment.FreeTranslation.get_String(RootVcDefaultWritingSystem);
+				Guid guidPic = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic).Guid;
+				for (int i = 0; i < contents.RunCount; i++)
+				{
+					string str = contents.get_Properties(i).GetStrPropValue((int)FwTextPropType.ktptObjData);
+
+					if (str != null && MiscUtils.GetGuidFromObjData(str.Substring(1)) == guidPic)
 					{
+						ichOrc = contents.get_MinOfRun(i);
+						int limOfRun = contents.get_LimOfRun(i);
 						ITsStrBldr bldr = contents.GetBldr();
-						startOfRun = contents.get_MinOfRun(i);
-						bldr.Replace(startOfRun, contents.get_LimOfRun(i), string.Empty, null);
-						para.Contents = bldr.GetString();
+						bldr.Replace(ichOrc, limOfRun, string.Empty, null);
+						segment.FreeTranslation.set_String(RootVcDefaultWritingSystem, bldr.GetString());
+						if (ContentType == StVc.ContentTypes.kctSimpleBT)
+							ichOrc += para.GetOffsetInFreeTranslationForStartOfSegment(segment, RootVcDefaultWritingSystem);
 						break;
 					}
 				}
 			}
+			else
+				ichOrc = para.DeletePicture(hvoPic);
+
+			Debug.Assert(ichOrc >= 0);
 
 			// TODO (TE-4967): do a prop change that actually works.
 			//			m_cache.DomainDataByFlid.PropChanged(null, (int)PropChangeType.kpctNotifyAll,
@@ -6914,35 +6916,8 @@ namespace SIL.FieldWorks.TE
 			if (m_app != null)
 				m_app.RefreshAllViews();
 
-			// REVIEW: Isn't there another way to delete pictures in the new FDO?
-			// They don't have an owner!!!!
-			m_cache.DomainDataByFlid.DeleteObj(hvoPic);
-
-			// TODO (TimS): This code to create a selection in the paragraph the picture was
-			// in probably won't work when deleting a picture in back translation
-			// material (which isn't possible to insert yet).
-
-			((ITeView)Control).LocationTracker.SetBookAndSection(helper,
-				SelectionHelper.SelLimitType.Anchor, iBook, iSection);
-
-			helper.RemoveLevel(StTxtParaTags.kflidContents);
-
-			if (Callbacks != null && Callbacks.EditedRootBox != null) // may not exist in tests.
-			{
-				try
-				{
-					MakeSimpleTextSelection(helper.LevelInfo, StTxtParaTags.kflidContents, startOfRun);
-				}
-				catch
-				{
-					// If we couldn't make the selection in the contents, it's probably because
-					// we are in a user prompt, so try that instead.
-					MakeSimpleTextSelection(helper.LevelInfo, SimpleRootSite.kTagUserPrompt, startOfRun);
-				}
-
-				Callbacks.EditedRootBox.Site.ScrollSelectionIntoView(
-					Callbacks.EditedRootBox.Selection, VwScrollSelOpts.kssoNearTop);
-			}
+			SelectRangeOfChars(iBook, iSection, tag, iPara, iSegment, ichOrc, ichOrc, true, true,
+				true, VwScrollSelOpts.kssoDefault);
 		}
 		#endregion
 

@@ -216,7 +216,7 @@ namespace SIL.CoreImpl
 
 				if (guid == guidToRemove)
 				{
-					// Footnote ORC with same Guid found. Remove it.
+					// ORC with same Guid found. Remove it.
 					int ichMin, ichLim;
 					TsRunInfo info;
 					tssBldr.FetchRunInfo(iRun, out info);
