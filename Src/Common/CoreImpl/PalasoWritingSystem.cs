@@ -84,6 +84,16 @@ namespace SIL.CoreImpl
 			}
 		}
 
+		private IRenderEngine CreateRenderEngine(Func<IRenderEngine> createFunc)
+		{
+			var renderEngine = createFunc();
+			renderEngine.WritingSystemFactory = WritingSystemManager;
+			var palasoWsManager = WritingSystemManager as PalasoWritingSystemManager;
+			if (palasoWsManager != null)
+				palasoWsManager.RegisterRenderEngine(renderEngine);
+			return renderEngine;
+		}
+
 		/// <summary>
 		/// Get the engine used to render text with the specified properties. At present only
 		/// font, bold, and italic properties are significant.
@@ -126,8 +136,7 @@ namespace SIL.CoreImpl
 				{
 					if (m_isGraphiteEnabled && FontHasGraphiteTables(vg))
 					{
-						renderEngine = FwGrEngineClass.Create();
-						renderEngine.WritingSystemFactory = WritingSystemManager;
+						renderEngine = CreateRenderEngine(FwGrEngineClass.Create);
 
 						string fontFeatures = null;
 						if (realFontName == DefaultFontName)
@@ -147,8 +156,7 @@ namespace SIL.CoreImpl
 					{
 						if (m_uniscribeEngine == null)
 						{
-							m_uniscribeEngine = UniscribeEngineClass.Create();
-							m_uniscribeEngine.WritingSystemFactory = WritingSystemManager;
+							m_uniscribeEngine = CreateRenderEngine(UniscribeEngineClass.Create);
 						}
 						renderEngine = m_uniscribeEngine;
 					}
@@ -158,13 +166,11 @@ namespace SIL.CoreImpl
 					// default to the UniscribeEngine unless ROMAN environment variable is set.
 					if (Environment.GetEnvironmentVariable("ROMAN") == null)
 					{
-						renderEngine = UniscribeEngineClass.Create();
-						renderEngine.WritingSystemFactory = WritingSystemManager;
+						renderEngine = CreateRenderEngine(UniscribeEngineClass.Create);
 					}
 					else
 					{
-						renderEngine = RomRenderEngineClass.Create();
-						renderEngine.WritingSystemFactory = WritingSystemManager;
+						renderEngine = CreateRenderEngine(RomRenderEngineClass.Create);
 					}
 				}
 
