@@ -66,6 +66,9 @@ namespace Reflector.UserInterface
 				IsDisposing = true;
 				try
 				{
+					if (contextMenu != null)
+						contextMenu.Dispose();
+
 					if (items != null)
 					{
 						// Disposing the item might remove it from the collection, so we better work on
