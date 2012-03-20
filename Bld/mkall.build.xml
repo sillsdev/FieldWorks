@@ -170,7 +170,7 @@
 		<choose>
 			<when test="${platform::is-unix()}">
 				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibLinuxBase}">
+					<fileset basedir="${dir.fwoutputlibPlatformBase}">
 						<include name="SilEncConverters40.dll"/>
 						<include name="SilEncConverters40.dll.mdb"/>
 						<include name="ECInterfaces.dll"/>
@@ -196,7 +196,7 @@
 					</fileset>
 				</copy>
 				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibLinux}">
+					<fileset basedir="${dir.fwoutputlibPlatform}">
 						<include name="SilEncConverters40.dll.config"/>
 						<include name="IcuEC.dll.config"/>
 						<include name="PyScriptEC.dll.config"/>
@@ -204,7 +204,7 @@
 				</copy>
 				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
 				<copy todir="${dir.outputBase}/EC/Plugins">
-					<fileset basedir="${dir.fwoutputlibLinux}/ECPlugins">
+					<fileset basedir="${dir.fwoutputlibPlatform}/ECPlugins">
 						<include name="AI 4.0.0.0 Plugin Details.xml"/>
 						<include name="CC 4.0.0.0 Plugin Details.xml"/>
 						<include name="EC 4.0.0.0 Plugin Details.xml"/>
@@ -216,7 +216,7 @@
 			</when>
 			<otherwise>
 				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibBase}">
+					<fileset basedir="${dir.fwoutputlibPlatformBase}">
 						<include name="SilEncConverters40.dll"/>
 						<include name="SilEncConverters40.pdb"/>
 						<include name="ECInterfaces.dll"/>

@@ -19,8 +19,7 @@
 		<property name="config" value="Bounds"/>
 		<property name="dir.outputBase" value="${path::combine(dir.fwoutput, config)}"/>
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
-		<property name="dir.fwoutputlibLinux" value="${path::combine(dir.fwoutputlib, 'linux')}"/>
-		<property name="dir.fwoutputlibLinuxBase" value="${path::combine(dir.fwoutputlibLinux, config)}"/>
+		<property name="dir.fwoutputlibPlatformBase" value="${path::combine(dir.fwoutputlibPlatform, config)}"/>
 		<property name="bld-debug" value="false"/>
 		<property name="bld-bounds" value="true"/>
 		<property name="bld-release" value="false"/>
@@ -37,8 +36,7 @@
 		<property name="config" value="Release"/>
 		<property name="dir.outputBase" value="${path::combine(dir.fwoutput, config)}"/>
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
-		<property name="dir.fwoutputlibLinux" value="${path::combine(dir.fwoutputlib, 'linux')}"/>
-		<property name="dir.fwoutputlibLinuxBase" value="${path::combine(dir.fwoutputlibLinux, config)}"/>
+		<property name="dir.fwoutputlibPlatformBase" value="${path::combine(dir.fwoutputlibPlatform, config)}"/>
 		<property name="bld-debug" value="false"/>
 		<property name="bld-bounds" value="false"/>
 		<property name="bld-release" value="true"/>
