@@ -220,6 +220,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				// dispose managed and unmanaged objects
 				m_lock.Dispose();
+				m_saveTimer.Dispose();
 			}
 			IsDisposed = true;
 		}
