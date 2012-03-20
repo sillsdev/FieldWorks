@@ -484,6 +484,7 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void DestroyMockCache()
 		{
+			m_cache.ThreadHelper.Dispose();
 			m_cache.Dispose();
 			m_cache = null;
 		}

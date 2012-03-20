@@ -5943,7 +5943,9 @@ namespace SIL.FieldWorks.TE
 			processInfo.UseShellExecute = true;
 			try
 			{
-				Process.Start(processInfo);
+				using (Process.Start(processInfo))
+				{
+				}
 			}
 			catch
 			{
@@ -7636,7 +7638,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		internal int GetBackTranslationWsForView(string viewName)
 		{
-			string icuLocale = GetBtWsRegistrySetting(viewName).Value;
+			string icuLocale;
+			using (var setting = GetBtWsRegistrySetting(viewName))
+				icuLocale = setting.Value;
 			int ws = string.IsNullOrEmpty(icuLocale) ? -1 :
 				Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(icuLocale);
 			return ws > 0 ? ws : m_defaultBackTranslationWs;

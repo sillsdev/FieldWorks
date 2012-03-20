@@ -151,6 +151,7 @@ namespace SIL.Utils
 			MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton,
 			MessageBoxOptions options, string helpFilePath, HelpNavigator navigator, object param)
 		{
+			// TODO-Linux: Help is not implemented in Mono
 			return Show(null, text, caption, buttons, icon, defaultButton, options, helpFilePath,
 				navigator, param);
 		}

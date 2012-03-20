@@ -36,7 +36,10 @@ namespace SIL.FieldWorks.TE
 			RegistryHelper.ProductName = "FieldWorks";
 
 			FwRegistrySettings.Init();
-			TeProjectSettings.InitSettings(RegistryHelper.SettingsKey(FwSubKey.TE, "Dummy"));
+			using (var registryKey = RegistryHelper.SettingsKey(FwSubKey.TE, "Dummy"))
+			{
+				TeProjectSettings.InitSettings(registryKey);
+			}
 			Options.Init();
 		}
 

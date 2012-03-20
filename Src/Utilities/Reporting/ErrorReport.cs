@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -140,6 +141,8 @@ namespace SIL.Utils
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Variables added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label label2;
@@ -320,6 +323,7 @@ namespace SIL.Utils
 
 				string caption = ReportingStrings.kstidFieldWorksErrorCaption;
 				string appExit = ReportingStrings.kstidFieldWorksErrorExitInfo;
+				// TODO-Linux: MessageBox.Show doesn't implement help
 				MessageBox.Show(parent, error.Message.Substring(0, lengthOfBasicMessage) + Environment.NewLine + appExit,
 					caption, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0,
 					sHelpFile, HelpNavigator.Topic, sHelpTopic);
@@ -524,9 +528,11 @@ namespace SIL.Utils
 					//string s = System.Web.HttpUtility.UrlPathEncode( m_details.Text);
 					string body = m_details.Text.Replace(Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
 
-					Process p = new Process();
-					p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
-					p.Start();
+					using (Process p = new Process())
+					{
+						p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
+						p.Start();
+					}
 				}
 				catch(Exception)
 				{

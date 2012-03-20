@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Xml;
@@ -265,6 +266,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		#endregion
 		#region private methods
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Added to ImageList and disposed there.")]
 		private void CommonInit()
 		{
 			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);

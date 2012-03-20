@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Printing;
@@ -352,6 +353,8 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region DummyApp class
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="This class doesn't do anything so there is no point in having it implement IDisposable")]
 		private class DummyApp : IApp
 		{
 			#region IApp Members

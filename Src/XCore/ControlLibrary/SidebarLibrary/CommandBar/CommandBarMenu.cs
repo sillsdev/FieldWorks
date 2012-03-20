@@ -12,11 +12,10 @@ namespace SidebarLibrary.CommandBars
 	{
 		// This is just to keep track of the selected
 		// menu as well as hold the menuitems in the menubar
-		Menu selectedMenuItem = null;
+		private Menu selectedMenuItem = null;
 
 		public CommandBarMenu(MenuItem[] items) : base(items)
 		{
-
 		}
 
 		internal Menu SelectedMenuItem
@@ -29,7 +28,5 @@ namespace SidebarLibrary.CommandBars
 		{
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
-
-
 	}
 }

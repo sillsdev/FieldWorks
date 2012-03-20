@@ -343,7 +343,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					System.Diagnostics.Process.Start(sPathname);
+					using (System.Diagnostics.Process.Start(sPathname))
+					{
+					}
 				}
 			}
 			catch (Exception ex)

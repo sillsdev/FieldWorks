@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -48,6 +49,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyTestCache()")]
 		public void CreateTestCache()
 		{
 			m_now = DateTime.Now;

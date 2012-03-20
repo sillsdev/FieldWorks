@@ -673,8 +673,7 @@ namespace SidebarLibrary.WinControls
 			//
 			// ColorPickerDropDown
 			//
-			this.AutoScaleMode = AutoScaleMode.None;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(198, 215);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																		  this.tabControl});

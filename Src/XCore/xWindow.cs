@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.IO;
 using System.Reflection;
@@ -1444,6 +1445,8 @@ namespace XCore
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TabStop is not implemented on Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1528,8 +1531,7 @@ namespace XCore
 			this.AccessibleDescription = "The main window";
 			this.AccessibleName = "The Window";
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.Window;
-			//this.AutoScaleMode = AutoScaleMode.None;
-			this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(873, 569);
 			this.Controls.Add(this.m_mainSplitContainer);
 			this.KeyPreview = true;
@@ -1801,6 +1803,8 @@ namespace XCore
 			//m_mediator.AllowCommandsToExecute = true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void SynchronizedOnIdleTime()
 		{
 			CheckDisposed();

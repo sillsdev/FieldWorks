@@ -26,6 +26,14 @@ namespace SIL.Utils.FileDialog.Linux
 		}
 
 		#region Disposable stuff
+#if DEBUG
+		/// <summary>Finalizer</summary>
+		~FileDialogLinux()
+		{
+			Dispose(false);
+		}
+#endif
+
 		/// <summary/>
 		public void Dispose()
 		{
@@ -36,8 +44,11 @@ namespace SIL.Utils.FileDialog.Linux
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (fDisposing && m_dlg != null)
 			{
+				ResetFilter(m_dlg);
+
 				//Don't forget to call Destroy() or the dialog window won't get closed.
 				m_dlg.Destroy();
 				m_dlg.Dispose();
@@ -77,7 +88,11 @@ namespace SIL.Utils.FileDialog.Linux
 		private void ResetFilter(FileChooserDialog dlg)
 		{
 			while (dlg.Filters.Length > 0)
-				dlg.RemoveFilter(dlg.Filters[0]);
+			{
+				var filter = dlg.Filters[0];
+				dlg.RemoveFilter(filter);
+				filter.Dispose();
+			}
 		}
 
 		private int CurrentFilterIndex

@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -132,6 +133,8 @@ namespace SIL.FieldWorks.PaObjects
 		/// Initializes the FDO repositories from the specified project and server.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private bool InternalInitialize(string name, string server, bool loadOnlyWs,
 			int timeToWaitForProcessStart, int timeToWaitForLoadingData)
 		{
@@ -160,6 +163,7 @@ namespace SIL.FieldWorks.PaObjects
 							FwUtils.ksFlexAbbrev, "-" + FwAppArgs.kNoUserInterface);
 
 						newProcessStarted = true;
+						// TODO-Linux: WaitForInputIdle isn't fully implemented on Linux.
 						if (!newFwInstance.WaitForInputIdle(timeToWaitForProcessStart))
 							return false;
 					}

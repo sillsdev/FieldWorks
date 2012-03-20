@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace SidebarLibrary.WinControls
@@ -6,6 +7,8 @@ namespace SidebarLibrary.WinControls
 	/// <summary>
 	/// Summary description for BitmapDoubleBuffer.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="surface and buffer get disposed in CleanUp() which gets called from Dispose()")]
 	public class DoubleBuffer: IDisposable
 	{
 		int bufferWidth;

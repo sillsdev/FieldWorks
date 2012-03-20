@@ -50,10 +50,6 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
-#if __MonoCS__
-			// TODO-Linux: AutoScaleBaseSize is now deprecated - regardless it's probably not wanted for unit tests
-			this.AutoScaleMode = AutoScaleMode.None;
-#endif
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -89,10 +85,10 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// DummyDerivedForm
 			//
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.AccessibleDescription = ((string)(resources.GetObject("$this.AccessibleDescription")));
 			this.AccessibleName = ((string)(resources.GetObject("$this.AccessibleName")));
 			this.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("$this.Anchor")));
-			this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
 			this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
 			this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
 			this.AutoScrollMinSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMinSize")));

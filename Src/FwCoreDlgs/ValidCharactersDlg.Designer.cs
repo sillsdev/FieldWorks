@@ -1,4 +1,4 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class ValidCharactersDlg
@@ -14,6 +14,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		// TODO-Linux: VirtualMode is not supported on Mono. TabStop is not implemented.
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

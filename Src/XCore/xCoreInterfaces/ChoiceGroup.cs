@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using SIL.Utils;
@@ -31,6 +32,8 @@ namespace XCore
 	/// <summary>
 	/// Summary description for ChoiceGroupCollection.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class ChoiceRelatedClass : ArrayList
 	{
 		protected IUIAdapter m_adapter;

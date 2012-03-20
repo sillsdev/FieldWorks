@@ -638,7 +638,7 @@ namespace SidebarLibrary.WinControls
 			//
 			// CustomColorDlg
 			//
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(246, 330);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																		  this.label7,

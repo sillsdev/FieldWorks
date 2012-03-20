@@ -2487,7 +2487,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile,
 						m_sSfmDataFile);
 					if (m_chkDisplayImportReport.Checked && !String.IsNullOrEmpty(m_sLogFile))
-						Process.Start(m_sLogFile);
+					{
+						using (Process.Start(m_sLogFile))
+						{
+						}
+					}
 				}
 			}
 		}

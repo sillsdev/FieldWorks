@@ -2352,18 +2352,42 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				s_helper.m_sections.Add(section);
 		}
 
-		#region IDisposable Members
+		#region Disposable stuff
+#if DEBUG
+		/// <summary/>
+		~SectionAdjustmentSuppressionHelper()
+		{
+			Dispose(false);
+		}
+#endif
+
+		/// <summary/>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary/>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
 		/// <summary>
 		/// Section references will be adjusted when helper is disposed.
 		/// </summary>
-		public void Dispose()
+		protected virtual void Dispose(bool fDisposing)
 		{
-			foreach (var section in m_sections)
-				section.AdjustReferences();
-			m_sections.Clear();
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+				foreach (var section in m_sections)
+					section.AdjustReferences();
+				m_sections.Clear();
+			}
 			s_helper = null;
+			IsDisposed = true;
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
 }

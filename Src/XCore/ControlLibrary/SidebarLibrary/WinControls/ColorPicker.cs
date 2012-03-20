@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Resources;
 using System.Diagnostics;
@@ -230,6 +231,8 @@ namespace SidebarLibrary.WinControls
 
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="colorPicker is a reference")]
 	internal class ColorPickerEditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 		#region Class Variables

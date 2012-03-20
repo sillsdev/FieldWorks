@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing.Design;
 
 using SidebarLibrary.Collections;
@@ -384,6 +385,18 @@ namespace SidebarLibrary.WinControls
 
 		}
 		#endregion
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			if (disposing)
+			{
+				if (contextMenu != null)
+					contextMenu.Dispose();
+			}
+			contextMenu = null;
+			base.Dispose(disposing);
+		}
 
 		#region Overrides
 		protected override Size DefaultSize
@@ -2405,6 +2418,8 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="MenuItemEx gets added to contextMenu and disposed there.")]
 		void CreateContextMenu()
 		{
 			// context menu

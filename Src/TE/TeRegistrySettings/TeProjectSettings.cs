@@ -140,13 +140,13 @@ namespace SIL.FieldWorks.TE
 				throw new ArgumentNullException("key");
 
 			System.Diagnostics.Debug.Assert(s_sendSyncMessages == null, "TeProjectSettings.InitSettings was called before!");
-			s_sendSyncMessages = new RegistryBoolSetting(key, "SendSyncMessage", true);
-			s_receiveSyncMessages = new RegistryBoolSetting(key, "ReceiveSyncMessage", false);
-			s_showSpellingErrors = new RegistryBoolSetting(key, "ShowSpellingErrors", false);
-			s_changeAllBtWs = new RegistryBoolSetting(key, "ChangeAllBtViews", true);
-			s_bookFilterEnabled = new RegistryBoolSetting(key, "BookFilterEnabled", false);
-			s_showUsfmResources = new RegistryBoolSetting(key, "ShowUsfmResources", false);
-			s_filtersKey = new RegistryStringSetting(key, "BookFilterBooks", string.Empty);
+			s_sendSyncMessages = new RegistryBoolSetting(true, "SendSyncMessage", key.Name);
+			s_receiveSyncMessages = new RegistryBoolSetting(false, "ReceiveSyncMessage", key.Name);
+			s_showSpellingErrors = new RegistryBoolSetting(false, "ShowSpellingErrors", key.Name);
+			s_changeAllBtWs = new RegistryBoolSetting(true, "ChangeAllBtViews", key.Name);
+			s_bookFilterEnabled = new RegistryBoolSetting(false, "BookFilterEnabled", key.Name);
+			s_showUsfmResources = new RegistryBoolSetting(false, "ShowUsfmResources", key.Name);
+			s_filtersKey = new RegistryStringSetting(string.Empty, "BookFilterBooks", key.Name);
 		}
 
 		/// ------------------------------------------------------------------------------------

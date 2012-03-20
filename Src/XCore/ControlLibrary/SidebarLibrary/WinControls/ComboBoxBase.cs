@@ -6,6 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Security;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 
@@ -17,6 +18,8 @@ namespace SidebarLibrary.WinControls
 {
 
 	#region Helper Classes
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="comboBox is a reference")]
 	internal class EditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 

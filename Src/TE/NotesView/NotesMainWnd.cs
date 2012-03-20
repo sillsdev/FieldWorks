@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.TE
 			this.SuspendLayout();
 			this.AccessibleDescription = resources.GetString("$this.AccessibleDescription");
 			this.AccessibleName = resources.GetString("$this.AccessibleName");
-			this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
 			this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
 			this.AutoScrollMinSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMinSize")));

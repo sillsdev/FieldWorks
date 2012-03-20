@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using SIL.Utils;
 
@@ -7,6 +8,8 @@ namespace XCore
 	/// <summary>
 	///  A PersistenceProvider which uses the XCore PropertyTable
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;

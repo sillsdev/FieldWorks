@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -186,6 +187,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				get { return false; }
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning a reference")]
 			public Form Form
 			{
 				get { return m_progressBar.Control.FindForm(); }

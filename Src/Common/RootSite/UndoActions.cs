@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -100,6 +101,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void RestoreSelection()
 		{
 			m_selHelper.RestoreSelectionAndScrollPos();

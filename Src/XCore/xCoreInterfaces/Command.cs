@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Collections;
 using System.Globalization;
@@ -25,6 +26,8 @@ namespace XCore
 	/// <summary>
 	/// Summary description for Commands.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public class CommandSet : Hashtable, IFWDisposable
 	{
 		protected Mediator m_mediator;
@@ -137,6 +140,8 @@ namespace XCore
 
 		#endregion IDisposable & Co. implementation
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "command is added to collection and disposed there")]
 		public void Init(XmlNode windowNode)
 		{
 			CheckDisposed();
@@ -214,6 +219,8 @@ namespace XCore
 		string RedoText { get; }
 	}
 
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public class Command : IFWDisposable, ICommandUndoRedoText
 	{
 		#region Fields

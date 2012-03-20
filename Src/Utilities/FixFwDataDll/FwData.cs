@@ -215,9 +215,11 @@ namespace SIL.FieldWorks.FixData
 							Indent = true,
 							IndentChars = "\t"
 						};
-					var writer = XmlWriter.Create(outFile, settings);
-					xeLdml.WriteTo(writer);
-					writer.Close();
+					using (var writer = XmlWriter.Create(outFile, settings))
+					{
+						xeLdml.WriteTo(writer);
+						writer.Close();
+					}
 				}
 			}
 		}

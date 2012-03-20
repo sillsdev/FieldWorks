@@ -58,11 +58,10 @@ namespace SIL.SilSidePane
 			return null;
 		}
 
-		public OutlookBarButton Add(OutlookBarButton item)
+		public void Add(OutlookBarButton item)
 		{
 			item.Owner = this.Owner;
-			int i = List.Add(item);
-			return List[i] as OutlookBarButton;
+			List.Add(item);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]

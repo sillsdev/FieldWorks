@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -453,6 +454,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return vs;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="DummyConSlice gets added to control collection and disposed there.")]
 		public void InsertDummies(ConcSlice concSlice, int index, int count)
 		{
 			CheckDisposed();

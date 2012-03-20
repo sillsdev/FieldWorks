@@ -1837,8 +1837,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			var innerBounds = new ElementBounds(pficElement, s_tagsCmAnnotation);
 			Debug.Assert(innerBounds.IsValid);
 			var pficBytes = new List<byte>(pficElement);
-			var instanceOf = String.Format("<InstanceOf>\r\n{0}\r\n</InstanceOf>\r\n",
-				DataMigrationServices.CreateReferenceObjSurElement(dtoMatchingPf.Guid));
+			var instanceOf = String.Format("<InstanceOf>{1}{0}{1}</InstanceOf>{1}",
+				DataMigrationServices.CreateReferenceObjSurElement(dtoMatchingPf.Guid), Environment.NewLine);
 			pficBytes.InsertRange(innerBounds.EndTagOffset, Encoding.UTF8.GetBytes(instanceOf));
 			dtoPfic.XmlBytes = pficBytes.ToArray();
 			return true;

@@ -11,6 +11,7 @@
 // File: XmlListTests.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -39,6 +40,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Create temporary FdoCache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in FixtureTeardown()")]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

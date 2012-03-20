@@ -235,7 +235,8 @@ namespace SIL.FieldWorks.TE
 					ReplaceBookTagAndIndex(selectionHelper, SelectionHelper.SelLimitType.Anchor);
 					ReplaceBookTagAndIndex(selectionHelper, SelectionHelper.SelLimitType.End);
 
-					key.SetValue(Name, Persistence.SerializeToBinary(selectionHelper).ToArray());
+					using (var stream = Persistence.SerializeToBinary(selectionHelper))
+						key.SetValue(Name, stream.ToArray());
 				}
 				catch
 				{

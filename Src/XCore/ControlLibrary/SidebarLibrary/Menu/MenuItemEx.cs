@@ -1,15 +1,16 @@
 using System;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Resources;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using SidebarLibrary.CommandBars;
+using SidebarLibrary.General;
 using SidebarLibrary.Win32;
 using SidebarLibrary.WinControls;
-using SidebarLibrary.General;
-using SidebarLibrary.CommandBars;
 
 namespace SidebarLibrary.Menus
 {
@@ -18,31 +19,30 @@ namespace SidebarLibrary.Menus
 	/// </summary>
 	public class MenuItemEx : MenuItem
 	{
-		static ColorGroup group = ColorGroup.GetColorGroup();
-		static Color bgColor  = group.bgColor;
-		static Color stripeColor = group.stripeColor;
-		static Color selectionColor  = group.selectionColor;
-		static Color borderColor = group.borderColor;
-		static Color darkSelectionColor = group.darkSelectionColor;
+		private static ColorGroup group = ColorGroup.GetColorGroup();
+		private static Color bgColor  = group.bgColor;
+		private static Color stripeColor = group.stripeColor;
+		private static Color selectionColor  = group.selectionColor;
+		private static Color borderColor = group.borderColor;
+		private static Color darkSelectionColor = group.darkSelectionColor;
 
-		static int iconSize = SystemInformation.SmallIconSize.Width + 5;
-		static int itemHeight;
-		static bool doColorUpdate = false;
-		string shortcuttext = "";
-		Bitmap icon = null;
-		EventHandler clickHandler = null;
+		private static int iconSize = SystemInformation.SmallIconSize.Width + 5;
+		private static int itemHeight;
+		private static bool doColorUpdate;
+		private string shortcuttext = string.Empty;
+		private Bitmap icon;
+		private EventHandler clickHandler;
 
 		// We could use an image list to associate
 		// the menu items with an bitmap instead of
 		// assigning a whole Bitmap object to the menu item
-		ImageList imageList = null;
-		int imageIndex = -1;
+		private ImageList imageList = null;
+		private int imageIndex = -1;
 
-
-		static int BITMAP_SIZE = 16;
-		static int STRIPE_WIDTH = iconSize + 2;
+		private static int BITMAP_SIZE = 16;
+		private static int STRIPE_WIDTH = iconSize + 2;
 		protected static ImageList menuImages;
-		static Color transparentColor = Color.FromArgb(192, 192, 192);
+		private static Color transparentColor = Color.FromArgb(192, 192, 192);
 
 		static MenuItemEx()
 		{
@@ -56,7 +56,7 @@ namespace SidebarLibrary.Menus
 			menuImages.Images.AddStrip(glyphs);
 		}
 
-		// constructors
+				// constructors
 		// ---------------------------------------------------
 		public MenuItemEx() : this(null, null)
 		{
@@ -90,7 +90,6 @@ namespace SidebarLibrary.Menus
 			clickHandler = handler;
 			imageList = list;
 			this.imageIndex = imageIndex;
-
 		}
 
 		static public MenuItem CloneMenu(MenuItemEx currentItem)
@@ -157,7 +156,7 @@ namespace SidebarLibrary.Menus
 		public int ImageIndex
 		{
 			set { imageIndex = value; }
-			get { return imageIndex;  }
+			get { return imageIndex; }
 		}
 
 		public EventHandler ClickHandler
@@ -171,17 +170,16 @@ namespace SidebarLibrary.Menus
 			// This is to support popup menus when using this class
 			// in conjunction with a toolbar that behaves like a menu
 			Menu parent = Parent;
-			while (!(parent is CommandBarMenu) &&   !(parent == null) )
+			while (!(parent is CommandBarMenu) && !(parent == null) )
 			{
 				if (parent is MenuItemEx)
 					parent = (parent as MenuItemEx).Parent;
 				else if (parent is MenuItem)
 					parent = (parent as MenuItem).Parent;
-				else if ( parent == Parent.GetMainMenu() )
+				else if (parent == Parent.GetMainMenu() )
 					parent = null;
 				else
 					parent = null;
-
 			}
 
 			if ( parent is CommandBarMenu )
@@ -206,14 +204,13 @@ namespace SidebarLibrary.Menus
 		private void DoUpdateMenuColors()
 		{
 			ColorGroup group = ColorGroup.GetColorGroup();
-			bgColor  = group.bgColor;
+			bgColor = group.bgColor;
 			stripeColor = group.stripeColor;
-			selectionColor  = group.selectionColor;
+			selectionColor = group.selectionColor;
 			borderColor = group.borderColor;
 			darkSelectionColor = group.darkSelectionColor;
 
 			doColorUpdate = false;
-
 		}
 
 		// overrides
@@ -226,8 +223,8 @@ namespace SidebarLibrary.Menus
 			if (Shortcut != Shortcut.None)
 			{
 				string text = "";
-				int    key  = (int)Shortcut;
-				int    ch   = key & 0xFF;
+				int key = (int)Shortcut;
+				int ch = key & 0xFF;
 				if (((int)Keys.Control & key) > 0)
 					text += "Ctrl+";
 				if (((int)Keys.Shift & key) > 0)
@@ -239,7 +236,7 @@ namespace SidebarLibrary.Menus
 					text += "F" + (ch - (int)Shortcut.F1 + 1);
 				else
 				{
-					if ( Shortcut == Shortcut.Del)
+					if (Shortcut == Shortcut.Del)
 					{
 						text += "Del";
 					}
@@ -254,32 +251,30 @@ namespace SidebarLibrary.Menus
 			if (Text == "-")
 			{
 				e.ItemHeight = 8;
-				e.ItemWidth  = 4;
+				e.ItemWidth = 4;
 				return;
 			}
 
 			bool topLevel = Parent == Parent.GetMainMenu();
 			string tempShortcutText = shortcuttext;
-			if ( topLevel )
+			if (topLevel)
 			{
 				tempShortcutText = "";
 			}
 			int textwidth = (int)(e.Graphics.MeasureString(Text + tempShortcutText, SystemInformation.MenuFont).Width);
 			int extraHeight = 2;
-			e.ItemHeight  = SystemInformation.MenuHeight + extraHeight;
-			if ( topLevel )
-				e.ItemWidth  = textwidth - 5;
+			e.ItemHeight = SystemInformation.MenuHeight + extraHeight;
+			if (topLevel)
+				e.ItemWidth = textwidth - 5;
 			else
-				e.ItemWidth   =  textwidth + 45;
+				e.ItemWidth = textwidth + 45;
 
 			// save menu item heihgt for later use
 			itemHeight = e.ItemHeight;
-
 		}
 
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
-
 			base.OnDrawItem(e);
 
 			if ( doColorUpdate)
@@ -309,9 +304,7 @@ namespace SidebarLibrary.Menus
 			{
 				DrawIcon(g, imageList.Images[imageIndex], bounds, selected, Enabled, Checked);
 			}
-
-			else
-				if (Checked && !hasIcon)
+			else if (Checked && !hasIcon)
 				DrawMenuGlyph(g, bounds, selected, true);
 			else if ( RadioCheck )
 				DrawMenuGlyph(g, bounds, selected, false);
@@ -344,7 +337,6 @@ namespace SidebarLibrary.Menus
 				ControlPaint.DrawImageDisabled(g, menuImages.Images[imageIndex], checkLeft, checkTop, Color.Black);
 			}
 		}
-
 
 		public void DrawIcon(Graphics g, Image icon, Rectangle bounds, bool selected, bool enabled, bool isChecked)
 		{
@@ -383,7 +375,6 @@ namespace SidebarLibrary.Menus
 			}
 		}
 
-
 		private void DrawCheckedRectangle(Graphics g, Rectangle bounds)
 		{
 			//int checkTop = bounds.Top + (itemHeight - BITMAP_SIZE)/2;
@@ -391,7 +382,6 @@ namespace SidebarLibrary.Menus
 			g.FillRectangle(new SolidBrush(selectionColor), bounds.Left+1, bounds.Top+1, STRIPE_WIDTH-3, bounds.Height-3);
 			g.DrawRectangle(new Pen(borderColor), bounds.Left+1, bounds.Top+1, STRIPE_WIDTH-3, bounds.Height-3);
 		}
-
 
 		public void DrawSeparator(Graphics g, Rectangle bounds)
 		{
@@ -404,13 +394,12 @@ namespace SidebarLibrary.Menus
 			bool selected = (state & DrawItemState.Selected) > 0;
 			if (selected || ((state & DrawItemState.HotLight) > 0))
 			{
-
 				if (toplevel && selected)
 				{   // draw toplevel, selected menuitem
 					bounds.Inflate(-1, 0);
 					g.FillRectangle(new SolidBrush(stripeColor), bounds);
 
-					if ( ColorUtil.UsingCustomColor )
+					if (ColorUtil.UsingCustomColor)
 					{
 						GDIUtil.Draw3DRect(g, bounds, ColorUtil.VSNetBorderColor, ColorUtil.VSNetControlColor);
 					}
@@ -422,7 +411,7 @@ namespace SidebarLibrary.Menus
 				}
 				else
 				{   // draw menuitem hotlighted
-					if ( enabled )
+					if (enabled)
 					{
 						g.FillRectangle(new SolidBrush(selectionColor), bounds);
 						g.DrawRectangle(new Pen(borderColor), bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1);
@@ -434,10 +423,10 @@ namespace SidebarLibrary.Menus
 						IntPtr parentHandle = Parent.Handle;
 						uint index = (uint)Index;
 						WindowsAPI.GetMenuItemRect(IntPtr.Zero, parentHandle, index, ref rc);
-						Rectangle menuRect = new Rectangle(rc.left, rc.top, rc.right-rc.left, rc.bottom-rc.top);
+						Rectangle menuRect = new Rectangle(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
 						Point mp = Control.MousePosition;
 
-						if ( !menuRect.Contains(mp) )
+						if (!menuRect.Contains(mp))
 						{
 							// Menu was selected by using keyboard
 							g.FillRectangle(new SolidBrush(bgColor), bounds);
@@ -471,6 +460,8 @@ namespace SidebarLibrary.Menus
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Brush gets disposed in finally block")]
 		public void DrawMenuText(Graphics g, Rectangle bounds, string text, string shortcut, bool enabled, bool toplevel, DrawItemState state)
 		{
 			using (StringFormat stringformat = new StringFormat())
@@ -522,16 +513,17 @@ namespace SidebarLibrary.Menus
 						brush = new SolidBrush(Color.FromArgb(255, Color.White));
 					}
 
-					if ( toplevel ) text = textTopMenu;
+					if (toplevel)
+						text = textTopMenu;
 					g.DrawString(text, SystemInformation.MenuFont, brush, x, y, stringformat);
 
 					// don't draw the shortcut for top level menus
 					// in case there was actually one
-					if ( !toplevel )
+					if (!toplevel)
 					{
 						// draw shortcut right aligned
 						stringformat.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
-						g.DrawString(shortcut, SystemInformation.MenuFont, brush, bounds.Width - 10 , bounds.Top + topGap, stringformat);
+						g.DrawString(shortcut, SystemInformation.MenuFont, brush, bounds.Width - 10, bounds.Top + topGap, stringformat);
 					}
 				}
 				finally
@@ -540,8 +532,6 @@ namespace SidebarLibrary.Menus
 				}
 			}
 		}
-
-
 	}
 
 }

@@ -1096,17 +1096,18 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			m_teImportUi.Maximum = 1;
 			string strToImport =
-				"<canon ID=\"nt\"><book ID=\"TIT\"><titleGroup short=\"Titus\" /><section>"+
-				"<sectionHead><trGroup /></sectionHead><p><chapterStart ID=\"TIT.1\" n=\"1\" />"+
-				"<trGroup><tr>Text to be annotated.</tr></trGroup><chapterEnd ID=\"TIT.1\" />"+
-				"</p><annotation type=\"invalidID\" status=\"0\" oxesRef=\"TIT.1.1\" "+
-				"beginOffset=\"12\" endOffset=\"21\"><created>2009-02-12 20:02:11.40</created>"+
-				"<modified>2009-02-12 20:02:20.65</modified><resolved /><notationQuote>"+
-				"<para xml:lang=\"fr\"><span>annotated</span></para></notationQuote></annotation>"+
+				"<canon ID=\"nt\"><book ID=\"TIT\"><titleGroup short=\"Titus\" /><section>" +
+				"<sectionHead><trGroup /></sectionHead><p><chapterStart ID=\"TIT.1\" n=\"1\" />" +
+				"<trGroup><tr>Text to be annotated.</tr></trGroup><chapterEnd ID=\"TIT.1\" />" +
+				"</p><annotation type=\"invalidID\" status=\"0\" oxesRef=\"TIT.1.1\" " +
+				"beginOffset=\"12\" endOffset=\"21\"><created>2009-02-12 20:02:11.40</created>" +
+				"<modified>2009-02-12 20:02:20.65</modified><resolved /><notationQuote>" +
+				"<para xml:lang=\"fr\"><span>annotated</span></para></notationQuote></annotation>" +
 				"</section></book></canon>";
 
 			XmlDocument toImport = new XmlDocument();
-			toImport.Load(new StringReader(strToImport));
+			using (var stringReader = new StringReader(strToImport))
+				toImport.Load(stringReader);
 
 			using (XmlNodeReader reader = new XmlNodeReader(toImport.SelectSingleNode("canon")))
 			{
@@ -1145,7 +1146,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 				"<verseEnd ID=\"TIT.1.1\" /><chapterEnd ID=\"TIT.1\" /></p></section></book></canon>";
 
 			XmlDocument toImport = new XmlDocument();
-			toImport.Load(new StringReader(strToImport));
+			using (var stringReader = new StringReader(strToImport))
+				toImport.Load(stringReader);
 
 			using (XmlNodeReader reader = new XmlNodeReader(toImport.SelectSingleNode("canon")))
 			{

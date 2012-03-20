@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -70,6 +71,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries or senses.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			Debug.Assert(m_flid == LexEntryRefTags.kflidComponentLexemes ||

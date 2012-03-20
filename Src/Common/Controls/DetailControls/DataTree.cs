@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -3351,6 +3352,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the next field.
 		//	@return The index of the next field or 0 if none.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public int NextFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3375,6 +3378,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the previous field.
 		//	@return The index of the desired field or 0 if none.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3883,6 +3888,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See TODO comment.")]
 		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)
 		{
 			CheckDisposed();
@@ -3892,6 +3899,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.Assert(ShowContextMenuEvent != null, "this should always be set to something");
 			CurrentSlice = e.Slice;
 			var args = new SliceMenuRequestArgs(e.Slice, false);
+			// TODO: ShowContextMenuEvent returns a ContextMenu that we should dispose. However,
+			// we can't do that right here (because that destroys the menu before being shown).
+			// Ideally we would store the context menu in a member variable and dispose this later
+			// on. However, it is unlikely that not disposing this context menu will cause any
+			// problems, so we leave it as is for now.
 			ShowContextMenuEvent(sender, args);
 			//			ContextMenu menu = ShowContextMenuEvent(sender, args);
 			//			menu.Show(e.Context, e.Location);
@@ -3994,7 +4006,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the first slice that can take focus.
 		/// </summary>
-		protected Slice FocusFirstPossibleSlice()
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() and FieldAt() return a reference.")]
+		protected bool FocusFirstPossibleSlice()
 		{
 			int cslice = Slices.Count;
 			// If we have a descendant that isn't the root, try to focus one of its slices.
@@ -4017,7 +4031,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (m_descendant != DescendantForSlice(slice))
 						continue;
 					if (slice.TakeFocus(false))
-						return slice;
+						return true;
 				}
 			}
 			// If that didn't work or we don't have a distinct descendant, just focus the first thing we can.
@@ -4025,9 +4039,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				var slice = Slices[islice];
 				if (slice.TakeFocus(false))
-					return slice;
+					return true;
 			}
-			return null;
+			return false;
 		}
 
 		#endregion IxCoreColleague message handlers

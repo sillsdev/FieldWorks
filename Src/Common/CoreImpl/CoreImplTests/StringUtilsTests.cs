@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
 using SIL.Utils;
@@ -29,6 +30,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class StringUtilsTest : FwCOMTestBase
 		// can't derive from BaseTest, but instantiate DebugProcs instead
 	{

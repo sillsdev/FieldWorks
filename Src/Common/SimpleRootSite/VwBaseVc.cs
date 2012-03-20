@@ -275,7 +275,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				try
 				{
-					Process.Start(url);
+					using (Process.Start(url))
+					{
+					}
 				}
 				catch (Exception e)
 				{

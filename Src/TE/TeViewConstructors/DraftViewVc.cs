@@ -170,8 +170,10 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private static IPicture PrepareImage(Image img)
 		{
-			return (IPicture)OLECvt.ToOLE_IPictureDisp(
-				ResourceHelper.ReplaceTransparentColor(img, SystemColors.Window));
+			using (var bitmap = ResourceHelper.ReplaceTransparentColor(img, SystemColors.Window))
+			{
+				return (IPicture)OLECvt.ToOLE_IPictureDisp(bitmap);
+			}
 		}
 
 		#region Overridden methods

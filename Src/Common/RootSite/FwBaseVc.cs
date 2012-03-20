@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -159,6 +160,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vwenv">The view environment</param>
 		/// <param name="hvo">The ID of the embedded object</param>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Added TODO-Linux comment")]
 		public override void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
 			// See if it is a CmPicture.
@@ -227,6 +230,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						image.Save(imageStream, ImageFormat.Png);
 						image.Dispose();
+						// TODO-Linux: useEmbeddedColorManagement isn't supported on Mono.
 						image = Image.FromStream(imageStream, true);
 					}
 					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);

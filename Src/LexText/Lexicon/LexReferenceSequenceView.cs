@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
@@ -54,6 +55,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="where"></param>
 		/// <param name="hvo"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See comment above 'new ReferenceSequenceUi()'")]
 		protected override bool HandleRightClickOnObject(int hvo)
 		{
 			if (hvo == 0)

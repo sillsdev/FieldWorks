@@ -122,13 +122,15 @@ namespace SIL.FieldWorks.Test.TestUtils
 #if __MonoCS__
 			try
 			{
-				// try to change PTRACE option so that unmanaged call stacks show more useful
-				// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
-				// PTRACE. This prevents call stacks and assertions from working properly.
-				// However, we can set a flag on the currently running process to allow
-				// it. See also the similar code in Generic/ModuleEntry.cpp
-				prctl(PR_SET_PTRACER, (IntPtr)System.Diagnostics.Process.GetCurrentProcess().Id,
-					IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				using (var process = System.Diagnostics.Process.GetCurrentProcess())
+				{
+					// try to change PTRACE option so that unmanaged call stacks show more useful
+					// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
+					// PTRACE. This prevents call stacks and assertions from working properly.
+					// However, we can set a flag on the currently running process to allow
+					// it. See also the similar code in Generic/ModuleEntry.cpp
+					prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				}
 			}
 			catch (Exception e)
 			{

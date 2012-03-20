@@ -1974,8 +1974,11 @@ System.Reflection.BindingFlags.Static );
 #else
 		public static int GetWindowThreadProcessId(IntPtr hwnd, out int procID)
 		{
-			procID = System.Diagnostics.Process.GetCurrentProcess().Id;
-			return System.Threading.Thread.CurrentThread.ManagedThreadId;
+			using (var process = System.Diagnostics.Process.GetCurrentProcess())
+			{
+				procID = process.Id;
+				return System.Threading.Thread.CurrentThread.ManagedThreadId;
+			}
 		}
 
 		[DllImport ("libc")]

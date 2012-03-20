@@ -39,6 +39,8 @@ namespace SIL.ObjectBrowser
 		/// <summary></summary>
 		protected List<string> m_ruFiles;
 
+		private InspectorWnd m_InspectorWnd;
+
 		#endregion Data members
 
 		#region Construction
@@ -573,7 +575,7 @@ namespace SIL.ObjectBrowser
 			if (text != null && text != io.DisplayType)
 				text += (": " + io.DisplayType);
 
-			ShowNewInspectorWindow(io.Object, text);
+			m_InspectorWnd = ShowNewInspectorWindow(io.Object, text);
 		}
 
 		/// ------------------------------------------------------------------------------------

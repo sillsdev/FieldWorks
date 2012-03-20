@@ -17,6 +17,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
@@ -575,19 +576,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				else
 				{
-					string rootDir = null;
-					if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-						rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
-					if (string.IsNullOrEmpty(rootDir))
-					{
-						throw new ApplicationException(
-							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
-					}
-					string fw = Directory.GetParent(rootDir).FullName;
-					string src = Path.Combine(fw, "Src");
-					if (!Directory.Exists(src))
-						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
+				string rootDir = null;
+				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
+				if (string.IsNullOrEmpty(rootDir))
+				{
+					throw new ApplicationException(
+						string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
+						FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+				}
+				string fw = Directory.GetParent(rootDir).FullName;
+				string src = Path.Combine(fw, "Src");
+				if (!Directory.Exists(src))
+					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
 					m_srcdir = src;
 				}
 				return m_srcdir;
@@ -744,6 +745,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the global writing system store directory. The directory is guaranteed to exist.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Offending code is not executed on Linux")]
 		public static string GlobalWritingSystemStoreDirectory
 		{
 			get
@@ -759,6 +762,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// correct permissions are set when installing the package or by the
 						// system administrator.
 
+						// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
 						DirectorySecurity ds = di.GetAccessControl();
 						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
 						AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute

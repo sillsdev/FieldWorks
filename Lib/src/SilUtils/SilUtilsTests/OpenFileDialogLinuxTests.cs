@@ -42,6 +42,11 @@ namespace SIL.Utils
 				stream.Dispose();
 			}
 
+			~DummyFile()
+			{
+				Dispose(false);
+			}
+
 			/// <summary/>
 			public void Dispose()
 			{
@@ -52,6 +57,7 @@ namespace SIL.Utils
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 				if (fDisposing && m_FileName != null)
 				{
 					File.Delete(m_FileName);

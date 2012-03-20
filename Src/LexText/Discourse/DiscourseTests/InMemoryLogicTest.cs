@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using System.Windows.Forms;
@@ -188,6 +189,8 @@ namespace SIL.FieldWorks.Discourse
 		/// Test the contents of a 'make dependent clause' context menu for row 2 of four rows.
 		/// </summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void MakeContextMenuRow2of4()
 		{
 			m_helper.MakeDefaultChartMarkers();
@@ -221,40 +224,36 @@ namespace SIL.FieldWorks.Discourse
 				// (The last two groups depend on how we initialized the ChartMarkers list.)
 
 				// Check the moved text item and subitems
-				using (var itemMDC = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MakeDepClauseMenuText, 3))
-				{
-					AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_PreviousClauseMenuItem, 0);
-					AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_NextClauseMenuItem, 0);
-					AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_OtherMenuItem, 0);
-					AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeAfterMenuItem, 0);
-					AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeBeforeMenuItem, 0);
+				var itemMDC = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MakeDepClauseMenuText, 3);
+				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_PreviousClauseMenuItem, 0);
+				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_NextClauseMenuItem, 0);
+				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_OtherMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeAfterMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeBeforeMenuItem, 0);
 
-					// Verify items generated from chart markers. These results depend on the default chart markers.
-					// The 'Mark' part comes from DiscourseStrings.ksMarkMenuItemFormat. I decided not to repeat the
-					// formatting code here, as it makes the test code too much like the production.
-					using (var itemG1 = AssertHasMenuWithText(strip.Items, "Mark Group1", 1))
-					{
-						using (var itemG2 = AssertHasMenuWithText(strip.Items, "Mark Group2", 2))
-						{
-							var itemG1_1 = itemG1.DropDownItems[0] as ToolStripMenuItem;
-							Assert.AreEqual("Group1.1", itemG1_1.Text);
-							VerifyMenuItemTextAndChecked(itemG1_1.DropDownItems[0] as ToolStripMenuItem, "Item1 (I1)", true);
-							VerifyMenuItemTextAndChecked(itemG2.DropDownItems[0] as ToolStripMenuItem, "Item2 (I2)", false);
-							VerifyMenuItemTextAndChecked(itemG2.DropDownItems[1] as ToolStripMenuItem, "Item3 (I3)", true);
+				// Verify items generated from chart markers. These results depend on the default chart markers.
+				// The 'Mark' part comes from DiscourseStrings.ksMarkMenuItemFormat. I decided not to repeat the
+				// formatting code here, as it makes the test code too much like the production.
+				var itemG1 = AssertHasMenuWithText(strip.Items, "Mark Group1", 1);
+				var itemG2 = AssertHasMenuWithText(strip.Items, "Mark Group2", 2);
+				var itemG1_1 = itemG1.DropDownItems[0] as ToolStripMenuItem;
+				Assert.AreEqual("Group1.1", itemG1_1.Text);
+				VerifyMenuItemTextAndChecked(itemG1_1.DropDownItems[0] as ToolStripMenuItem, "Item1 (I1)", true);
+				VerifyMenuItemTextAndChecked(itemG2.DropDownItems[0] as ToolStripMenuItem, "Item2 (I2)", false);
+				VerifyMenuItemTextAndChecked(itemG2.DropDownItems[1] as ToolStripMenuItem, "Item3 (I3)", true);
 
-							// Verify the delete from here item
-							AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_ClearFromHereOnMenuItem, 0);
+				// Verify the delete from here item
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_ClearFromHereOnMenuItem, 0);
 
-							// The target cell isn't empty so we shouldn't have this menu item.
-							// Except LT-8545 says possibility markers aren't 'contents' as such
-							//AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem);
-						}
-					}
-				}
+				// The target cell isn't empty so we shouldn't have this menu item.
+				// Except LT-8545 says possibility markers aren't 'contents' as such
+				//AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem);
 			}
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextPreposedPostposed()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2);
@@ -272,17 +271,13 @@ namespace SIL.FieldWorks.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
 			{
 				// Prepose menu for col 1 should have subitems for all subsequent columns (& 'Advanced...')
-				using (var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 1))
-				{
-					AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
-					// Postpose menu for col 1 should have one item (& 'Advanced...').
-					using (var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2))
-					{
-						AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
-						VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
-						VerifyMenuItemTextAndChecked(itemPre.DropDownItems[1], m_logic.GetColumnLabel(3), true);
-					}
-				}
+				var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 1);
+				AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				// Postpose menu for col 1 should have one item (& 'Advanced...').
+				var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2);
+				AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
+				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[1], m_logic.GetColumnLabel(3), true);
 			}
 			// Test a boundary cell with words. The one in cell 0 shouldn't have postposed.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 0)))
@@ -397,6 +392,8 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextPrePostposedOtherClause()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
@@ -415,22 +412,18 @@ namespace SIL.FieldWorks.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row1, 2)))
 			{
 				// Postpose menu for row1 col 2 should have items for 2 columns plus 'Another clause...'.
-				using (var itemPost = AssertHasMenuWithText(strip.Items,
-						ConstituentChartLogic.FTO_PostposeFromMenuItem, 3))
-				{
-					// Prepose menu for row1 col 2 should have subitems for all subsequent columns plus 'Another clause...'.
-					using (var itemPre = AssertHasMenuWithText(strip.Items,
-							ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 3 + 1))
-					{
-						// None of the items on this context menu should be in a checked state
-						VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
-						VerifyMenuItemTextAndChecked(itemPost.DropDownItems[1], m_logic.GetColumnLabel(1), false);
-						VerifyMenuItemTextAndChecked(itemPre.DropDownItems[0], m_logic.GetColumnLabel(3), false);
-						// a couple more here to check for 'Another clause...' in both Pre and Postposed menus.
-						AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
-						AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
-					}
-				}
+				var itemPost = AssertHasMenuWithText(strip.Items,
+						ConstituentChartLogic.FTO_PostposeFromMenuItem, 3);
+				// Prepose menu for row1 col 2 should have subitems for all subsequent columns plus 'Another clause...'.
+				var itemPre = AssertHasMenuWithText(strip.Items,
+						ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 3 + 1);
+				// None of the items on this context menu should be in a checked state
+				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
+				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[1], m_logic.GetColumnLabel(1), false);
+				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[0], m_logic.GetColumnLabel(3), false);
+				// a couple more here to check for 'Another clause...' in both Pre and Postposed menus.
+				AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
 			}
 
 			// Test a boundary row's cell with words.
@@ -438,20 +431,19 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Prepose menu for row0 col 1 should have subitems for all subsequent columns including col2
 				// AND a checked item for 'Advanced...'.
-				using (var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 2 + 1))
-				{
-					VerifyMenuItemTextAndChecked(itemPre.DropDownItems[itemPre.DropDownItems.Count - 1],
-						ConstituentChartLogic.FTO_AnotherClause, true);
-				}
+				var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 2 + 1);
+				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[itemPre.DropDownItems.Count - 1],
+					ConstituentChartLogic.FTO_AnotherClause, true);
+
 				// Postpose menu in row0 col1 should only have 1 postposed (col0; plus 'Advanced...').
-				using (var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2))
-				{
-					VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
-				}
+				var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2);
+				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
 			}
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextMoveWord()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
@@ -467,29 +459,29 @@ namespace SIL.FieldWorks.Discourse
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
 			{
-				using (var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 2))
-				{
-					AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
-					AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
-				}
+				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 2);
+				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
+				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
 			}
 
 			// Test cell in very first cell with words
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 0)))
 			{
-				using (var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1))
-					AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
+				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1);
+				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
 			}
 
 			// Test in very last cell with words
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, ccols - 1)))
 			{
-				using (var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1))
-					AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
+				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1);
+				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
 			}
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void InsertRowMenuItem()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
@@ -505,6 +497,8 @@ namespace SIL.FieldWorks.Discourse
 		/// That may change, e.g., to enforce same sentence.
 		/// </summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void MakeContextMenuRow5of10()
 		{
 			m_helper.MakeDefaultChartMarkers();

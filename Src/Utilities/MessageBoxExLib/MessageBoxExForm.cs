@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using SIL.Utils;
 
@@ -266,14 +267,15 @@ namespace Utils.MessageBoxExLib
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
-				{
+				if (components != null)
 					components.Dispose();
-				}
+				foreach (var button in _buttonControlsTable.Values)
+					button.Dispose();
 			}
-			base.Dispose( disposing );
+			components = null;
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -332,8 +334,7 @@ namespace Utils.MessageBoxExLib
 			//
 			// MessageBoxExForm
 			//
-			this.AutoScaleMode = AutoScaleMode.None;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(322, 224);
 			this.Controls.Add(this.rtbMessage);
 			this.Controls.Add(this.chbSaveResponse);
@@ -706,6 +707,8 @@ namespace Utils.MessageBoxExLib
 		/// <summary>
 		/// Layout all the controls
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="buttonCtrl is added to _buttonControlsTable and disposed in Dispose()")]
 		private void LayoutControls()
 		{
 			panelIcon.Location = new Point(LEFT_PADDING, TOP_PADDING);

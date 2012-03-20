@@ -119,7 +119,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			DoImport();
 			this.DialogResult = DialogResult.OK;
 			if (!String.IsNullOrEmpty(m_sLogFile))
-				Process.Start(m_sLogFile);		// display log file.
+			{
+				using (Process.Start(m_sLogFile)) // display log file.
+				{
+				}
+			}
 			this.Close();
 		}
 

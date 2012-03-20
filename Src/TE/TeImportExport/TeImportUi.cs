@@ -17,6 +17,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.Controls;
@@ -269,6 +270,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="e">The exception.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public virtual void ErrorMessage(EncodingConverterException e)
 		{
 			CheckDisposed();
@@ -279,6 +282,7 @@ namespace SIL.FieldWorks.TE
 			}
 			else
 			{
+				// TODO-Linux: Help is not implemented in Mono
 				MessageBox.Show(m_progressDialog.OwnerForm, e.Message,
 					ScriptureUtilsException.GetResourceString("kstidImportErrorCaption"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0,

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -49,6 +50,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle launching of the MSA editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())

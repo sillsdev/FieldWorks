@@ -15,8 +15,10 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -32,13 +34,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///</summary>
 		private static LogFileImpl GetLogFile()
 		{
-			if (s_logFile == null)
-			{
-				s_logFile = new LogFileImpl();
-				AddLine("----- LogFile Object Created -----");
-			}
-
-			return s_logFile;
+			return SingletonsContainer.Get<LogFileImpl>();
 		}
 
 		///<summary>
@@ -60,6 +56,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<param name="line"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetLogFile() returns a reference to a singleton")]
 		public static void AddVerboseLine(string line)
 		{
 			if (GetLogFile().VerboseLogging)
@@ -69,6 +67,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetLogFile() returns a reference to a singleton")]
 		public static bool IsLogging()
 		{
 			return GetLogFile().Logging;
@@ -78,18 +78,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///</summary>
 		public static void Release()
 		{
-			if (s_logFile == null)
+			if (!SingletonsContainer.Contains<LogFileImpl>())
 				return;
 
 			AddLine("----- LogFile Object Released -----");
-			s_logFile.Shutdown();
-			s_logFile = null;
+			SingletonsContainer.Get<LogFileImpl>().Shutdown();
+			SingletonsContainer.Remove(SingletonsContainer.Get<LogFileImpl>());
 		}
 
-		#endregion
-
-		#region private static member variables
-		private static LogFileImpl s_logFile;
 		#endregion
 
 		private sealed class LogFileImpl: IDisposable
@@ -152,6 +148,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 							regKey.Close();
 						}
 					}
+					AddLineX("----- LogFile Object Created -----", false);
 				}
 				catch (Exception e)
 				{

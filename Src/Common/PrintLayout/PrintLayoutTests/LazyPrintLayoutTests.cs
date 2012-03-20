@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -616,6 +617,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetFirstElementForStream() returns a reference")]
 		public void PagesWithFootnotes()
 		{
 			// Need VC with footnotes for this test, so we recreate one

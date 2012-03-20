@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
@@ -51,6 +52,7 @@ namespace FDOBrowser
 		private InspectorWnd m_repositoryWnd;
 		private int saveClid = 0;
 		private string FileName = "";
+		private ThreadHelper m_ThreadHelper;
 		//private FwTextBox m_textBox;
 		//private System.Windows.Forms.Panel panel1;
 
@@ -106,6 +108,8 @@ namespace FDOBrowser
 		/// Setups the custom menus and toolbar items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to ContextMenuStrip's item collection and disposed there")]
 		private void SetupCustomMenusAndToolbarItems()
 		{
 			#region Grid context menu items
@@ -377,14 +381,16 @@ namespace FDOBrowser
 
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
+				if (m_ThreadHelper == null)
+					m_ThreadHelper = new ThreadHelper();
+
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", new ThreadHelper());
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", m_ThreadHelper);
 				else
 				{
-					var th = new ThreadHelper();
 					using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", th);
+						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", m_ThreadHelper);
 					}
 				}
 			   // var v = m_cache.
@@ -895,11 +901,10 @@ namespace FDOBrowser
 
 		private void mnuDb4oToXmlClicked(object sender, EventArgs e)
 		{
-
-
-			var choose = new FileInOutChooser();
-			choose.ShowDialog();
-
+			using (var choose = new FileInOutChooser())
+			{
+				choose.ShowDialog();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

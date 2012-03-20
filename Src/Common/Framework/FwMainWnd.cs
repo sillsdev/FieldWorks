@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -374,6 +375,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Construct the default menus and toolbars
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ComboBox gets added to member variable and disposed in Dispose()")]
 		protected virtual void CreateMenusAndToolBars()
 		{
 			m_tmAdapter = AdapterHelper.CreateTMAdapter();
@@ -3977,13 +3980,20 @@ namespace SIL.FieldWorks.Common.Framework
 		/// the main window and the current project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey MainWndSettingsKey
 		{
 			get
 			{
 				CheckDisposed();
 				if (m_app != null)
-					return m_app.ProjectSpecificSettingsKey.CreateSubKey(Name);
+				{
+					using (var regKey = m_app.ProjectSpecificSettingsKey)
+					{
+						return regKey.CreateSubKey(Name);
+					}
+				}
 
 				Debug.Assert(MiscUtils.RunningTests);
 				return FwRegistryHelper.FieldWorksRegistryKey;

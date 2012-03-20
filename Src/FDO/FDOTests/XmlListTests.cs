@@ -12,6 +12,7 @@ using System.IO;
 // File: XmlListTests.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -595,6 +596,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Setup method: create a memory-only mock cache and empty language project.
 		/// </summary>
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyMockCache()")]
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(

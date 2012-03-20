@@ -11,6 +11,7 @@
 // File: TsStringWrapperTests.cs
 // Responsibility:
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.CoreImpl;
@@ -48,6 +49,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Intentional use of \n")]
 		public void WithParaBreaks()
 		{
 			TestTsStringWrapperRoundTrip("simple text1", "Title", "simple text2\nsimple text3", "Conclusion");

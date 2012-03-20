@@ -418,6 +418,23 @@ namespace SIL.FieldWorks.TE.ExportTests
 		}
 		#endregion
 
+		private void CompareXmlDocuments(string expectedXml, string actualXml)
+		{
+			using (var actualStringReader = new StringReader(actualXml))
+			using (var expectedStringReader = new StringReader(expectedXml))
+			{
+				XmlDocument actual = new XmlDocument();
+				actual.Load(actualStringReader);
+
+				XmlDocument expected = new XmlDocument();
+				expected.Load(expectedStringReader);
+
+				string strDifference;
+				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
+					Assert.Fail(strDifference);
+			}
+		}
+
 		#region ExportScriptureNote
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -460,15 +477,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 								"</notationDiscussion>" +
 							"</annotation>";
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -512,15 +521,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 								"</notationDiscussion>" +
 							"</annotation>";
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -596,15 +597,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 								"</notationDiscussion>" +
 							"</annotation></TestData>";
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -651,15 +644,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 								"</notationDiscussion>" +
 							"</annotation>";
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -706,15 +691,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 								"</notationDiscussion>" +
 							"</annotation>";
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 		#endregion
@@ -760,8 +737,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 					string sCanon = "ot";
 					ReflectionHelper.CallMethod(m_exporter, "ExportBook", sCanon, m_book, null);
 
-					XmlDocument actual = new XmlDocument();
-					actual.Load(new StringReader(stream.ToString()));
 					string strExpected = "<book ID=\"GEN\"><titleGroup short=\"Genesis\"><title type=\"main\">" +
 						"<trGroup><tr>Genesis</tr></trGroup></title></titleGroup>" +
 							"<introduction><section><sectionHead><trGroup><tr>Introduction</tr></trGroup></sectionHead>" +
@@ -772,12 +747,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 							"<trGroup><tr>Some intro text</tr></trGroup>" +
 							"</p></section></introduction></book>";
 
-					XmlDocument expected = new XmlDocument();
-					expected.Load(new StringReader(strExpected));
-
-					string strDifference;
-					if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-						Assert.Fail(strDifference);
+					CompareXmlDocuments(strExpected, stream.ToString());
 				}
 			}
 		}
@@ -823,8 +793,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				string sCanon = "ot";
 				ReflectionHelper.CallMethod(m_exporter, "ExportBook", sCanon, m_book, null);
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				// Why is the expected text for the translation in English?
 				// The BT is in English, but it is Spanish text that was added as a vernacular.
 				string strExpected = "<book ID=\"GEN\"><titleGroup short=\"Genesis\"><title type=\"main\">" +
@@ -839,12 +807,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 					"<span>This is a basic note about the BT of an intro.</span></para></notationDiscussion></annotation>" +
 					"</p></section></introduction></book>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -884,8 +847,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				string sCanon = "ot";
 				ReflectionHelper.CallMethod(m_exporter, "ExportBook", sCanon, m_book, null);
 
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<book ID=\"GEN\"><titleGroup short=\"Genesis\"><title type=\"main\">" +
 					"<trGroup><tr>Genesis</tr></trGroup></title></titleGroup>" +
 						"<introduction><section><sectionHead><trGroup><tr>Introduccion</tr></trGroup></sectionHead>" +
@@ -894,12 +855,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<bt xml:lang=\"hbo\" segmented =\"true\">Hbo BT</bt></trGroup>" +
 						"</p></section></introduction></book>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 		#endregion
@@ -951,8 +907,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"GEN.1\" n=\"1\" /><verseStart ID=\"GEN.1.1\" n=\"1\" />" +
 					"<trGroup><tr>Mera bhai<note noteID=\"fGEN1\" type=\"general\" canonical=\"true\">" +
 						"<trGroup><tr>Yohanna</tr><bt xml:lang=\"en\">John</bt></trGroup></note> ne mudj se bataya." +
@@ -963,12 +917,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<note noteRef=\"fGEN2\"/> me.</bt></trGroup>" +
 						"<verseEnd ID=\"GEN.1.1\" /><chapterEnd ID=\"GEN.1\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1020,8 +969,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"GEN.1\" n=\"1\" /><verseStart ID=\"GEN.1.1\" n=\"1\" />" +
 					"<trGroup><tr>Me dijo<note noteID=\"fGEN1\" type=\"general\" canonical=\"true\">" +
 						"<trGroup><tr>informo</tr><bt xml:lang=\"en\">inform</bt></trGroup></note> mi mama" +
@@ -1032,12 +979,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<note noteRef=\"fGEN1\"/> me that yes.</bt></trGroup>" +
 						"<verseEnd ID=\"GEN.1.1\" /><chapterEnd ID=\"GEN.1\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1090,8 +1032,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"GEN.1\" n=\"1\" /><verseStart ID=\"GEN.1.1\" n=\"1\" />" +
 					"<trGroup><tr>Me dijo<note noteID=\"fGEN1\" type=\"general\" canonical=\"true\">" +
 						"<trGroup><tr>informo</tr><bt xml:lang=\"en\">inform</bt></trGroup></note> mi mama" +
@@ -1102,12 +1042,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<note noteRef=\"fGEN1\"/> me that yes.</bt></trGroup>" +
 						"<verseEnd ID=\"GEN.1.1\" /><chapterEnd ID=\"GEN.1\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1146,8 +1081,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"GEN.1\" n=\"1\" /><verseStart ID=\"GEN.1.1\" n=\"1\" />" +
 					"<trGroup><tr>is jumle me kam alfaz he. </tr>" +
 						"<bt xml:lang=\"en\" segmented=\"true\">In this sentence, there are few words. </bt></trGroup>" +
@@ -1155,12 +1088,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<bt xml:lang=\"en\" segmented=\"true\">Besides that sentence, one more sentence is present.</bt></trGroup>" +
 						"<verseEnd ID=\"GEN.1.1\" /><chapterEnd ID=\"GEN.1\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1199,20 +1127,13 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"GEN.5\" n=\"5\" /><verseStart ID=\"GEN.5.14\" n=\"14\" />" +
 					"<labelTr><emphasis> </emphasis></labelTr>" +
 						"<trGroup><tr><emphasis>Imwe ndimwe cedza ca pa dziko. </emphasis></tr>" +
 						"<bt xml:lang=\"en\" segmented=\"true\">Voces sois a luz do mundo. </bt></trGroup>" +
 						"<verseEnd ID=\"GEN.5.14\" /><chapterEnd ID=\"GEN.5\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1267,8 +1188,6 @@ namespace SIL.FieldWorks.TE.ExportTests
 				ReflectionHelper.CallMethod(m_exporter, "ExportParagraph", para, null, true);
 
 				// Confirm the results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
 				string strExpected = "<p><chapterStart ID=\"JAS.1\" n=\"1\" /><verseStart ID=\"JAS.1.1\" n=\"1\" />" +
 					"<trGroup><tr><note noteID=\"fJAS1\" type=\"general\" canonical=\"true\"><trGroup><tr>footnote 1</tr>" +
 						"<bt xml:lang=\"en\">fuBnote 1</bt></trGroup></note>" +
@@ -1282,12 +1201,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 						"<bt xml:lang=\"en\" segmented=\"true\">GruBe an das ganze Volk Gottes. </bt></trGroup>" +
 						"<verseEnd ID=\"JAS.1.1\" /><chapterEnd ID=\"JAS.1\" /></p>";
 
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 		#endregion
@@ -1457,16 +1371,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 				string strExpected = "<figure src=\"filename.jpg\"><!--path=\"" + defaultDir + "\"-->" +
 					"<caption><trGroup><tr><foreign xml:lang=\"de\">photo</foreign>" +
 						"<foreign xml:lang=\"ur\"> tasvir</foreign> picture caption</tr></trGroup></caption></figure>";
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
 
-				//   Get actual results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 
@@ -1519,16 +1425,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 					"<!--path=\"" + defaultDir + "\"-->" +
 						"<caption><trGroup><tr><foreign xml:lang=\"de\">photo</foreign>" +
 						" picture caption</tr></trGroup></caption></figure>After</tr></trGroup></p>";
-				XmlDocument expected = new XmlDocument();
-				expected.Load(new StringReader(strExpected));
 
-				//   Get actual results.
-				XmlDocument actual = new XmlDocument();
-				actual.Load(new StringReader(stream.ToString()));
-
-				string strDifference;
-				if (!XmlHelper.CompareXmlNodes(expected.ChildNodes, actual.ChildNodes, out strDifference))
-					Assert.Fail(strDifference);
+				CompareXmlDocuments(strExpected, stream.ToString());
 			}
 		}
 		#endregion

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
@@ -20,12 +21,15 @@ namespace SidebarLibrary.WinControls
 		{
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Added REVIEW-Linux comment")]
 		public BorderLabel(Color BorderColor, Color HoverColor, int Width)
 		{
 			highlight = true;
 			//width = Width;
 			pen = new Pen(BorderColor, Width);
 			hoverPen = new Pen(HoverColor, Width);
+			// REVIEW-Linux: Libgdiplus doesn't use the Alignment property for rendering.
 			pen.Alignment = PenAlignment.Inset;
 			hoverPen.Alignment = PenAlignment.Inset;
 			if ( Width == 1 )
@@ -36,11 +40,14 @@ namespace SidebarLibrary.WinControls
 		{
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Added REVIEW-Linux comment")]
 		public BorderLabel(Color BorderColor, int Width)
 		{
 			highlight = false;
 			//width = Width;
 			pen = new Pen(BorderColor, Width);
+			// REVIEW-Linux: Libgdiplus doesn't use the Alignment property for rendering.
 			pen.Alignment = PenAlignment.Inset;
 			if ( Width == 1 )
 				gap = 1;

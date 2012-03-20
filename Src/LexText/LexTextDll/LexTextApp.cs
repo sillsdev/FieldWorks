@@ -646,7 +646,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 					{
 						// The user has the movie files, but does not have a file association for .html files.
 						// Try to launch Internet Explorer directly:
-						Process.Start("IExplore.exe", pathMovies);
+						using (Process.Start("IExplore.exe", pathMovies))
+						{
+						}
 					}
 					else
 					{
@@ -660,7 +662,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 							{
 								// The user does not have a file association for .html files.
 								// Try to launch Internet Explorer directly:
-								Process.Start("IExplore.exe", pathNoMovies);
+								using (Process.Start("IExplore.exe", pathNoMovies))
+								{
+								}
 							}
 							else
 								throw win32err2;
@@ -892,9 +896,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			try
 			{
 				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
-					Process.Start(webBrowserProgramLinux, Enquote(path));
+				{
+					using (Process.Start(webBrowserProgramLinux, Enquote(path)))
+					{
+					}
+				}
 				else
-					Process.Start(path);
+				{
+					using (Process.Start(path))
+					{
+					}
+				}
 			}
 			catch (T e)
 			{

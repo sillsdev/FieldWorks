@@ -126,7 +126,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Force a dictionary to exist for the default vernacular writing system.
 			IFdoServiceLocator servloc = cache.ServiceLocator;
 			var lgwsFactory = servloc.GetInstance<ILgWritingSystemFactory>();
-			EnchantHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory);
+			using (EnchantHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory))
+			{
+			}
 
 			// Make all existing spelling dictionaries give as nearly as possible the right answers.
 			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
@@ -141,8 +143,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					{
 						string wordform = wf.Form.get_String(ws).Text;
 						if (!string.IsNullOrEmpty(wordform))
+						{
 							EnchantHelper.SetSpellingStatus(wordform,
-							wf.SpellingStatus == (int)SpellingStatusStates.correct, dict);
+								wf.SpellingStatus == (int)SpellingStatusStates.correct, dict);
+						}
 					}
 				}
 			}

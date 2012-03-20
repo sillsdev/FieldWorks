@@ -14,6 +14,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Enchant;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -235,6 +236,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Make spell checking menu options using the DotNetBar adapter.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="we store a reference to AddToDictMenuItem for later use. REVIEW: we never dispose it.")]
 		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
 			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
 			string changeMultipleMenuName, string insertBeforeMenuName)

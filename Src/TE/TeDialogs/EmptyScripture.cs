@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
@@ -389,6 +390,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="SetParentForm() returns a reference")]
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);

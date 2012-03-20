@@ -20,11 +20,11 @@ namespace SidebarLibrary.Menus
 			this.darkselectioncolor = darkselectioncolor;
 		}
 
-		Color bgcolor;
-		Color stripecolor;
-		Color selectioncolor;
-		Color bordercolor;
-		Color darkselectioncolor;
+		private Color bgcolor;
+		private Color stripecolor;
+		private Color selectioncolor;
+		private Color bordercolor;
+		private Color darkselectioncolor;
 
 		public Color bgColor
 		{
@@ -77,7 +77,5 @@ namespace SidebarLibrary.Menus
 
 			return colorGroup;
 		}
-
 	}
-
 }

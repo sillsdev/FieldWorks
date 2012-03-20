@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -494,11 +495,13 @@ namespace SIL.Utils
 		public static ulong GetPhysicalMemoryBytes()
 		{
 #if !__MonoCS__
-			EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-			ManagementObjectHelper helper = new ManagementObjectHelper(waitHandle);
-			ThreadPool.QueueUserWorkItem(helper.GetPhysicalMemoryBytes);
-			waitHandle.WaitOne();
-			return helper.Memory;
+			using (var waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset))
+			{
+				var helper = new ManagementObjectHelper(waitHandle);
+				ThreadPool.QueueUserWorkItem(helper.GetPhysicalMemoryBytes);
+				waitHandle.WaitOne();
+				return helper.Memory;
+			}
 #else
 			using (var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory"))
 			{
@@ -576,19 +579,21 @@ namespace SIL.Utils
 		/// thread.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_waitHandle is a reference")]
 		private class ManagementObjectHelper
 		{
-			private ulong m_Memory = 0;
-			private ulong m_DiskFree = 0;
-			private ulong m_DiskSize = 0;
-			private int m_DriveCount = 0;
+			private ulong m_Memory;
+			private ulong m_DiskFree;
+			private ulong m_DiskSize;
+			private int m_DriveCount;
 #if !__MonoCS__
 			private EventWaitHandle m_waitHandle;
 #endif
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:Temp"/> class.
+			/// Initializes a new instance of the ManagementObjectHelper class.
 			/// </summary>
 			/// <param name="waitHandle">The wait handle.</param>
 			/// --------------------------------------------------------------------------------
@@ -620,13 +625,16 @@ namespace SIL.Utils
 			public void GetPhysicalMemoryBytes(object stateInfo)
 			{
 				m_Memory = 0;
-				using (ManagementObjectSearcher searcher =
+				using (var searcher =
 					new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
 				{
-					foreach (ManagementObject mem in searcher.Get())
+					using (var objColl = searcher.Get())
 					{
-						m_Memory += (ulong)mem.GetPropertyValue("Capacity");
-						mem.Dispose();
+						foreach (ManagementObject mem in objColl)
+						{
+							m_Memory += (ulong)mem.GetPropertyValue("Capacity");
+							mem.Dispose();
+						}
 					}
 				}
 

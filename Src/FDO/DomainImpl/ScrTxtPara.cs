@@ -18,7 +18,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
@@ -2093,6 +2093,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <returns>An enumerator for getting the verses from this paragraph</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public virtual IEnumerator GetEnumerator()
 		{
 			return new ScrVerseSet(this, true);

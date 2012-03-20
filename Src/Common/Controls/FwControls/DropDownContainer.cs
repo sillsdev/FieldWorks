@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// -----------------------------------------------------------------------------------
 		public DropDownContainer()
 		{
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(168, 144);
 			this.ControlBox = false;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

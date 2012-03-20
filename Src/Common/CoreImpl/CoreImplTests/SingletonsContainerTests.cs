@@ -9,6 +9,7 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -41,6 +42,11 @@ namespace SIL.CoreImpl
 			public bool DisposeCalled { get; private set; }
 
 			#region IDisposable Members
+			/// <summary>Finalizer</summary>
+			~MyDisposable()
+			{
+				Dispose(false);
+			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -58,6 +64,7 @@ namespace SIL.CoreImpl
 
 			private void Dispose(bool fDisposing)
 			{
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 				if (fDisposing)
 					DisposeCalled = true;
 			}
@@ -110,7 +117,10 @@ namespace SIL.CoreImpl
 		/// call dispose on it.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		///
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "singleton disposed by using statement")]
 		public void RemoveSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -128,6 +138,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "singleton disposed by using statement")]
 		public void RemoveNonExistingSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -144,6 +156,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "singleton disposed by using statement")]
 		public void RetrieveSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -159,6 +173,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "singleton disposed by using statement")]
 		public void RetrieveNonExistingSingleton()
 		{
 			using (var singleton = new MyDisposable())

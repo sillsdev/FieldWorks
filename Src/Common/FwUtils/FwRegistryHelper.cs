@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 using SIL.Utils;
 
@@ -35,6 +36,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
 			get
@@ -54,6 +57,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// NOTE: This will throw with non-administrative logons! Be ready for that.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 		{
 			get
@@ -125,6 +130,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the default (current user) Registry key for FieldWorks.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKey
 		{
 			get { return RegistryHelper.SettingsKey(string.Format("{0}.0", FwUtils.SuiteVersion)); }

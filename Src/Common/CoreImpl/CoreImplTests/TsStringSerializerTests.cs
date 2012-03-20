@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -26,6 +27,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class TsStringSerializerTests : FwCOMTestBase
 		// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
@@ -774,6 +777,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification = "This isn't really a newline character")]
 		public void DeserializePropsFromXml_BulNumFontInfo()
 		{
 			CheckBulFontInfoProp("<BulNumFontInfo backcolor=\"white\" bold=\"on\" fontsize=\"20mpt\"" +

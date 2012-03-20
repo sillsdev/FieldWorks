@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//
 			// DetailControlsMainWnd
 			//
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(504, 422);
 			this.Name = "DetailControlsMainWnd";
 			this.Text = "DetailControlsMainWnd";

@@ -11,6 +11,7 @@
 // File: FxApp.cs
 // Responsibility:
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -233,12 +234,17 @@ namespace SIL.FieldWorks.XWorks
 		/// The RegistryKey for this application.
 		/// </summary>
 		///***********************************************************************************
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public override RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return base.SettingsKey.CreateSubKey(SettingsKeyName);
+				using (var regKey = base.SettingsKey)
+				{
+					return regKey.CreateSubKey(SettingsKeyName);
+				}
 			}
 		}
 

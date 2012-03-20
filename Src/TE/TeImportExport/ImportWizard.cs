@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -1840,6 +1841,8 @@ namespace SIL.FieldWorks.TE
 		/// project cannot be found, and that's the type of project the user specified,
 		/// then it's not OK to proceed.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private bool ValidToGoForward()
 		{
 			if (m_settings == null)
@@ -1899,6 +1902,7 @@ namespace SIL.FieldWorks.TE
 						}
 						catch (ScriptureUtilsException e)
 						{
+							// TODO-Linux: Help is not implemented in Mono
 							MessageBox.Show(this, e.Message, ScriptureUtilsException.GetResourceString("kstidImportErrorCaption"),
 								MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 									HelpNavigator.Topic, e.HelpTopic);

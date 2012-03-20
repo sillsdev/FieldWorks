@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -575,6 +576,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="see REVIEW comment - code is possibly wrong")]
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
 			// Put the clerk node in the window configuration for this list
@@ -587,6 +590,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XmlNode x = windowConfig.SelectSingleNode(toolParamNodeXPath);
 			if (x == null)
 				x = FindToolParamNode(windowConfig, curList);
+			// REVIEW: I'm not sure where the created RecordClerk gets disposed
 			RecordClerkFactory.CreateClerk(m_mediator, x, true);
 		}
 

@@ -498,8 +498,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public ScrVerseList(IScrTxtPara para)
 		{
-			foreach (ScrVerse verse in new ScrVerseSet(para))
-				Add(verse);
+			using (var verseSet = new ScrVerseSet(para))
+			{
+				foreach (ScrVerse verse in verseSet)
+					Add(verse);
+			}
 		}
 	}
 

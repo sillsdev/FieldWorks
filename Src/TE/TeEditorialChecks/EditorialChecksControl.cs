@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -160,6 +161,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripSeparator gets added to m_ToolStrip.Items and disposed there")]
 		private void CreateCheckingToolbar(ITMAdapter tmAdapter)
 		{
 			if (tmAdapter == null)

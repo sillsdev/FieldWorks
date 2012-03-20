@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -2417,6 +2418,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// <param name="insertBeforeItem">Name of the context menu item before which the new
 		/// menu item will be added.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public void AddContextMenuItem(TMItemProperties itemProps, string contextMenuName,
 			string parentMenuName, string insertBeforeItem)
 		{
@@ -2433,6 +2436,7 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			if (contextMenuName != parentMenuName)
 			{
 				// Get the menu under which the new menu item will be added.
+				// TODO-Linux: Find doesn' use the searchAllChildren paramter on Mono.
 				ToolStripItem[] items = cmnu.Items.Find(parentMenuName, true);
 				Debug.Assert(items.Length == 1);
 				Debug.Assert(items[0] is ToolStripDropDownItem);
@@ -3155,9 +3159,12 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static ToolStrip CreateToolStrip()
 		{
 			ToolStrip item = new ToolStrip();
+			// TODO-Linux: AllowItemReorder isn't implemented on Mono.
 			item.AllowItemReorder = true;
 			item.ItemAdded += HandleItemAddedToOwner;
 			item.ItemRemoved += HandleItemRemovedFromOwner;

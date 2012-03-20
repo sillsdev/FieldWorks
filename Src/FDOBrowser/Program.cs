@@ -19,7 +19,10 @@ namespace FDOBrowser
 			// initialize ICU
 			Icu.InitIcuDataDir();
 			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
-			Application.Run(new FDOBrowserForm());
+			using (var form = new FDOBrowserForm())
+			{
+				Application.Run(form);
+			}
 		}
 	}
 }

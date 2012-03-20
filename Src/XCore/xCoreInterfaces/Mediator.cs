@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +35,8 @@ namespace XCore
 	}
 
 	/// <summary></summary>
+	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+		Justification = "We derive from Component and therefore can't modify the signature of Dispose(bool)")]
 	public sealed class Mediator : Component, IFWDisposable
 	{
 		#region PendingMessageItem
@@ -470,6 +473,8 @@ namespace XCore
 		private IntPtr m_mainWndPtr = IntPtr.Zero;
 
 		/// <summary>This posts a WM_BROADCAST... msg to the main app window</summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Add TODO-Linux comment")]
 		private void AddWindowMessage()
 		{
 			if (!ProcessMessages)
@@ -486,7 +491,11 @@ namespace XCore
 			if (m_specificToOneMainWindow)
 				mainWndPtr = m_mainWndPtr;
 			else
-				mainWndPtr = Process.GetCurrentProcess().MainWindowHandle;
+			{
+				// TODO-Linux: process.MainWindowHandle is not yet implemented in Mono
+				using (var process = Process.GetCurrentProcess())
+					mainWndPtr = process.MainWindowHandle;
+			}
 #if !__MonoCS__
 			PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
 #else
@@ -495,6 +504,8 @@ namespace XCore
 		}
 
 #if __MonoCS__
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "c is only a reference")]
 		internal static void SimulatePostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
 		{
 			if (hWnd != IntPtr.Zero)

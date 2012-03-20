@@ -18,12 +18,13 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using Microsoft.Win32;
 
@@ -142,12 +143,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("LingCmnDlgs");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("LingCmnDlgs");
+				}
 			}
 		}
 

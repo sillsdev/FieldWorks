@@ -140,6 +140,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly object m_syncRoot = new object();
 		private readonly int[] m_queueCounts = new int[5];
 		private volatile bool m_tryAWordDialogRunning;
+		private TaskReport m_TaskReport;
 
 		private readonly TraceSwitch m_tracingSwitch = new TraceSwitch("ParserCore.TracingSwitch", "Just regular tracking", "Off");
 
@@ -231,7 +232,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				m_parserWorker.ParseFiler.WordformUpdated -= ParseFiler_WordformUpdated;
 				m_parserWorker.Dispose();
+			if (m_TaskReport != null)
+			{
+				m_TaskReport.Dispose();
+				m_TaskReport = null;
 			}
+		}
 
 		/// <summary>
 		/// Reload Grammar And Lexicon
@@ -282,8 +288,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							 && m_queueCounts[(int)ParserPriority.Medium] == 0
 							 && m_queueCounts[(int)ParserPriority.High] == 0;
 			}
-			if (isIdle)
-				new TaskReport(ParserCoreStrings.ksIdle_, HandleTaskUpdate);
+			if (isIdle && m_TaskReport == null)
+				m_TaskReport = new TaskReport(ParserCoreStrings.ksIdle_, HandleTaskUpdate);
 		}
 
 		/// <summary>

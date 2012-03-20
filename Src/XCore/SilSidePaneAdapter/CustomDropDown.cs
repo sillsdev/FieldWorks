@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -110,6 +111,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripControlHost gets added to Items collection and disposed there.")]
 		public void AddControl(Control ctrl)
 		{
 			if (ctrl != null)

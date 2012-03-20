@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -35,11 +36,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="rgArgs">Command-line arguments</param>
 		/// <returns>0</returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
+			Justification = "Gendarme bug on Windows: doesn't recognize that we're returning 0")]
 		[STAThread]
 		public static int Main(string[] rgArgs)
 		{
-			FieldWorks.StartFwApp(FwUtils.ksFlexAbbrev, rgArgs);
-			return 0;
+			using (FieldWorks.StartFwApp(FwUtils.ksFlexAbbrev, rgArgs))
+			{
+				return 0;
+			}
 		}
 	}
 }

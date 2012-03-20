@@ -6,6 +6,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -438,21 +439,21 @@ namespace SIL.SilSidePane
 				Invalidate();
 
 				//adjust tooltip...
-				if (!Buttons.GetItem(e.X, e.Y).isLarge)
+				if (!m_hoveringButton.isLarge)
 				{
 					if (m_toolTip.Tag == null)
 					{
 						m_toolTip.Active = true;
-						m_toolTip.SetToolTip(this, Buttons.GetItem(e.X, e.Y).Text);
-						m_toolTip.Tag = Buttons.GetItem(e.X, e.Y);
+						m_toolTip.SetToolTip(this, m_hoveringButton.Text);
+						m_toolTip.Tag = m_hoveringButton;
 					}
 					else
 					{
-						if (!m_toolTip.Tag.Equals(Buttons.GetItem(e.X, e.Y)))
+						if (!m_toolTip.Tag.Equals(m_hoveringButton))
 						{
 							m_toolTip.Active = true;
-							m_toolTip.SetToolTip(this, Buttons.GetItem(e.X, e.Y).Text);
-							m_toolTip.Tag = Buttons.GetItem(e.X, e.Y);
+							m_toolTip.SetToolTip(this, m_hoveringButton.Text);
+							m_toolTip.Tag = m_hoveringButton;
 						}
 					}
 				}
@@ -971,6 +972,8 @@ namespace SIL.SilSidePane
 		}
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		private Brush GripBrush
 		{
 			get
@@ -983,7 +986,7 @@ namespace SIL.SilSidePane
 					case Renderer.Outlook2007: return new LinearGradientBrush(GripRectangle,
 						Color.FromArgb(227, 239, 255), Color.FromArgb(179, 212, 255), LinearGradientMode.Vertical);
 					case Renderer.Custom: return new LinearGradientBrush(GripRectangle,
-					   ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
+						ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
 				}
 
 				return null;

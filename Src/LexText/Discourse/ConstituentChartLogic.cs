@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.FDO;
@@ -2991,6 +2992,8 @@ namespace SIL.FieldWorks.Discourse
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there.")]
 		private void GeneratePlMenuItems(ContextMenuStrip menu, ICmPossibilityList list,
 			EventHandler clickHandler, ChartLocation cell)
 		{

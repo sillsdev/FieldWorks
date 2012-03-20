@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -678,7 +679,8 @@ namespace SIL.FieldWorks
 
 				// just to be sure
 				Thread.Sleep(5000); // 5s
-				Process.GetCurrentProcess().Kill();
+				using (var process = Process.GetCurrentProcess())
+					process.Kill();
 			}
 		}
 
@@ -1597,12 +1599,16 @@ namespace SIL.FieldWorks
 			return true;	// shouldn't ever get here, but be safe if we do.
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static List<string> GetDriveMountList()
 		{
+			// TODO-Linux: GetDrives() on Mono is only implemented for Linux.
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			List<string> driveMounts = new List<string>();
 			foreach (DriveInfo d in allDrives)
 			{
+				// TODO-Linux: IsReady always returns true on Mono
 				if (!d.IsReady || d.AvailableFreeSpace == 0)
 					continue;
 				switch (d.DriveType)
@@ -1926,10 +1932,17 @@ namespace SIL.FieldWorks
 						}
 
 						RestoreProjectSettings settings = restoreSettings.Settings;
-						OpenProjectWithNewProcess((string)null, settings.ProjectName, null,
+						// REVIEW: it might look strange to dispose the return value of OpenProjectWithNewProcess.
+						// However, that is a Process that gets started, and it is ok to dispose that
+						// right away if we don't work with the process object. It might be better
+						// though to change the signature of OpenProjectWithNewProcess to return
+						// a boolean.
+						using (OpenProjectWithNewProcess((string)null, settings.ProjectName, null,
 							restoreSettings.FwAppCommandLineAbbrev,
 							"-" + FwAppArgs.kRestoreFile, settings.Backup.File,
-							"-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions);
+							"-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions))
+						{
+						}
 					}
 				}
 			});
@@ -2083,7 +2096,14 @@ namespace SIL.FieldWorks
 				{
 					// No other FieldWorks process was running that could handle the request, so
 					// start a brand new process for the project requested by the link.
-					OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, link.ToString());
+					// REVIEW: it might look strange to dispose the return value of OpenProjectWithNewProcess.
+					// However, that is a Process that gets started, and it is ok to dispose that
+					// right away if we don't work with the process object. It might be better
+					// though to change the signature of OpenProjectWithNewProcess to return
+					// a boolean.
+					using (OpenProjectWithNewProcess(linkedProject, link.AppAbbrev, link.ToString()))
+					{
+					}
 				}
 			});
 		}
@@ -2367,7 +2387,10 @@ namespace SIL.FieldWorks
 			Debug.Assert(s_cache == null && s_projectId == null, "This should only get called once");
 			Debug.Assert(projectId != null, "Should have exited the program");
 
-			app.RegistrySettings.LoadingProcessId = Process.GetCurrentProcess().Id;
+			using (var process = Process.GetCurrentProcess())
+			{
+				app.RegistrySettings.LoadingProcessId = process.Id;
+			}
 			if (String.IsNullOrEmpty(app.RegistrySettings.LatestProject))
 			{
 				// Until something gets saved, we will keep track of the first project opened.
@@ -2409,6 +2432,8 @@ namespace SIL.FieldWorks
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static void CheckForMovingExternalLinkDirectory(FwApp app)
 		{
 			// Don't crash here if we have a data problem -- that may be due to another issue that
@@ -2438,31 +2463,34 @@ namespace SIL.FieldWorks
 			}
 			if ((Math.Max(launchesFlex, launchesTe) != 9) || (Math.Min(launchesFlex, launchesTe) >= 9))
 				return;
-			var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks");
-			string oldDir = null;
-			if (rk != null)
-				oldDir = rk.GetValue("RootDataDir") as string;
-			if (oldDir == null)
+			using (var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks"))
 			{
-				// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-				oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				string oldDir = null;
+				if (rk != null)
+					oldDir = rk.GetValue("RootDataDir") as string;
+				if (oldDir == null)
+				{
+					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
+					oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				}
+				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
+				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
+				newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
+				// This isn't foolproof since the currently open project on the 9th time may
+				// not even be one that was migrated. But it will probably work for most users.
+				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
+					return;
+				// TODO-Linux: Help is not implemented on Mono.
+				var res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
+					Properties.Resources.ksReviewLocationOfLinkedFiles,
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+					MessageBoxDefaultButton.Button1, 0,
+					app.HelpFile,
+					"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
+				if (res != DialogResult.Yes)
+					return;
+				MoveExternalLinkDirectoryAndFiles(app);
 			}
-			oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
-			var newDir = app.Cache.LangProject.LinkedFilesRootDir;
-			newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
-			// This isn't foolproof since the currently open project on the 9th time may
-			// not even be one that was migrated. But it will probably work for most users.
-			if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
-				return;
-			var res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-				Properties.Resources.ksReviewLocationOfLinkedFiles,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-				MessageBoxDefaultButton.Button1, 0,
-				app.HelpFile,
-				"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
-			if (res != DialogResult.Yes)
-				return;
-			MoveExternalLinkDirectoryAndFiles(app);
 		}
 
 		private static void MoveExternalLinkDirectoryAndFiles(FwApp app)
@@ -2909,6 +2937,8 @@ namespace SIL.FieldWorks
 		/// to the ErrorReporter so that it can be reported with a crash.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static void SetupErrorReportInformation()
 		{
 			object[] attributes;
@@ -2957,6 +2987,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("LocalDiskCount", cDisks.ToString());
 			ErrorReporter.AddProperty("FwProgramDiskSize", diskSize + " Mb");
 			ErrorReporter.AddProperty("FwProgramDiskFree", diskFree + " Mb");
+			// TODO-Linux: WorkingSet always returns 0 on Mono.
 			ErrorReporter.AddProperty("WorkingSet", Environment.WorkingSet.ToString());
 			ErrorReporter.AddProperty("UserDomainName", Environment.UserDomainName);
 			ErrorReporter.AddProperty("UserName", Environment.UserName);

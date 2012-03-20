@@ -844,9 +844,11 @@ namespace SIL.Utils
 			xslProc.input = xmlDoc;
 			AddParameters(parameterList, xslProc);
 			xslProc.transform();
-			StreamWriter sr = File.CreateText(sOutputName);
-			sr.Write(xslProc.output);
-			sr.Close();
+			using (StreamWriter sr = File.CreateText(sOutputName))
+			{
+				sr.Write(xslProc.output);
+				sr.Close();
+			}
 #endif // UsingDotNetTransforms
 #if DEBUG
 			DateTime end = DateTime.Now;

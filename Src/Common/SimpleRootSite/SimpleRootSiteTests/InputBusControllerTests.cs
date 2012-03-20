@@ -12,6 +12,7 @@
 // Responsibility:
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
@@ -29,6 +30,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Include = "Linux", Reason="InputBusController is Linux only")]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test. Variable disposed in Teardown method")]
 	public class InputBusControllerTests: BaseTest
 	{
 		// some lparam values representing keypress that we use for testing.
@@ -105,6 +108,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="NoPreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_EmptyStateSendSingleKeyPress_SelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
@@ -125,6 +130,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="NoPreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_EmptyStateSendTwoKeyPresses_SelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
@@ -146,6 +153,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="NoPreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_EmptyStateSendSingleControlCharacter_SelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new NoPreeditDummyIBusCommunicator());
@@ -165,6 +174,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="PreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_SimplePreeditEmptyStateSendSingleKeyPress_SelectionIsRange()
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
@@ -184,6 +195,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="PreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_SimplePreeditEmptyStateSendTwoKeyPresses_SelectionIsRange()
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
@@ -204,6 +217,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="PreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_SimplePreeditEmptyStateSendThreeKeyPresses_SelectionIsRange()
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
@@ -225,6 +240,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="PreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void KillFocus_ShowingPreedit_PreeditIsNotCommitedAndSelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
@@ -245,6 +262,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="PreeditDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void Focus_Unfocused_KeypressAcceptedAsNormal()
 		{
 			ChooseSimulatedKeyboard(new PreeditDummyIBusCommunicator());
@@ -272,6 +291,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#region KeyboardThatCommitsPreeditOnSpace
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatCommitsPreeditOnSpace is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatCommitsPreeditOnSpace_OneCharNoSpace_PreeditContainsChar()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
@@ -290,6 +311,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatCommitsPreeditOnSpace is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatCommitsPreeditOnSpace_TwoCharsNoSpace_PreeditContainsChars()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
@@ -309,6 +332,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatCommitsPreeditOnSpace is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatCommitsPreeditOnSpace_TwoCharsAndSpace_PreeditIsCommitted()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
@@ -329,6 +354,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatCommitsPreeditOnSpace is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatCommitsPreeditOnSpace_TwoCharsSpaceTwoChars_PreeditIsLastHalf()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
@@ -356,6 +383,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatCommitsPreeditOnSpace is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatCommitsPreeditOnSpace_TwoCharsSpaceTwoCharsSpace_PreeditIsEmpty()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatCommitsPreeditOnSpace());
@@ -385,6 +414,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#region KeyboardWithGlyphSubstitution
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_Space_JustAddsToDocument()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -405,6 +436,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_TwoChars_OnlyPreedit()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -427,6 +460,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_TwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -450,6 +485,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_TwoCharsSpaceTwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -477,6 +514,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary/>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardWithGlyphSubstitution_TwoCharsSpaceTwoChars_SubstitutionWorkedAndPreeditIsLastHalf()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -505,6 +544,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// <summary>
 		/// Common helper.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardWithGlyphSubstitution is disposed in TestTearDown()")]
 		private void KeyboardWithGlyphSubstitution_CreateDocumentABC()
 		{
 			ChooseSimulatedKeyboard(new KeyboardWithGlyphSubstitution());
@@ -603,6 +644,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatSendsBackspacesInItsCommits_BackspacesShouldNotBeIngored()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator());
@@ -625,6 +668,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator is disposed in TestTearDown()")]
 		public void NotifyKeyPress_KeyboardThatSendsBackspacesInItsForwardKeyEvent_BackspacesShouldNotBeIngored()
 		{
 			ChooseSimulatedKeyboard(new KeyboardThatSendsBackspacesAsForwardKeyEvents());
@@ -1451,6 +1496,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#endregion
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="reference only")]
 	public class DummyRootBox : IVwRootBox
 	{
 		internal ISilDataAccess m_dummyDataAccess = new DummyDataAccess();
@@ -1989,6 +2036,30 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			return char.ToLowerInvariant(input);
 		}
 
+		#region Disposable stuff
+		#if DEBUG
+		/// <summary/>
+		~KeyboardThatCommitsPreeditOnSpace()
+		{
+			Dispose(false);
+		}
+		#endif
+
+		/// <summary/>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+
+			}
+			IsDisposed = true;
+		}
+		#endregion
 		#region IIBusCommunicator implementation
 		public event Action<string> CommitText;
 		public event Action<string, uint, bool> UpdatePreeditText;
@@ -2073,6 +2144,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		public void SetCursorLocation(int x, int y, int width, int height)

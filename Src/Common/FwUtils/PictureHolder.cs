@@ -33,8 +33,10 @@ namespace SIL.FieldWorks.Common.Framework
 			try
 			{
 				string actualFilePath = FileUtils.ActualFilePath(imagePath);
-				var image = Image.FromFile(actualFilePath);
-				comPicture = (IPicture) OLECvt.ToOLE_IPictureDisp(image);
+				using (var image = Image.FromFile(actualFilePath))
+				{
+					comPicture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
+				}
 			}
 			catch (Exception e)
 			{

@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -70,10 +71,13 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public CheckGrid()
 		{
 			DoubleBuffered = true;
 			AutoGenerateColumns = false;
+			// TODO-Linux: VirtualMode is not supported in Mono
 			VirtualMode = true;
 			AllowUserToAddRows = false;
 			DefaultCellStyle.Font = SystemInformation.MenuFont;

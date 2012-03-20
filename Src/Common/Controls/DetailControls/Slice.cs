@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -472,6 +473,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Construction and initialization
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TabStop is not implemented in Mono, but we set TabStop to false so it's not a problem.")]
 		public Slice()
 		{
 #if SLICE_IS_SPLITCONTAINER
@@ -1590,6 +1593,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Collapse this node, which is at position iSlice in its parent.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public virtual void Collapse(int iSlice)
 		{
 			CheckDisposed();
@@ -2323,6 +2328,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// starting with the slice itself. An arbitrary maximum distance (currently 40) is imposed,
 		/// to minimize the time spent getting and using these; usually one of the first few is used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		internal List<Slice> GetCloseSlices()
 		{
 			int index = IndexInContainer;

@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -282,6 +283,8 @@ namespace FwRemoteDatabaseConnector
 		/// </summary>
 		/// <param name="projectName"></param>
 		/// <returns>a compressed memory block of all the CmObjectSurroagates raw data.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public byte[] GetCmObjectSurrogates(string projectName)
 		{
 			RunningServerInfo info;
@@ -323,6 +326,8 @@ namespace FwRemoteDatabaseConnector
 		/// returns true if server has stopped or is already stopped.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public bool StopServer(string projectName)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(projectName) && projectName == Path.GetFileName(projectName));
@@ -451,6 +456,8 @@ namespace FwRemoteDatabaseConnector
 		/// any possible bad performance.</remarks>
 		/// <param name="projectName">Name of the db4o project.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public string[] ListConnectedClients(string projectName)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(projectName) && projectName == Path.GetFileName(projectName));
@@ -511,6 +518,8 @@ namespace FwRemoteDatabaseConnector
 		/// <summary>
 		/// Start an instance of the .NET remoting server.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Added TODO-Linux")]
 		public static void Start()
 		{
 			// check if we are already running.
@@ -537,6 +546,7 @@ namespace FwRemoteDatabaseConnector
 			}
 
 			// TODO: currently running with no security
+			// TODO-Linux: security support has not been implemented in Mono
 			RemotingConfiguration.Configure(DirectoryFinder.RemotingTcpServerConfigFile, false);
 		}
 

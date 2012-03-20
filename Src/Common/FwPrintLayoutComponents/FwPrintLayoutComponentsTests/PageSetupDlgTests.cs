@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing.Printing;
 using System.Text;
 using System.Windows.Forms;
@@ -223,6 +224,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		#endregion
 
 		#region DummyApp class
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="This dummy class doesn't do anything (and doesn't create any disposable objects) - there is no point in implementing IDisposable")]
 		private class DummyApp : IApp
 		{
 			#region IApp Members

@@ -18,6 +18,7 @@ using System;
 using System.Resources;
 using System.Diagnostics;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker
@@ -27,6 +28,8 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 	/// Class that deals with modifying the registry and restoring the previous state
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_rootRegKey is a reference only, so there is no need to call Dispose() on it")]
 	public class RegistryData
 	{
 		private string m_keyPath;			// this is the path through the reg tree
@@ -130,7 +133,11 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 						if (regKey != null)
 							regKey.DeleteValue(m_keyName);
 						else
-							m_rootRegKey.CreateSubKey(m_keyPath);
+						{
+							using (m_rootRegKey.CreateSubKey(m_keyPath))
+							{
+							}
+						}
 					}
 				}
 				else							// case where we have to restore the saved value

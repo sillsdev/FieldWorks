@@ -103,37 +103,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (var dlg = new DummyFwNewLangProject())
 			{
-			FdoCache cache = null;
-			if (DbExists(dbName))
-				DestroyDb(dbName, true);
+				FdoCache cache = null;
+				if (DbExists(dbName))
+					DestroyDb(dbName, true);
 
-			dlg.ProjectName = dbName;
-			try
-			{
-				dlg.CreateNewLangProj();
+				dlg.ProjectName = dbName;
+				try
+				{
+					dlg.CreateNewLangProj();
 
-				Assert.IsTrue(DbExists(dbName));
+					Assert.IsTrue(DbExists(dbName));
 
-				cache = FdoCache.CreateCacheFromExistingData(new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", new ThreadHelper());
-				CheckInitialSetOfPartsOfSpeech(cache);
+					using (var threadHelper = new ThreadHelper())
+					{
+						cache = FdoCache.CreateCacheFromExistingData(new TestProjectId(FDOBackendProviderType.kXML, DbFilename(dbName)), "en", threadHelper);
+						CheckInitialSetOfPartsOfSpeech(cache);
 
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
-				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Count);
-				Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.LanguageName);
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count);
-				Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.VernacularWritingSystems.First().LanguageName);
-				Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count);
-				Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageName);
+						Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
+						Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
+						Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Count);
+						Assert.AreEqual("English", cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.LanguageName);
+						Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count);
+						Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.VernacularWritingSystems.First().LanguageName);
+						Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count);
+						Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageName);
+					}
+				}
+				finally
+				{
+					// Blow away the database to clean things up
+					if (cache != null)
+						cache.Dispose();
+					DestroyDb(dbName, false);
+				}
 			}
-			finally
-			{
-				// Blow away the database to clean things up
-				if (cache != null)
-					cache.Dispose();
-				DestroyDb(dbName, false);
-			}
-		}
 		}
 
 		/// ------------------------------------------------------------------------------------

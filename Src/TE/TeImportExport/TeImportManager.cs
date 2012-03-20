@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Specialized; // for StringCollection
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Forms;
 
@@ -374,6 +375,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private ScrReference InternalImport(IScrImportSet importSettings, bool fDisplayUi)
 		{
 			ScrReference firstImported = ScrReference.Empty;
@@ -414,6 +417,7 @@ namespace SIL.FieldWorks.TE
 					if (m_helpTopicProvider != null)
 					{
 						string sCaption = GetDialogCaption(se.ImportErrorCodeType);
+						// TODO-Linux: Help is not implemented in Mono
 						MessageBox.Show(m_mainWnd, se.Message, sCaption, MessageBoxButtons.OK,
 							MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 							HelpNavigator.Topic, se.HelpTopic);

@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -577,6 +578,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Handles the click on one of the "Treat as..." context menu items.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="MoveSelectedChars() returns a reference.")]
 			private void HandleTreatAsClick(object sender, EventArgs e)
 			{
 				MoveSelectedChars();

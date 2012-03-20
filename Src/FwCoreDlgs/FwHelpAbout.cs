@@ -333,12 +333,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var program = "gnome-system-monitor";
-			var process = MiscUtils.RunProcess(program, null, null);
-
-			Thread.Sleep(300);
-			// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0
-			if (process.HasExited && process.ExitCode != 0)
-				MessageBox.Show(string.Format(FwCoreDlgs.kstidUnableToStart, program));
+			using (var process = MiscUtils.RunProcess(program, null, null))
+			{
+				Thread.Sleep(300);
+				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0
+				if (process.HasExited && process.ExitCode != 0)
+					MessageBox.Show(string.Format(FwCoreDlgs.kstidUnableToStart, program));
+			}
 		}
 	}
 	#endregion

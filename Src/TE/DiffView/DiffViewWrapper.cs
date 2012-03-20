@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -218,6 +219,8 @@ namespace SIL.FieldWorks.TE
 		/// Gets or sets a value indicating whether the footnote row is visible.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetRow() returns a reference")]
 		public bool IsFootnoteRowVisible
 		{
 			get { return GetRow(kFootnoteRow).Visible; }
@@ -245,6 +248,8 @@ namespace SIL.FieldWorks.TE
 		/// Make column height sensible so as not to rely on mono's DataGridView implemention
 		/// being exactly the same as .NET's.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetRow() returns a reference")]
 		internal void FixupColumnHeights()
 		{
 			GetRow(kLabelRow).Height = GetRow(kLabelRow).MinimumHeight;
@@ -254,6 +259,8 @@ namespace SIL.FieldWorks.TE
 		/// <summary>
 		/// If a row is visible its hosted controls should also be visible.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetRow() returns a reference")]
 		internal void FixupHostedControlVisiblity()
 		{
 			int[] rows = { kLabelRow, kDraftRow, kFootnoteRow, kButtonRow };
