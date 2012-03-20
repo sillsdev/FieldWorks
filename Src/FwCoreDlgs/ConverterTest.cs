@@ -40,7 +40,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 	/// -----------------------------------------------------------------------------------------
 	/// <summary>
-	/// ConverterTest class.
+	/// Allows the user to test the converters. Despite its name, this is not a unit testing
+	/// class!
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	internal class ConverterTest : UserControl, IFWDisposable
@@ -558,6 +559,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+				// need to do this before we call base.Dispose()
+				var disposable = WritingSystemFactory as PalasoWritingSystemManager;
+				if (disposable != null)
+					disposable.Dispose();
+			}
 
 			base.Dispose(disposing);
 

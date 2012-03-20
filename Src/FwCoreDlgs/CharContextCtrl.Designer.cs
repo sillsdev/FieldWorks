@@ -17,16 +17,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
 
 				if (m_charPropEng != null && Marshal.IsComObject(m_charPropEng))
-				{
 					Marshal.ReleaseComObject(m_charPropEng);
-					m_charPropEng = null;
-				}
 			}
+			components = null;
+			m_openFileDialog = null;
+			m_charPropEng = null;
 			base.Dispose(disposing);
 		}
 
