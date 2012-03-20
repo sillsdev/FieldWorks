@@ -918,8 +918,12 @@ Do you want to make the changes anyway?</value>
 	<comment>Label used in place of the normal display of a sense that has no MSA, gloss, or defn.</comment>
   </data>
   <data name="ksBadData" xml:space="preserve">
-	<value>This database contains a corrupted record, which caused a program failure trying to load it. FieldWorks will have to close. Details: {0}. Record contains {1}</value>
-	<comment>{0} will be an obscure programmer-type message. {1} will be a chunk of incomprehensible XML.</comment>
+	<value>Project contains a corrupted record. FieldWorks will have to close.
+Project: {0}
+Error Details: {1}
+Corrupted Record:
+{2}</value>
+	<comment>{0} is the project name. {1} is an obscure programmer-type message (probably information about ill-formed XML). {2} is a chunk of incomprehensible XML.</comment>
   </data>
   <data name="ksShortDelayCaption" xml:space="preserve">
 	<value>Short delay</value>

@@ -510,20 +510,91 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether this instance [can find text in verse] the specified wfi wordform.
+		/// Determines whether the given verse still contains the text of the given wordform.
 		/// </summary>
-		/// <param name="wfiWordform">The wfi wordform.</param>
-		/// <param name="verse">The verse.</param>
-		/// <returns><c>true</c> if this instance [can find text in verse] the specified wfi
-		/// wordform; otherwise, <c>false</c>.
-		/// </returns>
+		/// <param name="wfiWordform">The wordform.</param>
+		/// <param name="verse">The verse reference.</param>
 		/// ------------------------------------------------------------------------------------
-		bool CanFindTextInVerse(IWfiWordform wfiWordform, ScrReference verse)
+		private bool CanFindTextInVerse(IWfiWordform wfiWordform, ScrReference verse)
 		{
 			int iDummy;
 			return TeEditingHelper.FindTextInVerse(m_scr,
 				wfiWordform.Form.get_String(wfiWordform.Cache.DefaultVernWs),
 				verse, true, out iDummy, out iDummy, out iDummy, out iDummy);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether or not there is a range selection in the draft view that is in
+		/// the current check reference's reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private bool IsRangeSelectionInKtRef(KeyTermRef keyTermRef)
+		{
+			CheckDisposed();
+
+			if (EditingHelper == null || EditingHelper.CurrentSelection == null)
+				return false;
+
+			// If the selection in the draft view is not a range selection, then there is
+			// nothing to use.
+			if (!EditingHelper.CurrentSelection.Selection.IsRange)
+				return false;
+
+			if (KeyTermRef.IsNullOrEmpty(keyTermRef))
+				return false;
+
+			return IsSelectionInRef(keyTermRef);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Selects the first node in the Key terms tree that corresponds to one of the terms
+		/// in the given list, preferring (if possible) one which has an occurrence in the
+		/// given reference range.
+		/// </summary>
+		/// <param name="terms">The terms.</param>
+		/// <param name="startRef">The starting Scripture reference.</param>
+		/// <param name="endRef">The ending Scripture reference.</param>
+		/// <returns><c>true</c> if a matching node is found (even it was already the selected
+		/// node); <c>false</c> otherwise.</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool SelectTerm(IEnumerable<IChkTerm> terms, int startRef, int endRef)
+		{
+			IChkTerm selectedTerm = m_ktTree.SelectedNode.Tag as IChkTerm;
+			TreeNode bestNode = null;
+			if (selectedTerm != null && terms.Contains(selectedTerm))
+			{
+				// Already have one of the requested terms selected.
+				if (selectedTerm.OccurrencesOS.Any(o => o.Ref >= startRef && o.Ref <= endRef))
+					return true;
+				// The currently selected node doesn't have an occurrence in range. Remember
+				// the current one as the best so far, but see if we can find one that does
+				// have an occurrence in range.
+				bestNode = m_ktTree.SelectedNode;
+			}
+			foreach (IChkTerm chkTerm in terms)
+			{
+				if (chkTerm == selectedTerm)
+					continue;
+				TreeNode node = m_ktTree.FindNode(chkTerm.Guid);
+				if (node != null)
+				{
+					if (bestNode == null)
+						bestNode = node;
+					if (chkTerm.OccurrencesOS.Any(o => o.Ref >= startRef && o.Ref <= endRef))
+					{
+						bestNode = node;
+						break;
+					}
+				}
+			}
+			if (bestNode != null)
+			{
+				m_ktTree.SelectedNode = bestNode;
+				return true;
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1343,38 +1414,14 @@ namespace SIL.FieldWorks.TE
 
 		#endregion
 
-		#region Methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether or not there is a range selection in the draft view that is in
-		/// the current check reference's reference.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private bool IsRangeSelectionInKtRef(KeyTermRef keyTermRef)
-		{
-			CheckDisposed();
-
-			if (EditingHelper == null || EditingHelper.CurrentSelection == null)
-				return false;
-
-			// If the selection in the draft view is not a range selection, then there is
-			// nothing to use.
-			if (!EditingHelper.CurrentSelection.Selection.IsRange)
-				return false;
-
-			if (KeyTermRef.IsNullOrEmpty(keyTermRef))
-				return false;
-
-			return IsSelectionInRef(keyTermRef);
-		}
-
+		#region Static Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified key term reference falls within the given range of
 		/// references. Normally this will only return <c>true</c> if the anchor and end are the
 		/// same. That is to say, the selection represented by the given ranges must fall wholly
-		/// within a single verse. (There is an anomalous case where it could succeed If the range crosses a verse number (or bridge) such that the end
-		/// reference
+		/// within a single verse. (There is an anomalous case where it could succeed If the
+		/// range crosses a verse number (or bridge) such that the end reference...?
 		/// </summary>
 		/// <param name="keyTermRef">The key term ref.</param>
 		/// <param name="anchorRefRange">The anchor ref range (which is made up of two
@@ -1393,7 +1440,9 @@ namespace SIL.FieldWorks.TE
 			return (anchorRefRange[0] <= selectedKtRef && anchorRefRange[1] >= selectedKtRef &&
 				endRefRange[0] == anchorRefRange[0] && endRefRange[1] == anchorRefRange[1]);
 		}
+		#endregion
 
+		#region Overrides of ChecksViewWrapper
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Activate the view
@@ -1418,7 +1467,7 @@ namespace SIL.FieldWorks.TE
 		}
 		#endregion
 
-		#region Event Handlers
+		#region Save and Load Settings
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -1452,6 +1501,7 @@ namespace SIL.FieldWorks.TE
 		#endregion
 	}
 
+	#region class InvalidRendering
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
 	/// Class to contain invalid renderings and the key term where the invalid rendering occurred.
@@ -1476,4 +1526,5 @@ namespace SIL.FieldWorks.TE
 			m_rendering = rendering;
 		}
 	}
+	#endregion
 }

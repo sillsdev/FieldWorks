@@ -33,6 +33,7 @@
 			</if>
 		</if>
 		<call target="nunitreport-text" cascade="false" unless="${property::exists('fw-build-error')}" />
+		<call target="CopyLiftBridge" failonerror="false" if="${deleteOutput}" cascade="false"/>
 		<chkrefs/>
 		<if test="${property::exists('fw-build-error') and remake-failonerror}">
 			<fail message="${fw-build-error}"/>
@@ -243,6 +244,20 @@
 			</dlls>
 		</regfree>
 		<p4add file="${manifestFile}" failonerror="false" unless="${manifestExists}"/>
+	</target>
+
+	<target name="CopyLiftBridge" description="Copy LiftBridge files to output directory when they are installed">
+		<copy todir="${dir.outputBase}"  failonerror="false" flatten="false">
+			<fileset basedir="${fwroot}/DistFiles/">
+				<include name="Mercurial/**/*"/>
+				<include name="MercurialExtensions/**/*"/>
+				<include name="LiftBridge.dll" />
+				<include name="ChorusMerge.exe" />
+				<include name="ChorusPlus.dll" />
+				<include name="about.htm" />
+				<include name="LogoForAbout.png" />
+			</fileset>
+		</copy>
 	</target>
 
 </project>

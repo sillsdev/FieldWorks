@@ -315,4 +315,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 		}
 	}
+	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
+	{
+		public ReferenceVectorDisabledSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+			: base(control, cache, obj, flid)
+		{
+		}
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			base.FinishInit();
+			var arl = (VectorReferenceLauncher)Control;
+			var view = (VectorReferenceView)arl.MainControl;
+			view.FinishInit(ConfigurationNode);
+		}
+	}
+
 }

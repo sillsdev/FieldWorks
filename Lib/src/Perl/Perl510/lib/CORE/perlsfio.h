@@ -72,3 +72,13 @@ extern int	_stdprintf _ARG_((const char*, ...));
 #define PerlIO_has_base(f)		1
 #define PerlIO_get_base(f)		((f)->data)
 #define PerlIO_get_bufsiz(f)		((f)->endr - (f)->data)
+
+/*
+ * Local variables:
+ * c-indentation-style: bsd
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ *
+ * ex: set ts=8 sts=4 sw=4 noet:
+ */

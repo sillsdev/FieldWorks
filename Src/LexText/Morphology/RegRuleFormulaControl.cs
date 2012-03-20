@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						cellId = -1;
 						break;
 					}
-			if (RHS.LeftContextOA.ClassID == PhSequenceContextTags.kClassId)
+					if (RHS.LeftContextOA.ClassID == PhSequenceContextTags.kClassId)
 					{
 						var seqCtxt = RHS.LeftContextOA as IPhSequenceContext;
 						if (!RemoveContextsFrom(forward, sel, seqCtxt, true, out cellIndex))
@@ -656,7 +656,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case PhSegRuleRHSTags.kflidRightContext:
-			if (RHS.RightContextOA == null)
+					if (RHS.RightContextOA == null)
 					{
 						cellId = -1;
 						break;
@@ -923,6 +923,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragRHS:
 					m_rhs = m_cache.ServiceLocator.GetInstance<IPhSegRuleRHSRepository>().GetObject(hvo);
 					var rule = m_rhs.OwningRule;
+					if (rule.Disabled)
+					{
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
+					}
 
 					int arrowWidth, slashWidth, underscoreWidth, charHeight;
 					vwenv.get_StringWidth(m_arrow, m_charProps, out arrowWidth, out charHeight);
@@ -999,7 +1003,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					else
 					{
-			vwenv.NoteDependency(new[] {hvo}, new[] {PhSegRuleRHSTags.kflidStrucChange}, 1);
+						vwenv.NoteDependency(new[] {hvo}, new[] {PhSegRuleRHSTags.kflidStrucChange}, 1);
 						OpenContextPile(vwenv, false);
 						vwenv.Props = m_bracketProps;
 						vwenv.AddProp(PhSegRuleRHSTags.kflidStrucChange, this, kfragEmpty);

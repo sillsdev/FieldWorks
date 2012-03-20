@@ -838,4 +838,45 @@
 	<value>{0} of {1} Texts</value>
 	<comment>Used for status bar message when some non-Scripture texts are excluded.</comment>
   </data>
+  <data name="ksMergeDuplicateWordforms" xml:space="preserve">
+	<value>Merge Duplicate Wordforms</value>
+	<comment>label for one of the tasks in the Utilities dialog</comment>
+  </data>
+  <data name="ksMergeWordformsAttemptsTo" xml:space="preserve">
+	<value>This utility finds groups of wordforms that have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate anlyses to sort out using the Word Analyses tool. Spelling status will be set to Correct if any of the old wordforms is Correct, otherwise Incorrect if any old form is Incorrect; otherwise it stays Undecided.</value>
+	<comment>Help information for the Merge Wordform option in Utilities.</comment>
+  </data>
+  <data name="ksUseMergeWordformsWhen" xml:space="preserve">
+	<value>Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text</value>
+	<comment>Help information for the merge wordform option in Utilies.</comment>
+  </data>
+  <data name="ksMergeWordformsWarning" xml:space="preserve">
+	<value>Merging wordforms is not undoable. We recommend making a backup first. You may need to Refresh some views to see the full effect of this fix.</value>
+  </data>
+  <data name="ksRedoMergeWordforms" xml:space="preserve">
+	<value>Redo Merge Wordforms</value>
+  </data>
+  <data name="ksUndoMergeWordforms" xml:space="preserve">
+	<value>Undo Merge Wordforms</value>
+  </data>
+  <data name="ksWordformMergeFailures" xml:space="preserve">
+	<value>Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}</value>
+	<comment>{0} is a list of space-separated words (possibly only one).</comment>
+  </data>
+  <data name="ksClearParseIsCurrent" xml:space="preserve">
+	<value>Force Rechecking Word Breaks</value>
+	<comment>Label for an item in Uitlity dialog</comment>
+  </data>
+  <data name="ksClearParseIsCurrentDoes" xml:space="preserve">
+	<value>This utility clears an internal flag that FLEx uses to track texts where its analysis is up-to-date. The effect will be that each text is re-parsed into words the next time this information is needed. Work you have done analyzing texts will not be affected, except possibly where word alignment is actually wrong. You may see a longer delay than usual the next time you want a concordance.</value>
+	<comment>Help text for a utlity dialog item.</comment>
+  </data>
+  <data name="ksParseIsCurrentWarning" xml:space="preserve">
+	<value>Clearing these flags is not undoable. We believe it is very safe, but you may wish to make a backup first. However, if things are out of alignment, the effects of leaving them that way are almost certainly worse than any effects of re-parsing.</value>
+	<comment>Help text for a utlity dialog item.</comment>
+  </data>
+  <data name="ksUseClearParseIsCurrentWhen" xml:space="preserve">
+	<value>Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the respellling dialog in FLEx 7.0 through 7.2.2. One symptom is an incorrect wordlist concordance, where what is highlighted for an occurrence is not the right word.</value>
+	<comment>Help text for a utility dialog item.</comment>
+  </data>
 </root>

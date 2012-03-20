@@ -173,4 +173,10 @@
   <data name="ksRemovingOwnerOfEmptySequence" xml:space="preserve">
 	<value>Removing owner of empty sequence (guid='{0}' class='{1}') from its owner (guid='{2}').</value>
   </data>
+  <data name="ksAdjustingAnalysisRefObj" xml:space="preserve">
+	<value>Adjusting reference to missing Segment by changing analysis object guid='{0}', class='{1}', field='{2}'.</value>
+  </data>
+  <data name="ksRemovingBadAnalysisRefObj" xml:space="preserve">
+	<value>Removing reference to missing Segment by deleting analysis object guid='{0}', class='{1}', ownerguid='{2}'.</value>
+  </data>
 </root>

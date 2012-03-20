@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -881,11 +881,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					{
 						ITsString tssKey = wfT.Form.get_String(ws);
 						if (tssKey.Length > 0)
-							lookupTable[tssKey.Text] = wfT;
+							lookupTable[tssKey.Text.Normalize(NormalizationForm.FormD)] = wfT;
 					}
 				}
 			}
-			return lookupTable.TryGetValue(tssTarget.Text, out wf);
+			return lookupTable.TryGetValue(tssTarget.Text.Normalize(NormalizationForm.FormD), out wf);
 		}
 
 		void IWfiWordformRepositoryInternal.UpdateForm(ITsString oldForm, IWfiWordform wf, int ws)

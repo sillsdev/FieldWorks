@@ -44,6 +44,24 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return fieldName;
 		}
 
+		/// <summary>
+		/// Reports true if the parent has the virtual field fieldName and there is a virtual
+		/// ordering of it's objects. The virtual order is kept in the fwdata file xml in
+		/// an <rt/> with class="VirtualOrdering".
+		/// Example: Virtual ordering of the "VisibleComplexFormBackRefs" field of a LexEntry
+		/// happens when the user "moves" one of the sequence's Complex Form references to the left or right.
+		/// By default they are not ordered "virtually", but by Complex Form Type.
+		/// This method allows XmlVcDisplayVec.Display() to know when to use this sort or the default.
+		/// </summary>
+		/// <param name="parent">The source of the field with name fieldName.</param>
+		/// <param name="fieldName">The field with the sequence that might have a virtual order.</param>
+		/// <returns>true if the field's sequence was ordered virtually.</returns>
+		public static bool HasVirtualOrdering(ICmObject parent, string fieldName)
+		{
+			IVirtualOrdering virtualOrder;
+			return TryGetVO(parent, fieldName, out virtualOrder);
+		}
+
 		static bool TryGetVO(ICmObject parent, string fieldName, out IVirtualOrdering myvo)
 		{
 			var voRepo = parent.Cache.ServiceLocator.GetInstance<IVirtualOrderingRepository>();

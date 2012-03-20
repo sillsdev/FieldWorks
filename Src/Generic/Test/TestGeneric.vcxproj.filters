@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{2b341c66-2b7f-4f70-b8f5-68e592146957}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{be54f9fe-d9bc-491b-afaa-cd379e875ce0}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{f8aae51e-55d7-4e74-ad68-e63c0ebe3251}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="Collection.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="testGeneric.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="TestErrorHandling.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestFwSettings.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="testGenericLib.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestSmartBstr.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestUtil.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestUtilString.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestUtilXml.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="testGenericLib.mak" />
+  </ItemGroup>
+</Project>

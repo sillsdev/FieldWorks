@@ -8,7 +8,7 @@
 // CPyScriptEncConverter
 #define PythonInactivityWarningTimeOut 60000   // 60 seconds of inactivity means clean up resources
 
-LPCTSTR clpszPyScriptProgID = _T("SilEncConverters31.PyScriptEncConverter.25b");
+LPCTSTR clpszPyScriptProgID = _T("SilEncConverters40.PyScriptEncConverter.27");
 LPCTSTR clpszPyScriptImplType = _T("SIL.PyScript");
 LPCTSTR clpszPyScriptDefFuncName = _T("Convert");
 

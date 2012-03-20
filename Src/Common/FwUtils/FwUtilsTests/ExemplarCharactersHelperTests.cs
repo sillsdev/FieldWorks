@@ -13,7 +13,6 @@
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using NMock.Dynamic;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

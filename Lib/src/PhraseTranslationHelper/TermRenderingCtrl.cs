@@ -9,6 +9,14 @@
 #endregion
 //
 // File: TermRenderingCtrl.cs
+//
+// Some icons used in this dialog box were downloaded from http://www.iconfinder.com
+// The Add Rendering icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons
+// License: http://creativecommons.org/licenses/by/3.0/
+// The Delete Rendering icon was developed by Rodolphe and is covered by the GNU General Public
+// License: http://www.gnu.org/copyleft/gpl.html
+// The Find icon was developed by Liam McKay and is free for commercial use:
+// http://www.woothemes.com/2009/09/woofunction-178-amazing-web-design-icons/
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -31,6 +39,9 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly KeyTermMatch m_term;
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<bool> m_selectKeyboard;
+		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTerm;
+
+		internal static string s_AppName;
 		#endregion
 
 		#region Events and Delegates
@@ -46,17 +57,21 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTermMatch term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard)
+			Action<bool> selectKeyboard, Action<IEnumerable<IKeyTerm>> lookupTerm)
 		{
 			InitializeComponent();
 
 			DoubleBuffered = true;
 			m_term = term;
 			m_selectKeyboard = selectKeyboard;
+			m_lookupTerm = lookupTerm;
 			m_lblKeyTermColHead.Text = term.Term;
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			m_lbRenderings.Items.AddRange(term.Renderings.Distinct().ToArray());
 			term.BestRenderingChanged += term_BestRenderingChanged;
+
+			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
 		}
 		#endregion
 
@@ -81,7 +96,10 @@ namespace SILUBS.PhraseTranslationHelper
 				m_lbRenderings.Font = value;
 
 				m_lbRenderings.ItemHeight = Math.Max(Properties.Resources.check_circle.Height,
-					(int)Math.Ceiling(CreateGraphics().MeasureString("Q", value).Height)) + 2;
+					TextRenderer.MeasureText(CreateGraphics(), "Q", value).Height) + 2;
+				MinimumSize = new Size(MinimumSize.Width, m_lbRenderings.Top + m_lbRenderings.ItemHeight +
+					(m_lbRenderings.Height - m_lbRenderings.ClientRectangle.Height) +
+					(Height - ClientRectangle.Height));
 			}
 		}
 		#endregion
@@ -95,6 +113,18 @@ namespace SILUBS.PhraseTranslationHelper
 		public IEnumerable<string> Renderings
 		{
 			get { return Term.Renderings; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the height that the control would need to have to show all the renderings
+		/// without a vertical scroll bar.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public int NaturalHeight
+		{
+			get { return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
+				(Height - m_lbRenderings.ClientRectangle.Height); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -147,6 +177,16 @@ namespace SILUBS.PhraseTranslationHelper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the Click event of the mnuSetAsDefault control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void LookUpTermInHostApplicaton(object sender, EventArgs e)
+		{
+			m_lookupTerm(m_term.AllTerms);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Handles the MouseDown event of the renderings list. If the user clicks with the
 		/// right mouse button we have to select the rendering.
 		/// </summary>
@@ -195,7 +235,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (e.Index < 0)
 				return;
 
-			RectangleF rect = new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+			Rectangle rect = new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
 			rect.Inflate(-1, 0);
 			rect.X += 2;
 
@@ -213,11 +253,11 @@ namespace SILUBS.PhraseTranslationHelper
 			}
 
 			item = item.Normalize(NormalizationForm.FormC);
-			SizeF textSize = e.Graphics.MeasureString(item, VernacularFont);
+			Size textSize = TextRenderer.MeasureText(e.Graphics, item, VernacularFont);
 
 			if (textSize.Height < rect.Height)
 			{
-				float diff = rect.Height - textSize.Height;
+				int diff = rect.Height - textSize.Height;
 				rect.Y += diff / 2;
 				rect.Height = textSize.Height;
 			}
@@ -226,14 +266,12 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				// In some cases where we go from a narrow size to a wide size really fast, debris can get left behind.
 				m_rectToInvalidateOnResize = Rectangle.Union(m_rectToInvalidateOnResize,
-					new Rectangle((int)Math.Floor(rect.X), (int)Math.Floor(rect.Y),
-					(int)Math.Ceiling(rect.Width), (int)Math.Ceiling(rect.Height)));
+					new Rectangle(rect.X, rect.Y, rect.Width, rect.Height));
 			}
 
 			// Draw the item's text, considering the item's selection state.
-			e.Graphics.DrawString(item, VernacularFont,
-				new SolidBrush(selected ? SystemColors.HighlightText : SystemColors.WindowText),
-				rect);
+			TextRenderer.DrawText(e.Graphics, item, VernacularFont, rect,
+				selected ? SystemColors.HighlightText : SystemColors.WindowText, TextFormatFlags.Left);
 		}
 
 		/// ------------------------------------------------------------------------------------

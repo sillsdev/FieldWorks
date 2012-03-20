@@ -90,17 +90,20 @@ display/printout!
 
   <xsl:template match="LexEntry">
 		<!-- For minor entries, we need to make sure the minorentry css class is invoked (LT-12119).
-		It seems the only way of detecting this is to look for a grandchild Paragraph style of Dictionary-Minor. -->
+		Also we do NOT want an ID for minor entries...could conflict with subentries, and we never link to minor entries (LT-11534)
+		It seems the only way of detecting this is to look for a grandchild span class of headword-minor. -->
 		<xsl:choose>
-			<xsl:when test="*/Paragraph[@style='Dictionary-Minor']">
+			<xsl:when test="*//span[@class='headword-minor']">
 				<div class="minorentry">
-					<xsl:copy-of select="@*"/>
+					<xsl:copy-of select="@*[name() != 'id']"/>
 					<xsl:text>&#13;&#10;</xsl:text>
 					<xsl:apply-templates/>
 					<xsl:text>&#13;&#10;</xsl:text>
 				</div>
 				<xsl:text>&#13;&#10;</xsl:text>
 			</xsl:when>
+			<!-- sometimes we get completely empty ones for derived forms...omit them-->
+			<xsl:when test="not(LexEntry_Self)"></xsl:when>
 			<xsl:otherwise>
 				<div class="entry">
 					<xsl:copy-of select="@*"/>

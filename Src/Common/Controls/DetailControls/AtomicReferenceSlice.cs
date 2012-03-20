@@ -278,4 +278,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 		}
 	}
+	public class AtomicReferenceDisabledSlice: AtomicReferenceSlice
+	{
+		public AtomicReferenceDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+			:base(cache, obj, flid)
+		{
+		}
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			base.FinishInit();
+			var arl = (AtomicReferenceLauncher)Control;
+			var view = (AtomicReferenceView)arl.MainControl;
+			view.FinishInit(ConfigurationNode);
+		}
+	}
 }

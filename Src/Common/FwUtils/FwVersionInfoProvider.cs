@@ -25,10 +25,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class FwVersionInfoProvider
 	{
 		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "(C) 2002-2011, SIL International.";
+		public const string kDefaultCopyrightString = "(C) 2002-2012, SIL International.";
 		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is
 		/// true)</summary>
-		public const string kSensitiveCopyrightString = "(C) 2002-2011";
+		public const string kSensitiveCopyrightString = "(C) 2002-2012";
 
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;

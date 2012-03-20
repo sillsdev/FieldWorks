@@ -129,6 +129,19 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+		/// <summary>
+		/// This method should cause all paragraphs in interesting texts which do not have the ParseIsCurrent flag set
+		/// to be Parsed. Created for use with ConcordanceWordList lists.
+		/// </summary>
+		public void ParseInterstingTextsIfNeeded()
+		{
+			//Optimize(JT): The reload is overkill, all we want to do is reparse those texts who are not up to date.
+			if(m_list != null)
+			{
+				m_list.ForceReloadList();
+			}
+		}
+
 		protected internal bool OnAddTexts(object args)
 		{
 			CheckDisposed();
@@ -358,7 +371,11 @@ namespace SIL.FieldWorks.IText
 			int wsText = PrevTextWs;
 			if (wsText != 0)
 			{
-				if (Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
+				if (Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count == 1)
+				{
+					wsText = Cache.DefaultVernWs;
+				}
+				else
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{

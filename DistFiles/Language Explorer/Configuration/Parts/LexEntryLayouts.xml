@@ -228,7 +228,7 @@
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishStemMinorEntry">
-		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css=""/>
+		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemMinorPara" css="$fwstyle=Dictionary-Normal">
 		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword-minor" visibility="ifdata"
@@ -352,7 +352,7 @@
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishRootMinorEntry">
-		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishRootMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css=""/>
+		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishRootMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRootMinorPara" css="$fwstyle=Dictionary-Normal">
 		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword"  css="headword-minor" visibility="ifdata"

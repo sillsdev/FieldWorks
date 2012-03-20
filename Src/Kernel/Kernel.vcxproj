@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectName>FwKernel</ProjectName>
+	<ProjectGuid>{6396B488-4D34-48B2-8639-EEB90707405B}</ProjectGuid>
+	<RootNamespace>FwKernel</RootNamespace>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\Output\Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\..\obj\Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkfwk cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FwKernel.dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkfwk r cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Kernel.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="ActionHandler.cpp" />
+	<ClCompile Include="DebugReport.cpp" />
+	<ClCompile Include="dlldatax.c" />
+	<ClCompile Include="TextServ.cpp" />
+	<ClCompile Include="TsMultiStr.cpp" />
+	<ClCompile Include="TsPropsFactory.cpp" />
+	<ClCompile Include="TsStrFactory.cpp" />
+	<ClCompile Include="TsString.cpp" />
+	<ClCompile Include="TsTextProps.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="FwKernel.def" />
+	<None Include="FwKernel.idh" />
+	<None Include="FwKernel.mak" />
+	<None Include="TextServ.idh" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="FwKernelPs.idl" />
+	<Midl Include="FwKernelTlb.idl" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="ActionHandler.h" />
+	<ClInclude Include="DebugReport.h" />
+	<ClInclude Include="IcuCleanupManager.h" />
+	<ClInclude Include="Main.h" />
+	<ClInclude Include="TextServ.h" />
+	<ClInclude Include="TsMultiStr.h" />
+	<ClInclude Include="TsPropsFactory.h" />
+	<ClInclude Include="TsStrFactory.h" />
+	<ClInclude Include="TsString.h" />
+	<ClInclude Include="TsTextProps.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="FwKernel.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -2001,10 +2001,11 @@ namespace SIL.FieldWorks.IText
 			private LexEntryComponents BuildEntryComponents()
 			{
 				var entryComponents = MorphServices.BuildEntryComponents(m_caches.MainCache,
-					m_sandbox.GetFullMorphForm(m_hvoMorph));
+					TsStringUtils.GetCleanSingleRunTsString(m_sandbox.GetFullMorphForm(m_hvoMorph)));
 				int hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, ktagSbMorphForm);
-				ITsString tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph,
-																		   ktagSbNamedObjName, m_sandbox.RawWordformWs);
+				var intermediateTssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph,
+											   ktagSbNamedObjName, m_sandbox.RawWordformWs);
+				var tssForm = TsStringUtils.GetCleanSingleRunTsString(intermediateTssForm);
 				if (entryComponents.LexemeFormAlternatives.Count > 0 &&
 					!entryComponents.LexemeFormAlternatives[0].Equals(tssForm))
 				{

@@ -23,6 +23,7 @@ using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.IText;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -273,6 +274,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			m_wfClerk = (RecordClerk)mediator.PropertyTable.GetValue("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
+
+			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
+			if(m_wfClerk is InterlinearTextsRecordClerk)
+			{
+				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
+				//(this clerk and its list are not visible in this dialog, so there will be no future reload)
+				m_wfClerk.ListLoadingSuppressed = false;
+				(m_wfClerk as InterlinearTextsRecordClerk).ParseInterstingTextsIfNeeded(); //Trigger the parsing
+			}
 			m_srcwfiWordform = (IWfiWordform)m_wfClerk.CurrentObject;
 			if (m_fDisposeMediator && m_mediator != null)
 				m_mediator.Dispose();
@@ -732,7 +742,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_respellUndoaction.CopyAnalyses = m_cbCopyAnalyses.Checked;
 				}
 
-
 				m_respellUndoaction.DoIt(m_mediator);
 
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
@@ -940,19 +949,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ITsStrBldr bldr = m_oldContents.GetBldr();
 			m_changes.Sort((left, right) => sda.get_IntProp(left, ConcDecorator.kflidBeginOffset).CompareTo(
 				sda.get_IntProp(right, ConcDecorator.kflidBeginOffset)));
-			UpdateInstanceOf(progress);
-
-			//// UpdateOffsets() changes the offsets to reflect the new values.
-			//// Save the old offsets to use in building the new string, since I don't want
-			//// to risk moving the method below the loop that changes the data.
-			//// (Unit tests don't show this behavior for some reason.)
-			//int[] rgichMin = new int[m_changes.Count];
-			//int[] rgichLim = new int[m_changes.Count];
-			//for (int i = m_changes.Count - 1; i >= 0; i--)
-			//{
-			//    rgichMin[i] = sda.get_IntProp(m_changes[i], ConcDecorator.kflidBeginOffset);
-			//    rgichLim[i] = sda.get_IntProp(m_changes[i], ConcDecorator.kflidEndOffset);
-			//}
 
 			for (int i = m_changes.Count - 1; i >= 0; i--)
 			{
@@ -972,9 +968,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 				}
 			}
-
-			UpdateOffsets();
-
 			RespellUndoAction.UpdateProgress(progress);
 			m_newContents = bldr.GetString();
 		}
@@ -992,6 +985,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// ------------------------------------------------------------------------------------
 		private void UpdateInstanceOf(ProgressDialogWorkingOn progress)
 		{
+			Debug.Fail(
+				@"use of this method was causing very unpleasant data corruption in texts, the bug it fixed needs addressing though.");
 			var analysesToChange = new List<Tuple<ISegment, int>>();
 			RespellingSda sda = m_action.RespellSda;
 			foreach (var hvoFake in m_changes)
@@ -1026,103 +1021,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					change.Item1.AnalysesRS.Replace(change.Item2, 1, newVal);
 			}
 			RespellUndoAction.UpdateProgress(progress);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Update offsets for the given paragraph
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal void UpdateOffsets()
-		{
-			int clid = m_action.RespellSda.get_IntProp(m_hvoTarget, CmObjectTags.kflidClass);
-			// ENHANCE: make more rigorous subclass check here using meta-data cache
-			if (clid == StTxtParaTags.kClassId || clid == ScrTxtParaTags.kClassId)
-				AdjustOldOccurrenceOffsets();
-			else if (clid == CmPictureTags.kflidCaption)
-			{
-				//// Not a paragraph, so just adjust all the occurrences.
-				//var ichange = 0;	// index into info.Changes;
-				//var delta = 0;	// amount to add to offsets of later segments.
-				//AdjustXficOffsets(Changes, ref delta, ref ichange);
-			}
-		}
-
-		private void AdjustOldOccurrenceOffsets()
-		{
-			if (m_action.OldOccurrencesOfOldWordform == null)
-				return;
-			List<int> xficIds = new List<int>();
-			foreach (int hvoFake in m_action.OldOccurrencesOfOldWordform)
-			{
-				int hvoSeg = m_action.RespellSda.get_ObjectProp(hvoFake, ConcDecorator.kflidSegment);
-				if (hvoSeg > 0)
-				{
-					ISegment seg = m_action.RepoSeg.GetObject(hvoSeg);
-					if (seg.Owner.Hvo == m_hvoTarget)
-						xficIds.Add(hvoFake);
-				}
-			}
-			var ichange = 0;
-			var delta = 0;
-			AdjustXficOffsets(xficIds, ref delta, ref ichange);
-		}
-
-		/// <summary>
-		/// Adjust the offsets of the xfics (wfics or pfics, wordform-in-context or punct-in-context) given
-		/// in xficIds, which are a (sub)range of the ids in info.changes. Both input and output are the
-		/// total change in length and the index of the place we are up to in info.Changes.
-		/// </summary>
-		private void AdjustXficOffsets(List<int> xficIds, ref int delta, ref int ichange)
-		{
-			RespellingSda sda = m_action.RespellSda;
-			foreach (var xfic in xficIds)
-			{
-				ComputeDeltaForSegment(ref ichange, ref delta, m_action.BeginOffset(xfic));
-				AdjustOffset(sda, xfic, delta, ConcDecorator.kflidBeginOffset);
-				if (ichange < m_changes.Count && m_changes[ichange] == xfic)
-				{
-					// Adjusting the target itself...it's end needs a different adjustment.
-					// Pass delta to account for the fact that the begin offset of xfic has
-					// already been adjusted.
-					var tssOld = m_action.OldOccurrence(xfic, delta);
-					var replacement = Replacement(tssOld);
-					delta += replacement.Length - tssOld.Length;
-					ichange++;
-				}
-				AdjustOffset(sda, xfic, delta, ConcDecorator.kflidEndOffset);
-			}
-		}
-
-		/// <summary>
-		/// Adjust the delta for however many additional changes occurred before this segment.
-		/// </summary>
-		private void ComputeDeltaForSegment(ref int ichange,
-			ref int delta, int beginTarget)
-		{
-			for (; ichange < m_changes.Count; ichange++)
-			{
-				var hvoFake = m_changes[ichange];
-				var beginChange = m_action.BeginOffset(hvoFake);
-				if (beginChange >= beginTarget)
-					return;
-				var tssOld = m_action.OldOccurrence(hvoFake);
-				var replacement = Replacement(tssOld);
-				delta += replacement.Length - tssOld.Length;
-			}
-		}
-
-		private void AdjustOffset(RespellingSda sda, int hvoFake, int delta, int flid)
-		{
-			if (delta == 0)
-				return;
-			int oldVal = sda.get_IntProp(hvoFake, flid);
-			int newVal = oldVal + delta;
-			//m_hvosToChangeIntProps.Add(hvoFake);
-			//m_tagsToChangeIntProps.Add(flid);
-			//m_oldValues.Add(oldVal);
-			//m_newValues.Add(newVal);
-			sda.SetInt(hvoFake, flid, newVal);
 		}
 
 		private string Replacement(ITsString oldTss)
@@ -1779,7 +1677,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			Set<int> changes = new Set<int>();
 			foreach (ParaChangeInfo info in m_changedParas.Values)
+			{
 				changes.AddRange(info.Changes);
+			}
 			if (AllChanged)
 			{
 				m_newOccurrencesOldWf = new int[0]; // no remaining occurrences
@@ -1789,8 +1689,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Only some changed, need to figure m_newOccurrences
 				List<int> newOccurrencesOldWf = new List<int>();
 				foreach (int hvo in OldOccurrencesOfOldWordform)
+				{
+					//The offsets of our occurrences have almost certainly changed.
+					//Update them so that the respelling dialog view will appear correct.
+					var occur = RespellSda.OccurrenceFromHvo(hvo) as LocatedAnalysisOccurrence;
+					if (occur != null)
+					{
+						occur.ResetSegmentOffsets();
+					}
+
 					if (!changes.Contains(hvo))
+					{
 						newOccurrencesOldWf.Add(hvo);
+					}
+				}
 				m_newOccurrencesOldWf = newOccurrencesOldWf.ToArray();
 			}
 			UpdateProgress(progress);

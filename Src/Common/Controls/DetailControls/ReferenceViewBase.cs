@@ -40,11 +40,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_rootFlid;
 		protected string m_rootFieldName;
 		protected string m_displayNameProperty;
+		private string m_textStyle;
 
 		#region Construction
 
 		public ReferenceViewBase()
 		{
+		}
+
+		/// <summary>
+		/// Get or set the text style name
+		/// </summary>
+		public string TextStyle
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(m_textStyle))
+				{
+					m_textStyle = "Default Paragraph Characters";
+				}
+				return m_textStyle;
+			}
+			set
+			{
+				m_textStyle = value;
+			}
 		}
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,

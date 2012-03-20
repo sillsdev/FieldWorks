@@ -1430,7 +1430,7 @@ namespace LexTextControlsTests
 			var customFieldIds = new List<int>();
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			Assert.IsNotNull(mdc);
-			foreach (var flid in mdc.GetFields(obj.ClassID, false, (int)CellarPropertyTypeFilter.All))
+			foreach (var flid in mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var fieldName = mdc.GetFieldName(flid);
 				if (mdc.IsCustom(flid))
@@ -1918,7 +1918,7 @@ namespace LexTextControlsTests
 			}
 
 			//Verify each custom field
-			foreach (var flid in m_mdc.GetFields(entry.ClassID, false, (int)CellarPropertyTypeFilter.All))
+			foreach (var flid in m_mdc.GetFields(entry.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
 					continue;

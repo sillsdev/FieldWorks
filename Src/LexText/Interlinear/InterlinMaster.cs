@@ -298,9 +298,6 @@ namespace SIL.FieldWorks.IText
 					var info = type.GetMethod("GetUnchartedWordForBookmark");
 					Debug.Assert(info != null);
 					curAnalysis = (AnalysisOccurrence)info.Invoke(m_constChartPane, null);
-					if (curAnalysis == null || !curAnalysis.IsValid)
-						// This result means the Chart doesn't want to save a bookmark
-						return;
 					break;
 				case ktpsTagging:
 					if (m_taggingPane != null)
@@ -324,6 +321,10 @@ namespace SIL.FieldWorks.IText
 					Debug.Fail("Unhandled tab index.");
 					break;
 			}
+			if (curAnalysis == null || !curAnalysis.IsValid)
+				// This result means the Chart doesn't want to save a bookmark,
+				// or that something else went wrong (e.g., we couldn't make a bookmark because we just deleted the text).
+				return;
 
 			if (!fSaved)
 			{
@@ -419,7 +420,15 @@ namespace SIL.FieldWorks.IText
 			}
 			if (iPara >= 0)
 			{
-				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true, m_mediator);
+				//if there is a bookmark for this text with this tool, then save it, if not some logic error brought us here,
+				//but simply not saving a bookmark which doesn't exist seems better than crashing. naylor 3/2012
+				var key = new Tuple<string, Guid>(CurrentTool, RootStText.Guid);
+				if (m_bookmarks.ContainsKey(key))
+				{
+					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true,
+										  m_mediator);
+				}
+
 				return true;
 			}
 			return false;
@@ -980,7 +989,8 @@ namespace SIL.FieldWorks.IText
 					var para = point.Segment.Paragraph;
 					hvoRoot = para.Owner.Hvo;
 				}
-				var text = Cache.ServiceLocator.GetObject(hvoRoot);
+				ICmObject text;
+				Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
 				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
 				{
 					InterAreaBookmark mark;
@@ -1028,9 +1038,14 @@ namespace SIL.FieldWorks.IText
 			else
 				RootStText = null;
 			// one way or another it's the Text by now.
+			ShowTabView();
+			// I (JohnT) no longer know why we need to update the TC pane (but not any of the others?) even if it
+			// is not the current pane. But it IS essential to do so AFTER updating the current one.
+			// When deleting the last text, the following call can result in a resize call to the current (e.g., analysis)
+			// pane, and if ShowTabView has not already cleared the current pane's knowledge of the deleted text,
+			// we can get a crash (e.g., second stack in LT-12401).
 			if (m_tcPane != null)
 				SetupInterlinearTabControlForStText(m_tcPane);
-			ShowTabView();
 		}
 
 		// If the Clerk's object is an annotation, select the corresponding thing in whatever pane

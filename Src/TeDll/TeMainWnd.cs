@@ -13,6 +13,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -356,6 +357,7 @@ namespace SIL.FieldWorks.TE
 		private const string kChkEditChecksSBItemName = "ChkEditChecksItem";
 		/// <summary>Internal name of keyterms button in the checking taskbar tab</summary>
 		private const string kChkKeyTermsSBItemName = "ChkKeyTermsItem";
+		SBTabItemProperties m_keyTermsViewItemProps;
 		/// <summary>Internal name of vertical draft view button in the Scripture taskbar tab</summary>
 		private const string kScrVerticalViewSBItemName = "ScrVertDraftViewItem";
 
@@ -993,13 +995,13 @@ namespace SIL.FieldWorks.TE
 		protected virtual void AddKeyTermsView(string viewName)
 		{
 			// Add this user view to the Checking sidebar tab.
-			SBTabItemProperties itemProps = new SBTabItemProperties(this);
-			itemProps.Name = kChkKeyTermsSBItemName;
-			itemProps.Text = viewName;
-			itemProps.ImageIndex = (int)TeResourceHelper.SideBarIndices.KeyTerms;
-			itemProps.Tag = TeViewType.KeyTerms;
-			itemProps.Message = "SwitchActiveView";
-			AddSideBarTabItem(kChkSBTabName, itemProps);
+			m_keyTermsViewItemProps = new SBTabItemProperties(this);
+			m_keyTermsViewItemProps.Name = kChkKeyTermsSBItemName;
+			m_keyTermsViewItemProps.Text = viewName;
+			m_keyTermsViewItemProps.ImageIndex = (int)TeResourceHelper.SideBarIndices.KeyTerms;
+			m_keyTermsViewItemProps.Tag = TeViewType.KeyTerms;
+			m_keyTermsViewItemProps.Message = "SwitchActiveView";
+			AddSideBarTabItem(kChkSBTabName, m_keyTermsViewItemProps);
 			m_uncreatedViews.Add(TeViewType.KeyTerms, new TeSelectableViewFactory(viewName,
 				TeViewType.KeyTerms, CreateKeyTermsView));
 		}
@@ -3851,7 +3853,7 @@ namespace SIL.FieldWorks.TE
 						int hvoSelection;
 						ActiveEditingHelper.GetSelectedScrElement(out tagSelection, out hvoSelection);
 						itemProps.Enabled = (SelectionInEditableScripture &&
-							!ActiveEditingHelper.IsBackTranslation && tagSelection != 0 &&
+							tagSelection != 0 &&
 							tagSelection != ScrBookTags.kflidFootnotes &&
 							!ActiveEditingHelper.IsPictureSelected);
 					}
@@ -5452,7 +5454,8 @@ namespace SIL.FieldWorks.TE
 					vernWs.RightToLeftScript, Path.Combine(ScrTextCollection.SettingsDirectory ?? @"c:\My Paratext Projects", "cms"), ccSettings,
 					App.ApplicationName, start, end,
 					vern => KeyboardHelper.ActivateKeyboard(vern ? vernWs.LCID : defaultWs.LCID),
-					() => ShowHelp.ShowHelpTopic(m_app, "khptBookProperties")); // TODO: Come up with a Help topic
+					() => ShowHelp.ShowHelpTopic(m_app, "khtpNoHelpTopic"),
+					LookupTerm); // TODO: Come up with a Help topic
 
 				m_transceleratorWindow.GetAvailableBooks = () => m_bookFilter.BookIds;
 				m_transceleratorWindow.Closed += SaveComprehensionCheckingSettings;
@@ -5505,6 +5508,28 @@ namespace SIL.FieldWorks.TE
 				string englishTerm = kt.Term;
 				if (englishTerm != null)
 					keyTerms.Add(kt);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempts to look up and select one of the given terms, if possible, selecting one
+		/// that has an occurrence in the given reference range.
+		/// </summary>
+		/// <param name="terms">One or more (more-or-less related) terms.</param>
+		/// <param name="startRef">The start reference (a BBCCCVVV integer).</param>
+		/// <param name="endRef">The end reference (a BBCCCVVV integer).</param>
+		/// ------------------------------------------------------------------------------------
+		private void LookupTerm(IEnumerable<IKeyTerm> terms, int startRef, int endRef)
+		{
+			if (!KeyTermsViewIsCreated)
+				m_sibAdapter.SetCurrentTabItem(kChkSBTabName, kChkKeyTermsSBItemName, true);
+
+			if (TheKeyTermsWrapper.SelectTerm(terms.Cast<IChkTerm>(), startRef, endRef))
+			{
+				if (!KeyTermsViewIsVisible)
+					m_sibAdapter.SetCurrentTabItem(kChkSBTabName, kChkKeyTermsSBItemName, true);
+				Activate();
 			}
 		}
 
@@ -5780,40 +5805,54 @@ namespace SIL.FieldWorks.TE
 		protected bool OnInsertPictureDialog(object args)
 		{
 			Debug.Assert(m_cache != null);
-			if (ActiveEditingHelper == null)
+			FwEditingHelper editHelper = ActiveEditingHelper;
+			if (editHelper == null)
 				return false;
 
-			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(m_cache, null,
-				m_app, m_app))
+			if (editHelper.IsBackTranslation)
 			{
-				// Don't allow inserting an empty picture, so don't check for result of Initialize()
-				if (dlg.Initialize())
+				SelectionHelper helper = editHelper.CurrentSelection;
+				ICmPictureRepository repo = Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+				SelLevInfo info;
+				ISegment segment;
+				if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
+					segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+				else
 				{
-					if (dlg.ShowDialog() == DialogResult.OK)
-						InsertThePicture(null, dlg);
+					SelLevInfo paraLevInfo;
+					helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo);
+					IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(paraLevInfo.hvo);
+					segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), helper.Ws);
+				}
+				ITsString tssVernSegment = segment.BaselineText;
+				Guid guidNextPicNotInBt = tssVernSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtGuidMoveableObjDisp).FirstOrDefault(g =>
+					!segment.FreeTranslation.get_String(helper.Ws).GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtGuidMoveableObjDisp).Contains(g));
+				if (guidNextPicNotInBt == Guid.Empty)
+					return false;
+				ICmPicture pict = repo.GetObject(guidNextPicNotInBt);
+				string undo;
+				string redo;
+				TeResourceHelper.MakeUndoRedoLabels("kstidInsertPicture", out undo, out redo);
+				using (UndoTaskHelper undoTaskHelper = new UndoTaskHelper(m_cache.ActionHandlerAccessor,
+						  editHelper.EditedRootBox.Site, undo, redo))
+				{
+					editHelper.InsertPicture(pict);
+					undoTaskHelper.RollBack = false;
 				}
 			}
-
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the clicking on the "Delete Picture" context menu.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDeletePicture(object args)
-		{
-			if (ActiveEditingHelper == null)
+			else
 			{
-				return false;
+				using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(m_cache, null,
+					m_app, m_app))
+				{
+					// Don't allow inserting an empty picture, so don't check for result of Initialize()
+					if (dlg.Initialize())
+					{
+						if (dlg.ShowDialog() == DialogResult.OK)
+							InsertThePicture(null, dlg);
+					}
+				}
 			}
-
-			if (ActiveEditingHelper.IsPictureSelected)
-				ActiveEditingHelper.DeletePicture();
-
 			return true;
 		}
 

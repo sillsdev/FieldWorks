@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -53,6 +54,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal System.Xml.XmlNode ConfigurationNode { get; set; }
 
 		private System.ComponentModel.IContainer components = null;
+		private string m_textStyle;
 
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
@@ -118,6 +120,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+		}
+
+		/// <summary>
+		/// Get any text styles from configuration node (which is now available; it was not at construction)
+		/// </summary>
+		/// <param name="configurationNode"></param>
+		public void FinishInit(XmlNode configurationNode)
+		{
+			if (configurationNode.Attributes != null)
+			{
+				var textStyle = configurationNode.Attributes["textStyle"];
+				if (textStyle != null)
+				{
+					TextStyle = textStyle.Value;
+					if (m_VectorReferenceVc != null)
+					{
+						m_VectorReferenceVc.TextStyle = textStyle.Value;
+					}
+				}
+			}
 		}
 
 		#endregion // Construction, initialization, and disposal
@@ -602,6 +624,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_flid;
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
+		private string m_textStyle;
 
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
@@ -729,7 +752,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						}
 #endif
 					}
-					vwenv.AddString(tss);
+						if (!string.IsNullOrEmpty(TextStyle))
+						{
+							vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
+
+						}
+						vwenv.AddString(tss);
 				}
 					break;
 				default:
@@ -754,6 +782,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				vwenv.AddSeparatorBar();
 			}
 		}
+		public string TextStyle
+		{
+			get
+			{
+				string sTextStyle = "Default Paragraph Characters";
+				if (!string.IsNullOrEmpty(m_textStyle))
+				{
+					sTextStyle = m_textStyle;
+				}
+				return sTextStyle;
+			}
+			set
+			{
+				m_textStyle = value;
+			}
+		}
+
 	}
 
 	#endregion // VectorReferenceVc class

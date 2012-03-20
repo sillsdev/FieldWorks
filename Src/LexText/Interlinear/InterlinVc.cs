@@ -1214,6 +1214,8 @@ namespace SIL.FieldWorks.IText
 
 		internal void SetActiveFreeform(int hvo, int flid, int ws, int cpropPrevious)
 		{
+			if (hvo == m_hvoActiveFreeform && flid == ActiveFreeformFlid)
+				return; // no changes; don't want to generate spurious selection changes which may trigger unwanted WS changes.
 			var helper = SelectionHelper.Create(m_rootsite);
 			int hvoOld = m_hvoActiveFreeform;
 			int flidOld = ActiveFreeformFlid;
@@ -1484,36 +1486,28 @@ namespace SIL.FieldWorks.IText
 						}
 						break;
 					case InterlinLineChoices.kflidLexGloss:
-						ILexSense sense = null;
+						int flid = 0;
 						if (wmb != null)
 						{
-							sense = wmb.SenseRA;
-							if (sense == null)
+							if (wmb.SenseRA == null)
 							{
-								vwenv.NoteDependency(new int[] {hvo}, new int[] {WfiMorphBundleTags.kflidSense}, 1);
-								if (ShowDefaultSense)
+								vwenv.NoteDependency(new[] {hvo}, new[] {WfiMorphBundleTags.kflidSense}, 1);
+								if (ShowDefaultSense && wmb.DefaultSense != null)
 								{
-									if (wmb.DefaultSense != null)
-									{
-										//apparently we believe this to be a parser generated guess
-										SetGuessing(vwenv, MachineGuessColor);
-										var virtFlid =
-											wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
-												"DefaultSense", false);
-										vwenv.AddObjProp(virtFlid, this, kfragLineChoices + i);
-									}
+									flid = wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
+										"DefaultSense", false);
 								}
 							}
+							else
+							{
+								flid = WfiMorphBundleTags.kflidSense;
+							}
 						}
-						if (sense == null)
-						{
-								vwenv.AddString(m_tssMissingSense);
-						}
+
+						if (flid == 0)
+							vwenv.AddString(m_tssMissingSense);
 						else
-						{
-							vwenv.AddObjProp(WfiMorphBundleTags.kflidSense,
-								this, kfragLineChoices + i);
-						}
+							vwenv.AddObjProp(flid, this, kfragLineChoices + i);
 						break;
 
 					case InterlinLineChoices.kflidLexPos:
@@ -1820,7 +1814,15 @@ namespace SIL.FieldWorks.IText
 					m_vwenv.AddString(m_this.m_tssMissingGloss);
 					break;
 				case WfiAnalysisTags.kClassId:
-					var wa = m_defaultObj as IWfiAnalysis;
+					if (m_hvoDefault != m_hvoWordBundleAnalysis)
+					{
+						// Real analysis isn't what we're displaying, so morph breakdown
+						// is a guess. Is it a human-approved guess?
+						bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+																		(int)AnalysisGuessServices.OpinionAgent.Parser;
+						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+					}
+					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
 					{
 						// There's no gloss, display something indicating it is missing.

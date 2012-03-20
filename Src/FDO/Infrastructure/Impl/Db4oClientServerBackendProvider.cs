@@ -494,6 +494,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return base.Commit(newbies, dirtballs, goners);
 		}
 
+		/// <summary>
+		/// Repeatedly ttempt to set a semaphore on the dbstore with a 3 second timeout.
+		/// if we aren't to wait for a commitlock then return false after the first attempt,
+		/// if we are then repeatedly show the user a message box until we can successfully set the semaphore.
+		/// If we set the semaphore return true.
+		/// </summary>
+		/// <param name="fWaitForCommitLock"></param>
+		/// <returns></returns>
 		private bool GetCommitLock(bool fWaitForCommitLock)
 		{
 			while (!m_dbStore.Ext().SetSemaphore(kCommitLock, 3000))
@@ -508,35 +516,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			return true;
 		}
-
-		//*-------------------------------------------------------------------*/
-		///// <summary>
-		///// Remove or drop the backend database and its files(s).
-		///// </summary>
-		//protected override void RemoveBackEnd()
-		//{
-		//    // TODO (SteveMiller): Check to see if any clients need to be warned?
-		//    StopClient();
-		//    CloseServerFile();
-		//    if (File.Exists(LocalDatabasePath))
-		//        File.Delete(LocalDatabasePath);
-		//}
-
-		//*-------------------------------------------------------------------*/
-		///// <summary>
-		///// Restore from a data migration, which used an XML BEP.
-		///// </summary>
-		///// <param name="xmlBepPathname">Path of the XML file which had the migration (?)</param>
-		//protected override void RestoreWithoutMigration(string xmlBepPathname)
-		//{
-		//    // Close down connection.
-		//    StopClient();
-		//    // Copy original file.
-		//    File.Copy(LocalDatabasePath, Path.Combine(LocalDatabasePath, FwFileExtensions.ksFwDataFallbackFileExtension));
-		//    // 'port' without migration to new DB4o, but reusing the old filename name.
-		//    PortLanguageProject(new[] { LocalDatabasePath }, new BackendStartupParameter(
-		//        true, BackendBulkLoadDomain.None, new[] { xmlBepPathname }));
-		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

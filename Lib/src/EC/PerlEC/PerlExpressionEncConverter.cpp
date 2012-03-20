@@ -8,7 +8,7 @@
 // CPerlExpressionEncConverter
 #define PerlInactivityWarningTimeOut 60000   // 60 seconds of inactivity means clean up resources
 
-LPCTSTR clpszPerlExpressionProgID = _T("SilEncConverters31.PerlExpressionEncConverter.5100b");
+LPCTSTR clpszPerlExpressionProgID = _T("SilEncConverters40.PerlExpressionEncConverter.5100b");
 LPCTSTR clpszPerlExpressionImplType = _T("SIL.PerlExpression");
 
 CPerlExpressionEncConverter::CPerlExpressionEncConverter()

@@ -17,3 +17,20 @@ It might be good to check in all these files in our own source tree, but Enchant
 Once again, sorry this is such a mess.
 
 JohnT
+
+----------------------------------
+Visual Studio 2010.
+
+I started with the working VS2008 source, which I had in D:\try2\glib and D:\Enchant.
+Converted the solutions and projects to VS 2010.
+Built glib and gmodule, both DLLs and libraries. Renamed and copied lib and DLLs from D:\try2\glib\glib-2.26.1\build\win32\vs9\Release\Win32\bin to D:\Enchant\lib\glib\release,
+giving each names ending .vs10.
+I changed the version numbers in .rc files and Enchant.NET's AssemblyInfo.
+Change Include files to use vs10 rather than vs8 or vs9. (libenchant properties/Linker/Input/Additional dependencies; also libenchant_myspell, libenchant_mock_provider, libenchant_ispell).
+At this point I was able to build, but the resulting DLLs still had dependencies on glib-vs9.dll. Turned out it was depending on the one in c:\ww\Distfiles!
+Somehow, just renaming that DLL (and the gmodule one) prevented this, and another build of libenchant etc. produced something with the
+desired dependency on glib-2-vs10.dll.
+At some point I did a Rebuild and it did not manage to regenerate a couple of .def files. Apparently something the generation
+depends on is no longer around. The only workaround I could find was to copy the missing files from the VS9 build's intermediate directory.
+
+I copied my Enchant2010 folder and the try2 folder to \\lsdevstore1\Public\Stuff for building Enchant.

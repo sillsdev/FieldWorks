@@ -1,7 +1,7 @@
 /*    op.h
  *
- *    Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
- *    2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, by Larry Wall and others
+ *    Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+ *    2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -45,6 +45,8 @@
 #  define MADPROP_IN_BASEOP
 #endif
 
+typedef PERL_BITFIELD16 Optype;
+
 #ifdef BASEOP_DEFINITION
 #define BASEOP BASEOP_DEFINITION
 #else
@@ -54,21 +56,28 @@
 	OP*		(CPERLscope(*op_ppaddr))(pTHX);		\
 	MADPROP_IN_BASEOP			\
 	PADOFFSET	op_targ;		\
-	unsigned	op_type:9;		\
-	unsigned	op_opt:1;		\
-	unsigned	op_latefree:1;		\
-	unsigned	op_latefreed:1;		\
-	unsigned	op_attached:1;		\
-	unsigned	op_spare:3;		\
+	PERL_BITFIELD16 op_type:9;		\
+	PERL_BITFIELD16 op_opt:1;		\
+	PERL_BITFIELD16 op_latefree:1;	\
+	PERL_BITFIELD16 op_latefreed:1;	\
+	PERL_BITFIELD16 op_attached:1;	\
+	PERL_BITFIELD16 op_spare:3;		\
 	U8		op_flags;		\
 	U8		op_private;
 #endif
+
+/* If op_type:9 is changed to :10, also change PUSHEVAL in cop.h.
+   Also, if the type of op_type is ever changed (e.g. to PERL_BITFIELD32)
+   then all the other bit-fields before/after it should change their
+   types too to let VC pack them into the same 4 byte integer.*/
 
 #define OP_GIMME(op,dfl) \
 	(((op)->op_flags & OPf_WANT) == OPf_WANT_VOID   ? G_VOID   : \
 	 ((op)->op_flags & OPf_WANT) == OPf_WANT_SCALAR ? G_SCALAR : \
 	 ((op)->op_flags & OPf_WANT) == OPf_WANT_LIST   ? G_ARRAY   : \
 	 dfl)
+
+#define OP_GIMME_REVERSE(flags)	((flags) & G_WANT)
 
 /*
 =head1 "Gimme" Values
@@ -103,8 +112,6 @@ Deprecated.  Use C<GIMME_V> instead.
 #define OPf_STACKED	64	/* Some arg is arriving on the stack. */
 #define OPf_SPECIAL	128	/* Do something weird for this op: */
 				/*  On local LVAL, don't init local value. */
-				/*  On OP_CONST, value is the hints hash for
-					eval, so return a copy from pp_const() */
 				/*  On OP_SORT, subroutine is inlined. */
 				/*  On OP_NOT, inversion was implicit. */
 				/*  On OP_LEAVE, don't restore curpm. */
@@ -130,6 +137,10 @@ Deprecated.  Use C<GIMME_V> instead.
 				/*  On OP_SMARTMATCH, an implicit smartmatch */
 				/*  On OP_ANONHASH and OP_ANONLIST, create a
 					reference to the new anon hash or array */
+				/*  On OP_ENTER, store caller context */
+				/*  On OP_HELEM and OP_HSLICE, localization will be followed
+					by assignment, so do not wipe the target if it is special
+					(e.g. a glob or a magic SV) */
 
 /* old names; don't use in new code, but don't break them, either */
 #define OPf_LIST	OPf_WANT_LIST
@@ -184,7 +195,7 @@ Deprecated.  Use C<GIMME_V> instead.
 #define OPpENTERSUB_DB		16	/* Debug subroutine. */
 #define OPpENTERSUB_HASTARG	32	/* Called from OP tree. */
 #define OPpENTERSUB_NOMOD	64	/* Immune to mod() for :attrlist. */
-  /* OP_RV2CV only */
+  /* OP_ENTERSUB and OP_RV2CV only */
 #define OPpENTERSUB_AMPER	8	/* Used & form to call. */
 #define OPpENTERSUB_NOPAREN	128	/* bare sub call (without parens) */
 #define OPpENTERSUB_INARGS	4	/* Lval used as arg to a sub. */
@@ -233,6 +244,7 @@ Deprecated.  Use C<GIMME_V> instead.
 
 /* Private for OP_DELETE */
 #define OPpSLICE		64	/* Operating on a list of keys */
+/* Also OPpLVAL_INTRO (128) */
 
 /* Private for OP_EXISTS */
 #define OPpEXISTS_SUB		64	/* Checking for &sub, not {} or [].  */
@@ -246,8 +258,8 @@ Deprecated.  Use C<GIMME_V> instead.
 #define OPpSORT_QSORT		32	/* Use quicksort (not mergesort) */
 #define OPpSORT_STABLE		64	/* Use a stable algorithm */
 
-/* Private for OP_THREADSV */
-#define OPpDONE_SVREF		64	/* Been through newSVREF once */
+/* Private for OP_REVERSE */
+#define OPpREVERSE_INPLACE	8	/* reverse in-place (@a = reverse @a) */
 
 /* Private for OP_OPEN and OP_BACKTICK */
 #define OPpOPEN_IN_RAW		16	/* binmode(F,":raw") on input fh */
@@ -262,13 +274,6 @@ Deprecated.  Use C<GIMME_V> instead.
 /* Private for OP_FTXXX */
 #define OPpFT_ACCESS		2	/* use filetest 'access' */
 #define OPpFT_STACKED		4	/* stacked filetest, as in "-f -x $f" */
-#define OP_IS_FILETEST_ACCESS(op) 		\
-	(((op)->op_type) == OP_FTRREAD  ||	\
-	 ((op)->op_type) == OP_FTRWRITE ||	\
-	 ((op)->op_type) == OP_FTREXEC  ||	\
-	 ((op)->op_type) == OP_FTEREAD  ||	\
-	 ((op)->op_type) == OP_FTEWRITE ||	\
-	 ((op)->op_type) == OP_FTEEXEC)
 
 /* Private for OP_(MAP|GREP)(WHILE|START) */
 #define OPpGREP_LEX		2	/* iterate over lexical $_ */
@@ -332,49 +337,56 @@ struct pmop {
 };
 
 #ifdef USE_ITHREADS
-#define PM_GETRE(o)     (INT2PTR(REGEXP*,SvIVX(PL_regex_pad[(o)->op_pmoffset])))
-#define PM_SETRE(o,r)   STMT_START { \
-							SV* const sv = PL_regex_pad[(o)->op_pmoffset]; \
-							sv_setiv(sv, PTR2IV(r)); \
+#define PM_GETRE(o)	(SvTYPE(PL_regex_pad[(o)->op_pmoffset]) == SVt_REGEXP \
+			 ? (REGEXP*)(PL_regex_pad[(o)->op_pmoffset]) : NULL)
+/* The assignment is just to enforce type safety (or at least get a warning).
+ */
+/* With first class regexps not via a reference one needs to assign
+   &PL_sv_undef under ithreads. (This would probably work unthreaded, but NULL
+   is cheaper. I guess we could allow NULL, but the check above would get
+   more complex, and we'd have an AV with (SV*)NULL in it, which feels bad */
+/* BEWARE - something that calls this macro passes (r) which has a side
+   effect.  */
+#define PM_SETRE(o,r)	STMT_START {					\
+							REGEXP *const _pm_setre = (r);		\
+							assert(_pm_setre);				\
+				PL_regex_pad[(o)->op_pmoffset] = MUTABLE_SV(_pm_setre); \
 						} STMT_END
-#define PM_GETRE_SAFE(o) (PL_regex_pad ? PM_GETRE(o) : (REGEXP*)0)
-#define PM_SETRE_SAFE(o,r) if (PL_regex_pad) PM_SETRE(o,r)
 #else
 #define PM_GETRE(o)     ((o)->op_pmregexp)
 #define PM_SETRE(o,r)   ((o)->op_pmregexp = (r))
-#define PM_GETRE_SAFE PM_GETRE
-#define PM_SETRE_SAFE PM_SETRE
 #endif
 
 
-#define PMf_RETAINT	0x0001		/* taint $1 etc. if target tainted */
-#define PMf_ONCE	0x0002		/* match successfully only once per
+#define PMf_RETAINT	0x00000040	/* taint $1 etc. if target tainted */
+#define PMf_ONCE	0x00000080	/* match successfully only once per
 										   reset, with related flag RXf_USED
 										   in re->extflags holding state.
 					   This is used only for ?? matches,
 					   and only on OP_MATCH and OP_QR */
 
-#define PMf_UNUSED	0x0004		/* free for use */
-#define PMf_MAYBE_CONST	0x0008		/* replacement contains variables */
+#define PMf_UNUSED	0x00000100	/* free for use */
+#define PMf_MAYBE_CONST	0x00000200	/* replacement contains variables */
 
-#define PMf_USED        0x0010          /* PMf_ONCE has matched successfully.
+#define PMf_USED        0x00000400	/* PMf_ONCE has matched successfully.
 										   Not used under threading. */
 
-#define PMf_CONST	0x0040		/* subst replacement is constant */
-#define PMf_KEEP	0x0080		/* keep 1st runtime pattern forever */
-#define PMf_GLOBAL	0x0100		/* pattern had a g modifier */
-#define PMf_CONTINUE	0x0200		/* don't reset pos() if //g fails */
-#define PMf_EVAL	0x0400		/* evaluating replacement as expr */
+#define PMf_CONST	0x00000800	/* subst replacement is constant */
+#define PMf_KEEP	0x00001000	/* keep 1st runtime pattern forever */
+#define PMf_GLOBAL	0x00002000	/* pattern had a g modifier */
+#define PMf_CONTINUE	0x00004000	/* don't reset pos() if //g fails */
+#define PMf_EVAL	0x00008000	/* evaluating replacement as expr */
 
 /* The following flags have exact equivalents in regcomp.h with the prefix RXf_
- * which are stored in the regexp->extflags member.
+ * which are stored in the regexp->extflags member. If you change them here,
+ * you have to change them there, and vice versa.
  */
-#define PMf_LOCALE	0x00800		/* use locale for character types */
-#define PMf_MULTILINE	0x01000		/* assume multiple lines */
-#define PMf_SINGLELINE	0x02000		/* assume single line */
-#define PMf_FOLD	0x04000		/* case insensitivity */
-#define PMf_EXTENDED	0x08000		/* chuck embedded whitespace */
-#define PMf_KEEPCOPY	0x10000		/* copy the string when matching */
+#define PMf_MULTILINE	0x00000001	/* assume multiple lines */
+#define PMf_SINGLELINE	0x00000002	/* assume single line */
+#define PMf_FOLD	0x00000004	/* case insensitivity */
+#define PMf_EXTENDED	0x00000008	/* chuck embedded whitespace */
+#define PMf_KEEPCOPY	0x00000010	/* copy the string when matching */
+#define PMf_LOCALE	0x00000020	/* use locale for character types */
 
 /* mask of bits that need to be transfered to re->extflags */
 #define PMf_COMPILETIME	(PMf_MULTILINE|PMf_SINGLELINE|PMf_LOCALE|PMf_FOLD|PMf_EXTENDED|PMf_KEEPCOPY)
@@ -509,7 +521,9 @@ struct loop {
 #define cSVOPo_sv		cSVOPx_sv(o)
 #define kSVOP_sv		cSVOPx_sv(kid)
 
-#define Nullop Null(OP*)
+#ifndef PERL_CORE
+#  define Nullop ((OP*)NULL)
+#endif
 
 /* Lowest byte-and-a-bit of PL_opargs */
 #define OA_MARK 1
@@ -590,9 +604,9 @@ struct loop {
 #endif
 
 /* flags used by Perl_load_module() */
-#define PERL_LOADMOD_DENY		0x1
-#define PERL_LOADMOD_NOIMPORT		0x2
-#define PERL_LOADMOD_IMPORT_OPS		0x4
+#define PERL_LOADMOD_DENY		0x1	/* no Module */
+#define PERL_LOADMOD_NOIMPORT		0x2	/* use Module () */
+#define PERL_LOADMOD_IMPORT_OPS		0x4	/* use Module (...) */
 
 #if defined(PERL_IN_PERLY_C) || defined(PERL_IN_OP_C)
 #define ref(o, type) doref(o, type, TRUE)
@@ -602,6 +616,10 @@ struct loop {
 #ifndef PERL_CORE
 #define cv_ckproto(cv, gv, p) \
    cv_ckproto_len((cv), (gv), (p), (p) ? strlen(p) : 0)
+#endif
+
+#ifdef PERL_CORE
+#  define my(o)	my_attrs((o), NULL)
 #endif
 
 #ifdef USE_REENTRANT_API
@@ -631,7 +649,7 @@ struct loop {
 
 struct madprop {
 	MADPROP* mad_next;
-	const void *mad_val;
+	void *mad_val;
 	U32 mad_vlen;
 /*    short mad_count; */
 	char mad_key;

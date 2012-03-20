@@ -54,6 +54,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo.DropDownStyle = ComboBoxStyle.DropDownList;
 			//note: no exception is thrown if it can't find it.
 			m_combo.Font = new System.Drawing.Font("Arial Unicode MS", 10);
+			SetForeColor(parameters);
 			m_combo.SelectedValueChanged += new EventHandler(this.SelectionChanged);
 			m_combo.GotFocus += new EventHandler(m_combo_GotFocus);
 			m_combo.DropDownClosed += new EventHandler(m_combo_DropDownClosed);
@@ -66,6 +67,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
+		void SetForeColor(XmlNode parameters)
+		{
+			XmlNode node = parameters.SelectSingleNode("forecolor");
+			if (node != null)
+			{
+				m_combo.ForeColor = Color.FromName(node.InnerText);
+			}
+		}
 		public override void Install(DataTree parent)
 		{
 			base.Install(parent);

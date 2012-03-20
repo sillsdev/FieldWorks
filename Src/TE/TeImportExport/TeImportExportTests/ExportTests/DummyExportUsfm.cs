@@ -123,15 +123,17 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// <param name="para"></param>
 		/// ------------------------------------------------------------------------------------
-		public new void ExportParagraph(IStTxtPara para)
+		public void ExportParagraph(IStTxtPara para)
 		{
 			CheckDisposed();
 
 			InitializeStateVariables();
 			CreateStyleTables();
-			base.CreateAnnotationList(m_currentBookOrd);
-			base.m_currentParaIsHeading = false;
-			base.ExportParagraph(para);
+			CreateAnnotationList(m_currentBookOrd);
+			m_currentParaIsHeading = false;
+			IScrBook owningBook = (m_bookFilter != null) ? m_bookFilter.GetBookByOrd(m_currentBookOrd) :
+				m_scr.FindBook(m_currentBookOrd);
+			ExportParagraph(para, owningBook);
 		}
 
 		/// ------------------------------------------------------------------------------------

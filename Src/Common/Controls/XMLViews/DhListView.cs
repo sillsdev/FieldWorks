@@ -312,6 +312,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		private bool flip;
+
 		void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
 			var paleBlue = Color.FromArgb(187, 235, 254);
@@ -369,7 +371,9 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			else
+			{
 				e.DrawBackground(); // standard background
+			}
 			// Draw the header text.
 			if (realSize.Width > drawRect.Width)
 			{
@@ -1010,8 +1014,6 @@ namespace SIL.FieldWorks.Common.Controls
 				// The images are stored in that order, so the following works
 				m_columnIconIndexes[columnIndex] = (int)size + (3 * ((int)sortOrder - 1));
 			}
-
-			Update();
 		}
 
 		// Todo JohnT: These could possibly move to Win32Wrappers.

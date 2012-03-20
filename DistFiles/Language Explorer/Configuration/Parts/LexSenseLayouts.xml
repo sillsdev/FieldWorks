@@ -86,7 +86,7 @@
 	</layout>
 
 	 <layout class="LexSense" type="jtview" name="CrossRefPub">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 
@@ -94,7 +94,7 @@
 		<sublayout name="classifiedDictI1" group="para" style="Classified-Item"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="classifiedDictI1">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Classified-Headword"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Classified-Headword"/>
 		<part ref="MorphoSyntaxAnalysisPub" label="Category" before="" after=" " visibility="ifdata" style="Classified-POS"/>
 		<!-- Show the definition if it exists, otherwise show the gloss. -->
 		<part ref="SmartDefinitionPub" label="Definition" before="" after=" " visibility="ifdata" ws="analysis" sep=" " showLabels="false" style="Classified-Defn"/>
@@ -767,40 +767,40 @@
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishStemRefMainEntry">
-		<part ref="OwnerOutlinePub" label="Referenced Headword and Sense Number" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword and Sense Number" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishStemMinorRefMainEntry">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref-minor"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishRootMinorRefMainEntry">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref-minor"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-mainentryref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	</layout>
 
 	 <layout class="LexSense" type="jtview" name="publishStemCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishStemMinorCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootMinorCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootMinorSubCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootSubCrossRef">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-sub"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-sub"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 
@@ -814,27 +814,27 @@
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="ifdata" ws="analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishStemMinorComponentTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishStemMinorPrimaryTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootMinorComponentTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootMinorPrimaryTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootSubComponentTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 	 <layout class="LexSense" type="jtview" name="publishRootSubPrimaryTarget">
-		<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
 

@@ -294,28 +294,46 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 					if (!value)
 					{
-						Form frm = FindForm();
-						// frm may be null, if the record has been switched
-						WaitCursor wc = null;
-						try
-						{
-							if (frm != null)
-								wc = new WaitCursor(frm);
-							ConstraintFailure failure;
-							m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
-							// This will make the record list update to the new value.
-							Mediator.BroadcastMessage("Refresh", null);
-						}
-						finally
-						{
-							if (wc != null)
-								wc.Dispose();
-						}
+						DoValidation(true); // JohnT: do we really always want a Refresh? Trying to preserve the previous behavior...
 					}
 				}
 			}
 
 			#endregion INotifyControlInCurrentSlice implementation
+
+			private void DoValidation(bool refresh)
+			{
+				Form frm = FindForm();
+				// frm may be null, if the record has been switched
+				WaitCursor wc = null;
+				try
+				{
+					if (frm != null)
+						wc = new WaitCursor(frm);
+					ConstraintFailure failure;
+					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
+					// This will make the record list update to the new value.
+					if(refresh)
+						Mediator.BroadcastMessage("Refresh", null);
+				}
+				finally
+				{
+					if (wc != null)
+						wc.Dispose();
+				}
+			}
+
+			/// <summary>
+			/// This method seems to get called when we are switching to another tool (or area, or slice) AND when the
+			/// program is shutting down. This makes it a good point to check constraints, since in some of these
+			/// cases, SliceIsCurrent may not get set false.
+			/// </summary>
+			protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+			{
+				base.OnValidating(e);
+				// Only necessary to ensure that validation is done when window is going away. We don't need a Refresh then!
+				DoValidation(false);
+			}
 
 			public override void MakeRoot()
 			{

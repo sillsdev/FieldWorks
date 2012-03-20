@@ -140,7 +140,7 @@
 	<value>There was a problem opening the current version of the file {0}, dated {1}. Would you like to open the automatic backup, {2}, dated {3}?</value>
   </data>
   <data name="ksLoadingPartsOfSpeech" xml:space="preserve">
-	<value>Loading the initial Parts of Speech</value>
+	<value>Loading the initial Grammatical Categories</value>
   </data>
   <data name="kstidProblemOpeningFile" xml:space="preserve">
 	<value>Problem opening file</value>

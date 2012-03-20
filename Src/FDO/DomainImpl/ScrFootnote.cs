@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IScrTxtPara para = ParaContainingOrcRA;
 			if (para != null && para.IsValidObject)
 			{
-				para.DeleteAnyBtMarkersForFootnote(this.Guid);
+				para.DeleteAnyBtMarkersForObject(this.Guid);
 				ITsString tssContent = para.Contents;
 				TsRunInfo runInfo = new TsRunInfo();
 				int i;

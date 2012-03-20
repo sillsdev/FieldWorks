@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
+using System.Xml;
 using Palaso.Media;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
@@ -40,6 +41,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		List<IWritingSystem> m_rgwsToDisplay;
 		LabeledMultiStringVc m_vc = null;
 		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
+		private string m_textStyle;
 
 		/// <summary>
 		/// This event is triggered at the start of the Display() method of the VC.
@@ -243,6 +245,41 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_rootb != null)
 			{
 				m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
+			}
+		}
+		/// <summary>
+		/// Get any text styles from configuration node (which is now available; it was not at construction)
+		/// </summary>
+		/// <param name="configurationNode"></param>
+		public void FinishInit(XmlNode configurationNode)
+		{
+			if (configurationNode.Attributes != null)
+			{
+				var textStyle = configurationNode.Attributes["textStyle"];
+				if (textStyle != null)
+				{
+					TextStyle = textStyle.Value;
+				}
+			}
+			FinishInit();
+		}
+
+		/// <summary>
+		/// Get or set the text style name
+		/// </summary>
+		public string TextStyle
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(m_textStyle))
+				{
+					m_textStyle = "Default Paragraph Characters";
+				}
+				return m_textStyle;
+			}
+			set
+			{
+				m_textStyle = value;
 			}
 		}
 
@@ -1287,6 +1324,26 @@ namespace SIL.FieldWorks.Common.Widgets
 			//				qtpf->MakeProps(stuLangCodeStyle.Bstr(), ???->UserWs(), 0, &qttp);
 		}
 
+		public virtual string TextStyle
+		{
+			get
+			{
+
+				string sTextStyle = "Default Paragraph Characters";
+/*
+				if (m_view != null)
+				{
+					sTextStyle = m_view.TextStyle;
+				}
+*/
+				return sTextStyle;
+			}
+			set
+			{
+				/*m_textStyle = value;*/
+			}
+		}
+
 		public void Reuse(int flid, List<IWritingSystem> rgws, bool editable)
 		{
 			m_flid = flid;
@@ -1408,6 +1465,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				else
 				{
+					if (!string.IsNullOrEmpty(TextStyle))
+					{
+						vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, TextStyle);
+
+					}
 					vwenv.AddStringAltMember(m_flid, m_rgws[i].Handle, this);
 				}
 				vwenv.CloseTableCell();
@@ -1491,6 +1553,26 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			return false;
 		}
+		public override string TextStyle
+		{
+			get
+			{
+				string sTextStyle = "Default Paragraph Characters";
+				if (m_view != null)
+				{
+					sTextStyle = m_view.TextStyle;
+				}
+				return sTextStyle;
+			}
+			set
+			{
+				if (m_view != null)
+				{
+					m_view.TextStyle = value;
+				}
+			}
+		}
+
 	}
 
 	/// <summary>

@@ -5738,3 +5738,53 @@ NaylorJ, 10 Feb 2012. Added the first 2 of 3 integration points to FieldworksBri
 TomB, 14 Feb 2012. TE-9529: Added a command to help user find places where a footnote marker is missing in the BT
 RickM, 14 Feb 2012. LT-12720 Clicking on "Import --> Lift Lexicon leads to crash.
 NaylorJ, 14 Feb 2012. Added the option for obtaining a project to the open project menu for LT-12693
+EberhardB, 15 Feb 2012. Integration Calgary/WW -> WW.
+NaylorJ, 15 Feb 2012. Initial FLEx to FLExBridge communication, part of LT-12525
+TomB, 16 Feb 2012. TXL-109: After user enters a translation, if they immediately click Confirm, the checkbox is selected, not cleared.
+NaylorJ, 16 Feb 2012. Make missing FLExBridge registry key non-catastrophic.
+TomB, 16 Feb 2012. TXL-108: Fixed crash when trying to confirm a translation consisting only of initial and final punctuation.
+	(Also, went ahead and prevented confirmation of such a translation.)
+NaylorJ, 16 Feb 2012. Modified the key location for FLExBridge added a backup location of the CodeDir, now it sort of works. LT-12525
+NaylorJ, 20 Feb 2012. Updated the service communication code. Should freeze and re-awaken flex on the bridge launch in all cases. LT-12525
+NaylorJ, 20 Feb 2012. Improve behavior on bridge green screen errors. LT-12525
+GordonM, 20 Feb 2012. LT-12650 improve IText handling of merge problems.
+NaylorJ, 21 Feb 2012. Manage lock file so that Send/Receive launched from FLEx works. LT-12525
+TomB, 21 Feb 2012. TE-9534 (part of TE-6013): Fixed USFM export so that footnotes from back translation will always be exported
+NaylorJ, 21 Feb 2012. Fixed bug in the SequenceFixer, handle reloading of project modified by Send/Receive.
+TomB, 21 Feb 2012. TXL-110: Changed TXL so the toolbar and answers pane are on by default (for new users).
+	TXL-111: Fixed crash when drawing key terms pane using certain complex-script fonts.
+NaylorJ, 22 Feb 2012. Renamed FieldworksBridge to FLExBridge.
+TomB, 23 Feb 2012. TE-9538: Prevented "database contains a corrupted record" message during normal shut-down of TE.
+	Improved handling of exceptions on the data loading thread.
+TomB, 23 Feb 2012. TE-9536, TE-9539: Removed (undocumented) option from Scripture Properties dialog box that false advertized
+	ability to convert script digits to Arabic numerals for (all) exports, and made the checkbox for this setting
+	in the Toolbox export dialog work correctly without crashing. Paratext exports now always do script digit
+	conversion because otherwise they won't work in Paratext.
+AlistairI, 29 Feb 2012. Integration from WW_VS2010: Upgrade to VS2010.
+KenZ, 29 Feb 2012. JohnT fixed LT-12471 on my machine where it was occurring.
+RandyR, 5 March 2012. Add the offical FLEx Bridge installer and remove the older placeholder installer.
+EricP, 7 March 2012. Added "Disabled" property to PhSegmentRule, MoCompoundRule, MoAdhocProhib, MoInflAffixTemplate.
+	(LT-10471 "Allow user ability to turn phonological rules on or off")
+KenZ, 7 Mar 2012. Updated vcproj files to VS2010.
+EricP, 8 Mar 2012. See LT-9137 "Allow proclitics or enclitics to be constrained by order".
+	Model Change (7000054): Added "ProcliticSlots" and "EncliticSlots" reference sequence properties to MoInflAffixTemplate.
+	Also added "Slots" reference collection property to MoStemMsa. No data migration needed for this optional new capability.
+RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10".
+RandyR, 8 March 2012. Fixed LT-12854 "Crash using 3/8 build of FLEx and FLExBridge 0.3.10" (again, but this time for DM 7000054).
+RandyR, 12 March 2012. Added comment to model file about the need to also change the MDC in FLEx bridge.
+Andy Black, 13 Mar 2012. LT-10471 "Allow user ability to turn phonological rules on or off".
+	Also did this for affix templates, compound rules, and ad hoc rules.
+TomB, 14 Mar 2012. Upgraded additional project and Designer files fo VS 2010.
+KenZ, 15 Mar 2012. Updated FlexBridge installer (0.3.13) from Randy.
+TomB, 15 Mar 2012. TE-8956, TE-9543, TE-9533, TE-9542: Enabled pasting of footnote callers in back translations.
+	Also removed preprocessor directives that relied on the definition of NET_4_0.
+KenZ, 15 Mar 2012. Updated FlexBridge installer (0.3.14) from Randy.
+EricP, 16 Mar 2012. LT-7581 "Have parser know about inflectional variant entries".
+	Model Change (7000055): Created class LexEntryInflType (num 133 in Ling) based on LexEntryType.
+	Added atomic reference attribute InflType to WfiMorphBundle with target of LexEntryInflType.
+	No data migration needed.
+RandyR, 8 March 2012. Updated FLEx Bridge installer (0.3.15) which adds support for FW's DM 7000055.
+RandyR, 18 March 2012. Updated FLEx Bridge installer (0.3.17) which fixes a few actual and potential validation bugs.
+TomB, 15 Mar 2012. TE-9038: Enabled displaying pictures in the BT so captions can be edited.
+	TE-9544: Enabled deleting picture ORC in the BT and handling deletion of BT picture ORCs when a picture is
+	deleted in the vernacular.

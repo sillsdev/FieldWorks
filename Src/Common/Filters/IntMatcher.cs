@@ -104,7 +104,7 @@ namespace  SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------------
 		public override bool Matches(ITsString stringval)
 		{
-			if (stringval == null)
+			if (stringval == null || String.IsNullOrEmpty(stringval.Text))
 				return false;
 			int val = Int32.Parse(stringval.Text);
 			return val >= m_min && val <= m_max;

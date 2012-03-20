@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -144,14 +145,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="captionTss">The caption</param>
 		/// <param name="sFolder">The name of the CmFolder where picture should be stored</param>
 		/// ------------------------------------------------------------------------------------
-		public ICmPicture InsertPicture(string srcFilename, ITsString captionTss, string sFolder)
+		public void InsertPicture(string srcFilename, ITsString captionTss, string sFolder)
 		{
 			CheckDisposed();
 
-			ICmPicture pict = m_cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(srcFilename, captionTss, sFolder);
-			// Add the ORC to the text at the insertion point.
-			InsertPicture(pict);
-			return pict;
+			// Create the picture and add the ORC to the text at the insertion point.
+			InsertPicture(m_cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(
+				srcFilename, captionTss, sFolder));
 		}
 		#endregion
 
@@ -451,13 +451,13 @@ namespace SIL.FieldWorks.Common.Framework
 		#region Private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Inserts a ORC pointing to hvoObjToInsert at the current selection location.
+		/// Inserts an ORC pointing to hvoObjToInsert at the current selection location.
 		/// Enhance JohnT: should move this to RootSite or similar location where all clients
 		/// can readily use it.
 		/// </summary>
 		/// <param name="pict">The picture to insert</param>
 		/// ------------------------------------------------------------------------------------
-		private void InsertPicture(ICmPicture pict)
+		public void InsertPicture(ICmPicture pict)
 		{
 			// get selection information
 			ITsString tss;

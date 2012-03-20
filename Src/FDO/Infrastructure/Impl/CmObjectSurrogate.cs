@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Utils;
+using System.Threading;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -504,6 +505,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							((IServiceLocatorInternal)m_cache.ServiceLocator).IdentityMap.RegisterActivatedSurrogate(this);
 						}
 					}
+					Debug.Assert(m_object != null, "Surrogate should not exist without being able to create an object");
+				}
+				catch (ThreadAbortException)
+				{
+					// Ignore. This can happen if the domain loading thread is excessively busy when the application is being shut down.
 				}
 				catch (Exception e)
 				{
@@ -514,18 +520,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					// we are holding.
 					// Also, throwing an unhandled exception in a background thread can abort the process
 					// possibly without ever showing a message.
-					var msg = string.Format(Strings.ksBadData, e.Message, sXml);
+					string fullMsg = string.Format(Strings.ksBadData, m_cache.ProjectId.UiName, e.Message, sXml);
+					string msg = fullMsg;
 					// limit length of message so that message box is more likely to fit on the screen.
 					var lines = msg.Split('\n');
 					const int nLines = 40;
 					if (lines.Length > nLines)
 						msg = String.Join("\n", lines.Take(nLines).ToArray()) + "\n...";
-					// It would be nice to Invoke this on the ActiveForm if any, but I've run into at least
-					// one case where that window doesn't have a handle yet, making Invoke improper.
-					MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					throw;
+					m_cache.ThreadHelper.Invoke(() =>
+					{
+						MessageBox.Show(null, msg, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						ErrorReporter.ReportException(new Exception(fullMsg, e), null, null, null, true);
+					});
 				}
-				Debug.Assert(m_object != null, "Surrogate should not exist without being able to create an object");
 				return m_object;
 			}
 		}

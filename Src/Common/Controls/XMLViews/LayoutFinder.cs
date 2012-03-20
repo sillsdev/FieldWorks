@@ -377,8 +377,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// more efficient. This one looks to see whether its ColSpec specifies a preload,
 		/// and if so, invokes it.
 		/// </summary>
-		public void Preload()
+		public void Preload(object rootObj)
 		{
+			if (m_vc != null)
+				m_vc.SetReversalWritingSystemFromRootObject(rootObj);
 			string preload = XmlUtils.GetOptionalAttributeValue(m_colSpec, "preload", null);
 			if (String.IsNullOrEmpty(preload))
 				return;

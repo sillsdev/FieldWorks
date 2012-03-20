@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Res">
+	  <UniqueIdentifier>{8059275f-6504-4830-8017-9f40dca77c4c}</UniqueIdentifier>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="Res\AfExport.rc">
+	  <Filter>Res</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="Res\CmnFwDlgs.rc">
+	  <Filter>Res</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="Res\RnAnthroList.rc">
+	  <Filter>Res</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="Res\TeFmtGenDlg.rc">
+	  <Filter>Res</Filter>
+	</ResourceCompile>
+	<ResourceCompile Include="Res\TeStylesDlg.rc">
+	  <Filter>Res</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="Res\AfExportRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="Res\LangProjPropDlgRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="Res\OpenProjDlgRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="Res\RnAnthroListRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="Res\TeFmtGenDlgRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="Res\TeStylesDlgRes.h">
+	  <Filter>Res</Filter>
+	</ClInclude>
+	<ClInclude Include="AfExportDlg.h" />
+	<ClInclude Include="FwCheckAnthroList.h" />
+	<ClInclude Include="FwDbMergeStyles.h" />
+	<ClInclude Include="FwDbMergeWrtSys.h" />
+	<ClInclude Include="FwExportDlg.h" />
+	<ClInclude Include="FwStylesDlg.h" />
+	<ClInclude Include="Main.h" />
+	<ClInclude Include="OpenFWProjectDlg.h" />
+	<ClInclude Include="OpenProjDlg.h" />
+	<ClInclude Include="RnAnthroListDlg.h" />
+	<ClInclude Include="TeStylesDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="AfExportDlg.cpp" />
+	<ClCompile Include="FwCheckAnthroList.cpp" />
+	<ClCompile Include="FwDbMergeStyles.cpp" />
+	<ClCompile Include="FwDbMergeWrtSys.cpp" />
+	<ClCompile Include="FwExportDlg.cpp" />
+	<ClCompile Include="FwStylesDlg.cpp" />
+	<ClCompile Include="OpenFWProjectDlg.cpp" />
+	<ClCompile Include="OpenProjDlg.cpp" />
+	<ClCompile Include="RnAnthroListDlg.cpp" />
+	<ClCompile Include="TeStylesDlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="CmnFwDlgs.def" />
+	<None Include="CmnFwDlgs.idh" />
+	<None Include="CmnFwDlgs.mak" />
+	<None Include="..\..\Bin\mkComFWDlgs.bat" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="CmnFwDlgsPs.idl" />
+	<Midl Include="CmnFwDlgsTlb.idl" />
+  </ItemGroup>
+</Project>

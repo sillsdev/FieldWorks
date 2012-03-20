@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Bounds|Win32">
+	  <Configuration>Bounds</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectName>Generic</ProjectName>
+	<ProjectGuid>{7F6B25EE-CD22-4E4C-898D-A0F846E6E9D4}</ProjectGuid>
+	<RootNamespace>Generic</RootNamespace>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Bounds\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Bounds\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Generic.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkGenLib.bat d</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkGenLib.bat d cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generic.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generic.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="BinTree_i.cpp" />
+	<ClCompile Include="ComHashMap_i.cpp" />
+	<ClCompile Include="ComMultiMap_i.cpp" />
+	<ClCompile Include="ComVector.cpp" />
+	<ClCompile Include="DataStream.cpp" />
+	<ClCompile Include="Debug.cpp" />
+	<ClCompile Include="DllModul.cpp" />
+	<ClCompile Include="FileStrm.cpp" />
+	<ClCompile Include="FwSettings.cpp" />
+	<ClCompile Include="GenericFactory.cpp" />
+	<ClCompile Include="GpHashMap_i.cpp" />
+	<ClCompile Include="HashMap.cpp" />
+	<ClCompile Include="HashMap_i.cpp" />
+	<ClCompile Include="MakeDir.cpp" />
+	<ClCompile Include="ModuleEntry.cpp" />
+	<ClCompile Include="MultiMap_i.cpp" />
+	<ClCompile Include="OleStringLiteral.cpp" />
+	<ClCompile Include="proxystub.c" />
+	<ClCompile Include="ResourceStrm.cpp" />
+	<ClCompile Include="Set_i.cpp" />
+	<ClCompile Include="StackDumper.cpp" />
+	<ClCompile Include="StringStrm.cpp" />
+	<ClCompile Include="StrUtil.cpp" />
+	<ClCompile Include="TextProps1.cpp" />
+	<ClCompile Include="Util.cpp" />
+	<ClCompile Include="UtilFile.cpp" />
+	<ClCompile Include="UtilSil.cpp" />
+	<ClCompile Include="UtilString.cpp" />
+	<ClCompile Include="UtilTime.cpp" />
+	<ClCompile Include="UtilXml.cpp" />
+	<ClCompile Include="Vector_i.cpp" />
+	<ClCompile Include="Zipper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="BinTree.h" />
+	<ClInclude Include="ComHashMap.h" />
+	<ClInclude Include="common.h" />
+	<ClInclude Include="ComMultiMap.h" />
+	<ClInclude Include="ComSmartPtr.h" />
+	<ClInclude Include="ComSmartPtrImpl.h" />
+	<ClInclude Include="ComVector.h" />
+	<ClInclude Include="CSupportErrorInfo.h" />
+	<ClInclude Include="DataReader.h" />
+	<ClInclude Include="DataStream.h" />
+	<ClInclude Include="DataWriter.h" />
+	<ClInclude Include="debug.h" />
+	<ClInclude Include="DispatchImpl.h" />
+	<ClInclude Include="FileStrm.h" />
+	<ClInclude Include="FwSettings.h" />
+	<ClInclude Include="GenericFactory.h" />
+	<ClInclude Include="GenericResource.h" />
+	<ClInclude Include="GenSmartPtr.h" />
+	<ClInclude Include="GpHashMap.h" />
+	<ClInclude Include="HashMap.h" />
+	<ClInclude Include="LinkedList.h" />
+	<ClInclude Include="main.h" />
+	<ClInclude Include="MakeDir.h" />
+	<ClInclude Include="ModuleEntry.h" />
+	<ClInclude Include="MultiMap.h" />
+	<ClInclude Include="Mutex.h" />
+	<ClInclude Include="OleStringLiteral.h" />
+	<ClInclude Include="proxystub.h" />
+	<ClInclude Include="ResourceStrm.h" />
+	<ClInclude Include="Set.h" />
+	<ClInclude Include="SmartBstr.h" />
+	<ClInclude Include="SmartVariant.h" />
+	<ClInclude Include="StackDumper.h" />
+	<ClInclude Include="StringStrm.h" />
+	<ClInclude Include="TextProps.h" />
+	<ClInclude Include="Throwable.h" />
+	<ClInclude Include="UtilCom.h" />
+	<ClInclude Include="UtilFile.h" />
+	<ClInclude Include="UtilInt.h" />
+	<ClInclude Include="UtilMem.h" />
+	<ClInclude Include="UtilPersist.h" />
+	<ClInclude Include="UtilRect.h" />
+	<ClInclude Include="UtilRegistry.h" />
+	<ClInclude Include="UtilSil.h" />
+	<ClInclude Include="UtilSort.h" />
+	<ClInclude Include="UtilString.h" />
+	<ClInclude Include="UtilTime.h" />
+	<ClInclude Include="UtilTypeLib.h" />
+	<ClInclude Include="UtilXml.h" />
+	<ClInclude Include="Vector.h" />
+	<ClInclude Include="wn95scm.h" />
+	<ClInclude Include="Zipper.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="Generic.rc" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="common.idh" />
+	<None Include="GenericInc.mak" />
+	<None Include="GenericLib.mak" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

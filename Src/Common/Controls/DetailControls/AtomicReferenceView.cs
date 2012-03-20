@@ -19,6 +19,7 @@
 using System;
 using System.Drawing;
 using System.Diagnostics;
+using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
@@ -131,6 +132,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				if (w1 != w2 && w2 > Width)
 				{
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get any text styles from configuration node (which is now available; it was not at construction)
+		/// </summary>
+		/// <param name="configurationNode"></param>
+		public void FinishInit(XmlNode configurationNode)
+		{
+			if (configurationNode.Attributes != null)
+			{
+				var textStyle = configurationNode.Attributes["textStyle"];
+				if (textStyle != null)
+				{
+					TextStyle = textStyle.Value;
+					if (m_atomicReferenceVc != null)
+					{
+						m_atomicReferenceVc.TextStyle = textStyle.Value;
+					}
 				}
 			}
 		}
@@ -262,6 +283,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		#endregion
 
+		#region Properties
+
+		#endregion
 	}
 
 	#region AtomicReferenceVc class
@@ -273,6 +297,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		protected int m_flid;
 		protected string m_displayNameProperty;
+		private string m_textStyle;
 
 		public AtomicReferenceVc(FdoCache cache, int flid, string displayNameProperty)
 		{
@@ -374,6 +399,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							}
 						}
 					}
+					if (!string.IsNullOrEmpty(TextStyle))
+					{
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
+
+					}
 					vwenv.AddString(tss);
 				}
 					break;
@@ -393,6 +423,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			ISilDataAccess sda = vwenv.DataAccess;
 			return sda.get_ObjectProp(hvo, m_flid);
 		}
+		public string TextStyle
+		{
+			get
+			{
+				string sTextStyle = "Default Paragraph Characters";
+				if (!string.IsNullOrEmpty(m_textStyle))
+				{
+					sTextStyle = m_textStyle;
+				}
+				return sTextStyle;
+			}
+			set
+			{
+					m_textStyle = value;
+			}
+		}
+
 	}
 
 	#endregion // AtomicReferenceVc class

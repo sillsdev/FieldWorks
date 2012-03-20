@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.IText
 				// if we edit something that deletes the current wordform in a concordance view.
 				// In that case we don't want to steal the focus.
 				if (ParentForm == Form.ActiveForm)
-					FocusBox.Focus();
+					FocusBox.FocusSandbox();
 			}
 
 			if (fMakeDefaultSelection)
@@ -1239,8 +1239,13 @@ namespace SIL.FieldWorks.IText
 			curNoteIndex = -1;
 			if (tag == NoteTags.kflidContent)
 			{
-				curNoteIndex = rgvsli[clev - 4].ihvo;
-				curNote = curSeg.NotesOS[curNoteIndex];
+				//if clev == 5 then we have both a Free Translation and some number of Notes
+				//otherwise I assume we have only a Free Translation if clev == 4
+				if (clev == 5)
+				{
+					curNoteIndex = rgvsli[0].ihvo; //if there are multiple Notes the index could be more than 0
+					curNote = curSeg.NotesOS[curNoteIndex];
+				}
 			}
 		}
 
@@ -1366,7 +1371,7 @@ namespace SIL.FieldWorks.IText
 			if (selStart <= 0)
 				return WhichEnd.Left;
 			//if (isRightToLeft ? selStart <= 0 : selEnd >= selLength - 1)
-			if (selEnd >= selLength - 1)
+			if (selEnd >= selLength)
 				return WhichEnd.Right; // this happens with punctuation at end!
 			return WhichEnd.Neither;
 		}

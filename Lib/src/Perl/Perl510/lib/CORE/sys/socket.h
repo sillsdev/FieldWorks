@@ -16,15 +16,17 @@ extern "C" {
 #endif
 #include <windows.h>
 
-
 /* Too late to include winsock2.h if winsock.h has already been loaded */
 #ifndef _WINSOCKAPI_
+#  ifndef FD_SETSIZE
+#    define FD_SETSIZE 2048
+#  endif
 #  if defined(UNDER_CE) && UNDER_CE <= 300
 	 /* winsock2 only for 4.00+ */
 #    include <winsock.h>
 #  else
-#  include <winsock2.h>
-#endif
+#    include <winsock2.h>
+#  endif
 #endif
 
 #include "win32.h"
@@ -34,7 +36,7 @@ extern "C" {
 #ifdef USE_SOCKETS_AS_HANDLES
 
 #ifndef PERL_FD_SETSIZE
-#define PERL_FD_SETSIZE		64
+#  define PERL_FD_SETSIZE 2048
 #endif
 
 #define PERL_BITS_PER_BYTE	8

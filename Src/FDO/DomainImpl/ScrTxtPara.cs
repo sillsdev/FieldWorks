@@ -2071,7 +2071,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// If there's no (vernacular) paragraph with an ORC that references this
 				// footnote, there can't be a translation either.
 				if (para != null && para.IsValidObject)
-					para.DeleteAnyBtMarkersForFootnote(footnote.Guid);
+					para.DeleteAnyBtMarkersForObject(footnote.Guid);
 				book.FootnotesOS.Remove(footnote);
 			}
 		}

@@ -746,7 +746,7 @@ A stack dump has been copied to the clipboard.  Please email it and your LIFT fi
 	<value>{0} entries processed on import, adding {1} entries and {2} senses to the project, and deleting {3} entries.</value>
   </data>
   <data name="ksPartsOfSpeechAdded" xml:space="preserve">
-	<value>The following Parts of Speech were added to the language project:</value>
+	<value>The following Grammatical Categories were added to the language project:</value>
   </data>
   <data name="ksMorphTypesAdded" xml:space="preserve">
 	<value>The following Morph Types were added to the language project:</value>

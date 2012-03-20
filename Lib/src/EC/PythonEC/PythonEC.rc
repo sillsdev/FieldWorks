@@ -41,7 +41,7 @@ END
 
 3 TEXTINCLUDE
 BEGIN
-	"1 TYPELIB ""PythonEC25b.tlb""\r\0"
+	"1 TYPELIB ""PythonEC27.tlb""\r\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,1,0,1
- PRODUCTVERSION 3,1,0,0
+ FILEVERSION 4,0,0,0
+ PRODUCTVERSION 4,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -72,13 +72,13 @@ BEGIN
 			VALUE "Comments", "COM interface for Python Script Encoding Converters"
 			VALUE "CompanyName", "SIL"
 			VALUE "FileDescription", "Python Script Encoding Converter"
-			VALUE "FileVersion", "3.1.0.1"
+			VALUE "FileVersion", "4.0.0.0"
 			VALUE "InternalName", "PythonEC.dll"
-			VALUE "LegalCopyright", "Copyright (c) 2003-2009 SIL. All rights reserved."
-			VALUE "LegalTrademarks", "Copyright (c) 2003-2009 SIL. All rights reserved."
+			VALUE "LegalCopyright", "Copyright (c) 2003-2012 SIL. All rights reserved."
+			VALUE "LegalTrademarks", "Copyright (c) 2003-2012 SIL. All rights reserved."
 			VALUE "OriginalFilename", "PythonEC.dll"
 			VALUE "ProductName", "PythonEC Module"
-			VALUE "ProductVersion", "3.1.0.0"
+			VALUE "ProductVersion", "4.0.0.0"
 		END
 	END
 	BLOCK "VarFileInfo"
@@ -165,7 +165,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "PythonEC25b.tlb"
+1 TYPELIB "PythonEC27.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

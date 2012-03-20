@@ -523,11 +523,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var result = m_lexEntryRefFactory.Create();
 			owner.EntryRefsOS.Add(result);
+			result.RefType = type;
 			foreach (var obj in components)
 				result.ComponentLexemesRS.Add(obj);
 			foreach (var obj in primaryComponents)
 				result.PrimaryLexemesRS.Add(obj);
-			result.RefType = type;
 			return result;
 		}
 

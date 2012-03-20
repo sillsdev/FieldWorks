@@ -97,11 +97,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// when this is not in all, that means there is another clerk managing a list,
+		/// when this is not null, that means there is another clerk managing a list,
 		/// and the selected item of that list provides the object that this
 		/// RecordClerk gets items out of. For example, the WfiAnalysis clerk
-		/// is dependent on the WfiWordform clerk to tell at which wordform it is supposed to
-		/// the displaying the analyses of.
+		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
+		/// be displaying the analyses of.
 		/// </summary>
 		protected string m_clerkProvidingRootObject;
 
@@ -571,6 +571,7 @@ namespace SIL.FieldWorks.XWorks
 				if (sorterNode != null)
 				{
 					sorter = PropertyRecordSorter.Create(cache, sorterNode);
+					m_sortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
 				}
 			}
 			// If sorter is null, allow any sorter which may have been installed during
@@ -1695,7 +1696,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string value = filter.id;
 			string imageName = filter.imageName;
-			//since we are storing actual, instantiated filter objects, there's no point and also keeping their configuration information separately. Any configuration information they had would have already been sucked in when the filter was created.
+			// Since we are storing actual, instantiated filter objects, there's no point in also keeping
+			// their configuration information separately. Any configuration information they had would
+			// have already been sucked in when the filter was created.
 			display.List.Add(filter.Name, value, imageName, null);
 		}
 
@@ -2734,6 +2737,9 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnDisplayChangeFilterClearAll(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
+
+			if (!IsPrimaryClerk)
+				return false; // Let the primary clerk have a chance to handle this! (See LT-12786)
 
 			if (Filter != null && Filter.IsUserVisible)
 			{

@@ -218,6 +218,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					slice = new CheckboxSlice(cache, obj, flid, node);
 					break;
 				}
+				case "checkboxwithrefresh":
+				{
+					slice = new CheckboxRefreshSlice(cache, obj, flid, node);
+					break;
+				}
 				case "time":
 				{
 					slice = new DateSlice(cache, obj, flid);
@@ -247,10 +252,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					slice = new AtomicReferencePOSSlice(cache, obj, flid, persistenceProvider, mediator);
 					break;
 				}
+				case "atomicreferenceposdisabled":
+				{
+					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, persistenceProvider, mediator);
+					break;
+				}
 
 				case "defaultatomicreference":
 				{
 					slice = new AtomicReferenceSlice(cache, obj, flid);
+					break;
+				}
+				case "defaultatomicreferencedisabled":
+				{
+					slice = new AtomicReferenceDisabledSlice(cache, obj, flid);
 					break;
 				}
 

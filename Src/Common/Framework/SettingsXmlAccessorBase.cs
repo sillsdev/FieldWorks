@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.Framework
 			try
 			{
 				XmlReaderSettings settings = new XmlReaderSettings();
-#if NET_4_0 && !__MonoCS__
+#if !__MonoCS__
 				settings.DtdProcessing = DtdProcessing.Parse;
 #else
 				settings.ProhibitDtd = false;

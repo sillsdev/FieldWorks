@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Bounds|Win32">
+	  <Configuration>Bounds</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{7B6C898F-350C-41E1-BC05-BF5DB723EB5C}</ProjectGuid>
+	<RootNamespace>CommonDlgs</RootNamespace>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\bin\mkcomFWDlgs.bat b</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\bin\mkcomFWDlgs.bat b cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\output\Bounds\CmnFWDlgs.Dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkcomFWDlgs.bat d</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkcomFWDlgs.bat d cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\output\debug\CmnFWDlgs.Dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkcomFWDlgs.bat r</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\mkcomFWDlgs.bat r cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\output\release\CmnFWDlgs.Dll</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ResourceCompile Include="Res\AfExport.rc" />
+	<ResourceCompile Include="Res\CmnFwDlgs.rc" />
+	<ResourceCompile Include="Res\RnAnthroList.rc" />
+	<ResourceCompile Include="Res\TeFmtGenDlg.rc" />
+	<ResourceCompile Include="Res\TeStylesDlg.rc" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="Res\AfExportRes.h" />
+	<ClInclude Include="Res\LangProjPropDlgRes.h" />
+	<ClInclude Include="Res\OpenProjDlgRes.h" />
+	<ClInclude Include="Res\RnAnthroListRes.h" />
+	<ClInclude Include="Res\TeFmtGenDlgRes.h" />
+	<ClInclude Include="Res\TeStylesDlgRes.h" />
+	<ClInclude Include="AfExportDlg.h" />
+	<ClInclude Include="FwCheckAnthroList.h" />
+	<ClInclude Include="FwDbMergeStyles.h" />
+	<ClInclude Include="FwDbMergeWrtSys.h" />
+	<ClInclude Include="FwExportDlg.h" />
+	<ClInclude Include="FwStylesDlg.h" />
+	<ClInclude Include="Main.h" />
+	<ClInclude Include="OpenFWProjectDlg.h" />
+	<ClInclude Include="OpenProjDlg.h" />
+	<ClInclude Include="RnAnthroListDlg.h" />
+	<ClInclude Include="TeStylesDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="AfExportDlg.cpp" />
+	<ClCompile Include="FwCheckAnthroList.cpp" />
+	<ClCompile Include="FwDbMergeStyles.cpp" />
+	<ClCompile Include="FwDbMergeWrtSys.cpp" />
+	<ClCompile Include="FwExportDlg.cpp" />
+	<ClCompile Include="FwStylesDlg.cpp" />
+	<ClCompile Include="OpenFWProjectDlg.cpp" />
+	<ClCompile Include="OpenProjDlg.cpp" />
+	<ClCompile Include="RnAnthroListDlg.cpp" />
+	<ClCompile Include="TeStylesDlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="CmnFwDlgs.def" />
+	<None Include="CmnFwDlgs.idh" />
+	<None Include="CmnFwDlgs.mak" />
+	<None Include="..\..\Bin\mkComFWDlgs.bat" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="CmnFwDlgsPs.idl" />
+	<Midl Include="CmnFwDlgsTlb.idl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

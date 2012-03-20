@@ -950,4 +950,8 @@ The error was:
 	<value>Choose Associated FieldWorks Project</value>
 	<comment>Title for the Open Project Dialog when called from an external application to associate a FieldWorks project with that application</comment>
   </data>
+  <data name="ksUnauthorizedRenameBakFile" xml:space="preserve">
+	<value>The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually.</value>
+	<comment>Displayed if we try to open a .bak file (because there isn't an fwdata one) and the system won't allow it.</comment>
+  </data>
 </root>

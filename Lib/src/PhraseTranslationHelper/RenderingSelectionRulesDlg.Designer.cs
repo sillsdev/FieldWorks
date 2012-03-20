@@ -101,6 +101,7 @@ namespace SILUBS.PhraseTranslationHelper
 			//
 			// btnNew
 			//
+			this.btnNew.Image = global::SILUBS.PhraseTranslationHelper.Properties.Resources._1321382935_plus;
 			resources.ApplyResources(this.btnNew, "btnNew");
 			this.btnNew.Name = "btnNew";
 			this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
@@ -121,6 +122,7 @@ namespace SILUBS.PhraseTranslationHelper
 			//
 			// btnDelete
 			//
+			this.btnDelete.Image = global::SILUBS.PhraseTranslationHelper.Properties.Resources._1321385905_dialog_close;
 			resources.ApplyResources(this.btnDelete, "btnDelete");
 			this.btnDelete.Margin = new System.Windows.Forms.Padding(5, 1, 0, 2);
 			this.btnDelete.Name = "btnDelete";

@@ -147,6 +147,127 @@ namespace SIL.FieldWorks.TE.ExportTests
 		}
 		#endregion
 
+		#region ConvertScriptDigits tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use normal digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_NormalDigits()
+		{
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_BengaliDigits_NoConvert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Toolbox_BengaliDigits_Convert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_scr.ConvertCVDigitsOnExport = true;
+			m_exporter.MarkupSystem = MarkupType.Toolbox;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use normal digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_NormalDigits()
+		{
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsFalse(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is always true for Paratext export if using Script
+		/// digits.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_BengaliDigits_NoConvert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ConvertScriptDigits is false when Scripture is set to use Bengali digits
+		/// if user hasn't requested conversion.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ConvertScriptDigits_Paratext_BengaliDigits_Convert()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			m_scr.ConvertCVDigitsOnExport = true;
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			Assert.IsTrue(m_exporter.ConvertFromScriptDigits);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test exporting a paragraph with Paratext markup when there is a mid-paragraph
+		/// chapter marker.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ExportPara_Paratext_ScriptChapterAndVerseNumbers()
+		{
+			m_scr.UseScriptDigits = true;
+			m_scr.ScriptDigitZero = '\u09e6';  // Zero for Bengali
+			IScrSection section = ExportHelper.CreateSection(this, m_book, "My section head");
+			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
+			AddRunToMockedPara(para, "\u09e7", ScrStyleNames.ChapterNumber);
+			AddRunToMockedPara(para, "\u09e7", ScrStyleNames.VerseNumber);
+			AddRunToMockedPara(para, "Verse 1 text. ", m_wsVern);
+			AddRunToMockedPara(para, "\u09e8", ScrStyleNames.VerseNumber);
+			AddRunToMockedPara(para, "Verse 2 text.", m_wsVern);
+
+			// export
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			m_exporter.ExportScriptureDomain = true;
+			m_exporter.ExportParagraph(para);
+
+			// expect correct \c mid-paragraph and footnote refs
+			string[] expected = new [] {@"\c 1", @"\p",
+										@"\v 1 Verse 1 text.",
+										@"\v 2 Verse 2 text."};
+
+			m_exporter.FileWriter.VerifyOutput(expected);
+		}
+
+		#endregion
+
 		#region ExportBook Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3157,23 +3278,28 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			IScrSection section = ExportHelper.CreateSection(this, m_book, "My section head");
 			IScrTxtPara para = ExportHelper.AppendParagraph(this, m_book, section,
-				@"\c1\v1\*won\f\*footynote\^ \v2\*too \v3\*treee", m_wsVern, ScrStyleNames.NormalParagraph);
-			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*uno\f\* \^ \v2\*dos \v3\*tres", m_wsSpanish);
+				@"\c1\v1\*won \v2\*too \v3\*treee", m_wsVern, ScrStyleNames.NormalParagraph);
+			ExportHelper.AddBackTranslation(this, m_book, para, @"\c1\v1\*uno \v2\*dos \v3\*tres", m_wsSpanish);
+
+			IStFootnote footnote1 = AddFootnote(m_book, para, 5, "footynote");
+			ICmTranslation trans = para.GetOrCreateBT();
+			AddBtFootnote(trans, 5, m_wsSpanish, footnote1);
 
 			// export
 			m_exporter.MarkupSystem = MarkupType.Toolbox;
 			m_exporter.ExportScriptureDomain = false;
 			m_exporter.ExportBackTranslationDomain = true;
-			m_exporter.RequestedAnalysisWss = new int[] { m_wsSpanish };
+			m_exporter.RequestedAnalysisWss = new [] { m_wsSpanish };
 			m_exporter.ExportParagraph(para);
 
-			string[] expected = new string[] {	@"\rcrd GEN 1",
+			string[] expected = new [] {	@"\rcrd GEN 1",
 												@"\c 1",
 												@"\p",
 												@"\vref GEN.1:1",
 												@"\v 1",
 												@"\vt uno",
 												@"\f +",
+												@"\vt",
 												@"\vref GEN.1:2",
 												@"\v 2",
 												@"\vt dos",
@@ -3302,7 +3428,52 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_exporter.FileWriter.VerifyOutput(expected);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test exporting a paragraph with Paratext markup with only the BT (No scripture).
+		/// Vernacular paragraph has footnotes and those footnotes have back translations, but
+		/// the ORCs have not been inserted into the BT text. TE-9534.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ExportPara_Paratext_BtOnly_Footnotes_MissingBTOrcs()
+		{
+			IScrSection section = ExportHelper.CreateSection(this, m_book, "My section head");
+			IScrTxtPara para = ExportHelper.AppendParagraph(this, m_book, section,
+				@"\c1\v1\*one \v2\*two frogs \v3\*three", m_wsVern, ScrStyleNames.NormalParagraph);
+			ExportHelper.AddBackTranslation(this, m_book, para,
+				@"\c1\v1\*eins\v2\*zvei\v3\*drei", m_wsGerman);
+			ExportHelper.AddBackTranslation(this, m_book, para,
+				@"\c1\v1\*uno\v2\*dos ranas\v3\*tres", m_wsSpanish);
 
+			IStFootnote footnote3 = AddFootnote(m_book, para, para.Contents.Length, "footnote3"); // end of paragraph
+			IStFootnote footnote2 = AddFootnote(m_book, para, 10, "footnote2"); // middle of verse
+			IStFootnote footnote1 = AddFootnote(m_book, para, 5, "footnote1"); // end of verse
+			footnote1[0].GetOrCreateBT().Translation.set_String(m_wsGerman, "Techto von notei 1");
+			footnote2[0].GetOrCreateBT().Translation.set_String(m_wsGerman, "Techto von notei 2");
+			footnote3[0].GetOrCreateBT().Translation.set_String(m_wsGerman, "Techto von notei 3");
+			footnote1[0].GetOrCreateBT().Translation.set_String(m_wsSpanish, "Texto de nota 1");
+			footnote2[0].GetOrCreateBT().Translation.set_String(m_wsSpanish, "Texto de nota 2");
+			footnote3[0].GetOrCreateBT().Translation.set_String(m_wsSpanish, "Texto de nota 3");
+
+			// set footnote option to display the reference for the footnote
+			m_scr.DisplayFootnoteReference = true;
+
+			// export
+			m_exporter.MarkupSystem = MarkupType.Paratext;
+			m_exporter.ExportScriptureDomain = false;
+			m_exporter.ExportBackTranslationDomain = true;
+			m_exporter.RequestedAnalysisWss = new [] { m_wsSpanish };
+			m_exporter.ExportParagraph(para);
+
+			string[] expected = new [] {@"\c 1",
+				@"\p",
+				@"\v 1 uno\f + \fr 1.1 \ft Texto de nota 1\f*",
+				@"\v 2 dos ranas\f + \fr 1.2 \ft Texto de nota 2\f*",
+				@"\v 3 tres\f + \fr 1.3 \ft Texto de nota 3\f*"};
+
+			m_exporter.FileWriter.VerifyOutput(expected);
+		}
 		#endregion
 
 		#region Invalid Chapter/Verse Numbers: Export Requirements and Tests

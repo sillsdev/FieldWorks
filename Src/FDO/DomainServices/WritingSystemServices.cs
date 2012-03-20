@@ -1547,6 +1547,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				run => MergeRun(fromWs, toWs, run)),
 				multiStr => MergeMultiString(fromWs, toWs, multiStr));
 
+			foreach (var para in cache.ServiceLocator.GetInstance<IStTxtParaRepository>().AllInstances())
+			{
+				if(para.StyleRules == null)
+					continue;
+				int variant;
+				//if the paragraph has a spurious writing system that matches the one we are getting rid of
+				if(para.StyleRules.GetIntPropValues((int)FwTextPropType.ktptWs, out variant) == fromWs.Handle)
+				{
+					var builder = para.StyleRules.GetBldr();
+					//get rid of it
+					builder.SetIntPropValues((int)FwTextPropType.ktptWs, -1, -1);
+					para.StyleRules = builder.GetTextProps();
+				}
+			}
+
 			UpdateWritingSystemFields(cache, fromWs.Id, toWs.Id);
 			foreach (var style in cache.ServiceLocator.GetInstance<IStStyleRepository>().AllInstances())
 			{

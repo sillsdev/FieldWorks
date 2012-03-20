@@ -14,9 +14,11 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
@@ -177,6 +179,115 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				pf.Form = form;
 			}
 			return pf;
+		}
+
+		/// <summary>
+		/// Find and fix duplicate wordforms (any two or more that have the same form for default vernacular and all non-empty writing systems).
+		/// All anlyses (and WfiGlosses) are preserved, even if duplicated.
+		/// Spelling status is correct if any of the merged items are correct, then false if any is false, otherwise stays unknown.
+		/// Note: caller is responsible to create Unit of Work.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="progressBar"></param>
+		/// <returns>A string containing a list of wordforms that could not be merged because they have differing values for other WSs</returns>
+		public static string FixDuplicates(FdoCache cache, ProgressBar progressBar)
+		{
+			var failures = new HashSet<string>();
+			var wfRepo = cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			// Note that we may change AllInstances in this loop, so the copy done by ToArray() is essential.
+			var wfiWordforms = wfRepo.AllInstances().ToArray();
+			progressBar.Minimum = 0;
+			progressBar.Maximum = wfiWordforms.Length;
+			progressBar.Step = 1;
+			foreach (var wf in wfiWordforms)
+			{
+				progressBar.PerformStep();
+				var text = wf.Form.VernacularDefaultWritingSystem.Text;
+				if (string.IsNullOrEmpty(text))
+					continue;
+				var canonicalWf = wfRepo.GetMatchingWordform(cache.DefaultVernWs, text);
+				if (canonicalWf == wf)
+					continue;
+				if (HaveInconsistentAlternatives(wf, canonicalWf))
+				{
+					failures.Add(text);
+					continue; // can't merge.
+				}
+				// Move all analyses to survivor.
+				foreach (var wa in wf.AnalysesOC)
+					canonicalWf.AnalysesOC.Add(wa);
+				foreach (var source in wf.ReferringObjects)
+				{
+					var srcSegment = source as ISegment;
+					if (srcSegment != null)
+					{
+						for (;;)
+						{
+							int index = srcSegment.AnalysesRS.IndexOf(wf);
+							if (index == -1)
+								break;
+							srcSegment.AnalysesRS[index] = canonicalWf;
+						}
+						continue;
+					}
+					var wordset = source as IWfiWordSet;
+					if (wordset != null)
+					{
+						if (wordset.CasesRC.Contains(wf))
+							wordset.CasesRC.Add(canonicalWf); // does nothing if already present.
+						continue;
+					}
+					var rendering = source as IChkRendering;
+					if (rendering != null)
+					{
+						rendering.SurfaceFormRA = canonicalWf;
+						continue;
+					}
+					var chkRef = source as IChkRef;
+					if (chkRef != null)
+					{
+						chkRef.RenderingRA = canonicalWf;
+					}
+				}
+				if (wf.SpellingStatus == (int)SpellingStatusStates.correct)
+					canonicalWf.SpellingStatus = (int)SpellingStatusStates.correct; // may be already, but ensures this wins
+				else if (canonicalWf.SpellingStatus == (int)SpellingStatusStates.undecided)
+					canonicalWf.SpellingStatus = wf.SpellingStatus; // the only case that does something is undecided => incorrect
+				canonicalWf.Checksum = 0; // reset so parser will recheck whole group of analyses.
+
+				// Copy over other alternatives
+				foreach (var ws in wf.Form.AvailableWritingSystemIds)
+				{
+					if(string.IsNullOrEmpty(canonicalWf.Form.get_String(ws).Text))
+						canonicalWf.Form.set_String(ws, wf.Form.get_String(ws));
+				}
+				wf.Delete();
+			}
+			if (failures.Count == 0)
+				return "";
+			return failures.OrderBy(x=>x).Aggregate((x,y) => x + " " + y);
+		}
+
+		/// <summary>
+		/// True if the two wordforms have different forms for some alternative that is non-empty on both.
+		/// </summary>
+		/// <param name="first"></param>
+		/// <param name="second"></param>
+		/// <returns></returns>
+		static bool HaveInconsistentAlternatives(IWfiWordform first, IWfiWordform second)
+		{
+			foreach (var ws in first.Form.AvailableWritingSystemIds)
+			{
+				string firstForm = first.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(firstForm))
+					continue;
+				string secondForm = second.Form.get_String(ws).Text;
+				if (string.IsNullOrEmpty(secondForm))
+					continue;
+				if (!firstForm.Equals(secondForm, StringComparison.Ordinal))
+					return true;
+			}
+			return false;
 		}
 	}
 }

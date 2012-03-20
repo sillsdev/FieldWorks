@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CIcuConverter
 LPCTSTR clpszIcuConvImplType   = _T("ICU.conv");
-LPCTSTR clpszIcuConvProgId     = _T("SilEncConverters31.IcuECConverter.40");
+LPCTSTR clpszIcuConvProgId     = _T("SilEncConverters40.IcuECConverter.40");
 
 CIcuConverter::CIcuConverter()
   : CEncConverter(clpszIcuConvProgId,clpszIcuConvImplType)  // from IcuConverter.rgs)

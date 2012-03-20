@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2009' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2009' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,8 +10,6 @@
 //
 // File: FdoXmlServices.cs
 // Responsibility: Randy Regnier
-// Last reviewed:
-//
 // --------------------------------------------------------------------------------------------
 using System;
 using System.IO;
@@ -62,9 +60,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <returns></returns>
 		internal static XmlReader CreateReader(string xmlPathname)
 		{
-			XmlTextReader textReader = new XmlTextReader(xmlPathname);
-			textReader.WhitespaceHandling = WhitespaceHandling.Significant;
-			return XmlReader.Create(textReader, ReaderSettings);
+			return XmlReader.Create(xmlPathname, ReaderSettings);
 		}
 
 		/// <summary>
@@ -134,7 +130,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 						{
 							CheckCharacters = false,
 							ConformanceLevel = ConformanceLevel.Document,
-#if NET_4_0 && !__MonoCS__
+#if !__MonoCS__
 							DtdProcessing = DtdProcessing.Parse,
 #else
 							ProhibitDtd = true,

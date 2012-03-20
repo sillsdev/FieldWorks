@@ -16,7 +16,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -361,12 +360,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 		}
 
-		private static FileStream LockProject(string projectPath)
+		internal static FileStream LockProject(string projectPath)
 		{
 			return File.Open(projectPath + ".lock", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		private void UnlockProject()
+		internal void UnlockProject()
 		{
 			if (m_lockFile != null)
 			{
@@ -538,7 +537,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									(customFieldInfo.Label != customFieldInfo.m_fieldname) ? new XAttribute("label", customFieldInfo.Label) : null));
 							}
 							DataSortingService.SortCustomPropertiesRecord(customPropertyDeclarations);
-							DataSortingService.WriteElement(writer, reader.Settings, customPropertyDeclarations);
+							DataSortingService.WriteElement(writer, customPropertyDeclarations);
 						}
 
 						var sortableProperties = m_mdcInternal.GetSortableProperties();
@@ -554,7 +553,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							foreach (var newbyXml in workItem.Newbies.Values)
 							{
 								DataSortingService.WriteElement(writer,
-									reader.Settings,
 									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbyXml)));
 							}
 						}
@@ -586,7 +584,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 								foreach (var newbieXml in DataSortingService.GetLessorNewbies(currentGuid, workItem.Newbies))
 								{
 									DataSortingService.WriteElement(writer,
-										reader.Settings,
 										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
 								}
 
@@ -606,7 +603,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									keepReading = reader.IsStartElement();
 									// But, add updated data for the modified record.
 									DataSortingService.WriteElement(writer,
-										reader.Settings,
 										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(dirtballXml)));
 									workItem.Dirtballs.Remove(currentGuid);
 									transferUntouched = false;
@@ -622,7 +618,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							foreach (var newbieXml in workItem.Newbies.Values)
 							{
 								DataSortingService.WriteElement(writer,
-									reader.Settings,
 									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
 							}
 						}

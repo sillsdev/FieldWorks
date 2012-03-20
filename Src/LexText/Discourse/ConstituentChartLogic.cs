@@ -884,6 +884,11 @@ namespace SIL.FieldWorks.Discourse
 			Debug.Assert(m_hvoStText > 0, "No text!");
 			Debug.Assert(bookmark != null && bookmark.IndexOfParagraph > -1, "Bad bookmark!");
 			var txt = m_textRepo.GetObject(m_hvoStText);
+			if (bookmark.IndexOfParagraph >= txt.ParagraphsOS.Count)
+			{
+				Debug.Fail("Bad bookmark paragraph index!");
+				return null;
+			}
 			var curPara = (IStTxtPara)txt.ParagraphsOS[bookmark.IndexOfParagraph];
 			Debug.Assert(curPara != null, "What kind of paragraph is this?");
 			var ibeg = bookmark.BeginCharOffset;

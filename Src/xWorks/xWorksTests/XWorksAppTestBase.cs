@@ -358,6 +358,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Reopens the given FLEx project. This may be necessary if some external process modified the project data.
+		/// Currently used when FLExBridge modifies our project during a Send/Receive
+		/// </summary>
+		/// <param name="project">The project name to re-open</param>
+		/// <param name="app"></param>
+		public void ReopenProject(string project, FwAppArgs app)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		public void FileProjectSharingLocation(FwApp fwApp, Form dialogOwner)

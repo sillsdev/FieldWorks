@@ -2770,13 +2770,13 @@ namespace SIL.FieldWorks.XWorks
 			ArrayList newSortedObjects;
 			newSortedObjects = new ArrayList();
 			if (m_filter != null)
-				m_filter.Preload();
+				m_filter.Preload(OwningObject);
 				// Preload the sorter (if any) only if we do NOT have a filter.
 				// If we also have a filter, it's pretty well certain currently that it already did
 				// the preloading. If we ever have a filter and sorter that want to preload different
 				// data, we'll need to refactor so we can determine this, because we don't want to do it twice!
 			else if (m_sorter != null)
-				m_sorter.Preload();
+				m_sorter.Preload(OwningObject);
 
 			using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
 			{

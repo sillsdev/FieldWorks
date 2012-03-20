@@ -64,7 +64,7 @@ extern void EnumRegKeys(LPCTSTR lpszRegKey, LPCTSTR lpszPrefix, CStringArray& as
 extern void WritePerlDistroPaths(CStringArray& astrPaths);
 extern void WritePerlModulePaths(CStringArray& astrModules);
 
-#define PERLEXPR_REG_ROOT           _T("SOFTWARE\\SIL\\SilEncConverters31\\ConvertersSupported\\SIL.PerlExpression")
-#define PERLEXPR_REG_ADD_KEY(s)     _T("SOFTWARE\\SIL\\SilEncConverters31\\ConvertersSupported\\SIL.PerlExpression\\") ## s
+#define PERLEXPR_REG_ROOT           _T("SOFTWARE\\SIL\\SilEncConverters40\\ConvertersSupported\\SIL.PerlExpression")
+#define PERLEXPR_REG_ADD_KEY(s)     _T("SOFTWARE\\SIL\\SilEncConverters40\\ConvertersSupported\\SIL.PerlExpression\\") ## s
 #define PERLEXPR_PATHS_KEY          PERLEXPR_REG_ADD_KEY(_T("PerlPaths"))
 #define PERLEXPR_MODULES_KEY        PERLEXPR_REG_ADD_KEY(_T("DefaultModules"))

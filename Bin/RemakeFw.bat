@@ -25,4 +25,4 @@ gacutil /u WhatsThisHelp
 
 cd %FWROOT%\Bld
 
-%FWROOT%\bin\nant\bin\nant -t:net-3.5 %CONFIG% %ACTION% remakefw
+%FWROOT%\bin\nant\bin\nant %CONFIG% %ACTION% remakefw

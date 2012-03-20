@@ -216,7 +216,7 @@ namespace SIL.CoreImpl
 
 				if (guid == guidToRemove)
 				{
-					// Footnote ORC with same Guid found. Remove it.
+					// ORC with same Guid found. Remove it.
 					int ichMin, ichLim;
 					TsRunInfo info;
 					tssBldr.FetchRunInfo(iRun, out info);
@@ -965,6 +965,19 @@ namespace SIL.CoreImpl
 
 			}
 			return tssBldr.GetString();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a TsString made from the ashes of the input parameter which has:
+		/// 1) only one run
+		/// 2) uses the ws of the 1st run of the input TsString.
+		/// </summary>
+		/// <param name="tss">structured text string</param>
+		/// ------------------------------------------------------------------------------------
+		public static ITsString GetCleanSingleRunTsString(ITsString tss)
+		{
+			return MakeTss(tss.Text, tss.get_WritingSystem(0));
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			Debug.Assert(mdc != null);
 			ISilDataAccessManaged sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 			Debug.Assert(sda != null);
-			foreach (int flid in mdc.GetFields(cmoOld.ClassID, false, (int)CellarPropertyTypeFilter.All))
+			foreach (int flid in mdc.GetFields(cmoOld.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!mdc.IsCustom(flid))
 					continue;

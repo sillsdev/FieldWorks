@@ -433,6 +433,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_para.SegmentsOS.Replace(m_iSegFirstModified + 1, 1, new ISegment[0]);
 			}
 
+			if (m_para.SegmentsOS.Count == 0)
+				return; // can happen if the paragraph we are moving from has no segments.
+
 			// Any modified segments need their BeginOffsets set to the correct values.
 			for (var i = m_iSegFirstModified; i <= m_iNewSegLastModified; i++)
 				((Segment)m_para.SegmentsOS[i]).BeginOffset = m_newBeginOffsets[i];

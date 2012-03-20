@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Provider;
 using System.Windows.Forms;
@@ -999,6 +1000,19 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwSelection vwselNew = args.Selection;
 			Debug.Assert(vwselNew != null);
 			HandleSelectionChange(rootb, vwselNew);
+		}
+
+		/// <summary>
+		/// Once we have a cache we can return a sensible list.
+		/// </summary>
+		/// <param name="wsf"></param>
+		/// <returns></returns>
+		protected override int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
+		{
+			var writingSystems = Cache.ServiceLocator.WritingSystems;
+			return (from ws in writingSystems.CurrentAnalysisWritingSystems.Union(writingSystems.CurrentVernacularWritingSystems).Union(
+				writingSystems.CurrentPronunciationWritingSystems)
+					   select ws.Handle).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------

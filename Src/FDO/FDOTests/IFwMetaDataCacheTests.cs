@@ -601,6 +601,24 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 				Assert.AreEqual(7, countAllFlidsOut, "Wrong number of fields returned for CmObject.");
 			}
 		}
+
+		/// <summary>
+		/// GetFields should not include base class fields when told not to.
+		/// </summary>
+		[Test]
+		public void GetFieldsDoesNotIncludeBaseFields()
+		{
+			using (var flids = MarshalEx.ArrayToNative<int>(500))
+			{
+				var countAllFlidsOut = m_mdc.GetFields(MoStemAllomorphTags.kClassId, false, (int)CellarPropertyTypeFilter.All, 0, flids);
+				countAllFlidsOut = m_mdc.GetFields(MoStemAllomorphTags.kClassId, false, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
+
+				var fields = new List<int>(MarshalEx.NativeToArray<int>(flids, countAllFlidsOut));
+				Assert.That(fields, Has.Member(MoStemAllomorphTags.kflidPhoneEnv)); // not inherited
+				Assert.That(fields, Has.No.Member(MoFormTags.kflidForm)); // inherited
+			}
+
+		}
 	}
 
 	#endregion MetaDataCacheClassAccessTests class

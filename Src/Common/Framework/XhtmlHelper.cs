@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".entry {");
 			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Normal", "entry");
-			WriteParaStyleInfoToCss(esi);
+			WriteParaStyleInfoToCss(esi, true); // LT-12658 allow to indent
 			m_writer.WriteLine("    counter-reset: sense;");
 			m_writer.WriteLine("}");
 		}
@@ -1030,7 +1030,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (String.IsNullOrEmpty(style))
 				style = "Dictionary-Minor";
 			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "minorentry");
-			WriteParaStyleInfoToCss(esi);
+			WriteParaStyleInfoToCss(esi, true); // LT-12658 allow to indent
 			m_writer.WriteLine("}");
 			WriteParaBulletInfoToCss(style, "minorentry", "minorentryCounter");
 			// Todo: more style details; see LT-12184
@@ -1372,7 +1372,7 @@ namespace SIL.FieldWorks.Common.Framework
 						{
 							string sLeading;
 							string sTrailing;
-							WriteHorizontalPaddingValues(esi, out sLeading, out sTrailing);
+							WriteHorizontalPaddingValues(esi, true, out sLeading, out sTrailing); // LT-12658 allow to indent
 						}
 					}
 				}
@@ -1669,9 +1669,16 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi)
 		{
+			WriteParaStyleInfoToCss(esi, false);
+		}
+
+		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent)
+		{
+			if (esi == null)
+				return; // If the style was not defined in our stylesheet, we can't write anything for it.
 			string sLeading;
 			string sTrailing;
-			WriteHorizontalPaddingValues(esi, out sLeading, out sTrailing);
+			WriteHorizontalPaddingValues(esi, hangingIndent, out sLeading, out sTrailing);
 			if (esi.HasAlignment)
 			{
 				switch (esi.Alignment)
@@ -1709,7 +1716,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (esi.HasBorderColor)
 				m_writer.WriteLine("    border-color: rgb({0},{1},{2});",
 					esi.BorderColor.R, esi.BorderColor.G, esi.BorderColor.B);
-			if (esi.HasFirstLineIndent)
+			if (esi.HasFirstLineIndent && hangingIndent)  // LT-12658 suppress indentation inside paragraphs (entries).
 			{
 				m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(esi.FirstLineIndent));
 				m_writer.Write("    margin-{0}: ", sLeading);
@@ -1746,12 +1753,12 @@ namespace SIL.FieldWorks.Common.Framework
 			// esi.KeepWithNext;
 		}
 
-		private void WriteHorizontalPaddingValues(ExportStyleInfo esi,
+		private void WriteHorizontalPaddingValues(ExportStyleInfo esi, bool hangingIndent,
 			out string sLeading, out string sTrailing)
 		{
 			sLeading = esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "right" : "left";
 			sTrailing = esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "left" : "right";
-			if (esi.HasLeadingIndent)
+			if (esi.HasLeadingIndent && hangingIndent) // LT-12658 suppress indentation inside paragraphs
 				m_writer.WriteLine("    padding-{0}: {1}pt;", sLeading, ConvertMptToPt(esi.LeadingIndent));
 			if (esi.HasTrailingIndent)
 				m_writer.WriteLine("    padding-{0}: {1}pt;", sTrailing, ConvertMptToPt(esi.TrailingIndent));

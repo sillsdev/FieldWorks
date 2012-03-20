@@ -3255,6 +3255,24 @@ namespace SIL.FieldWorks
 			}
 		}
 
+		internal static void ReopenProject(string project, FwAppArgs appArgs)
+		{
+			ExecuteWithAppsShutDown("FLEx", ()=>
+												{
+													try
+													{
+														HandleLinkRequest(appArgs);
+															return s_projectId ??
+																new ProjectId(ClientServerServices.Current.Local.IdForLocalProject(project), null);
+													}
+													catch (Exception e)
+													{
+														//This is not good.
+													}
+													return null;
+												});
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes the requested action with all FW applications temporarily shut down and

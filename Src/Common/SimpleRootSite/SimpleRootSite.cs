@@ -3165,6 +3165,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			string sKeymanKbd = KeyboardHelper.ActiveKeymanKeyboard;
 
 			int wsMatch = -1;
+			int countNoKeymanKeyboard = 0;
+			foreach (int ws in vws)
+			{
+				if (ws == 0)
+					continue;
+				ILgWritingSystem lgws = wsf.get_EngineOrNull(ws);
+				if (lgws == null)
+					continue;
+				if (string.IsNullOrEmpty(lgws.Keyboard))
+					countNoKeymanKeyboard++;
+			}
 			foreach (int ws in vws)
 			{
 				// Don't consider switching to the default, dummy writing system.
@@ -3186,6 +3197,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			if (wsMatch == -1) // no known writing system uses this keyboard
+				return;
+
+			// Don't switch to some writing system just on the strength of not using a keyman
+			// keyboard at all, unless it is the only active one that does not.
+			if (string.IsNullOrEmpty(sKeymanKbd) && countNoKeymanKeyboard > 1)
 				return;
 
 			m_wsPending = -1;
@@ -3617,6 +3633,14 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_messageFilterInstalled = true;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Marker interface which a window (e.g., FocusBoxController) may implement to indicate
+		/// that when focus switches there from a root box, we should NOT restore the default keyboard.
+		/// </summary>
+		public interface ISuppressDefaultKeyboardOnKillFocus
+		{
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5178,12 +5202,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (cws < 2)
 				return;	// no writing systems to work with
 
-			int[] vwsTemp = new int[0];
-			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
-			{
-				wsf.GetWritingSystems(ptr, cws);
-				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
-			}
+			var vwsTemp = GetPossibleWritingSystemsToSelectByInputLanguage(wsf);
 
 			// resize the array leaving slot 0 empty
 			int[] vws = new int[++cws];
@@ -5311,8 +5330,27 @@ namespace SIL.FieldWorks.Common.RootSites
 				(int)FwTextPropVar.ktpvDefault, wsMatch);
 			vttp[0] = tpb.GetTextProps();
 			vwsel.SetSelectionProps(cttp, vttp);
-			SelectionChanged(m_rootb, vwsel);
+			SelectionChanged(m_rootb, m_rootb.Selection); // might NOT be vwsel any more
 		}
+
+		/// <summary>
+		/// get the writing systems we should consider as candidates to be selected whent the user makes an
+		/// external choice of keyboard. overridden in root site to use only active ones.
+		/// </summary>
+		/// <param name="wsf"></param>
+		/// <returns></returns>
+		protected virtual int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
+		{
+			int cws = wsf.NumberOfWs;
+			int[] vwsTemp = new int[0];
+			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
+			{
+				wsf.GetWritingSystems(ptr, cws);
+				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
+			}
+			return vwsTemp;
+		}
+
 		#endregion // Other virtual methods
 
 		#region Other non-virtual methods
