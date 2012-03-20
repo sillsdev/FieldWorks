@@ -16,20 +16,20 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Globalization;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.Utils;
+using System.Xml;
 using Microsoft.Win32;
+using SIL.Utils;
+
 
 namespace XCore
 {
@@ -40,7 +40,6 @@ namespace XCore
 #if __MonoCS__
 	, IRaiseASyncMessages
 #endif
-
 	{
 		#region Data members
 		/// <summary>

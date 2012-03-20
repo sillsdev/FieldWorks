@@ -9,28 +9,28 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.IO;
 using Microsoft.Win32;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -100,16 +100,16 @@ namespace SIL.FieldWorks.Common.Framework
 		protected ISIBInterface m_sibAdapter;
 
 		/// <summary></summary>
-		protected ComboBox m_cboZoomPercent = null;
+		protected ComboBox m_cboZoomPercent;
 
 		/// <summary></summary>
-		protected ComboBox m_paraStylesComboBox = null;
+		protected ComboBox m_paraStylesComboBox;
 
 		/// <summary></summary>
-		protected ComboBox m_charStylesComboBox = null;
+		protected ComboBox m_charStylesComboBox;
 
-		private StyleComboListHelper m_paraStyleListHelper = null;
-		private StyleComboListHelper m_charStyleListHelper = null;
+		private StyleComboListHelper m_paraStyleListHelper;
+		private StyleComboListHelper m_charStyleListHelper;
 		/// <summary></summary>
 		protected Panel m_sideBarContainer;
 		/// <summary></summary>
@@ -243,6 +243,15 @@ namespace SIL.FieldWorks.Common.Framework
 					m_mediator.RemoveColleague(this);
 				}
 
+				if (m_cboZoomPercent != null)
+					m_cboZoomPercent.Dispose();
+				if (m_paraStylesComboBox != null)
+					m_paraStylesComboBox.Dispose();
+				if (m_charStylesComboBox != null)
+					m_charStylesComboBox.Dispose();
+				if (m_writingSystemSelector != null)
+					m_writingSystemSelector.Dispose();
+
 				if (m_progressHandler != null)
 					m_progressHandler.Dispose();
 				if (m_writingSystemSelector != null)
@@ -272,6 +281,10 @@ namespace SIL.FieldWorks.Common.Framework
 					m_app.FwManager.ExecuteAsync(m_app.RemoveWindow, this);
 				}
 			}
+			m_cboZoomPercent = null;
+			m_paraStylesComboBox = null;
+			m_charStylesComboBox = null;
+			m_writingSystemSelector = null;
 			m_delegate = null;
 			m_tmAdapter = null;
 			m_UndoRedoDropDown = null;
@@ -287,7 +300,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				base.Dispose(disposing);
 			}
-			catch(System.ArgumentOutOfRangeException)
+			catch (System.ArgumentOutOfRangeException)
 			{
 				// TODO-Linux: examine ToolStrip disposal in UIAdapter
 				// is ToolStrip (from UIAdapter?) being Disposed multiple times?

@@ -13,19 +13,19 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using Enchant;
-using SIL.Utils;
-using System.Drawing;
+
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using System.Diagnostics;
-using SIL.CoreImpl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

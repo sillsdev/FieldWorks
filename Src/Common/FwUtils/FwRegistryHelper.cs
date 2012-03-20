@@ -74,7 +74,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void SetValueAsAdmin(this RegistryKey key, string name, string value)
 		{
-			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\")) == "HKEY_LOCAL_MACHINE", "SetValueAsAdmin should only be used for writing hklm values.");
+			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\")) == "HKEY_LOCAL_MACHINE",
+				"SetValueAsAdmin should only be used for writing hklm values.");
 
 			if (MiscUtils.IsUnix)
 			{
@@ -88,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// .NET cmd processing treats \" as a single ", not part of a delimiter.
 			// This can mess up closing " delimiters when the string ends with backslash.
-			// To get around this, you need to add an extra \ to the end.  "D:\"  -> D:"     "D:\\" -> D:\
+			// To get around this, you need to add an extra \ to the end.  "D:\"  -> D:"	 "D:\\" -> D:\
 			// Cmd line with 4 args: "Software\SIL\"7.0" "Projects\\Dir\" "I:\" "e:\\"
 			// Interpreted as 3 args: 1)"Software\\SIL\\FieldWorks\"7.0"  2)"Projects\\\\Dir\" I:\""  3)"e:\\"
 			// We'll hack the final value here to put in an extra \ for final \. "c:\\" will come through as c:\.

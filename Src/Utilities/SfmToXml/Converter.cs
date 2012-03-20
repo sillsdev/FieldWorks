@@ -1528,7 +1528,7 @@ namespace Sfm2Xml
 
 			try
 			{
-				int charCount = encoding.GetCharCount(multi, start, end-start+1);
+				int charCount = encoding.GetCharCount(multi, start, end - start + 1);
 				Char[] chars = new Char[charCount];
 				encoding.GetChars(multi, start, end - start + 1, chars, 0);
 				return new string(chars);

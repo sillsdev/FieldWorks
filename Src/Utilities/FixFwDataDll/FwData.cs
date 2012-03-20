@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.FixData
 				if (!File.Exists(oldLdmlFile))
 				{
 					if (oldTag.StartsWith("cmn"))
-						oldLdmlFile = Path.Combine(wsDirectory, oldTag.Remove(0,3).Insert(0,"zh") + ".ldml");
+						oldLdmlFile = Path.Combine(wsDirectory, oldTag.Remove(0, 3).Insert(0, "zh") + ".ldml");
 					else
 						oldLdmlFile = newLdmlFile;
 					if (!File.Exists(oldLdmlFile))

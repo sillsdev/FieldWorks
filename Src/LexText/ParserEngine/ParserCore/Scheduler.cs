@@ -224,14 +224,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void DisposeManagedResources()
 		{
-				if (m_thread.Stop())
-					Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "==== ParserScheduler thread Successfully shutdown.");
-				else
-					Trace.WriteLineIf(m_tracingSwitch.TraceError, "**** ERROR : ParserScheduler Thread didn't shutdown.");
-				m_thread.Dispose();
+			if (m_thread.Stop())
+				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "==== ParserScheduler thread Successfully shutdown.");
+			else
+				Trace.WriteLineIf(m_tracingSwitch.TraceError, "**** ERROR : ParserScheduler Thread didn't shutdown.");
+			m_thread.Dispose();
 
-				m_parserWorker.ParseFiler.WordformUpdated -= ParseFiler_WordformUpdated;
-				m_parserWorker.Dispose();
+			m_parserWorker.ParseFiler.WordformUpdated -= ParseFiler_WordformUpdated;
+			m_parserWorker.Dispose();
+
 			if (m_TaskReport != null)
 			{
 				m_TaskReport.Dispose();

@@ -1488,32 +1488,33 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Rectangle rc = WaterMarkRectangle;
 			using (GraphicsPath path = new GraphicsPath())
 			{
-			FontFamily family = FontFamily.GenericSerif;
+				FontFamily family = FontFamily.GenericSerif;
 
-			// Find the first font size equal to or smaller than 256 that
-			// fits in the water mark rectangle.
-			for (int size = 256; size >= 0; size -= 2)
-			{
-				using (Font fnt = new Font(family, size, FontStyle.Bold))
+				// Find the first font size equal to or smaller than 256 that
+				// fits in the water mark rectangle.
+				for (int size = 256; size >= 0; size -= 2)
 				{
-					int height = TextRenderer.MeasureText(m_waterMark, fnt).Height;
-					if (height < rc.Height)
+					using (Font fnt = new Font(family, size, FontStyle.Bold))
 					{
-						using (StringFormat sf = (StringFormat)StringFormat.GenericDefault.Clone())
+						int height = TextRenderer.MeasureText(m_waterMark, fnt).Height;
+						if (height < rc.Height)
 						{
-							sf.Alignment = StringAlignment.Center;
-							sf.LineAlignment = StringAlignment.Center;
-							sf.Trimming = StringTrimming.EllipsisCharacter;
-							sf.FormatFlags |= StringFormatFlags.NoWrap;
-							path.AddString(m_waterMark, family, (int)FontStyle.Bold, size, rc, sf);
-						}
+							using (StringFormat sf = (StringFormat)StringFormat.GenericDefault.Clone())
+							{
+								sf.Alignment = StringAlignment.Center;
+								sf.LineAlignment = StringAlignment.Center;
+								sf.Trimming = StringTrimming.EllipsisCharacter;
+								sf.FormatFlags |= StringFormatFlags.NoWrap;
+								// TODO-Linux: The layoutRect and StringFormat parameters are ignored when using libgdiplus
+								path.AddString(m_waterMark, family, (int)FontStyle.Bold, size, rc, sf);
+							}
 
-						break;
+							break;
+						}
 					}
 				}
-			}
 
-			path.AddEllipse(rc);
+				path.AddEllipse(rc);
 
 				using (SolidBrush br = new SolidBrush(Color.FromArgb(80, DefaultCellStyle.ForeColor)))
 				using (var region = new Region(path))

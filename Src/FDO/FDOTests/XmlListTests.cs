@@ -7,19 +7,17 @@
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-using System.IO;
 //
 // File: XmlListTests.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests

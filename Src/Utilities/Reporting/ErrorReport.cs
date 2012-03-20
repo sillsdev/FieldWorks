@@ -518,7 +518,7 @@ namespace SIL.Utils
 		{
 			GatherData();
 
-			if(radEmail.Checked)
+			if (radEmail.Checked)
 			{
 				try
 				{

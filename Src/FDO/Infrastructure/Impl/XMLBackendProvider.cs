@@ -283,12 +283,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 			try
 			{
-			m_lockFile = LockProject(ProjectId.Path);
+				m_lockFile = LockProject(ProjectId.Path);
 				return;
 			}
 			catch (IOException)
 			{
-		}
+			}
 			throw new FdoFileLockedException() {ProjectName = ProjectId.Name};
 		}
 

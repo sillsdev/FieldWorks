@@ -1,4 +1,4 @@
-	// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2003, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2003' company='SIL International'>
 //		Copyright (c) 2003, SIL International. All Rights Reserved.
@@ -16,16 +16,15 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System. Collections;
-using System.Windows.Forms;
-using System.  Drawing;
-using System.  Diagnostics;
-using Reflector.UserInterface;//commandbar
-using SIL.Utils;
-
+using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Security;
 using System.Security.Permissions;
+using System.Windows.Forms;
+using Reflector.UserInterface; //commandbar
+using SIL.Utils;
 
 namespace XCore
 {
@@ -344,7 +343,7 @@ namespace XCore
 					((ChoiceGroup)menu.Tag).OnDisplay(null, null);
 
 					//note that some of these may be set menus, others are just items; we don't bother checking
-					foreach(CommandBarItem x in  menu.Items)
+					foreach(CommandBarItem x in menu.Items)
 					{
 
 						if (x.Tag!=null //separators don't have tags
@@ -380,7 +379,7 @@ namespace XCore
 		/// <param name="itemId">the id of the item.  As of this writing, this often defaults to the label without the "_"</param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="GetMenu() returns a reference")]
-		public  void ClickItem (string groupId, string itemId)
+		public void ClickItem (string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
 			if(menu == null)

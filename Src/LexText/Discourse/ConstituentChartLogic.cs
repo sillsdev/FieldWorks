@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using System.Windows.Forms;
-using System.Diagnostics;
+using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText;
-using SIL.FieldWorks.FDO.Application;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Discourse

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
-using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -1128,19 +1129,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		public override void SetFocus()
 		{
 			m_site.Invoke(() =>
-							{
-								if (m_site.FindForm() == Form.ActiveForm)
-									m_site.Focus();
-								if (Selection.SelType == VwSelType.kstText)
-								{
-									InstallTextRangeSelection();
-								}
-								else if (Selection.SelType == VwSelType.kstPicture)
-								{
-									var sh = SelectionHelper.Create(Selection, m_site);
-									m_site.RootBox.MakeSelInObj(0, sh.LevelInfo.Length, sh.LevelInfo, sh.TextPropId, true);
-								}
-							});
+				{
+					if (m_site.FindForm() == Form.ActiveForm)
+						m_site.Focus();
+					if (Selection.SelType == VwSelType.kstText)
+					{
+						InstallTextRangeSelection();
+					}
+					else if (Selection.SelType == VwSelType.kstPicture)
+					{
+						var sh = SelectionHelper.Create(Selection, m_site);
+						m_site.RootBox.MakeSelInObj(0, sh.LevelInfo.Length, sh.LevelInfo, sh.TextPropId, true);
+					}
+				});
 		}
 	}
 

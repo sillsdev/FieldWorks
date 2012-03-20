@@ -1613,14 +1613,14 @@ namespace SIL.FieldWorks
 					continue;
 				switch (d.DriveType)
 				{
-				case DriveType.Fixed:
-				case DriveType.Network:
-				case DriveType.Removable:
-					if (MiscUtils.IsUnix)
-						driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
-					else
-						driveMounts.Add(d.Name.ToLowerInvariant());		// Windows produces C:\ D:\ etc.
-					break;
+					case DriveType.Fixed:
+					case DriveType.Network:
+					case DriveType.Removable:
+						if (MiscUtils.IsUnix)
+							driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
+						else
+							driveMounts.Add(d.Name.ToLowerInvariant());		// Windows produces C:\ D:\ etc.
+						break;
 				}
 			}
 			driveMounts.Sort(longestFirst);

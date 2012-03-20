@@ -12,14 +12,13 @@
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
-using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests

@@ -744,7 +744,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// Try a few more times...after waking a laptop from sleep it may take a couple of seconds to
 			// wake up the service.
-			for (int i = 0; i < 10; i++ )
+			for (int i = 0; i < 10; i++)
 			{
 				Thread.Sleep(500);
 				if (ResumeDb4oConnection())

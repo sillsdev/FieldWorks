@@ -22,13 +22,13 @@ using System.Text;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {

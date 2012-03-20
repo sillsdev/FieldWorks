@@ -1889,7 +1889,7 @@ namespace SIL.FieldWorks.TE
 							{
 								Logger.WriteError(e);
 								MessageBox.Show(this, e.Message, m_app.ApplicationName,
-								MessageBoxButtons.OK, MessageBoxIcon.Information);
+									MessageBoxButtons.OK, MessageBoxIcon.Information);
 								return false;
 							}
 							throw;
@@ -1905,7 +1905,7 @@ namespace SIL.FieldWorks.TE
 							// TODO-Linux: Help is not implemented in Mono
 							MessageBox.Show(this, e.Message, ScriptureUtilsException.GetResourceString("kstidImportErrorCaption"),
 								MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
-									HelpNavigator.Topic, e.HelpTopic);
+								HelpNavigator.Topic, e.HelpTopic);
 							return false;
 						}
 				}

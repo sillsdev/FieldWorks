@@ -1,12 +1,12 @@
 //From:http://www.codeproject.com/cs/miscctrl/MessageBoxEx.asp
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using SIL.Utils;
 
 namespace Utils.MessageBoxExLib

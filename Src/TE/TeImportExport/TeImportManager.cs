@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.TE
 			{
 				if (e.InnerException is ScriptureUtilsException)
 				{
-					var se = (ScriptureUtilsException) e.InnerException;
+					var se = (ScriptureUtilsException)e.InnerException;
 					if (m_helpTopicProvider != null)
 					{
 						string sCaption = GetDialogCaption(se.ImportErrorCodeType);
@@ -441,7 +441,7 @@ namespace SIL.FieldWorks.TE
 						}
 
 						MessageBoxUtils.Show(m_mainWnd, sbMsg.ToString(), sCaption, MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
+						MessageBoxIcon.Error);
 					}
 				}
 				else if (!(e.InnerException is CancelException))

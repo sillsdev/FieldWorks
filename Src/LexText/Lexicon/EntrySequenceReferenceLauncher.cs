@@ -2,22 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Xml;
 using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.LexText.Controls;
-using XCore;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -79,8 +79,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid == LexEntryRefTags.kflidPrimaryLexemes);
 			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
 			{
-			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
-			{
+				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
+				{
 					ILexEntry le = null;
 					if (m_obj.ClassID == LexEntryTags.kClassId)
 					{
@@ -95,10 +95,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					dlg.SetDlgInfo(m_cache, m_mediator, le);
 					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
-					AddItem(dlg.SelectedObject);
+					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+						AddItem(dlg.SelectedObject);
+				}
 			}
-		}
 			else if (m_flid == LexEntryRefTags.kflidPrimaryLexemes)
 			{
 				string displayWs = "analysis vernacular";

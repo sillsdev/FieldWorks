@@ -19,19 +19,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {

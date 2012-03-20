@@ -13,11 +13,10 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-//using System;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

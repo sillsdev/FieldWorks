@@ -11,22 +11,22 @@
 // File: SimpleRootSite.cs
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
-using Accessibility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
+using System.Windows.Forms;
 using System.Windows.Automation.Provider;
+using Accessibility;
+
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

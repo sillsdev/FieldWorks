@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
+using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.ObjectBrowser;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.FieldWorks.Resources;
+using SIL.ObjectBrowser;
 using SIL.Utils;
 using WeifenLuo.WinFormsUI.Docking;
-using System.IO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Reflection;
-using SIL.FieldWorks.Resources;
-using FwRemoteDatabaseConnector;
 using XCore;
 
 namespace FDOBrowser
@@ -41,7 +41,7 @@ namespace FDOBrowser
 		/// <summary>
 		/// Specifies whether the class was selected on the dialog (true) or not (false).
 		/// </summary>
-		public static bool m_dlgChanged = false;
+		public static bool m_dlgChanged;
 		private FdoCache m_cache;
 		private ILangProject m_lp;
 		private ICmObjectRepository m_repoCmObject;
@@ -50,8 +50,8 @@ namespace FDOBrowser
 		private ModelWnd m_modelWnd;
 		private InspectorWnd m_langProjWnd;
 		private InspectorWnd m_repositoryWnd;
-		private int saveClid = 0;
-		private string FileName = "";
+		private int saveClid;
+		private string FileName = string.Empty;
 		private ThreadHelper m_ThreadHelper;
 		//private FwTextBox m_textBox;
 		//private System.Windows.Forms.Panel panel1;
@@ -349,7 +349,6 @@ namespace FDOBrowser
 			Properties.Settings.Default.Save();
 		}
 
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Opens the specified file.
@@ -357,8 +356,6 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		protected override void OpenFile(string fileName)
 		{
-
-
 			if (fileName == null || !File.Exists(fileName) || m_currOpenedProject == fileName)
 				return;
 			if (m_cache != null)        // if we didn't clean up when we ran this before, do it now.

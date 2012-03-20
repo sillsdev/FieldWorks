@@ -1,13 +1,13 @@
 using System;
-using System.Windows.Forms;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

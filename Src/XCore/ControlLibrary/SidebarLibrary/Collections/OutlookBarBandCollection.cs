@@ -20,7 +20,7 @@ namespace SidebarLibrary.Collections
 
 		#region Class Variables
 		// Back reference to the parent control
-		OutlookBar parentBar = null;
+		private OutlookBar parentBar;
 		#endregion
 
 		#region Constructors
@@ -78,7 +78,7 @@ namespace SidebarLibrary.Collections
 		#endregion
 
 		#region Implementation
-		void RaiseChanged()
+		private void RaiseChanged()
 		{
 			if (Changed != null) Changed(this, null);
 		}

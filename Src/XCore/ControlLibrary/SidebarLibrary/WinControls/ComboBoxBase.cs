@@ -1,18 +1,16 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Security;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Runtime.InteropServices;
-
+using System.Security;
+using System.Windows.Forms;
 
 using SidebarLibrary.General;
 using SidebarLibrary.Win32;
-
 
 namespace SidebarLibrary.WinControls
 {
@@ -24,8 +22,8 @@ namespace SidebarLibrary.WinControls
 	{
 
 		#region Class Variables
-		ComboBoxBase comboBox = null;
-		bool ignoreNextPaintMessage = false;
+		private ComboBoxBase comboBox;
+		private bool ignoreNextPaintMessage;
 		#endregion
 
 		#region Constructors

@@ -12,6 +12,7 @@
 // Responsibility:
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -19,7 +20,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

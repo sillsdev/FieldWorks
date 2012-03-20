@@ -11,10 +11,10 @@ namespace SidebarLibrary.WinControls
 		Justification="surface and buffer get disposed in CleanUp() which gets called from Dispose()")]
 	public class DoubleBuffer: IDisposable
 	{
-		int bufferWidth;
-		int bufferHeight;
-		Bitmap surface;
-		Graphics buffer;
+		private int bufferWidth;
+		private int bufferHeight;
+		private Bitmap surface;
+		private Graphics buffer;
 
 		private void Cleanup()
 		{

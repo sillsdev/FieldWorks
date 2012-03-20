@@ -12,18 +12,17 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Collections;
+using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

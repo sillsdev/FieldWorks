@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using NUnit.Framework;
 using System.Windows.Forms;
+using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
@@ -524,16 +524,16 @@ namespace SIL.FieldWorks.Discourse
 				//		1h
 				//		1i
 
-			// Check the moved text item and subitems
+				// Check the moved text item and subitems
 				AssertExpectedMoveClauseSubItems(strip, 0, ConstituentChartLogic.FTO_MakeDepClauseMenuText);
 
-			// Similar check of speech item
+				// Similar check of speech item
 				AssertExpectedMoveClauseSubItems(strip, 1, ConstituentChartLogic.FTO_MakeSpeechClauseMenuItem);
 
-			// Similar check of song item
+				// Similar check of song item
 				AssertExpectedMoveClauseSubItems(strip, 2, ConstituentChartLogic.FTO_MakeSongClauseMenuItem);
 
-			AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_RowEndsParaMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_RowEndsParaMenuItem, 0);
 				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_RowEndsSentMenuItem, 0);
 			}
 		}

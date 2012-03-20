@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace SidebarLibrary.WinControls
 {

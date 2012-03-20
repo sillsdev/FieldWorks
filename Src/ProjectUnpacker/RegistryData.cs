@@ -15,9 +15,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Resources;
-using System.Diagnostics;
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 

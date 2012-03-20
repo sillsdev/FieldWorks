@@ -2,11 +2,11 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

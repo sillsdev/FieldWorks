@@ -17,16 +17,20 @@ namespace FDOBrowser
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing && !IsDisposed)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				if (File.Exists(FileName + ".lock"))
+				{
+					m_cache.ServiceLocator.GetInstance<IActionHandler>().Commit();
+					m_cache.Dispose();
+				}
+				if (m_ThreadHelper != null)
+					m_ThreadHelper.Dispose();
 			}
-			if (File.Exists(FileName + ".lock"))
-			{
-				m_cache.ServiceLocator.GetInstance<IActionHandler>().Commit();
-				m_cache.Dispose();
-				m_cache = null; // Don't try to use it again
-			}
+			m_cache = null; // Don't try to use it again
+			m_ThreadHelper = null;
 			base.Dispose(disposing);
 		}
 

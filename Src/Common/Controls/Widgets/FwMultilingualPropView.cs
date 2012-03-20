@@ -21,13 +21,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 
 		#region Data members
-		IFwMultilingualPropViewDataSource PropertyDataSource { get; set; }
+		private IFwMultilingualPropViewDataSource PropertyDataSource { get; set; }
 		#endregion
 
 		#region Constructor

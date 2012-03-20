@@ -125,6 +125,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								// complex forms that DO have components.
 								if (ler.ComponentLexemesRS.Count > 0)
 								{
+									// TODO-Linux: Help is not implemented in Mono
 									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
 										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_mediator.HelpTopicProvider.HelpFile,
