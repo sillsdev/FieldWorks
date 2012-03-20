@@ -29,6 +29,13 @@ namespace SIL.Utils
 			{
 				return GetCurrentFileName(fileName);
 			}
+
+			public FileChooserDialog CallApplyFilter()
+			{
+				var dlg = CreateFileChooserDialog();
+				ApplyFilter(dlg);
+				return dlg;
+			}
 		}
 
 		private class DummyFile: IDisposable
@@ -76,6 +83,7 @@ namespace SIL.Utils
 		[TestFixtureSetUp]
 		public void FixtureSetUp()
 		{
+			Application.Init();
 			m_File = new DummyFile("AddExtension_ExtensionIncluded.txt");
 		}
 
@@ -194,6 +202,36 @@ namespace SIL.Utils
 			using (var dlg = new DummyOpenFileDialogLinux())
 			{
 				dlg.Filter = "All files (*.*)";
+			}
+		}
+
+		private FileFilterInfo CreateFilterInfo(string extension)
+		{
+			var info = new FileFilterInfo();
+			info.Filename = "abc" + extension;
+			info.DisplayName = info.Filename;
+			info.Contains = FileFilterFlags.Filename | FileFilterFlags.DisplayName;
+			return info;
+		}
+
+		[Test]
+		public void FilterSeparatedBySpaces_FWNX840()
+		{
+			using (var dlg = new DummyOpenFileDialogLinux())
+			{
+				dlg.AddExtension = true;
+				dlg.CheckFileExists = false;
+				dlg.DefaultExt = "foo";
+				dlg.Filter = "Other files|*.bla|Text files|*.abc; *.txt";
+				dlg.FilterIndex = 2;
+				using (var chooserDlg = dlg.CallApplyFilter())
+				{
+					var filter = chooserDlg.Filter;
+					Assert.AreEqual("Text files", filter.Name);
+					Assert.IsTrue(filter.Filter(CreateFilterInfo(".abc")));
+					Assert.IsTrue(filter.Filter(CreateFilterInfo(".txt")));
+					Assert.IsFalse(filter.Filter(CreateFilterInfo(".bla")));
+				}
 			}
 		}
 

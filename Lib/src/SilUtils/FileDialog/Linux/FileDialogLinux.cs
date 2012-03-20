@@ -60,7 +60,7 @@ namespace SIL.Utils.FileDialog.Linux
 		#endregion
 
 		#region Filter related private methods
-		private void ApplyFilter(FileChooserDialog dlg)
+		protected void ApplyFilter(FileChooserDialog dlg)
 		{
 			if (string.IsNullOrEmpty(Filter))
 				return;
@@ -77,7 +77,7 @@ namespace SIL.Utils.FileDialog.Linux
 				filter.Name = parts[i];
 				var patterns = parts[i + 1].Split(';');
 				foreach (var pattern in patterns)
-					filter.AddPattern(pattern);
+					filter.AddPattern(pattern.Trim());
 				dlg.AddFilter(filter);
 			}
 
