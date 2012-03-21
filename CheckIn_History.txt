@@ -5788,3 +5788,4 @@ RandyR, 18 March 2012. Updated FLEx Bridge installer (0.3.17) which fixes a few 
 TomB, 15 Mar 2012. TE-9038: Enabled displaying pictures in the BT so captions can be edited.
 	TE-9544: Enabled deleting picture ORC in the BT and handling deletion of BT picture ORCs when a picture is
 	deleted in the vernacular.
+JohnT, 21 Mar 2012. LT-12768, Bring up the Conflict window after S/R if there are new conflicts created in FlexBridge

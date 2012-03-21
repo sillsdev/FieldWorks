@@ -197,9 +197,9 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="project">The project name to re-open</param>
 		/// <param name="app"></param>
-		public void ReopenProject(string project, FwAppArgs app)
+		public FwApp ReopenProject(string project, FwAppArgs app)
 		{
-			FieldWorks.ReopenProject(project, app);
+			return FieldWorks.ReopenProject(project, app);
 		}
 		#endregion
 	}

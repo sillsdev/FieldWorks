@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="project">The project name to re-open</param>
 		/// <param name="app"></param>
-		void ReopenProject(string project, FwAppArgs app);
+		FwApp ReopenProject(string project, FwAppArgs app);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

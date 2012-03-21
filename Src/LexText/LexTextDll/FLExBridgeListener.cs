@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -81,17 +82,25 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			//Unlock project
 			ProjectLockingService.UnlockCurrentProject(Cache);
-			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+			var projectFolder = Cache.ProjectId.ProjectFolder;
+			var savedState = PrepareToDetectConflicts(projectFolder);
+			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
 																	  Environment.UserName,
 																	  FLExBridgeHelper.SendReceive);
 			if(dataChanged)
 			{
 				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
 				fixer.FixErrorsAndSave();
+				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var manager = app.FwManager;
 				var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
-				manager.ReopenProject(Cache.ProjectId.Name, appArgs);
+				var newApp = manager.ReopenProject(Cache.ProjectId.Name, appArgs);
+				if (conflictOccurred)
+				{
+					((FwXWindow) newApp.ActiveMainWindow).Mediator.SendMessage("ShowConflictReport", null);
+					//OnShowConflictReport(null); no good, we've been disposed.
+				}
 			}
 			else //Re-lock project if we aren't trying to close the app
 			{
@@ -101,7 +110,28 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 		#region Implementation of IDisposable
 
-		/// <summary>
+		private bool DetectConflicts(string path, Dictionary<string, long> savedState)
+		{
+			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				long oldLength;
+				savedState.TryGetValue(file, out oldLength);
+				if (new FileInfo(file).Length == oldLength)
+					continue; // no new notes in this file.
+				return true; // Review JohnT: do we need to look in the file to see if what was added is a conflict?
+			}
+			return false; // no conflicts added.
+		}
+
+		private Dictionary<string, long> PrepareToDetectConflicts(string path)
+		{
+			var result = new Dictionary<string, long>();
+			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				result[file] = new FileInfo(file).Length;
+			}
+			return result;
+		}		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		/// <filterpriority>2</filterpriority>

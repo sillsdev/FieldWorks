@@ -3255,7 +3255,14 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		internal static void ReopenProject(string project, FwAppArgs appArgs)
+		/// <summary>
+		/// Returns some active, non-disposed application if possible, otherwise, null. Currently Flex is preferred
+		/// if both are re-opened.
+		/// </summary>
+		/// <param name="project"></param>
+		/// <param name="appArgs"></param>
+		/// <returns></returns>
+		internal static FwApp ReopenProject(string project, FwAppArgs appArgs)
 		{
 			ExecuteWithAppsShutDown("FLEx", ()=>
 												{
@@ -3271,6 +3278,7 @@ namespace SIL.FieldWorks
 													}
 													return null;
 												});
+			return s_flexApp ?? s_teApp;
 		}
 
 		/// ------------------------------------------------------------------------------------
