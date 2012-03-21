@@ -5789,3 +5789,4 @@ TomB, 15 Mar 2012. TE-9038: Enabled displaying pictures in the BT so captions ca
 	TE-9544: Enabled deleting picture ORC in the BT and handling deletion of BT picture ORCs when a picture is
 	deleted in the vernacular.
 JohnT, 21 Mar 2012. LT-12768, Bring up the Conflict window after S/R if there are new conflicts created in FlexBridge
+Andy Black, 21 Mar 2012. Added select column to LT-10471 "Allow user ability to turn phonological rules on or off".

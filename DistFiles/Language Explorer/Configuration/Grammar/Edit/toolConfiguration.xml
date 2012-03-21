@@ -44,10 +44,10 @@
 						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 						<parameters id="CompoundRuleList">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural">
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
+								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural" selectColumn="true">
 									<columns>
-										<column label="Active" width="10%" layout="Active" editable="true"/>
+										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 										<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
 										<column label="Description" width="15%" layout="Description" ws="$ws=best analysis" field="Description"/>
 										<column label="Left Member" width="20%" layout="LeftMsa"/>
@@ -220,11 +220,11 @@
 						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 						<parameters id="PhonologicalRuleList">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural" selectColumn="false">
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
+								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural" selectColumn="true">
 									<columns>
-										<column label="Active" width="10%" layout="Active" editable="true"/>
-										<column label="Order" width="15%" layout="Order" editable="true"/>
+										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
+										<column label="Order" width="15%" layout="Order" editable="true" sortType="integer" blankPossible="false"/>
 										<column label="Name" width="35%" layout="Name" ws="$ws=best analysis" field="Name"/>
 										<column label="Description" width="40%" layout="Description" ws="$ws=best analysis" field="Description"/>
 									</columns>

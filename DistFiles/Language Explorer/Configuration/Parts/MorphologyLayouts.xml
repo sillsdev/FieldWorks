@@ -59,7 +59,7 @@
 	<layout class="MoStemAllomorph" type="detail" name="Normal">
 		<part ref="FormAllV" label="Stem Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
 			<indent>
-				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
+				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 				<part ref="MorphType"/>
 				<part ref="PhoneEnv"/>
 				<part ref="StemName" visibility="ifdata"/>

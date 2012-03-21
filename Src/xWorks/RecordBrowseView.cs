@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
@@ -824,6 +825,50 @@ namespace SIL.FieldWorks.XWorks
 		public void PostLayoutInit()
 		{
 			m_browseViewer.PostLayoutInit();
+		}
+	}
+	public class RecordBrowseActiveView : RecordBrowseView
+	{
+
+		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache, Mediator mediator,
+					ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		{
+			return new BrowseActiveViewer(nodeSpec,
+						 hvoRoot, fakeFlid,
+						 cache, mediator, sortItemProvider, sda);
+		}
+		/// <summary>
+		/// Event handler, which just passes the event on, if possible.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public override void OnCheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
+		{
+			base.OnCheckBoxChanged(sender, e);
+			var changedHvos = e.HvosChanged;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsert, xWorksStrings.ksRedoInsert, Cache.ActionHandlerAccessor, () =>
+				ChangeAnyDisabledFlags(changedHvos));
+		}
+
+		private void ChangeAnyDisabledFlags(int[] changedHvos)
+		{
+			foreach (var hvo in changedHvos)
+			{
+				ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+				switch (obj.ClassID)
+				{
+					case FDO.PhRegularRuleTags.kClassId: // fall through
+					case FDO.PhMetathesisRuleTags.kClassId:
+						var segmentRule = obj as FDO.IPhSegmentRule;
+						segmentRule.Disabled = !segmentRule.Disabled;
+						break;
+					case FDO.MoEndoCompoundTags.kClassId: // fall through
+					case FDO.MoExoCompoundTags.kClassId:
+						var compoundRule = obj as FDO.IMoCompoundRule;
+						compoundRule.Disabled = !compoundRule.Disabled;
+						break;
+				}
+			}
 		}
 	}
 }
