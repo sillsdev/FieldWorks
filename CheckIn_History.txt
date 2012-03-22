@@ -5790,3 +5790,4 @@ TomB, 15 Mar 2012. TE-9038: Enabled displaying pictures in the BT so captions ca
 	deleted in the vernacular.
 JohnT, 21 Mar 2012. LT-12768, Bring up the Conflict window after S/R if there are new conflicts created in FlexBridge
 Andy Black, 21 Mar 2012. Added select column to LT-10471 "Allow user ability to turn phonological rules on or off".
+RandyR, 22 March 2012. Updated FLEx Bridge installer (0.3.19) which fixes LT-12902 "Crash on Send/Receive Project with TrashCans project, but not on Sena 3 project".
