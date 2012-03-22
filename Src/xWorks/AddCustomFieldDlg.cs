@@ -1052,9 +1052,9 @@ namespace SIL.FieldWorks.XWorks
 			this.m_okButton = new System.Windows.Forms.Button();
 			this.m_helpButton = new System.Windows.Forms.Button();
 			this.m_fieldsListView = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			//
