@@ -5793,3 +5793,4 @@ Andy Black, 21 Mar 2012. Added select column to LT-10471 "Allow user ability to 
 RandyR, 22 March 2012. Updated FLEx Bridge installer (0.3.19) which fixes LT-12902 "Crash on Send/Receive Project with TrashCans project, but not on Sena 3 project".
 JohnT, 22 Mar 2012. Added a change that somehow didn't get checked in before.
 NaylorJ, 22 Mar 2012. Fix a bug which could result in multiple lift-ranges during LiftBridge operation. One of several causes for LT-12738.
+RickM, 22 Mar 2012. LT-12870 save user position in project before closing and reloading project

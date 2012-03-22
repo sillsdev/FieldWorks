@@ -1006,7 +1006,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Note: MUST always update this through the CurrentIndex setter, so that m_hvoCurrent
 		/// is kept in sync.
 		/// </summary>
-		protected int m_currentIndex;
+		protected int m_currentIndex = -1;
 
 		/// <summary>
 		/// Basically RootObjectAt(m_currentIndex) (unless m_currentIndex is -1, when it is zero).
@@ -2740,6 +2740,10 @@ namespace SIL.FieldWorks.XWorks
 					// Keep the current position as far as possible.
 					if (newCurrentIndex >= newSortedObjects.Count)
 						newCurrentIndex = newSortedObjects.Count - 1;
+					else
+					{
+						newCurrentIndex = GetPersistedCurrentIndex(newSortedObjects.Count);
+					}
 
 					actions = ListChangedEventArgs.ListChangedActions.Normal; // We definitely changed records
 				}
@@ -3771,12 +3775,30 @@ namespace SIL.FieldWorks.XWorks
 			m_sortedObjects = items;
 			m_requestedLoadWhileSuppressed = false; // If a load was pending, we just removed the need for it.
 			if (m_currentIndex == -1 && m_sortedObjects.Count > 0)
-				CurrentIndex = 0;
+			{
+				CurrentIndex = GetPersistedCurrentIndex(m_sortedObjects.Count);
+			}
 			if (m_currentIndex > m_sortedObjects.Count)
 				CurrentIndex = m_sortedObjects.Count == 0 ? -1 : 0;
 			// Let the view update to show the restored list.
 			SendPropChangedOnListChange(m_currentIndex, m_sortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
 			return true;
+		}
+
+		/// <summary>
+		/// LT-12780:  On reloading FLEX there were situtaions where it reloaded on the first element of a list instead of
+		/// the last item the user was working on before closing Flex. The CurrentIndex was being set to zero. This method
+		/// will access the prersisted index but also make sure it does not use an index which is out of range.
+		/// </summary>
+		/// <param name="numberOfObjectsInList"></param>
+		/// <returns></returns>
+		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
+		{
+			var persistedCurrentIndex = m_mediator.PropertyTable.GetIntProperty(Clerk.PersistedIndexProperty, 0,
+																				PropertyTable.SettingsGroup.LocalSettings);
+			if (persistedCurrentIndex >= numberOfObjectsInList)
+				persistedCurrentIndex = numberOfObjectsInList - 1;
+			return persistedCurrentIndex;
 		}
 	}
 
