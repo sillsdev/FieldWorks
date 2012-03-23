@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -68,11 +69,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			// LT-11922 & LT-12053 show that we need the CodeDirectory here and it's better
 			// to use the FileUtils version of FileExists for cross-platform reasons.
-			var dllPath = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
-			display.Enabled = FileUtils.FileExists(dllPath);
+			var fullDllName = FullLiftBridgeDllPath();
+			display.Enabled = FileUtils.FileExists(fullDllName);
 			display.Visible = display.Enabled;
 
 			return true; // We dealt with it.
+		}
+
+		private static string FullLiftBridgeDllPath()
+		{
+			var fullDllName = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
+			return fullDllName;
 		}
 
 		/// <summary>
@@ -81,8 +88,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			m_fRefreshNeeded = false;
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var assembly = Assembly.LoadFrom(Path.Combine(baseDir, LiftBridgeDll));
+			var assembly = Assembly.LoadFrom(FullLiftBridgeDllPath());
 			var lbType = (assembly.GetTypes().Where(typeof(ILiftBridge).IsAssignableFrom)).First();
 			var constInfo = lbType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
 			using (var liftBridge = (ILiftBridge)constInfo.Invoke(BindingFlags.NonPublic, null, null, null))
@@ -189,13 +195,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				//Output the Ranges file
 				//NOTE (RickM): outPath is passed in with the following kind of format with the .tmp at the end.
-				//If LiftBridge could be changed on the parameter is passes in to remove this .tmp at the end of
-				//the path/filename we could remove a few of the following lines of code.
-				//outPath = "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\lt11554\\lt11554.lift.tmp"
-				var path = Path.GetDirectoryName(outPath);
-				var projectName = Path.GetFileName(path);
-				var pathWithFilename = Path.Combine(path, projectName);
-				var outPathRanges = Path.ChangeExtension(pathWithFilename, "lift-ranges");
+				//Because changing the service to add another parameter would be an interface breaking change
+				//we will continue to hack our way around here but Assert that .lift.tmp will always be the file name.
+				//For an outPath = "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift.tmp"
+				//ranges should be "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift-ranges"
+				Debug.Assert(outPath.EndsWith(@".lift.tmp"), @"Unexpected argument format from LiftBridge.");
+				if(!outPath.EndsWith(@".lift.tmp"))
+					return null; //The liftbridge behavior has changed, we need to change also.
+				var pathWithFilename = outPath.Substring(0, outPath.Length - @".lift.tmp".Length);
+				var outPathRanges = Path.ChangeExtension(pathWithFilename, @"lift-ranges");
 				using (TextWriter w = new StreamWriter(outPathRanges))
 				{
 					exporter.ExportLiftRanges(w);

@@ -177,3 +177,4 @@ RickM, 16 Mar 2012. NEEDED To Remove a comment line: LT-12716 Going through the 
 KenZ, 16 Mar 2012. Integrated FW7.2.3 changes to WW.
 KenZ, 18 Mar 2012. Fixed LT-12893 to avoid duplicating pictures on LIFT import.
 ----------------- FW7.2.4 -------------------------------------------------------------------------------
+NaylorJ, 23 Mar 2012. Integrated [Fix a bug which could result in multiple lift-ranges during LiftBridge operation. One of several causes for LT-12738]
