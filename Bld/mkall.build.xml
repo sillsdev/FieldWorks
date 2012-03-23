@@ -358,6 +358,7 @@
 				<include name="icu*.dll"/>
 			</fileset>
 		</copy>
+		<delete dir="${dir.fwdistfiles}/SIL/Repository" failonerror="false"/>
 		<choose>
 			<when test="${user::is-admin() or platform::is-unix()}">
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" value="${dir.fwdistfiles}" verbose="${verbose}"/>
@@ -368,8 +369,10 @@
 					 verbose="${verbose}" />
 				<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}" />
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${dir.outputBase}" verbose="${verbose}"  if="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
 			</when>
 			<otherwise>
 				<readregistry property="rootCodeDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" failonerror="false" verbose="${verbose}"/>
