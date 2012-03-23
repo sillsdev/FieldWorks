@@ -827,29 +827,37 @@ namespace SIL.FieldWorks.XWorks
 			m_browseViewer.PostLayoutInit();
 		}
 	}
+	/// <summary>
+	/// A browse view which has the select column hooked to an Active boolean
+	///  (which is the UI name of the Disabled property of phonological rules,
+	///   compound rules, ad hoc rules, and inflectional affix templates).  We
+	///  only use this view with phonological rules and compound rules.
+	/// </summary>
 	public class RecordBrowseActiveView : RecordBrowseView
 	{
 
 		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache, Mediator mediator,
 					ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			return new BrowseActiveViewer(nodeSpec,
+			var viewer = new BrowseActiveViewer(nodeSpec,
 						 hvoRoot, fakeFlid,
 						 cache, mediator, sortItemProvider, sda);
+			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
+			return viewer;
 		}
+
 		/// <summary>
-		/// Event handler, which just passes the event on, if possible.
+		/// Event handler, which makes any changes to the Active flag.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public override void OnCheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
+		public void OnCheckBoxActiveChanged(object sender, CheckBoxActiveChangedEventArgs e)
 		{
 			base.OnCheckBoxChanged(sender, e);
 			var changedHvos = e.HvosChanged;
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsert, xWorksStrings.ksRedoInsert, Cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.Do(e.UndoMessage, e.RedoMessage, Cache.ActionHandlerAccessor, () =>
 				ChangeAnyDisabledFlags(changedHvos));
 		}
-
 		private void ChangeAnyDisabledFlags(int[] changedHvos)
 		{
 			foreach (var hvo in changedHvos)
