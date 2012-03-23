@@ -358,7 +358,7 @@
 				<include name="icu*.dll"/>
 			</fileset>
 		</copy>
-		<delete dir="${dir.fwdistfiles}/SIL/Repository" failonerror="false"/>
+		<delete dir="${dir.fwdistfiles}/SIL/Repository" failonerror="false" if="${platform::is-unix()}"/>
 		<choose>
 			<when test="${user::is-admin() or platform::is-unix()}">
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" value="${dir.fwdistfiles}" verbose="${verbose}"/>
