@@ -37,6 +37,9 @@ namespace SIL.FieldWorks.IText
 	{
 		private SetupMatchingMorphs m_matchingMorphs;
 
+		/// <summary>
+		///
+		/// </summary>
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -44,6 +47,9 @@ namespace SIL.FieldWorks.IText
 			   DoSetupFixture);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		public override void FixtureTeardown()
 		{
 			if (m_matchingMorphs != null)
@@ -175,6 +181,9 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(0, emptySet.Count());
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_Stems()
 		{
@@ -193,6 +202,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_StemAllomorphs()
 		{
@@ -211,6 +223,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_Prefixes()
 		{
@@ -227,6 +242,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_Suffixes()
 		{
@@ -243,6 +261,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_Proclitic()
 		{
@@ -262,6 +283,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void MatchingMorphs_Enclitic()
 		{
@@ -307,12 +331,18 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(1, Cache.ServiceLocator.GetInstance<IMoFormRepository>().Count);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void NewEntry()
 		{
 			MakeSureEverythingIsUndoneAfterTests();
 		}
 
+		/// <summary>
+		///
+		/// </summary>
 		[Test]
 		public void NewEntry2()
 		{

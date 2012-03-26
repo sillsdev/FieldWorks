@@ -5798,3 +5798,4 @@ NaylorJ, 22 Mar 2012. Fix a crash in bringing up the Add Custom Field dialog, wa
 Andy Black, 23 Mar 2012. Refine adding select column to LT-10471 "Allow user ability to turn 	phonological rules on or off".  Fix LT-12918 "Could get a crash when had an infix using
 	reduplication and used Try a Word with the "Let me see all" option."
 NaylorJ, 23 Mar 2012. New pathinclude's for 2010 which will allow for net4.0 resource building. Required to localize dialogs built in 2010.
+PyleE, 26 Mar 2012. Rename/move SandboxBase.ComboHandlerTests.cs to FDOTests/MorphServicesTests.cs

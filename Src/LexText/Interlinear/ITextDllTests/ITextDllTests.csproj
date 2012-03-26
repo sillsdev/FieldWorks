@@ -246,7 +246,6 @@
 	<Compile Include="InterlinSfmImportTests.cs" />
 	<Compile Include="InterlinTaggingTests.cs" />
 	<Compile Include="MorphemeBreakerTests.cs" />
-	<Compile Include="SandboxBase.ComboHandlerTests.cs" />
 	<Compile Include="SandboxBaseTests.cs" />
 	<Compile Include="ShowSpaceDecoratorTests.cs" />
 	<Compile Include="TestTaggingChild.cs">

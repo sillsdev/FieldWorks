@@ -340,6 +340,7 @@
 	<Compile Include="ReferenceAdjusterServiceTests.cs" />
 	<Compile Include="RepositoryTests.cs" />
 	<Compile Include="ReversalIndexTests.cs" />
+	<Compile Include="MorphServicesTests.cs" />
 	<Compile Include="ScrBookTests.cs">
 	  <SubType>Code</SubType>
 	</Compile>
