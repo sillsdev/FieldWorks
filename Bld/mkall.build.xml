@@ -180,8 +180,8 @@
 			cascade="true"/></target> Note that this is not an issue if we have u_cleanup in the
 			CIcuECModule destructor, but this apparently causes other problems. -->
 		<!-- NB: Only one of these will be run. -->
-		<!--comregisterex file="${dir.fwoutputlibBase}/IcuEC40a.dll" failonerror="false" unless="${clean}"/-->
-		<!--comregisterex file="/s/u ${dir.fwoutputlibBase}/IcuEC40a.dll" failonerror="false" unregister="true" if="${clean}"/-->
+		<!--comregisterex file="${dir.fwoutputlibBase}/IcuEC40b.dll" failonerror="false" unless="${clean}"/-->
+		<!--comregisterex file="/s/u ${dir.fwoutputlibBase}/IcuEC40b.dll" failonerror="false" unregister="true" if="${clean}"/-->
 		<property name="args" value="" if="${user::is-admin()}"/>
 		<property name="args" value="/c" unless="${user::is-admin()}"/>
 		<property name="dir" value="${config}" if="${user::is-admin()}"/>
@@ -194,8 +194,8 @@
 						<include name="${dir.fwoutputlib}/${dir}/AIGuesserEC.dll"/>
 					</assemblies>
 				</regasm>
-				<exec program="regsvr32.exe" commandline="/s ${fwroot}/Lib/${dir}/IcuEC40a.dll" failonerror="false" unless="${clean}" verbose="true"/>
-				<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/Lib/${dir}/IcuEC40a.dll" failonerror="false" if="${clean}"/>
+				<exec program="regsvr32.exe" commandline="/s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" unless="${clean}" verbose="true"/>
+				<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" if="${clean}"/>
 			</when>
 			<otherwise>
 			<if test="${not platform::is-unix()}">
@@ -209,29 +209,29 @@
 				<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
 								unregister="false" peruser="true" failonerror="false"/>
 				<delete file="${dir.outputBase}\AIGuesserEC.reg" failonerror="false"/>
-				<!-- IcuEC40a.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
+				<!-- IcuEC40b.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
 				<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-					  commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40a.dll"
+					  commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40b.dll"
 					  failonerror="false" if="${clean}"/>
 				<if test="${not clean}">
-					<copy file="${fwroot}\Lib\${dir}\IcuEC40a.dll" todir="${path::get-temp-path()}"/>
+					<copy file="${fwroot}\Lib\${dir}\IcuEC40b.dll" todir="${path::get-temp-path()}"/>
 					<checksum algorithm="MD5">
 						<fileset>
-							<include name="${path::combine(path::get-temp-path(), 'IcuEC40a.dll')}"/>
+							<include name="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
 						</fileset>
 					</checksum>
 					<property name="IcuEcChanged" value="true"/>
-					<if test="${file::exists(fwroot + '\Lib\' + dir + '\IcuEC40a.dll.MD5')}">
-						<loadfile property="newIcuEc" file="${path::combine(path::get-temp-path(), 'IcuEC40a.dll')}"/>
-						<loadfile property="oldIcuEc" file="${fwroot}\Lib\${dir}\IcuEC40a.dll.MD5" />
+					<if test="${file::exists(fwroot + '\Lib\' + dir + '\IcuEC40b.dll.MD5')}">
+						<loadfile property="newIcuEc" file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
+						<loadfile property="oldIcuEc" file="${fwroot}\Lib\${dir}\IcuEC40b.dll.MD5" />
 						<property name="IcuEcChanged" value="${newIcuEc != oldIcuEc}"/>
 					</if>
 					<!-- If IcuEC40a didn't change then we have nothing to do. Otherwise we register with admin privileges -->
 					<if test="${IcuEcChanged}">
-						<echo message="Register IcuEC40a.dll file with admin privileges"/>
+						<echo message="Register IcuEC40b.dll file with admin privileges"/>
 						<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-							  commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40a.dll" failonerror="false"/>
-						<copy file="${path::combine(path::get-temp-path(), 'IcuEC40a.dll.MD5')}" todir="${fwroot}\Lib\${dir}"/>
+							  commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40b.dll" failonerror="false"/>
+						<copy file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll.MD5')}" todir="${fwroot}\Lib\${dir}"/>
 					</if>
 				</if>
 			</if> <!-- not is unix-->
