@@ -5802,3 +5802,4 @@ PyleE, 26 Mar 2012. Rename/move SandboxBase.ComboHandlerTests.cs to FDOTests/Mor
 AlistairI, 26 Mar 2012. Upgraded all remaining src projects to VS2010 and .NET4.
 NaylorJ, 26 Mar 2012. Upgrade the Palaso dll so newer builds of the bridges will work correctly. (should be updated to latest official version before release)
 AnnB, 26 March 2012 - LT-12883 - Hook up Help button: Active fields in four different tools in the Grammar area
+AnnB, 26 March 2012 - LT-3844 - Change the Bulk Replace summary, LT-10403 - Wrong path name given in Export Interlinear, Word 2003
