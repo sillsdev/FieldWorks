@@ -5801,3 +5801,4 @@ NaylorJ, 23 Mar 2012. New pathinclude's for 2010 which will allow for net4.0 res
 PyleE, 26 Mar 2012. Rename/move SandboxBase.ComboHandlerTests.cs to FDOTests/MorphServicesTests.cs
 AlistairI, 26 Mar 2012. Upgraded all remaining src projects to VS2010 and .NET4.
 NaylorJ, 26 Mar 2012. Upgrade the Palaso dll so newer builds of the bridges will work correctly. (should be updated to latest official version before release)
+AnnB, 26 March 2012 - LT-12883 - Hook up Help button: Active fields in four different tools in the Grammar area
