@@ -2861,7 +2861,7 @@
 	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Active_field_Ad_Hoc_Rules.htm</value>
 	<comment>Grammar - Ad-hoc Rules, hook up the Active field </comment>
   </data>
-  <data name="khtpField-compoundRuleAdvancedEdit-MoExoCompound-Active" xml:space="preserve">
+  <data name="khtpField-compoundRuleAdvancedEdit-Active" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Active_field_Compound_Rules.htm</value>
 	<comment>Grammar - Compound Rules, hook up the Active field</comment>
   </data>
