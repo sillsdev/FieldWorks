@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XML Spy v4.3 (http://www.xmlspy.com) by Gary Simons (SIL International) -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxslt="urn:schemas-microsoft-com:xslt" xmlns:saxon="http://icl.com/saxon" exclude-result-prefixes="saxon msxslt">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns:msxslt="urn:schemas-microsoft-com:xslt"
+ xmlns:saxon="http://icl.com/saxon"
+ xmlns:exsl="http://exslt.org/common"
+ exclude-result-prefixes="exsl saxon msxslt">
 	<xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
 	<!--
 ================================================================
@@ -4096,6 +4099,12 @@ GetSlotName
 			</xsl:call-template>
 		</xsl:variable>
 		<xsl:choose>
+			<xsl:when test="function-available('exsl:node-set')">
+				<xsl:for-each select="exsl:node-set($subcatItems)/subcat">
+					<xsl:sort select="name"/>
+					<xsl:call-template name="OutputSubcategoryNameAsList"/>
+				</xsl:for-each>
+			</xsl:when>
 			<xsl:when test="function-available('saxon:node-set')">
 				<xsl:for-each select="saxon:node-set($subcatItems)/subcat">
 					<xsl:sort select="name"/>
@@ -5149,6 +5158,9 @@ OutputListOfSubcategories
 		</xsl:variable>
 		<xsl:variable name="iSubcatCount">
 			<xsl:choose>
+				<xsl:when test="function-available('exsl:node-set')">
+					<xsl:value-of select="count(exsl:node-set($subcatItems)/subcat)"/>
+				</xsl:when>
 				<xsl:when test="function-available('saxon:node-set')">
 					<xsl:value-of select="count(saxon:node-set($subcatItems)/subcat)"/>
 				</xsl:when>
@@ -5403,6 +5415,20 @@ OutputSlotsAndFillersForPOS
 						</xsl:variable>
 						<xsl:text>  Its templates, however, may use </xsl:text>
 						<xsl:choose>
+							<xsl:when test="function-available('exsl:node-set')">
+								<xsl:choose>
+									<xsl:when test="exsl:node-set($higherSlots)[count(affixslot) &gt; 1]">
+										<xsl:text>any of these slots: </xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>the slot </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="exsl:node-set($higherSlots)/affixslot">
+									<xsl:sort select="name"/>
+									<xsl:call-template name="OutputInflectionalSlotAsList"/>
+								</xsl:for-each>
+							</xsl:when>
 							<xsl:when test="function-available('saxon:node-set')">
 								<xsl:choose>
 									<xsl:when test="saxon:node-set($higherSlots)[count(affixslot) &gt; 1]">
@@ -5467,6 +5493,16 @@ OutputSlotsAndFillersForPOS
 							</xsl:for-each>
 						</xsl:variable>
 						<xsl:choose>
+							<xsl:when test="function-available('exsl:node-set')">
+								<xsl:choose>
+									<xsl:when test="exsl:node-set($subcats)[count(subcat) &gt; 1]">these subcategories: </xsl:when>
+									<xsl:otherwise>the subcategory </xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="exsl:node-set($subcats)/subcat">
+									<xsl:sort select="name"/>
+									<xsl:call-template name="OutputSubcategoryNameAsList"/>
+								</xsl:for-each>
+							</xsl:when>
 							<xsl:when test="function-available('saxon:node-set')">
 								<xsl:choose>
 									<xsl:when test="saxon:node-set($subcats)[count(subcat) &gt; 1]">these subcategories: </xsl:when>
@@ -6176,6 +6212,12 @@ ProcessInflAffixTemplatesForPOS
 								</xsl:call-template>
 							</xsl:variable>
 							<xsl:choose>
+								<xsl:when test="function-available('exsl:node-set')">
+									<xsl:for-each select="exsl:node-set($subcatItems)/subcat">
+										<xsl:sort select="name"/>
+										<xsl:call-template name="OutputInflectionalTemplateNameAsList"/>
+									</xsl:for-each>
+								</xsl:when>
 								<xsl:when test="function-available('saxon:node-set')">
 									<xsl:for-each select="saxon:node-set($subcatItems)/subcat">
 										<xsl:sort select="name"/>

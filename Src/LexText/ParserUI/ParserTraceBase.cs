@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml;
@@ -444,41 +445,35 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
-		protected string TransformToHtml(XPathDocument doc, string sTempFileBase, string sTransformFile, XsltArgumentList args)
+		protected string TransformToHtml(string sInputFile, string sTempFileBase, string sTransformFile, List<XmlUtils.XSLParameter> args)
 		{
-			string sOutput = null;
-			XslCompiledTransform transformer = new XslCompiledTransform();
-			sOutput = CreateTempFile(sTempFileBase, "htm");
-			transformer.Load(Path.Combine(TransformPath, sTransformFile));
-			using (TextWriter writer = File.CreateText(sOutput))
-			{
-				SetWritingSystemBasedArguments(args);
-				transformer.Transform(doc, args, writer);
-				writer.Close();
-				return sOutput;
-			}
+			string sOutput = CreateTempFile(sTempFileBase, "htm");
+			string sTransform = Path.Combine(TransformPath, sTransformFile);
+			SetWritingSystemBasedArguments(args);
+			XmlUtils.TransformFileToFile(sTransform, args.ToArray(), sInputFile, sOutput);
+			return sOutput;
 		}
 
-		private void SetWritingSystemBasedArguments(XsltArgumentList args)
+		private void SetWritingSystemBasedArguments(List<XmlUtils.XSLParameter> args)
 		{
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
 			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, m_mediator, wsf))
 			{
-				args.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
-				args.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
+				args.Add(new XmlUtils.XSLParameter("prmAnalysisFont", myFont.FontFamily.Name));
+				args.Add(new XmlUtils.XSLParameter("prmAnalysisFontSize", myFont.Size + "pt"));
 			}
 
 			IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, m_mediator, wsf))
 			{
-				args.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
-				args.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");
+				args.Add(new XmlUtils.XSLParameter("prmVernacularFont", myFont.FontFamily.Name));
+				args.Add(new XmlUtils.XSLParameter("prmVernacularFontSize", myFont.Size + "pt"));
 			}
 
 			string sRTL = defVernWs.RightToLeftScript ? "Y" : "N";
-			args.AddParam("prmVernacularRTL", "", sRTL);
+			args.Add(new XmlUtils.XSLParameter("prmVernacularRTL", sRTL));
 		}
 	}
 }

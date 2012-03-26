@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -27,7 +27,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public WordGrammarDebugger()
 		{
-
 		}
 		/// <summary>
 		/// The real deal
@@ -133,12 +132,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string CreateWordDebuggerPage(string sXmlFile)
 		{
 			// apply word grammar step transform file
-			XPathDocument xpath = new XPathDocument(sXmlFile);
-			string sXmlOutput = TransformToXml(xpath);
+			string sXmlOutput = TransformToXml(sXmlFile);
 			m_sWordGrammarDebuggerXmlFile = sXmlOutput;
 			// format the result
-			xpath = new XPathDocument(sXmlOutput);
-			string sOutput = TransformToHtml(xpath);
+			string sOutput = TransformToHtml(sXmlOutput);
 			return sOutput;
 		}
 
@@ -148,27 +145,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_ksWordGrammarDebugger + sDepthLevel;
 		}
 
-
-		protected string TransformToHtml(XPathDocument doc)
+		protected string TransformToHtml(string sInputFile)
 		{
-			XsltArgumentList args = new XsltArgumentList();
-			string sOutput = TransformToHtml(doc, CreateWordGrammarDebuggerFileName(),
+			var args = new List<XmlUtils.XSLParameter>();
+			string sOutput = TransformToHtml(sInputFile, CreateWordGrammarDebuggerFileName(),
 									  "FormatXAmpleWordGrammarDebuggerResult.xsl", args);
 			return sOutput;
 		}
-		private string TransformToXml(XPathDocument doc)
+		private string TransformToXml(string sInputFile)
 		{
 			string sOutput = CreateTempFile(CreateWordGrammarDebuggerFileName(), "xml");
-			using (TextWriter writer = File.CreateText(sOutput))
-			{
-				XslCompiledTransform transformer = new XslCompiledTransform();
-				XsltArgumentList args = new XsltArgumentList();
-				string sName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
-				transformer.Load(Path.Combine(Path.GetDirectoryName(sOutput), sName));
-				transformer.Transform(doc, args, writer);
-				writer.Close();
-				return sOutput;
-			}
+			string sName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
+			string sTransform = Path.Combine(Path.GetDirectoryName(sOutput), sName);
+			XmlUtils.TransformFileToFile(sTransform, new XmlUtils.XSLParameter[0], sInputFile, sOutput);
+			return sOutput;
 		}
 	}
 }

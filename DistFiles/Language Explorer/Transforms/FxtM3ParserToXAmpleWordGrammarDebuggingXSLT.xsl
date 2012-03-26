@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wgd="output.xsl">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wgd="output.xsl"
+ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
+ xmlns:saxon="http://icl.com/saxon"
+ xmlns:exsl="http://exslt.org/common"
+ exclude-result-prefixes="exsl saxon msxsl">
    <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
    <!--
 ================================================================
@@ -85,7 +89,17 @@ Main template
 	  <!-- output header info -->
 	  <xsl:element name="xsl:stylesheet">
 		 <xsl:attribute name="version">1.0</xsl:attribute>
+		 <xsl:choose>
+		   <xsl:when test="function-available('exsl:node-set')">
+			 <xsl:attribute name="auto-ns1:exsl" namespace="http://exslt.org/common"/>
+		   </xsl:when>
+		   <xsl:when test="function-available('saxon:node-set')">
+			 <xsl:attribute name="auto-ns1:saxon" namespace="http://icl.com/saxon"/>
+		   </xsl:when>
+		   <xsl:otherwise>
 		 <xsl:attribute name="msxsl" namespace="urn:schemas-microsoft-com:xslt"/>
+		   </xsl:otherwise>
+		 </xsl:choose>
 		 <xsl:element name="xsl:output">
 			<xsl:attribute name="method">xml</xsl:attribute>
 			<xsl:attribute name="version">1.0</xsl:attribute>
@@ -99,7 +113,7 @@ DO NOT EDIT!!  This transform is automatically generated
 Word Grammar Debugger
   This transform is applied repeatedly until a failure is found or the entire analysis succeeds
 
-  Input:    XML output for a given sequence of morphemes
+  Input:  XML output for a given sequence of morphemes
   Output: The tree result with failures embedded
 			   (Note: each possible parse is within its own seq element)
 ================================================================
