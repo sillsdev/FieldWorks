@@ -5800,3 +5800,4 @@ Andy Black, 23 Mar 2012. Refine adding select column to LT-10471 "Allow user abi
 NaylorJ, 23 Mar 2012. New pathinclude's for 2010 which will allow for net4.0 resource building. Required to localize dialogs built in 2010.
 PyleE, 26 Mar 2012. Rename/move SandboxBase.ComboHandlerTests.cs to FDOTests/MorphServicesTests.cs
 AlistairI, 26 Mar 2012. Upgraded all remaining src projects to VS2010 and .NET4.
+NaylorJ, 26 Mar 2012. Upgrade the Palaso dll so newer builds of the bridges will work correctly. (should be updated to latest official version before release)
