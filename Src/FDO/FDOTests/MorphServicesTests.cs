@@ -28,7 +28,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 
-namespace SIL.FieldWorks.IText
+namespace SIL.FieldWorks.FDO.FDOTests
 {
 	/// <summary>
 	/// </summary>
