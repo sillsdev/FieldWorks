@@ -32,7 +32,8 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\debug\</OutputPath>
@@ -91,9 +92,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\debug\COMInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="FDO">
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
@@ -122,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Content Include="App.ico" />
+	<None Include="app.config" />
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>

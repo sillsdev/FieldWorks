@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic; // Needed for generic Di
 using System.Diagnostics;
 using System.Xml;
-using System.Linq;
-using System.Xml.Linq;
 using System.Runtime.InteropServices; // needed for Marshal
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;

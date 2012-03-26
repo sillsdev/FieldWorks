@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<StartProgram>
 	</StartProgram>
@@ -10,5 +11,13 @@
   </PropertyGroup>
   <PropertyGroup>
 	<ReferencePath>C:\fw\Src\LexText\Extensions\Flex.LiftImport\lib\;C:\fw\Output\Debug\</ReferencePath>
+	<PublishUrlHistory />
+	<InstallUrlHistory />
+	<SupportUrlHistory />
+	<UpdateUrlHistory />
+	<BootstrapperUrlHistory />
+	<ErrorReportUrlHistory />
+	<FallbackCulture>en-US</FallbackCulture>
+	<VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
 </Project>

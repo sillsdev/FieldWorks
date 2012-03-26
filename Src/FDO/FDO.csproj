@@ -72,7 +72,8 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -95,7 +96,8 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils">
 	  <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -175,18 +177,14 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\DistFiles\StructureMapAdapter.dll</HintPath>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Runtime.Remoting" />
 	<Reference Include="System.Runtime.Serialization">
 	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.ServiceProcess" />
 	<Reference Include="System.Web" />
-	<Reference Include="System.Xml.Linq">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="COMInterfaces">
 	  <Name>COMInterfaces</Name>
 	  <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
