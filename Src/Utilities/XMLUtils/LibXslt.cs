@@ -148,7 +148,7 @@ namespace SIL.Utils
 		///<remarks>link placeholder-- should not be called!</remarks>
 		public static IntPtr CompileTransform(string sTransformFile)
 		{
-			return null;
+			return IntPtr.Zero;
 		}
 
 		/// <summary>
