@@ -5804,3 +5804,4 @@ NaylorJ, 26 Mar 2012. Upgrade the Palaso dll so newer builds of the bridges will
 AnnB, 26 March 2012 - LT-12883 - Hook up Help button: Active fields in four different tools in the Grammar area
 AnnB, 26 March 2012 - LT-3844 - Change the Bulk Replace summary, LT-10403 - Wrong path name given in Export Interlinear, Word 2003
 KenZ, 27 Mar 2012. Removed illegal ws from Uni fields and migrated all projects to current version.
+NaylorJ, 27 Mar 2012. Continued work on LT-12738, write out the lift-ranges files in a more bridge friendly way.

@@ -1598,9 +1598,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Write the .lift-ranges file.
+		/// Write the .lift-ranges data into the string writer.
+		/// <note>Does not write to a file, anymore.</note>
 		/// </summary>
-		public void ExportLiftRanges(TextWriter w)
+		public void ExportLiftRanges(StringWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
