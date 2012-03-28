@@ -2645,6 +2645,14 @@
 	</bin>
 
 	<bin class="PhRegularRule">
+		<part id="PhSegmentRule-Detail-RequiredPOSes" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="RequiredPOSesDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="RequiredPOSes"/>
+			</if>
+		</part>
 		<part id="PhRegularRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
 				   helpTopicID="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection"/>
@@ -2655,6 +2663,22 @@
 	</bin>
 
 	<bin class="PhSegRuleRHS">
+		<part id="PhSegRuleRHS-Detail-RequiredPOSesDisabled" type="detail">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following categories are available.">
+					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredPOSes" type="detail">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following categories are available.">
+					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
 		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
 			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">

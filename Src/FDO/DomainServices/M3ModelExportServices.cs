@@ -492,7 +492,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 														select new XElement("PhSegRuleRHS",
 															 new XAttribute("Id", rhs.Hvo),
 															 new XElement("StrucChange", from structChange in rhs.StrucChangeOS
-															  select ExportContext(structChange)),
+																						 select ExportContext(structChange)),
+															  new XElement("InputPOSes", from pos in rhs.InputPOSesRC
+																						 select ExportItemAsReference(pos, "RequiredPOS")),
 															  new XElement("LeftContext", ExportContext(rhs.LeftContextOA)),
 															  new XElement("RightContext", ExportContext(rhs.RightContextOA)))));
 					break;

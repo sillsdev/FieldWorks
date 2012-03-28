@@ -156,6 +156,31 @@ GetVernacularFont
 		<xsl:value-of select="$prmVernacularFontSize"/>
 	</xsl:template>
 	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputListPunctuation
+		display information at end of a list for each member of that list
+		Parameters: none
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputListPunctuation">
+		<xsl:param name="sConjunction" select="' and '"/>
+		<xsl:param name="sFinalPunctuation" select="'.'"/>
+		<xsl:choose>
+			<xsl:when test="position()='1' and position()=last()-1">
+				<xsl:value-of select="$sConjunction"/>
+			</xsl:when>
+			<xsl:when test="position()=last()-1">
+				<xsl:text>,</xsl:text>
+				<xsl:value-of select="$sConjunction"/>
+			</xsl:when>
+			<xsl:when test="position()=last()">
+				<xsl:value-of select="$sFinalPunctuation"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>, </xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ResultSection
 	Output the Results section
@@ -1011,6 +1036,12 @@ ShowMorph
 	-->
 	<xsl:template name="ShowPhonologicalRules">
 		<xsl:param name="phonologicalRules"/>
+		<xsl:variable name="fHaveBlocker">
+			<xsl:choose>
+				<xsl:when test="$phonologicalRules/PhonologicalRuleSynthesisRequiredPOSTrace">Y</xsl:when>
+				<xsl:otherwise>N</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<table border="1">
 			<tr>
 				<th>Input</th>
@@ -1023,6 +1054,9 @@ ShowMorph
 					</xsl:attribute>
 					<xsl:value-of select="$phonologicalRules[1]/Input"/>
 				</td>
+				<xsl:if test="$fHaveBlocker='Y'">
+					<th>Rule not applied because...</th>
+				</xsl:if>
 			</tr>
 			<xsl:for-each select="$phonologicalRules">
 				<tr>
@@ -1037,7 +1071,16 @@ ShowMorph
 						</xsl:attribute>
 						<xsl:choose>
 							<xsl:when test="string-length(normalize-space(PhonologicalRule/Description)) &gt; 0">
-								<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
+								<xsl:choose>
+									<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace">
+										<span style="color:gray">
+											<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
+										</span>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:text>Rule </xsl:text>
@@ -1054,6 +1097,27 @@ ShowMorph
 						</xsl:attribute>
 						<xsl:value-of select="Output"/>
 					</td>
+					<xsl:if test="$fHaveBlocker='Y'">
+						<td>
+					<xsl:choose>
+						<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace">
+							<xsl:text>The stem's category is </xsl:text>
+							<xsl:value-of select="PhonologicalRuleSynthesisRequiredPOSTrace/PhonologicalRuleStemPOS/Description"/>
+							<xsl:text>, but this rule only applies when the stem's category is </xsl:text>
+							<xsl:for-each select="PhonologicalRuleSynthesisRequiredPOSTrace/PhonologicalRuleRequiredPOSes/PhonologicalRuleRequiredPOS">
+								<xsl:value-of select="Description"/>
+								<xsl:call-template name="OutputListPunctuation">
+									<xsl:with-param name="sConjunction" select="' or '"/>
+									<xsl:with-param name="sFinalPunctuation" select="'.'"/>
+								</xsl:call-template>
+							</xsl:for-each>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>&#xa0;</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+						</td>
+					</xsl:if>
 				</tr>
 			</xsl:for-each>
 		</table>

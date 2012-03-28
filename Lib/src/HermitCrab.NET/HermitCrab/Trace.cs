@@ -49,6 +49,10 @@ namespace SIL.HermitCrab
 			/// </summary>
 			PHONOLOGICAL_RULE_SYNTHESIS,
 			/// <summary>
+			/// Phonological rule synthesis trace, required POSes not met
+			/// </summary>
+			PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS,
+			/// <summary>
 			/// Affix template analysis trace
 			/// </summary>
 			TEMPLATE_ANALYSIS,
@@ -706,6 +710,64 @@ namespace SIL.HermitCrab
 					m_output == null ? HCStrings.kstidTraceNoOutput
 					: m_output.Stratum.CharacterDefinitionTable.ToString(m_output.Shape, ModeType.SYNTHESIS, true));
 			}
+		}
+	}
+	/// <summary>
+	/// This is used to represent information resulting from when a phonological rule is not applicable
+	/// during synthesis due to the part of speech of the stem not being one of the required parts of speech
+	/// for the rule. This trace record is produced every time a phonological rule is not applied during
+	/// word synthesis because of a mismatch in part of speech.
+	/// </summary>
+	public class PhonologicalRuleSynthesisRequiredPOSTrace : Trace
+	{
+		private PartOfSpeech m_partOfSpeech;
+		private HCObjectSet<PartOfSpeech> m_requiredPOSs;
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockingTrace"/> class.
+		/// </summary>
+		/// <param name="pos">The part of speech of the stem.</param>
+		/// <param name="requiredPOSs">The set of parts of speech this rule requires.</param>
+		internal PhonologicalRuleSynthesisRequiredPOSTrace(PartOfSpeech pos, HCObjectSet<PartOfSpeech> requiredPOSs)
+		{
+			PartOfSpeech = pos;
+			RequiredPOSs = requiredPOSs;
+		}
+
+		/// <summary>
+		/// Gets the trace record type.
+		/// </summary>
+		/// <value>The trace record type.</value>
+		public override TraceType Type
+		{
+			get
+			{
+				return TraceType.PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the part of speech of the stem
+		/// </summary>
+		/// <value>The part of speech of the stem</value>
+		public PartOfSpeech PartOfSpeech
+		{
+			get { return m_partOfSpeech; }
+			set { m_partOfSpeech = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the required parts of speech
+		/// </summary>
+		/// <value>The set of parts of speech the stem must have in order for the phonological rule to be applicable</value>
+		public HCObjectSet<PartOfSpeech> RequiredPOSs
+		{
+			get { return m_requiredPOSs; }
+			set { m_requiredPOSs = value; }
+		}
+
+		public override string ToString(bool includeInputs)
+		{
+			return string.Format(HCStrings.kstidTracePhonologicalRuleSynthesisRequiredPOS, m_partOfSpeech.ToString(), m_requiredPOSs.ToString());
 		}
 	}
 

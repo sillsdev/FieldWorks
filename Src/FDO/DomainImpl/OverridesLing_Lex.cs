@@ -6093,6 +6093,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get { return OwnerOfClass<IPhRegularRule>(); }
 		}
+		/// <summary>
+		/// Get a set of hvos that are suitable for targets to a reference property.
+		/// Subclasses should override this method to return a sensible list of IDs.
+		/// </summary>
+		/// <param name="flid">The reference property that can store the IDs.</param>
+		/// <returns>A set of hvos.</returns>
+		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+		{
+			switch (flid)
+			{
+				case PhSegRuleRHSTags.kflidInputPOSes:
+					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Cast<ICmObject>();
+				default:
+					return base.ReferenceTargetCandidates(flid);
+			}
+		}
 	}
 
 	internal partial class PhMetathesisRule

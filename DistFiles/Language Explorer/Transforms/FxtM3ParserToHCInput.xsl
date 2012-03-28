@@ -3666,6 +3666,20 @@
 
 	<xsl:template match="PhSegRuleRHS">
 		<PhonologicalSubrule>
+			<xsl:if test="InputPOSes/RequiredPOS">
+				<xsl:attribute name="requiredPartsOfSpeech">
+					<xsl:for-each select="InputPOSes/RequiredPOS">
+						<xsl:text>pos</xsl:text>
+						<xsl:value-of select="@dst"/>
+						<xsl:call-template name="POSIds">
+							<xsl:with-param name="posId" select="@dst"/>
+						</xsl:call-template>
+						<xsl:if test="position() != last()">
+							<xsl:text>&#x20;</xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:attribute>
+			</xsl:if>
 			<PhonologicalSubruleStructure>
 				<PhoneticOutput>
 					<xsl:attribute name="id">

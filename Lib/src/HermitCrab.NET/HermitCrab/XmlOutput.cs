@@ -138,6 +138,18 @@ namespace SIL.HermitCrab
 					Write("Output", psTrace.Output);
 					break;
 
+				case Trace.TraceType.PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS:
+					PhonologicalRuleSynthesisRequiredPOSTrace psposTrace = trace as PhonologicalRuleSynthesisRequiredPOSTrace;
+					m_xmlWriter.WriteStartElement(psposTrace.GetType().Name);
+					Write("PhonologicalRuleStemPOS", psposTrace.PartOfSpeech);
+					m_xmlWriter.WriteStartElement("PhonologicalRuleRequiredPOSes");
+					foreach (var partOfSpeech in psposTrace.RequiredPOSs)
+					{
+						Write("PhonologicalRuleRequiredPOS", partOfSpeech);
+					}
+					m_xmlWriter.WriteEndElement();
+					break;
+
 				case Trace.TraceType.TEMPLATE_ANALYSIS:
 					TemplateAnalysisTrace taTrace = trace as TemplateAnalysisTrace;
 					m_xmlWriter.WriteStartElement(taTrace.GetType().Name + (taTrace.IsInput ? "In" : "Out"));

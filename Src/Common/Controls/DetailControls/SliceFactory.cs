@@ -331,6 +331,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (slice == null)
 						return null;
 					break;
+				case "defaultvectorreferencedisabled": // second most common.
+					{
+						ReferenceVectorDisabledSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
+						if (rvSlice == null)
+							slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+						else
+						{
+							slice = rvSlice;
+							rvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
 				default:
 				{
 					//Since the editor has not been implemented yet,
