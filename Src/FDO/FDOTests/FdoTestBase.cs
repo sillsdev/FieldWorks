@@ -669,4 +669,27 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		#endregion
 	}
 	#endregion
+
+	///<summary>
+	/// In contrast to MemoryOnlyBackendProviderRestoredForEachTestTestBase, this class doesn't rely on Undo mechanism for
+	/// restoring each tests, instead it tries to recreate the FDO Cache.
+	///</summary>
+	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	{
+		/// <summary>
+		/// Setup the FDO Cache and Action Handler
+		/// </summary>
+		public override void TestSetup()
+		{
+			SetupEverythingButBase();
+		}
+
+		/// <summary>
+		/// Dispose the FDO Cache and Action Handler
+		/// </summary>
+		public override void TestTearDown()
+		{
+			DisposeEverythingButBase();
+		}
+	}
 }

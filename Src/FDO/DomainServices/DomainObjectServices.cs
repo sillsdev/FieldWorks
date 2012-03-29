@@ -1989,32 +1989,43 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
-		/// If hvoEntry is the id of a variant, try to find an entry it's a variant of that
+		/// Returns the Entry Refs for the given variant/entry.
+		/// (Currently we only return ones with one ComponentLexeme.)
+		/// </summary>
+		/// <param name="variantEntry"></param>
+		/// <returns></returns>
+		public static IEnumerable<ILexEntryRef> GetVariantRefs(ILexEntry variantEntry)
+		{
+			Debug.Assert(variantEntry != null, "Variant Entry shouldn't be null.");
+			return from entryRef in variantEntry.EntryRefsOS
+				   where entryRef.RefType == LexEntryRefTags.krtVariant &&
+						 entryRef.VariantEntryTypesRS != null && entryRef.VariantEntryTypesRS.Count > 0 &&
+						 entryRef.ComponentLexemesRS.Count == 1
+				   select entryRef;
+		}
+
+		/// <summary>
+		/// If variantOrEntry is a variant, try to find an entry it's a variant of that
 		/// has a sense.  Return the corresponding ILexEntryRef for the first such entry.
 		/// If this is being called to establish a default monomorphemic guess, skip over
-		/// any bound root or bound stem entries that hvoEntry may be a variant of.
+		/// any bound root or bound stem entries that variantOrEntry may be a variant of.
 		/// </summary>
 		/// <returns>the lexEntryRef of the primary/main/head entry or sense</returns>
 		public static ILexEntryRef GetVariantRef(ILexEntry variantOrEntry, bool fMonoMorphemic)
 		{
-			foreach (var entryRef in variantOrEntry.EntryRefsOS)
+			foreach (var entryRef in GetVariantRefs(variantOrEntry))
 			{
-				if (entryRef.RefType == LexEntryRefTags.krtVariant)
+				IVariantComponentLexeme component = (IVariantComponentLexeme)entryRef.ComponentLexemesRS[0];
+				if (fMonoMorphemic && IsEntryBound(component))
+					continue;
+				if (component is ILexSense ||
+					component is ILexEntry && ((ILexEntry)component).SensesOS.Count > 0)
 				{
-					if (entryRef.ComponentLexemesRS.Count != 1)
-						continue;
-					IVariantComponentLexeme component = (IVariantComponentLexeme)entryRef.ComponentLexemesRS[0];
-					if (fMonoMorphemic && IsEntryBound(component))
-						continue;
-					if (component is ILexSense ||
-						component is ILexEntry && ((ILexEntry)component).SensesOS.Count > 0)
-					{
-						return entryRef;
-					}
-					else
-					{
-						// Should we check for a variant of a variant of a ...?
-					}
+					return entryRef;
+				}
+				else
+				{
+					// Should we check for a variant of a variant of a ...?
 				}
 			}
 			return null; // nothing useful we can do.
