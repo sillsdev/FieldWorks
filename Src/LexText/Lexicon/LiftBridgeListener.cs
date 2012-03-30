@@ -3,11 +3,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LiftBridgeCore;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using Palaso.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -78,8 +80,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string FullLiftBridgeDllPath()
 		{
-			var fullDllName = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
-			return fullDllName;
+			return Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
 		}
 
 		/// <summary>
@@ -204,11 +205,26 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					return null; //The liftbridge behavior has changed, we need to change also.
 				var pathWithFilename = outPath.Substring(0, outPath.Length - @".lift.tmp".Length);
 				var outPathRanges = Path.ChangeExtension(pathWithFilename, @"lift-ranges");
-				using (TextWriter w = new StreamWriter(outPathRanges))
+				var stringWriter = new StringWriter(new StringBuilder());
+				exporter.ExportLiftRanges(stringWriter);
+				using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
 				{
-					exporter.ExportLiftRanges(w);
+					var readersettings = new XmlReaderSettings
+					{
+						CheckCharacters = false,
+						ConformanceLevel = ConformanceLevel.Document,
+#if !__MonoCS__
+						DtdProcessing = DtdProcessing.Parse,
+#else
+							ProhibitDtd = true,
+#endif
+						ValidationType = ValidationType.None,
+						CloseInput = true,
+						IgnoreWhitespace = true
+					};
+					var reader = XmlReader.Create(stringWriter.GetStringBuilder().ToString(), readersettings);
+					xmlWriter.WriteNode(reader, true);
 				}
-
 				// At least for now, we won't bother with validation for LiftBridge.
 				//progressDialog.Message = String.Format("Validating LIFT file {0}.",
 				//        Path.GetFileName(outPath));

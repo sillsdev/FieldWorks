@@ -999,7 +999,7 @@ namespace LexTextControlsTests
 			VerifyExport(xdoc);
 
 			var xdocRangeFile = new XmlDocument();
-			using (TextWriter w = new StringWriter())
+			using (var w = new StringWriter())
 			{
 				exporter.ExportLiftRanges(w);
 				xdocRangeFile.LoadXml(w.ToString());
