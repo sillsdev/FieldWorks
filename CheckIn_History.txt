@@ -5808,3 +5808,4 @@ NaylorJ, 27 Mar 2012. Continued work on LT-12738, write out the lift-ranges file
 Andy Black, 28 Mar 2012.  LT-10417 "Hermit Crab: Enable phonological rules to apply only when certain categories are present".
 EricP, 29 Mar 2012. Refactor DomainObjectServices GetVariantRefs and add some tests for those changes.
 	Added new FdoTest class for restoring the FDO cache after every test.
+NaylorJ, 30 Mar 2012. Fixed the Lift Send/Rec so that it can work again after breaking it in the last bit of LT-12738 work.
