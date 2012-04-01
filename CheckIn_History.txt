@@ -180,3 +180,4 @@ KenZ, 18 Mar 2012. Fixed LT-12893 to avoid duplicating pictures on LIFT import.
 NaylorJ, 23 Mar 2012. Integrated [Fix a bug which could result in multiple lift-ranges during LiftBridge operation. One of several causes for LT-12738]
 NaylorJ, 30 Mar 2012. Integrated WW changeset 37781 into this branch to add pretty printing of the lift-ranges to help in the fix for LT-12738.
 NaylorJ, 30 Mar 2012. Integrated WW changeset 37787 into this branch to fix a bug in the pretty printing fix.
+KenZ, 21 Mar 2012. Fixed LT-12924 Crash in Dictionary view for localized UI.
