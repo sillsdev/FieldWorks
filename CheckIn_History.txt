@@ -5810,3 +5810,4 @@ EricP, 29 Mar 2012. Refactor DomainObjectServices GetVariantRefs and add some te
 	Added new FdoTest class for restoring the FDO cache after every test.
 NaylorJ, 30 Mar 2012. Fixed the Lift Send/Rec so that it can work again after breaking it in the last bit of LT-12738 work.
 KenZ, 2 Apr 2012. Integrated LT-12924 localization crash fix from 7.2 branch.
+EricP, 2 Apr 2012. added some MorphServices tests for inflectional variant types.
