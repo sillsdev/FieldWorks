@@ -788,8 +788,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 			progress.Message = String.Format(xWorksStrings.ksValidatingOutputFile,
 					Path.GetFileName(outPath));
-			var prog = new ValidationProgress(progress);
-			Validator.CheckLiftWithPossibleThrow(outPath, prog);
+			Validator.CheckLiftWithPossibleThrow(outPath);
 #if DEBUG
 			var dtValidate = DateTime.Now;
 			var exportDelta = new TimeSpan(dtExport.Ticks - dtStart.Ticks);
@@ -836,8 +835,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				progressDialog.Message = String.Format(xWorksStrings.ksValidatingOutputFile,
 					Path.GetFileName(outPath));
-				ValidationProgress prog = new ValidationProgress(progressDialog);
-				Validator.CheckLiftWithPossibleThrow(outPath, prog);
+				Validator.CheckLiftWithPossibleThrow(outPath);
 			}
 #if DEBUG
 			DateTime dtValidate = DateTime.Now;
