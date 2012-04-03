@@ -5812,3 +5812,4 @@ NaylorJ, 30 Mar 2012. Fixed the Lift Send/Rec so that it can work again after br
 KenZ, 2 Apr 2012. Integrated LT-12924 localization crash fix from 7.2 branch.
 EricP, 2 Apr 2012. added some MorphServices tests for inflectional variant types.
 GordonM, 2 Apr 2012. Fix for Chart crash sent in by LarryH.
+NaylorJ, 3 April 2012. Fixed a bug in writing out the formatted lift-ranges introduced on 30 Mar.
