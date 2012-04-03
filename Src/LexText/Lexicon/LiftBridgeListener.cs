@@ -209,7 +209,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				exporter.ExportLiftRanges(stringWriter);
 				using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
 				{
-					xmlWriter.WriteString(stringWriter.GetStringBuilder().ToString());
+					var doc = new XmlDocument();
+					doc.LoadXml(stringWriter.ToString());
+					doc.WriteContentTo(xmlWriter);
 				}
 				// At least for now, we won't bother with validation for LiftBridge.
 				//progressDialog.Message = String.Format("Validating LIFT file {0}.",
