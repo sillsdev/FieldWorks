@@ -182,3 +182,4 @@ NaylorJ, 30 Mar 2012. Integrated WW changeset 37781 into this branch to add pret
 NaylorJ, 30 Mar 2012. Integrated WW changeset 37787 into this branch to fix a bug in the pretty printing fix.
 KenZ, 21 Mar 2012. Fixed LT-12924 Crash in Dictionary view for localized UI.
 NaylorJ, 2 April 2012. Updated the Palso and Palaso.Lift dlls to support the new LiftBridge installer. Also modify FLEx code to accomodate the change.
+NaylorJ, 3 April 2012. Fixed a bug in writing out the formatted lift-ranges introduced on 30 Mar.
