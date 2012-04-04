@@ -93,8 +93,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// By default a slice is just considered to be a field (of the same object as the one before).
 		protected ObjectWeight m_weight = ObjectWeight.field;
 		protected bool m_widthHasBeenSetByDataTree = false;
-		// trace switch used to limit Dispose traces when obj is dispos(ed/ing) and still getting msgs
-		// private TraceSwitch disposeSwitch = new TraceSwitch("SIL.DisposeTrace", "Dispose tracking", "Off"); // CS0414
 		protected IPersistenceProvider m_persistenceProvider;
 
 		protected Slice m_parentSlice;

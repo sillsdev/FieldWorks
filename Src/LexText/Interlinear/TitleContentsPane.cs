@@ -202,7 +202,6 @@ namespace SIL.FieldWorks.IText
 		int m_dxWsLabWidth = 0; // width of writing system labels.
 		ITsTextProps m_ttpBold;
 		ITsTextProps m_ttpDataCellProps;
-		// int m_wsAnalysis; // CS0414
 		IWritingSystem[] m_writingSystems;
 		ITsString[] m_WsLabels;
 		ITsTextProps m_ttpWsLabel;
@@ -211,11 +210,8 @@ namespace SIL.FieldWorks.IText
 		public TitleContentsVc(FdoCache cache)
 		{
 			int wsUser = cache.DefaultUserWs;
-			// m_wsAnalysis = cache.DefaultAnalWs; // CS0414
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			m_tssTitle = tsf.MakeString(ITextStrings.ksTitle, wsUser);
-			//m_tssComments = tsf.MakeString("Comments", wsUser);
-			//m_tssComments = tsf.MakeString("Source", wsUser);
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum,

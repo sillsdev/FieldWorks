@@ -24,7 +24,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// in the mananged section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-		// private IPersistenceProvider m_persistProvider; // CS0414
 		private POSPopupTreeManager m_pOSPopupTreeManager;
 		private IPartOfSpeech m_pos;
 		private bool m_handlingMessage = false;
@@ -61,7 +60,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			// m_persistProvider = persistenceProvider; // CS0414
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tree.WritingSystemCode = defAnalWs.Handle;
@@ -210,7 +208,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_cache = null;
 			m_tree = null;
 			m_pOSPopupTreeManager = null;
-			// m_persistProvider = null; // CS0414
 			m_pos = null;
 
 			base.Dispose(disposing);

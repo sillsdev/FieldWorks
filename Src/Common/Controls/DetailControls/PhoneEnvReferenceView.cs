@@ -371,7 +371,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (vwselNew == null)
 				return;
-			// bool hasFoc = Focused; // CS0219
 
 			// Get the string value for the old selection before it possibly changes due to a delete.
 			ITsString tssOldSel = null;
@@ -1003,12 +1002,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public class PhoneEnvReferenceVc : FwBaseVc
 		{
-			// private FdoCache m_cache; // CS0414
-
 			public PhoneEnvReferenceVc(FdoCache cache)
 			{
 				Debug.Assert(cache != null);
-				// m_cache = cache; // CS0414
 			}
 
 			public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -1023,8 +1019,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					vwenv.AddObjVec(PhoneEnvReferenceView.kMainObjEnvironments, this, frag);
 					vwenv.CloseParagraph();
 					break;
-					//case PhoneEnvReferenceView.kFragAnnotation:
-					//	break;
 				default:
 					throw new ArgumentException(
 						"Don't know what to do with the given frag.", "frag");

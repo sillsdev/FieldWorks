@@ -1429,19 +1429,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				btnRemoveChar.Enabled = !string.IsNullOrEmpty(m_validCharsGridMngr.CurrentCharacter);
 		}
 
-#if false // CS0169
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles one of the character grids in the explorer bar expanding or collapsing.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void HandleCharGridCharExplorerItemStateChanged(SimpleExplorerBar expBar,
-			ExplorerBarItem item)
-		{
-			btnRemoveChar.Enabled = !string.IsNullOrEmpty(m_validCharsGridMngr.CurrentCharacter);
-		}
-#endif
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the event fired when one of the character grids gains focus.

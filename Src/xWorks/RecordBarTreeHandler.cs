@@ -334,11 +334,6 @@ namespace SIL.FieldWorks.XWorks
 		// map from writing system to font.
 		Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
 
-		// int id; // CS0414
-		// static int nextID = 1234; // CS0414
-		// int treeHash; // CS0414
-
-
 		//must have a constructor with no parameters, to use with the dynamic loader.
 		protected TreeBarHandler()
 		{
@@ -482,8 +477,6 @@ namespace SIL.FieldWorks.XWorks
 				if (m_tree != null && !m_expand)
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				m_tree = tree;
-				// id = nextID++; // CS0414
-				// treeHash = m_tree.GetHashCode(); // CS0414
 
 				// Removing the handlers first seems to be necessary because multiple tree handlers are
 				// working with one treeview. Only this active one should have handlers connected.

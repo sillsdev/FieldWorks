@@ -2328,22 +2328,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion implementation of (some of) IMainWindowDelegateCallbacks
 
-// CS0169
-#if false
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwXWindow));
-			this.SuspendLayout();
-			//
-			// FwXWindow
-			//
-			resources.ApplyResources(this, "$this");
-			this.Name = "FwXWindow";
-			this.ResumeLayout(false);
-
-		}
-#endif
-
 		/// <summary>
 		/// Get a special-case find dialog help ID. We attempt to retrieve it from our active view or its parent.
 		/// (The only current actual implementation is XmlDocView.)

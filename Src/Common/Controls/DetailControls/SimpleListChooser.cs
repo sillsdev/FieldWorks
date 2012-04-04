@@ -188,35 +188,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 			}
 		}
-
-// CS0169
-#if false
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimpleListChooser));
-			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink1)).BeginInit();
-			this.SuspendLayout();
-			//
-			// m_labelsTreeView
-			//
-			this.m_labelsTreeView.LineColor = System.Drawing.Color.Black;
-			//
-			// m_imageList
-			//
-			this.m_imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_imageList.ImageStream")));
-			this.m_imageList.Images.SetKeyName(0, "");
-			this.m_imageList.Images.SetKeyName(1, "Create Entry.ico");
-			//
-			// SimpleListChooser
-			//
-			resources.ApplyResources(this, "$this");
-			this.Name = "SimpleListChooser";
-			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink1)).EndInit();
-			this.ResumeLayout(false);
-
-		}
-#endif
 	}
 }

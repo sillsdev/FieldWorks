@@ -1526,7 +1526,6 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 
 			int wsUI = cache.DefaultUserWs;
-			// int wsAnalysis = cache.DefaultAnalWs; // CS0219
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 				(int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBold,

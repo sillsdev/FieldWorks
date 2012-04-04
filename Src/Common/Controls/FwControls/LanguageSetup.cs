@@ -947,33 +947,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-#if false // CS0169
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///	 This routine replaces known SQL special characters with escaped characters.
-		///	 Currently this is only the apos (').
-		/// </summary>
-		/// <param name="text"></param>
-		/// <returns>string</returns>
-		/// ------------------------------------------------------------------------------------
-		private string SQLSafeString(string text)
-		{
-			string safeData = text;
-			int startPos = 0;
-			int foundPos = 0;
-			while (foundPos >= 0)
-			{
-				foundPos = safeData.IndexOf("'", startPos);
-				if (foundPos >= 0)
-				{
-					safeData = safeData.Insert(foundPos, "'");
-					startPos = foundPos + 2;	// skip found and one added
-				}
-			}
-			return safeData;
-		}
-#endif
-
 		/// <summary>
 		/// Implements sorting by country name, then by language name.
 		/// </summary>

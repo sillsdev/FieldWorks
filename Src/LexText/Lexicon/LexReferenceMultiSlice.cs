@@ -128,7 +128,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 			// If node has children, figure what to do with them...
-			//XmlNodeList children = node.ChildNodes; // CS0219
 
 			// It's important to initialize m_refs here rather than in FinishInit, because we need it
 			// to be updated when the slice is reused in a regenerate.

@@ -831,40 +831,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-#if false //CS0169
-		private void AddAbbrAndNameInfo(string abbr, string name, string nameWS, string reverseAbbr, string reverseName, string reverseNameWS)
-		{
-			if (name != null)
-			{
-				cbFunction.Items.Add(name);
-				if (abbr == null)
-					abbr = name;	// use both for the map key
-				if (!m_htNameToAbbr.ContainsKey(name))
-				{
-				//	m_htNameToAbbr.Add(name, abbr);
-					NameWSandAbbr nwsa = new NameWSandAbbr();
-					nwsa.abbr = abbr;
-					nwsa.nameWS = nameWS;
-					m_htNameToAbbr.Add(name, nwsa);
-				}
-			}
-			if (reverseName != null)
-			{
-				cbFunction.Items.Add(reverseName);
-				if (reverseAbbr == null)
-					reverseAbbr = reverseName;	// use the same when abbr is empty
-				if (!m_htNameToAbbr.ContainsKey(reverseName))
-				{
-				//	m_htNameToAbbr.Add(reverseName, reverseAbbr);
-					NameWSandAbbr nwsa = new NameWSandAbbr();
-					nwsa.abbr = reverseAbbr;
-					nwsa.nameWS = reverseNameWS;
-					m_htNameToAbbr.Add(reverseName, nwsa);
-				}
-			}
-		}
-#endif
-
 		private void FillLexicalRefTypesCombo(Sfm2Xml.LexImportField field)
 		{
 			if (m_LastSelectedField == field)

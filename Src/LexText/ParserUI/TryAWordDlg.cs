@@ -81,13 +81,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string m_sLastWordUsedPropertyName;
 		private Button buttonHelp;
 		protected string m_sWhileTracingFile;
-		// private string m_sXAmpleSelectFile; // CS0414
 
 		private const string s_helpTopic = "khtpTryAWord";
 		private readonly HelpProvider helpProvider;
 
-		// private string m_sOneWordMessage; // CS0414
-		// private string m_sOneWordCaption; // CS0414
 		private string m_sNoLexInfoForMorphsMessage;
 		private string m_sNoLexInfoForMorphsCaption;
 		private string m_sParserStatusPrefix;
@@ -170,7 +167,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_sLastWordUsedPropertyName = m_cache.ProjectId.Name + "TryAWordDlg-lastWordToTry";
 			m_sWhileTracingFile = Path.Combine(TransformPath, "WhileTracing.htm");
-			// m_sXAmpleSelectFile = Path.Combine(Path.GetTempPath(), m_cache.DatabaseName + "XAmpleSelectFile.txt"); // CS0414
 
 			m_connectionTimer = new Timer {Interval = 250};
 			m_connectionTimer.Tick += m_connectionTimer_Tick;
@@ -260,8 +256,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void SetStrings()
 		{
 			const string ksPath = "Linguistics/Morphology/TryAWord";
-			// m_sOneWordMessage = m_mediator.StringTbl.GetString("OnlyOneWordMessage", ksPath); // CS0414
-			// m_sOneWordCaption = m_mediator.StringTbl.GetString("OnlyOneWordCaption", ksPath); // CS0414
 			m_sNoLexInfoForMorphsMessage = m_mediator.StringTbl.GetString("NoLexInfoForMorphsMessage", ksPath);
 			m_sNoLexInfoForMorphsCaption = m_mediator.StringTbl.GetString("NoLexInfoForMorphsCaption", ksPath);
 			m_sParserStatusPrefix = m_mediator.StringTbl.GetString("ParserStatusPrefix", ksPath);

@@ -379,14 +379,6 @@ namespace SIL.FieldWorks.IText
 			return m_fieldNames[flid];
 		}
 
-// CS0169
-#if false
-		private Color LabelColorFor(int choiceIndex)
-		{
-			return LabelColorFor(this[choiceIndex]);
-		}
-#endif
-
 		internal int LabelRGBFor(int choiceIndex)
 		{
 			return LabelRGBFor(this[choiceIndex]);

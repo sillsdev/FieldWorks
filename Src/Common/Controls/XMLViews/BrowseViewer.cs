@@ -976,34 +976,9 @@ namespace SIL.FieldWorks.Common.Controls
 			this.AutoScroll = true;
 			this.VScroll = false;
 			this.HScroll = true;
-//			m_doHScroll = true;
 			m_scrollContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
-
-#if false // CS0169
-		/// <summary>
-		/// Indicates the state of the checkboxes for all displayed items.
-		/// </summary>
-		enum CheckedStatus
-		{
-			NoItemsAreChecked,
-			MixedCheckedStatus,
-			AllItemsAreChecked
-		}
-
-		private CheckedStatus GetAllItemsCheckedStatus()
-		{
-			List<int> allItems = AllItems;
-			List<int> checkedItems = CheckedItems;
-
-			if (checkedItems.Count == 0)
-				return CheckedStatus.NoItemsAreChecked;
-			if (checkedItems.Count == allItems.Count)
-				return CheckedStatus.AllItemsAreChecked;
-			return CheckedStatus.MixedCheckedStatus;
-		}
-#endif
 
 		/// <summary>
 		/// indicates the last class of items that the user selected something.

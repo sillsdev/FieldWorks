@@ -165,18 +165,6 @@ namespace SIL.FieldWorks.XWorks
 			get { return IsDisposed; }
 		}
 
-// CS0169
-#if false
-		private int WritingSystemHvo
-		{
-			get
-			{
-				string s = (string)m_mediator.PropertyTable.GetValue("WritingSystemHvo", "-1");
-				return int.Parse(s);
-			}
-		}
-#endif
-
 		/// <summary>
 		/// Called (by xcore) to control display params of the writing system menu, e.g. whether it should be enabled
 		/// </summary>

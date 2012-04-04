@@ -827,7 +827,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnDataTreeMerge(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -853,7 +852,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnDataTreeSplit(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -883,7 +881,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeEdit(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -900,7 +897,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeAddReference(object cmd)
 		{
-			// Command command = (Command)cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -946,7 +942,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true to indicate the message was handled</returns>
 		public bool OnMoveUpObjectInSequence(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
@@ -1034,7 +1029,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true to indicate the message was handled</returns>
 		public virtual bool OnMoveDownObjectInSequence(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");

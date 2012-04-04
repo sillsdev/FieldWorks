@@ -272,8 +272,6 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			// ITsStrBldr builder = TsStrBldrClass.Create(); // CS0219
-
 			m_fInitializing = true;
 			var wordform = m_owner.GetWordformOfAnalysis();
 

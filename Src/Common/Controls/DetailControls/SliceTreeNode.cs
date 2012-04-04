@@ -115,11 +115,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void HandleSizeChanged(object sender, EventArgs ea)
 		{
 			CheckDisposed();
-
-			if (Slice.Parent == null)
-				return; // Not intialized enough yet.
-
-			// int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice); // CS0219
 		}
 
 		// Things can (potentially) be dropped on this control.
@@ -140,7 +135,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int hvoDstOwner; // dummies, we just want to set the Effect property of drgevent.
 			int flidDst;
 			int ihvoDstStart;
-			// ObjectDragInfo odi = // CS0219
 			TestDropEffects(drgevent, out hvoDstOwner, out flidDst, out ihvoDstStart);
 		}
 
@@ -385,27 +379,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Draw the vertical line.
 				bool fMoreFieldsAtLevel = (Slice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
 
-				// We get a vertical line at all if this is the level of the node, or if
-				// there is a following node at the level we are processing.
-				if (nInd == nIndent || fMoreFieldsAtLevel)
-				{
-					// int ypStop = ypBoxCtr + 1; // CS0219
-					// if (fMoreFieldsAtLevel)
-					// {
-						// If there are more fields at this level, the line goes right through the
-						// field; otherwise (as set above) it stops half way.
-						// ypStop = ypTopOfNextSlice; // CS0219
-					// }
-					// int ypStart = ypTreeTop; // usually start line at top of field // CS0219
-					// if (iSlice == 0 && fMoreFieldsAtLevel) // CS0219
-						// ypStart = ypBoxCtr; // CS0219
-					//gr.DrawLine(linePen, xpBoxCtr, ypStart, xpBoxCtr, ypStop);
-				}
-
-				// Draw the line to the right of the box.
-				//				if (nInd == nIndent)
-				//					gr.DrawLine(linePen,xpBoxCtr + 2, ypBoxCtr, xpRtLineEnd, ypBoxCtr);
-
 				// Process a terminal level with a box.
 				if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
 				{
@@ -518,43 +491,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				}
 				//end test
-
-				//				// Setup the context menu every time, because it contains information about
-				//				// item positions that can be invalidated by inserting items, etc.
-				//		SetupContextMenu();
-				//				return;
 			}
 
-
-			// int xp = meArgs.X; // CS0219
-			// xpText is the left side of the tree label.
-			// int xpText = kdxpLeftMargin + kdxpIndDist + Slice.Indent * kdxpIndDist; // CS0219
-			// If we are over the +/- box...
-// But, we never are in the current way all this works (see LT-2643, apparently some slices, such
-// as the summary slice for a LexSense, think they are collapsed and can be expanded.
-//			if (xp < xpText && xp >= xpText - kdxpIndDist)
-//			{
-//				// Handle label expansion and contraction.
-//				if (Slice.Expansion != DataTree.TreeItemState.ktisFixed)
-//				{
-			//					int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
-//					ToggleExpansionAndScroll(iSlice);
-//				}
-//			}
-//			else
-//			{
-				// Enhance JohnT: Could we find a better label that shows more clearly what is being moved?
-				int hvoSrcOwner;
-				int flidSrc;
-				int ihvoSrcStart;
-				if (!Slice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
-					return; // If we can't identify an object to move, don't do a drag.
-				ObjectDragInfo objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, Slice.Label);
-				DataObject dataobj = new DataObject(objinfo);
-				// Initiate a drag/drop operation. Currently we only support move.
-				// Enhance JohnT: Also support Copy.
-				DoDragDrop(dataobj, DragDropEffects.Move);
-//			}
+			// Enhance JohnT: Could we find a better label that shows more clearly what is being moved?
+			int hvoSrcOwner;
+			int flidSrc;
+			int ihvoSrcStart;
+			if (!Slice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
+				return; // If we can't identify an object to move, don't do a drag.
+			ObjectDragInfo objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, Slice.Label);
+			DataObject dataobj = new DataObject(objinfo);
+			// Initiate a drag/drop operation. Currently we only support move.
+			// Enhance JohnT: Also support Copy.
+			DoDragDrop(dataobj, DragDropEffects.Move);
 		}
 
 		/// <summary>

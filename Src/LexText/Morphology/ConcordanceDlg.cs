@@ -39,7 +39,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region Data Members
 
 		private IWfiWordform m_wordform;
-		// private ICmObject m_sourceObject; // CS0414
 		private FdoCache m_cache;
 		private Mediator m_mediator;
 		private XmlNode m_configurationNode;
@@ -139,7 +138,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			base.Dispose( disposing );
 
 			m_wordform = null;
-			// m_sourceObject = null; // CS0414
 			m_cache = null;
 			if (m_mediator != null)
 				m_mediator.PropertyTable.RemoveProperty("IgnoreStatusPanel");
@@ -247,7 +245,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cache = sourceObject.Cache;
 			m_mediator = mediator;
 			m_configurationNode = configurationNode;
-			// m_sourceObject = sourceObject; // CS0414
 			if (sourceObject is IWfiWordform)
 			{
 				m_wordform = (IWfiWordform)sourceObject;

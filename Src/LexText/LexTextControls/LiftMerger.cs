@@ -6936,19 +6936,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_dictResidue.Clear();
 		}
 
-#if false // CS0169
-		private static int StartOfLiftResidue(ITsStrBldr tsb)
-		{
-			int idx = tsb.Length;
-			if (tsb.Text != null)
-			{
-				idx = tsb.Text.IndexOf("<lift-residue id=");
-				if (idx < 0)
-					idx = tsb.Length;
-			}
-			return idx;
-		}
-#endif
 		/// <summary>
 		/// Check whether an existing entry has data that conflicts with an imported entry that
 		/// has the same identity (guid).  Senses are not checked, since they can be added to

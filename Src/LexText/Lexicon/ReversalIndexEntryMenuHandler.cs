@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams {m_btnText = LexEdStrings.ks_MoveEntry, m_title = LexEdStrings.ksMoveRevEntry};
 				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				dlg.SetDlgInfo(cache, wp, m_mediator); // , true
+				dlg.SetDlgInfo(cache, wp, m_mediator);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var newOwner = (IReversalIndexEntry) dlg.SelectedObject;
@@ -122,7 +122,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						LexEdStrings.ksRedoMoveRevEntry, Cache.ActionHandlerAccessor,
 						() =>
 						{
-							// ICmObject newOwningObj =  // CS0219
 							newOwner.MoveIfNeeded(currentEntry);
 							newOwner.SubentriesOC.Add(currentEntry);
 						});

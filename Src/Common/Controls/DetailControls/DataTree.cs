@@ -1980,11 +1980,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						string key = classname + "-Detail-" + partName;
 						part = m_partInventory.GetElement("part", new[] {key});
 
-						// temp not used CS0103
-						// int temp = 0;
-						// if (part != null)
-						//	temp = part.GetHashCode();
-
 						if (part != null)
 							break;
 						if (classId == 0) // we've just tried CmObject.
@@ -4362,7 +4357,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ihvo = m_ihvoMin;
 			for (int islice = index - 1; islice >= 0 && ContainingDataTree.Slices[islice] == this; islice--)
 				ihvo++;
-			// string mode = XmlUtils.GetOptionalAttributeValue(m_node, "mode"); //CS0219
 			int hvo = m_cache.DomainDataByFlid.get_VecItem(m_obj.Hvo, m_flid, ihvo);
 			// In the course of becoming real, we may get disposed. That clears m_path, which
 			// has various bad effects on called objects that are trying to use it, as well as

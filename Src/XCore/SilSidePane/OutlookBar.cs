@@ -1026,26 +1026,6 @@ namespace SIL.SilSidePane
 			}
 		}
 
-		/// <summary>
-		/// Color of top line of grip bar
-		/// </summary>
-#if false // CS0169
-		private Color GripTopColor
-		{
-			get
-			{
-				switch (Renderer)
-				{
-					case Renderer.Outlook2003: return ProfessionalColors.GripLight;
-					case Renderer.Outlook2007: return InternalOutlookBarLineColor;
-					case Renderer.Custom: return Color.Transparent;
-				}
-
-				return Color.Transparent;
-			}
-		}
-#endif
-
 		/// <summary></summary>
 		private Rectangle DropDownRectangle
 		{

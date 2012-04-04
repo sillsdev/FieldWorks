@@ -2760,7 +2760,6 @@ namespace SIL.FieldWorks.XWorks
 					// Now, compare our member variables to the content of m_xnConfig.
 					if (m_xnConfig.Name == "part")
 					{
-						// string sVisibility = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "visibility", "always"); // CS0219
 						bool fContentVisible = m_sVisibility != "never";
 						m_fContentVisible = this.Checked;	// in case (un)checked in treeview, but node never selected.
 						if (fContentVisible != m_fContentVisible)
@@ -2946,7 +2945,6 @@ namespace SIL.FieldWorks.XWorks
 					xnLayout.Attributes.CopyTo(rgxa, 0);
 					List<XmlNode> rgxnGen = new List<XmlNode>();
 					List<int> rgixn = new List<int>();
-					// int cChildren = xnLayout.ChildNodes.Count; // CS0219
 					for (int i = 0; i < xnLayout.ChildNodes.Count; ++i)
 					{
 						XmlNode xn = xnLayout.ChildNodes[i];
