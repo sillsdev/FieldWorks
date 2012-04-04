@@ -4711,7 +4711,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (m_ianalysis >= m_segment.AnalysesRS.Count) // Oops!
 			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_segment.Cache.ActionHandlerAccessor,
+				//Use DoSomehow to avoid crash if this was triggered during a PropertyChangeEvent
+				NonUndoableUnitOfWorkHelper.DoSomehow(m_segment.Cache.ActionHandlerAccessor,
 					() => m_segment.Paragraph.ParseIsCurrent = false);
 				Debug.Fail("Paragraph is supposedly parsed correctly, but analysis list is inconsistent with content");
 				m_ich = m_segment.BaselineText.Length - 1; // May fix LT-12657
@@ -4720,10 +4721,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_ich += m_segment.AnalysesRS[m_ianalysis].GetForm(TsStringUtils.GetWsAtOffset(Baseline, m_ich)).Length;
 			if (m_ich > m_length)
 			{
-				Debug.Fail("Paragraph is supposedly parsed correctly, but analysis list is inconsistent with content");
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_segment.Cache.ActionHandlerAccessor,
+				//Use DoSomehow to avoid crash if this was triggered during a PropertyChangeEvent
+				NonUndoableUnitOfWorkHelper.DoSomehow(m_segment.Cache.ActionHandlerAccessor,
 					() => m_segment.Paragraph.ParseIsCurrent = false); //We don't think the parse is right, flag for reparsing.
 				m_ich = m_length; // May prevent crash (see FWR-3221).
+				Debug.Fail("Paragraph is supposedly parsed correctly, but analysis list is inconsistent with content");
 			}
 			m_ianalysis++;
 		}

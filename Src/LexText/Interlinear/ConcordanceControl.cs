@@ -1242,7 +1242,7 @@ namespace SIL.FieldWorks.IText
 					AddUnparsedParagraphs(sttext, needsParsing, result);
 				if (needsParsing.Count > 0)
 				{
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
+					NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
 						() =>
 						{
 							foreach (var para in needsParsing)
