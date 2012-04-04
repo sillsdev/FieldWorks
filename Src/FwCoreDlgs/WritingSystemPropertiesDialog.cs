@@ -622,7 +622,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
 			if(spellCheckingDictionary == null)
 			{
-				dictionaries.Add(new {Name = CurrentWritingSystem.Id, CurrentWritingSystem.Id});
+				dictionaries.Add(new { Name = CurrentWritingSystem.Id, Id = CurrentWritingSystem.Id.Replace('-', '_') });
 			}
 
 			bool fDictionaryExistsForLanguage = false;
