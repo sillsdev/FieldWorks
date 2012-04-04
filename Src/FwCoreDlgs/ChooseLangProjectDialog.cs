@@ -534,7 +534,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain);
+			string dummy;
+			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain, out dummy);
 		}
 
 		private void HelpButtonClick(object sender, EventArgs e)

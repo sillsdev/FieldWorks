@@ -26,12 +26,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// constant for launching the bridge in the Conflict\Notes Viewer mode
 		/// </summary>
-		public const string ConflictViewer = "view_notes";
+		public const string ConflictViewer = @"view_notes";
 
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object waitObject = new object();
 		private static bool receivedChanges;
+		private static string sjumpUrl;
 
 		/// <summary>
 		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
@@ -40,8 +41,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectFolder">optional</param>
 		/// <param name="userName"></param>
 		/// <param name="command"></param>
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command)
+		/// <param name="url">If this out param is other than null, it is a link to jump to in FLEx.</param>
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, out string url)
 		{
+			sjumpUrl = "";
 			string args = "";
 			if (userName != null)
 			{
@@ -71,6 +74,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Thread letTheHostDie = new Thread(host.Close);
 			letTheHostDie.Start();
 
+			url = sjumpUrl;
 			return receivedChanges;
 		}
 
@@ -150,12 +154,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			#region Implementation of IFLExBridgeService
 
 			/// <summary>
-			/// This method signals that FLExBridge completed normally
+			/// This method signals that FLExBridge completed normally, but with a URL to jump to.
 			/// </summary>
 			/// <param name="changesReceived">true if the send/receive or other operation resulted in local changes</param>
-			public void BridgeWorkComplete(bool changesReceived)
+			/// <param name="jumpUrl">If we use this method, it's because the user clicked on a conflict title link.</param>
+			public void BridgeWorkComplete(bool changesReceived, string jumpUrl)
 			{
 				receivedChanges = changesReceived;
+				sjumpUrl = jumpUrl;
 				AlertFLEx();
 			}
 
@@ -183,7 +189,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private interface IFLExBridgeService
 		{
 			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived);
+			void BridgeWorkComplete(bool changesReceived, string jumpUrl);
 
 			[OperationContract]
 			void BridgeReady();

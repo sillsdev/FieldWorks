@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -63,9 +64,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		public bool OnShowConflictReport(object commandObject)
 		{
+			string url;
 			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
 								   Environment.UserName,
-								   FLExBridgeHelper.ConflictViewer);
+								   FLExBridgeHelper.ConflictViewer, out url);
+			if (!string.IsNullOrEmpty(url))
+			{
+				// TODO: Jump to url
+				var args = new LocalLinkArgs() {Link = url};
+				if (_mediator != null)
+				{
+					_mediator.SendMessage("HandleLocalHotlink", args);
+					if (args.LinkHandledLocally)
+						return true;
+				}
+			}
 			return true;
 		}
 
@@ -81,12 +94,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnFLExBridge(object commandObject)
 		{
 			//Unlock project
+			string url;
 			ProjectLockingService.UnlockCurrentProject(Cache);
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
 			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
 																	  Environment.UserName,
-																	  FLExBridgeHelper.SendReceive);
+																	  FLExBridgeHelper.SendReceive, out url);
 			if(dataChanged)
 			{
 				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
