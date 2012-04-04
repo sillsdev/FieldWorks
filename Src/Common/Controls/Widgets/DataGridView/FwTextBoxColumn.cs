@@ -301,8 +301,20 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_cache == null || ws <= 0 || style == null)
 				return;
 
+			if (m_textBoxControl != null)
+				m_textBoxControl.WritingSystemCode = ws;
 			if (m_cache.ServiceLocator.WritingSystemManager.Get(ws).RightToLeftScript)
+			{
 				style.Alignment = DataGridViewContentAlignment.MiddleRight;
+				if (m_textBoxControl != null)
+					m_textBoxControl.RightToLeft = RightToLeft.Yes;
+			}
+			else
+			{
+				style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+				if (m_textBoxControl != null)
+					m_textBoxControl.RightToLeft = RightToLeft.No;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
