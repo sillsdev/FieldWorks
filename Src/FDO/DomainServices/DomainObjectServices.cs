@@ -1999,7 +1999,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			Debug.Assert(variantEntry != null, "Variant Entry shouldn't be null.");
 			return from entryRef in variantEntry.EntryRefsOS
 				   where entryRef.RefType == LexEntryRefTags.krtVariant &&
-						 entryRef.VariantEntryTypesRS != null && entryRef.VariantEntryTypesRS.Count > 0 &&
+// Is this necessary:    entryRef.VariantEntryTypesRS != null && entryRef.VariantEntryTypesRS.Count > 0 &&
 						 entryRef.ComponentLexemesRS.Count == 1
 				   select entryRef;
 		}

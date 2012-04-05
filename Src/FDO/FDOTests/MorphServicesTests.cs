@@ -508,14 +508,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			SetupLexEntryVariant(Cache, "vaNewPast", newMainEntry, letNewPast, out newLerPast);
 		}
 
-		private ILexEntry GetNewMainEntry()
+		private ILexEntry GetNewMainEntry(string mainEntryForm = "mainEntry", string mainEntrySenseGloss = "mainEntrySense1")
 		{
 			ILexEntry newMainEntry;
 			ILexEntry newDummyEntry;
 			ILexSense newDummySense;
 			var msaStem = new SandboxGenericMSA();
 			msaStem.MsaType = MsaType.kStem;
-			MatchingMorphsLogicTests.SetupMatchingMorphs.SetupLexEntryAndSense(Cache, "mainEntry", "mainEntrySense1", msaStem, out newMainEntry, out newDummySense);
+			MatchingMorphsLogicTests.SetupMatchingMorphs.SetupLexEntryAndSense(Cache, mainEntryForm, mainEntrySenseGloss, msaStem, out newMainEntry, out newDummySense);
 			MatchingMorphsLogicTests.SetupMatchingMorphs.AddAllomorph<IMoStemAllomorphFactory, IMoStemAllomorph>(newMainEntry, "mainEntryAllomorph1", newMainEntry.LexemeFormOA.MorphTypeRA);
 			return newMainEntry;
 		}
@@ -558,22 +558,34 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private static ITsString MakeGlossWithReverseAbbrs(IMultiUnicode gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
 		{
-			if (variantEntryTypes == null || variantEntryTypes.Count() == 0)
-				return null;
+			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
+				return GetTssGloss(gloss, wsGloss);
 			var cache = variantEntryTypes.First().Cache;
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			IList<IMultiUnicode> reverseAbbrs = (from variantType in variantEntryTypes
 												  select variantType.ReverseAbbr).ToList();
 			var sb = TsIncStrBldrClass.Create();
-			int wsActual;
-			sb.AppendTsString(gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual));
-			if (sb.Text.Length == 0)
-				return null;  // no sense in appending reverse abbrs to nothing?
+			AddGloss(sb, gloss, wsGloss);
 			const string sBeginSeparator = "+";
 			if (reverseAbbrs.Count() > 0)
 				sb.AppendTsString(TsStringUtils.MakeTss(sBeginSeparator, wsUser.Handle));
 			AddVariantTypeGlossInfo(sb, wsGloss, reverseAbbrs, wsUser);
 			return sb.Text.Length > 0 ? sb.GetString() : null;
+		}
+
+		private static void AddGloss(TsIncStrBldr sb, IMultiUnicode gloss, IWritingSystem wsGloss)
+		{
+			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
+			sb.AppendTsString(tssGloss);
+		}
+
+		private static ITsString GetTssGloss(IMultiUnicode gloss, IWritingSystem wsGloss)
+		{
+			int wsActual;
+			var tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
+			if (tssGloss == null || tssGloss.Length == 0)
+				tssGloss = gloss.NotFoundTss;
+			return tssGloss;
 		}
 
 		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, IWritingSystem wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, IWritingSystem wsUser)
@@ -591,6 +603,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				sb.AppendTsString((tssVariantTypeInfo));
 				fBeginSeparator = false;
 			}
+
+			// Handle the special case where no reverse abbr was found.
+			if (fBeginSeparator && multiUnicodeAccessors.Count > 0)
+			{
+				sb.AppendTsString(multiUnicodeAccessors.ElementAt(0).NotFoundTss);
+			}
 		}
 
 
@@ -603,21 +621,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiUnicode gloss, IWritingSystem wsGloss)
 		{
 			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
-			if (inflVariantEntryType == null || gloss == null)
+			if (gloss == null)
 				return null;
 
-			int wsActual;
-			ITsString tssGlossPrepend =
-				inflVariantEntryType.GlossPrepend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
-			ITsString tssGlossAppend =
-				inflVariantEntryType.GlossAppend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
-			if (tssGlossPrepend.Length == 0 && tssGlossAppend.Length == 0)
+			ITsString tssGlossPrepend = null;
+			ITsString tssGlossAppend = null;
+			if (inflVariantEntryType != null)
+			{
+				int wsActual1;
+				tssGlossPrepend =
+					inflVariantEntryType.GlossPrepend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+				tssGlossAppend =
+					inflVariantEntryType.GlossAppend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+			}
+
+			if ((tssGlossPrepend == null || tssGlossPrepend.Length == 0) &&
+				(tssGlossAppend == null || tssGlossAppend.Length == 0))
 			{
 				return MakeGlossWithReverseAbbrs(gloss, wsGloss, new[]{variantEntryType});
 			}
-			ITsString tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
+			int wsActual2;
+			ITsString tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
 			if (tssGloss.Length == 0)
-				return null;
+				tssGloss = gloss.NotFoundTss;
 
 			var sb = TsIncStrBldrClass.Create();
 			var cache = inflVariantEntryType.Cache;
@@ -983,6 +1009,205 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1/GA"));
+			}
+		}
+
+		/// <summary>
+		/// Construct "***.GA" with GlossAppend "GA"
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfSense_SenseHasEmptyGloss()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss:"");
+
+				// Setup variant data
+				const string variantTypeNameIIV = "Irregular Inflectional Variant";
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				string variantTypeName = variantTypeNameIIV;
+
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("NPl.", eng.Handle),
+															"", "GA");
+				ILexEntryRef newLerPlural;
+				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPlural").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
+			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				Assert.That(variantGloss, Is.Not.Null);
+				Assert.That(variantGloss.Text, Is.EqualTo("***.GA"));
+			}
+		}
+
+		/// <summary>
+		/// Construct "***+***" with no sense gloss and no variant reverse abbr.
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfSense_VariantTypeHasEmptyReverseAbbr()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "");
+
+				// Setup variant data
+				const string variantTypeNameIIV = "Irregular Inflectional Variant";
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				string variantTypeName = variantTypeNameIIV;
+
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", "");
+				ILexEntryRef newLerPlural;
+				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPlural").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
+			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				Assert.That(variantGloss, Is.Not.Null);
+				Assert.That(variantGloss.Text, Is.EqualTo("***+***"));
+			}
+		}
+
+		/// <summary>
+		/// Construct "***+***" with no sense gloss and no variant reverse abbr.
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfVariant_MissingSense()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "");
+
+				// Setup variant data
+				const string variantTypeNameIIV = "Irregular Inflectional Variant";
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				string variantTypeName = variantTypeNameIIV;
+
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", "");
+				ILexEntryRef newLerPlural;
+				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
+				ILexEntryRef newLerPlural2;
+				SetupLexEntryVariant(Cache, "vaVaNewPlural", newLerPlural.Owner as ILexEntry, letNewPlural, out newLerPlural2);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPlural").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
+			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				Assert.That(variantGloss, Is.Not.Null);
+				Assert.That(variantGloss.Text, Is.EqualTo("***+***"));
+			}
+		}
+
+		/// <summary>
+		///
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Ignore("find the first available gloss.")]
+		[Test]
+		public void GlossOfInflVariantOfVariant_FindFirstGloss()
+		{
+		}
+
+		/// <summary>
+		///
+		/// TODO: Ask Beth to review this case
+		/// </summary>
+		[Ignore("find the first available gloss.")]
+		[Test]
+		public void GlossOfInflVariantOfSense_UseGlossOfVariant()
+		{
+		}
+
+		/// <summary>
+		///
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Ignore("pick the first lexeme component? Currently we skip these.")]
+		[Test]
+		public void GlossOfInflVariantOfSense_MultipleLexemeComponents()
+		{
+		}
+
+		/// <summary>
+		///
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Ignore("pick the first lexeme component? Currently we skip these.")]
+		[Test]
+		public void GlossOfInflVariantOfSense_NoLexemeComponents()
+		{
+		}
+
+
+		/// <summary>
+		/// Currently I think we just display the gloss without any +***"
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Test]
+		public void GlossOfVariantOfSense_MissingVariantType()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense1");
+				ILexEntryRef newLerPlural;
+				SetupLexEntryVariant(Cache, "vaMissingType", newMainEntry, null, out newLerPlural);
+			});
+
+			var variantMissingType = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaMissingType").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantMissingType);
+			var variantRef = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRef, out gloss);
+			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				var variantGloss = MakeGlossOptionWithInflVariantTypes(null, gloss, analWs);
+				Assert.That(variantGloss, Is.Not.Null);
+				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1"));
 			}
 		}
 	}

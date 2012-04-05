@@ -5816,3 +5816,4 @@ NaylorJ, 3 April 2012. Fixed a bug in writing out the formatted lift-ranges intr
 GordonM, 4 Apr 2012. LT-12875 Conflict report Title hyperlink, need latest Chorus.
 NaylorJ, 4 April 2012. (Integrated from 7.2)Fixed LT-12930 and LT-12923 the offending units of work were called using the DoSomehow method which can do the work post PropChanges
 NaylorJ, 4 April 2012. Fixed LT-12942. When creating a spelling dictionary entry from our current project put underscores in the ids instead of hyphens.
+EricP, 5 April 2012. Make tests for some corner cases when handling variant entry references.
