@@ -53,6 +53,10 @@ namespace SIL.HermitCrab
 			/// </summary>
 			PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS,
 			/// <summary>
+			/// Phonological rule synthesis trace, required or excluded MPR features not met
+			/// </summary>
+			PHONOLOGICAL_RULE_SYNTHESIS_MPRFEATURES,
+			/// <summary>
 			/// Affix template analysis trace
 			/// </summary>
 			TEMPLATE_ANALYSIS,
@@ -768,6 +772,94 @@ namespace SIL.HermitCrab
 		public override string ToString(bool includeInputs)
 		{
 			return string.Format(HCStrings.kstidTracePhonologicalRuleSynthesisRequiredPOS, m_partOfSpeech.ToString(), m_requiredPOSs.ToString());
+		}
+	}
+
+	/// <summary>
+	/// This is used to represent information resulting from the blocking of word synthesis by a lexical
+	/// entry during synthesis. This trace record is produced every time a word synthesis is blocked.
+	/// </summary>
+	public class PhonologicalRuleSynthesisMPRFeaturesTrace : Trace
+	{
+		/// <summary>
+		/// The block type
+		/// </summary>
+		public enum PhonologicalRuleSynthesisMPRFeaturesTraceType { REQUIRED, EXCLUDED }
+
+		PhonologicalRuleSynthesisMPRFeaturesTraceType m_mprFeatureType;
+		private MPRFeatureSet m_mprFeatures;
+		private MPRFeatureSet m_constrainingMPRFeatures;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockingTrace"/> class.
+		/// </summary>
+		/// <param name="mprFeatureType">Type: required or excluded.</param>
+		/// <param name="mprFeatures">The set of MPR features the form has.</param>
+		/// <param name="constrainingMPRFeatures">The set of MPR features the form must have (required) or must not have (excluded).</param>
+		internal PhonologicalRuleSynthesisMPRFeaturesTrace(PhonologicalRuleSynthesisMPRFeaturesTraceType mprFeatureType,
+			MPRFeatureSet mprFeatures, MPRFeatureSet constrainingMPRFeatures)
+		{
+			m_mprFeatureType = mprFeatureType;
+			m_mprFeatures = mprFeatures;
+			m_constrainingMPRFeatures = constrainingMPRFeatures;
+		}
+
+		/// <summary>
+		/// Gets the trace record type.
+		/// </summary>
+		/// <value>The trace record type.</value>
+		public override TraceType Type
+		{
+			get
+			{
+				return TraceType.PHONOLOGICAL_RULE_SYNTHESIS_MPRFEATURES;
+			}
+		}
+
+		/// <summary>
+		/// Gets the type of the checking.
+		/// </summary>
+		/// <value>The type of the checking.</value>
+		public PhonologicalRuleSynthesisMPRFeaturesTraceType MPRFeatureType
+		{
+			get
+			{
+				return m_mprFeatureType;
+			}
+		}
+		/// <summary>
+		/// Gets the set of MPR features of the form.
+		/// </summary>
+		/// <value>The MPR features of the form.</value>
+		public MPRFeatureSet MPRFeatures
+		{
+			get { return m_mprFeatures; }
+		}
+
+		/// <summary>
+		/// Gets the set of required or excluded MPR features.
+		/// </summary>
+		/// <value>The set of required or excluded MPR features.</value>
+		public MPRFeatureSet ConstrainingMPRFeatures
+		{
+			get { return m_constrainingMPRFeatures; }
+		}
+
+		public override string ToString(bool includeInputs)
+		{
+			string format = null;
+			switch (m_mprFeatureType)
+			{
+				case PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED:
+					format = HCStrings.kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures;
+					break;
+
+				case PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED:
+					format = HCStrings.kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures;
+					break;
+			}
+
+			return string.Format(format, MPRFeatures, ConstrainingMPRFeatures);
 		}
 	}
 

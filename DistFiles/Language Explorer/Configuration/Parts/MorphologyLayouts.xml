@@ -559,6 +559,8 @@
 		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
 		<part ref="Direction" menu="mnuDataTree-Help"/>
 		<part ref="RequiredPOSes" menu="mnuDataTree-Help"/>
+		<part ref="RequiredRuleFeats" menu="mnuDataTree-Help"/>
+		<part ref="ExcludedRuleFeats" menu="mnuDataTree-Help"/>
 		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>
@@ -576,6 +578,18 @@
 	</layout>
 	<layout class="PhSegRuleRHS" type="detail" name="RequiredPOSesDisabled">
 		<part ref="RequiredPOSesDisabled"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredRuleFeats">
+		<part ref="RequiredRuleFeats"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredRuleFeatsDisabled">
+		<part ref="RequiredRuleFeatsDisabled"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="ExcludedRuleFeats">
+		<part ref="ExcludedRuleFeats"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="ExcludedRuleFeatsDisabled">
+		<part ref="ExcludedRuleFeatsDisabled"/>
 	</layout>
 
 	<layout class="PhMetathesisRule" type="detail" name="Edit">

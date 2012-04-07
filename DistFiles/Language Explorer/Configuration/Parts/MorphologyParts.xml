@@ -2653,6 +2653,22 @@
 				<seq field="RightHandSides" layout="RequiredPOSes"/>
 			</if>
 		</part>
+		<part id="PhSegmentRule-Detail-RequiredRuleFeats" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="RequiredRuleFeatsDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="RequiredRuleFeats"/>
+			</if>
+		</part>
+		<part id="PhSegmentRule-Detail-ExcludedRuleFeats" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="ExcludedRuleFeatsDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="ExcludedRuleFeats"/>
+			</if>
+		</part>
 		<part id="PhRegularRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
 				   helpTopicID="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection"/>
@@ -2676,6 +2692,42 @@
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following categories are available.">
 					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredRuleFeatsDisabled" type="detail">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredRuleFeats" type="detail">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeatsDisabled" type="detail">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeats" type="detail">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>

@@ -73,7 +73,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -97,7 +97,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils">
 	  <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -337,6 +337,7 @@
 	<Compile Include="DomainServices\DataMigration\DataMigration7000044.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000051.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000052.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000056.cs" />
 	<Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
 	<Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
 	  <SubType>Form</SubType>
@@ -614,7 +615,9 @@
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Strings.Designer.cs</LastGenOutput>
 	</EmbeddedResource>
-	<None Include="FDOGenerate\HandGenerated.xml" />
+	<None Include="FDOGenerate\HandGenerated.xml">
+	  <SubType>Designer</SubType>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<None Include="FDOGenerate\IntPropTypeOverrides.xml" />

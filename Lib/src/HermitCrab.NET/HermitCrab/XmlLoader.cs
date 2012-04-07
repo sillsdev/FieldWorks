@@ -971,10 +971,10 @@ namespace SIL.HermitCrab
 				throw le;
 			}
 
-			sr.RequiredPOSs = LoadPOSs(psubruleNode.GetAttribute("requiredPartsOfSpeech"));
+			sr.RequiredPOSs = LoadPOSs(structElem.GetAttribute("requiredPartsOfSpeech"));
 
-			sr.RequiredMPRFeatures = LoadMPRFeatures(psubruleNode.GetAttribute("requiredMPRFeatures"));
-			sr.ExcludedMPRFeatures = LoadMPRFeatures(psubruleNode.GetAttribute("excludedMPRFeatures"));
+			sr.RequiredMPRFeatures = LoadMPRFeatures(structElem.GetAttribute("requiredMPRFeatures"));
+			sr.ExcludedMPRFeatures = LoadMPRFeatures(structElem.GetAttribute("excludedMPRFeatures"));
 
 			prule.AddSubrule(sr);
 		}

@@ -5818,3 +5818,5 @@ NaylorJ, 4 April 2012. (Integrated from 7.2)Fixed LT-12930 and LT-12923 the offe
 NaylorJ, 4 April 2012. Fixed LT-12942. When creating a spelling dictionary entry from our current project put underscores in the ids instead of hyphens.
 EricP, 5 April 2012. Make tests for some corner cases when handling variant entry references.
 RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.21.
+Andy Black, 7 April 2012.  LT-10621 "Hermit Crab: Enable phonological rules to apply only when
+	certain morpho-syntactic features are present (or not present)"

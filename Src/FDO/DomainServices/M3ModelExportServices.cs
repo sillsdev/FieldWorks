@@ -276,7 +276,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportBestAnalysis(restriction.Description, "Description", mode),
 					ExportBestAnalysis(restriction.Abbreviation, "Abbreviation", mode)));
 		}
-
 		private static XElement ExportMorphTypes(IRepository<IMoMorphType> morphTypeRepository, Icu.UNormalizationMode mode)
 		{
 			return new XElement("MoMorphTypes",
@@ -450,12 +449,29 @@ namespace SIL.FieldWorks.FDO.DomainServices
 																 select ExportFeatureConstraint(featureConstraint)),
 								new XElement("PhonRules", from phonRule in phonologicalData.PhonRulesOS
 														   select ExportPhonRule(phonRule, mode)),
+								ExportPhonRuleFeats(phonologicalData, mode),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"));
+		}
+
+		private static XElement ExportPhonRuleFeats(IPhPhonData phonData, Icu.UNormalizationMode mode)
+		{
+			return new XElement("PhonRuleFeats",
+				from phonRuleFeat in phonData.PhonRuleFeatsOA.ReallyReallyAllPossibilities
+				select ExportPhonRuleFeat(phonRuleFeat as IPhPhonRuleFeat, mode));
+		}
+
+		private static XElement ExportPhonRuleFeat(IPhPhonRuleFeat phonRuleFeat, Icu.UNormalizationMode mode)
+		{
+			return new XElement("PhonRuleFeat",
+								new XAttribute("Id", phonRuleFeat.Hvo),
+								ExportBestAnalysis(phonRuleFeat.Name, "Name", mode),
+								new XElement("Item",
+								phonRuleFeat.ItemRA != null ? new XAttribute("itemRef", phonRuleFeat.ItemRA.Hvo) : new XAttribute("missing", 1)));
 		}
 
 		private static XElement ExportPhonRule(IPhSegmentRule phonRule, Icu.UNormalizationMode mode)
@@ -488,15 +504,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							ExportContextList(phonRule.StrucDescOS)),
 						from constraint in constraints
 						select ExportItemAsReference(constraint, constraints.IndexOf(constraint), "FeatureConstraints"),
-						 new XElement("RightHandSides", from rhs in asRegularRule.RightHandSidesOS
+							new XElement("RightHandSides", from rhs in asRegularRule.RightHandSidesOS
 														select new XElement("PhSegRuleRHS",
-															 new XAttribute("Id", rhs.Hvo),
-															 new XElement("StrucChange", from structChange in rhs.StrucChangeOS
-																						 select ExportContext(structChange)),
-															  new XElement("InputPOSes", from pos in rhs.InputPOSesRC
-																						 select ExportItemAsReference(pos, "RequiredPOS")),
-															  new XElement("LeftContext", ExportContext(rhs.LeftContextOA)),
-															  new XElement("RightContext", ExportContext(rhs.RightContextOA)))));
+							new XAttribute("Id", rhs.Hvo),
+							new XElement("StrucChange", from structChange in rhs.StrucChangeOS
+															select ExportContext(structChange)),
+							new XElement("InputPOSes", from pos in rhs.InputPOSesRC
+															select ExportItemAsReference(pos, "RequiredPOS")),
+							new XElement("ReqRuleFeats", from rrf in rhs.ReqRuleFeatsRC
+															select ExportItemAsReference(rrf, "RuleFeat")),
+							new XElement("ExclRuleFeats", from erf in rhs.ExclRuleFeatsRC
+															select ExportItemAsReference(erf, "RuleFeat")),
+							new XElement("LeftContext", ExportContext(rhs.LeftContextOA)),
+							new XElement("RightContext", ExportContext(rhs.RightContextOA)))));
 					break;
 				case "PhSegmentRule":
 					retVal = new XElement("PhSegmentRule",

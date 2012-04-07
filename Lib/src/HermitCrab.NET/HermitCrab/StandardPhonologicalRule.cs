@@ -662,18 +662,34 @@ namespace SIL.HermitCrab
 			public bool IsApplicable(WordSynthesis input, Trace trace)
 			{
 				// check part of speech and MPR features
-				bool fGoodRequiredPOS = m_requiredPOSs == null || m_requiredPOSs.Count == 0 || m_requiredPOSs.Contains(input.POS);
-				bool fGoodRequiredMPRFeatures = m_requiredMPRFeatures == null || m_requiredMPRFeatures.Count == 0 || m_requiredMPRFeatures.IsMatch(input.MPRFeatures);
-				bool fGoodExcludedMPRFeatures = m_excludedMPRFeatures == null || m_excludedMPRFeatures.Count == 0 || !m_excludedMPRFeatures.IsMatch(input.MPRFeatures);
+				bool fRequiredPOSMet = m_requiredPOSs == null || m_requiredPOSs.Count == 0 || m_requiredPOSs.Contains(input.POS);
+				bool fRequiredMPRFeaturesMet = m_requiredMPRFeatures == null || m_requiredMPRFeatures.Count == 0 || m_requiredMPRFeatures.IsMatch(input.MPRFeatures);
+				bool fExcludedMPRFeaturesMet = m_excludedMPRFeatures == null || m_excludedMPRFeatures.Count == 0 || !m_excludedMPRFeatures.IsMatch(input.MPRFeatures);
 				if (trace != null)
 				{
-					if (!fGoodRequiredPOS)
+					if (!fRequiredPOSMet)
 					{
 						var badPosTrace = new PhonologicalRuleSynthesisRequiredPOSTrace(input.POS, m_requiredPOSs);
 						trace.AddChild(badPosTrace);
 					}
+					if (!fRequiredMPRFeaturesMet)
+					{
+						var badRequiredMPRFeaturesTrace =
+							new PhonologicalRuleSynthesisMPRFeaturesTrace(
+								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED,
+								input.MPRFeatures, m_requiredMPRFeatures);
+						trace.AddChild(badRequiredMPRFeaturesTrace);
+					}
+					if (!fExcludedMPRFeaturesMet)
+					{
+						var badExcludedMPRFeaturesTrace =
+							new PhonologicalRuleSynthesisMPRFeaturesTrace(
+								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED,
+								input.MPRFeatures, m_excludedMPRFeatures);
+						trace.AddChild(badExcludedMPRFeaturesTrace);
+					}
 				}
-				return (fGoodRequiredPOS && fGoodRequiredMPRFeatures && fGoodExcludedMPRFeatures);
+				return (fRequiredPOSMet && fRequiredMPRFeaturesMet && fExcludedMPRFeaturesMet);
 			}
 		}
 

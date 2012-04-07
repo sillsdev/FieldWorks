@@ -1039,6 +1039,7 @@ ShowMorph
 		<xsl:variable name="fHaveBlocker">
 			<xsl:choose>
 				<xsl:when test="$phonologicalRules/PhonologicalRuleSynthesisRequiredPOSTrace">Y</xsl:when>
+				<xsl:when test="$phonologicalRules/PhonologicalRuleSynthesisMPRFeaturesTrace">Y</xsl:when>
 				<xsl:otherwise>N</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
@@ -1072,7 +1073,7 @@ ShowMorph
 						<xsl:choose>
 							<xsl:when test="string-length(normalize-space(PhonologicalRule/Description)) &gt; 0">
 								<xsl:choose>
-									<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace">
+									<xsl:when test="PhonologicalRuleSynthesisRequiredPOSTrace or PhonologicalRuleSynthesisMPRFeaturesTrace">
 										<span style="color:gray">
 											<xsl:value-of select="normalize-space(PhonologicalRule/Description)"/>
 										</span>
@@ -1113,7 +1114,52 @@ ShowMorph
 							</xsl:for-each>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:text>&#xa0;</xsl:text>
+							<xsl:choose>
+								<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace">
+									<xsl:choose>
+										<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleMPRFeatures/PhonologicalRuleMPRFeature">
+											<xsl:text>The stem has the following properties:</xsl:text>
+											<xsl:for-each select="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleMPRFeatures/PhonologicalRuleMPRFeature">
+												<xsl:value-of select="Description"/>
+												<xsl:call-template name="OutputListPunctuation">
+													<xsl:with-param name="sConjunction" select="' and '"/>
+													<xsl:with-param name="sFinalPunctuation" select="','"/>
+												</xsl:call-template>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:text>The stem does not have any special properties,</xsl:text>
+										</xsl:otherwise>
+									</xsl:choose>
+									<xsl:choose>
+										<xsl:when test="PhonologicalRuleSynthesisMPRFeaturesTrace/@type='required'">
+											<xsl:text> but this rule only applies when the stem has the following properties: </xsl:text>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:text> but this rule only applies when the stem has none of the following properties: </xsl:text>
+										</xsl:otherwise>
+									</xsl:choose>
+									<xsl:for-each select="PhonologicalRuleSynthesisMPRFeaturesTrace/PhonologicalRuleConstrainingMPRFeatrues/PhonologicalRuleMPRFeature">
+										<xsl:value-of select="Description"/>
+										<xsl:call-template name="OutputListPunctuation">
+											<xsl:with-param name="sConjunction">
+												<xsl:choose>
+													<xsl:when test="../../@type='required'">
+														<xsl:text> and </xsl:text>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:text> or </xsl:text>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:with-param>
+											<xsl:with-param name="sFinalPunctuation" select="'.'"/>
+										</xsl:call-template>
+									</xsl:for-each>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>&#xa0;</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:otherwise>
 					</xsl:choose>
 						</td>

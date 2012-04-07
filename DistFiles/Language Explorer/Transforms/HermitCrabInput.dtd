@@ -531,12 +531,6 @@ For OutputFootFeatures and RequiredFootFeatures, the Features need to be FootFea
 >
 <!ELEMENT PhonologicalSubrules (PhonologicalSubrule+) >
 <!ELEMENT PhonologicalSubrule (PhonologicalSubruleStructure+) >
-<!ATTLIST PhonologicalSubrule
-  isActive (yes | no) "yes"
-  requiredPartsOfSpeech IDREFS #IMPLIED
-  requiredMPRFeatures IDREFS #IMPLIED
-  excludedMPRFeatures IDREFS #IMPLIED
->
 <!ELEMENT PhonologicalSubruleStructure (PhoneticOutput, Environment?, PreviousWord?, NextWord?) >
 <!--
   requiredPartsOfSpeech refers to one or more PartOfSpeech IDs

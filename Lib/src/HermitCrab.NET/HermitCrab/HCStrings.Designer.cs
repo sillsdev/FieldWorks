@@ -358,11 +358,29 @@ namespace SIL.HermitCrab {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Phonological Rule Synthesis Excluded MPR features found [Stem MPR features: {0}, Excluded MPR features: {1}].
+		/// </summary>
+		internal static string kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures {
+			get {
+				return ResourceManager.GetString("kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Phonological Rule Synthesis [Rule: {0}, Input: {1}, Output: {2}].
 		/// </summary>
 		internal static string kstidTracePhonologicalRuleSynthesisInputs {
 			get {
 				return ResourceManager.GetString("kstidTracePhonologicalRuleSynthesisInputs", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Phonological Rule Synthesis Required MPR features missing [Stem MPR features: {0}, Required MPR features: {1}].
+		/// </summary>
+		internal static string kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures {
+			get {
+				return ResourceManager.GetString("kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures", resourceCulture);
 			}
 		}
 

@@ -35,17 +35,17 @@
 	<xsl:key name="NCAbbr" match="//PhNCSegments | //PhNCFeatures" use="Abbreviation"/>
 	<xsl:key name="EnvId" match="//PhEnvironment" use="@Id"/>
 	<xsl:key name="PhonemeId" match="//PhPhoneme" use="@Id"/>
-	<xsl:key name="Rep" match="//PhPhoneme" use="Codes/PhCode/Representation"/>
+		   <xsl:key name="Rep" match="//PhPhoneme" use="Codes/PhCode/Representation"/>
 	<xsl:key name="FeatTypeId" match="//FsFeatStrucType" use="@Id"/>
 	<xsl:key name="FeatId" match="//FsComplexFeature | //FsClosedFeature" use="@Id"/>
 	<xsl:key name="InflClassId" match="//MoInflClass" use="@Id"/>
 	<xsl:key name="FeatConstrId" match="//PhFeatureConstraint" use="@Id"/>
-	<xsl:key name="CtxtId" match="//PhSimpleContextBdry | //PhSimpleContextSeg | //PhSimpleContextNC | //PhIterationContext" use="@Id"/>
+			<xsl:key name="CtxtId" match="//PhSimpleContextBdry | //PhSimpleContextSeg | //PhSimpleContextNC | //PhIterationContext" use="@Id"/>
 	<xsl:key name="BdryId" match="//PhBdryMarker" use="@Id"/>
 	<xsl:key name="AffixProcessId" match="//MoAffixProcess" use="@Id"/>
 	<xsl:key name="NCId" match="//PhNCSegments | //PhNCFeatures" use="@Id"/>
 	<xsl:key name="TermUnitId" match="//PhPhoneme | //PhBdryMarker" use="@Id"/>
-
+	<xsl:key name="PhonRuleFeatId" match="//PhonRuleFeat" use="@Id"/>
 	<xsl:include href="MorphTypeGuids.xsl"/>
 	<xsl:include href="XAmpleTemplateVariables.xsl"/>
 
@@ -3666,21 +3666,43 @@
 
 	<xsl:template match="PhSegRuleRHS">
 		<PhonologicalSubrule>
-			<xsl:if test="InputPOSes/RequiredPOS">
-				<xsl:attribute name="requiredPartsOfSpeech">
-					<xsl:for-each select="InputPOSes/RequiredPOS">
-						<xsl:text>pos</xsl:text>
-						<xsl:value-of select="@dst"/>
-						<xsl:call-template name="POSIds">
-							<xsl:with-param name="posId" select="@dst"/>
-						</xsl:call-template>
-						<xsl:if test="position() != last()">
-							<xsl:text>&#x20;</xsl:text>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:attribute>
-			</xsl:if>
 			<PhonologicalSubruleStructure>
+				<xsl:if test="InputPOSes/RequiredPOS">
+					<xsl:attribute name="requiredPartsOfSpeech">
+						<xsl:for-each select="InputPOSes/RequiredPOS">
+							<xsl:text>pos</xsl:text>
+							<xsl:value-of select="@dst"/>
+							<xsl:call-template name="POSIds">
+								<xsl:with-param name="posId" select="@dst"/>
+							</xsl:call-template>
+							<xsl:if test="position() != last()">
+								<xsl:text>&#x20;</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="ReqRuleFeats/RuleFeat">
+					<xsl:attribute name="requiredMPRFeatures">
+						<xsl:for-each select="ReqRuleFeats/RuleFeat">
+							<xsl:text>mpr</xsl:text>
+							<xsl:value-of select="key('PhonRuleFeatId',@dst)/Item/@itemRef"/>
+							<xsl:if test="position()!=last()">
+								<xsl:text>&#x20;</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="ExclRuleFeats/RuleFeat">
+					<xsl:attribute name="excludedMPRFeatures">
+						<xsl:for-each select="ExclRuleFeats/RuleFeat">
+							<xsl:text>mpr</xsl:text>
+							<xsl:value-of select="key('PhonRuleFeatId',@dst)/Item/@itemRef"/>
+							<xsl:if test="position()!=last()">
+								<xsl:text>&#x20;</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:attribute>
+				</xsl:if>
 				<PhoneticOutput>
 					<xsl:attribute name="id">
 						<xsl:text>pout</xsl:text>

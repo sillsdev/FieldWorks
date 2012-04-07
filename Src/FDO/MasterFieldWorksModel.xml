@@ -24,7 +24,7 @@
 	  2. <para> elements must not have newlines in them. (The build will likely fail, otherwise.)
 
    WARNING 4: Any update of the model number *requires* a matching update in the FLEx Bridge metadata cache.
-	That MDC is designed to adjsut to the model number of the given data set, starting from DM37.
+	That MDC is designed to adjust to the model number of the given data set, starting from DM37.
 	Updates here also need to be made in the other MDC, along with tests for the new model.
 	1. MetadataCache (FLEx_ChorusPlugin.Infrastructure), and
 	2. UpdateMetaDataCacheTests (FLEx_ChorusPluginTests.Integration).
@@ -33,6 +33,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+   6 April 2012 (7000056): No actual model change, but a data migration to instantiate PhonRuleFeats possibility list in PhPhonData.
+	See LT-10621 Hermit Crab: Enable phonological rules to apply only when certain morpho-syntactic features are present (or not present)
   16 March 2012 (7000055): Created class LexEntryInflType (num 133 in Ling) based on LexEntryType.
 	Added atomic reference attribute InflType to WfiMorphBundle with target of LexEntryInflType.
 	See LT-7581 "Have parser know about inflectional variant entries". No data migration needed.
@@ -158,7 +160,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000055" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000056" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

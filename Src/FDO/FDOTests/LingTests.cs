@@ -871,6 +871,82 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// test creating PhPhonData.PhonRuleFeats
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RebuildPhonRuleFeats()
+		{
+			// exception "features"
+			var restrictionsList = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA;
+			if (restrictionsList == null)
+			{
+				restrictionsList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			}
+			var prodRestrict1 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict1);
+			var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+			prodRestrict1.Name.set_String(wsBestAnalysis, "Exception feature the first");
+			var prodRestrict2 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict2);
+			var prodRestrict3 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict3);
+			var prodRestrict4 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict4);
+			restrictionsList.PossibilitiesOS.Remove(prodRestrict4);  // testing removal when there are no PhonRuleFeats yet
+			// inflection classes
+			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			IMoInflClass moInflClass1 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass1);
+			moInflClass1.Name.set_String(wsBestAnalysis, "Inflection class the first");
+			IMoInflClass moInflClass2 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass2);
+			IMoInflClass moInflClass3 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass3);
+			IMoInflClass moInflClass4 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass4);
+			pos.InflectionClassesOC.Remove(moInflClass4);  // testing removal when there are no PhonRuleFeats yet
+			// Collect up exception features and inflection classes
+			var result = new List<ICmObject>();
+			var prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+			result.AddRange(prodRestricts);
+			var inflClasses = pos.AllInflectionClasses;
+			result.AddRange(inflClasses);
+
+			var phonRuleFeats = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA;
+			Assert.AreEqual(0, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should be empty");
+			Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+			Assert.AreEqual(6, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have six items");
+			string sExceptionFeatureNewName = "Exception feature one";
+			prodRestrict1.Name.set_String(wsBestAnalysis, sExceptionFeatureNewName);
+			string sInflClassNewName = "Inflection class one";
+			moInflClass1.Name.set_String(wsBestAnalysis, sInflClassNewName);
+			result = new List<ICmObject>();
+			prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+			result.AddRange(prodRestricts);
+			inflClasses = pos.AllInflectionClasses;
+			result.AddRange(inflClasses);
+			Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+			Assert.AreEqual(6, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have six items after exception feature rename and after inflection class rename");
+			var sFirstOnesName = phonRuleFeats.PossibilitiesOS.First().Name.get_String(wsBestAnalysis);
+			Assert.AreEqual(sExceptionFeatureNewName, sFirstOnesName.Text,
+				"PhonRuleFeats should reflect a name change for exception features");
+			sFirstOnesName = phonRuleFeats.PossibilitiesOS.ElementAt(3).Name.get_String(wsBestAnalysis);
+			Assert.AreEqual(sInflClassNewName, sFirstOnesName.Text,
+				"PhonRuleFeats should reflect a name change for inflection classes");
+			restrictionsList.PossibilitiesOS.Remove(prodRestrict2);
+			Assert.AreEqual(5, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have five items after deleting one productivity restriction");
+			pos.InflectionClassesOC.Remove(moInflClass2);
+			Assert.AreEqual(4, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have four items after deleting one inflection class");
+		}
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// test that ShortName for optional slots have parentheses and non-optional do not.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
