@@ -185,3 +185,4 @@ NaylorJ, 2 April 2012. Updated the Palso and Palaso.Lift dlls to support the new
 NaylorJ, 3 April 2012. Fixed a bug in writing out the formatted lift-ranges introduced on 30 Mar.
 NaylorJ, 4 April 2012. Fixed LT-12930 and LT-12923 the offending units of work were called using the DoSomehow method which does work post PropChanges
 NaylorJ, 4 April 2012. (Integrated) Fixed LT-12942. When creating a spelling dictionary entry from our current project put underscores in the ids instead of hyphens.
+-------------------------- Begin FW7.2.5
