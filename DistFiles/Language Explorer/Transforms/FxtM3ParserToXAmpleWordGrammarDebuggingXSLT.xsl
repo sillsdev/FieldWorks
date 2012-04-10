@@ -19,13 +19,13 @@ Preamble
 -->
    <xsl:namespace-alias stylesheet-prefix="wgd" result-prefix="xsl"/>
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-   <xsl:key name="FeatureID" match="//FsComplexFeature | //FsClosedFeature" use="@Id"/>
-   <xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-   <xsl:key name="SlotID" match="//MoInflAffixSlot" use="@Id"/>
-   <xsl:key name="StemMsaID" match="//MoStemMsa" use="@Id"/>
-   <xsl:key name="StemNameID" match="//MoStemName" use="@Id"/>
-   <xsl:key name="ValueID" match="//FsSymFeatVal" use="@Id"/>
-   <xsl:key name="MoStemAllomorph_id" match="//MoStemAllomorph" use="@Id"/>
+   <xsl:key name="FeatureID" match="FsComplexFeature | FsClosedFeature | FsComplexFeature | FsClosedFeature" use="@Id"/>
+   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+   <xsl:key name="SlotID" match="MoInflAffixSlot" use="@Id"/>
+   <xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
+   <xsl:key name="StemNameID" match="MoStemName" use="@Id"/>
+   <xsl:key name="ValueID" match="FsSymFeatVal" use="@Id"/>
+   <xsl:key name="MoStemAllomorph_id" match="MoStemAllomorph" use="@Id"/>
    <!--
 	Global variables
 	-->
@@ -47,15 +47,14 @@ Preamble
    <xsl:variable name="sPhrase">
 	  <xsl:text>a23b6faa-1052-4f4d-984b-4b338bdaf95f</xsl:text>
    </xsl:variable>
-	<xsl:variable name="affixTemplates" select="//MoInflAffixTemplate"/>
-	<xsl:variable name="compoundRules" select="//CompoundRules[MoExoCompound | MoEndoCompound]"/>
-	<xsl:variable name="compounds" select="//MoExoCompound | //MoEndoCompound"/>
-	<xsl:variable name="lexEntries" select="//LexEntry"/>
-	<xsl:variable name="partsOfSpeech" select="//PartOfSpeech"/>
-	<xsl:variable name="stemAllomorphs" select="//MoStemAllomorph"/>
+	<xsl:variable name="affixTemplates" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate"/>
+	<xsl:variable name="compoundRules" select="/M3Dump/CompoundRules[MoExoCompound | MoEndoCompound]"/>
+	<xsl:variable name="compounds" select="/M3Dump/CompoundRules/MoExoCompound | /M3Dump/CompoundRules/MoEndoCompound"/>
+	<xsl:variable name="partsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
 	<!-- Need to create a list of all unique stem name combinations used in lexical entries -->
    <xsl:variable name="sAllStemNamesUsedInLexicalEntries">
-	  <xsl:for-each select="$lexEntries">
+	  <!--xsl:for-each select="$lexEntries"-->
+	  <xsl:for-each select="/M3Dump/Lexicon/Entries/LexEntry">
 		 <xsl:variable name="allos" select="AlternateForms | LexemeForm"/>
 		 <!-- collect stem names used so we can output any default stem name allomorph properties -->
 		 <xsl:variable name="sStemNamesUsed">

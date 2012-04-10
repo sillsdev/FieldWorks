@@ -14,32 +14,30 @@ Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-   <xsl:key name="LexSenseID" match="//LexSense" use="@Id"/>
+   <xsl:key name="LexSenseID" match="LexSense" use="@Id"/>
    <xsl:key name="MSAID" match="MorphoSyntaxAnalysis" use="@dst"/>
-   <xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
+   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
 	<!-- global variables (to improve efficiency) -->
-	<xsl:variable name="AllPrefixSlots" select="//PrefixSlots"/>
-	<xsl:variable name="AllSuffixSlots" select="//SuffixSlots"/>
-	<xsl:variable name="InflAffixSlots" select="//MoInflAffixSlot"/>
-	<xsl:variable name="LexEntries" select="//LexEntry"/>
-	<xsl:variable name="MoStemMsas" select="//MoStemMsa"/>
-	<xsl:variable name="MoInflAffMsas" select="//MoInflAffMsa"/>
-	<xsl:variable name="MoDerivAffMsas" select="//MoDerivAffMsa"/>
-	<xsl:variable name="MoUnclassifiedAffixMsas" select="//MoUnclassifiedAffixMsa"/>
+	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
+	<xsl:variable name="MoStemMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoStemMsa"/>
+	<xsl:variable name="MoInflAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoInflAffMsa"/>
+	<xsl:variable name="MoDerivAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoDerivAffMsa"/>
+	<xsl:variable name="MoUnclassifiedAffixMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoUnclassifiedAffixMsa"/>
 
-	<xsl:variable name="MoInflClasses" select="//MoInflClass"/>
-	<xsl:variable name="MoStemNames" select="//MoStemName"/>
-	<xsl:variable name="MoAlloAdhocProhibs" select="//MoAlloAdhocProhib"/>
-	<xsl:variable name="MoMorphAdhocProhibs" select="//MoMorphAdhocProhib"/>
+	<!-- MoInflClass may be nested -->
+	<xsl:variable name="MoInflClasses" select="/M3Dump/PartsOfSpeech/PartOfSpeech/InflectionClasses//MoInflClass"/>
+	<xsl:variable name="MoStemNames" select="/M3Dump/PartsOfSpeech/PartOfSpeech/StemNames/MoStemName"/>
+	<xsl:variable name="MoAlloAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/MoAlloAdhocProhib"/>
+	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/MoMorphAdhocProhib"/>
 
-	<xsl:variable name="ProdRestricts" select="//ProdRestrict"/>
-	<xsl:variable name="MoAffixAllomorphs" select="//MoAffixAllomorph"/>
-	<xsl:variable name="MoStemAllomorphs" select="//MoStemAllomorph"/>
-	<xsl:variable name="PartsOfSpeech" select="//PartOfSpeech"/>
-	<xsl:variable name="MoEndoCompounds" select="//MoEndoCompound"/>
-	<xsl:variable name="MoExoCompounds" select="//MoExoCompound"/>
-	<xsl:variable name="MoMorphTypes" select="//MoMorphType"/>
-	<xsl:variable name="XAmple" select="//XAmple"/>
+	<xsl:variable name="ProdRestricts" select="/M3Dump/ProdRestrict"/>
+	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
+	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
+	<xsl:variable name="MoEndoCompounds" select="/M3Dump/CompoundRules/MoEndoCompound"/>
+	<xsl:variable name="MoExoCompounds" select="/M3Dump/CompoundRules/MoExoCompound"/>
+	<xsl:variable name="MoMorphTypes" select="/M3Dump/MoMorphTypes/MoMorphType"/>
+	<!-- Old files have a single level of ParserParameters.  New output may have two levels (ParserParameters/ParserParameters). -->
+	<xsl:variable name="XAmple" select="/M3Dump/ParserParameters//XAmple"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
 	<xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="CalculateStemNamesUsedInLexicalEntries.xsl"/>
@@ -413,7 +411,7 @@ Allomorph ad hoc constraints
 	  <!--
 String Classes (which correspond to natural classes
 -->
-	  <xsl:for-each select="//PhNCSegments">
+	  <xsl:for-each select="/M3Dump/PhPhonData/NaturalClasses/PhNCSegments">
 \scl <xsl:value-of select="@Id"/>
 		 <xsl:text> | </xsl:text>
 		 <xsl:value-of select="Abbreviation"/>
@@ -427,7 +425,7 @@ String Classes (which correspond to natural classes
 			<xsl:variable name="Code">
 			   <xsl:value-of select="@dst"/>
 			</xsl:variable>
-			<xsl:for-each select="//PhPhoneme[@Id=$Code]">
+			<xsl:for-each select="/M3Dump/PhPhonData/PhonemeSets/PhPhonemeSet/Phonemes/PhPhoneme[@Id=$Code]">
 			   <xsl:for-each select="Codes/PhCode">
 				  <xsl:value-of select="Representation"/>
 				  <xsl:if test="position()!=last()">
@@ -699,6 +697,7 @@ SetEllipsisValue
 ================================================================
 Revision History
 - - - - - - - - - - - - - - - - - - -
+27-Mar-2012     Steve McConnel  Tweak for effiency in libxslt based processing.
 21-Apr-2006	    Andy Black	Output all representations in a natural class, not just the first one.
 21-Feb-2006	    Andy Black	Add inflection class and productivity restrictions to properties; remove feature structures
 09-Dec-2005	    Andy Black	Use minimum output patr options (for efficiency)

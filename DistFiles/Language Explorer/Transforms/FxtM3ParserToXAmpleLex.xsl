@@ -16,35 +16,31 @@ Preamble
    <!-- Parameters that can be set by user.  -->
    <!-- none now -->
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-   <xsl:key name="AffixAlloID" match="//MoAffixAllomorph" use="@Id"/>
-   <xsl:key name="AlloID" match="//MoAffixAllomorph | //MoStemAllomorph" use="@Id"/>
-   <xsl:key name="DerivMsaID" match="//MoDerivAffMsa" use="@Id"/>
-   <xsl:key name="InflClassID" match="//MoInflClass" use="@Id"/>
-   <xsl:key name="InflMsaID" match="//MoInflAffMsa" use="@Id"/>
-   <xsl:key name="UnclassifiedMsaID" match="//MoUnclassifiedAffixMsa" use="@Id"/>
-   <xsl:key name="LexSenseID" match="//LexSense" use="@Id"/>
-   <xsl:key name="MorphTypeID" match="//MoMorphType" use="@Id"/>
-   <xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-   <xsl:key name="PhEnvID" match="//PhEnvironment" use="@Id"/>
-   <xsl:key name="PhContextID" match="//PhSimpleContextNC | //PhSimpleContextSeg | //PhSimpleContextBdry | //PhIterationContext | PhSequenceContext" use="@Id"/>
-   <xsl:key name="PhBdryID" match="//PhBdryMarker" use="@Id"/>
-   <xsl:key name="PhonemeID" match="//PhPhoneme" use="@Id"/>
-   <xsl:key name="StemAlloID" match="//MoStemAllomorph" use="@Id"/>
-   <xsl:key name="StemMsaID" match="//MoStemMsa" use="@Id"/>
-   <xsl:key name="ToMsaDst" match="//ToMsa" use="@dst"/>
-   <xsl:key name="NatClassAbbr" match="//PhNCSegments/Abbreviation" use="."/>
+   <xsl:key name="AffixAlloID" match="MoAffixAllomorph" use="@Id"/>
+   <xsl:key name="AlloID" match="MoAffixAllomorph | MoStemAllomorph" use="@Id"/>
+   <xsl:key name="DerivMsaID" match="MoDerivAffMsa" use="@Id"/>
+   <xsl:key name="InflClassID" match="MoInflClass" use="@Id"/>
+   <xsl:key name="InflMsaID" match="MoInflAffMsa" use="@Id"/>
+   <xsl:key name="UnclassifiedMsaID" match="MoUnclassifiedAffixMsa" use="@Id"/>
+   <xsl:key name="LexSenseID" match="LexSense" use="@Id"/>
+   <xsl:key name="MorphTypeID" match="MoMorphType" use="@Id"/>
+   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+   <xsl:key name="PhEnvID" match="PhEnvironment" use="@Id"/>
+   <xsl:key name="PhContextID" match="PhSimpleContextNC | PhSimpleContextSeg | PhSimpleContextBdry | PhIterationContext | PhSequenceContext" use="@Id"/>
+   <xsl:key name="PhBdryID" match="PhBdryMarker" use="@Id"/>
+   <xsl:key name="PhonemeID" match="PhPhoneme" use="@Id"/>
+   <xsl:key name="StemAlloID" match="MoStemAllomorph" use="@Id"/>
+   <xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
+   <xsl:key name="ToMsaDst" match="ToMsa" use="@dst"/>
+   <xsl:key name="NatClassAbbr" match="PhNCSegments/Abbreviation" use="."/>
    <!-- various global variables to make searching faster -->
-	<xsl:variable name="AllPrefixSlots" select="//PrefixSlots"/>
-	<xsl:variable name="AllSuffixSlots" select="//SuffixSlots"/>
-	<xsl:variable name="InflAffixSlots" select="//MoInflAffixSlot"/>
-	<xsl:variable name="LexEntries" select="//LexEntry"/>
-	<xsl:variable name="MoStemMsas" select="//MoStemMsa"/>
-	<xsl:variable name="MoInflAffMsas" select="//MoInflAffMsa"/>
-	<xsl:variable name="MoDerivAffMsas" select="//MoDerivAffMsa"/>
-	<xsl:variable name="MoUnclassifiedAffixMsas" select="//MoUnclassifiedAffixMsa"/>
-	<xsl:variable name="MoAffixAllomorphs" select="//MoAffixAllomorph"/>
-	<xsl:variable name="MoStemAllomorphs" select="//MoStemAllomorph"/>
-	<xsl:variable name="PartsOfSpeech" select="//PartOfSpeech"/>
+	<xsl:variable name="AllPrefixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/PrefixSlots"/>
+	<xsl:variable name="AllSuffixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/SuffixSlots"/>
+	<xsl:variable name="InflAffixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixSlots/MoInflAffixSlot"/>
+	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
+	<xsl:variable name="MoStemMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoStemMsa"/>
+	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
+	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
    <!-- included stylesheets (i.e. things common to other style sheets) -->
    <xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="XAmpleTemplateVariables.xsl"/>
@@ -63,7 +59,7 @@ Preamble
 	  </xsl:for-each>
    </xsl:variable>
    <!-- following is a way to deal with iteration contexts -->
-   <xsl:variable name="PhIters" select="//PhIters"/>
+   <xsl:variable name="PhIters" select="/M3Dump/PhPhonData/PhIters"/>
    <!-- following is for full reduplication -->
    <xsl:variable name="sFullRedupPattern" select="'[...]'"/>
    <!--
@@ -1872,6 +1868,7 @@ OutputUnclassifiedOrderClass
 ================================================================
 Revision History
 - - - - - - - - - - - - - - - - - - -
+27-Mar-2012     Steve McConnel  Tweak for effiency in libxslt based processing.
 21-Feb-2006	    Andy Black	Use MECs for inflection classes and MCC for exception features
 09-Feb-2006	    Andy Black	Allow ^0 and &0 for null as well as *0 and the empty set character
 06-Feb-2006	    Andy Black	Allow for full reduplication
