@@ -782,6 +782,7 @@ namespace SIL.FieldWorks.XWorks
 				var sw = new StreamWriter(outPathRanges);
 				//actually write out to file
 				sw.Write(w.GetStringBuilder().ToString());
+				sw.Close();
 			}
 #if DEBUG
 			var dtExport = DateTime.Now;
