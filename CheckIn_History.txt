@@ -5821,3 +5821,4 @@ RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.21.
 Andy Black, 7 April 2012.  LT-10621 "Hermit Crab: Enable phonological rules to apply only when
 	certain morpho-syntactic features are present (or not present)"
 RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.22.
+GordonM, 11 April 2012. LT-12926 Fix double quote crash.

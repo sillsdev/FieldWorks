@@ -317,13 +317,18 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
+			var baseNameForFile = obj.ShortName;
+			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
+			// so we need to fix the filename before calling it.
+			foreach (var c in Path.GetInvalidFileNameChars())
+				baseNameForFile = baseNameForFile.Replace(c, '_');
+			// WeSay and most other programs use NFC for file names, so we'll standardize on this.
+			baseNameForFile = baseNameForFile.Normalize(NormalizationForm.FormC);
 			string filename;
 			do
 			{
-				//WeSay and most other programs use NFC for file names, so we'll standardize on this.
-				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + obj.ShortName.Normalize(NormalizationForm.FormC), "wav");
-				foreach (var c in Path.GetInvalidFileNameChars())
-					filename = filename.Replace(c, '_');
+				filename = baseNameForFile;
+				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + filename, "wav");
 				path = Path.Combine(mediaDir, filename);
 
 			} while (File.Exists(path));
