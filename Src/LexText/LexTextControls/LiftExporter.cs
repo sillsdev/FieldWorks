@@ -593,14 +593,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			// special case to export the BaseForm complex form type as expected by WeSay.
 			if (ler.ComplexEntryTypesRS.Count == 1 && ler.ComplexEntryTypesRS[0].Name.get_String(m_cache.WritingSystemFactory.GetWsFromStr("en")).Text == "BaseForm")
 				typeString = "BaseForm";
+			int order = 0;
 			foreach (var obj in ler.ComponentLexemesRS)
 			{
-				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\">",
-					XmlUtils.MakeSafeXmlAttribute(GetProperty(obj, "LIFTid").ToString()));
+				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\" order=\"{1}\">",
+					XmlUtils.MakeSafeXmlAttribute(GetProperty(obj, "LIFTid").ToString()), order);
 				if (ler.PrimaryLexemesRS.Contains(obj))
 					w.WriteLine("<trait name=\"is-primary\" value=\"true\"/>");
 				WriteLexEntryRefBasics(w, ler);
 				w.WriteLine("</relation>");
+				++order;
 			}
 			if (ler.ComponentLexemesRS.Count == 0)
 			{
