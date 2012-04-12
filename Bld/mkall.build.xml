@@ -166,7 +166,7 @@
 			</fileset>
 		</attrib>
 	</target>
-	<target name="EncConvertersDlls" description="Copy and Register the EncodingConverters files">
+	<target name="EncConvertersDlls" description="Copy the EncodingConverters files">
 		<choose>
 			<when test="${platform::is-unix()}">
 				<copy todir="${dir.outputBase}">
@@ -216,85 +216,48 @@
 			</when>
 			<otherwise>
 				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibPlatformBase}">
+					<fileset basedir="${dir.fwoutputlibBase}">
 						<include name="SilEncConverters40.dll"/>
 						<include name="SilEncConverters40.pdb"/>
 						<include name="ECInterfaces.dll"/>
 						<include name="ECInterfaces.pdb"/>
+						<include name="AIGuesserEC.dll"/>
+						<include name="AIGuesserEC.pdb"/>
+						<include name="CcEC.dll"/>
+						<include name="CcEC.dll.mdb"/>
+						<include name="IcuEC.dll"/>
+						<include name="IcuEC.pdb"/>
+						<include name="IcuConvEC.dll"/>
+						<include name="IcuConvEC.pdb"/>
+						<include name="IcuRegexEC.dll"/>
+						<include name="IcuRegexEC.pdb"/>
+						<include name="IcuTranslitEC.dll"/>
+						<include name="IcuTranslitEC.pdb"/>
+						<include name="PyScriptEncConverter.dll"/>
+						<include name="PyScriptEncConverter.pdb"/>
+						<include name="PerlExpressionEC.dll"/>
+						<include name="PerlExpressionEC.pdb"/>
+						<include name="PyScriptEC.dll"/>
+						<include name="PyScriptEC.pdb"/>
+						<include name="SilIndicEncConverters40.dll"/>
+						<include name="SilIndicEncConverters40.pdb"/>
+					</fileset>
+				</copy>
+				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
+				<copy todir="${dir.outputBase}/EC/Plugins">
+					<fileset basedir="${dir.fwoutputlib}/release/ECPlugins">
+						<include name="AI 4.0.0.0 Plugin Details.xml"/>
+						<include name="CC 4.0.0.0 Plugin Details.xml"/>
+						<include name="EC 4.0.0.0 Plugin Details.xml"/>
+						<include name="IcuEC 4.0.0.0 Plugin Details.xml"/>
+						<include name="PerlEC 4.0.0.0 Plugin Details.xml"/>
+						<include name="PythonEC 4.0.0.0 Plugin Details.xml"/>
+						<include name="SIEC 4.0.0.0 Plugin Details.xml"/>
 					</fileset>
 				</copy>
 			</otherwise>
 		</choose>
-		<!-- I (KZ) switched to an external call to regsvr32 because comregisterex was doing strange things.
-			When registering with regsvr32 we call u_init in CIcuECModule which locks cnvalias.icu. Then
-			we call u_cleanup in DllRegisterServer which releases the lock, and finally CIcuECModule which
-			currently does not call u_cleanup. When using comregisterex, we call u_init, then CIcuECModule
-			destructor, then another u_init, then u_cleanup in DllRegisterServer, but at this point cnvalias.icu
-			is still locked, apparently because the first u_init was called on a different thread that isn't released
-			until nant stops. This breaks the build process because we can't call IcuData to reset the ICU
-			directory prior to checking or building installers. The error can be seen by running a temporary
-			nant target: <target name="testLockedIcu" depends="EncConvertersDlls"><call target="IcuData"
-			cascade="true"/></target> Note that this is not an issue if we have u_cleanup in the
-			CIcuECModule destructor, but this apparently causes other problems. -->
-		<!-- NB: Only one of these will be run. -->
-		<!--comregisterex file="${dir.fwoutputlibBase}/IcuEC40a.dll" failonerror="false" unless="${clean}"/-->
-		<!--comregisterex file="/s/u ${dir.fwoutputlibBase}/IcuEC40a.dll" failonerror="false" unregister="true" if="${clean}"/-->
-		<property name="args" value="" if="${user::is-admin()}"/>
-		<property name="args" value="/c" unless="${user::is-admin()}"/>
-		<property name="dir" value="${config}" if="${user::is-admin()}"/>
-		<property name="dir" value="release" unless="${user::is-admin()}"/>
-		<choose>
-			<when test="${user::is-admin()}">
-				<regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
-					<assemblies>
-						<include name="${dir.outputBase}/SilEncConverters40.dll"/>
-						<include name="${dir.fwoutputlib}/${dir}/AIGuesserEC.dll"/>
-					</assemblies>
-				</regasm>
-				<exec program="regsvr32.exe" commandline="/s ${fwroot}/Lib/${dir}/IcuEC40a.dll" failonerror="false" unless="${clean}" verbose="true"/>
-				<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/Lib/${dir}/IcuEC40a.dll" failonerror="false" if="${clean}"/>
-			</when>
-			<otherwise>
-			<if test="${not platform::is-unix()}">
-				<regasm assembly="${dir.outputBase}\SilEncConverters40.dll"
-						regfile="${dir.outputBase}\SilEncConverters40.reg" unregister="false" failonerror="false"/>
-				<importregistry regfile="${dir.outputBase}\SilEncConverters40.reg"
-								unregister="false" peruser="true" failonerror="false"/>
-				<delete file="${dir.outputBase}\SilEncConverters40.reg" failonerror="false"/>
-				<regasm assembly="${fwroot}\Lib\${dir}\AIGuesserEC.dll"
-						regfile="${dir.outputBase}\AIGuesserEC.reg" unregister="false" failonerror="false"/>
-				<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
-								unregister="false" peruser="true" failonerror="false"/>
-				<delete file="${dir.outputBase}\AIGuesserEC.reg" failonerror="false"/>
-				<!-- IcuEC40a.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
-				<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-					  commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40a.dll"
-					  failonerror="false" if="${clean}"/>
-				<if test="${not clean}">
-					<copy file="${fwroot}\Lib\${dir}\IcuEC40a.dll" todir="${path::get-temp-path()}"/>
-					<checksum algorithm="MD5">
-						<fileset>
-							<include name="${path::combine(path::get-temp-path(), 'IcuEC40a.dll')}"/>
-						</fileset>
-					</checksum>
-					<property name="IcuEcChanged" value="true"/>
-					<if test="${file::exists(fwroot + '\Lib\' + dir + '\IcuEC40a.dll.MD5')}">
-						<loadfile property="newIcuEc" file="${path::combine(path::get-temp-path(), 'IcuEC40a.dll')}"/>
-						<loadfile property="oldIcuEc" file="${fwroot}\Lib\${dir}\IcuEC40a.dll.MD5" />
-						<property name="IcuEcChanged" value="${newIcuEc != oldIcuEc}"/>
-					</if>
-					<!-- If IcuEC40a didn't change then we have nothing to do. Otherwise we register with admin privileges -->
-					<if test="${IcuEcChanged}">
-						<echo message="Register IcuEC40a.dll file with admin privileges"/>
-						<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-							  commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40a.dll" failonerror="false"/>
-						<copy file="${path::combine(path::get-temp-path(), 'IcuEC40a.dll.MD5')}" todir="${fwroot}\Lib\${dir}"/>
-					</if>
-				</if>
-			</if> <!-- not is unix-->
-			</otherwise>
-		</choose>
-		</target>
+	</target>
 	<target name="copy-nmockDll" description="Copy the nmock files. This gets around something bizarre that breaks the build machine. remakefw ends up copying the dll, but mkall doesn't even though both use buildtest.">
 		<copy todir="${dir.outputBase}">
 			<fileset basedir="${fwroot}/Bin/nmock/">
