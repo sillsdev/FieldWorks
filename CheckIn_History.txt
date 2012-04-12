@@ -5825,3 +5825,4 @@ GordonM, 11 April 2012. LT-12926 Fix double quote crash.
 KenZ, 12 Apr 2012. Fixed LT-12950 crash when creating new project.
 RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust indentation in StylesDlg paragraph tab.
 KenZ, 12 Apr 2012. Added new FB installer from Randy to fix crash due to the new phonology possibility list.
+KenZ. 12 Apr 2012. Added another new FB installer from Randy to fix LT-12952.
