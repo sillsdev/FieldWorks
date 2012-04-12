@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using NAnt.Core.Attributes;
 using NAnt.DotNet.Tasks;
+using System;
 using System.IO;
 
 namespace SIL.FieldWorks.Build.Tasks
@@ -63,10 +64,10 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The name of the task.
+		/// Get the name of the program executed by this task.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override string Name
+		public override string ExeName
 		{
 			get { return "resgen"; }
 		}

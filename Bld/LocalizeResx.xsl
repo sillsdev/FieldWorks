@@ -16,9 +16,10 @@
 
 	<xsl:param name="lang">en</xsl:param>
 	<xsl:param name="verbose">false</xsl:param>
+	<xsl:param name="outputdir">../output</xsl:param>
 
 	<!-- Cache translations in a variable -->
-	<xsl:variable name="translations" select="document(concat('../output/',$lang,'.xml'))"/>
+	<xsl:variable name="translations" select="document(concat($outputdir,'/',$lang,'.xml'))"/>
 
 	<!-- Lookup key for translations -->
 	<xsl:key name="msg-from-key" match="msg" use="key"/>

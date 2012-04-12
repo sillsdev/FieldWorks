@@ -1,36 +1,27 @@
 #!/usr/bin/env python
 
-#       $Id: po2xml.py,v 1.8 2006/02/03 22:14:37 mayhewn Exp $
+#       po2xml.py
 #
 #       Reformat PO files into an XML message catalog
 #
 #       Neil Mayhew - 11 Mar 2005
 
-import sys, fileinput, re, string
+import sys, re, string
+import optparse, fileinput
+from xml.sax.saxutils import XMLGenerator
 
 def backslash_sub(m):
 	c = m.group(1)
-	if c == 'n':
-		return '\n'
-	else:
-		return c
+	return '\n' if c == 'n' else c
 
 def unescape_c(s):
-	s = re.sub(r'\\(.)', backslash_sub, s)
-	return s
-
-def escape_xml(s):
-	s = re.sub('&', '&amp;', s)
-	s = re.sub('<', '&lt;', s)
-	s = re.sub('>', '&gt;', s)
-	s = re.sub("'", '&apos;', s)
-	s = re.sub('"', '&quot;', s)
-	s = re.sub('\n', '&#10;', s)
-	return s
+	return re.sub(r'\\(.)', backslash_sub, s)
 
 class Message:
-	def __init__(self, roundtrip):
+	def __init__(self, writer, roundtrip=False, indent="  "):
+		self.writer = writer
 		self.roundtrip = roundtrip
+		self.indent = indent
 		self.reset()
 
 	def reset(self):
@@ -42,46 +33,70 @@ class Message:
 		self.flags = []
 		self.current = None
 
-	def flush(self, output):
+	def flush(self):
 		if self.current != self.msgstr:
 			return
-		output.write(str(self))
+		self.write()
 		self.reset()
 
-	def __str__(self):
-		s = '<msg>\n'
+	def write(self):
+		self.writer.startElement("msg", {})
+		self.writer.ignorableWhitespace("\n")
+
 		if self.roundtrip:
 			# Support exact round-tripping using multiple <key> and <str> child elements
 			for t in self.msgid:
-				s += '  <key>%s</key>\n' % escape_xml(t)
+				self.writeElement("key", t)
 			for t in self.msgstr:
-				s += '  <str>%s</str>\n' % escape_xml(t)
+				self.writeElement("str", t)
 		else:
 			# Concatenate parts into single <key> and <str> child elements
-			s += '  <key>%s</key>\n' % escape_xml(string.join(self.msgid, ''))
-			s += '  <str>%s</str>\n' % escape_xml(string.join(self.msgstr, ''))
+			self.writeElement("key", string.join(self.msgid,  ''))
+			self.writeElement("str", string.join(self.msgstr, ''))
+
 		for t in self.usrcomment:
-			s += '  <comment>%s</comment>\n' % escape_xml(t)
+			self.writeElement("comment", t)
 		for t in self.dotcomment:
-			s += '  <info>%s</info>\n' % escape_xml(t)
+			self.writeElement("info", t)
 		for t in self.reference:
-			s += '  <ref>%s</ref>\n' % escape_xml(t)
+			self.writeElement("ref", t)
 		for t in self.flags:
-			s += '  <flags>%s</flags>\n' % escape_xml(t)
-		s += '</msg>\n'
-		return s
+			self.writeElement("flags", t)
+
+		self.writer.endElement("msg")
+		self.writer.ignorableWhitespace("\n")
+
+	def writeElement(self, name, data="", attrs={}):
+		self.writer.ignorableWhitespace(self.indent)
+		self.writer.startElement(name, attrs)
+		self.writer.characters(data)
+		self.writer.endElement(name)
+		self.writer.ignorableWhitespace("\n")
 
 def main():
-	output = sys.stdout
-	roundtrip = False
+	optparser = optparse.OptionParser(usage="Usage: %prog [options] POFILE ...")
+	optparser.add_option("-r", "--roundtrip", help="generate round-tripable output",
+		action="store_true", dest="roundtrip", default=False)
+	optparser.add_option("-o", "--output", help="write output to XMLFILE", metavar="XMLFILE",
+		action="store", dest="output", default="-")
+	(options, args) = optparser.parse_args()
 
-	msg = Message(roundtrip)
+	if options.output == "-":
+		output = sys.stdout
+	else:
+		output = open(options.output, "w")
 
-	output.write('<?xml version="1.0"?>\n')
-	output.write('<?xml-stylesheet type="text/xsl" href="format-html.xsl"?>\n')
-	output.write('<messages>\n')
+	writer = XMLGenerator(output or sys.stdout, "utf-8")
+	writer.startDocument()
+	writer.processingInstruction("xml-stylesheet", 'type="text/xsl" href="format-html.xsl"')
+	writer.ignorableWhitespace("\n")
 
-	for l in fileinput.input():
+	writer.startElement("messages", {})
+	writer.ignorableWhitespace("\n")
+
+	msg = Message(writer, options.roundtrip)
+
+	for l in fileinput.input(args):
 		# Continuation string?
 		m = re.match(r'\s*"(.*)"', l)
 		if m:
@@ -89,7 +104,7 @@ def main():
 			msg.current.append(unescape_c(m.group(1)))
 			continue
 		else:
-			msg.flush(output)
+			msg.flush()
 
 		m = re.match(r'(?s)msgid "(.*)"', l)
 		if m:
@@ -113,9 +128,11 @@ def main():
 		if m:
 			msg.flags.append(m.group(1))
 
-	msg.flush(output)
+	msg.flush()
 
-	output.write('</messages>\n')
+	writer.endElement("messages")
+	writer.ignorableWhitespace("\n")
+	writer.endDocument()
 
 if __name__ == "__main__":
 	main()
