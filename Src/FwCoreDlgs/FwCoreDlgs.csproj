@@ -73,7 +73,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -97,7 +97,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -162,7 +162,6 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
 	</Reference>
-	<Reference Include="Keyboarding, Version=7.2.3.18250, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -201,7 +200,7 @@
 	  <Name>System</Name>
 	</Reference>
 	<Reference Include="System.Core" />
-		<Reference Include="System.Data">
+	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
 	<Reference Include="System.Drawing">
@@ -659,6 +658,12 @@
 	  <ProductName>Windows Installer 3.1</ProductName>
 	  <Install>true</Install>
 	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\Common\Keyboarding\Keyboarding.csproj">
+	  <Project>{3365F220-B39D-423D-8A99-FDD0588970CE}</Project>
+	  <Name>Keyboarding</Name>
+	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

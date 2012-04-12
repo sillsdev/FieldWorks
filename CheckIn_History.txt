@@ -5823,3 +5823,4 @@ Andy Black, 7 April 2012.  LT-10621 "Hermit Crab: Enable phonological rules to a
 RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.22.
 GordonM, 11 April 2012. LT-12926 Fix double quote crash.
 KenZ, 12 Apr 2012. Fixed LT-12950 crash when creating new project.
+RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust indentation in StylesDlg paragraph tab.
