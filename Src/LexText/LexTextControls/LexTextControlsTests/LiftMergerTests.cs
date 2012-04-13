@@ -2453,7 +2453,6 @@ namespace LexTextControlsTests
 			"</lift>"
 		};
 
-
 		[Test]
 		public void TestImportSplitsDifferingComplexFormsByType_LT12948()
 		{
@@ -2471,6 +2470,106 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count());
 			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count);
 			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count());
+		}
+
+		private static readonly string[] s_LT12948Test3 = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-04-11T19:45:34Z' dateModified='2012-04-11T19:49:42Z' id='house_7e4e4aed-0b2e-4e2b-9c84-4466b8e73ea4' guid='7e4e4aed-0b2e-4e2b-9c84-4466b8e73ea4'>",
+			"<lexical-unit>",
+			"<form lang='obo'>",
+			"	<text>house</text>",
+			"</form>",
+			"	</lexical-unit>",
+			"	<trait name='morph-type' value='stem' />",
+			"	<sense id='a02f9304-1100-40cd-9433-6f9c70177e1e'>",
+			"		<gloss lang='en'>",
+			"			<text>house</text>",
+			"		</gloss>",
+			"		<relation type='Synonyms' ref='4bb72859-623b-4616-aa10-a6b0005a2f4b' />",
+			"		<relation type='Synonyms' ref='1c62a5fa-fcc1-477e-bc1e-e69f7633c613' />",
+			"	</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-11T19:45:34Z' dateModified='2012-04-11T19:49:42Z' id='bob' guid='7e6e4aed-0b2e-4e2b-9c84-4466b8e73ea4'>",
+			"<lexical-unit>",
+			"<form lang='obo'>",
+			"	<text>bob</text>",
+			"</form>",
+			"	</lexical-unit>",
+			"	<trait name='morph-type' value='stem' />",
+			"	<relation type='Synonyms' ref='builder' />",
+			"	<sense id='bobsense'>",
+			"	</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-11T19:49:42Z' dateModified='2012-04-11T19:49:42Z' id='bungalo_885f3937-7761-406c-a46b-ef71e2f10334' guid='885f3937-7761-406c-a46b-ef71e2f10334'>",
+			"	<lexical-unit>",
+			"		<form lang='obo'>",
+			"			<text>bungalo</text>",
+			"		</form>",
+			"	</lexical-unit>",
+			"	<trait name='morph-type' value='stem' />",
+			"	<sense id='4bb72859-623b-4616-aa10-a6b0005a2f4b'>",
+			"		<gloss lang='en'>",
+			"			<text>bungalo</text>",
+			"		</gloss>",
+			"		<relation type='Synonyms' ref='a02f9304-1100-40cd-9433-6f9c70177e1e' />",
+			"		<relation type='Synonyms' ref='1c62a5fa-fcc1-477e-bc1e-e69f7633c613' />",
+			"	</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-11T19:45:34Z' dateModified='2012-04-11T19:49:42Z' id='builder' guid='7e5e4aed-0b2e-4e2b-9c84-4466b8e73ea4'>",
+			"<lexical-unit>",
+			"<form lang='obo'>",
+			"	<text>builder</text>",
+			"</form>",
+			"	</lexical-unit>",
+			"	<trait name='morph-type' value='stem' />",
+			"	<relation type='Synonyms' ref='bob' />",
+			"	<sense id='buildersense'>",
+			"	</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-11T19:49:57Z' dateModified='2012-04-11T19:49:57Z' id='castle_00c8535d-0be5-45c3-9d70-0a7840325fed' guid='00c8535d-0be5-45c3-9d70-0a7840325fed'>",
+			"	<lexical-unit>",
+			"		<form lang='obo'>",
+			"			<text>castle</text>",
+			"		</form>",
+			"	</lexical-unit>",
+			"	<trait name='morph-type' value='stem' />",
+			"	<sense id='1c62a5fa-fcc1-477e-bc1e-e69f7633c613'>",
+			"		<gloss lang='en'>",
+			"			<text>castle</text>",
+			"		</gloss>",
+			"		<relation type='Synonyms' ref='a02f9304-1100-40cd-9433-6f9c70177e1e' />",
+			"		<relation type='Synonyms' ref='4bb72859-623b-4616-aa10-a6b0005a2f4b' />",
+			"	</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void TestImportDoesNotSplitSynonyms_LT12948()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var senseRepository = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+
+			var sOrigFile = CreateInputFile(s_LT12948Test3);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 5);
+			var bungaloSense = senseRepository.GetObject(new Guid("4bb72859-623b-4616-aa10-a6b0005a2f4b"));
+			var bobEntry = entryRepository.GetObject(new Guid("7e6e4aed-0b2e-4e2b-9c84-4466b8e73ea4"));
+			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
+			//should be collected in the same LexEntryRef
+			Assert.AreEqual(1, bungaloSense.LexSenseReferences.Count());
+			Assert.AreEqual(3, bungaloSense.LexSenseReferences.First().TargetsRS.Count);
+			Assert.AreEqual(1, bobEntry.LexEntryReferences.Count());
+			Assert.AreEqual(2, bobEntry.LexEntryReferences.First().TargetsRS.Count);
 		}
 
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)

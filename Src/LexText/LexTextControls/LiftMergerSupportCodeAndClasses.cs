@@ -2158,6 +2158,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		public void ProcessPendingRelations(IProgress progress)
 		{
+			// relationMap is used to group collection relations from the lift file into a structure useful for creating
+			// correct LexRefType and LexReference objects in our model.
+			// The key is the relationType string(eg. Synonym), The value is a list of groups of references.
+			//		in detail, the value holds a pair(tuple) containing a set of the ids(hvos) involved in the group
+			//		and a set of all the PendingRelation objects which have those ids.
+			var relationMap = new Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>();
 			if (m_mapFeatStrucTypeMissingFeatureAbbrs.Count > 0)
 				ProcessMissingFeatStrucTypeFeatures();
 			if (m_rgPendingRelation.Count > 0)
@@ -2182,12 +2188,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					else
 					{
 						i += rgRelation.Count;
-						ProcessRelation(rgRelation);
+						ProcessRelation(rgRelation, relationMap);
 					}
 					progress.Position = i;
 				}
 			}
-			StorePendingCollectionRelations(progress);
+			StorePendingCollectionRelations(progress, relationMap);
 			StorePendingTreeRelations(progress);
 			StorePendingLexEntryRefs(progress);
 			// We can now store residue everywhere since any bogus relations have been added
@@ -2271,7 +2277,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ProcessRelation(List<PendingRelation> rgRelation)
+		private void ProcessRelation(List<PendingRelation> rgRelation,
+									 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
 		{
 			if (rgRelation == null || rgRelation.Count == 0 || rgRelation[0] == null)
 				return;
@@ -2285,7 +2292,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					Debug.Assert(rgRelation[0].RelationType == "Something else...");
 					break;
 				default:
-					StoreLexReference(rgRelation);
+					StoreLexReference(rgRelation, uniqueRelations);
 					break;
 			}
 		}
@@ -2603,7 +2610,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return result;
 		}
 
-		private void StoreLexReference(List<PendingRelation> rgRelation)
+		private void StoreLexReference(List<PendingRelation> rgRelation,
+									   Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
 		{
 			// Store any relations with unrecognized targets in residue, removing them from the
 			// list.
@@ -2638,7 +2646,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryCollection:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseCollection:
-					CollapseCollectionRelationPairs(rgRelation);
+					CollapseCollectionRelationPairs(rgRelation, uniqueRelations);
 					break;
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
@@ -2740,111 +2748,90 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-
-		private void CollapseCollectionRelationPairs(List<PendingRelation> rgRelation)
+		/// <summary>
+		/// Removes duplicate and mirrored relations from Collections
+		/// </summary>
+		/// <param name="rgRelation"></param>
+		/// <param name="uniqueRelations">see comment on </param>
+		private void CollapseCollectionRelationPairs(List<PendingRelation> rgRelation,
+													 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
 		{
-			foreach (PendingRelation rel in rgRelation)
+			//for every pending relation in this list
+			foreach(var rel in rgRelation)
 			{
 				Debug.Assert(rel.Target != null);
 				if (rel.Target == null)
 					continue;
-				bool fAdd = true;
-				foreach (PendingRelation pend in m_rgPendingCollectionRelations)
+				List<Tuple<Set<int>, Set<PendingRelation>>> relationsForType;
+				uniqueRelations.TryGetValue(rel.RelationType, out relationsForType);
+				if(relationsForType != null)
 				{
-					if (pend.IsSameOrMirror(rel))
+					bool foundGroup = false;
+					//for every group of relations identified so far (relations which share target or object ids)
+					foreach (var refs in relationsForType)
 					{
-						fAdd = false;
-						break;
+						bool fAdd = true;
+						//If this item belongs to an existing group
+						if(refs.Item1.Contains(rel.ObjectHvo) || refs.Item1.Contains(rel.TargetHvo))
+						{
+							foundGroup = true;
+							foreach (var pend in refs.Item2)
+							{
+								//test if we have added this relation or a mirror of it.
+								if (pend.IsSameOrMirror(rel))
+								{
+									fAdd = false;
+									break;
+								}
+							}
+							if(fAdd) //add it into the group if it wasn't already here.
+							{
+								refs.Item1.Add(rel.ObjectHvo);
+								refs.Item1.Add(rel.TargetHvo);
+								refs.Item2.Add(rel);
+								continue;
+							}
+						}
 					}
+					//if this is a brand new relation for this type, build it
+					if(!foundGroup)
+						relationsForType.Add(new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.ObjectHvo, rel.TargetHvo}, new Set<PendingRelation> {rel}));
 				}
-				if (fAdd)
-					m_rgPendingCollectionRelations.AddLast(rel);
+				else //First relation that we are processing, create the dictionary with this relation as our initial data.
+				{
+					var relData = new List<Tuple<Set<int>, Set<PendingRelation>>>
+									{new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.TargetHvo, rel.ObjectHvo}, new Set<PendingRelation> { rel })};
+					uniqueRelations[rel.RelationType] = relData;
+				}
 			}
 		}
 
-		private void StorePendingCollectionRelations(IProgress progress)
+		private void StorePendingCollectionRelations(IProgress progress,
+													 Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> relationMap)
 		{
-			int cOrig = m_rgPendingCollectionRelations.Count;
-			if (cOrig == 0)
-				return;
 			progress.Message = String.Format(LexTextControls.ksSettingCollectionRelationLinks,
 				m_rgPendingCollectionRelations.Count);
 			progress.Minimum = 0;
-			progress.Maximum = cOrig;
+			progress.Maximum = relationMap.Count;
 			progress.Position = 0;
-			while (m_rgPendingCollectionRelations.Count > 0)
+			foreach(var typeCollections in relationMap) //for each relationType
 			{
-				PendingRelation rel = m_rgPendingCollectionRelations.First.Value;
-				m_rgPendingCollectionRelations.RemoveFirst();
-				StoreCollectionRelation(rel);
-				progress.Position = cOrig - m_rgPendingCollectionRelations.Count;
-			}
-		}
-
-		private void StoreCollectionRelation(PendingRelation relMain)
-		{
-			string sType = relMain.RelationType;
-			ILexRefType lrt = FindOrCreateLexRefType(sType, relMain.IsSequence);
-			Set<int> currentRel = new Set<int>();
-			currentRel.Add(relMain.ObjectHvo);
-			currentRel.Add(relMain.TargetHvo);
-			int cAdded;
-			do
-			{
-				cAdded = 0;
-				LinkedListNode<PendingRelation> nodeNext = null;
-				for (LinkedListNode<PendingRelation> node = m_rgPendingCollectionRelations.First;
-					node != null;
-					node = nodeNext)
+				string sType = typeCollections.Key;
+				foreach (var collection in typeCollections.Value)//for each grouping of relations for that type
 				{
-					nodeNext = node.Next;
-					PendingRelation rel = node.Value;
-					if (rel.RelationType != sType)
-						break;
-					int hvoNew = 0;
-					if (currentRel.Contains(rel.ObjectHvo))
-						hvoNew = rel.TargetHvo;
-					else if (currentRel.Contains(rel.TargetHvo))
-						hvoNew = rel.ObjectHvo;
-					else
+					var currentRel = collection.Item1;
+					ILexRefType lrt = FindOrCreateLexRefType(sType, collection.Item2.FirstItem().IsSequence);
+					if (CollectionRelationAlreadyExists(lrt, currentRel))
 						continue;
-					bool fDelNode = false;
-					LinkedListNode<PendingRelation> node2Next = null;
-					for (LinkedListNode<PendingRelation> node2 = node.Next;
-						node2 != null;
-						node2 = node2Next)
-					{
-						node2Next = node2.Next;
-						PendingRelation rel2 = node2.Value;
-						if (rel2.RelationType != sType)
-							break;
-						if ((rel2.ObjectHvo == hvoNew && currentRel.Contains(rel2.TargetHvo)) ||
-							(rel2.TargetHvo == hvoNew && currentRel.Contains(rel2.ObjectHvo)))
-						{
-							// Two pairs have the new item, with their other items already in the
-							// collection.  We can add the new item to the collection.
-							currentRel.Add(hvoNew);
-							++cAdded;
-							// Remove nodes that have been used from the linked list.
-							fDelNode = true;
-							m_rgPendingCollectionRelations.Remove(node2);
-						}
-					}
-					nodeNext = node.Next;
-					if (fDelNode)
-					{
-						nodeNext = node.Next;	// may have changed in inner loop
-						m_rgPendingCollectionRelations.Remove(node);
-					}
+					ILexReference lr = CreateNewLexReference();
+					lrt.MembersOC.Add(lr);
+					foreach (int hvo in currentRel)
+						lr.TargetsRS.Add(GetObjectForId(hvo));
+					foreach(var relMain in collection.Item2)
+						StoreRelationResidue(lr, relMain);
 				}
-			} while (cAdded > 0);
-			if (CollectionRelationAlreadyExists(lrt, currentRel))
-				return;
-			ILexReference lr = CreateNewLexReference();
-			lrt.MembersOC.Add(lr);
-			foreach (int hvo in currentRel)
-				lr.TargetsRS.Add(GetObjectForId(hvo));
-			StoreRelationResidue(lr, relMain);
+				progress.Position++;
+			}
 		}
 
 		/// <summary>

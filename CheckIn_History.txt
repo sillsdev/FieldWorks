@@ -187,3 +187,4 @@ NaylorJ, 4 April 2012. Fixed LT-12930 and LT-12923 the offending units of work w
 NaylorJ, 4 April 2012. (Integrated) Fixed LT-12942. When creating a spelling dictionary entry from our current project put underscores in the ids instead of hyphens.
 NaylorJ, 11 April 2012. Fixed problem relating to lift-ranges data not always flushing.
 NaylorJ, 12 April 2012. Fixed parts of bug LT-12948. ComplexForm behavior on import of lift files is now improved.
+NaylorJ, 13 April 2012. Fixed bug LT-12948. Relations of the same type should now be grouped correctly.
