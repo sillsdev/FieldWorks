@@ -20,6 +20,7 @@ using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
 
 using NUnit.Framework;
+using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -27,21 +28,22 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Summary description for ConvertFailuresTests.
 	/// </summary>
 	[TestFixture]
-	public class ConvertFailuresTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class ConvertFailuresTests: BaseTest
 	{
-		XmlDocument m_doc;
+		private XmlDocument m_doc;
 
-		XAmpleTrace m_xampleTrace = new XAmpleTrace();
+		private XAmpleTrace m_xampleTrace = new XAmpleTrace();
 
 		/// <summary>
 		/// Location of simple test FXT files
 		/// </summary>
-		protected string m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
-			"LexText/ParserUI/ParserUITests");
+		protected string m_sTestPath;
 
 		[TestFixtureSetUp]
 		public void FixtureInit()
 		{
+			m_sTestPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+				"LexText/ParserUI/ParserUITests");
 			string sFailureDocPath = Path.Combine(m_sTestPath, "Failures.xml");
 			m_doc = new XmlDocument();
 			m_doc.Load(sFailureDocPath);
