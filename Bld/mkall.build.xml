@@ -167,96 +167,17 @@
 		</attrib>
 	</target>
 	<target name="EncConvertersDlls" description="Copy the EncodingConverters files">
-		<choose>
-			<when test="${platform::is-unix()}">
-				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibPlatformBase}">
-						<include name="SilEncConverters40.dll"/>
-						<include name="SilEncConverters40.dll.mdb"/>
-						<include name="ECInterfaces.dll"/>
-						<include name="ECInterfaces.dll.mdb"/>
-						<include name="AIGuesserEC.dll"/>
-						<include name="AIGuesserEC.dll.mdb"/>
-						<include name="CcEC.dll"/>
-						<include name="CcEC.dll.mdb"/>
-						<include name="IcuEC.dll"/>
-						<include name="IcuEC.dll.mdb"/>
-						<include name="libIcuConvEC.so.1.0"/>
-						<include name="libIcuConvEC_64.so.1.0"/>
-						<include name="libIcuRegexEC.so.1.0"/>
-						<include name="libIcuRegexEC_64.so.1.0"/>
-						<include name="libIcuTranslitEC.so.1.0"/>
-						<include name="libIcuTranslitEC_64.so.1.0"/>
-						<include name="libPyScriptEncConverter.so.1.0"/>
-						<include name="libPyScriptEncConverter_64.so.1.0"/>
-						<include name="PerlExpressionEC.dll"/>
-						<include name="PerlExpressionEC.dll.mdb"/>
-						<include name="PyScriptEC.dll"/>
-						<include name="PyScriptEC.dll.mdb"/>
-					</fileset>
-				</copy>
-				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibPlatform}">
-						<include name="SilEncConverters40.dll.config"/>
-						<include name="IcuEC.dll.config"/>
-						<include name="PyScriptEC.dll.config"/>
-					</fileset>
-				</copy>
-				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
-				<copy todir="${dir.outputBase}/EC/Plugins">
-					<fileset basedir="${dir.fwoutputlibPlatform}/ECPlugins">
-						<include name="AI 4.0.0.0 Plugin Details.xml"/>
-						<include name="CC 4.0.0.0 Plugin Details.xml"/>
-						<include name="EC 4.0.0.0 Plugin Details.xml"/>
-						<include name="IcuEC 4.0.0.0 Plugin Details.xml"/>
-						<include name="PerlEC 4.0.0.0 Plugin Details.xml"/>
-						<include name="PythonEC 4.0.0.0 Plugin Details.xml"/>
-					</fileset>
-				</copy>
-			</when>
-			<otherwise>
-				<copy todir="${dir.outputBase}">
-					<fileset basedir="${dir.fwoutputlibBase}">
-						<include name="SilEncConverters40.dll"/>
-						<include name="SilEncConverters40.pdb"/>
-						<include name="ECInterfaces.dll"/>
-						<include name="ECInterfaces.pdb"/>
-						<include name="AIGuesserEC.dll"/>
-						<include name="AIGuesserEC.pdb"/>
-						<include name="CcEC.dll"/>
-						<include name="CcEC.dll.mdb"/>
-						<include name="IcuEC.dll"/>
-						<include name="IcuEC.pdb"/>
-						<include name="IcuConvEC.dll"/>
-						<include name="IcuConvEC.pdb"/>
-						<include name="IcuRegexEC.dll"/>
-						<include name="IcuRegexEC.pdb"/>
-						<include name="IcuTranslitEC.dll"/>
-						<include name="IcuTranslitEC.pdb"/>
-						<include name="PyScriptEncConverter.dll"/>
-						<include name="PyScriptEncConverter.pdb"/>
-						<include name="PerlExpressionEC.dll"/>
-						<include name="PerlExpressionEC.pdb"/>
-						<include name="PyScriptEC.dll"/>
-						<include name="PyScriptEC.pdb"/>
-						<include name="SilIndicEncConverters40.dll"/>
-						<include name="SilIndicEncConverters40.pdb"/>
-					</fileset>
-				</copy>
-				<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
-				<copy todir="${dir.outputBase}/EC/Plugins">
-					<fileset basedir="${dir.fwoutputlib}/release/ECPlugins">
-						<include name="AI 4.0.0.0 Plugin Details.xml"/>
-						<include name="CC 4.0.0.0 Plugin Details.xml"/>
-						<include name="EC 4.0.0.0 Plugin Details.xml"/>
-						<include name="IcuEC 4.0.0.0 Plugin Details.xml"/>
-						<include name="PerlEC 4.0.0.0 Plugin Details.xml"/>
-						<include name="PythonEC 4.0.0.0 Plugin Details.xml"/>
-						<include name="SIEC 4.0.0.0 Plugin Details.xml"/>
-					</fileset>
-				</copy>
-			</otherwise>
-		</choose>
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${dir.fwoutputlibPlatformBase}">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
+		<copy todir="${dir.outputBase}/EC/Plugins">
+			<fileset basedir="${dir.fwoutputlibPlatform}/ECPlugins">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
 	</target>
 	<target name="copy-nmockDll" description="Copy the nmock files. This gets around something bizarre that breaks the build machine. remakefw ends up copying the dll, but mkall doesn't even though both use buildtest.">
 		<copy todir="${dir.outputBase}">
