@@ -317,6 +317,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					currentWs = cache.ServiceLocator.WritingSystemManager.Get(ws);
 					m_cbWritingSystems.Items.Add(currentWs);
+					SetCbWritingSystemsSize();
 				}
 				else
 				{
@@ -410,6 +411,33 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (!m_cbWritingSystems.Items.Contains(ws))
 					m_cbWritingSystems.Items.Add(ws);
+			}
+			SetCbWritingSystemsSize();
+		}
+
+		/// <summary>
+		/// Increase the width of the writing systems combobox if needed to display the names.
+		/// (This fixes FWNX-795.)
+		/// </summary>
+		protected virtual void SetCbWritingSystemsSize()
+		{
+			int requiredWidth = m_cbWritingSystems.Width;
+			int approxDropdownArrowWidth = m_cbWritingSystems.Height;
+			using (Graphics g = Graphics.FromHwnd(m_cbWritingSystems.Handle))
+			{
+				foreach (var item in m_cbWritingSystems.Items)
+				{
+					var stringSize = g.MeasureString(item.ToString(), m_cbWritingSystems.Font);
+					int textwidth = (int)stringSize.Width;
+					if (requiredWidth < textwidth + approxDropdownArrowWidth)
+						requiredWidth = textwidth + approxDropdownArrowWidth;
+				}
+				// Allow at most one extra inch beyond m_tbForms's width.  This keeps the new
+				// width within reasonable bounds, and should be ample to display a unique
+				// name even with breaking between words like Mono's implementation does.
+				int width = Math.Min(requiredWidth, m_tbForm.Width + (int)g.DpiX);
+				if (width != m_cbWritingSystems.Width)
+					m_cbWritingSystems.Width = width;
 			}
 		}
 
