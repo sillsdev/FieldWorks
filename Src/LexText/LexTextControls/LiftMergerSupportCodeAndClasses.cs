@@ -2290,6 +2290,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		/// This method will process the m_rgPendingLexEntryRefs and put all the ones which belong
+		/// in the same LexEntryRef into a collection. It will return when it encounters an item which
+		/// belongs in a different LexEntryRef.
+		/// </summary>
+		/// <param name="i">The index into m_rgPendingLexEntryRefs from which to start building the like item collection</param>
+		/// <returns>A List containing all the PendingLexEntryRefs which belong in the same LexEntryRef</returns>
 		private List<PendingLexEntryRef> CollectLexEntryRefMembers(int i)
 		{
 			if (i < 0 || i >= m_rgPendingLexEntryRefs.Count)
@@ -2318,10 +2325,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				// is set to -1 when there's only one).
 				if (prev != null && pend.Order < prev.Order)
 					break;
+				//If we have a different set of traits from the previous relation we belong in a new ref.
+				if(prev != null)
+				{
+					if(prev.ComplexFormTypes.Count != pend.ComplexFormTypes.Count)
+					{
+						break;
+					}
+					if (!prev.ComplexFormTypes.ContainsSequence(pend.ComplexFormTypes))
+						break;
+				}
 				pend.Target = GetObjectFromTargetIdString(m_rgPendingLexEntryRefs[i].TargetId);
 				rgRefs.Add(pend);
-				if (pend.Order == -1 && pend.RelationType != "main")
-					break;
 				prev = pend;
 				++i;
 			}
@@ -2449,6 +2464,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// no match, make a new one with the required properties.
 				ler = CreateNewLexEntryRef();
+
 				le.EntryRefsOS.Add(ler);
 				ler.RefType = refType;
 				foreach (var item in complexEntryTypes)
@@ -2831,15 +2847,27 @@ namespace SIL.FieldWorks.LexText.Controls
 			StoreRelationResidue(lr, relMain);
 		}
 
-		private bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
+		/// <summary>
+		/// This method returns true if there is an existing collection belonging to an entry or sense
+		/// related to the given ILexRefType which EXACTLY matches the contents of the given set.
+		/// This method is to prevent duplication of sets of relations due to the fact they are replicated in
+		/// all the members of the relation in the LIFT file.
+		/// </summary>
+		/// <param name="lrt">The ILexRefType to inspect</param>
+		/// <param name="setRelation">The Set of hvo's to check</param>
+		/// <returns>true if the collection has already been added.</returns>
+		private static bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
 		{
+			//check each reference in the lexreftype
 			foreach (ILexReference lr in lrt.MembersOC)
 			{
 				if (lr.TargetsRS.Count != setRelation.Count)
-					continue;
+					continue; //number of items differed, try next
 				bool fSame = true;
+				//for every object in the target sequence of the LexReference
 				foreach (ICmObject cmo in lr.TargetsRS)
 				{
+					//if the given set doesn't have this it isn't the same relation
 					if (!setRelation.Contains(cmo.Hvo))
 					{
 						fSame = false;
@@ -2847,7 +2875,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 				if (fSame)
-					return true;
+					return true; //all items matched
 			}
 			return false;
 		}
