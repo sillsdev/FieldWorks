@@ -1629,6 +1629,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteStemNameRanges(w);
 			WriteAnyOtherRangesReferencedByFields(w);
 			w.WriteLine("</lift-ranges>");
+			w.Flush();
 		}
 
 		private void WriteAnyOtherRangesReferencedByFields(TextWriter w)
