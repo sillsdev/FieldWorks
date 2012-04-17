@@ -188,3 +188,4 @@ NaylorJ, 4 April 2012. (Integrated) Fixed LT-12942. When creating a spelling dic
 NaylorJ, 11 April 2012. Fixed problem relating to lift-ranges data not always flushing.
 NaylorJ, 12 April 2012. Fixed parts of bug LT-12948. ComplexForm behavior on import of lift files is now improved.
 NaylorJ, 13 April 2012. Fixed bug LT-12948. Relations of the same type should now be grouped correctly.
+NaylorJ, 17 April 2012. Fixed additional issue with LT-12948 where adding to a ComplexForm component list created a new list on merge.

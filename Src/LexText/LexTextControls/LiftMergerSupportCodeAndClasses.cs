@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -2350,6 +2351,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rgRefs;
 		}
 
+		/// <summary>
+		/// A LexEntryRef is matched if it is has same type, summary and hideMinorEntry value
+		/// and if the collections are a subset or superset.
+		/// </summary>
+		/// <param name="ler"></param>
+		/// <param name="refType"></param>
+		/// <param name="complexEntryTypes"></param>
+		/// <param name="variantEntryTypes"></param>
+		/// <param name="hideMinorEntry"></param>
+		/// <param name="summary"></param>
+		/// <param name="componentLexemes"></param>
+		/// <param name="primaryLexemes"></param>
+		/// <returns></returns>
 		private bool MatchLexEntryRef(ILexEntryRef ler, int refType, List<ILexEntryType> complexEntryTypes,
 			List<ILexEntryType> variantEntryTypes, int hideMinorEntry, LiftMultiText summary,
 			List<ICmObject> componentLexemes, List<ICmObject> primaryLexemes)
@@ -2358,29 +2372,29 @@ namespace SIL.FieldWorks.LexText.Controls
 				return false;
 			if (ler.HideMinorEntry != hideMinorEntry)
 				return false;
-			if (ler.ComplexEntryTypesRS.Count != complexEntryTypes.Count)
-				return false;
-			if (ler.VariantEntryTypesRS.Count != variantEntryTypes.Count)
-				return false;
-			if (ler.ComponentLexemesRS.Count != componentLexemes.Count)
-				return false;
-			if (ler.PrimaryLexemesRS.Count != primaryLexemes.Count)
-				return false;
 			AddNewWsToAnalysis();
 			if (summary != null && !MatchMultiString(ler.Summary, summary))
 				return false;
-			for (int i = 0; i < complexEntryTypes.Count; i++)
-				if (complexEntryTypes[i] != ler.ComplexEntryTypesRS[i])
-					return false;
-			for (int i = 0; i < variantEntryTypes.Count; i++)
-				if (variantEntryTypes[i] != ler.VariantEntryTypesRS[i])
-					return false;
-			for (int i = 0; i < componentLexemes.Count; i++)
-				if (componentLexemes[i] != ler.ComponentLexemesRS[i])
-					return false;
-			for (int i = 0; i < primaryLexemes.Count; i++)
-				if (primaryLexemes[i] != ler.PrimaryLexemesRS[i])
-					return false;
+			if(!complexEntryTypes.ContainsSequence(ler.ComplexEntryTypesRS) &&
+			   !ler.ComplexEntryTypesRS.ContainsSequence(complexEntryTypes))
+			{
+				return false;
+			}
+			if (!variantEntryTypes.ContainsSequence(ler.VariantEntryTypesRS) &&
+			   !ler.VariantEntryTypesRS.ContainsSequence(variantEntryTypes))
+			{
+				return false;
+			}
+			if (!componentLexemes.ContainsSequence(ler.ComponentLexemesRS) &&
+			   !ler.ComponentLexemesRS.ContainsSequence(componentLexemes))
+			{
+				return false;
+			}
+			if (!primaryLexemes.ContainsSequence(ler.PrimaryLexemesRS) &&
+			   !ler.PrimaryLexemesRS.ContainsSequence(primaryLexemes))
+			{
+				return false;
+			}
 			return true;
 		}
 
@@ -2487,6 +2501,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (summary != null)
 					MergeInMultiString(ler.Summary, LexEntryRefTags.kflidSummary, summary, ler.Guid);
 			}
+			else // Adjust collection contents if necessary
+			{
+				AdjustCollectionContents(complexEntryTypes, ler.ComplexEntryTypesRS);
+				AdjustCollectionContents(variantEntryTypes, ler.VariantEntryTypesRS);
+				AdjustCollectionContents(componentLexemes, ler.ComponentLexemesRS);
+				AdjustCollectionContents(primaryLexemes, ler.PrimaryLexemesRS);
+			}
+
 			// Create an empty sense if a complex form came in without a sense.  See LT-9153.
 			if (le.SensesOS.Count == 0 &&
 				(ler.ComplexEntryTypesRS.Count > 0 || ler.PrimaryLexemesRS.Count > 0))
@@ -2494,6 +2516,34 @@ namespace SIL.FieldWorks.LexText.Controls
 				bool fNeedNewId;
 				CreateNewLexSense(Guid.Empty, le, out fNeedNewId);
 				EnsureValidMSAsForSenses(le);
+			}
+		}
+
+		/// <summary>
+		/// This method will set the contents of the given ReferenceSequence(second param) to the contents of the list (first param)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="complexEntryTypes"></param>
+		/// <param name="ler"></param>
+		private static void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> ler) where T : class, ICmObject
+		{
+			if (ler.Count != complexEntryTypes.Count)
+			{
+				var union = complexEntryTypes.Union(ler.AsEnumerable());
+				for (int i = ler.Count - 1; i >= 0; --i )
+				{
+					if(!union.Contains(ler[i]))
+					{
+						ler.RemoveAt(i);
+					}
+				}
+				foreach (var lexEntryType in union)
+				{
+					if(!ler.Contains(lexEntryType))
+					{
+						ler.Add(lexEntryType);
+					}
+				}
 			}
 		}
 

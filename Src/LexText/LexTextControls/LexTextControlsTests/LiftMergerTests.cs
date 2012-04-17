@@ -2467,9 +2467,83 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count());
-			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count);
-			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count());
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Wrong number of Components.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+		}
+
+		private static readonly string[] mergeTestOld = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>do</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:56:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"1\">",
+			"<trait name=\"is-primary\" value=\"true\"/>",
+			"<trait name=\"variant-type\" value=\"Dialectal Variant\"/>",
+			"</relation>",
+			"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" order=\"2\">",
+			"<trait name=\"is-primary\" value=\"true\"/>",
+			"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+			"</relation>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  Test that two component lists which share an entry are considered the same
+		/// list and merged rather than put in two different lists of components.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestMergeWithDiffComponentListKeepOld()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			var sOrigFile = CreateInputFile(mergeTestOld);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+
+			var sNewFile = CreateInputFile(s_LT12948Test2);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
+
+			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
+			//should be collected in the same LexEntryRef
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexForms, they were incorrectly split.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of Variants.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of components.");
+
 		}
 
 		private static readonly string[] s_LT12948Test3 = new[]
