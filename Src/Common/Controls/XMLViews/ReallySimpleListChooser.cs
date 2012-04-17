@@ -2317,7 +2317,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected void m_labelsTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
 			var node = (LabelNode)e.Node;
-			using (new WaitCursor())
+			using (new WaitCursor(this))
 			{
 				node.AddChildren(false, m_chosenObjs);
 			}

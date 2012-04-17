@@ -1139,7 +1139,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// After a find next, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
+#if __MonoCS__
+			RemoveWaitCursor(this);
+#endif
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// Remove the wait cursor, which is left behind on several controls when the
+		/// DataUpdateMonitor object is disposed.  This is a patch over a bug in Mono
+		/// as far as I can tell. It fixes FWNX-659.
+		/// </summary>
+		/// <remarks>
+		/// The strange thing is that the cursor on all these controls seems to already
+		/// be set to Cursors.Default, but this fix works.
+		/// </remarks>
+		private void RemoveWaitCursor(Control ctl)
+		{
+			foreach (var c in ctl.Controls)
+			{
+				var control = c as Control;
+				if (control != null)
+					RemoveWaitCursor(control);
+			}
+			ctl.Cursor = Cursors.Default;
+		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
