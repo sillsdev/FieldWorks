@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -441,7 +442,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			contextMenu.Show(control, position);
 		}
 
-		static void CalculateOverflow(ContextMenuStrip contextMenu, ToolStripItemCollection items, int maxHeight)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="overflow gets added to ToolStripItemCollection and disposed there")]
+		private static void CalculateOverflow(ContextMenuStrip contextMenu,
+			ToolStripItemCollection items, int maxHeight)
 		{
 			int height = contextMenu.Padding.Top;
 			contextMenu.PerformLayout();
@@ -484,6 +488,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 				if (overflow.DropDown.Items.Count > 0)
 					items.Add(overflow);
+				else
+					overflow.Dispose();
 			}
 		}
 
