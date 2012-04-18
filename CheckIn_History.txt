@@ -5830,3 +5830,4 @@ NaylorJ, 16 Apr 2012. Integrated 3 LiftBridge fixes related to LT-12948 from 7.2
 RandyR, 18 April 2012: Added FLEx Bridge installer 0.3.26.
 EricP, 18 Apr 2012. Minor changes to tests.
 GordonM, 18 Apr 2012. Fix crashing bug related to sound controls in prep for LT-12882.
+KenZ, 18 Apr 2012. Checked in FlexBridge 0.3.27 for Randy
