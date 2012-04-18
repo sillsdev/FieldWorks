@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml.Linq;
@@ -32,7 +33,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// Summary description for M3ToXAmpleTransformerTests.
 	/// </summary>
-	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule",
+		Justification="Unit test - IntPtr get disposed in fixture teardown")]
 	public class M3ToXAmpleTransformerTests : BaseTest
 	{
 		string m_sM3FXTDump;
@@ -51,11 +53,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 #if __MonoCS__
 		IntPtr m_adTransform;
-		IntPtr m_lexTransform;  // public so utility tool (like a results updater) can access it
+		IntPtr m_lexTransform;
 		IntPtr m_gramTransform;
 #else
 		XslCompiledTransform m_adTransform;
-		XslCompiledTransform m_lexTransform;  // public so utility tool (like a results updater) can access it
+		XslCompiledTransform m_lexTransform;
 		XslCompiledTransform m_gramTransform;
 #endif
 
@@ -82,6 +84,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			SetUpXAmpleTransforms();
 			SetUpM3FXTDump();
+		}
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+#if __MonoCS__
+			if (m_adTransform != IntPtr.Zero)
+			{
+				LibXslt.FreeCompiledTransform(m_adTransform);
+				m_adTransform = IntPtr.Zero;
+			}
+			if (m_lexTransform != IntPtr.Zero)
+			{
+				LibXslt.FreeCompiledTransform(m_lexTransform);
+				m_lexTransform = IntPtr.Zero;
+			}
+			if (m_gramTransform != IntPtr.Zero)
+			{
+				LibXslt.FreeCompiledTransform(m_gramTransform);
+				m_gramTransform = IntPtr.Zero;
+			}
+#endif
+			base.FixtureTeardown();
 		}
 
 		private void SetUpM3FXTDump()
@@ -137,7 +162,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void SetUpTransform(ref IntPtr transform, string sName)
 		{
 			string sTransformPath = Path.Combine(m_sTransformPath, sName);
-			transform = SIL.Utils.LibXslt.CompileTransform(sTransformPath);
+			transform = LibXslt.CompileTransform(sTransformPath);
 		}
 
 		/// <summary>

@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -35,6 +36,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule",
+		Justification="Unit test - IntPtr get disposed in fixture teardown")]
 	public class WordGrammarDebuggingTests : BaseTest
 	{
 		private XPathDocument m_doc;

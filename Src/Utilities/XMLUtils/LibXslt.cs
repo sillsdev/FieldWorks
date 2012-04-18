@@ -296,19 +296,19 @@ namespace SIL.Utils
 			IntPtr doc = xmlParseFile(sInputFile);
 			if (doc == IntPtr.Zero)
 			{
-				throw new Exception(String.Format("LibXslt.TransformFileToFile: Cannot parse XML file \"{0}\"\n", sInputFile));
+				throw new Exception(String.Format("LibXslt.TransformFileToFile: Cannot parse XML file \"{0}\"", sInputFile));
 			}
 			IntPtr res = xsltApplyStylesheet(xsl, doc, parameters);
 			xmlFreeDoc(doc);
 			if (res == IntPtr.Zero)
 			{
-				throw new Exception(String.Format("LibXslt.TransformFileToFile: Applying stylesheet to \"{0}\" failed.\n", sInputFile));
+				throw new Exception(String.Format("LibXslt.TransformFileToFile: Applying stylesheet to \"{0}\" failed.", sInputFile));
 			}
 			int ok = xsltSaveResultToFilename(sOutputFile, res, xsl, 0);
 			xmlFreeDoc(res);
 			if (ok < 0)
 			{
-				throw new Exception(String.Format("LibXslt.TransformFileToFile: Cannot save result file \"{0}\"\n", sOutputFile));
+				throw new Exception(String.Format("LibXslt.TransformFileToFile: Cannot save result file \"{0}\"", sOutputFile));
 			}
 		}
 #else
