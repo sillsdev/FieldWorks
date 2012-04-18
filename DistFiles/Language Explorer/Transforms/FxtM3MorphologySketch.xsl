@@ -6771,7 +6771,7 @@ ProcessSlotName
 			<xsl:variable name="bOptional">
 				<xsl:value-of select="$Slot/@Optional"/>
 			</xsl:variable>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>(</xsl:text>
 			</xsl:if>
 			<genericRef>
@@ -6785,7 +6785,7 @@ ProcessSlotName
 					</xsl:with-param>
 				</xsl:call-template>
 			</genericRef>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>)</xsl:text>
 			</xsl:if>
 		</th>
