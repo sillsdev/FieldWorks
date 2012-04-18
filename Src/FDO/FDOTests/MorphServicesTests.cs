@@ -311,14 +311,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class InflectionalVariantTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
-		/// <summary>
-		/// Setup the data for this test after the cache has been setup.
-		/// </summary>
-		public override void TestSetup()
-		{
-			base.TestSetup();
-		}
-
 		static internal ILexEntryInflType InsertInflType<TOwner>(TOwner owningObj, IFdoServiceLocator sl, ITsString variantTypeName, ITsString reverseAbbr,
 			string glossPrepend, string glossAppend)
 			where TOwner : ICmObject
@@ -747,7 +739,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// TODO: handle case where GlossAppend/GlossPrepend does not exist
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_DefaultToReverseAbbr()
+		public void GlossOfInflVariantOfEntry_DefaultToReverseAbbr()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, ()=>
 				{
@@ -791,7 +783,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Construct "GP.mainEntrySense1" with GlossPrepend "GP"
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_GlossPrepend_UnSpecifiedDivider()
+		public void GlossOfInflVariantOfEntry_GlossPrepend_UnSpecifiedDivider()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -833,7 +825,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Construct @"GP\mainEntrySense1" with GlossPrepend @"GP\"
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_GlossPrepend_SpecifiedDivider()
+		public void GlossOfInflVariantOfEntry_GlossPrepend_SpecifiedDivider()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -876,7 +868,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Construct "mainEntrySense1.GA" with GlossAppend "GA"
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_GlossAppend_UnSpecifiedDivider()
+		public void GlossOfInflVariantOfEntry_GlossAppend_UnSpecifiedDivider()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -974,7 +966,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Construct "mainEntrySense1/GA" with GlossAppend "/GA"
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_GlossAppend_SpecifiedDivider()
+		public void GlossOfInflVariantOfEntry_GlossAppend_SpecifiedDivider()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -1017,7 +1009,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// TODO: Ask Andy Black what to show in this case.
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_SenseHasEmptyGloss()
+		public void GlossOfInflVariantOfEntry_SenseHasEmptyGloss()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -1060,7 +1052,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// TODO: Ask Andy Black what to show in this case.
 		/// </summary>
 		[Test]
-		public void GlossOfInflVariantOfSense_VariantTypeHasEmptyReverseAbbr()
+		public void GlossOfInflVariantOfEntry_EmptyGlossAndVariantTypeHasEmptyReverseAbbr()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -1099,9 +1091,57 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// TODO: how to avoid infinite recursion if user specifies that a variant1 is a variant of variant2 is a variant of variant1? (Or detect this situation.)
+		/// TODO: should we recurse in a way that is depth first or bredth first?
+		/// TODO: Ask Andy Black what to show in this case.
+		/// </summary>
+		[Ignore("find the first available gloss.")]
+		[Test]
+		public void GlossOfInflVariantOfVariant_FindFirstGloss()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense");
+
+				// Setup variant data
+				const string variantTypeNameIIV = "Irregular Inflectional Variant";
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				string variantTypeName = variantTypeNameIIV;
+
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", "PL");
+				ILexEntryRef newLerPlural;
+				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
+				ILexEntryRef newLerPlural2;
+				SetupLexEntryVariant(Cache, "vaVaNewPlural", newLerPlural.Owner as ILexEntry, letNewPlural, out newLerPlural2);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaVaNewPlural").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
+			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				Assert.That(variantGloss, Is.Not.Null);
+				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense.PL"));
+			}
+		}
+
+		/// <summary>
 		/// Construct "***+***" with no sense gloss and no variant reverse abbr.
 		/// TODO: Ask Andy Black what to show in this case.
 		/// </summary>
+		[Ignore("find the first available gloss.")]
 		[Test]
 		public void GlossOfInflVariantOfVariant_MissingSense()
 		{
@@ -1122,14 +1162,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("", eng.Handle),
-															"", "");
+															"", "PL");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
 				ILexEntryRef newLerPlural2;
 				SetupLexEntryVariant(Cache, "vaVaNewPlural", newLerPlural.Owner as ILexEntry, letNewPlural, out newLerPlural2);
 			});
 
-			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPlural").FirstOrDefault();
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaVaNewPlural").FirstOrDefault();
 			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
 			var variantRefPl = variantRefs.First();
 			IMultiUnicode gloss;
@@ -1145,21 +1185,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// <summary>
 		///
-		/// TODO: Ask Andy Black what to show in this case.
-		/// </summary>
-		[Ignore("find the first available gloss.")]
-		[Test]
-		public void GlossOfInflVariantOfVariant_FindFirstGloss()
-		{
-		}
-
-		/// <summary>
-		///
 		/// TODO: Ask Beth to review this case
 		/// </summary>
 		[Ignore("find the first available gloss.")]
 		[Test]
-		public void GlossOfInflVariantOfSense_UseGlossOfVariant()
+		public void GlossOfInflVariantOfEntry_UseGlossOfVariant()
 		{
 		}
 
@@ -1169,7 +1199,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		[Ignore("pick the first lexeme component? Currently we skip these.")]
 		[Test]
-		public void GlossOfInflVariantOfSense_MultipleLexemeComponents()
+		public void GlossOfInflVariantOfEntry_MultipleLexemeComponents()
 		{
 		}
 
@@ -1179,7 +1209,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		[Ignore("pick the first lexeme component? Currently we skip these.")]
 		[Test]
-		public void GlossOfInflVariantOfSense_NoLexemeComponents()
+		public void GlossOfInflVariantOfEntry_NoLexemeComponents()
 		{
 		}
 
@@ -1189,7 +1219,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// TODO: Ask Andy Black what to show in this case.
 		/// </summary>
 		[Test]
-		public void GlossOfVariantOfSense_MissingVariantType()
+		public void GlossOfVariantOfEntry_MissingVariantType()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
