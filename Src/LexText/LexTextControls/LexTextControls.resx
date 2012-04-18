@@ -1230,4 +1230,13 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksReferenceCount" xml:space="preserve">
 	<value>Reference Count</value>
   </data>
+  <data name="ksAddedToCombinedCollection" xml:space="preserve">
+	<value>{0} added to the {1} of {2}.</value>
+  </data>
+  <data name="ksCombinedCollections" xml:space="preserve">
+	<value>Combined Collections</value>
+  </data>
+  <data name="ksAddedItem" xml:space="preserve">
+	<value>Added Item</value>
+  </data>
 </root>

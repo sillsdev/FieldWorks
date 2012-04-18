@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.IO;
@@ -1066,6 +1067,24 @@ namespace SIL.Utils
 					errorHandler(e);
 			}
 			return process;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether a list contains the collection represented by another list.
+		/// </summary>
+		/// <typeparam name="T">The type of item contained in the lists</typeparam>
+		/// <param name="list1">The potential super-sequence.</param>
+		/// <param name="list2">The potential sub-sequence.</param>
+		/// ------------------------------------------------------------------------------------
+		public static bool ContainsCollection<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
+		{
+			int intersectingItems = list1.Intersect(list2).Count();
+			if (intersectingItems == list2.Count())
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }

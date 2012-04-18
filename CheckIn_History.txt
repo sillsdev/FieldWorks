@@ -189,3 +189,4 @@ NaylorJ, 11 April 2012. Fixed problem relating to lift-ranges data not always fl
 NaylorJ, 12 April 2012. Fixed parts of bug LT-12948. ComplexForm behavior on import of lift files is now improved.
 NaylorJ, 13 April 2012. Fixed bug LT-12948. Relations of the same type should now be grouped correctly.
 NaylorJ, 17 April 2012. Fixed additional issue with LT-12948 where adding to a ComplexForm component list created a new list on merge.
+NaylorJ, 18 April 2012. Fixed an additional set of LT-12948 issues Relations and ComplexForms. Added new logging feature to warn when intersecting collections are merged.

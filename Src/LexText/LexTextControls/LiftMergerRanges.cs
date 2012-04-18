@@ -464,6 +464,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListInvalidData(writer);
 				ListTruncatedData(writer);
 				ListInvalidRelations(writer);
+				ListCombinedCollections(writer);
 				ListInvalidMorphTypes(writer);
 				ListErrorMessages(writer);
 				writer.WriteLine("</body>");
@@ -584,6 +585,33 @@ namespace SIL.FieldWorks.LexText.Controls
 			writer.WriteLine("</tbody>");
 			writer.WriteLine("</table>");
 			writer.WriteLine("<p>{0}</p>", LexTextControls.ksClickOnHyperLinks);
+		}
+
+		private void ListCombinedCollections(StreamWriter writer)
+		{
+			if(m_combinedCollections.Count == 0)
+				return;
+
+			writer.WriteLine("<table border=\"1\" width=\"100%\">");
+			writer.WriteLine("<tbody>");
+			writer.WriteLine("<caption><h3>{0}</h3></caption>", LexTextControls.ksCombinedCollections);
+			writer.WriteLine("<tr>");
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LexTextControls.ksEntry);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LexTextControls.ksRelationType);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LexTextControls.ksAddedItem); //column header for items added in combining two collections during lift merge
+			writer.WriteLine("<th width=\"49%\">{0}</th>", LexTextControls.ksErrorMessage);
+			writer.WriteLine("</tr>");
+			foreach (var bad in m_combinedCollections)
+			{
+				writer.WriteLine("<tr>");
+				writer.WriteLine("<td width=\"17%\">{0}</td>", bad.EntryHtmlReference());
+				writer.WriteLine("<td width=\"17%\">{0}</td>", bad.TypeName);
+				writer.WriteLine("<td width=\"17%\">{0}</td>", bad.BadValue);
+				writer.WriteLine("<td width=\"49%\">{0}</td>", bad.ErrorMessage);
+				writer.WriteLine("</tr>");
+			}
+			writer.WriteLine("</tbody>");
+			writer.WriteLine("</table>");
 		}
 
 		private void ListInvalidMorphTypes(StreamWriter writer)
