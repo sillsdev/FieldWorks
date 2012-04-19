@@ -1249,7 +1249,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			mcr.m_baseClsid = m_nameToClid[mcr.m_superclassName];
 			var mcrSuperclass = m_metaClassRecords[mcr.m_baseClsid];
 			mcrSuperclass.m_directSubclasses.Add(mcr);
-			mcr.AddSuperclassFields(mcrSuperclass);
 		}
 #endif
 

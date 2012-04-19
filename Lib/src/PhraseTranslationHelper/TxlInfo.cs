@@ -134,7 +134,7 @@ namespace SILUBS.PhraseTranslationHelper
 #if !__MonoCS__
 					Invoke(new Action(ScrollCredits));
 #else // Windows have to be on the main thread on mono.
-					UpdateDisplay();
+					ScrollCredits();
 					Application.DoEvents(); // force a paint
 #endif
 				}
