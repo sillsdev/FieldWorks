@@ -1,0 +1,72 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>NUnitTask Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">NUnitTask Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <P>
+		<FONT color="red">
+		  <B>NOTE: This class is now obsolete.</B>
+		</FONT>
+	  </P>
+	  <P>
+		<B>In a future release, this task will be moved to NAntContrib. However, we strongly advise you to upgrade to NUnit 2.x.</B>
+	  </P>
+	  <HR />
+	  <p> Runs tests using the NUnit V1.0 framework. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.NUnit1.Tasks.NUnitTaskMembers.html">NUnitTask Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <b>NAnt.NUnit1.Tasks.NUnitTask</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Obsolete(Message:="In a future release, this task will be moved to NAntContrib. However, we strongly advise you to upgrade to NUnit 2.x.", IsError:=False), _
+ TaskName(Name:="nunit")&gt;</div>Public Class NUnitTask<div>    Inherits <a href="NAnt.Core.Task.html">Task</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[Obsolete(Message="In a future release, this task will be moved to NAntContrib. However, we strongly advise you to upgrade to NUnit 2.x.", IsError=False)]</div>
+		<div class="attribute">[TaskName(Name="nunit")]</div>
+		<div>public class NUnitTask<b> : <a href="NAnt.Core.Task.html">Task</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> See the <a href="http://nunit.sf.net">NUnit home page</a> for more information. </p>
+			  <p> The <a href="NAnt.NUnit1.Tasks.NUnitTask.HaltOnFailure.html">HaltOnFailure</a> or <a href="NAnt.NUnit1.Tasks.NUnitTask.HaltOnError.html">HaltOnError</a> attributes are only used to stop more than one test suite to stop running. If any test suite fails a build error will be thrown. Set <a href="NAnt.Core.Task.FailOnError.html">FailOnError</a> to <b>false</b> to ignore test errors and continue build. </p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Run tests in the <code>MyProject.Tests.dll</code> assembly. </p>
+			  <p> The test results are logged in <code>results.xml</code> and <code>results.txt</code> using the <a href="NAnt.NUnit.Types.FormatterType.html">Xml</a> and <a href="NAnt.NUnit.Types.FormatterType.html">Plain</a> formatters, respectively. </p>
+			  <pre class="code">
+&lt;nunit basedir="build" verbose="false" haltonerror="true" haltonfailure="true"&gt;
+	&lt;formatter type="Xml" /&gt;
+	&lt;formatter type="Plain" /&gt;
+	&lt;test name="MyProject.Tests.AllTests" assembly="MyProject.Tests.dll" outfile="results"/&gt;
+&lt;/nunit&gt;
+
+  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.NUnit1.Tasks.html">NAnt.NUnit1.Tasks</a></p><p><b>Assembly: </b>NAnt.NUnit1Tasks (in NAnt.NUnit1Tasks.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.NUnit1.Tasks.NUnitTaskMembers.html">NUnitTask Members</a> | <a href="NAnt.NUnit1.Tasks.html">NAnt.NUnit1.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="NUnitTask class, about NUnitTask class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

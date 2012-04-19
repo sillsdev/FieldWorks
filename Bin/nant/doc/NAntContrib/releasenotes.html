@@ -9,6 +9,26 @@
 			li {
 				margin-top: 10px;
 			}
+
+			.xmlelement {
+				color: #660000;
+			}
+
+			.xmlattribute {
+				color: red;
+			}
+
+			.xmltext {
+				color: blue;
+			}
+
+			.xmlcomment {
+				color: green;
+			}
+
+			.xmlcdata {
+				color: #FF00CC;
+			}
 		</style>
 	</head>
 	<body>
@@ -23,6 +43,173 @@
 		</table>
 		<h1>
 			<span class="N">N</span><span class="Ant">Ant</span>Contrib Release Notes</h1>
+		<h2>0.91 (October 22, 2011)</h2>
+		<h3>No Updates since 0.91-rc1</h3>
+		<div style="margin-left: 20px;">
+			<div style="margin-left: 20px;">
+				<p>Released to maintain consistency with <a href="http://nant.sourceforge.net/">NAnt</a>.</p>
+			</div>
+		</div>
+		<h2>0.91-rc1 (October 8, 2011)</h2>
+		<h3>No Updates since 0.91-beta1</h3>
+		<div style="margin-left: 20px;">
+			<div style="margin-left: 20px;">
+				<p>Released to maintain consistency with <a href="http://nant.sourceforge.net/">NAnt</a>.</p>
+			</div>
+		</div>
+		<h2>0.91-beta1 (September 25, 2011)</h2>
+		<h3>Bug fixes</h3>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/tasks/vb6.html">&lt;vb6&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Type library references with path ending of backslash+number (eg. vbscript.dll\3)
+					are now parsed correctly. (bug <a href="https://sourceforge.net/tracker/?func=detail&amp;aid=1745360&amp;group_id=54790&amp;atid=474851">#1745360</a>).
+				  </p>
+			</div>
+			<div style="margin-left: 20px;">
+				<p>
+					Take "ResFile32" and "Desiger" files into account when checking for recompilation.
+					(bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1205594&group_id=54790&atid=474851">#1205594</a>
+					and <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1648001&group_id=54790&atid=474853">#1648001</a>).
+				  </p>
+			</div>
+			<div style="margin-left: 20px;">
+				<p>
+					Reduced vb6 task problems with "Auto Increment" revision. (bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1081472&group_id=54790&atid=474851">#1081472</a>).
+				  </p>
+			</div>
+		</div>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/tasks/msbuild.html">&lt;msbuild&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Multiple targets can now be defined. (bug <a href="https://sourceforge.net/tracker/?func=detail&amp;aid=3214616&amp;group_id=54790&amp;atid=474851">#3214616</a>).
+				</p>
+			</div>
+		</div>
+		<h4>Functions</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/tasks/choose.html">choose</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Global types can now be defined in either the <span class="xmltext">&lt;</span><span class="xmlelement">when</span><span class="xmltext">&gt;</span>
+					or <span class="xmltext">&lt;</span><span class="xmlelement">otherwise</span><span class="xmltext">&gt;</span>
+					elements.
+				</p>
+				<pre class="code">
+<span class="xmltext">&lt;</span><span class="xmlelement">choose</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;</span><span class="xmlelement">when</span> <span class="xmlattribute">test</span><span class="xmltext">="${build.config == 'Debug'}"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="sources"&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="**/*.cs" /&gt;</span>
+		<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">when</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;</span><span class="xmlelement">when</span> <span class="xmlattribute">test</span><span class="xmltext">="${build.config == 'Release'}"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="sources"&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="**/*.cs" /&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="**/Instrumentation/*.cs" /&gt;</span>
+		<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">when</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;</span><span class="xmlelement">otherwise</span><span class="xmltext">&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">fail</span><span class="xmltext">&gt;</span>Build configuration '${build.config}' is not supported!<span class="xmltext">&lt;/</span><span class="xmlelement">fail</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">otherwise</span><span class="xmltext">&gt;</span>
+<span class="xmltext">&lt;/</span><span class="xmlelement">choose</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+		</div>
+		<h3>Additions</h3>
+		<h4>Functions</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/functions/index.html">Windows Installer functions</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Allows information on Windows Installer databases and
+					products to be retrieved.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/tasks/btsdeploy.html">&lt;btsreceivelocation&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Allows BizTalk receive locations to be controlled.
+				</p>
+			</div>
+			<h5><a class="heading" href="help/tasks/kill.html">&lt;kill&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Immediately stops a given process.
+				</p>
+				<p>
+					When used in combination with the <span class="xmltext">&lt;</span><span class="xmlelement">exec</span><span class="xmltext">&gt;</span>
+					task, it allows processed to be spawned for a certain duration or task, and then
+					stopped.
+				</p>
+			</div>
+			<h5><a class="heading" href="help/tasks/loadproperties.html">&lt;loadproperties&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Loads a file's contents as NAnt properties.
+				</p>
+			</div>
+			<h5><a class="heading" href="help/tasks/waitforexit.html">&lt;waitforexit&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Waits for a given process on the local computer to exit.
+				</p>
+				<p>
+					When used in combination with the <span class="xmltext">&lt;</span><span class="xmlelement">exec</span><span class="xmltext">&gt;</span>
+					task, it allows processed to be spawned for a certain duration or task, and then
+					wait until the process is finished before continueing.
+				</p>
+			</div>
+		</div>
+		<h3>Changes</h3>
+		<h4>Framework&nbsp;support</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" >Mono</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixes in both Mono and NAntContrib now allow NAntContrib
+					to be used in Mono (both Windows and Linux).
+				</p>
+			</div>
+		</div>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" >.NET Framework 3.5</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Updated build file to allow NAntContrib to be built against
+					.NET Framework 3.5 and Mono 3.5 Profile.
+				</p>
+			</div>
+		</div>
+		<h4>Installation</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" >Templates</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					The templates used by the <code><a href="help/tasks/msi.html">&lt;msi&gt;</a></code>
+					and <code><a href="help/tasks/msm.html">&lt;msm&gt;</a></code> takes are now embedded
+					in the NAntContrib assembly, and no longer need to be installed separately.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading" href="help/tasks/deliisdir.html">&lt;deliisdir&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Attempting to delete a virtual directory that does not exist,
+					no longer results in a build failure.
+				</p>
+			</div>
+		</div>
 		<h2>0.85 (October 15, 2006)</h2>
 		<h3>Changes</h3>
 		<h4>Tasks</h4>

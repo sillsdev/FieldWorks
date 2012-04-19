@@ -1,0 +1,44 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>Managed Property</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ExternalProgramBase.Managed Property</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Specifies whether the external program should be treated as a managed application, possibly forcing it to be executed under the currently targeted version of the CLR. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;FrameworkConfigurable(Name:="managed", Required:=False, ExpandProperties:=True)&gt;</div>Overridable Public Property Managed As <a href="NAnt.Core.Types.ManagedExecution.html">ManagedExecution</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />
+		<div class="attribute">[FrameworkConfigurable(Name="managed", Required=False, ExpandProperties=True)]</div>public virtual <a href="NAnt.Core.Types.ManagedExecution.html">NAnt.Core.Types.ManagedExecution</a> Managed {get; set;}</div>
+	  <p>
+	  </p>
+	  <h4 class="dtH4">Property Value</h4>
+	  <p> A <a href="NAnt.Core.Types.ManagedExecution.html">ManagedExecution</a> indicating how the program should be treated. </p>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> If <b>Managed</b> is set to <a href="NAnt.Core.Types.ManagedExecution.html">Default</a>, which is the default value, and <a href="NAnt.Core.Tasks.ExternalProgramBase.UseRuntimeEngine.html">UseRuntimeEngine</a> is <b>true</b> then <a href="NAnt.Core.Types.ManagedExecution.html">Auto</a> is returned. </p>
+			  <p> When the changing <b>Managed</b> to <b>Default</b>, then <b>UseRuntimeEngine</b> is set to <b>false</b>; otherwise, it is changed to <b>true</b>. </p>
+			<h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Tasks.ExternalProgramBase.html">ExternalProgramBase Class</a> | <a href="NAnt.Core.Tasks.html">NAnt.Core.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Managed property"></param><param name="Keyword" value="Managed property, ExternalProgramBase class"></param><param name="Keyword" value="ExternalProgramBase.Managed property"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

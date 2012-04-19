@@ -1,0 +1,82 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>ManagedProjectBase.DetermineProjectLocation Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ManagedProjectBase.DetermineProjectLocation Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Returns the project location from the specified project XML fragment. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />MustOverride Protected Function DetermineProjectLocation( _<br />   ByVal <i>docElement</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemXmlXmlElementClassTopic.asp">XmlElement</a> _<br />) As <a href="NAnt.VSNet.ProjectLocation.html">ProjectLocation</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />protected abstract <a href="NAnt.VSNet.ProjectLocation.html">ProjectLocation</a> DetermineProjectLocation(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemXmlXmlElementClassTopic.asp">XmlElement</a> <i>docElement</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>docElement</i>
+		</dt>
+		<dd>XML fragment representing the project file.</dd>
+	  </dl>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> The project location of the specified project XML file. </p>
+	  <h4 class="dtH4">Exceptions</h4>
+	  <div class="tablediv">
+		<table class="dtTABLE" cellspacing="0">
+		  <tr valign="top">
+			<th width="50%">Exception Type</th>
+			<th width="50%">Condition</th>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="NAnt.Core.BuildException.html">BuildException</a>
+			</td>
+			<td width="50%">
+			  <p>The project location could not be determined.</p>
+			  <p>-or-</p>
+			  <p>The project location is invalid.</p>
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.VSNet.ManagedProjectBase.html">ManagedProjectBase Class</a> | <a href="NAnt.VSNet.html">NAnt.VSNet Namespace</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="DetermineProjectLocation method">
+		</param>
+		<param name="Keyword" value="DetermineProjectLocation method, ManagedProjectBase class">
+		</param>
+		<param name="Keyword" value="ManagedProjectBase.DetermineProjectLocation method">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

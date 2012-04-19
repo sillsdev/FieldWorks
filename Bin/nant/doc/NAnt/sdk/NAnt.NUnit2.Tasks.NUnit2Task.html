@@ -1,0 +1,97 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>NUnit2Task Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">NUnit2Task Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Runs tests using the NUnit V2.2 framework. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.NUnit2.Tasks.NUnit2TaskMembers.html">NUnit2Task Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <b>NAnt.NUnit2.Tasks.NUnit2Task</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;TaskName(Name:="nunit2")&gt;</div>Public Class NUnit2Task<div>    Inherits <a href="NAnt.Core.Task.html">Task</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[TaskName(Name="nunit2")]</div>
+		<div>public class NUnit2Task<b> : <a href="NAnt.Core.Task.html">Task</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> The <a href="NAnt.NUnit2.Tasks.NUnit2Task.HaltOnFailure.html">HaltOnFailure</a> attribute is only useful when more than one test suite is used, and you want to continue running other test suites although a test failed. </p>
+			  <p> Set <a href="NAnt.Core.Task.FailOnError.html">FailOnError</a> to <b>false</b> to ignore any errors and continue the build. </p>
+			  <p> In order to run a test assembly built with NUnit 2.0 or 2.1 using <b>NUnit2Task</b>, you must add the following node to your test config file : </p>
+			  <pre class="code">
+&lt;configuration&gt;
+	...
+	&lt;runtime&gt;
+		&lt;assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1"&gt;
+			&lt;dependentAssembly&gt;
+				&lt;assemblyIdentity name="nunit.framework" publicKeyToken="96d09a1eb7f44a77" culture="Neutral" /&gt;
+				&lt;bindingRedirect oldVersion="2.0.6.0" newVersion="2.2.8.0" /&gt;
+				&lt;bindingRedirect oldVersion="2.1.4.0" newVersion="2.2.8.0" /&gt;
+			&lt;/dependentAssembly&gt;
+		&lt;/assemblyBinding&gt;
+	&lt;/runtime&gt;
+	...
+&lt;/configuration&gt;
+
+  </pre>
+			  <p> See the <a href="http://nunit.sf.net">NUnit home page</a> for more information. </p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Run tests in the <code>MyProject.Tests.dll</code> assembly. </p>
+			  <pre class="code">
+&lt;nunit2&gt;
+	&lt;formatter type="Plain" /&gt;
+	&lt;test assemblyname="MyProject.Tests.dll" appconfig="MyProject.Tests.dll.config" /&gt;
+&lt;/nunit2&gt;
+
+  </pre>
+
+			  <p> Only run tests that are not known to fail in files listed in the <code>tests.txt</code> file. </p>
+			  <pre class="code">
+&lt;nunit2&gt;
+	&lt;formatter type="Xml" usefile="true" extension=".xml" outputdir="${build.dir}/results" /&gt;
+	&lt;test&gt;
+		&lt;assemblies&gt;
+			&lt;includesfile name="tests.txt" /&gt;
+		&lt;/assemblies&gt;
+		&lt;categories&gt;
+			&lt;exclude name="NotWorking" /&gt;
+		&lt;/categories&gt;
+		&lt;references basedir="build"&gt;
+			&lt;include name="Cegeka.Income.Services.dll" /&gt;
+			&lt;include name="Cegeka.Util.dll" /&gt;
+		&lt;/references&gt;
+	&lt;/test&gt;
+&lt;/nunit2&gt;
+
+  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.NUnit2.Tasks.html">NAnt.NUnit2.Tasks</a></p><p><b>Assembly: </b>NAnt.NUnit2Tasks (in NAnt.NUnit2Tasks.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.NUnit2.Tasks.NUnit2TaskMembers.html">NUnit2Task Members</a> | <a href="NAnt.NUnit2.Tasks.html">NAnt.NUnit2.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="NUnit2Task class, about NUnit2Task class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

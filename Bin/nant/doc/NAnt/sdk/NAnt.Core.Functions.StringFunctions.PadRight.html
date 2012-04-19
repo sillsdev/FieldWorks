@@ -1,0 +1,101 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>StringFunctions.PadRight Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">StringFunctions.PadRight Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Returns the given string right-padded to the given length. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Function(Name:="pad-right")&gt;</div>Public Shared Function PadRight( _<br />   ByVal <i>s</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a>, _<br />   ByVal <i>totalWidth</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemInt32ClassTopic.asp">Integer</a>, _<br />   ByVal <i>paddingChar</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a> _<br />) As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />
+		<div class="attribute">[Function(Name="pad-right")]</div>public static <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> PadRight(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>s</i>,<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemInt32ClassTopic.asp">int</a> <i>totalWidth</i>,<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>paddingChar</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>s</i>
+		</dt>
+		<dd>The <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a> that needs to be right-padded.</dd>
+		<dt>
+		  <i>totalWidth</i>
+		</dt>
+		<dd>The number of characters in the resulting string, equal to the number of original characters plus any additional padding characters.</dd>
+		<dt>
+		  <i>paddingChar</i>
+		</dt>
+		<dd>A Unicode padding character.</dd>
+	  </dl>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> If the length of <i>s</i> is at least <i>totalWidth</i>, then a new <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a> identical to <i>s</i> is returned. Otherwise, <i>s</i> will be padded on the right with as many <i>paddingChar</i> characters as needed to create a length of <i>totalWidth</i>. </p>
+	  <h4 class="dtH4">Remarks</h4>
+	  <p> Note that only the first character of <i>paddingChar</i> will be used when padding the result. </p>
+	  <h4 class="dtH4">Exceptions</h4>
+	  <div class="tablediv">
+		<table class="dtTABLE" cellspacing="0">
+		  <tr valign="top">
+			<th width="50%">Exception Type</th>
+			<th width="50%">Condition</th>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemArgumentExceptionClassTopic.asp">ArgumentException</a>
+			</td>
+			<td width="50%">
+			  <i>totalWidth</i> is less than zero.</td>
+		  </tr>
+		</table>
+	  </div>
+	  <h4 class="dtH4">Example</h4>
+	  <p>
+			<pre class="code">string::pad-right('test', 10, ' ') ==&gt; 'test      '</pre>
+
+			<pre class="code">string::pad-right('test', 10, 'abcd') ==&gt; 'testaaaaaa'</pre>
+
+			<pre class="code">string::pad-right('test', 3, ' ') ==&gt; 'test'</pre>
+
+			<pre class="code">string::pad-right('test', -3, ' ') ==&gt; ERROR</pre>
+			</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.Functions.StringFunctions.html">StringFunctions Class</a> | <a href="NAnt.Core.Functions.html">NAnt.Core.Functions Namespace</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="PadRight method">
+		</param>
+		<param name="Keyword" value="PadRight method, StringFunctions class">
+		</param>
+		<param name="Keyword" value="StringFunctions.PadRight method">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>
