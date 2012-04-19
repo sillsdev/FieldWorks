@@ -93,6 +93,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_stringFormat.FormatFlags |= StringFormatFlags.NoWrap;
 		}
 
+#if DEBUG
+		/// <summary>Finalizer</summary>
+		~CheckBoxColumnHeaderHandler()
+		{
+			Dispose(false);
+		}
+#endif
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
 		/// ------------------------------------------------------------------------------------

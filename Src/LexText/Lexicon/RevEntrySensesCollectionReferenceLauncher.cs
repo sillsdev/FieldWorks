@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.FDO;
@@ -48,6 +49,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries or senses.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (var dlg = new LinkEntryOrSenseDlg())

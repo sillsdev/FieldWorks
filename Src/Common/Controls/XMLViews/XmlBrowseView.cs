@@ -92,31 +92,6 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnPropertyChanged(propName);
 		}
 
-#if false // CS0169
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make the selection that would be made by clicking at the specified mouse event,
-		/// but don't install it.
-		/// </summary>
-		/// <param name="ptOrig">The pt orig.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private IVwSelection MakeSelectionAt(Point ptOrig)
-		{
-			Point pt;
-			Rectangle rcSrcRoot;
-			Rectangle rcDstRoot;
-			using(new HoldGraphics(this))
-			{
-				pt = PixelToView(new Point(ptOrig.X, ptOrig.Y));
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				// This can legitimately return null,
-				// e.g. because they selected beyond the last item.
-				return m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
-			}
-		}
-#endif
-
 		private ITsString StripTrailingNewLine(ITsString tss)
 		{
 			string val = tss.Text;

@@ -11,6 +11,7 @@
 // File: ProgressDlgTests.cs
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -69,6 +70,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test, object is disposed in TearDown method")]
 	public class ProgressDlgTests : BaseTest
 	{
 		private DummyProgressDlg m_dlg;
@@ -80,6 +83,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Unit test, object is disposed in TearDown method")]
 		public void Setup()
 		{
 			m_dlg = new DummyProgressDlg {Maximum = 10};

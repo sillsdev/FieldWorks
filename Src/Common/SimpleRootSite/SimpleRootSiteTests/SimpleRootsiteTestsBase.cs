@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -141,6 +142,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// Rootsite tests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test. Variable disposed in Teardown method")]
 	public class SimpleRootsiteTestsBase : BaseTest
 	{
 		/// <summary>Defines the possible languages</summary>

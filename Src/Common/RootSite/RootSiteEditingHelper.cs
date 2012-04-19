@@ -12,21 +12,22 @@
 // Responsibility:
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using Enchant;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
-using System.Drawing;
-using SIL.FieldWorks.Common.UIAdapters;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -236,6 +237,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Make spell checking menu options using the DotNetBar adapter.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="we store a reference to AddToDictMenuItem for later use. REVIEW: we never dispose it.")]
 		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
 			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
 			string changeMultipleMenuName, string insertBeforeMenuName)

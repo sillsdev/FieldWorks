@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -852,15 +853,17 @@ namespace SIL.Ethnologue
 				// variable) to override the default behavior
 				string defaultDir = Path.Combine(Environment.ExpandEnvironmentVariables(@"%FWROOT%"),
 					"DistFiles");
-				string rootDir = (EthnologueRegistryKey == null) ? null :
-					EthnologueRegistryKey.GetValue("RootCodeDir", defaultDir) as string;
-				if (rootDir == null)
-					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+				using (var regKey = EthnologueRegistryKey)
+				{
+					string rootDir = (regKey == null) ? null : regKey.GetValue("RootCodeDir", defaultDir) as string;
+					if (rootDir == null)
+						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
 
-				string path = Path.Combine(rootDir, "Ethnologue");
-				if (!Directory.Exists(path))
-					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
-				return path;
+					string path = Path.Combine(rootDir, "Ethnologue");
+					if (!Directory.Exists(path))
+						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+					return path;
+				}
 			}
 		}
 
@@ -869,6 +872,8 @@ namespace SIL.Ethnologue
 		/// Gets the local machine Registry key for FieldWorks.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning a reference")]
 		static public RegistryKey EthnologueRegistryKey
 		{
 			get

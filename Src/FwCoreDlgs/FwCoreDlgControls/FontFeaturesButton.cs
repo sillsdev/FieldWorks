@@ -357,14 +357,16 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			//					return false;
 			//				dwIndex++;
 			//			}
-			RegistryKey regKey = RegistryHelper.CompanyKeyLocalMachine.OpenSubKey("GraphiteFonts");
-			if (regKey == null)
+			using (RegistryKey regKey = RegistryHelper.CompanyKeyLocalMachine.OpenSubKey("GraphiteFonts"))
+			{
+				if (regKey == null)
+					return false;
+				string[] subkeys = regKey.GetSubKeyNames();
+				foreach (string key in subkeys)
+					if (key == fontName)
+						return true;
 				return false;
-			string [] subkeys = regKey.GetSubKeyNames();
-			foreach (string key in subkeys)
-				if (key == fontName)
-					return true;
-			return false;
+			}
 		}
 #endif
 		/// ------------------------------------------------------------------------------------

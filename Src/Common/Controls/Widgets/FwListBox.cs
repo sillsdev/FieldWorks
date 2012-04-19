@@ -1440,7 +1440,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Level 1 gives info about which line object it is in the root.
 			sel.PropInfo(false, 1, out hvo, out tag, out index, out prev, out vps);
 			Debug.Assert(index < m_owner.Items.Count && index >= 0);
-			m_owner.HighlightedIndex = index;
+			// We are getting an out-of-bounds crash in setting HighlightedIndex at times,
+			// for no apparent reason (after fixing the display bug of FWNX-803).
+			if (index >= 0 && index < m_owner.Items.Count)
+				m_owner.HighlightedIndex = index;
 		}
 
 		/// <summary>
@@ -1626,16 +1629,20 @@ namespace SIL.FieldWorks.Common.Widgets
 							(int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Highlight)));
 					}
 					vwenv.OpenParagraph();
+					var tss = vwenv.DataAccess.get_StringProp(hvo, InnerFwListBox.ktagText);
 					if (fHighlighted && m_listbox.ShowHighlight)
 					{
 						// Insert a string that has the foreground color not set, so the foreground color set above can take effect.
-						ITsStrBldr bldr = vwenv.DataAccess.get_StringProp(hvo, InnerFwListBox.ktagText).GetBldr();
+						ITsStrBldr bldr = tss.GetBldr();
 						bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptForeColor, -1, -1);
 						vwenv.AddString(bldr.GetString());
 					}
 					else
 					{
-						vwenv.AddStringProp(InnerFwListBox.ktagText, this);
+						// Use the same Add method on both branches of the if.  Otherwise, wierd
+						// results can happen on the display.  (See FWNX-803, which also affects
+						// the Windows build, not just the Linux build!)
+						vwenv.AddString(tss);
 					}
 					vwenv.AddString(m_tssBlanks);
 					vwenv.CloseParagraph();

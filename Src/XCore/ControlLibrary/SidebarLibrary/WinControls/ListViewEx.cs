@@ -1,17 +1,18 @@
 using System;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
-using System.Resources;
-using System.Drawing.Text;
-using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-using SidebarLibrary.Win32;
 using SidebarLibrary.General;
+using SidebarLibrary.Win32;
 
 namespace SidebarLibrary.WinControls
 {
@@ -113,10 +114,12 @@ namespace SidebarLibrary.WinControls
 		#endregion
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="listView is a reference")]
 	internal class HeaderHook : System.Windows.Forms.NativeWindow
 	{
 		#region Class Variables
-		ListViewEx listView = null;
+		private ListViewEx listView;
 		#endregion
 
 		#region Constructors
@@ -192,10 +195,12 @@ namespace SidebarLibrary.WinControls
 		#endregion
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="listView is a reference")]
 	public class CompareListItems : IComparer
 	{
 		#region Class Variables
-		ListViewEx listView = null;
+		private ListViewEx listView;
 		#endregion
 
 		#region Constructors

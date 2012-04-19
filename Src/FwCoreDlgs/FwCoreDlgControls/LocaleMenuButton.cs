@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -358,7 +359,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (MiscUtils.IsUnix)
 				menu.ShowWithOverflow(this, new Point(0, Height));
 			else
-			menu.Show(this, new Point(0, Height));
+				menu.Show(this, new Point(0, Height));
 
 			Marshal.ReleaseComObject(locEnum);
 			base.OnClick(e); // Review JohnT: is this useful or harmful or neither? MS recommends it.
@@ -434,50 +435,61 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public static void ShowWithOverflow(this ContextMenuStrip contextMenu, Control control, Point position)
 		{
-			int maxHeight = SystemInformation.VirtualScreen.Height;
+			int maxHeight = Screen.GetWorkingArea(control).Height;
 
-			using (ToolStripMenuItem overflow = new ToolStripMenuItem(FwCoreDlgControls.kstid_More, Images.arrowright))
+			CalculateOverflow(contextMenu, contextMenu.Items, maxHeight);
+
+			contextMenu.Show(control, position);
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="overflow gets added to ToolStripItemCollection and disposed there")]
+		private static void CalculateOverflow(ContextMenuStrip contextMenu,
+			ToolStripItemCollection items, int maxHeight)
+		{
+			int height = contextMenu.Padding.Top;
+			contextMenu.PerformLayout();
+			int totalItems = items.Count;
+			int overflowIndex = 0;
+			bool overflowNeeded = false;
+			// only examine up to last but one item.
+			for (; overflowIndex < totalItems - 2; ++overflowIndex)
 			{
+				ToolStripItem current = items[overflowIndex];
+				ToolStripItem next = items[overflowIndex + 1];
+				if (!current.Available)
+					continue;
+
+				height += GetTotalHeight(current);
+
+				if (height + GetTotalHeight(next) + contextMenu.Padding.Bottom > maxHeight)
+				{
+					overflowNeeded = true;
+					break;
+				}
+			}
+
+			if (overflowNeeded)
+			{
+				// Don't dispose overflow here because that will prevent it from working.
+				ToolStripMenuItem overflow = new ToolStripMenuItem(FwCoreDlgControls.kstid_More, Images.arrowright);
 				overflow.ImageScaling = ToolStripItemImageScaling.None;
 				overflow.ImageAlign = ContentAlignment.MiddleCenter;
 				overflow.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
-				contextMenu.PerformLayout();
 
-				int height = contextMenu.Padding.Top;
-				int totalItems = contextMenu.Items.Count;
-				int overflowIndex = 0;
-				bool overflowNeeded = false;
-				// only examine upto last but one item.
-				for (; overflowIndex < totalItems - 2; ++overflowIndex)
+				for (int i = totalItems - 1; i >= overflowIndex; i--)
 				{
-					ToolStripItem current = contextMenu.Items[overflowIndex];
-					ToolStripItem next = contextMenu.Items[overflowIndex + 1];
-					if (!current.Available)
-						continue;
-
-					height += GetTotalHeight(current);
-
-					if (height + GetTotalHeight(next) + contextMenu.Padding.Bottom > maxHeight)
-					{
-						overflowNeeded = true;
-						break;
-					}
+					ToolStripItem item = items[i];
+					items.RemoveAt(i);
+					overflow.DropDown.Items.Add(item);
 				}
 
-				if (overflowNeeded)
-				{
-					for (int i = totalItems - 1; i >= overflowIndex; i--)
-					{
-						ToolStripItem item = contextMenu.Items[i];
-						contextMenu.Items.RemoveAt(i);
-						overflow.DropDown.Items.Add(item);
-					}
-				}
+				CalculateOverflow(contextMenu, overflow.DropDownItems, maxHeight);
 
 				if (overflow.DropDown.Items.Count > 0)
-					contextMenu.Items.Add(overflow);
-
-				contextMenu.Show(control, position);
+					items.Add(overflow);
+				else
+					overflow.Dispose();
 			}
 		}
 

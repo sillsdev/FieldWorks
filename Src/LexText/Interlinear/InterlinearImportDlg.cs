@@ -120,12 +120,17 @@ namespace SIL.FieldWorks.IText
 			m_btnOK.Enabled = File.Exists(m_tbFilename.Text);
 		}
 
+		// TODO-Linux: this doesn't work on Linux
+		// Code review comment from SteveMc: On Linux, could invoking open office be tried?
+		// Otherwise, maybe we should change the .doc file to an html file for portability.
 		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			string path = Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer\Training\Technical Notes on Interlinear Import.doc");
 			try
 			{
-				System.Diagnostics.Process.Start(path);
+				using (System.Diagnostics.Process.Start(path))
+				{
+				}
 			}
 			catch (Exception)
 			{

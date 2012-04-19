@@ -17,6 +17,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
@@ -588,6 +589,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetDirectory("RootDataDir", CommonAppDataFolder(string.Format("FieldWorks {0}", FwUtils.SuiteVersion))); }
 		}
 
+		private static string m_srcdir;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the src dir (for running tests)
@@ -597,6 +600,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
+				if (!String.IsNullOrEmpty(m_srcdir))
+					return m_srcdir;
+				if (MiscUtils.IsUnix)
+				{
+					// Linux doesn't have the registry setting, at least while running tests,
+					// so we'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
+					// and the source dir is $FW/Src.
+					Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+					dir = Path.Combine(dir, "Src");
+					if (!Directory.Exists(dir))
+						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
+					m_srcdir = dir;
+				}
+				else
+				{
 				string rootDir = null;
 				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
 					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
@@ -610,7 +631,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string src = Path.Combine(fw, "Src");
 				if (!Directory.Exists(src))
 					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-				return src;
+					m_srcdir = src;
+				}
+				return m_srcdir;
 			}
 		}
 
@@ -756,6 +779,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the global writing system store directory. The directory is guaranteed to exist.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Offending code is not executed on Linux")]
 		public static string GlobalWritingSystemStoreDirectory
 		{
 			get
@@ -771,6 +796,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// correct permissions are set when installing the package or by the
 						// system administrator.
 
+						// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
 						DirectorySecurity ds = di.GetAccessControl();
 						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
 						AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute

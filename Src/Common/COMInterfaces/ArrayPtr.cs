@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using SIL.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -402,9 +403,11 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>
 		/// Converts the unmanaged data to managed data
 		/// </summary>
-		/// <param name="pNativeData">A pointer to the unamanged data to be wrapped</param>
+		/// <param name="pNativeData">A pointer to the unmanaged data to be wrapped</param>
 		/// <returns>Returns the managed view of the COM data</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Not sure why Gendarme is complaining here on Windows")]
 		public object MarshalNativeToManaged(IntPtr pNativeData)
 		{
 			return (ArrayPtr)pNativeData;

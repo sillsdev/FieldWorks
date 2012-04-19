@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class FwUpdateReportDlg
@@ -27,6 +28,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		// TODO-Linux: UseEXDialog is not implemented, will always use default dialog
+		// (printDialog1.UseEXDialog)
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label spearatorLine;

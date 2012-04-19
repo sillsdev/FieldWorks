@@ -1202,8 +1202,8 @@ namespace SIL.FieldWorks.TE
 			// Load larger picture from resources and save it to file.
 			Image resImage = SimpleRootSite.ImageNotFoundX;
 			fileNameString = Guid.NewGuid() + ".bmp";
-			resImage.Save(FileUtils.OpenFileForBinaryWrite(fileNameString, Encoding.Default).BaseStream,
-				ImageFormat.Bmp);
+			using (var writer = FileUtils.OpenFileForBinaryWrite(fileNameString, Encoding.Default))
+				resImage.Save(writer.BaseStream, ImageFormat.Bmp);
 
 			ITsStrFactory factory = TsStrFactoryClass.Create();
 			return Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(fileNameString,

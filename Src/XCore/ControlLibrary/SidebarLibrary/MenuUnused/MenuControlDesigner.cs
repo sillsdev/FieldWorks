@@ -1,3 +1,4 @@
+#if USE_THIS
 
 using System;
 using System.Drawing;
@@ -28,3 +29,4 @@ namespace SidebarLibrary.Menus
 		}
 	}
 }
+#endif

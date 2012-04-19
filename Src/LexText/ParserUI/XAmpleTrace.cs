@@ -91,10 +91,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			string sInput = CreateTempFile(m_ksXAmpleTrace, "xml");
 			m_parseResult.Save(sInput);
-			XPathDocument xpath = new XPathDocument(sInput);
-
 			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(xpath, kind);
+			string sOutput = TransformToHtml(sInput, kind);
 			return sOutput;
 		}
 

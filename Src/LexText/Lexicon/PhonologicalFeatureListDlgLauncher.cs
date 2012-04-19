@@ -1,14 +1,15 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.XWorks.MorphologyEditor;
-using SIL.Utils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.XWorks.MorphologyEditor;
+using SIL.Utils;
 using XCore;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -44,6 +45,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle launching of the phonological feature editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			// grammar/phonemes/phonological features/[...] (click chooser button)

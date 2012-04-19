@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -41,6 +42,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IMoMorphType m_mmtSimulfix;
 		private IMoMorphType m_mmtSuprafix;
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Added to MenuItems collection and disposed there.")]
 		private void Init()
 		{
 			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(

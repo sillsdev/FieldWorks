@@ -45,7 +45,9 @@ namespace SIL.FieldWorks
 		private void m_btnViewFolder_Click(object sender, EventArgs e)
 		{
 			// This fires up Windows Explorer, showing the owner of the projects folder.
-			Process.Start(Path.GetDirectoryName(DirectoryFinder.ProjectsDirectory));
+			using (Process.Start(Path.GetDirectoryName(DirectoryFinder.ProjectsDirectory)))
+			{
+			}
 		}
 
 		private void m_btnClose_Click(object sender, EventArgs e)

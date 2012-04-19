@@ -7,18 +7,17 @@
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-using System.IO;
 //
 // File: XmlListTests.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -596,6 +595,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Setup method: create a memory-only mock cache and empty language project.
 		/// </summary>
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyMockCache()")]
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(

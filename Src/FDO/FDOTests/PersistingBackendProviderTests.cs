@@ -815,9 +815,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 						DeleteDatabase(targetBackendStartupParameters);
 
 						// Migrate source data to new BEP.
+						using (var otherThreadHelper = new ThreadHelper())
 						using (var targetCache = FdoCache.CreateCacheCopy(
 							new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-								targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, new ThreadHelper()))
+								targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, otherThreadHelper))
 						{
 							// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 							// by service locator.

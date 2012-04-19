@@ -78,9 +78,14 @@ namespace SIL.FieldWorks.Common.Controls
 						typeof(FwHelpButton));
 					button.Image = ((System.Drawing.Image)(resources.GetObject("button.Image")));
 					button.ImageAlign = ContentAlignment.MiddleLeft;
+					button.TextImageRelation = TextImageRelation.ImageBeforeText;
 				}
 				else
+				{
 					button.Image = null;
+					button.ImageAlign = ContentAlignment.MiddleCenter;
+					button.TextImageRelation = TextImageRelation.Overlay;
+				}
 			}
 		}
 

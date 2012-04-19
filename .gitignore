@@ -61,6 +61,7 @@ Release/
 /Output_x86_64/
 /Lib/src/unit++/autom4te.cache/
 /Lib/src/unit++/configure
+/Lib/src/Enchant/fieldworks-enchant-1.6.1/
 /Src/DbAccessFirebird/Test/temp.awk
 /Src/DbAccessFirebird/testDbAccess
 /Src/Kernel/libFwKernel

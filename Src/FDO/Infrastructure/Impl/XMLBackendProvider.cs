@@ -351,8 +351,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			try
 			{
-				LockProject(projectPath).Close();
-				return false;
+				using (var lockFile = LockProject(projectPath))
+				{
+					lockFile.Close();
+					return false;
+				}
 			}
 			catch (IOException)
 			{

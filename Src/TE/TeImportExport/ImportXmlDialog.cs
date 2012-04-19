@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -87,6 +88,8 @@ namespace SIL.FieldWorks.TE
 		/// Displays the "Unable to Import" message box.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void DisplayImportError(SUE_ErrorCode errorCode, string sParam1, string sParam2,
 			string msgDetails)
 		{
@@ -103,6 +106,7 @@ namespace SIL.FieldWorks.TE
 			else
 				message = string.Format(msgTemplate, msgDetails);
 
+			// TODO-Linux: Help is not implemented in Mono
 			MessageBox.Show(this, message,
 				ScriptureUtilsException.GetResourceString("kstidXmlImportErrorCaption"),
 				MessageBoxButtons.OK,

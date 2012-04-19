@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -10,6 +11,8 @@ namespace SIL.CoreImpl
 	/// Test fixture for LangTagUtils class.
 	/// </summary>
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class LangTagUtilsTests : FwCOMTestBase // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;

@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -123,7 +124,8 @@ namespace SIL.FieldWorks.TE
 			// find all the subkeys and delete them recursively.
 			foreach (string subKeyName in key.GetSubKeyNames())
 			{
-				DeleteRegistryKey(key.OpenSubKey(subKeyName, true));
+				using (var regKey = key.OpenSubKey(subKeyName, true))
+					DeleteRegistryKey(regKey);
 				key.DeleteSubKey(subKeyName);
 			}
 		}
@@ -315,12 +317,17 @@ namespace SIL.FieldWorks.TE
 		/// The RegistryKey for this application.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		override public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return base.SettingsKey.CreateSubKey(FwSubKey.TE);
+				using (var regKey = base.SettingsKey)
+				{
+					return regKey.CreateSubKey(FwSubKey.TE);
+				}
 			}
 		}
 

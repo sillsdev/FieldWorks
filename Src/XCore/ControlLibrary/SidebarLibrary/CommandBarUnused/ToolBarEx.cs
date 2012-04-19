@@ -1,3 +1,4 @@
+#if USE_THIS
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -1297,3 +1298,5 @@ namespace SidebarLibrary.CommandBars
 	}
 
 }
+
+#endif

@@ -123,7 +123,7 @@
 	</Reference>
 	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FwResources">
 	  <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
@@ -165,7 +165,7 @@
 	</Reference>
 	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="StructureMap, Version=2.5.4.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

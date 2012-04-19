@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -1808,6 +1809,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
 			CheckDisposed();

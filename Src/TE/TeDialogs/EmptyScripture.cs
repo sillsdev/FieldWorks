@@ -15,18 +15,19 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.FDO;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -395,6 +396,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="SetParentForm() returns a reference")]
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);

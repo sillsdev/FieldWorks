@@ -20,12 +20,11 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Windows.Forms;
-using System.  Drawing;
-using System.  Diagnostics;
+using System.Drawing;
+using System.Diagnostics;
 
 //for outlookbar
 using SidebarLibrary.WinControls;
-using SidebarLibrary.CommandBars;
 using SidebarLibrary.Menus;
 using SidebarLibrary.General;
 using SIL.Utils;

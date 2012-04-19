@@ -2097,7 +2097,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void linkToEthnologue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			string targetURL = String.Format("http://www.ethnologue.com/show_language.asp?code={0}", m_LanguageCode.Text);
-			Process.Start(targetURL);
+			using (Process.Start(targetURL))
+			{
+			}
 		}
 
 		private void m_linkWindowsKeyboard_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2114,7 +2116,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				arguments ="input.dll";
 			}
 			var processInfo = new ProcessStartInfo(program, arguments);
-			Process.Start(processInfo);
+			using (Process.Start(processInfo))
+			{
+			}
 		}
 
 		private void m_linkKeymanConfiguration_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2147,8 +2151,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string param = "";
 					if (version > 6)
 						param = "-c";
-					Process.Start(keyman, param);
-					return;
+					using (Process.Start(keyman, param))
+					{
+						return;
+					}
 				}
 			}
 			MessageBox.Show("Keyman 5.0 or later is not Installed.");

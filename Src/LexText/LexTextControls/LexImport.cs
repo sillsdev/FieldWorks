@@ -272,7 +272,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_fDisplayImportReport)
 			{
 				string sHtmlFile = Path.Combine(m_sTempDir, "ImportLog.htm");
-				Process.Start(sHtmlFile);
+				using (Process.Start(sHtmlFile))
+				{
+				}
 			}
 		}
 

@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -149,6 +150,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return this;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
@@ -286,6 +289,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		internal CachedProjectInformation CachedProjectInformation { get; set; }
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		internal void ActivateServer(IReferenceActivationContext context)
 		{
 			var context2 = (UnmarshallingContext)context;

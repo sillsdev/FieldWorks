@@ -119,7 +119,6 @@ namespace SIL.FieldWorks.IText
 					components.Dispose();
 				}
 			}
-			// m_cache = null; // CS0169
 
 			base.Dispose( disposing );
 		}

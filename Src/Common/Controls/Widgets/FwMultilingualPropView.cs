@@ -17,16 +17,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -268,7 +269,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 
 		#region Data members
-		IFwMultilingualPropViewDataSource PropertyDataSource { get; set; }
+		private IFwMultilingualPropViewDataSource PropertyDataSource { get; set; }
 		#endregion
 
 		#region Constructor
@@ -418,6 +419,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Added to Rows collection and disposed in DataGridView.Dispose()")]
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);

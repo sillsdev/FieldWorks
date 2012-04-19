@@ -21,6 +21,7 @@
 			<include name="${fwroot}/DistFiles/Linux/libTECkit_Compiler_x86_64.so"/>
 			<include name="${fwroot}/DistFiles/Linux/libTECkit_x86.so"/>
 			<include name="${fwroot}/DistFiles/Linux/libTECkit_x86_64.so"/>
+			<include name="${fwroot}/DistFiles/Enchant.Net.dll.config"/>
 			<include name="${fwroot}/DistFiles/icu.net.dll.config"/>
 			<include name="${fwroot}/DistFiles/icu.net.dll"/>
 			  </fileset>

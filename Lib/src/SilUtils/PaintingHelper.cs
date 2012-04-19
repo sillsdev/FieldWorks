@@ -91,6 +91,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static void DrawCustomBorder(Control ctrl)
 		{
+			// TODO-Linux: VisualStyleInformation.TextControlBorder has a MonoTODO.
 			DrawCustomBorder(ctrl, Application.RenderWithVisualStyles ?
 				VisualStyleInformation.TextControlBorder : Color.Black);
 		}
@@ -134,6 +135,7 @@ namespace SIL.Utils
 				return;
 
 			// Determine the highlight color.
+			// TODO-Linux: VisualStyleInformation.ControlHighlightHot has a MonoTODO.
 			Color clrHot = (Application.RenderWithVisualStyles ?
 				VisualStyleInformation.ControlHighlightHot : SystemColors.MenuHighlight);
 

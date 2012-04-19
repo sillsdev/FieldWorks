@@ -376,23 +376,24 @@ namespace XCore
 
 		static public string GetStringRegistryValue(string key, string defaultValue)
 		{
-			using (RegistryKey company = Registry.CurrentUser.OpenSubKey("Software", false).OpenSubKey(Application.CompanyName, false))
+			using (var software = Registry.CurrentUser.OpenSubKey("Software", false))
+			using (var company = software.OpenSubKey(Application.CompanyName, false))
 			{
-			if( company != null )
-			{
+				if (company != null)
+				{
 					using (RegistryKey application = company.OpenSubKey(Application.ProductName, false))
 					{
-				if( application != null )
-				{
-					foreach(string sKey in application.GetValueNames())
-					{
-						if( sKey == key )
+						if (application != null)
 						{
-							return (string)application.GetValue(sKey);
+							foreach (string sKey in application.GetValueNames())
+							{
+								if (sKey == key)
+								{
+									return (string)application.GetValue(sKey);
+								}
+							}
 						}
 					}
-				}
-			}
 				}
 			}
 			return defaultValue;

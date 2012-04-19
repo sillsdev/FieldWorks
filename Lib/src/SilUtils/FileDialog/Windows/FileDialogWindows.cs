@@ -136,6 +136,14 @@ namespace SIL.Utils.FileDialog.Windows
 		#endregion
 
 		#region Disposable stuff
+#if DEBUG
+		/// <summary>Finalizer</summary>
+		~FileDialogWindows()
+		{
+			Dispose(false);
+		}
+#endif
+
 		/// <summary/>
 		public void Dispose()
 		{
@@ -146,6 +154,7 @@ namespace SIL.Utils.FileDialog.Windows
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (fDisposing && m_dlg != null)
 			{
 				// dispose managed and unmanaged objects

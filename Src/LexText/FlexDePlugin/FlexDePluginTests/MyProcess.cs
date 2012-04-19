@@ -17,12 +17,15 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace FlexDePluginTests
 {
 	class MyProcess
 	{
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static bool KillProcess(string search)
 		{
 			bool foundProc = false;
@@ -32,6 +35,8 @@ namespace FlexDePluginTests
 				Process[] procs = Process.GetProcesses();
 				foreach (Process proc in procs)
 				{
+					// TODO-Linux: MainWindowTitle always returns null on Mono which means this
+					// code doesn't work on Linux.
 					Match match = Regex.Match(proc.MainWindowTitle, search);
 					if (match.Success)
 					{

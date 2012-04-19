@@ -2,24 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
+using FwRemoteDatabaseConnector;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.ObjectBrowser;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.FieldWorks.Resources;
+using SIL.ObjectBrowser;
 using SIL.Utils;
 using WeifenLuo.WinFormsUI.Docking;
-using System.IO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Reflection;
-using SIL.FieldWorks.Resources;
-using FwRemoteDatabaseConnector;
 using XCore;
 
 namespace FDOBrowser
@@ -40,7 +41,7 @@ namespace FDOBrowser
 		/// <summary>
 		/// Specifies whether the class was selected on the dialog (true) or not (false).
 		/// </summary>
-		public static bool m_dlgChanged = false;
+		public static bool m_dlgChanged;
 		private FdoCache m_cache;
 		private ILangProject m_lp;
 		private ICmObjectRepository m_repoCmObject;
@@ -49,8 +50,9 @@ namespace FDOBrowser
 		private ModelWnd m_modelWnd;
 		private InspectorWnd m_langProjWnd;
 		private InspectorWnd m_repositoryWnd;
-		private int saveClid = 0;
-		private string FileName = "";
+		private int saveClid;
+		private string FileName = string.Empty;
+		private ThreadHelper m_ThreadHelper;
 		//private FwTextBox m_textBox;
 		//private System.Windows.Forms.Panel panel1;
 
@@ -106,6 +108,8 @@ namespace FDOBrowser
 		/// Setups the custom menus and toolbar items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to ContextMenuStrip's item collection and disposed there")]
 		private void SetupCustomMenusAndToolbarItems()
 		{
 			#region Grid context menu items
@@ -345,7 +349,6 @@ namespace FDOBrowser
 			Properties.Settings.Default.Save();
 		}
 
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Opens the specified file.
@@ -353,8 +356,6 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		protected override void OpenFile(string fileName)
 		{
-
-
 			if (fileName == null || !File.Exists(fileName) || m_currOpenedProject == fileName)
 				return;
 			if (m_cache != null)        // if we didn't clean up when we ran this before, do it now.
@@ -377,11 +378,14 @@ namespace FDOBrowser
 
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
+				if (m_ThreadHelper == null)
+					m_ThreadHelper = new ThreadHelper();
+
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", new ThreadHelper());
+					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", m_ThreadHelper);
 				else
 				{
-					using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, new ThreadHelper()))
+					using (ProgressDialogWithTask progressDlg = new ProgressDialogWithTask(this, m_ThreadHelper))
 					{
 						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", progressDlg);
 					}
@@ -894,11 +898,10 @@ namespace FDOBrowser
 
 		private void mnuDb4oToXmlClicked(object sender, EventArgs e)
 		{
-
-
-			var choose = new FileInOutChooser();
-			choose.ShowDialog();
-
+			using (var choose = new FileInOutChooser())
+			{
+				choose.ShowDialog();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

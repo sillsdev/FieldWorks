@@ -1556,7 +1556,6 @@ namespace SIL.FieldWorks.IText
 
 			int wsUI = cache.DefaultUserWs;
 			var spaceStr = TsStringUtils.MakeTss(" ", wsUI);
-			// int wsAnalysis = cache.DefaultAnalWs; // CS0219
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 				(int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBold,

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks;
@@ -116,6 +117,8 @@ namespace RBRExtensions
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void m_cbFind_SelectedIndexChanged(object sender, EventArgs e)
 		{
 // ReSharper disable PossibleNullReferenceException
@@ -148,6 +151,8 @@ namespace RBRExtensions
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void m_cbUsedBy_SelectedIndexChanged(object sender, EventArgs e)
 		{
 // ReSharper disable PossibleNullReferenceException

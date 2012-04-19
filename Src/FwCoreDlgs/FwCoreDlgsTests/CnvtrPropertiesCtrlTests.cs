@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -159,20 +161,21 @@ namespace AddConverterDlgTests
 	}
 	#endregion
 
-#if WANTTESTPORT // (Common) Need to port this to not use a real database
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Class for testing the CnvtrPropertiesCtrl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test. m_myDlg gets disposed in FixtureTearDown method.")]
 	public class CnvtrPropertiesControlTests : BaseTest
 	{
-		private TempSFFileMaker m_fileMaker;
 		private DummyAddCnvtrDlg m_myDlg;
 		private DummyCnvtrPropertiesCtrl m_myCtrl;
 		private string m_ccFileName;
 		private string m_mapFileName;
+		private string m_bogusFileName;
 
 		#region Setup & Teardown
 		/// ------------------------------------------------------------------------------------
@@ -185,27 +188,27 @@ namespace AddConverterDlgTests
 		{
 			base.FixtureSetup();
 
-			m_fileMaker = new TempSFFileMaker();
-			m_myDlg = new DummyAddCnvtrDlg();
-			m_myCtrl = new DummyCnvtrPropertiesCtrl();
-
-			EncConverters encConverters = new EncConverters();
-
+			var encConverters = new SilEncConverters40.EncConverters();
+			// Remove any encoding converters we created that have been left over due to a crash
+			// or other mishap.  (That's why we use wierd names starting with ZZZUnitTest, so
+			// there won't be any conceivable conflict with user chosen names.  Inconceivable
+			// conflicts might still happen, but...)
+			RemoveTestConverters(encConverters, "Installed mappings before test setup:");
 			string[] ccFileContents = {"'c' > 'C'"};
-			m_ccFileName = m_fileMaker.CreateFileNoID(ccFileContents, "cct");
-			encConverters.AddConversionMap("ZZZTestCC", m_ccFileName,
+			m_ccFileName = CreateTempFile(ccFileContents, "cct");
+			encConverters.AddConversionMap("ZZZUnitTestCC", m_ccFileName,
 				ConvType.Legacy_to_Unicode, "SIL.cc", "", "",
 				ProcessTypeFlags.UnicodeEncodingConversion);
 
 			string[] mapFileContents = {
-										   "EncodingName	'ZZZText'",
+										   "EncodingName	'ZZZUnitTestText'",
 										   "DescriptiveName	'Silly test file'",
 										   "ByteDefault		'?'",
 										   "UniDefault		replacement_character",
 										   "0x80	<>	euro_sign"
 									   };
-			m_mapFileName = m_fileMaker.CreateFileNoID(mapFileContents, "map");
-			encConverters.AddConversionMap("ZZZTestMap", m_mapFileName,
+			m_mapFileName = CreateTempFile(mapFileContents, "map");
+			encConverters.AddConversionMap("ZZZUnitTestMap", m_mapFileName,
 				ConvType.Legacy_to_from_Unicode, "SIL.map", "", "",
 				ProcessTypeFlags.UnicodeEncodingConversion);
 
@@ -214,68 +217,89 @@ namespace AddConverterDlgTests
 
 			// This is a randomly chosen ICU converter. The test may break when we reduce the set of
 			// ICU converters we ship.
-			encConverters.AddConversionMap("ZZZTestICU", "ISO-8859-1",
+			encConverters.AddConversionMap("ZZZUnitTestICU", "ISO-8859-1",
 				ConvType.Legacy_to_from_Unicode, "ICU.conv", "", "",
-				ProcessTypeFlags.UnicodeEncodingConversion);
+				ProcessTypeFlags.ICUConverter);
 
 			// Add a 1-step compound converter, which won't be any of the types our dialog
 			// recognizes for now.
-			encConverters.AddCompoundConverterStep("ZZZTestCompound", "ZZZTestCC", true,
+			encConverters.AddCompoundConverterStep("ZZZUnitTestCompound", "ZZZUnitTestCC", true,
 				NormalizeFlags.None);
 
+			encConverters.Remove("BogusTecKitFile");	// shouldn't exist, but...
+
+			m_myDlg = new DummyAddCnvtrDlg();
+			m_myCtrl = new DummyCnvtrPropertiesCtrl();
+			m_myCtrl.Converters = encConverters;
 			// Load all the mappings after the dummy mappings are added, so the Converter
 			// Mapping File combo box won't contain obsolete versions of the mappings referring
-			// to old temp files from a previous run of the tests.
+			// to old temp files from a previous run of the tests.q
 			m_myCtrl.CnvtrPropertiesCtrl_Load(null, null);
-			encConverters.Remove("Bogus");
+#if !QUIET
+			Console.WriteLine("Installed mappings after test setup:");
+			foreach (var name in encConverters.Mappings)
+			{
+				var conv = encConverters[name];
+				Console.WriteLine("    {0} ({1})", name, conv == null ? "null" : conv.GetType().ToString());
+			}
+#endif
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Executes in two distinct scenarios.
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
+		/// Clean up after running all the tests.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		protected override void Dispose(bool disposing)
+		public override void FixtureTeardown()
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
+			SilEncConverters40.EncConverters encConverters;
 				// Dispose managed resources here.
-				if (m_fileMaker != null)
-					m_fileMaker.Dispose();
 				if (m_myCtrl != null)
+			{
+				encConverters = m_myCtrl.Converters;
 					m_myCtrl.Dispose();
-				if (m_myDlg != null)
-					m_myDlg.Dispose();
+				m_myCtrl = null;
 			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_fileMaker = null;
-			m_myCtrl = null;
-			m_myDlg = null;
+			else
+			{
+				encConverters = new SilEncConverters40.EncConverters();
+			}
+				if (m_myDlg != null)
+			{
+					m_myDlg.Dispose();
+				m_myDlg = null;
+			}
+			// Delete any temp files that have been created.
+			if (!String.IsNullOrEmpty(m_ccFileName))
+			{
+				File.Delete(m_ccFileName);
 			m_ccFileName = null;
+			}
+			if (!String.IsNullOrEmpty(m_mapFileName))
+			{
+				File.Delete(m_mapFileName);
 			m_mapFileName = null;
-
-			base.Dispose(disposing);
+			}
+			if (!String.IsNullOrEmpty(m_bogusFileName))
+			{
+				File.Delete(m_bogusFileName);
+				m_bogusFileName = null;
+			}
+			// Remove any encoding converters that we may have created during this test run.
+			RemoveTestConverters(encConverters, "Installed mappings after test teardown:");
+		}
+		void RemoveTestConverters(SilEncConverters40.EncConverters encConverters, string testMessage)
+		{
+			// Remove any encoding converters that were added for these tests.
+			encConverters.Remove("ZZZUnitTestCC");
+			encConverters.Remove("ZZZUnitTestText");
+			encConverters.Remove("ZZZUnitTestMap");
+			encConverters.Remove("ZZZUnitTestICU");
+			encConverters.Remove("ZZZUnitTestCompound");
+			encConverters.Remove("ZZZUnitTestBogusTecKitFile");	// shouldn't exist, but...
+#if !QUIET
+			Console.WriteLine("{0}", testMessage);
+			foreach (var name in encConverters.Mappings)
+				Console.WriteLine("    {0}", name);
+#endif
 		}
 		#endregion
 
@@ -304,16 +328,16 @@ namespace AddConverterDlgTests
 		[Test]
 		public void SelectMapping_CCMappingTable()
 		{
-			m_myCtrl.SelectMapping("ZZZTestCC");
-			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem);
-			Assert.AreEqual(ConverterType.ktypeCC, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
-			Assert.IsFalse(m_myCtrl.cboSpec.Visible);
-			Assert.IsTrue(m_myCtrl.btnMapFile.Visible);
-			Assert.IsTrue(m_myCtrl.txtMapFile.Visible);
-			Assert.AreEqual(m_myCtrl.txtMapFile.Text, m_ccFileName);
-			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem);
-			Assert.AreEqual(ConvType.Legacy_to_Unicode, ((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
-			Assert.AreEqual("ZZZTestCC", m_myCtrl.txtName.Text);
+			m_myCtrl.SelectMapping("ZZZUnitTestCC");
+			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem, "Should be able to select ZZZUnitTestCC");
+			Assert.AreEqual(ConverterType.ktypeCC, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected converter should be CC for ZZZUnitTestCC");
+			Assert.IsFalse(m_myCtrl.cboSpec.Visible, "Converter specifier ComboBox should not be visible for ZZZUnitTestCC");
+			Assert.IsTrue(m_myCtrl.btnMapFile.Visible, "Map file chooser Button should be visible for ZZZUnitTestCC");
+			Assert.IsTrue(m_myCtrl.txtMapFile.Visible, "Map file TextBox should be visible for ZZZUnitTestCC");
+			Assert.AreEqual(m_ccFileName, m_myCtrl.txtMapFile.Text, "TextBox and member variable should have same value for ZZZUnitTestCC");
+			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem, "Conversion type should be selected for ZZZUnitTestCC");
+			Assert.AreEqual(ConvType.Legacy_to_Unicode, ((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Conversion type should be Legacy_to_Unicode for ZZZUnitTestCC");
+			Assert.AreEqual("ZZZUnitTestCC", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestCC");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -324,16 +348,17 @@ namespace AddConverterDlgTests
 		[Test]
 		public void SelectMapping_TecKitMapTable()
 		{
-			m_myCtrl.SelectMapping("ZZZTestMap");
-			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem);
-			Assert.AreEqual(ConverterType.ktypeTecKitMap, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
-			Assert.IsFalse(m_myCtrl.cboSpec.Visible);
-			Assert.IsTrue(m_myCtrl.btnMapFile.Visible);
-			Assert.IsTrue(m_myCtrl.txtMapFile.Visible);
-			Assert.AreEqual(m_mapFileName, m_myCtrl.txtMapFile.Text);
-			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem);
-			Assert.AreEqual(ConvType.Legacy_to_from_Unicode, ((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
-			Assert.AreEqual("ZZZTestMap", m_myCtrl.txtName.Text);
+			m_myCtrl.SelectMapping("ZZZUnitTestMap");
+			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem, "Should be able to select ZZZUnitTestMap");
+			Assert.AreEqual(ConverterType.ktypeTecKitMap, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected converter should be TecKit/Map for ZZZUnitTestMap");
+			Assert.IsFalse(m_myCtrl.cboSpec.Visible, "Converter specifier ComboBox should not be visible for ZZZUnitTestMap");
+			Assert.IsTrue(m_myCtrl.btnMapFile.Visible, "Map file chooser Button should be visible for ZZZUnitTestMap");
+			Assert.IsTrue(m_myCtrl.txtMapFile.Visible, "Map file TextBox should be visible for ZZZUnitTestMap");
+			Assert.AreEqual(m_mapFileName, m_myCtrl.txtMapFile.Text, "TextBox and member variable should have same value for ZZZUnitTestMap");
+			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem, "Conversion type should be selected for ZZZUnitTestMap");
+			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Conversion type should be Legacy_to_from_Unicode for ZZZUnitTestMap");
+			Assert.AreEqual("ZZZUnitTestMap", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestMap");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -342,24 +367,22 @@ namespace AddConverterDlgTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude="Linux", Reason="TODO-Linux FWNX-115: fix FwCoreDlgsTests SelectMapping_IcuConversion: This isn't expected to work on Linux currently if it is using a Windows code page. May be related to FWNX-114.")]
 		public void SelectMapping_IcuConversion()
 		{
-			// Now try one that uses a combo.
-			m_myCtrl.SelectMapping("ZZZTestICU");
-			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem);
-			Assert.AreEqual(ConverterType.ktypeIcuConvert, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
-			Assert.IsTrue(m_myCtrl.cboSpec.Visible);
-			Assert.IsFalse(m_myCtrl.btnMapFile.Visible);
-			Assert.IsFalse(m_myCtrl.txtMapFile.Visible);
-			Assert.IsTrue(m_myCtrl.cboSpec.SelectedItem is CnvtrSpecComboItem);
+			m_myCtrl.SelectMapping("ZZZUnitTestICU");
+			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem, "Should be able to select ZZZUnitTestICU");
+			Assert.AreEqual(ConverterType.ktypeIcuConvert, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected item should be ICU converter for ZZZUnitTestICU");
+			Assert.IsTrue(m_myCtrl.cboSpec.Visible, "ComboBox for Specifying Converter should be visible for ZZZUnitTestICU");
+			Assert.IsFalse(m_myCtrl.btnMapFile.Visible, "Button for selecting map file should not be visible for ZZZUnitTestICU");
+			Assert.IsFalse(m_myCtrl.txtMapFile.Visible, "TextBox for displaying map file should not be visible for ZZZUnitTestICU");
+			Assert.IsTrue(m_myCtrl.cboSpec.SelectedItem is CnvtrSpecComboItem, "A Converter spec should be selected for ZZZUnitTestICU");
 			// This is a randomly chosen ICU converter. The test may break when we reduce the set of
 			// ICU converters we ship.
-			Assert.AreEqual("ISO-8859-1", ((CnvtrSpecComboItem)m_myCtrl.cboSpec.SelectedItem).Specs);
-			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem);
+			Assert.AreEqual("ISO-8859-1", ((CnvtrSpecComboItem)m_myCtrl.cboSpec.SelectedItem).Specs, "Selected spec should be ISO-8859-1 for ZZZUnitTestICU");
+			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem, "Conversion type should be selected for ZZZUnitTestICU");
 			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
-			Assert.AreEqual("ZZZTestICU", m_myCtrl.txtName.Text);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should be Legacy_to_from_Unicode for IZZZUnitTestICU");
+			Assert.AreEqual("ZZZUnitTestICU", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestICU");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -371,12 +394,12 @@ namespace AddConverterDlgTests
 		public void SelectMapping_Compound()
 		{
 			// This is a type we don't recognize.
-			m_myCtrl.SelectMapping("ZZZTestCompound");
-			Assert.AreEqual(-1, m_myCtrl.cboConverter.SelectedIndex);
-			Assert.IsFalse(m_myCtrl.cboSpec.Visible);
-			Assert.IsTrue(m_myCtrl.btnMapFile.Visible);
-			Assert.IsTrue(m_myCtrl.txtMapFile.Visible);
-			Assert.AreEqual("ZZZTestCompound", m_myCtrl.txtName.Text);
+			m_myCtrl.SelectMapping("ZZZUnitTestCompound");
+			Assert.AreEqual(-1, m_myCtrl.cboConverter.SelectedIndex, "Should NOT be able to select ZZZUnitTestCompound");
+			Assert.IsFalse(m_myCtrl.cboSpec.Visible, "ComboBox for Specifying Converter should not be visible for ZZZUnitTestCompound");
+			Assert.IsTrue(m_myCtrl.btnMapFile.Visible, "Button for selecting map file should be visible for ZZZUnitTestCompound");
+			Assert.IsTrue(m_myCtrl.txtMapFile.Visible, "TextBox for displaying map file should be visible for ZZZUnitTestCompound");
+			Assert.AreEqual("ZZZUnitTestCompound", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestCompound");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -390,7 +413,7 @@ namespace AddConverterDlgTests
 		public void SelectMapping_CboSpecListedItems()
 		{
 			// It doesn't really matter which one we've loaded, just load one
-			m_myCtrl.SelectMapping("ZZZTestMap");
+			m_myCtrl.SelectMapping("ZZZUnitTestMap");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeCC);
 			Assert.IsFalse(m_myCtrl.cboSpec.Visible);
@@ -420,12 +443,7 @@ namespace AddConverterDlgTests
 			Assert.IsTrue(m_myCtrl.txtMapFile.Visible);
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeCodePage); // produces 148 on Vista, and 50-some odd on XP
-#if !__MonoCS__
 			Assert.IsTrue(25 < m_myCtrl.cboSpec.Items.Count);
-#else
-			// TODO-Linux FWNX-114: implement windows code page support on Linux
-			Assert.AreEqual(0, m_myCtrl.cboSpec.Items.Count);
-#endif
 			Assert.IsTrue(m_myCtrl.cboSpec.Visible);
 			Assert.IsFalse(m_myCtrl.btnMapFile.Visible);
 			Assert.IsFalse(m_myCtrl.txtMapFile.Visible);
@@ -440,7 +458,7 @@ namespace AddConverterDlgTests
 		public void SelectMapping_PrepopulateCboConversion()
 		{
 			// It doesn't really matter which one we've loaded
-			m_myCtrl.SelectMapping("ZZZTestMap");
+			m_myCtrl.SelectMapping("ZZZUnitTestMap");
 
 			// During the testing portion below, we will test two things:
 			// 1) That the cboConverter selected an item properly
@@ -448,39 +466,39 @@ namespace AddConverterDlgTests
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeCC);
 			Assert.AreEqual(ConverterType.ktypeCC,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected CC type properly");
 			Assert.AreEqual(ConvType.Legacy_to_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "CC type defaults to Legacy_to_Unicode");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeIcuConvert);
 			Assert.AreEqual(ConverterType.ktypeIcuConvert,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected ICU Converter type properly");
 			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "ICU Converter type defaults to Legacy_to_from_Unicode");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeIcuTransduce);
 			Assert.AreEqual(ConverterType.ktypeIcuTransduce,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected ICU Transducer type properly");
 			Assert.AreEqual(ConvType.Unicode_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "ICU Transducer type defaults to Legacy_to_from_Unicode");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeTecKitTec);
 			Assert.AreEqual(ConverterType.ktypeTecKitTec,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected TecKit/Tec type properly");
 			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "TecKit/Tec type defaults to Legacy_to_from_Unicode");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeTecKitMap);
 			Assert.AreEqual(ConverterType.ktypeTecKitMap,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected TecKit/Map type properly");
 			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "TecKit/Map type defaults to Legacy_to_from_Unicode");
 
 			m_myCtrl.setCboConverter(ConverterType.ktypeCodePage);
 			Assert.AreEqual(ConverterType.ktypeCodePage,
-				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type);
+				((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected CodePage type properly");
 			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type);
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "CodePage type defaults to Legacy_to_from_Unicode");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -491,10 +509,10 @@ namespace AddConverterDlgTests
 		[Test]
 		public void SelectMapping_BogusCompiledTecKitFile()
 		{
-			string sFileName = m_fileMaker.CreateFileNoID(new string[] { "bogus contents" }, "tec");
+			m_bogusFileName = CreateTempFile(new string[] { "bogus contents" }, "tec");
 
 			// This is a type we don't recognize.
-			m_myDlg.m_cnvtrPropertiesCtrl.txtName.Text = "BogusTecKitFile";
+			m_myDlg.m_cnvtrPropertiesCtrl.txtName.Text = "ZZZUnitTestBogusTecKitFile";
 
 			int i;
 			for (i = 0; i < m_myDlg.m_cnvtrPropertiesCtrl.cboConverter.Items.Count; ++i)
@@ -505,7 +523,7 @@ namespace AddConverterDlgTests
 					break;
 				}
 			}
-			Assert.IsTrue(i < m_myDlg.m_cnvtrPropertiesCtrl.cboConverter.Items.Count);
+			Assert.IsTrue(i < m_myDlg.m_cnvtrPropertiesCtrl.cboConverter.Items.Count, "Should find a TecKitTec type converter listed.");
 			for (i = 0; i < m_myDlg.m_cnvtrPropertiesCtrl.cboConversion.Items.Count; ++i)
 			{
 				if (((CnvtrDataComboItem)m_myDlg.m_cnvtrPropertiesCtrl.cboConversion.Items[i]).Type == ConvType.Legacy_to_Unicode)
@@ -514,11 +532,11 @@ namespace AddConverterDlgTests
 					break;
 				}
 			}
-			Assert.IsTrue(i < m_myDlg.m_cnvtrPropertiesCtrl.cboConversion.Items.Count);
+			Assert.IsTrue(i < m_myDlg.m_cnvtrPropertiesCtrl.cboConversion.Items.Count, "Should find a Legacy_to_Unicode conversion listed.");
 
-			m_myDlg.SetMappingFile(sFileName);
+			m_myDlg.SetMappingFile(m_bogusFileName);
 
-			Assert.IsFalse(m_myDlg.InstallConverter());
+			Assert.IsFalse(m_myDlg.InstallConverter(), "Should not be able to install bogus compiled TecKit file.");
 			// This may not be testing what we want it to test...
 			// Might want make an assert on the error message that is produced!
 		}
@@ -531,7 +549,7 @@ namespace AddConverterDlgTests
 		[Test]
 		public void AutoSave_ValidButUnchanged()
 		{
-			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZTestCC");
+			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZUnitTestCC");
 			m_myDlg.SetUnchanged();
 			Assert.IsTrue(m_myDlg.AutoSave());
 		}
@@ -545,9 +563,9 @@ namespace AddConverterDlgTests
 		[Ignore("Fails about half of the time -- CameronB")]
 		public void AutoSave_ValidContents()
 		{
-			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZTestICU");
+			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZUnitTestICU");
 			m_myDlg.SetUnchanged();
-			m_myDlg.m_cnvtrPropertiesCtrl.txtName.Text = "ZZZTestRenamedICU";
+			m_myDlg.m_cnvtrPropertiesCtrl.txtName.Text = "ZZZUnitTestRenamedICU";
 			Assert.IsTrue(m_myDlg.AutoSave());
 		}
 
@@ -560,12 +578,31 @@ namespace AddConverterDlgTests
 		[Ignore("Fails: producing object null message")]
 		public void AutoSave_InvalidContents()
 		{
-			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZTestMap");
+			m_myDlg.m_cnvtrPropertiesCtrl.SelectMapping("ZZZUnitTestMap");
 			m_myDlg.SetUnchanged();
 			m_myDlg.m_cnvtrPropertiesCtrl.cboSpec.Text = "NotValid";
 			Assert.IsFalse(m_myDlg.AutoSave());
 		}
 		#endregion
+
+		/// <summary>
+		/// Create a temporary file with the given data and file type extension.
+		/// </summary>
+		string CreateTempFile(string[] data, string filetype)
+		{
+			string fileTmp = Path.GetTempFileName();	// actually creates file on disk.
+			string filename = fileTmp;
+			if (!String.IsNullOrEmpty(filetype))
+			{
+				filename = Path.ChangeExtension(fileTmp, filetype);
+				File.Move(fileTmp, filename);
 	}
-#endif
+			using (var file = new StreamWriter(filename, false, System.Text.Encoding.ASCII))
+			{
+				foreach (var line in data)
+					file.WriteLine(line);
+			}
+			return filename;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -115,20 +115,20 @@ namespace SIL.FieldWorks.LexText.Controls
 
 
 
-		protected string TransformToHtml(XPathDocument doc, TransformKind kind)
+		protected string TransformToHtml(string sInputFile, TransformKind kind)
 		{
 			string sOutput = null;
-			var args = new XsltArgumentList();
+			var args = new List<XmlUtils.XSLParameter>();
 
 			switch (kind)
 			{
 				case TransformKind.kcptParse:
-					sOutput = TransformToHtml(doc, m_sParse, m_sFormatParse, args);
+					sOutput = TransformToHtml(sInputFile, m_sParse, m_sFormatParse, args);
 					break;
 				case TransformKind.kcptTrace:
 					string sIconPath = CreateIconPath();
-					args.AddParam("prmIconPath", "", sIconPath);
-					sOutput = TransformToHtml(doc, m_sTrace, m_sFormatTrace, args);
+					args.Add(new XmlUtils.XSLParameter("prmIconPath", sIconPath));
+					sOutput = TransformToHtml(sInputFile, m_sTrace, m_sFormatTrace, args);
 					break;
 			}
 			return sOutput;

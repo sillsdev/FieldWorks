@@ -67,7 +67,6 @@ namespace SIL.FieldWorks.TE
 		/// base caption string that this client window should display in the info bar
 		/// </summary>
 		private string m_baseInfoBarCaption;
-		private IParagraphCounter m_paraCounter;
 		#endregion
 
 		#region Constructor
@@ -238,7 +237,8 @@ namespace SIL.FieldWorks.TE
 					ReplaceBookTagAndIndex(selectionHelper, SelectionHelper.SelLimitType.Anchor);
 					ReplaceBookTagAndIndex(selectionHelper, SelectionHelper.SelLimitType.End);
 
-					key.SetValue(Name, Persistence.SerializeToBinary(selectionHelper).ToArray());
+					using (var stream = Persistence.SerializeToBinary(selectionHelper))
+						key.SetValue(Name, stream.ToArray());
 				}
 				catch
 				{
@@ -1196,24 +1196,6 @@ namespace SIL.FieldWorks.TE
 				CheckDisposed();
 				return (int)(21 * Zoom);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Calculate height for books and sections.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// <param name="dxAvailWidth"></param>
-		/// <returns>The estimated height for the specified hvo in paragraphs</returns>
-		/// ------------------------------------------------------------------------------------
-		public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
-		{
-			CheckDisposed();
-
-			if (m_ParaHeightInPoints <= 0)
-				m_ParaHeightInPoints = 1;
-			return m_paraCounter.GetParagraphCount(hvo, frag) * m_ParaHeightInPoints;
 		}
 
 		/// ------------------------------------------------------------------------------------

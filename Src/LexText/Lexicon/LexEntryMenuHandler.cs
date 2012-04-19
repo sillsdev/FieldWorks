@@ -337,7 +337,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public virtual bool OnPictureProperties(object cmd)
 		{
-			// Command command = (Command)cmd; // CS0219
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			if (slice != null)
 			{

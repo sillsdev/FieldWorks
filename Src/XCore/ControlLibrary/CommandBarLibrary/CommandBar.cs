@@ -56,16 +56,38 @@ namespace Reflector.UserInterface
 			this.style = style;
 		}
 
+		private bool IsDisposing { get; set; }
+
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				this.items.Clear();
-				this.items = null;
+				IsDisposing = true;
+				try
+				{
+					if (contextMenu != null)
+						contextMenu.Dispose();
 
-				this.contextMenu = null;
+					if (items != null)
+					{
+						// Disposing the item might remove it from the collection, so we better work on
+						// a copy of the collection.
+						var copiedItems = new CommandBarItem[items.Count];
+						items.CopyTo(copiedItems, 0);
+						foreach (var item in copiedItems)
+							item.Dispose();
+
+						this.items.Clear();
+					}
+				}
+				finally
+				{
+					IsDisposing = false;
+				}
 			}
+			this.items = null;
+			this.contextMenu = null;
 
 			base.Dispose(disposing);
 		}
@@ -1034,7 +1056,7 @@ namespace Reflector.UserInterface
 
 		private void UpdateItems()
 		{
-			if (this.IsHandleCreated)
+			if (this.IsHandleCreated && !IsDisposing)
 			{
 				this.RecreateHandle();
 			}

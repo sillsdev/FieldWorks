@@ -1811,7 +1811,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// make sure the file exists, otherwise the process will fail
 				if (System.IO.File.Exists(sHtmlFile))
-					System.Diagnostics.Process.Start(sHtmlFile);
+				{
+					using (System.Diagnostics.Process.Start(sHtmlFile))
+					{
+					}
+				}
 			}
 			catch (Exception e)
 			{

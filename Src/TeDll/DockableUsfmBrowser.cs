@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -72,6 +73,8 @@ namespace SIL.FieldWorks.TE
 		/// 	<c>true</c> if the browser was installed successfully; <c>false</c>
 		/// otherwise.
 		/// </returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public bool Install(Control dockHost, IApp app)
 		{
 			while (true)
@@ -320,6 +323,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="how">The how.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void DockFloaty(DockStyle how)
 		{
 			switch(how)

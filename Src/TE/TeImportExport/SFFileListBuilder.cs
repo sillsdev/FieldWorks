@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -689,10 +690,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="filename"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected virtual void ShowBadFileMessage(string filename)
 		{
 			string message = string.Format(TeResourceHelper.GetResourceString("kstidImportFileNoBooks"),
 				filename);
+			// TODO-Linux: Help is not implemented in Mono
 			MessageBox.Show(message, ResourceHelper.GetResourceString("kstidImportFileNoBookCaption"),
 				MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 				HelpNavigator.Topic, ResourceHelper.GetHelpString("kstidImportFileNoBookTopic"));

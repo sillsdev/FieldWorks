@@ -1,20 +1,21 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Data;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading;
-using System.Reflection;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Drawing.Design;
+using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 
 using SidebarLibrary.Collections;
-using SidebarLibrary.Win32;
 using SidebarLibrary.General;
 using SidebarLibrary.Menus;
+using SidebarLibrary.Win32;
 
 namespace SidebarLibrary.WinControls
 {
@@ -384,6 +385,18 @@ namespace SidebarLibrary.WinControls
 
 		}
 		#endregion
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			if (disposing)
+			{
+				if (contextMenu != null)
+					contextMenu.Dispose();
+			}
+			contextMenu = null;
+			base.Dispose(disposing);
+		}
 
 		#region Overrides
 		protected override Size DefaultSize
@@ -2399,13 +2412,15 @@ namespace SidebarLibrary.WinControls
 			// reattach the Outlookbar as the parent
 			Control c = (Control)sender;
 			IntPtr hParent = WindowsAPI.GetParent(c.Handle);
-			if ( hParent != Handle )
+			if (hParent != Handle)
 			{
 				WindowsAPI.SetParent(c.Handle, Handle);
 			}
 		}
 
-		void CreateContextMenu()
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="MenuItemEx gets added to contextMenu and disposed there.")]
+		private void CreateContextMenu()
 		{
 			// context menu
 			MenuItemEx largeIconsMenu = new MenuItemEx("Large Icons", new EventHandler(OnContextMenu));
@@ -2479,7 +2494,7 @@ namespace SidebarLibrary.WinControls
 		void RenameItem()
 		{
 			// Display a edit control that will do the editing of  the item
-		// Get the item index first
+			// Get the item index first
 			int index;
 			HitTest(lastClickedPoint, out index, false);
 			using ( Graphics g = Graphics.FromHwnd(Handle) )

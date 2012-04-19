@@ -14,6 +14,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.Utils
 {
@@ -68,6 +69,8 @@ namespace SIL.Utils
 		/// Returns an enumerator that iterates through the characters.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

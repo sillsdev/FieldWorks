@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -36,6 +37,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		private XmlDocument m_xmlShowInfoDoc;
 		private readonly string m_sHelpHtm = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
+		// TODO-Linux: WebBrowser control is only supported on Linux/Windows. No support for OSX.
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public MGAHtmlHelpDialog(FdoCache cache, Mediator mediator, string sMorphemeForm) : base(cache, mediator, sMorphemeForm)
 		{
 			m_webBrowserInfo = new WebBrowser

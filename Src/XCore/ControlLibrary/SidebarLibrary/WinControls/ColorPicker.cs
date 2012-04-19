@@ -1,15 +1,16 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Reflection;
 using System.Resources;
-using System.Diagnostics;
+using System.Windows.Forms;
 using SidebarLibrary.General;
-using SidebarLibrary.WinControls;
 using SidebarLibrary.Win32;
+using SidebarLibrary.WinControls;
 
 namespace SidebarLibrary.WinControls
 {
@@ -230,11 +231,13 @@ namespace SidebarLibrary.WinControls
 
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="colorPicker is a reference")]
 	internal class ColorPickerEditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 		#region Class Variables
-		ColorPicker colorPicker;
-		bool ignoreNextPaintMessage = false;
+		private ColorPicker colorPicker;
+		private bool ignoreNextPaintMessage;
 		#endregion
 
 		#region Constructors

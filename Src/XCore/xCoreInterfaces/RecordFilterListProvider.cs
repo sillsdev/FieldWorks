@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Xml;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using SIL.Utils;
 
@@ -10,6 +11,10 @@ namespace XCore
 	/// <summary>
 	/// concrete implementations of this provide a list of RecordFilters to offer to the user.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "variable is a reference; it is owned by parent")]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class RecordFilterListProvider : IxCoreColleague
 	{
 		protected XmlNode m_configuration;

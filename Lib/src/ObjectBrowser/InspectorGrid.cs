@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
+using System.Windows.Forms;
 
 namespace SIL.ObjectBrowser
 {
@@ -29,6 +30,8 @@ namespace SIL.ObjectBrowser
 		/// Initializes a new instance of the <see cref="InspectorGrid"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public InspectorGrid()
 		{
 			DoubleBuffered = true;
@@ -38,6 +41,7 @@ namespace SIL.ObjectBrowser
 			ReadOnly = false;
 			SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 			RowHeadersVisible = false;
+			// TODO-Linux: VirtualMode is not supported on Mono.
 			VirtualMode = true;
 			AllowUserToResizeRows = false;
 			Font = SystemFonts.MenuFont;

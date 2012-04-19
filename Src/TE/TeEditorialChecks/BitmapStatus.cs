@@ -16,8 +16,9 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Text;
 
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {
@@ -356,6 +357,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// value is equivalent to the value of this instance.
 		/// </returns>
 		/// --------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning a reference")]
 		object IConvertible.ToType(Type conversionType, IFormatProvider provider)
 		{
 			if (conversionType == typeof(Image))

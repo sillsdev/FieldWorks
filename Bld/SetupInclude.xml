@@ -49,6 +49,15 @@
 	<if test="${not property::exists('dir.fwoutputlibBase')}">
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
 	</if>
+	<if test="${not property::exists('dir.fwoutputlibPlatform')}">
+		<property name="dir.fwoutputlibPlatform" value="${path::combine(dir.fwoutputlib, 'linux')}"
+			 if="${platform::is-unix()}"/>
+		<property name="dir.fwoutputlibPlatform" value="${path::combine(dir.fwoutputlib, 'windows')}"
+			 unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutputlibPlatformBase')}">
+		<property name="dir.fwoutputlibPlatformBase" value="${path::combine(dir.fwoutputlibPlatform, config)}"/>
+	</if>
 	<if test="${not property::exists('dir.fwinstall')}">
 		<property name="dir.fwinstall" value="${path::combine(dir.fwoutput, 'install')}"/>
 	</if>

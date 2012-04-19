@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
@@ -203,6 +204,8 @@ namespace SIL.FieldWorks.TE
 		/// Creates a view constructor suitable for this kind of view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		protected override TeStVc CreateViewConstructor()
 		{
 			CheckDisposed();

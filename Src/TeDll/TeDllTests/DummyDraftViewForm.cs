@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
@@ -167,7 +168,7 @@ namespace SIL.FieldWorks.TE
 			//
 			// DummyDraftViewForm
 			//
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(292, 273);
 			this.Menu = this.m_mainMenu;
 			this.Name = "DummyDraftViewForm";
@@ -184,12 +185,17 @@ namespace SIL.FieldWorks.TE
 		/// Returns the parent's SettingsKey if parent implements ISettings, otherwise null.
 		/// </summary>
 		///-------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("DraftViewTest");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("DraftViewTest");
+				}
 			}
 		}
 

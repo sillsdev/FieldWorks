@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -41,6 +42,8 @@ namespace XCore
 	/// adapts DotNetBar to provide context help
 	/// /summary>
 	[XCore.MediatorDispose]
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IFWDisposable
 	{
 		protected Mediator m_mediator;

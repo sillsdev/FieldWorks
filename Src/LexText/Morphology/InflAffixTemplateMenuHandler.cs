@@ -382,7 +382,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			FwMenuItem fmi = FindEnabledItem(iSel);
 			if (fmi == null)
 				return;
-			m_mediator.SendMessage(fmi.Message, new XCore.Command(m_mediator, fmi.ConfigurationNode));
+			using (var command = new XCore.Command(m_mediator, fmi.ConfigurationNode))
+			{
+				m_mediator.SendMessage(fmi.Message, command);
+			}
 		}
 
 		private FwMenuItem FindEnabledItem(int iSel)

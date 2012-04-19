@@ -16,25 +16,26 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
-using System.Xml;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.IText;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.IText;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -532,6 +533,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Returns the object of the current slice, or (if no slice is marked current)
 		/// the object of the first slice, or (if there are no slices, or no data entry form) null.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldAt() returns a reference")]
 		private ICmObject CurrentSliceObject
 		{
 			get

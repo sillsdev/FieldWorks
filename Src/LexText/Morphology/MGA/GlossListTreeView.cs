@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Xml;
@@ -67,6 +68,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -77,6 +79,12 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			if (IsDisposed)
 				return;
 
+			if (disposing)
+			{
+				if (ImageList != null)
+					ImageList.Dispose();
+			}
+			ImageList = null;
 			m_cache = null;
 
 			base.Dispose(disposing);
@@ -265,6 +273,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		#endregion
 		#region private methods
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Added to ImageList and disposed there.")]
 		private void CommonInit()
 		{
 			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);

@@ -33,7 +33,7 @@
 	<SccAuxPath>
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -49,6 +49,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -121,7 +122,7 @@
 	</Reference>
 	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FDO">
 	  <Name>FDO</Name>
@@ -205,7 +206,7 @@
 	</Reference>
 	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -249,29 +250,38 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</None>
 	<Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
 	  <Link>FwSetupFixtureClass.cs</Link>
 	</Compile>
-	<Compile Include="CnvtrPropertiesCtrlTests.cs" />
+	<Compile Include="CnvtrPropertiesCtrlTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="CharContextCtrlTests.cs" />
 	<Compile Include="RestoreProjectPresenterTests.cs" />
-	<Compile Include="ValidCharactersDlgTests.cs" />
-	<Compile Include="FindReplaceCollectorEnvTests.cs" />
-	<Compile Include="FwFindReplaceDlgTests.cs" />
-	<Compile Include="FwNewLangProjectTests.cs" />
-	<Compile Include="FwProjPropertiesDlgTests.cs" />
-	<Compile Include="FwStylesDlgTests.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
+	<Compile Include="ValidCharactersDlgTests.cs">
+	  <SubType>Form</SubType>
 	</Compile>
+	<Compile Include="FindReplaceCollectorEnvTests.cs" />
+	<Compile Include="FwFindReplaceDlgTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwNewLangProjectTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwProjPropertiesDlgTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwStylesDlgTests.cs" />
 	<Compile Include="PunctuationDlgTests.cs" />
-	<Compile Include="WritingSystemPropertiesDialogTests.cs" />
+	<Compile Include="WritingSystemPropertiesDialogTests.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="RealSplashScreenTests.cs" />
 	<Compile Include="FwFontDialogTests.cs" />
 	<Compile Include="FwHelpAboutTests.cs" />
+	<Compile Include="..\..\xWorks\xWorksTests\AssemblyInfo.cs">
+	  <Link>AssemblyInfo.cs</Link>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<Content Include="xtst.xml">

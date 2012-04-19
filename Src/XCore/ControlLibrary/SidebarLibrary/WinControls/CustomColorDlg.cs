@@ -226,12 +226,12 @@ namespace SidebarLibrary.WinControls
 
 			hueEdit.Text = Convert.ToString((int)h);
 			satEdit.Text = Convert.ToString((int)s);
-		ConvertToRGB(h, s, l);
+			ConvertToRGB(h, s, l);
 			updatingUI = false;
 
 		}
 
-	void HueSatTextBoxChanged()
+		void HueSatTextBoxChanged()
 		{
 			// Calculate palette box marker coordinates positon base on
 			// the new hue or sat value
@@ -638,7 +638,7 @@ namespace SidebarLibrary.WinControls
 			//
 			// CustomColorDlg
 			//
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(246, 330);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																		  this.label7,

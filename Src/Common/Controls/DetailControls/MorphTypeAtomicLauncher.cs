@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
@@ -63,6 +64,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";
@@ -120,6 +125,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								// complex forms that DO have components.
 								if (ler.ComponentLexemesRS.Count > 0)
 								{
+									// TODO-Linux: Help is not implemented in Mono
 									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
 										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_mediator.HelpTopicProvider.HelpFile,

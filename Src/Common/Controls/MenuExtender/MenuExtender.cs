@@ -716,7 +716,8 @@ namespace SIL.FieldWorks.Common.Controls
 		// These methods prevent that the properties are written in the generated code
 		// unless they are really set.
 
-#pragma warning disable 0169 // error CS0169: The private method ... is never used
+#pragma warning disable 0169 // error CS0169: The private method ... is never used, but they are
+		// needed in Designer
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -201,15 +201,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			//Initialize our label Association dictionary
 			var labelAssociations = new Dictionary<TextBox, Label>
-		{
-			{m_txtCodepoint, m_lblMessageTop},
-			{m_txtName, m_lblMessageTop},
-			{m_txtUpperEquiv, m_lblMessageMiddle},
-			{m_txtLowerEquiv, m_lblMessageMiddle},
-			{m_txtTitleEquiv, m_lblMessageMiddle},
-			{m_txtNumericValue, m_lblMessageMiddle},
-			{m_txtDecomposition, m_lblMessageBottom}
-		};
+			{
+				{m_txtCodepoint, m_lblMessageTop},
+				{m_txtName, m_lblMessageTop},
+				{m_txtUpperEquiv, m_lblMessageMiddle},
+				{m_txtLowerEquiv, m_lblMessageMiddle},
+				{m_txtTitleEquiv, m_lblMessageMiddle},
+				{m_txtNumericValue, m_lblMessageMiddle},
+				{m_txtDecomposition, m_lblMessageBottom}
+			};
 
 			// Add any constructor code after InitializeComponent call
 			m_errorMessageHandler = new ErrorMessageHandler(labelAssociations, m_btnOK);
@@ -691,10 +691,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="enabled"></param>
 		private static void SetEnabledAll(Control baseControl, bool enabled)
 		{
-			Type groupBoxType = new GroupBox().GetType();
-			Type textBoxType = new TextBox().GetType();
-			Type comboBoxType = new ComboBox().GetType();
-			Type checkBoxType = new CheckBox().GetType();
+			Type groupBoxType = typeof(GroupBox);
+			Type textBoxType = typeof(TextBox);
+			Type comboBoxType = typeof(ComboBox);
+			Type checkBoxType = typeof(CheckBox);
 
 			foreach( Control groupBox in baseControl.Parent.Parent.Controls)
 				if(groupBox.GetType() == groupBoxType)

@@ -12,6 +12,7 @@
 // Responsibility: Erik Freund, Tres London, Zachariah Yoder
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -25,6 +26,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class PuaCharacterTests : FwCOMTestBase
 		// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
