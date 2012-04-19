@@ -560,7 +560,7 @@ Main template
 						</dl>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:if test="//MoInflAffixSlot/@Optional = '1'">
+				<xsl:if test="//MoInflAffixSlot/@Optional = 'true'">
 					<p>In the inflectional templates expressed below, parentheses indicate that a slot is optional.</p>
 				</xsl:if>
 				<xsl:for-each select="$toplevelPOSes">
@@ -4190,7 +4190,7 @@ GetSlotName
 		<xsl:variable name="bOptional">
 			<xsl:value-of select="$Slot/@Optional"/>
 		</xsl:variable>
-		<xsl:if test="$bOptional='1'">
+		<xsl:if test="$bOptional='true'">
 			<xsl:text>(</xsl:text>
 		</xsl:if>
 		<xsl:call-template name="Capitalize">
@@ -4198,7 +4198,7 @@ GetSlotName
 				<xsl:value-of select="$sSlotName"/>
 			</xsl:with-param>
 		</xsl:call-template>
-		<xsl:if test="$bOptional='1'">
+		<xsl:if test="$bOptional='true'">
 			<xsl:text>)</xsl:text>
 		</xsl:if>
 	</xsl:template>
