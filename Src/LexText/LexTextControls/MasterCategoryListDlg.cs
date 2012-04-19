@@ -793,6 +793,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (MasterCategoryCitation mcc in m_citations)
 						mcc.ResetDescription(rtbDescription);
 				}
+#if __MonoCS__
+				// Ensure that the top of the description is showing (FWNX-521).
+				rtbDescription.Select(0,0);
+				rtbDescription.ScrollToCaret();
+#endif
 			}
 
 			public override string ToString()

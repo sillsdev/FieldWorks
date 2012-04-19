@@ -364,15 +364,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// For character styles, hide the "Paragraph", "Bullets", and "Border" tabs
 			if (styleInfo.IsCharacterStyle && m_tabControl.TabPages.Contains(m_tbParagraph))
 			{
-				// deselect tab before removing. This is needed on mono.
-				// see bug: https://bugzilla.novell.com/show_bug.cgi?id=613765
-				if (m_tabControl.SelectedTab == m_tbBorder ||
-					m_tabControl.SelectedTab == m_tbBullets ||
-					m_tabControl.SelectedTab == m_tbParagraph)
-				{
-					m_tabControl.SelectedTab = m_tbGeneral;
-				}
-
 				m_tabControl.TabPages.Remove(m_tbBorder);
 				m_tabControl.TabPages.Remove(m_tbBullets);
 				m_tabControl.TabPages.Remove(m_tbParagraph);
