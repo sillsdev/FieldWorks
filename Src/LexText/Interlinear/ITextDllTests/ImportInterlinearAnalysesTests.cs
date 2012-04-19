@@ -18,19 +18,8 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderBasicTestBase
+	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
-
-		public override void TestSetup()
-		{
-			SetupEverythingButBase();
-		}
-
-		public override void TestTearDown()
-		{
-			DisposeEverythingButBase();
-		}
-
 		[Test]
 		public void ImportNewHumanApprovedByDefaultWordGloss()
 		{

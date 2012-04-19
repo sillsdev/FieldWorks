@@ -726,9 +726,16 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private static void CompareResults(ICollection<Guid> sourceGuids, FdoCache targetCache)
 		{
 			var allTargetObjects = GetAllCmObjects(targetCache);
-			Assert.AreEqual(sourceGuids.Count, allTargetObjects.Length, "Wrong number of objects in target DB.");
 			foreach (var obj in allTargetObjects)
-				Assert.IsTrue(sourceGuids.Contains(obj.Guid), "Missing guid in target DB.");
+				Assert.IsTrue(sourceGuids.Contains(obj.Guid), "Missing guid in target DB.: " + obj.Guid);
+			var targetGuids = new List<Guid>();
+			foreach (var obj in allTargetObjects)
+				targetGuids.Add(obj.Guid);
+			foreach (var guid in sourceGuids)
+			{
+				Assert.IsTrue(targetGuids.Contains(guid), "Missing guid in source DB.: " + guid);
+			}
+			Assert.AreEqual(sourceGuids.Count, allTargetObjects.Length, "Wrong number of objects in target DB.");
 		}
 
 		/// <summary>

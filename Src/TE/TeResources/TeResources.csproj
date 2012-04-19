@@ -32,7 +32,7 @@
 	</UpgradeBackupLocation>
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -47,6 +47,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -69,7 +70,8 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>bin\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -92,16 +94,15 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="FwResources">
 	  <Name>FwResources</Name>
 	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
@@ -123,7 +124,9 @@
 	<Compile Include="TeDialogResources.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="TeResourceHelper.cs" />
+	<Compile Include="TeResourceHelper.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="TeStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>

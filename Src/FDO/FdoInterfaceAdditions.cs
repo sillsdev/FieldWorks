@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
@@ -5452,6 +5453,19 @@ namespace SIL.FieldWorks.FDO
 		/// default analysis writing system.
 		/// </summary>
 		List<string> AllNaturalClassAbbrs();
+
+		/// <summary>
+		/// Rebuild the list of PhonRuleFeats
+		/// </summary>
+		/// <param name="members">list of items to become PhPhonRuleFeats</param>
+		void RebuildPhonRuleFeats(IEnumerable<ICmObject> members);
+
+		/// <summary>
+		/// Remove any matching items from the PhonRuleFeats list
+		/// </summary>
+		/// <param name="obj">Object being removed</param>
+		void RemovePhonRuleFeat(ICmObject obj);
+
 	}
 
 	public partial interface IPhPhoneme

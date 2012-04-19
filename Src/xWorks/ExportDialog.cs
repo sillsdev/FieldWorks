@@ -798,9 +798,13 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			var outPathRanges = Path.ChangeExtension(outPath, ".lift-ranges");
-			using (TextWriter w =  new StreamWriter(outPathRanges))
+			using (var w =  new StringWriter())
 			{
 				exporter.ExportLiftRanges(w);
+				var sw = new StreamWriter(outPathRanges);
+				//actually write out to file
+				sw.Write(w.GetStringBuilder().ToString());
+				sw.Close();
 			}
 #if DEBUG
 			var dtExport = DateTime.Now;

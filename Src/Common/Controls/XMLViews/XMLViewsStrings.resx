@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAddToExisting" xml:space="preserve">
 	<value>Add to existing items</value>
@@ -530,5 +530,23 @@ Do you want to proceed?</value>
   <data name="ksShowEntryInLexicon" xml:space="preserve">
 	<value>Show Entry in Lexicon</value>
 	<comment>popup menu item in categorized entry view</comment>
+  </data>
+  <data name="ksRedoCheckAll" xml:space="preserve">
+	<value>Redo Select All</value>
+  </data>
+  <data name="ksRedoToggle" xml:space="preserve">
+	<value>Redo Toggle</value>
+  </data>
+  <data name="ksRedoUncheckAll" xml:space="preserve">
+	<value>Redo Clear All</value>
+  </data>
+  <data name="ksUndoCheckAll" xml:space="preserve">
+	<value>Undo Select All</value>
+  </data>
+  <data name="ksUndoToggle" xml:space="preserve">
+	<value>Undo Toggle</value>
+  </data>
+  <data name="ksUndoUncheckAll" xml:space="preserve">
+	<value>Undo Clear All</value>
   </data>
 </root>

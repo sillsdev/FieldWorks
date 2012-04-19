@@ -600,14 +600,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			// special case to export the BaseForm complex form type as expected by WeSay.
 			if (ler.ComplexEntryTypesRS.Count == 1 && ler.ComplexEntryTypesRS[0].Name.get_String(m_cache.WritingSystemFactory.GetWsFromStr("en")).Text == "BaseForm")
 				typeString = "BaseForm";
+			int order = 0;
 			foreach (var obj in ler.ComponentLexemesRS)
 			{
-				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\">",
-					XmlUtils.MakeSafeXmlAttribute(GetProperty(obj, "LIFTid").ToString()));
+				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\" order=\"{1}\">",
+					XmlUtils.MakeSafeXmlAttribute(GetProperty(obj, "LIFTid").ToString()), order);
 				if (ler.PrimaryLexemesRS.Contains(obj))
 					w.WriteLine("<trait name=\"is-primary\" value=\"true\"/>");
 				WriteLexEntryRefBasics(w, ler);
 				w.WriteLine("</relation>");
+				++order;
 			}
 			if (ler.ComponentLexemesRS.Count == 0)
 			{
@@ -1598,9 +1600,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Write the .lift-ranges file.
+		/// Write the .lift-ranges data into the string writer.
+		/// <note>Does not write to a file, anymore.</note>
 		/// </summary>
-		public void ExportLiftRanges(TextWriter w)
+		public void ExportLiftRanges(StringWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
@@ -1628,6 +1631,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteStemNameRanges(w);
 			WriteAnyOtherRangesReferencedByFields(w);
 			w.WriteLine("</lift-ranges>");
+			w.Flush();
 		}
 
 		private void WriteAnyOtherRangesReferencedByFields(TextWriter w)

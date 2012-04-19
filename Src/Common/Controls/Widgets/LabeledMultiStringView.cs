@@ -98,14 +98,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				int wsIndex;
 				var ws = WsForSoundField(control, out wsIndex);
-				var sel = GetSelAtStartOfWs(wsIndex, ws);
-				Rectangle selRect;
-				bool fEndBeforeAnchor; // not used
-				using (new HoldGraphics(this))
-					SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
-				control.Left = indent;
-				control.Width = Width - indent;
-				control.Top = selRect.Top;
+				if (ws != null)
+				{
+					var sel = GetSelAtStartOfWs(wsIndex, ws);
+					Rectangle selRect;
+					bool fEndBeforeAnchor; // not used
+					using (new HoldGraphics(this))
+						SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+					control.Left = indent;
+					control.Width = Width - indent;
+					control.Top = selRect.Top;
+				}
 			}
 		}
 
@@ -113,7 +116,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			try
 			{
-				return m_rootb.MakeTextSelection(0, 0, null, m_flid, wsIndex, 0, 0, ws.Handle, false, -1, null, false);
+				return m_rootb.MakeTextSelection(0, 0, null, m_flid, wsIndex, 0, 0, (ws == null) ? 0 : ws.Handle, false, -1, null, false);
 			}
 			catch (COMException)
 			{
@@ -213,12 +216,19 @@ namespace SIL.FieldWorks.Common.Widgets
 			var sc = (ShortSoundFieldControl)sender;
 			int dummy;
 			var ws = WsForSoundField(sc, out dummy);
+			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_fdoCache.ActionHandlerAccessor,
 				() =>
-					m_fdoCache.DomainDataByFlid.SetMultiStringAlt(m_hvoObj, m_flid, ws.Handle,
-						m_fdoCache.TsStrFactory.MakeString("", ws.Handle)));
+					m_fdoCache.DomainDataByFlid.SetMultiStringAlt(m_hvoObj, m_flid, handle,
+						m_fdoCache.TsStrFactory.MakeString("", handle)));
 		}
 
+		/// <summary>
+		/// If we're shutting down, this might return null
+		/// </summary>
+		/// <param name="sc"></param>
+		/// <param name="wsIndex"></param>
+		/// <returns></returns>
 		IWritingSystem WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
 		{
 			int index = m_soundControls.IndexOf(sc);
@@ -233,7 +243,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					return ws;
 				index--;
 			}
-			throw new InvalidOperationException("trying to get WS for sound field failed");
+			return null;
+			//throw new InvalidOperationException("trying to get WS for sound field failed");
 		}
 
 		/// <summary>
@@ -317,13 +328,18 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
+			var baseNameForFile = obj.ShortName;
+			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
+			// so we need to fix the filename before calling it.
+			foreach (var c in Path.GetInvalidFileNameChars())
+				baseNameForFile = baseNameForFile.Replace(c, '_');
+			// WeSay and most other programs use NFC for file names, so we'll standardize on this.
+			baseNameForFile = baseNameForFile.Normalize(NormalizationForm.FormC);
 			string filename;
 			do
 			{
-				//WeSay and most other programs use NFC for file names, so we'll standardize on this.
-				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + obj.ShortName.Normalize(NormalizationForm.FormC), "wav");
-				foreach (var c in Path.GetInvalidFileNameChars())
-					filename = filename.Replace(c, '_');
+				filename = baseNameForFile;
+				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + filename, "wav");
 				path = Path.Combine(mediaDir, filename);
 
 			} while (File.Exists(path));

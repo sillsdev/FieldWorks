@@ -31,7 +31,7 @@
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
@@ -47,6 +47,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\Output\Debug\</OutputPath>
@@ -69,7 +70,8 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -92,8 +94,9 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
+	<ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.0.28068, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -109,9 +112,7 @@
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="ZippedParaPrjWithMissingFiles.resx">

@@ -30,10 +30,10 @@ namespace XAmpleManagedWrapper
 
 	public class XAmpleDLLWrapper: IDisposable
 	{
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleCreateSetup ();
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleDeleteSetup (IntPtr pSetupIo);
 
 		internal string AmpleDeleteSetupMarshaled (IntPtr pSetupIo)
@@ -42,7 +42,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleLoadControlFiles (IntPtr pSetupIo, string pszAnalysisDataFileIn, string pszDictCodeTableIn, string pszDictOrthoChangeTableIn, string pszTextInputControlFileIn);
 
 		internal string AmpleLoadControlFilesMarshaled (IntPtr pSetupIo, string pszAnalysisDataFileIn, string pszDictCodeTableIn, string pszDictOrthoChangeTableIn, string pszTextInputControlFileIn)
@@ -51,7 +51,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleLoadDictionary (IntPtr pSetupIo, string pszFilePathIn, string pszDictType);
 
 		internal string AmpleLoadDictionaryMarshaled (IntPtr pSetupIo, string pszFilePathIn, string pszDictType)
@@ -60,7 +60,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleLoadGrammarFile (IntPtr pSetupIo, string pszGrammarFileIn);
 
 		internal string AmpleLoadGrammarFileMarshaled (IntPtr pSetupIo, string pszGrammarFileIn)
@@ -69,7 +69,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleParseText (IntPtr pSetupIo, byte[] pszInputTextIn, string pszUseTextIn);
 
 		internal string AmpleParseTextMarshaled (IntPtr pSetupIo, string pszInputTextIn, string pszUseTextIn)
@@ -82,7 +82,7 @@ namespace XAmpleManagedWrapper
 			return PtrToString(ret, Encoding.UTF8);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleGetAllAllomorphs (IntPtr pSetupIo, string pszRestOfWordIn, string pszState_in);
 
 		internal string AmpleGetAllAllomorphsMarshaled(IntPtr pSetupIo, string pszRestOfWordIn, string pszStateIn)
@@ -91,7 +91,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleApplyInputChangesToWord (IntPtr pSetupIo, string pszWordIn);
 
 		internal string AmpleApplyInputChangesToWordMarshaled (IntPtr pSetupIo, string pszWordIn)
@@ -100,7 +100,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleSetParameter (IntPtr pSetupIo, string pszNameIn, string pszValueIn);
 
 		internal string AmpleSetParameterMarshaled (IntPtr pSetupIo, string pszNameIn, string pszValueIn)
@@ -109,7 +109,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleAddSelectiveAnalysisMorphs (IntPtr pSetupIo, string pszMorphsIn);
 
 		internal string AmpleAddSelectiveAnalysisMorphsMarshaled (IntPtr pSetupIo, string pszMorphsIn)
@@ -118,7 +118,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi (ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleRemoveSelectiveAnalysisMorphs(IntPtr pSetupIo);
 
 		internal string AmpleRemoveSelectiveAnalysisMorphMarshaled(IntPtr pSetupIo)
@@ -127,7 +127,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleReset(IntPtr pSetupIo);
 
 		internal string AmpleResetMarshaled(IntPtr pSetupIo)
@@ -136,7 +136,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleReportVersion(IntPtr pSetupIo);
 
 		internal string AmpleReportVersionMarshaled(IntPtr pSetupIo)
@@ -145,7 +145,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleInitializeMorphChecking(IntPtr pSetupIo);
 
 		internal string AmpleInitializeMorphCheckingMarshaled(IntPtr pSetupIo)
@@ -154,7 +154,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleCheckMorphReferences(IntPtr pSetupIo);
 
 		internal string AmpleCheckMorphReferencesMarshaled(IntPtr pSetupIo)
@@ -163,7 +163,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleInitializeTraceString(IntPtr pSetupIo);
 
 		internal string AmpleInitializeTraceStringMarshaled(IntPtr pSetupIo)
@@ -172,7 +172,7 @@ namespace XAmpleManagedWrapper
 			return Marshal.PtrToStringAnsi(ret);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern IntPtr AmpleGetTraceString(IntPtr pSetupIo);
 
 		internal string AmpleGetTraceStringMarshaled(IntPtr pSetupIo)
@@ -181,7 +181,7 @@ namespace XAmpleManagedWrapper
 			return PtrToString(ret, Encoding.UTF8);
 		}
 
-		[DllImport("xample.dll")]
+		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		static internal extern int AmpleThreadId ();
 
 		static string PtrToString(IntPtr ptr, Encoding encoding)

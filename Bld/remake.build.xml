@@ -251,9 +251,11 @@
 			<fileset basedir="${fwroot}/DistFiles/">
 				<include name="Mercurial/**/*"/>
 				<include name="MercurialExtensions/**/*"/>
-				<include name="LiftBridge.dll" />
-				<include name="ChorusMerge.exe" />
-				<include name="ChorusPlus.dll" />
+				<include name="LiftBridge.*" />
+				<include name="ChorusMerge.*" />
+				<include name="Chorus.*" />
+				<include name="LibChorus.*" />
+				<include name="Autofac.dll" />
 				<include name="about.htm" />
 				<include name="LogoForAbout.png" />
 			</fileset>

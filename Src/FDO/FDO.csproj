@@ -72,6 +72,7 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
@@ -95,6 +96,7 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils">
@@ -175,18 +177,14 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\DistFiles\StructureMapAdapter.dll</HintPath>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Runtime.Remoting" />
 	<Reference Include="System.Runtime.Serialization">
 	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
 	</Reference>
 	<Reference Include="System.ServiceProcess" />
 	<Reference Include="System.Web" />
-	<Reference Include="System.Xml.Linq">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="COMInterfaces">
 	  <Name>COMInterfaces</Name>
 	  <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
@@ -339,6 +337,7 @@
 	<Compile Include="DomainServices\DataMigration\DataMigration7000044.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000051.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000052.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000056.cs" />
 	<Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
 	<Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
 	  <SubType>Form</SubType>
@@ -616,7 +615,9 @@
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Strings.Designer.cs</LastGenOutput>
 	</EmbeddedResource>
-	<None Include="FDOGenerate\HandGenerated.xml" />
+	<None Include="FDOGenerate\HandGenerated.xml">
+	  <SubType>Designer</SubType>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<None Include="FDOGenerate\IntPropTypeOverrides.xml" />

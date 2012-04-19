@@ -16,7 +16,7 @@
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<SccProjectName>SAK</SccProjectName>
 	<SccLocalPath>SAK</SccLocalPath>
 	<SccAuxPath>SAK</SccAuxPath>
@@ -35,6 +35,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -60,7 +61,8 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.1.28484, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -100,9 +102,7 @@
 	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data" />
 	<Reference Include="System.Xml" />
 	<Reference Include="nunit.framework">

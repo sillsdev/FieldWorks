@@ -44,6 +44,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				lp.MorphologicalDataOA.ProdRestrictOA = servLoc.GetInstance<ICmPossibilityListFactory>().Create();
 				lp.MorphologicalDataOA.ProdRestrictOA.ItemClsid = CmPossibilityTags.kClassId;
 
+				lp.PhonologicalDataOA.PhonRuleFeatsOA = servLoc.GetInstance<ICmPossibilityListFactory>().Create();
+				lp.PhonologicalDataOA.PhonRuleFeatsOA.ItemClsid = PhPhonRuleFeatTags.kClassId;
+
 				lp.ResearchNotebookOA = servLoc.GetInstance<IRnResearchNbkFactory>().Create();
 
 				InitializeLexDb(lp);

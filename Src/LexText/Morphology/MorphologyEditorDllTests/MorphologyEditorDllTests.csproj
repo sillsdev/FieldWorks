@@ -19,7 +19,8 @@
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -42,7 +43,8 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.3.0.14154, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -92,9 +94,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />

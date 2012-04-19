@@ -42,6 +42,7 @@ Preamble
 	<xsl:key name="PhEnvironmentsID" match="//PhEnvironment" use="@Id"/>
 	<xsl:key name="PhFeatureConstraintsID" match="//PhFeatureConstraint" use="@Id"/>
 	<xsl:key name="PhonemesID" match="//PhPhoneme" use="@Id"/>
+	<xsl:key name="PhonRuleFeatsID" match="//PhonRuleFeat" use="@Id"/>
 	<xsl:key name="SensesID" match="//LexSense" use="@Id"/>
 	<xsl:key name="SensesMsa" match="//LexSense" use="@Msa"/>
 	<xsl:key name="SlotsID" match="//MoInflAffixSlot" use="@Id"/>
@@ -447,9 +448,9 @@ Main template
 					<xsl:variable name="iSubcats" select="count($POSes/PartOfSpeech)"/>
 					<xsl:value-of select="count($POSes) - $iSubcats"/>
 					<xsl:if test="$iSubcats > 0">
-						<xsl:text> major </xsl:text>
+						<xsl:text> major</xsl:text>
 					</xsl:if>
-					<xsl:text>syntactic categories for words.  </xsl:text>
+					<xsl:text> syntactic categories for words.  </xsl:text>
 					<xsl:if test="$iSubcats > 0">
 						<xsl:text>Some of these in turn have subcategories. </xsl:text>
 					</xsl:if>
@@ -1551,7 +1552,7 @@ Main template
 										<xsl:text> shown in the following table.  </xsl:text>
 										<xsl:if test="SubPossibilities">
 											<xsl:call-template name="OutputListOfSubcategories">
-												<xsl:with-param name="sText">
+												<xsl:with-param name="sText1">
 													<xsl:text>  Any stem names shown here are valid for not only the </xsl:text>
 												</xsl:with-param>
 												<xsl:with-param name="pos" select="."/>
@@ -1805,6 +1806,47 @@ Main template
 										<xsl:text>has simultaneous application.</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
+								<xsl:variable name="requiredCategories" select="RightHandSides/PhSegRuleRHS/InputPOSes/RequiredPOS"/>
+								<xsl:variable name="requiredRuleFeats" select="RightHandSides/PhSegRuleRHS/ReqRuleFeats/RuleFeat"/>
+								<xsl:variable name="excludedRuleFeats" select="RightHandSides/PhSegRuleRHS/ExclRuleFeats/RuleFeat"/>
+								<xsl:if test="$requiredCategories or $requiredRuleFeats or $excludedRuleFeats">
+									<xsl:text>  It also only applies </xsl:text>
+									<xsl:if test="$requiredCategories">
+										<xsl:text>when the category of the stem is </xsl:text>
+									   <xsl:call-template name="OutputPhonologicalRuleRequiredPOSes">
+										   <xsl:with-param name="requiredCategories" select="$requiredCategories"/>
+									   </xsl:call-template>
+									</xsl:if>
+									<xsl:if test="$requiredRuleFeats">
+										<xsl:if test="$requiredCategories">
+											<xsl:text>; </xsl:text>
+											<xsl:if test="not($excludedRuleFeats)">
+												<xsl:text>and </xsl:text>
+											</xsl:if>
+										</xsl:if>
+										<xsl:text>when the stem has all of the following properties: </xsl:text>
+										<xsl:for-each select="$requiredRuleFeats">
+											<xsl:value-of select="key('PhonRuleFeatsID', @dst)/Name"/>
+											<xsl:call-template name="OutputListPunctuation">
+												<xsl:with-param name="sFinalPunctuation" select="''"/>
+											</xsl:call-template>
+										</xsl:for-each>
+									</xsl:if>
+									<xsl:if test="$excludedRuleFeats">
+										<xsl:if test="$requiredCategories or $requiredRuleFeats">
+											<xsl:text>; and </xsl:text>
+										</xsl:if>
+										<xsl:text>when the stem has none of the following properties: </xsl:text>
+										<xsl:for-each select="$excludedRuleFeats">
+											<xsl:value-of select="key('PhonRuleFeatsID', @dst)/Name"/>
+											<xsl:call-template name="OutputListPunctuation">
+												<xsl:with-param name="sConjunction" select="' or '"/>
+												<xsl:with-param name="sFinalPunctuation" select="''"/>
+											</xsl:call-template>
+										</xsl:for-each>
+									</xsl:if>
+									<xsl:text>.  </xsl:text>
+								 </xsl:if>
 							</p>
 						</section2>
 					</xsl:for-each>
@@ -2443,6 +2485,71 @@ Main template
 			</languages>
 			<xsl:call-template name="DoTypes"/>
 		</lingPaper>
+	</xsl:template>
+	<xsl:template name="OutputPhonologicalRuleRequiredPOSes">
+		<xsl:param name="requiredCategories"/>
+		<xsl:for-each select="key('POSID',$requiredCategories/@dst)">
+			<xsl:if test="position()=last() and count($requiredCategories) &gt; 1">
+				<xsl:text>or </xsl:text>
+			</xsl:if>
+			<genericRef>
+				<xsl:attribute name="gref">
+					<xsl:text>sCat.</xsl:text>
+					<xsl:value-of select="@Id"/>
+				</xsl:attribute>
+				<xsl:value-of select="Name"/>
+			</genericRef>
+			<xsl:variable name="subcats">
+				<xsl:call-template name="GetAnyNestedCategoriesForListing">
+					<xsl:with-param name="pos" select="."/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="function-available('saxon:node-set')">
+					<xsl:if test="saxon:node-set($subcats)/subcat">
+						<xsl:text> or its </xsl:text>
+						<xsl:choose>
+							<xsl:when test="saxon:node-set($subcats)[count(subcat) &gt; 1]">subcategories: </xsl:when>
+							<xsl:otherwise>subcategory </xsl:otherwise>
+						</xsl:choose>
+						<xsl:for-each select="saxon:node-set($subcats)/subcat">
+							<xsl:sort select="name"/>
+							<xsl:call-template name="OutputSubcategoryNameAsList">
+								<xsl:with-param name="sConjunction" select="' or '"/>
+								<xsl:with-param name="sFinalPunctuation" select="''"/>
+							</xsl:call-template>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test="msxslt:node-set($subcats)/subcat">
+						<xsl:text> or  its </xsl:text>
+						<xsl:choose>
+							<xsl:when test="msxslt:node-set($subcats)[count(subcat) &gt; 1]">subcategories: </xsl:when>
+							<xsl:otherwise>subcategory </xsl:otherwise>
+						</xsl:choose>
+						<xsl:for-each select="msxslt:node-set($subcats)/subcat">
+							<xsl:sort select="name"/>
+							<xsl:call-template name="OutputSubcategoryNameAsList">
+								<xsl:with-param name="sConjunction" select="' or '"/>
+								<xsl:with-param name="sFinalPunctuation" select="''"/>
+							</xsl:call-template>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:if test="position()!=last()">
+				<xsl:choose>
+					<xsl:when test="count($requiredCategories) &gt; 2">
+						<xsl:text>, </xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>&#x20;</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:if>
+		</xsl:for-each>
+
 	</xsl:template>
 	<xsl:template name="OutputPhonemeCount">
 		<xsl:param name="sLangName"/>
@@ -4662,7 +4769,7 @@ OutputInflectionalAffixTemplate
 			</xsl:choose>
 			<xsl:if test="../../PartOfSpeech">
 				<xsl:call-template name="OutputListOfSubcategories">
-					<xsl:with-param name="sText">
+					<xsl:with-param name="sText1">
 						<xsl:text>  This template is valid for not only the </xsl:text>
 					</xsl:with-param>
 					<xsl:with-param name="pos" select="../.."/>
@@ -4834,15 +4941,18 @@ OutputListPunctuation
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputListPunctuation">
+		<xsl:param name="sConjunction" select="' and '"/>
+		<xsl:param name="sFinalPunctuation" select="'.'"/>
 		<xsl:choose>
 			<xsl:when test="position()='1' and position()=last()-1">
-				<xsl:text> and </xsl:text>
+				<xsl:value-of select="$sConjunction"/>
 			</xsl:when>
 			<xsl:when test="position()=last()-1">
-				<xsl:text>, and </xsl:text>
+				<xsl:text>,</xsl:text>
+				<xsl:value-of select="$sConjunction"/>
 			</xsl:when>
 			<xsl:when test="position()=last()">
-				<xsl:text>.</xsl:text>
+				<xsl:value-of select="$sFinalPunctuation"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>, </xsl:text>
@@ -5164,7 +5274,10 @@ OutputListOfSubcategories
 -->
 	<xsl:template name="OutputListOfSubcategories">
 		<xsl:param name="pos" select="."/>
-		<xsl:param name="sText"/>
+		<xsl:param name="sText1"/>
+		<xsl:param name="sText2" select="' category, but also '"/>
+		<xsl:param name="sText3plural" select="'all of its subcategories: '"/>
+		<xsl:param name="sText3singular" select="'its subcategory: '"/>
 		<xsl:variable name="subcatItems">
 			<xsl:call-template name="GetAnyNestedCategoriesForListing">
 				<xsl:with-param name="pos" select="$pos"/>
@@ -5183,7 +5296,7 @@ OutputListOfSubcategories
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:value-of select="$sText"/>
+		<xsl:value-of select="$sText1"/>
 		<genericRef>
 			<xsl:attribute name="gref">
 				<xsl:text>sCat.</xsl:text>
@@ -5191,13 +5304,13 @@ OutputListOfSubcategories
 			</xsl:attribute>
 			<xsl:value-of select="$pos/Name"/>
 		</genericRef>
-		<xsl:text> category, but also </xsl:text>
+		<xsl:value-of select="$sText2"/>
 		<xsl:choose>
 			<xsl:when test="$iSubcatCount > 1">
-				<xsl:text>all of its subcategories: </xsl:text>
+				<xsl:value-of select="$sText3plural"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>its subcategory: </xsl:text>
+				<xsl:value-of select="$sText3singular"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:call-template name="HandleOutputtingListOfSubcatNames">
@@ -5674,6 +5787,8 @@ OutputSlotsAndFillersForPOS
 						- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					-->
 	<xsl:template name="OutputSubcategoryNameAsList">
+		<xsl:param name="sConjunction" select="' and '"/>
+		<xsl:param name="sFinalPunctuation" select="'.'"/>
 		<genericRef>
 			<xsl:attribute name="gref">
 				<xsl:text>sCat.</xsl:text>
@@ -5681,7 +5796,10 @@ OutputSlotsAndFillersForPOS
 			</xsl:attribute>
 			<xsl:value-of select="name"/>
 		</genericRef>
-		<xsl:call-template name="OutputListPunctuation"/>
+		<xsl:call-template name="OutputListPunctuation">
+			<xsl:with-param name="sConjunction" select="$sConjunction"/>
+			<xsl:with-param name="sFinalPunctuation" select="$sFinalPunctuation"/>
+		</xsl:call-template>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6695,7 +6813,7 @@ ProcessSlotName
 			<xsl:variable name="bOptional">
 				<xsl:value-of select="$Slot/@Optional"/>
 			</xsl:variable>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>(</xsl:text>
 			</xsl:if>
 			<genericRef>
@@ -6709,7 +6827,7 @@ ProcessSlotName
 					</xsl:with-param>
 				</xsl:call-template>
 			</genericRef>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>)</xsl:text>
 			</xsl:if>
 		</th>

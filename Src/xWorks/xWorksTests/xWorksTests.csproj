@@ -83,7 +83,8 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Reference Include="COMInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
 	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
@@ -112,6 +113,10 @@
 	<Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
+	<Reference Include="NMock, Version=1.0.4428.35173, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\NMock.dll</HintPath>
+	</Reference>
 	<Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
 	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
@@ -123,9 +128,7 @@
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
@@ -171,9 +174,6 @@
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="NMock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Bin\nmock\NMock.dll</HintPath>
 	</Reference>
 	<Reference Include="ScrUtilsInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
 	  <SpecificVersion>False</SpecificVersion>

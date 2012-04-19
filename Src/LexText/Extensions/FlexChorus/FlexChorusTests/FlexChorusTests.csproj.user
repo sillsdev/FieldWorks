@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<StartAction>Program</StartAction>
 	<StartProgram>C:\FW_6.0\Bin\NUnit\bin\nunit.exe</StartProgram>
@@ -10,5 +11,15 @@
 	<StartProgram>C:\FW_6.0\Bin\NUnit\bin\nunit.exe</StartProgram>
 	<StartWorkingDirectory>C:\FW_6.0\Output\Debug\</StartWorkingDirectory>
 	<StartArguments>C:\FW_6.0\Output\Debug\FlexChorusTests.dll</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup>
+	<PublishUrlHistory />
+	<InstallUrlHistory />
+	<SupportUrlHistory />
+	<UpdateUrlHistory />
+	<BootstrapperUrlHistory />
+	<ErrorReportUrlHistory />
+	<FallbackCulture>en-US</FallbackCulture>
+	<VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
 </Project>

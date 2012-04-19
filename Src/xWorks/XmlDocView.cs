@@ -239,16 +239,27 @@ namespace SIL.FieldWorks.XWorks
 			return sda as DictionaryPublicationDecorator;
 		}
 
+		// Return CmPossibility if any alternative matches SelectedPublication or first one.
 		ICmPossibility Publication
 		{
 			get
 			{
 				var pubName = GetSelectedPublication();
 				var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					where item.Name.UserDefaultWritingSystem.Text == pubName
-					select item).FirstOrDefault();
-				return pub;
+					where IsDesiredPublication(item, pubName)
+						   select item).FirstOrDefault();
+				return pub != null ? pub : Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 			}
+		}
+
+		private bool IsDesiredPublication(ICmPossibility item, string name)
+		{
+			foreach (var ws in item.Name.AvailableWritingSystemIds)
+			{
+				if (item.Name.get_String(ws).Text == name)
+					return true;
+			}
+			return false;
 		}
 
 		private string GetSelectedConfigView()

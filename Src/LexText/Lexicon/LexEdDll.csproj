@@ -47,7 +47,8 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -71,6 +72,7 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
@@ -94,6 +96,7 @@
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
@@ -178,6 +181,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\MorphologyEditorDll.dll</HintPath>
 	</Reference>
+	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
+	</Reference>
 	<Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Palaso.Lift.dll</HintPath>
@@ -214,9 +221,7 @@
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
@@ -229,9 +234,7 @@
 	<Reference Include="System.Xml">
 	  <Name>System.XML</Name>
 	</Reference>
-	<Reference Include="System.Xml.Linq">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="Widgets">
 	  <Name>Widgets</Name>
 	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
@@ -261,21 +264,15 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GhostLexRefSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="GhostLexRefSlice.cs" />
 	<Compile Include="CreateReversalIndexDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="CreateReversalIndexDlg.Designer.cs">
 	  <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
 	</Compile>
-	<Compile Include="EntrySequenceReferenceLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="EntrySequenceReferenceSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="EntrySequenceReferenceLauncher.cs" />
+	<Compile Include="EntrySequenceReferenceSlice.cs" />
 	<Compile Include="FindExampleSentenceDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -302,97 +299,43 @@
 	<Compile Include="LexEntryMenuHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="LexReferenceCollectionLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceCollectionSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceCollectionView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceMultiSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferencePairLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferencePairSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferencePairView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceSequenceLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceSequenceSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceSequenceView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeBranchesLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeBranchesSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeBranchesView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeRootLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeRootSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LexReferenceTreeRootView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="LexReferenceCollectionLauncher.cs" />
+	<Compile Include="LexReferenceCollectionSlice.cs" />
+	<Compile Include="LexReferenceCollectionView.cs" />
+	<Compile Include="LexReferenceMultiSlice.cs" />
+	<Compile Include="LexReferencePairLauncher.cs" />
+	<Compile Include="LexReferencePairSlice.cs" />
+	<Compile Include="LexReferencePairView.cs" />
+	<Compile Include="LexReferenceSequenceLauncher.cs" />
+	<Compile Include="LexReferenceSequenceSlice.cs" />
+	<Compile Include="LexReferenceSequenceView.cs" />
+	<Compile Include="LexReferenceTreeBranchesLauncher.cs" />
+	<Compile Include="LexReferenceTreeBranchesSlice.cs" />
+	<Compile Include="LexReferenceTreeBranchesView.cs" />
+	<Compile Include="LexReferenceTreeRootLauncher.cs" />
+	<Compile Include="LexReferenceTreeRootSlice.cs" />
+	<Compile Include="LexReferenceTreeRootView.cs" />
 	<Compile Include="LiftBridgeListener.cs" />
-	<Compile Include="MSADlgLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="MSADlgLauncherSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="MSADlgLauncher.cs" />
+	<Compile Include="MSADlgLauncherSlice.cs" />
 	<Compile Include="MSADlglauncherView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="MsaInflectionFeatureListDlgLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="MsaInflectionFeatureListDlgLauncherSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="MsaInflectionFeatureListDlgLauncher.cs" />
+	<Compile Include="MsaInflectionFeatureListDlgLauncherSlice.cs" />
 	<Compile Include="MsaInflectionFeatureListDlgLauncherView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="PhonologicalFeatureListDlgLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="PhonologicalFeatureListDlgLauncherSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="PhonologicalFeatureListDlgLauncher.cs" />
+	<Compile Include="PhonologicalFeatureListDlgLauncherSlice.cs" />
 	<Compile Include="PhonologicalFeatureListDlgLauncherView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="RecordReferenceVectorLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="RecordReferenceVectorSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="RevEntrySensesCollectionReferenceLauncher.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="RevEntrySensesCollectionReferenceSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="RevEntrySensesCollectionReferenceView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="RecordReferenceVectorLauncher.cs" />
+	<Compile Include="RecordReferenceVectorSlice.cs" />
+	<Compile Include="RevEntrySensesCollectionReferenceLauncher.cs" />
+	<Compile Include="RevEntrySensesCollectionReferenceSlice.cs" />
+	<Compile Include="RevEntrySensesCollectionReferenceView.cs" />
 	<Compile Include="ReversalEntryBulkEdit.cs" />
 	<Compile Include="ReversalEntryGoDlg.cs">
 	  <SubType>Form</SubType>
@@ -401,21 +344,15 @@
 	<Compile Include="ReversalIndexEntryChangeHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="ReversalIndexEntryFormSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="ReversalIndexEntryFormSlice.cs" />
 	<Compile Include="ReversalIndexEntryMenuHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="ReversalIndexEntrySlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="ReversalIndexEntrySlice.cs" />
 	<Compile Include="ReversalListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="RoledParticipantsSlice.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="RoledParticipantsSlice.cs" />
 	<Compile Include="SwapLexemeWithAllomorphDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>

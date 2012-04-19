@@ -18,6 +18,7 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -164,7 +165,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#region IVwNotifyChange methods
-		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
 
@@ -194,7 +195,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_cb.GotFocus += m_cb_GotFocus;
 		}
 
-		public virtual void OnChanged(Object obj, EventArgs args)
+		public void OnChanged(Object obj, EventArgs args)
 		{
 			CheckDisposed();
 			if (!Object.IsValidObject) return;
@@ -277,12 +278,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			: base(cache, obj, flid, node)
 		{
 		}
-		public override void OnChanged(Object obj, EventArgs args)
+
+		private void RefreshDisplay()
 		{
 			CheckDisposed();
-			if (!Object.IsValidObject) return;
-
-			base.OnChanged(obj, args);
 			var dt = ContainingDataTree;
 			var result = dt.RefreshDisplay();
 			if (result)
@@ -290,6 +289,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				dt.RefreshList(true);
 			}
 		}
+
+		#region IVwNotifyChange methods
+		// We use PropChanged instead of OnChanged so that the BrowseActiveViewer can tell us when
+		// a select column item has been changed.
+		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			CheckDisposed();
+
+			if (tag == PhSegmentRuleTags.kflidDisabled ||
+				tag == MoCompoundRuleTags.kflidDisabled ||
+				tag == MoAdhocProhibTags.kflidDisabled)
+			{
+				UpdateDisplayFromDatabase();
+				RefreshDisplay();
+			}
+		}
+		#endregion
 	}
 
 	/// <summary>

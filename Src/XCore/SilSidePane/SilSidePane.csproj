@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,12 +10,32 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.SilSidePane</RootNamespace>
 	<AssemblyName>SilSidePane</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<SccProjectName>SAK</SccProjectName>
 	<SccLocalPath>SAK</SccLocalPath>
 	<SccAuxPath>SAK</SccAuxPath>
 	<SccProvider>SAK</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<UpgradeBackupLocation />
+	<TargetFrameworkProfile />
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -29,7 +49,9 @@
 	<DocumentationFile>
 	</DocumentationFile>
 	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-  </PropertyGroup>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -37,7 +59,9 @@
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
+</PropertyGroup>
   <ItemGroup>
 	<Compile Include="Banner.cs">
 	  <SubType>Component</SubType>
@@ -77,6 +101,7 @@
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <SubType>Designer</SubType>
 	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
 	</EmbeddedResource>
 	<EmbeddedResource Include="SilSidePane.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
@@ -84,6 +109,7 @@
 	</EmbeddedResource>
 	<None Include="Properties\Settings.settings">
 	  <Generator>SettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
 	</None>
 	<None Include="Resources\Arrow_Down.ico" />
 	<None Include="Resources\Arrow_Up.ico" />
@@ -95,7 +121,17 @@
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="Properties\Resources1.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
 	<Compile Include="Properties\Settings.Designer.cs">
+	  <DependentUpon>Settings.settings</DependentUpon>
+	</Compile>
+	<Compile Include="Properties\Settings1.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	  <DependentUpon>Settings.settings</DependentUpon>
 	</Compile>
 	<Compile Include="SidePane.cs">
@@ -148,9 +184,7 @@
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="xCore, Version=6.9.0.35481, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
@@ -163,5 +197,22 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
 	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+	  <Visible>False</Visible>
+	  <ProductName>Windows Installer 3.1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
   </ItemGroup>
 </Project>

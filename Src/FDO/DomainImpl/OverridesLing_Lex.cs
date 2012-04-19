@@ -3299,6 +3299,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Collect the referring FsFeatureSpecification objects (already done), plus any of
+		/// their owners which would then be empty.  Then delete them.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			base.RemoveObjectSideEffectsInternal(e);
+			if (e.Flid == PartOfSpeechTags.kflidInflectionClasses)
+			{
+				Cache.LangProject.PhonologicalDataOA.RemovePhonRuleFeat(e.ObjectRemoved);
+			}
+		}
+
+		/// <summary>
 		/// Determine if the POS or any of its super POSes require inflection (i.e. have an inflectional template)
 		/// </summary>
 		/// <returns>true if so; false otherwise</returns>
@@ -5588,6 +5602,95 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return clAbbrs;
 		}
+
+		/// <summary>
+		/// Get (create if necessary, in a non-undoable UOW if necessary) PublicationTypesOA in the default state.
+		/// </summary>
+/*
+		[ModelProperty(CellarPropertyType.OwningAtomic, PhPhonDataTags.kflidPhonRuleFeats, "CmPossibilityList")]
+		public ICmPossibilityList PhonRuleFeatsOA
+		{
+			get
+			{
+				if (PhonRuleFeatsOA_Generated != null)
+					return PhonRuleFeatsOA_Generated;
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
+					() =>
+					{
+						m_PhonRuleFeatsOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+						var prf = m_PhonRuleFeatsOA as ICmPossibilityList;
+						var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+						// Note: we don't need to localize here because we are deliberately creating a minimal English
+						// version of the list.
+						prf.Name.set_String(wsEn, "Phonological Rule Features");
+
+						// The following are not explicitly tested.
+						prf.ItemClsid = CmPossibilityTags.kClassId;
+						prf.Depth = 1;
+						prf.IsSorted = true;
+						prf.PreventChoiceAboveLevel = 0;
+					}
+					);
+				return PhonRuleFeatsOA_Generated;
+			}
+			set { PhonRuleFeatsOA_Generated = value; }
+		}
+*/
+
+		public void RebuildPhonRuleFeats(IEnumerable<ICmObject> members)
+		{
+			var phonRuleFeats = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA;
+			var currentItems = new List<ICmObject>();
+			if (phonRuleFeats.PossibilitiesOS.Count > 0)
+			{
+				foreach (var phonRuleFeat in phonRuleFeats.PossibilitiesOS)
+				{
+					var prf = phonRuleFeat as IPhPhonRuleFeat;
+					if (prf.ItemRA == null)
+						phonRuleFeats.PossibilitiesOS.Remove(prf);
+					else
+					{
+						currentItems.Add(prf.ItemRA);
+						// need to set name in case user changed it
+						var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+						prf.Name.set_String(wsBestAnalysis, prf.ItemRA.ShortNameTSS);
+						prf.Abbreviation.set_String(wsBestAnalysis, prf.ItemRA.ShortNameTSS);
+					}
+				}
+			}
+			foreach (var member in members)
+			{
+				IPhPhonRuleFeat prf;
+				if (!currentItems.Any() || !currentItems.Contains(member))
+				{
+					prf = Cache.ServiceLocator.GetInstance<IPhPhonRuleFeatFactory>().Create();
+					phonRuleFeats.PossibilitiesOS.Add(prf);
+					prf.ItemRA = member;
+					var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+					prf.Name.set_String(wsBestAnalysis, member.ShortNameTSS);
+					prf.Abbreviation.set_String(wsBestAnalysis, member.ShortNameTSS);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Remove any matching items from the PhonRuleFeats list
+		/// </summary>
+		/// <param name="obj">Object being removed</param>
+		public void RemovePhonRuleFeat(ICmObject obj)
+		{
+			var phonRuleFeatList = PhonRuleFeatsOA;
+			if (phonRuleFeatList != null)
+			{
+				var phonRuleFeats = phonRuleFeatList.PossibilitiesOS.Cast<IPhPhonRuleFeat>();
+				if (phonRuleFeats != null && phonRuleFeats.Count() > 0)
+				{
+					var phonRuleFeat = phonRuleFeats.First(prf => prf.ItemRA == obj);
+					phonRuleFeatList.PossibilitiesOS.Remove(phonRuleFeat);
+				}
+			}
+
+		}
 	}
 
 	/// <summary>
@@ -6092,6 +6195,56 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public IPhRegularRule OwningRule
 		{
 			get { return OwnerOfClass<IPhRegularRule>(); }
+		}
+		/// <summary>
+		/// Get a set of hvos that are suitable for targets to a reference property.
+		/// Subclasses should override this method to return a sensible list of IDs.
+		/// </summary>
+		/// <param name="flid">The reference property that can store the IDs.</param>
+		/// <returns>A set of hvos.</returns>
+		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+		{
+			switch (flid)
+			{
+				case PhSegRuleRHSTags.kflidInputPOSes:
+					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Cast<ICmObject>();
+				case PhSegRuleRHSTags.kflidReqRuleFeats: // fall through
+				case PhSegRuleRHSTags.kflidExclRuleFeats:
+					// need to get inflection classes and exception "features"
+					var result = new List<ICmObject>();
+					var poses = Cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities;
+					foreach (var possibility in poses)
+					{
+						var pos = possibility as IPartOfSpeech;
+						CollectInflectionClassesAndSubclasses(result, pos.AllInflectionClasses);
+					}
+					var prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+					result.AddRange(prodRestricts);
+					// in an effort to save the user from having to define these items redunantly, we maintain it dynamically here
+					NonUndoableUnitOfWorkHelper.
+						Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(),
+						   () =>
+							{
+								Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+							});
+					var newresult = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA.PossibilitiesOS.Cast<ICmObject>();
+					return newresult;
+				default:
+					return base.ReferenceTargetCandidates(flid);
+			}
+		}
+
+		private void CollectInflectionClassesAndSubclasses(List<ICmObject> result, IEnumerable<IMoInflClass> classes)
+		{
+			foreach (var ic in classes)
+			{
+				if (!result.Contains(ic))
+					result.Add(ic);
+				if (ic.SubclassesOC != null && ic.SubclassesOC.Count > 0)
+				{
+					CollectInflectionClassesAndSubclasses(result, ic.SubclassesOC);
+				}
+			}
 		}
 	}
 

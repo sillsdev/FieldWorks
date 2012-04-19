@@ -17,7 +17,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Linq;
@@ -29,7 +28,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

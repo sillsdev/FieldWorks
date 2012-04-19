@@ -59,7 +59,7 @@
 	<layout class="MoStemAllomorph" type="detail" name="Normal">
 		<part ref="FormAllV" label="Stem Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
 			<indent>
-				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
+				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 				<part ref="MorphType"/>
 				<part ref="PhoneEnv"/>
 				<part ref="StemName" visibility="ifdata"/>
@@ -558,6 +558,9 @@
 		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
 		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
 		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="RequiredPOSes" menu="mnuDataTree-Help"/>
+		<part ref="RequiredRuleFeats" menu="mnuDataTree-Help"/>
+		<part ref="ExcludedRuleFeats" menu="mnuDataTree-Help"/>
 		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>
@@ -568,6 +571,25 @@
 
 	<layout class="PhSegRuleRHS" type="detail" name="Edit">
 		<part ref="RuleFormula"/>
+	</layout>
+
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredPOSes">
+		<part ref="RequiredPOSes"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredPOSesDisabled">
+		<part ref="RequiredPOSesDisabled"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredRuleFeats">
+		<part ref="RequiredRuleFeats"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="RequiredRuleFeatsDisabled">
+		<part ref="RequiredRuleFeatsDisabled"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="ExcludedRuleFeats">
+		<part ref="ExcludedRuleFeats"/>
+	</layout>
+	<layout class="PhSegRuleRHS" type="detail" name="ExcludedRuleFeatsDisabled">
+		<part ref="ExcludedRuleFeatsDisabled"/>
 	</layout>
 
 	<layout class="PhMetathesisRule" type="detail" name="Edit">

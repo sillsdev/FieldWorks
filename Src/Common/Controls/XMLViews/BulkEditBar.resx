@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_operationLabel.AutoSize" type="System.Boolean, mscorlib">
@@ -156,9 +156,9 @@
   <data name="m_bulkEditIconButton.ImageIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <metadata name="m_imageList16x16.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="m_imageList16x16.TrayLocation" type="System.Drawing.Point, System.Drawing">
 	<value>169, 17</value>
-  </metadata>
+  </data>
   <data name="m_imageList16x16.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
 	<value>
 		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
@@ -1049,9 +1049,6 @@
   <data name="m_findReplaceSummaryLabel.TabIndex" type="System.Int32, mscorlib">
 	<value>17</value>
   </data>
-  <data name="m_findReplaceSummaryLabel.Text" xml:space="preserve">
-	<value>Replace o: with oo</value>
-  </data>
   <data name="&gt;&gt;m_findReplaceSummaryLabel.Name" xml:space="preserve">
 	<value>m_findReplaceSummaryLabel</value>
   </data>
@@ -1262,9 +1259,9 @@
   <data name="&gt;&gt;m_operationsTabControl.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <metadata name="m_imageList16x14.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="m_imageList16x14.TrayLocation" type="System.Drawing.Point, System.Drawing">
 	<value>17, 17</value>
-  </metadata>
+  </data>
   <data name="m_imageList16x14.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
 	<value>
 		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
@@ -1375,9 +1372,9 @@
   <data name="&gt;&gt;m_ApplyButton.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
 	<value>True</value>
-  </metadata>
+  </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
 	<value>744, 171</value>
   </data>
@@ -1398,5 +1395,8 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
 	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.Text" xml:space="preserve">
+	<value />
   </data>
 </root>

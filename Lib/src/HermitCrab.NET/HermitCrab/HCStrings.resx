@@ -306,4 +306,13 @@
   <data name="kstidUnknownAllo" xml:space="preserve">
 	<value>Unknown allomorph '{0}'.</value>
   </data>
+  <data name="kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures" xml:space="preserve">
+	<value>Phonological Rule Synthesis Excluded MPR features found [Stem MPR features: {0}, Excluded MPR features: {1}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures" xml:space="preserve">
+	<value>Phonological Rule Synthesis Required MPR features missing [Stem MPR features: {0}, Required MPR features: {1}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleSynthesisRequiredPOS" xml:space="preserve">
+	<value>Phonological Rule Synthesis Required POS missing [Stem POS: {0}, Required POSes: {1}]</value>
+  </data>
 </root>

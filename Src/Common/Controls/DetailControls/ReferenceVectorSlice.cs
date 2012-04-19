@@ -317,8 +317,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	}
 	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
 	{
-		public ReferenceVectorDisabledSlice(Control control, FdoCache cache, ICmObject obj, int flid)
-			: base(control, cache, obj, flid)
+		public ReferenceVectorDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+			: base(cache, obj, flid)
 		{
 		}
 		public override void FinishInit()

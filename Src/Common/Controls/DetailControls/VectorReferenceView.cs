@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void SetupRoot()
 		{
 			m_VectorReferenceVc.Reuse(m_rootFlid, m_displayNameProperty, m_displayWs);
-			m_rootb.SetRootObject(m_rootObj == null ? 0 : m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, null);
+			m_rootb.SetRootObject(m_rootObj == null ? 0 : m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
 		}
 
 		protected virtual VectorReferenceVc CreateVectorReferenceVc()
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// We've selected the whole string for it, so remove the object from the
 					// vector.
-					var hvosOld = ((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid).VecProp(m_rootObj.Hvo, m_rootFlid);
+					var hvosOld = ((ISilDataAccessManaged)m_fdoCache.DomainDataByFlid).VecProp(m_rootObj.Hvo, m_rootFlid);
 					UpdateTimeStampsIfNeeded(hvosOld);
 					for (int i = 0; i < hvosOld.Length; ++i)
 					{
@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
-		public void Reuse( int flid, string displayNameProperty, string displayWs)
+		public void Reuse(int flid, string displayNameProperty, string displayWs)
 		{
 			m_flid = flid;
 			m_displayNameProperty = displayNameProperty;
@@ -673,10 +673,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 						//vwenv.AddString(m_cache.MakeUserTss("Click to select -->"));
 						if (hvo != 0)
-							vwenv.NoteDependency(new[] {hvo}, new[] {m_flid}, 1);
+							vwenv.NoteDependency(new[] { hvo }, new[] { m_flid }, 1);
 					}
 					else
 					{
+						if (!string.IsNullOrEmpty(TextStyle))
+						{
+							vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
+						}
 						vwenv.OpenParagraph();
 						vwenv.AddObjVec(m_flid, this, frag);
 						vwenv.CloseParagraph();
@@ -684,16 +688,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				case VectorReferenceView.kfragTargetObj:
 					// Display one object from the vector.
-				{
-					ILgWritingSystemFactory wsf =
-						m_cache.WritingSystemFactory;
+					{
+						ILgWritingSystemFactory wsf =
+							m_cache.WritingSystemFactory;
 
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-						(int)FwTextPropVar.ktpvDefault,
-						(int)TptEditable.ktptNotEditable);
-					ITsString tss;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
-					Debug.Assert(hvo != 0);
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
+							(int)FwTextPropVar.ktpvDefault,
+							(int)TptEditable.ktptNotEditable);
+						ITsString tss;
+						ITsStrFactory tsf = m_cache.TsStrFactory;
+						Debug.Assert(hvo != 0);
 #if USEBESTWS
 					if (m_displayWs != null && m_displayWs.StartsWith("best"))
 					{
@@ -706,7 +710,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 #endif
-					// Use reflection to get a prebuilt name if we can.  Otherwise
+						// Use reflection to get a prebuilt name if we can.  Otherwise
 						// settle for piecing together a string.
 						Debug.Assert(m_cache != null);
 						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
@@ -751,14 +755,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 #if USEBESTWS
 						}
 #endif
-					}
+						}
 						if (!string.IsNullOrEmpty(TextStyle))
 						{
 							vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
-
 						}
 						vwenv.AddString(tss);
-				}
+					}
 					break;
 				default:
 					throw new ArgumentException(

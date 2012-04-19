@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UserHelpFile" xml:space="preserve">
 	<value>\Helps\FieldWorks_Language_Explorer_Help.chm</value>
@@ -2856,5 +2856,21 @@
   </data>
   <data name="khtpBulkEditShowAsHeadwordIn" xml:space="preserve">
 	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpField-AdhocCoprohibEdit-Active" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Active_field_Ad_Hoc_Rules.htm</value>
+	<comment>Grammar - Ad-hoc Rules, hook up the Active field </comment>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-Active" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Active_field_Compound_Rules.htm</value>
+	<comment>Grammar - Compound Rules, hook up the Active field</comment>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-Active" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Active_field_(Ph_Rules).htm</value>
+	<comment>Grammar - Phonological Rules Active Slice:</comment>
+  </data>
+  <data name="khtpField-posEdit-MoInflAffixTemplate-Active" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Active_field_templates.htm</value>
+	<comment>Grammar - Category Edit, Active slice help topic </comment>
   </data>
 </root>

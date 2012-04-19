@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<languageproject version="7000052">
+<languageproject version="7000056">
 <rt class="CmPossibility" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
 <Abbreviation>
 <AUni ws="en">Evnt</AUni>
@@ -4321,6 +4321,9 @@
 <PhonemeSets>
 <objsur guid="be7fe79c-ea5e-11de-8151-0013722f8dec" t="o" />
 </PhonemeSets>
+<PhonRuleFeats>
+<objsur guid="e491e5d5-d569-41f2-a9c1-23c048d55d59" t="o" />
+</PhonRuleFeats>
 </rt>
 <rt class="PhPhonemeSet" guid="be7fe79c-ea5e-11de-8151-0013722f8dec" ownerguid="be765e3e-ea5e-11de-9d42-0013722f8dec">
 <BoundaryMarkers>
@@ -7647,6 +7650,27 @@
 <UnderStyle val="0" />
 <UserCanCreate val="False" />
 <ZeroWidth val="False" />
+</rt>
+<rt class="CmPossibilityList" guid="e491e5d5-d569-41f2-a9c1-23c048d55d59" ownerguid="be765e3e-ea5e-11de-9d42-0013722f8dec">
+<DateCreated val="2012-3-30 18:48:18.679" />
+<DateModified val="2012-3-30 18:48:18.679" />
+<Depth val="1" />
+<DisplayOption val="0" />
+<IsClosed val="False" />
+<IsSorted val="True" />
+<IsVernacular val="False" />
+<ItemClsid val="7" />
+<ListVersion val="00000000-0000-0000-0000-000000000000" />
+<Name>
+<AUni ws="en">Phonological Rule Features</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+<PreventChoiceAboveLevel val="0" />
+<PreventDuplicates val="False" />
+<PreventNodeChoices val="False" />
+<UseExtendedFields val="False" />
+<WsSelector val="0" />
 </rt>
 <rt class="CmPossibilityList" guid="ea346c01-022f-4f34-b938-219ce7b65b73" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
 <Abbreviation>

@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LiftBridgeCore;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using Palaso.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -77,8 +80,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string FullLiftBridgeDllPath()
 		{
-			var fullDllName = Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
-			return fullDllName;
+			return Path.Combine(DirectoryFinder.FWCodeDirectory, LiftBridgeDll);
 		}
 
 		/// <summary>
@@ -194,18 +196,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				//Output the Ranges file
 				//NOTE (RickM): outPath is passed in with the following kind of format with the .tmp at the end.
-				//If LiftBridge could be changed on the parameter is passes in to remove this .tmp at the end of
-				//the path/filename we could remove a few of the following lines of code.
-				//outPath = "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\lt11554\\lt11554.lift.tmp"
-				var path = Path.GetDirectoryName(outPath);
-				var projectName = Path.GetFileName(path);
-				var pathWithFilename = Path.Combine(path, projectName);
-				var outPathRanges = Path.ChangeExtension(pathWithFilename, "lift-ranges");
-				using (TextWriter w = new StreamWriter(outPathRanges))
+				//Because changing the service to add another parameter would be an interface breaking change
+				//we will continue to hack our way around here but Assert that .lift.tmp will always be the file name.
+				//For an outPath = "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift.tmp"
+				//ranges should be "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift-ranges"
+				Debug.Assert(outPath.EndsWith(@".lift.tmp"), @"Unexpected argument format from LiftBridge.");
+				if(!outPath.EndsWith(@".lift.tmp"))
+					return null; //The liftbridge behavior has changed, we need to change also.
+				var pathWithFilename = outPath.Substring(0, outPath.Length - @".lift.tmp".Length);
+				var outPathRanges = Path.ChangeExtension(pathWithFilename, @"lift-ranges");
+				var stringWriter = new StringWriter(new StringBuilder());
+				exporter.ExportLiftRanges(stringWriter);
+				using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
 				{
-					exporter.ExportLiftRanges(w);
+					var doc = new XmlDocument();
+					doc.LoadXml(stringWriter.ToString());
+					doc.WriteContentTo(xmlWriter);
 				}
-
 				// At least for now, we won't bother with validation for LiftBridge.
 				//progressDialog.Message = String.Format("Validating LIFT file {0}.",
 				//        Path.GetFileName(outPath));
