@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -80,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (!string.IsNullOrEmpty(url))
 			{
 				// TODO: Jump to url
-				var args = new LocalLinkArgs() {Link = url};
+				var args = new Common.RootSites.LocalLinkArgs {Link = url};
 				if (_mediator != null)
 				{
 					_mediator.SendMessage("HandleLocalHotlink", args);
@@ -108,6 +109,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnFLExBridge(object commandObject)
 		{
+			if (IsDb4oProject)
+			{
+				MessageBox.Show(LexTextStrings.ksDb4oProjectNotShareableDlgText, LexTextStrings.ksDb4oProjectNotShareableTitle, MessageBoxButtons.OK);
+				return true;
+			}
 			//Unlock project
 			string url;
 			ProjectLockingService.UnlockCurrentProject(Cache);
@@ -139,6 +145,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			return true;
 		}
+
+		protected bool IsDb4oProject
+		{
+			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
+		}
+
 		#region Implementation of IDisposable
 
 		private bool DetectConflicts(string path, Dictionary<string, long> savedState)
