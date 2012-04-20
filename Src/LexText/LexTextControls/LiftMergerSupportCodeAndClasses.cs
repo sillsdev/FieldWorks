@@ -2724,8 +2724,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
-					StoreTreeRelation(lrt, rgRelation,
-						ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt));
+					StoreTreeRelation(lrt, rgRelation);
 					break;
 			}
 		}
@@ -2956,17 +2955,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private bool IsMember(int[] targets, int hvo)
-		{
-			for (int i = targets.Length - 1; i >= 0; i--)
-			{
-				if (targets[i] == hvo)
-					return true;
-			}
-			return false;
-
-		}
-
 		private void StoreSequenceRelation(ILexRefType lrt, List<
 			PendingRelation> rgRelation)
 		{
@@ -3000,13 +2988,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation,
-			bool fFirst)
+		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			if (fFirst)
+			if (TreeRelationAlreadyExists(lrt, rgRelation))
 			{
-				if (TreeRelationAlreadyExists(lrt, rgRelation))
-					return;
+				return;
+			}
+			if(ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt))
+			{
 				ILexReference lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
 				lr.TargetsRS.Add(rgRelation[0].CmObject);
@@ -3016,11 +3005,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				for (int i = 0; i < rgRelation.Count; ++i)
+				foreach (var pendingRelation in rgRelation)
 				{
-					if (TreeRelationAlreadyExists(lrt, rgRelation[i]))
-						continue;
-					m_rgPendingTreeTargets.Add(rgRelation[i]);
+					m_rgPendingTreeTargets.Add(pendingRelation);
 				}
 			}
 		}
@@ -3042,49 +3029,90 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		/// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
+		/// related to the given list of pending relations.
+		/// If it does then those relations which are not yet included will be added to the matching ILexReference.
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <returns>true if a match was found</returns>
 		private bool TreeRelationAlreadyExists(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (ILexReference lr in lrt.MembersOC) //for every potential reference
 			{
-				if (lr.TargetsRS.Count != rgRelation.Count + 1)
-					continue;
-				if (lr.TargetsRS[0].Hvo != rgRelation[0].ObjectHvo)
-					continue;
-				int[] rghvoRef = new int[rgRelation.Count];
-				for (int i = 0; i < rghvoRef.Length; ++i)
-					rghvoRef[i] = lr.TargetsRS[i + 1].Hvo;
-				int[] rghvoNew = new int[rgRelation.Count];
-				for (int i = 0; i < rghvoNew.Length; ++i)
-					rghvoNew[i] = rgRelation[i].TargetHvo;
-				Array.Sort(rghvoRef);
-				Array.Sort(rghvoNew);
-				bool fSame = true;
-				for (int i = 0; i < rghvoRef.Length; ++i)
+				int firstTargetHvo = lr.TargetsRS.First().Hvo;
+				if (firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
 				{
-					if (rghvoRef[i] != rghvoNew[i])
+					foreach (var pendingRelation in rgRelation)
 					{
-						fSame = false;
-						break;
+						var pendingObj = GetObjectForId(pendingRelation.TargetHvo);
+						if (firstTargetHvo == pendingRelation.ObjectHvo
+							&& HasMatchingUnicodeAlternative(pendingRelation.RelationType.ToLowerInvariant(),
+															 lrt.Abbreviation, lrt.Name))
+						{
+							if (!lr.TargetsRS.Contains(pendingObj))
+								lr.TargetsRS.Add(pendingObj); //add each item which is not yet in this list
+						}
+						else
+						{
+							m_rgPendingTreeTargets.Add(pendingRelation);
+						}
 					}
-				}
-				if (fSame)
 					return true;
+				}
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
+		/// related to the given PendingRelation.
+		/// If it does then the relation will be added to the matching ILexReference if necessary.
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <returns>true if a match was found</returns>
 		private bool TreeRelationAlreadyExists(ILexRefType lrt, PendingRelation rel)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			//The object who contains the other end of this relation, i.e. the entry with the Part
+			//may not have been processed, so if we are dealing with the Whole we need to make sure that
+			//the part is present.
+			if (!ObjectIsFirstInRelation(rel.RelationType, lrt))
 			{
-				if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
-					continue;
-				if (IsMember(lr.TargetsRS.ToHvoArray(), rel.ObjectHvo))
+				foreach (ILexReference lr in lrt.MembersOC)
+				{
+					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
+						continue;
+					var pendingObj = GetObjectForId(rel.ObjectHvo);
+					if (!lr.TargetsRS.Contains(pendingObj))
+						lr.TargetsRS.Add(pendingObj);
 					return true;
+				}
+			}
+			else
+			{
+				foreach (ILexReference lr in lrt.MembersOC)
+				{
+					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.ObjectHvo)
+						continue;
+					var pendingObj = GetObjectForId(rel.TargetHvo);
+					if (!lr.TargetsRS.Contains(pendingObj))
+						lr.TargetsRS.Add(pendingObj);
+					return true;
+				}
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// This method will return true if the given type is the name, or main part of this reference type.
+		/// as opposed to the ReversalName i.e. in a Part/Whole relation Part would return true, where Whole would
+		/// return false.
+		/// </summary>
+		/// <param name="sType"></param>
+		/// <param name="lrt"></param>
+		/// <returns></returns>
 		private bool ObjectIsFirstInRelation(string sType, ILexRefType lrt)
 		{
 			if (HasMatchingUnicodeAlternative(sType.ToLowerInvariant(), lrt.Abbreviation, lrt.Name))

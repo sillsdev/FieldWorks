@@ -2725,6 +2725,134 @@ namespace LexTextControlsTests
 			Assert.AreEqual(2, bobEntry.LexEntryReferences.First().TargetsRS.Count);
 		}
 
+		private static string[] treeLiftData = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:31Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>arm</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+			"<gloss lang='en'><text>arm</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>body</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>body</text></gloss>",
+			"<relation type='Part' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>leg</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>hand</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='72c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static string[] treeLiftData2 = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:32Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>arm</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+			"<gloss lang='en'><text>arm</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"<relation type='Part' ref='72c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>body</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>body</text></gloss>",
+			"<relation type='Part' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"<relation type='Part' ref='62c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:16:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>leg</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>hand</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='72c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>hand</text></gloss>",
+			"<relation type='Whole' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test, Ignore("The bootstrapping is not sufficient for this to work yet, part and whole end up as different LexRefTypes, which is incorrect.")]
+		public void TestImportDoesNotDuplicateTreeRelations()
+		{
+
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+
+			var sOrigFile = CreateInputFile(treeLiftData);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			var bodySense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
+
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(2, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+
+			var sNewFile = CreateInputFile(treeLiftData2);
+			TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
+			var legSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
+
+			//There should be 2 LexSenseReferences, one for the Whole relationship, and one for the Part relationship.
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(3, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, legSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
+			Assert.AreEqual(1, legSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
+		}
+
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)
 		{
 			ILexEntry entry1;
