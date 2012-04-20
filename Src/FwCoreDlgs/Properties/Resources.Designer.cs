@@ -88,6 +88,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
 			}
 		}
 
+		internal static System.Drawing.Bitmap chorus32 {
+			get {
+				object obj = ResourceManager.GetObject("chorus32", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+
 		internal static System.Drawing.Bitmap DownArrow {
 			get {
 				object obj = ResourceManager.GetObject("DownArrow", resourceCulture);
@@ -380,6 +387,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
 		internal static string kstidWordMedial {
 			get {
 				return ResourceManager.GetString("kstidWordMedial", resourceCulture);
+			}
+		}
+
+		internal static System.Drawing.Bitmap LogoForAbout {
+			get {
+				object obj = ResourceManager.GetObject("LogoForAbout", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
 			}
 		}
 

@@ -31,8 +31,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object waitObject = new object();
-		private static bool receivedChanges;
 		private static string sjumpUrl;
+		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
+		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 
 		/// <summary>
 		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
@@ -41,8 +42,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectFolder">optional</param>
 		/// <param name="userName"></param>
 		/// <param name="command"></param>
+		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <param name="url">If this out param is other than null, it is a link to jump to in FLEx.</param>
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, out string url)
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, out string projectName, out string url)
 		{
 			sjumpUrl = "";
 			string args = "";
@@ -69,13 +71,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Cursor.Current = Cursors.WaitCursor;
 			waitOnBridgeThread.Join();
 				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.
+			projectName = _projectName;
 			Cursor.Current = Cursors.Default;
 			//let the service host cleanup happen in another thread so the user can get on with life.
 			Thread letTheHostDie = new Thread(host.Close);
 			letTheHostDie.Start();
 
 			url = sjumpUrl;
-			return receivedChanges;
+			return _receivedChanges;
 		}
 
 		/// <summary>
@@ -87,17 +90,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			try
 			{
 				//wait until we are notified that the bridge is listening.
-				Monitor.Wait(waitObject);
+				Monitor.Wait(waitObject, -1); // infinite timeout
 				var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
 																	  new EndpointAddress("net.pipe://localhost/FLExEndpoint/FLExPipe"));
 				var channelClient = factory.CreateChannel();
+				channelClient.OperationTimeout = TimeSpan.MaxValue;
 				channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
 				while (true)
 				{
 					try
 					{
 						//wait for a notify\pulse event and release the lock to other threads, re-aquires the lock before continueing.
-						Monitor.Wait(waitObject);
+						Monitor.Wait(waitObject, -1); // infinite timeout
 						break;
 					}
 					catch (ThreadInterruptedException)
@@ -160,7 +164,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <param name="jumpUrl">If we use this method, it's because the user clicked on a conflict title link.</param>
 			public void BridgeWorkComplete(bool changesReceived, string jumpUrl)
 			{
-				receivedChanges = changesReceived;
+				_receivedChanges = changesReceived;
 				sjumpUrl = jumpUrl;
 				AlertFLEx();
 			}
@@ -168,6 +172,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public void BridgeReady()
 			{
 				AlertFLEx();
+			}
+
+			public void InformFwProjectName(string fwProjectName)
+			{
+				_projectName = fwProjectName;
 			}
 
 			/// <summary>
@@ -193,6 +202,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			[OperationContract]
 			void BridgeReady();
+
+			[OperationContract]
+			void InformFwProjectName(string fwProjectName);
 		}
 
 		#endregion
