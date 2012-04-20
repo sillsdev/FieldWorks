@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -2633,6 +2634,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_sandbox is a reference")]
 		class UpdateMorphEntryAction: UndoActionBase
 		{
 			private SandboxBase m_sandbox;

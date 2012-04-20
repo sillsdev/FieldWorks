@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -255,6 +256,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// Get changes we haven't seen. (This has a side effect of updating the record of which ones HAVE been seen.)
 		/// Returns true if there are any unseen foreign changes.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public override bool GetUnseenForeignChanges(out List<ICmObjectSurrogate> foreignNewbies,
 			out List<ICmObjectSurrogate> foreignDirtballs,
 			out List<ICmObjectId> foreignGoners, bool fWaitForCommitLock)
@@ -724,7 +727,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// Try a few more times...after waking a laptop from sleep it may take a couple of seconds to
 			// wake up the service.
-			for (int i = 0; i < 10; i++ )
+			for (int i = 0; i < 10; i++)
 			{
 				Thread.Sleep(500);
 				if (ResumeDb4oConnection())
@@ -734,18 +737,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			// It's useful to have this MessageBox handling here, as it allows reconnecting a dropped connection.
 			// Handling this at the application layer would require either recreating FdoCache or
 			// adding interface methods to expose resuming a dropped connection.
-			while (new ConnectionLostDlg().ShowDialog() == DialogResult.Yes)
+			using (var dlg = new ConnectionLostDlg())
 			{
-				// if re-connection failed allow user to keep retrying as many times as they want.
-				if (ResumeDb4oConnection())
-					break;
+				while (dlg.ShowDialog() == DialogResult.Yes)
+				{
+					// if re-connection failed allow user to keep retrying as many times as they want.
+					if (ResumeDb4oConnection())
+						break;
+				}
+
+				if (m_dbStore == null)
+					System.Windows.Forms.Application.Exit();
+
+				// return true if connection re-established
+				return (m_dbStore != null);
 			}
-
-			if (m_dbStore == null)
-				System.Windows.Forms.Application.Exit();
-
-			// return true if connection re-established.);
-			return (m_dbStore != null);
 		}
 
 		internal static Db4oServerInfo GetDb4OServerInfo(string host, int port)

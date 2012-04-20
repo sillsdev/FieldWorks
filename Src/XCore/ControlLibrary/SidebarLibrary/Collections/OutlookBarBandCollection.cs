@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SidebarLibrary.WinControls;
 
@@ -8,6 +9,8 @@ namespace SidebarLibrary.Collections
 	/// <summary>
 	/// Summary description for OutlookBarBandCollection.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="parentBar is a reference")]
 	public class OutlookBarBandCollection  : System.Collections.CollectionBase, IEnumerable
 	{
 
@@ -17,7 +20,7 @@ namespace SidebarLibrary.Collections
 
 		#region Class Variables
 		// Back reference to the parent control
-		OutlookBar parentBar = null;
+		private OutlookBar parentBar;
 		#endregion
 
 		#region Constructors
@@ -75,7 +78,7 @@ namespace SidebarLibrary.Collections
 		#endregion
 
 		#region Implementation
-		void RaiseChanged()
+		private void RaiseChanged()
 		{
 			if (Changed != null) Changed(this, null);
 		}

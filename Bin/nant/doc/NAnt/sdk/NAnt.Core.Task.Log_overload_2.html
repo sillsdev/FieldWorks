@@ -1,0 +1,54 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>Task.Log Method (Level, String, Object[])</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">Task.Log Method (Level, String, Object[])</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Logs a formatted message with the given priority. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />Overrides Overloads Public Sub Log( _<br />   ByVal <i>messageLevel</i> As <a href="NAnt.Core.Level.html">Level</a>, _<br />   ByVal <i>message</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a>, _<br />   ParamArray <i>args</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">Object()</a> _<br />)</div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />public override <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemVoidClassTopic.asp">void</a> Log(<br />   <a href="NAnt.Core.Level.html">Level</a> <i>messageLevel</i>,<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>message</i>,<br />   params <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">object[]</a> <i>args</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>messageLevel</i>
+		</dt>
+		<dd>The message priority at which the specified message is to be logged.</dd>
+		<dt>
+		  <i>message</i>
+		</dt>
+		<dd>The message to log, containing zero or more format items.</dd>
+		<dt>
+		  <i>args</i>
+		</dt>
+		<dd>An <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">Object</a> array containing zero or more objects to format.</dd>
+	  </dl>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> The actual logging is delegated to the project. </p>
+			<p> If the <a href="NAnt.Core.Task.Verbose.html">Verbose</a> attribute is set on the task and a message is logged with level <a href="NAnt.Core.Level.html">Verbose</a>, the priority of the message will be increased to <a href="NAnt.Core.Level.html">Info</a>. when the threshold of the build log is <b>Info</b>. </p>
+			<p> This will allow individual tasks to run in verbose mode while the build log itself is still configured with threshold <b>Info</b>. </p>
+			<h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Task.html">Task Class</a> | <a href="NAnt.Core.html">NAnt.Core Namespace</a> | <a href="NAnt.Core.Task.Log_overloads.html">Task.Log Overload List</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Log method"></param><param name="Keyword" value="Log method, Task class"></param><param name="Keyword" value="Task.Log method"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

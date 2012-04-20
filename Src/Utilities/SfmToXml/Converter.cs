@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ECInterfaces;
 using SilEncConverters40;
 
@@ -1511,6 +1512,9 @@ namespace Sfm2Xml
 			byte[] badBytes;
 			return MultiToWideWithERROR(multi, start, end, encodingToUse, out error, out badBytes);
 		}
+
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static string MultiToWideWithERROR(byte[] multi, int start, int end,
 			System.Text.Encoding encodingToUse, out MultiToWideError err, out byte[] badBytes)
 		{
@@ -1522,7 +1526,7 @@ namespace Sfm2Xml
 
 			try
 			{
-				int charCount = encoding.GetCharCount(multi, start, end-start+1);
+				int charCount = encoding.GetCharCount(multi, start, end - start + 1);
 				Char[] chars = new Char[charCount];
 				encoding.GetChars(multi, start, end - start + 1, chars, 0);
 				return new string(chars);
@@ -1530,6 +1534,7 @@ namespace Sfm2Xml
 			catch (System.Text.DecoderFallbackException dfe)	//(Exception e)
 			{
 				err = MultiToWideError.InvalidCodePoint;
+				// TODO-Linux: BytesUnknown is marked with a [MonoTODO] attribute.
 				badBytes = dfe.BytesUnknown;
 				// have an invalid utf8 char most likely, so switch to ascii
 				if (encoding.EncodingName == System.Text.UTF8Encoding.UTF8.EncodingName)

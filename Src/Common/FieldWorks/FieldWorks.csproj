@@ -248,12 +248,6 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\Framework\Framework.csproj">
-	  <Project>{C4A415C6-AB60-4118-BE82-5777C0877A8B}</Project>
-	  <Name>Framework</Name>
-	</ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
 	<EmbeddedResource Include="ApplicationBusyDialog.resx">
 	  <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>

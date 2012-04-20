@@ -17,12 +17,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Check how spelling status is set and cleared.
 		/// </summary>
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux FWNX-610: libenchant isn't fully case sensitive - need to patch libenchant.")]
 		public void BasicSpellingStatus()
 		{
+#if __MonoCS__
+			if (!File.Exists("/usr/lib/enchant-cs/libenchant_myspell.so"))
+			{
+				Assert.Ignore("The fieldworks-enchant package must be installed on this computer for EnchantHelperTests.BasicSpellingStatus to work!");
+			}
+#endif
 			var dirPath = EnchantHelper.GetSpellingDirectoryPath();
 			Directory.CreateDirectory(dirPath);
-			var dictId = "testDummy1";
+			var dictId = "foo";
 			var filePath = EnchantHelper.GetDicPath(dirPath, dictId);
 			File.Delete(filePath);
 			File.Delete(Path.ChangeExtension(filePath, ".aff"));

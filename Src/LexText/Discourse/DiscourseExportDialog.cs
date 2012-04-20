@@ -157,41 +157,6 @@ namespace SIL.FieldWorks.Discourse
 			return 0;
 		}
 
-// CS0169
-#if false
-		/// <summary>
-		/// Attempt to write the file to the zip file uncompressed (this is especially useful for very small files).
-		/// Unfortunately, the version of the #ZipLib we currently have doesn't seem to support this, so it
-		/// will currently do a deflated version as usual.
-		/// </summary>
-		/// <param name="zipName"></param>
-		/// <param name="pathName"></param>
-		/// <param name="zipFile"></param>
-		private static void WriteFileToZipUncompressed(string zipName, string pathName, ZipOutputStream zipFile)
-		{
-			ZipEntry entry = new ZipEntry(zipName);
-			// Try this again when we have a later version of the library.
-			//entry.CompressionMethod = CompressionMethod.Stored;
-			WriteFileToZip(entry, pathName, zipFile);
-		}
-
-		private static void WriteFileToZip(string zipName, string pathName, ZipOutputStream zipFile)
-		{
-			WriteFileToZip(new ZipEntry(zipName), pathName, zipFile);
-		}
-
-		private static void WriteFileToZip(ZipEntry entry, string pathName, ZipOutputStream zipFile)
-		{
-			zipFile.PutNextEntry(entry);
-			FileStream contentsFile = new FileStream(pathName, FileMode.Open, FileAccess.Read);
-			int len = (int)contentsFile.Length;
-			byte[] contents = new byte[contentsFile.Length];
-			contentsFile.Read(contents, 0, len);
-			zipFile.Write(contents, 0, len);
-			contentsFile.Close();
-		}
-#endif
-
 		internal bool ExportPhase1(out DiscourseExporter exporter, string fileName)
 		{
 			CheckDisposed();

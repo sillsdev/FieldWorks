@@ -355,18 +355,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (!String.IsNullOrEmpty(m_warningText))
 				{
 					// print the warning label
-					SizeF stringSize = e.Graphics.MeasureString(m_warningText, m_SansSerifFont, layoutSize,
-					new StringFormat(), out charactersFitted, out linesFilled);
+					using (var stringFormat = new StringFormat())
+					{
+						SizeF stringSize = e.Graphics.MeasureString(m_warningText, m_SansSerifFont, layoutSize,
+						stringFormat, out charactersFitted, out linesFilled);
 
-					RectangleF drawRect = new RectangleF(currentX, currentY, layoutSize.Width, layoutSize.Height);
-					e.Graphics.DrawString(m_warningText, m_SansSerifFont, Brushes.Black, drawRect,
-					new StringFormat());
+						RectangleF drawRect = new RectangleF(currentX, currentY, layoutSize.Width, layoutSize.Height);
+						e.Graphics.DrawString(m_warningText, m_SansSerifFont, Brushes.Black, drawRect,
+						stringFormat);
 
-					m_warningText = m_warningText.Substring(charactersFitted);
+						m_warningText = m_warningText.Substring(charactersFitted);
 
-					// Skip a line
-					layoutSize.Height -= stringSize.Height + m_SansSerifFont.Height;
-					currentY += stringSize.Height + m_SansSerifFont.Height;
+						// Skip a line
+						layoutSize.Height -= stringSize.Height + m_SansSerifFont.Height;
+						currentY += stringSize.Height + m_SansSerifFont.Height;
+					}
 				}
 
 				if (layoutSize.Height > (sanSerifBoldFont.Height * 2))

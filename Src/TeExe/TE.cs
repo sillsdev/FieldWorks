@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
@@ -36,11 +37,15 @@ namespace SIL.FieldWorks.TE
 		///
 		/// <returns>0</returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
+			Justification = "Gendarme bug on Windows: doesn't recognize that we're returning 0")]
 		[STAThread]
 		public static int Main(string[] rgArgs)
 		{
-			FieldWorks.StartFwApp(FwUtils.ksTeAbbrev, rgArgs);
-			return 0;
+			using (FieldWorks.StartFwApp(FwUtils.ksTeAbbrev, rgArgs))
+			{
+				return 0;
+			}
 		}
 	}
 }

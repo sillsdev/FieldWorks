@@ -616,14 +616,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return false;
 		}
-// CS0169
-//		private bool Includes(string[] items, string target)
-//		{
-//			foreach(string s in items)
-//				if (s == target)
-//					return true;
-//			return false;
-//		}
 		#endregion Construction and initialization
 
 		#region Properties

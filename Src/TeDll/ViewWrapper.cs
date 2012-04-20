@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -247,6 +248,8 @@ namespace SIL.FieldWorks.TE
 		/// focus.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetControl() returns a reference")]
 		public bool FootnoteViewFocused
 		{
 			set
@@ -421,6 +424,8 @@ namespace SIL.FieldWorks.TE
 		/// Hides the footnote view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetControl() returns a reference")]
 		public virtual void HideFootnoteView()
 		{
 			CheckDisposed();

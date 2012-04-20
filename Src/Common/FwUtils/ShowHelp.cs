@@ -140,21 +140,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </returns>
 		private static bool RunNonblockingProcess(string command, string arguments)
 		{
-			Process process = new Process();
-			process.StartInfo.FileName = command;
-			process.StartInfo.Arguments = arguments;
-			process.StartInfo.UseShellExecute = false;
-
-			try
+			using (Process process = new Process())
 			{
-				process.Start();
-			}
-			catch
-			{
-				return false;
-			}
+				process.StartInfo.FileName = command;
+				process.StartInfo.Arguments = arguments;
+				process.StartInfo.UseShellExecute = false;
 
-			return true;
+				try
+				{
+					process.Start();
+				}
+				catch
+				{
+					return false;
+				}
+
+				return true;
+			}
 		}
 	}
 }

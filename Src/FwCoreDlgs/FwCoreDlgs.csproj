@@ -118,7 +118,7 @@
 	</Reference>
 	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -162,6 +162,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
 	</Reference>
+	<Reference Include="Keyboarding, Version=7.2.3.18250, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -185,7 +188,7 @@
 	</Reference>
 	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
 	</Reference>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -658,12 +661,6 @@
 	  <ProductName>Windows Installer 3.1</ProductName>
 	  <Install>true</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\Common\Keyboarding\Keyboarding.csproj">
-	  <Project>{3365F220-B39D-423D-8A99-FDD0588970CE}</Project>
-	  <Name>Keyboarding</Name>
-	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

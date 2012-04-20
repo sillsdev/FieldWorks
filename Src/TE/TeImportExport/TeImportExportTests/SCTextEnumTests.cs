@@ -1534,7 +1534,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux FWNX-611: fix this unit test on Linux.")]
+		[Platform(Exclude = "Linux", Reason = "TODO-Linux FWNX-611: fix this unit test on Linux 64-bit.")]
 		public void ConvertAsciiToUnicode()
 		{
 			string encFileName = Path.Combine(Path.GetTempPath(), "test.map");

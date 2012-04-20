@@ -1,0 +1,91 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>IBuildLogger Interface</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">IBuildLogger Interface</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Interface used by NAnt to log the build output. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Core.IBuildLoggerMembers.html">IBuildLogger Members</a>.</p>
+	  <p>
+	  </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />Public Interface IBuildLogger<div>    Implements <a href="NAnt.Core.IBuildListener.html">IBuildListener</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div>public interface IBuildLogger<b> : <a href="NAnt.Core.IBuildListener.html">IBuildListener</a></b></div>
+	  </div>
+	  <h4 class="dtH4">Types that implement IBuildLogger</h4>
+	  <div class="tablediv">
+		<table class="dtTABLE" cellspacing="0">
+		  <tr valign="top">
+			<th width="50%">Type</th>
+			<th width="50%">Description</th>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="NAnt.Core.DefaultLogger.html">DefaultLogger</a>
+			</td>
+			<td width="50%"> </td>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="NAnt.Core.MailLogger.html">MailLogger</a>
+			</td>
+			<td width="50%"> Buffers log messages from DefaultLogger, and sends an e-mail with the results. </td>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="NAnt.Core.XmlLogger.html">XmlLogger</a>
+			</td>
+			<td width="50%"> Used to wrap log messages in xml &lt;message/&gt; elements. </td>
+		  </tr>
+		</table>
+	  </div>
+	  <h4 class="dtH4">Remarks</h4>
+	  <p> Depending on the supplied command-line arguments, NAnt will set the <a href="NAnt.Core.IBuildLogger.OutputWriter.html">OutputWriter</a> to <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemConsoleClassOutTopic.asp">Out</a> or a <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemIOStreamWriterClassTopic.asp">StreamWriter</a> with a file as backend store. </p>
+	  <h4 class="dtH4">Requirements</h4>
+	  <p>
+		<b>Namespace: </b>
+		<a href="NAnt.Core.html">NAnt.Core</a>
+	  </p>
+	  <p>
+		<b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.IBuildLoggerMembers.html">IBuildLogger Members</a> | <a href="NAnt.Core.html">NAnt.Core Namespace</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="IBuildLogger interface, about IBuildLogger interface">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

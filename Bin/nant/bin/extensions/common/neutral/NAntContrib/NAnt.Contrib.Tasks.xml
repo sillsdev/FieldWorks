@@ -4,6 +4,44 @@
 		<name>NAnt.Contrib.Tasks</name>
 	</assembly>
 	<members>
+		<member name="T:NAnt.Contrib.Functions.FileFunctions">
+			<summary>
+			Groups a set of functions for dealing with files.
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Functions.FileFunctions.GetChecksum(System.String,System.String)">
+			<summary>
+			Calculates a checksum for a given file and returns it in a hex
+			string.
+			</summary>
+			<param name="path">The file for which to calculate a checksum.</param>
+			<param name="algorithm">The name of hash algorithm to use.</param>
+			<returns>
+			The hex-formatted checksum of the specified file.
+			</returns>
+			<exception cref="T:System.IO.IOException">The specified file does not exist.</exception>
+			<exception cref="T:System.ArgumentException">
+			<para>
+			<paramref name="path"/> is a zero-length string, contains only white space, or contains one or more invalid characters.
+			</para>
+			<para>-or-</para>
+			<para>
+			<paramref name="algorithm"/> is not a valid name of a hash algorithm.
+			</para>
+			</exception>
+			<exception cref="T:System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length.</exception>
+			<exception cref="T:System.NotSupportedException">The <paramref name="path"/> parameter is in an invalid format.</exception>
+			<example>
+			  <para>
+			  Displays the MD5 checksum of a file.
+			  </para>
+			  <code>
+				<![CDATA[
+			<echo>Checksum=${file::get-checksum('Cegeka.exe', 'MD5')}"></echo>
+				]]>
+			  </code>
+			</example>
+		</member>
 		<member name="T:NAnt.Contrib.Functions.FileSetFunctions">
 			<summary>
 			Provides methods for interrogating Filesets.
@@ -72,6 +110,68 @@
 				<include name="**/*.cs">
 			</fileset>
 			<echo message="${fileset::to-string('test.fileset', ' | ')}">
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="T:NAnt.Contrib.Functions.MsiFunctions">
+			<summary>
+			Allows information on Windows Installer databases and products to be
+			retrieved.
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Functions.MsiFunctions.GetProductCode(System.String)">
+			<summary>
+			Returns the product code of the specified Windows Installer
+			database.
+			</summary>
+			<param name="databasePath">The path of the Windows Installer database.</param>
+			<returns>
+			The product code of the specified Windows Installer database.
+			</returns>
+			<exception cref="T:System.IO.FileNotFoundException">The specified installer database does not exist.</exception>
+			<exception cref="T:System.ArgumentException">
+			  <para>
+			  The installer database could not be opened.
+			  </para>
+			  <para>-or-</para>
+			  <para>
+			  The product code property is not available in the installer
+			  database.
+			  </para>
+			</exception>
+			<example>
+			  <para>
+			  Retrieves the product code of a given installer database, and
+			  fails the build if the product is not installed.
+			  </para>
+			  <code>
+				<![CDATA[
+			<property name="office.productcode" value=${msi::get-product-code('Office.msi')}" />
+			<fail unless="${msi::is-installed(office.productcode)}">Please install Office first.</fail>
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Functions.MsiFunctions.IsInstalled(System.String)">
+			<summary>
+			Returns a value indicating whether a product with the specified
+			<c>product code</c> is installed.
+			</summary>
+			<param name="productCode">The product code of the product to check.</param>
+			<returns>
+			<see langword="true" /> if a product with the specified product
+			code is installed; otherwise, <see langword="false" />.
+			</returns>
+			<example>
+			  <para>
+			  Retrieves the product code of a given installer database, and
+			  fails the build if the product is not installed.
+			  </para>
+			  <code>
+				<![CDATA[
+			<property name="office.productcode" value=${msi::get-product-code('Office.msi')}" />
+			<fail unless="${msi::is-installed(office.productcode)}">Please install Office first.</fail>
 				]]>
 			  </code>
 			</example>
@@ -525,6 +625,64 @@
 			be automatically terminated. The default is <see langword="false" />.
 			</summary>
 		</member>
+		<member name="T:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation">
+			<summary>
+			Allows BizTalk receive locations to be controlled.
+			</summary>
+			<example>
+			  <para>
+			  Enables the &quot;HttpReceive&quot; receive location on server
+			  &quot;SV-ARD-EAI&quot;.
+			  </para>
+			  <code>
+				<![CDATA[
+			<btsreceivelocation action="Enable" location="HttpReceive" server="SV-ARD-EAI" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>
+			  Disables the &quot;HttpReceive&quot; receive location on server
+			  &quot;SV-ARD-EAI&quot;.
+			  </para>
+			  <code>
+				<![CDATA[
+			<btsreceivelocation action="Disable" location="HttpReceive" server="SV-ARD-EAI" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.LocationName">
+			<summary>
+			The name of the receive location on which the perform the action.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.Server">
+			<summary>
+			The name of the BizTalk server on which to perform the action.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.Action">
+			<summary>
+			The action that should be performed on the receive location.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.ReceiveLocationAction">
+			<summary>
+			Defines the actions that can be performed on a BizTalk receive
+			location.
+			</summary>
+		</member>
+		<member name="F:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.ReceiveLocationAction.Enable">
+			<summary>
+			Enables the receive location.
+			</summary>
+		</member>
+		<member name="F:NAnt.Contrib.Tasks.BizTalk.ReceiveLocation.ReceiveLocationAction.Disable">
+			<summary>
+			Disables the receive location.
+			</summary>
+		</member>
 		<member name="T:NAnt.Contrib.Tasks.BizTalk.Reset">
 			<summary>
 			Allows stopping, starting and resetting of BizTalk in-process host
@@ -569,7 +727,7 @@
 			</summary>
 			<example>
 			  <para>
-			  Starts the &quot;UmeHttpSendPort&quot; port on server
+			  Starts the &quot;UmeHttpSendPort&quot; send port on server
 			  &quot;SV-ARD-EAI&quot;.
 			  </para>
 			  <code>
@@ -580,7 +738,8 @@
 			</example>
 			<example>
 			  <para>
-			  Unenlists the &quot;UmeHttpSendPort&quot; on server &quot;SV-ARD-EAI&quot;.
+			  Unenlists the &quot;UmeHttpSendPort&quot; send port on server
+			  &quot;SV-ARD-EAI&quot;.
 			  </para>
 			  <code>
 				<![CDATA[
@@ -2263,11 +2422,10 @@
 			an XML schema of the same name.
 			</summary>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.SchemaValidatedTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.SchemaValidatedTask.Initialize">
 			<summary>
 			Initializes the task and verifies parameters.
 			</summary>
-			<param name="TaskNode">Node that contains the XML fragment used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.SchemaValidatedTask.Task_OnSchemaValidate(System.Object,System.Xml.Schema.ValidationEventArgs)">
 			<summary>
@@ -2286,9 +2444,9 @@
 		<member name="P:NAnt.Contrib.Tasks.SchemaValidatedTask.SchemaObject">
 			<summary>
 			Returns the object from the Schema wrapper after
-			<see cref="M:NAnt.Contrib.Tasks.SchemaValidatedTask.InitializeTask(System.Xml.XmlNode)"/> is called.
+			<see cref="M:NAnt.Contrib.Tasks.SchemaValidatedTask.Initialize"/> is called.
 			</summary>
-			<value>The object from the Schema wrapper after <see cref="M:NAnt.Contrib.Tasks.SchemaValidatedTask.InitializeTask(System.Xml.XmlNode)"/> is called.</value>
+			<value>The object from the Schema wrapper after <see cref="M:NAnt.Contrib.Tasks.SchemaValidatedTask.Initialize"/> is called.</value>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Msi.InstallerTaskBase.MsiOutput">
 			<summary>
@@ -3961,13 +4119,11 @@
 					x="304" y="200" width="56" height="17" attr="3" remove="true" /&gt;
 				&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
 					x="25" y="85" width="175" height="95" attr="7" remove="true" /&gt;
-
-				&lt;!-- Re add the tree control with the proper next control --&gt;
+							&lt;!-- Re add the tree control with the proper next control --&gt;
 				&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
 					x="25" y="85" width="175" height="95" attr="7"
 					property="_BrowseProperty" text="Tree of selections" nextcontrol="Reset" /&gt;
-
-				&lt;!-- Adds the controls associated with the webfolder dialog --&gt;
+							&lt;!-- Adds the controls associated with the webfolder dialog --&gt;
 				&lt;control dialog="WebFolderDlg" name="BannerBitmap" type="Bitmap"
 					x="0" y="0" width="374" height="44" attr="1"
 					text="[BannerBitmap]" nextcontrol="VDirLabel" /&gt;
@@ -4186,8 +4342,7 @@
 				&lt;!-- Remove control events for Browse button on CustomizeDlg --&gt;
 				&lt;controlevent dialog="CustomizeDlg" control="Browse" name="SelectionBrowse"
 					argument="BrowseDlg" condition="1" remove="true" /&gt;
-
-				&lt;!-- Add new control events for the web dialog --&gt;
+							&lt;!-- Add new control events for the web dialog --&gt;
 				&lt;controlevent dialog="UserRegistrationDlg" control="Next" name="NewDialog"
 					argument="WebFolderDlg" condition="ProductID" /&gt;
 				&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
@@ -5239,12 +5394,13 @@
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.Msi.MsiTask">
 			<summary>
-			Creates a Windows Installer (also known as Microsoft Installer, or MSI) setup database for installing software on the Windows Platform.
+			Creates a Windows Installer (also known as Microsoft Installer, or MSI)
+			setup database for installing software on the Windows Platform.
 			</summary>
 			<remarks>
 			<para>
 			Requires <c>cabarc.exe</c> in the path.  This tool is part of the
-			<see href="http://msdn.microsoft.com/library/en-us/dncabsdk/html/cabdl.asp">Microsoft Cabinet SDK</see>.
+			<see href="http://msdn2.microsoft.com/en-us/library/ms974336.aspx">Microsoft Cabinet SDK</see>.
 			</para>
 			<para>
 			Requires <c>mergemod.dll</c> version 2.0 or greater.  This dll is part of the
@@ -5256,11 +5412,10 @@
 			</para>
 			</remarks>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.Msi.MsiTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.Msi.MsiTask.Initialize">
 			<summary>
 			Initializes task and verifies parameters.
 			</summary>
-			<param name="TaskNode">Node that contains the XML fragment used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.Msi.MsiTask.ExecuteTask">
 			<summary>
@@ -5602,14 +5757,13 @@
 			</summary>
 			<para>
 			Requires <c>cabarc.exe</c> in the path.  This tool is part of the
-			<see href="http://msdn.microsoft.com/library/en-us/dncabsdk/html/cabdl.asp">http://msdn.microsoft.com/library/en-us/dncabsdk/html/cabdl.asp">Microsoft Cabinet SDK</see>.
+			<see href="http://msdn2.microsoft.com/en-us/library/ms974336.aspx">Microsoft Cabinet SDK</see>.
 			</para>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.Msi.MsmTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.Msi.MsmTask.Initialize">
 			<summary>
 			Initializes task and verifies parameters.
 			</summary>
-			<param name="TaskNode">Node that contains the XML fragment used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.Msi.MsmTask.ExecuteTask">
 			<summary>
@@ -6129,11 +6283,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.NUnit2Report.NUnit2ReportTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.NUnit2Report.NUnit2ReportTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.NUnit2Report.NUnit2ReportTask.ExecuteTask">
 			<summary>
@@ -6225,6 +6378,846 @@
 			<param name="absoluteUri"></param>
 			<param name="role"></param>
 			<param name="objToReturn"></param>
+			<returns></returns>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Add">
+			<summary>
+			Open file(s) in a client workspace for addition to the depot.
+			</summary>
+			<example>
+			  <para>
+			  Add all cs files under the given directory into the "new" changelist
+			  (will be created if it doesn't already exist).
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4add file="C:\Src\Project\*.cs" changelist="new" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Add Test.txt into the default changelist.</para>
+			  <code>
+				<![CDATA[
+			<p4add file="C:\Src\Project\Test.txt" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Base">
+			<summary>
+			Base class for Perforce (P4) NAnt tasks. See individual task for example usage.
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Add">P4Add</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Change">P4Change</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Delete">P4Delete</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Edit">P4Edit</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Label">P4Label</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Labelsync">P4Labelsync</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Print">P4Print</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Reopen">P4Reopen</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Revert">P4Revert</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Submit">P4Submit</seealso>
+			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Sync">P4Sync</seealso>
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Base.ExecuteTask">
+			<summary>
+			Execute the perforce command assembled by subclasses.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Port">
+			<summary>
+			The p4 server and port to connect to. The default is "perforce:1666".
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Client">
+			<summary>
+			The p4 client spec to use. The default is the current client.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.User">
+			<summary>
+			The p4 username. The default is the current user.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.View">
+			<summary>
+			The client, branch or label view to operate upon. The default is
+			"//...".
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Script">
+			<summary>
+			Prepends a descriptive field (for example, text:, info:, error:, exit:)
+			to each line of output produced by a Perforce command. This is most
+			often used when scripting. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.ProgramArguments">
+			<summary>
+			Gets the command line arguments for the external program.
+			</summary>
+			<value>
+			The command line arguments for the external program.
+			</value>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.ExeName">
+			<summary>
+			Override the ExeName paramater for p4.exe
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.CommandSpecificArguments">
+			<summary>
+			Derived classes should override this to provide command-specific
+			commandline arguments.
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Add.getSpecificCommandArguments">
+			<summary>
+			Build the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.File">
+			<summary>
+			File(s) to add. File name can contain wildcard characters. (Note:
+			this is not using p4 wildcard syntax, but the OS wildcards).
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.Changelist">
+			<summary>
+			Changelist that files will be added into. Changelist will be created
+			if not already present.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.Type">
+			<summary>
+			File Type settings. Applied to all files in the <see cref="P:NAnt.Contrib.Tasks.Perforce.P4Add.File"/>
+			parameter.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Change">
+			<summary>
+			Create or delete a changelist specification.
+			</summary>
+			<example>
+			  <para>Create a new changelist called "mynewchange".</para>
+			  <code>
+				<![CDATA[
+			<p4change changelist="mynewchange" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Delete the changelist called "mynewchange".</para>
+			  <code>
+				<![CDATA[
+			<p4change changelist="mynewchange" delete="true" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Change.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.Changelist">
+			<summary>
+			Changelist to create or delete.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.Delete">
+			<summary>
+			If <see langword="false" /> causes passed in changelist to be
+			deleted. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Client">
+			<summary>
+			Add/modify/delete a client spec in perforce.
+			</summary>
+			<example>
+			  <para>
+			  Add a client (modify if already present and have sufficient rights).
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4client clientname="myClient" view="//root/test/..." />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Delete a client.</para>
+			  <code>
+				<![CDATA[
+			<p4client delete="true" clientname="myClient" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Client.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.ClientName">
+			<summary>
+			Name of client to create/delete.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Root">
+			<summary>
+			Root path for client spec.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Delete">
+			<summary>
+			Delete the named client. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Force">
+			<summary>
+			Force a delete even if files are open. The default is
+			<see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Delete">
+			<summary>
+			Open file(s) in a client workspace for deletion from the depot.
+			</summary>
+			<example>
+			  <para>
+			  Mark all cs files under the give view for deletion and place them in
+			  the "Deleting" changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4delete view="//Root/ProjectX/Test/...*.cs" changelist="Deleting" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Delete.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.Changelist">
+			<summary>
+			Changelist to place the marked for deletion item into.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.View">
+			<summary>
+			The client, branch or label view to operate upon.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Edit">
+			<summary>
+			Opens file(s) in a client workspace for edit.
+			</summary>
+			<example>
+			  <para>
+			  Open all files in the ProjectX Test folder for edit, and place into
+			  the default changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4edit view="//Root/ProjectX/Test/..." />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>
+			  Open all *.txt files in the ProjectX Test folder for edit, and place
+			  into the "testing" changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4edit view="//Root/ProjectX/Test/...*.txt" changelist="testing" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Edit.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.Changelist">
+			<summary>
+			Changelist to place the opened files into.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.Type">
+			<summary>
+			File Type settings.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.View">
+			<summary>
+			The client, branch or label view to operate upon.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Info">
+			<summary>
+			Returns information from the "p4 info" command back into variables for
+			use within the build process.
+			</summary>
+			<example>
+			  <para>Fill the variables using the task.</para>
+			  <code>
+				<![CDATA[
+			<p4info user="myuser" client="myclient" host="myhost" root="myroot" />
+			<echo message="User: ${myuser} - Client: ${myclient} - Host: ${myhost} - Root: ${myroot}" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.User">
+			<summary>
+			The name of the property to store the p4 user name in.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Client">
+			<summary>
+			The name of the property to store the p4 client name in.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Host">
+			<summary>
+			The name of the property to store the p4 host name in.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Root">
+			<summary>
+			The name of the property to store the p4 client root in.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Label">
+			<summary>
+			Create or edit a label specification and its view.
+			</summary>
+			<example>
+			  <para>Create a new label called "SDK_V1.2".</para>
+			  <code>
+				<![CDATA[
+			<p4label label="SDK_V1.2" view="//Root/ProjectX/Test/...*.txt" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Delete the previously created label.</para>
+			  <code>
+				<![CDATA[
+			<p4label label="SDK_V1.2" delete="true" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Label.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.Label">
+			<summary>
+			Name of label to create/delete.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.Delete">
+			<summary>
+			Delete the named label. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Labelsync">
+			<summary>
+			Synchronize a label with the contents of the current client workspace.
+			</summary>
+			<example>
+			  <para>Apply a previously created label to the specified view.</para>
+			  <code>
+				<![CDATA[
+			<p4labelsync label="SDK_V1.2" view="//Root/..." />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Labelsync.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.Label">
+			<summary>
+			Name of the label to sync the specified or default view with.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.Delete">
+			<summary>
+			Delete the view defined in the label, or matching the input view
+			from the label. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Print">
+			<summary>
+			Fetch a specific file from a Perforce depot without needing a clientspec
+			to map it.
+			</summary>
+			<example>
+			  <code>
+				<![CDATA[
+			<p4print file="//depot/foo/mainline/clientspec" outputfile=".\clientspec" />
+			<p4client input=".\clientspec" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Print.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.File">
+			<summary>
+			The depot or local filename (including optional path) of the file
+			to fetch.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.P4OutputFile">
+			<summary>
+			The local filename to write the fetched file to.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Reopen">
+			<summary>
+			Move opened files between changelists or change the files’ type.
+			</summary>
+			<remarks>
+			This task has two different but related uses:
+			Moving opened files between changelists (default or named).
+			Changing the type of an opened file.
+			</remarks>
+			<example>
+			  <para>
+			  Move the specified files matching the view into the "New" changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4reopen view="//Root/...Version.xml" changelist="New" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>
+			  Modify the specified files matching the view to the given file type.
+			  The change won't affect the repository until submitted.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4reopen view="//Root/...*.res" type="binary" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Reopen.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.View">
+			<summary>
+			The client, branch or label view to operate upon.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.Changelist">
+			<summary>
+			Changelist to place the reopened files into.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.Type">
+			<summary>
+			File Type settings.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Revert">
+			<summary>
+			Discard changes made to open files.
+			</summary>
+			<example>
+			  <para>Revert all txt files in a given changelist.</para>
+			  <code>
+				<![CDATA[
+			<p4revert changelist="Test" view="//...*.txt" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>
+			  Revert all unchanged files opened in the given changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4revert changelist="Test" revertunchanged="true" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Revert all unchanged files opened in any changelist.</para>
+			  <code>
+				<![CDATA[
+			<p4revert revertunchanged="true" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Revert.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.Changelist">
+			<summary>
+			Changelist to perform the revert action on. optional.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.RevertUnchanged">
+			<summary>
+			Revert all unchanged or missing files from the changelist. default is false. optional.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Set">
+			<summary>
+			Set registry variables that perforce uses.
+			</summary>
+			<remarks>
+			Note: the environment variables that p4 uses will be set, but will not
+			be validated.
+			</remarks>
+			<example>
+			  <para>Modify any of the three variables (at least one required).</para>
+			  <code>
+				<![CDATA[
+			<p4set client="myClient" user="jonb" port="server:1666" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Set.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Set.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Submit">
+			<summary>
+			Send changes made to open files to the depot.
+			</summary>
+			<example>
+			  <para>
+			  Submit changelist "Temp", but first revert all unchanged files in the
+			  changelist.
+			  </para>
+			  <code>
+				<![CDATA[
+			<p4submit changelist="Temp" revertunchanged="true" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Submit changelist, but leave the files open afterwards.</para>
+			  <code>
+				<![CDATA[
+			<p4submit changelist="Temp" remainopen="true" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Submit.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.Changelist">
+			<summary>
+			Changelist to submit.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.RemainOpen">
+			<summary>
+			Keep the files open after submitting. The default is
+			<see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.RevertUnchanged">
+			<summary>
+			Revert all unchanged or missing files from the changelist.
+			The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Sync">
+			 <summary>
+			 Synchronize client space to a Perforce depot view.
+			 </summary>
+			 <example>
+			   <para>
+			   Sync to head using P4USER, P4PORT and P4CLIENT settings specified.
+			   </para>
+			   <code>
+				 <![CDATA[
+			 <p4sync
+				 view="//projects/foo/main/source/..."
+				 user="fbloggs"
+				 port="km01:1666"
+				 client="fbloggsclient"
+			 />
+				 ]]>
+			   </code>
+			 </example>
+			 <example>
+			   <para>Sync to head using default p4 environment variables.</para>
+			   <code>
+				 <![CDATA[
+			 <p4sync view="//projects/foo/main/source/..." />
+				 ]]>
+			   </code>
+			 </example>
+			 <example>
+			   <para>Force a re-sync to head, refreshing all files.</para>
+			   <code>
+				 <![CDATA[
+			 <p4sync force="true" view="//projects/foo/main/source/..." />
+				 ]]>
+			   </code>
+			 </example>
+			 <example>
+			   <para>Sync to a label.</para>
+			   <code>
+				 <![CDATA[
+			 <p4sync label="myPerforceLabel" />
+				 ]]>
+			   </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Sync.getSpecificCommandArguments">
+			<summary>
+			Builds the command string for this particular command.
+			</summary>
+			<returns>
+			The command string for this particular command.
+			</returns>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.Label">
+			<summary> Label to sync client to; optional.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.Force">
+			<summary>
+			Force a refresh of files. The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.CommandSpecificArguments">
+			<summary>
+			This is an override used by the base class to get command specific args.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.Perforce.Perforce">
+			<summary>
+			Static helper class for Perforce tasks.
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetUserName">
+			<summary>
+			ask p4 for the user name
+			</summary>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetClient">
+			<summary>
+			ask p4 for the client name
+			</summary>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetChangelistNumber(System.String,System.String,System.String,System.Boolean)">
+			<summary>
+			Get a changelist number based on on its name
+			</summary>
+			<param name="User"></param>
+			<param name="Client"></param>
+			<param name="ChangeList"></param>
+			<param name="CreateIfMissing"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetChangelistNumber(System.String,System.String,System.String)">
+			<summary>
+			Get a changelist number based on on its name
+			</summary>
+			<param name="User"></param>
+			<param name="Client"></param>
+			<param name="ChangeList"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateLabel(System.String,System.String,System.String)">
+			<summary>
+			Create a new label
+			</summary>
+			<param name="User"></param>
+			<param name="Labelname"></param>
+			<param name="View"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateClient(System.String,System.String,System.String,System.String)">
+			<summary>
+			Create a new Client
+			</summary>
+			<param name="User"></param>
+			<param name="Clientname"></param>
+			<param name="Root"></param>
+			<param name="View"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateChangelist(System.String,System.String,System.String)">
+			<summary>
+			Create a new changelist
+			</summary>
+			<param name="User"></param>
+			<param name="Client"></param>
+			<param name="ChangeList">Description of Changelist</param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetP4Info(System.String)">
+			<summary>
+			call the p4 process to
+			</summary>
+			<param name="SearchPattern"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetP4Info(System.String[])">
+			<summary>
+			call the p4 process to
+			</summary>
+			<param name="SearchPatterns"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.getProcessOutput(System.String,System.String,System.String)">
+			<summary>
+			Execute a process and return its ourput
+			</summary>
+			<param name="exe"></param>
+			<param name="prms"></param>
+			<param name="input"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.RunProcess(System.String,System.String,System.String,System.String@)">
+			<summary>
+			Execute a process and return its ourput
+			</summary>
+			<param name="exe"></param>
+			<param name="prms"></param>
+			<param name="input"></param>
+			<param name="output"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.RunProcess(System.String,System.String,System.String)">
+			<summary>
+			Execute a process by name
+			</summary>
+			<param name="exe"></param>
+			<param name="prms"></param>
+			<param name="input"></param>
 			<returns></returns>
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.PVCS.PVCSAddFilesTask">
@@ -8267,846 +9260,6 @@
 			<summary>
 			All locks held by all users are removed.
 			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Add">
-			<summary>
-			Open file(s) in a client workspace for addition to the depot.
-			</summary>
-			<example>
-			  <para>
-			  Add all cs files under the given directory into the "new" changelist
-			  (will be created if it doesn't already exist).
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4add file="C:\Src\Project\*.cs" changelist="new" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Add Test.txt into the default changelist.</para>
-			  <code>
-				<![CDATA[
-			<p4add file="C:\Src\Project\Test.txt" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Base">
-			<summary>
-			Base class for Perforce (P4) NAnt tasks. See individual task for example usage.
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Add">P4Add</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Change">P4Change</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Delete">P4Delete</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Edit">P4Edit</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Label">P4Label</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Labelsync">P4Labelsync</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Print">P4Print</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Reopen">P4Reopen</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Revert">P4Revert</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Submit">P4Submit</seealso>
-			<seealso cref="T:NAnt.Contrib.Tasks.Perforce.P4Sync">P4Sync</seealso>
-			</summary>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Base.ExecuteTask">
-			<summary>
-			Execute the perforce command assembled by subclasses.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Port">
-			<summary>
-			The p4 server and port to connect to. The default is "perforce:1666".
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Client">
-			<summary>
-			The p4 client spec to use. The default is the current client.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.User">
-			<summary>
-			The p4 username. The default is the current user.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.View">
-			<summary>
-			The client, branch or label view to operate upon. The default is
-			"//...".
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.Script">
-			<summary>
-			Prepends a descriptive field (for example, text:, info:, error:, exit:)
-			to each line of output produced by a Perforce command. This is most
-			often used when scripting. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.ProgramArguments">
-			<summary>
-			Gets the command line arguments for the external program.
-			</summary>
-			<value>
-			The command line arguments for the external program.
-			</value>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.ExeName">
-			<summary>
-			Override the ExeName paramater for p4.exe
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Base.CommandSpecificArguments">
-			<summary>
-			Derived classes should override this to provide command-specific
-			commandline arguments.
-			</summary>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Add.getSpecificCommandArguments">
-			<summary>
-			Build the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.File">
-			<summary>
-			File(s) to add. File name can contain wildcard characters. (Note:
-			this is not using p4 wildcard syntax, but the OS wildcards).
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.Changelist">
-			<summary>
-			Changelist that files will be added into. Changelist will be created
-			if not already present.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.Type">
-			<summary>
-			File Type settings. Applied to all files in the <see cref="P:NAnt.Contrib.Tasks.Perforce.P4Add.File"/>
-			parameter.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Add.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Change">
-			<summary>
-			Create or delete a changelist specification.
-			</summary>
-			<example>
-			  <para>Create a new changelist called "mynewchange".</para>
-			  <code>
-				<![CDATA[
-			<p4change changelist="mynewchange" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Delete the changelist called "mynewchange".</para>
-			  <code>
-				<![CDATA[
-			<p4change changelist="mynewchange" delete="true" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Change.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.Changelist">
-			<summary>
-			Changelist to create or delete.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.Delete">
-			<summary>
-			If <see langword="false" /> causes passed in changelist to be
-			deleted. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Change.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Client">
-			<summary>
-			Add/modify/delete a client spec in perforce.
-			</summary>
-			<example>
-			  <para>
-			  Add a client (modify if already present and have sufficient rights).
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4client clientname="myClient" view="//root/test/..." />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Delete a client.</para>
-			  <code>
-				<![CDATA[
-			<p4client delete="true" clientname="myClient" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Client.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.ClientName">
-			<summary>
-			Name of client to create/delete.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Root">
-			<summary>
-			Root path for client spec.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Delete">
-			<summary>
-			Delete the named client. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.Force">
-			<summary>
-			Force a delete even if files are open. The default is
-			<see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Client.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Delete">
-			<summary>
-			Open file(s) in a client workspace for deletion from the depot.
-			</summary>
-			<example>
-			  <para>
-			  Mark all cs files under the give view for deletion and place them in
-			  the "Deleting" changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4delete view="//Root/ProjectX/Test/...*.cs" changelist="Deleting" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Delete.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.Changelist">
-			<summary>
-			Changelist to place the marked for deletion item into.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.View">
-			<summary>
-			The client, branch or label view to operate upon.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Delete.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Edit">
-			<summary>
-			Opens file(s) in a client workspace for edit.
-			</summary>
-			<example>
-			  <para>
-			  Open all files in the ProjectX Test folder for edit, and place into
-			  the default changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4edit view="//Root/ProjectX/Test/..." />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>
-			  Open all *.txt files in the ProjectX Test folder for edit, and place
-			  into the "testing" changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4edit view="//Root/ProjectX/Test/...*.txt" changelist="testing" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Edit.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.Changelist">
-			<summary>
-			Changelist to place the opened files into.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.Type">
-			<summary>
-			File Type settings.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.View">
-			<summary>
-			The client, branch or label view to operate upon.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Edit.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Info">
-			<summary>
-			Returns information from the "p4 info" command back into variables for
-			use within the build process.
-			</summary>
-			<example>
-			  <para>Fill the variables using the task.</para>
-			  <code>
-				<![CDATA[
-			<p4info user="myuser" client="myclient" host="myhost" root="myroot" />
-			<echo message="User: ${myuser} - Client: ${myclient} - Host: ${myhost} - Root: ${myroot}" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.User">
-			<summary>
-			The name of the property to store the p4 user name in.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Client">
-			<summary>
-			The name of the property to store the p4 client name in.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Host">
-			<summary>
-			The name of the property to store the p4 host name in.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Info.Root">
-			<summary>
-			The name of the property to store the p4 client root in.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Label">
-			<summary>
-			Create or edit a label specification and its view.
-			</summary>
-			<example>
-			  <para>Create a new label called "SDK_V1.2".</para>
-			  <code>
-				<![CDATA[
-			<p4label label="SDK_V1.2" view="//Root/ProjectX/Test/...*.txt" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Delete the previously created label.</para>
-			  <code>
-				<![CDATA[
-			<p4label label="SDK_V1.2" delete="true" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Label.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.Label">
-			<summary>
-			Name of label to create/delete.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.Delete">
-			<summary>
-			Delete the named label. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Label.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Labelsync">
-			<summary>
-			Synchronize a label with the contents of the current client workspace.
-			</summary>
-			<example>
-			  <para>Apply a previously created label to the specified view.</para>
-			  <code>
-				<![CDATA[
-			<p4labelsync label="SDK_V1.2" view="//Root/..." />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Labelsync.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.Label">
-			<summary>
-			Name of the label to sync the specified or default view with.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.Delete">
-			<summary>
-			Delete the view defined in the label, or matching the input view
-			from the label. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Labelsync.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Print">
-			<summary>
-			Fetch a specific file from a Perforce depot without needing a clientspec
-			to map it.
-			</summary>
-			<example>
-			  <code>
-				<![CDATA[
-			<p4print file="//depot/foo/mainline/clientspec" outputfile=".\clientspec" />
-			<p4client input=".\clientspec" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Print.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.File">
-			<summary>
-			The depot or local filename (including optional path) of the file
-			to fetch.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.P4OutputFile">
-			<summary>
-			The local filename to write the fetched file to.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Print.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Reopen">
-			<summary>
-			Move opened files between changelists or change the files’ type.
-			</summary>
-			<remarks>
-			This task has two different but related uses:
-			Moving opened files between changelists (default or named).
-			Changing the type of an opened file.
-			</remarks>
-			<example>
-			  <para>
-			  Move the specified files matching the view into the "New" changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4reopen view="//Root/...Version.xml" changelist="New" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>
-			  Modify the specified files matching the view to the given file type.
-			  The change won't affect the repository until submitted.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4reopen view="//Root/...*.res" type="binary" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Reopen.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.View">
-			<summary>
-			The client, branch or label view to operate upon.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.Changelist">
-			<summary>
-			Changelist to place the reopened files into.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.Type">
-			<summary>
-			File Type settings.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Reopen.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Revert">
-			<summary>
-			Discard changes made to open files.
-			</summary>
-			<example>
-			  <para>Revert all txt files in a given changelist.</para>
-			  <code>
-				<![CDATA[
-			<p4revert changelist="Test" view="//...*.txt" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>
-			  Revert all unchanged files opened in the given changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4revert changelist="Test" revertunchanged="true" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Revert all unchanged files opened in any changelist.</para>
-			  <code>
-				<![CDATA[
-			<p4revert revertunchanged="true" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Revert.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.Changelist">
-			<summary>
-			Changelist to perform the revert action on. optional.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.RevertUnchanged">
-			<summary>
-			Revert all unchanged or missing files from the changelist. default is false. optional.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Revert.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Set">
-			<summary>
-			Set registry variables that perforce uses.
-			</summary>
-			<remarks>
-			Note: the environment variables that p4 uses will be set, but will not
-			be validated.
-			</remarks>
-			<example>
-			  <para>Modify any of the three variables (at least one required).</para>
-			  <code>
-				<![CDATA[
-			<p4set client="myClient" user="jonb" port="server:1666" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Set.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Set.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Submit">
-			<summary>
-			Send changes made to open files to the depot.
-			</summary>
-			<example>
-			  <para>
-			  Submit changelist "Temp", but first revert all unchanged files in the
-			  changelist.
-			  </para>
-			  <code>
-				<![CDATA[
-			<p4submit changelist="Temp" revertunchanged="true" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Submit changelist, but leave the files open afterwards.</para>
-			  <code>
-				<![CDATA[
-			<p4submit changelist="Temp" remainopen="true" />
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Submit.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.Changelist">
-			<summary>
-			Changelist to submit.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.RemainOpen">
-			<summary>
-			Keep the files open after submitting. The default is
-			<see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.RevertUnchanged">
-			<summary>
-			Revert all unchanged or missing files from the changelist.
-			The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Submit.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.P4Sync">
-			 <summary>
-			 Synchronize client space to a Perforce depot view.
-			 </summary>
-			 <example>
-			   <para>
-			   Sync to head using P4USER, P4PORT and P4CLIENT settings specified.
-			   </para>
-			   <code>
-				 <![CDATA[
-			 <p4sync
-				 view="//projects/foo/main/source/..."
-				 user="fbloggs"
-				 port="km01:1666"
-				 client="fbloggsclient"
-			 />
-				 ]]>
-			   </code>
-			 </example>
-			 <example>
-			   <para>Sync to head using default p4 environment variables.</para>
-			   <code>
-				 <![CDATA[
-			 <p4sync view="//projects/foo/main/source/..." />
-				 ]]>
-			   </code>
-			 </example>
-			 <example>
-			   <para>Force a re-sync to head, refreshing all files.</para>
-			   <code>
-				 <![CDATA[
-			 <p4sync force="true" view="//projects/foo/main/source/..." />
-				 ]]>
-			   </code>
-			 </example>
-			 <example>
-			   <para>Sync to a label.</para>
-			   <code>
-				 <![CDATA[
-			 <p4sync label="myPerforceLabel" />
-				 ]]>
-			   </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.P4Sync.getSpecificCommandArguments">
-			<summary>
-			Builds the command string for this particular command.
-			</summary>
-			<returns>
-			The command string for this particular command.
-			</returns>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.Label">
-			<summary> Label to sync client to; optional.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.Force">
-			<summary>
-			Force a refresh of files. The default is <see langword="false" />.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.Perforce.P4Sync.CommandSpecificArguments">
-			<summary>
-			This is an override used by the base class to get command specific args.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.Perforce.Perforce">
-			<summary>
-			Static helper class for Perforce tasks.
-			</summary>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetUserName">
-			<summary>
-			ask p4 for the user name
-			</summary>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetClient">
-			<summary>
-			ask p4 for the client name
-			</summary>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetChangelistNumber(System.String,System.String,System.String,System.Boolean)">
-			<summary>
-			Get a changelist number based on on its name
-			</summary>
-			<param name="User"></param>
-			<param name="Client"></param>
-			<param name="ChangeList"></param>
-			<param name="CreateIfMissing"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetChangelistNumber(System.String,System.String,System.String)">
-			<summary>
-			Get a changelist number based on on its name
-			</summary>
-			<param name="User"></param>
-			<param name="Client"></param>
-			<param name="ChangeList"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateLabel(System.String,System.String,System.String)">
-			<summary>
-			Create a new label
-			</summary>
-			<param name="User"></param>
-			<param name="Labelname"></param>
-			<param name="View"></param>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateClient(System.String,System.String,System.String,System.String)">
-			<summary>
-			Create a new Client
-			</summary>
-			<param name="User"></param>
-			<param name="Clientname"></param>
-			<param name="Root"></param>
-			<param name="View"></param>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.CreateChangelist(System.String,System.String,System.String)">
-			<summary>
-			Create a new changelist
-			</summary>
-			<param name="User"></param>
-			<param name="Client"></param>
-			<param name="ChangeList">Description of Changelist</param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetP4Info(System.String)">
-			<summary>
-			call the p4 process to
-			</summary>
-			<param name="SearchPattern"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.GetP4Info(System.String[])">
-			<summary>
-			call the p4 process to
-			</summary>
-			<param name="SearchPatterns"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.getProcessOutput(System.String,System.String,System.String)">
-			<summary>
-			Execute a process and return its ourput
-			</summary>
-			<param name="exe"></param>
-			<param name="prms"></param>
-			<param name="input"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.RunProcess(System.String,System.String,System.String,System.String@)">
-			<summary>
-			Execute a process and return its ourput
-			</summary>
-			<param name="exe"></param>
-			<param name="prms"></param>
-			<param name="input"></param>
-			<param name="output"></param>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.Perforce.Perforce.RunProcess(System.String,System.String,System.String)">
-			<summary>
-			Execute a process by name
-			</summary>
-			<param name="exe"></param>
-			<param name="prms"></param>
-			<param name="input"></param>
-			<returns></returns>
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.SourceSafe.AddTask">
 			<summary>
@@ -11463,10 +11616,8 @@
 			and path information can be derived.  Although the path to the repository
 			can also be determined from this the information is more implicit
 			than explicit.  For example a subversion root URL of:
-
-			http://svn.collab.net/repos/svn/trunk/doc/book/tools
-
-			would have the following components:
+						http://svn.collab.net/repos/svn/trunk/doc/book/tools
+						would have the following components:
 				protocol:       http/ web_dav
 				username:       anonymous
 				servername:     svn.collab.net
@@ -12734,17 +12885,14 @@
 			<code>
 
 			   The default:
-
-			   class Foo
+						   class Foo
 			   {
 			   public:
 				   Foo();
 				   virtual ~Foo();
 			   };
-
-			   becomes:
-
-			   class Foo
+						   becomes:
+						   class Foo
 			   {
 				   public:
 					   Foo();
@@ -12760,27 +12908,22 @@
 			<code>
 
 				   The default:
-
-				   switch (foo)
+							   switch (foo)
 				   {
 				   case 1:
 					   a += 2;
 					   break;
-
-				   default:
+							   default:
 					   a += 2;
 					   break;
 				   }
-
-				   becomes:
-
-				   switch (foo)
+							   becomes:
+							   switch (foo)
 				   {
 					   case 1:
 						   a += 2;
 						   break;
-
-					   default:
+								   default:
 						   a += 2;
 						   break;
 				   }
@@ -12794,33 +12937,28 @@
 			<code>
 
 			   The default:
-
-			   switch (foo)
+						   switch (foo)
 			   {
 			   case 1:
 				   {
 					   a += 2;
 					   break;
 				   }
-
-			   default:
+						   default:
 				   {
 					   a += 2;
 					   break;
 				   }
 			   }
-
-			   becomes:
-
-			   switch (foo)
+						   becomes:
+						   switch (foo)
 			   {
 				   case 1:
 				   {
 					   a += 2;
 					   break;
 				   }
-
-				   default:
+							   default:
 				   {
 					   a += 2;
 					   break;
@@ -12836,8 +12974,7 @@
 			<code>
 
 			   The default:
-
-			   if (isFoo)
+						   if (isFoo)
 			   {
 				   bar();
 			   }
@@ -12845,10 +12982,8 @@
 			   {
 				   anotherBar();
 			   }
-
-			   becomes:
-
-			   if (isFoo)
+						   becomes:
+						   if (isFoo)
 				   {
 				   bar();
 				   }
@@ -12864,17 +12999,14 @@
 			<summary>
 			<see langword="true" /> if block statements should be indented.
 			   The default:
-
-			   if (isFoo)
+						   if (isFoo)
 			   {
 				   bar();
 			   }
 			   else
 				   anotherBar();
-
-			   becomes:
-
-			   if (isFoo)
+						   becomes:
+						   if (isFoo)
 				   {
 					   bar();
 				   }
@@ -12886,10 +13018,8 @@
 			<summary>
 			<see langword="true" /> if namespace statements should be indented.
 			<code>
-
-			   The default:
-
-			   namespace foospace
+						   The default:
+						   namespace foospace
 			   {
 			   class Foo
 			   {
@@ -12898,10 +13028,8 @@
 					   virtual ~Foo();
 			   };
 			   }
-
-			   becomes:
-
-			   namespace foospace
+						   becomes:
+						   namespace foospace
 			   {
 				   class Foo
 				   {
@@ -12910,8 +13038,7 @@
 						   virtual ~Foo();
 				   };
 			   }
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.IndentLabels">
@@ -12920,34 +13047,28 @@
 			<code>
 
 			   The default:
-
-			   int foospace()
+						   int foospace()
 			   {
 				   while (isFoo)
 				   {
 					   ...
 					   goto error;
-
-			   error:
+						   error:
 					   ...
 				   }
 			   }
-
-			   becomes:
-
-			   int foospace()
+						   becomes:
+						   int foospace()
 			   {
 				   while (isFoo)
 				   {
 					   ...
 					   goto error;
-
-				   error:
+							   error:
 					   ...
 				   }
 			   }
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.IndentMax">
@@ -12972,8 +13093,7 @@
 			<summary>
 			<see langword="true" /> if brackets should be put on a new line.
 			<code>
-
-			   if (isFoo)
+						   if (isFoo)
 			   {
 				   bar();
 			   }
@@ -13004,8 +13124,7 @@
 			<see langword="true" /> if brackets should be put on a new line and
 			indented.
 			<code>
-
-			   namespace foospace
+						   namespace foospace
 			   {
 				   int Foo()
 				   {
@@ -13016,8 +13135,7 @@
 						   return 0;
 				   }
 			   }
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.BreakClosing">
@@ -13031,10 +13149,8 @@
 			   }else {
 				   anotherBar();
 			   }
-
-			   becomes:
-
-			   if (isFoo) {
+						   becomes:
+						   if (isFoo) {
 				   bar();
 			   }
 			   else {
@@ -13048,28 +13164,22 @@
 			<summary>
 			<see langword="true" /> to break block statements with an empty line.
 			<code>
-
-			   isFoo = true;
+						   isFoo = true;
 			   if (isFoo) {
 				   bar();
 			   } else {
 				   anotherBar();
 			   }
 			   isBar = false;
-
-			   becomes:
-
-			   isFoo = true;
-
-			   if (isFoo) {
+						   becomes:
+						   isFoo = true;
+						   if (isFoo) {
 				   bar();
 			   } else {
 				   anotherBar();
 			   }
-
-			   isBar = false;
-
-			</code>
+						   isBar = false;
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.BreakBlocksAll">
@@ -13077,29 +13187,22 @@
 			<see langword="true" /> to break all block statements, even on
 			nested ifs with an empty line.
 			<code>
-
-			   isFoo = true;
+						   isFoo = true;
 			   if (isFoo) {
 				   bar();
 			   } else {
 				   anotherBar();
 			   }
 			   isBar = false;
-
-			   becomes:
-
-			   isFoo = true;
-
-			   if (isFoo) {
+						   becomes:
+						   isFoo = true;
+						   if (isFoo) {
 				   bar();
-
-			   } else {
+						   } else {
 				   anotherBar();
 			   }
-
-			   isBar = false;
-
-			</code>
+						   isBar = false;
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.BreakElseif">
@@ -13107,23 +13210,19 @@
 			<see langword="true" /> to put the if component of an else if on a
 			new line.
 			<code>
-
-			   if (isFoo) {
+						   if (isFoo) {
 				   bar();
 			   } else if (isBar()){
 				   anotherBar();
 			   }
-
-			   becomes:
-
-			   if (isFoo) {
+						   becomes:
+						   if (isFoo) {
 				   bar();
 			   } else
 				   if (isBar()){
 					   anotherBar();
 				   }
-
-			</code>
+						</code>
 
 			</summary>
 		</member>
@@ -13134,29 +13233,22 @@
 
 			   if (isFoo)
 				   a = bar((b-c)*a,*d--);
-
-			   becomes:
-
-			   if (isFoo)
+						   becomes:
+						   if (isFoo)
 				   a = bar((b - c) * a, *d--);
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.PadParenthesis">
 			<summary>
 			<see langword="true" /> to pad parenthesis with a space.
 			<code>
-
-			   if (isFoo)
+						   if (isFoo)
 				   a = bar((b-c)*a,*d--);
-
-			   becomes:
-
-			   if ( isFoo )
+						   becomes:
+						   if ( isFoo )
 				   a = bar( ( b-c )*a, *d-- );
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.PadAll">
@@ -13166,13 +13258,10 @@
 
 			   if (isFoo)
 				   a = bar((b-c)*a,*d--);
-
-			   becomes:
-
-			   if ( isFoo )
+						   becomes:
+						   if ( isFoo )
 				   a = bar( ( b - c ) * a, *d-- );
-
-			</code>
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.NoBreakComplex">
@@ -13184,27 +13273,20 @@
 			   {
 				   isFoo = false; cout &lt;&lt; isFoo &lt;&lt; endl;
 			   }
-
-			   remains as is.
-
-			   if (isFoo) DoBar();
-
-			   remains as is.
-
-			</code>
+						   remains as is.
+						   if (isFoo) DoBar();
+						   remains as is.
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.NoBreakSingleLineBlocks">
 			<summary>
 			<see langword="true" /> to keep single line statements on the same line.
 			<code>
-
-			   if (isFoo)
+						   if (isFoo)
 			   { isFoo = false; cout &lt;&lt; isFoo &lt;&lt; endl; }
-
-			   remains as is.
-
-			</code>
+						   remains as is.
+						</code>
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Astyle.ProgramArguments">
@@ -13214,98 +13296,6 @@
 			<value>
 			The command-line arguments for the external program.
 			</value>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.COMRegisterTask">
-			<summary>
-			Register COM servers or type libraries.
-			</summary>
-			<remarks>
-			<para>
-			COM register task will try and register any type of COM related file
-			that needs registering.
-			</para>
-			<para>Executable files (.exe) will be registered as exe servers, type
-			libaries (.tlb) registered with RegisterTypeLib and for all other
-			filetypes it will attempt to register them as dll servers.
-			</para>
-			</remarks>
-			<example>
-			  <para>Register a single dll server.</para>
-			  <code>
-				<![CDATA[
-			<comregister file="myComServer.dll" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Register a single exe server </para>
-			  <code>
-				<![CDATA[
-			<comregister file="myComServer.exe" />
-				]]>
-			  </code>
-			</example>
-			<example>
-			  <para>Register a set of COM files at once.</para>
-			  <code>
-				<![CDATA[
-			<comregister unregister="false">
-				<fileset>
-					<include name="an_ExeServer.exe" />
-					<include name="a_TypeLibrary.tlb" />
-					<include name="a_DllServer.dll" />
-					<include name="an_OcxServer.ocx" />
-				</fileset>
-			</comregister>
-				]]>
-			  </code>
-			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterDllServer(System.String)">
-			<summary>
-			Register an inproc COM server, usually a .dll or .ocx
-			</summary>
-			<param name="path"></param>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterTypelib(System.String)">
-			<summary>
-			Register a COM type library
-			</summary>
-			<param name="path"></param>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterExeServer(System.String)">
-			<summary>
-			Register exe servers.
-			</summary>
-			<param name="path"></param>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.File">
-			<summary>
-			The name of the file to register. This is provided as an alternate
-			to using the task's fileset.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.Unregister">
-			<summary>Unregistering this time. ( /u paramater )Default is "false".</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.COMRegisterFileSet">
-			<summary>
-			The set of files to register.
-			</summary>
-		</member>
-		<member name="T:NAnt.Contrib.Tasks.COMRegisterTask.DynamicPInvoke">
-			<summary>
-			Helper class to synamically build an assembly with the correct
-			P/Invoke signature
-			</summary>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.DynamicPInvoke.DynamicDllFuncInvoke(System.String,System.String)">
-			<summary>
-			Register a given dll.
-			</summary>
-			<param name="dll"></param>
-			<param name="entrypoint"></param>
-			<returns></returns>
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.ChangeDirectory">
 			<summary>
@@ -13360,11 +13350,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.ChecksumTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.ChecksumTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.ChecksumTask.ExecuteTask">
 			<summary>
@@ -13400,8 +13389,8 @@
 		<member name="T:NAnt.Contrib.Tasks.ChooseTask">
 			<summary>
 			  <para>
-			  Executes an alternate set of tasks depending on conditions that are
-			  individually set on each group of tasks.
+			  Executes an alternate set of task or type definition depending on
+			  conditions that are individually set on each group.
 			  </para>
 			</summary>
 			<remarks>
@@ -13439,6 +13428,32 @@
 				<when test="${build.config == 'Release'}">
 					<!-- compile app in release configuration -->
 					...
+				</when>
+				<otherwise>
+					<fail>Build configuration '${build.config}' is not supported!</fail>
+				</otherwise>
+			</choose>
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>
+			  Define a <c>sources</c> patternset holding an alternate set of patterns
+			  depending on the configuration being built.
+			  </para>
+			  <code>
+				<![CDATA[
+			<choose>
+				<when test="${build.config == 'Debug'}">
+					<patternset id="sources">
+						<include name="**/*.cs" />
+					</patternset>
+				</when>
+				<when test="${build.config == 'Release'}">
+					<patternset id="sources">
+						<include name="**/*.cs" />
+						<exclude name="**/Instrumentation/*.cs" />
+					</patternset>
 				</when>
 				<otherwise>
 					<fail>Build configuration '${build.config}' is not supported!</fail>
@@ -13578,6 +13593,98 @@
 			The name of the file to save the output to (in XML).
 			</summary>
 		</member>
+		<member name="T:NAnt.Contrib.Tasks.COMRegisterTask">
+			<summary>
+			Register COM servers or type libraries.
+			</summary>
+			<remarks>
+			<para>
+			COM register task will try and register any type of COM related file
+			that needs registering.
+			</para>
+			<para>Executable files (.exe) will be registered as exe servers, type
+			libaries (.tlb) registered with RegisterTypeLib and for all other
+			filetypes it will attempt to register them as dll servers.
+			</para>
+			</remarks>
+			<example>
+			  <para>Register a single dll server.</para>
+			  <code>
+				<![CDATA[
+			<comregister file="myComServer.dll" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Register a single exe server </para>
+			  <code>
+				<![CDATA[
+			<comregister file="myComServer.exe" />
+				]]>
+			  </code>
+			</example>
+			<example>
+			  <para>Register a set of COM files at once.</para>
+			  <code>
+				<![CDATA[
+			<comregister unregister="false">
+				<fileset>
+					<include name="an_ExeServer.exe" />
+					<include name="a_TypeLibrary.tlb" />
+					<include name="a_DllServer.dll" />
+					<include name="an_OcxServer.ocx" />
+				</fileset>
+			</comregister>
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterDllServer(System.String)">
+			<summary>
+			Register an inproc COM server, usually a .dll or .ocx
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterTypelib(System.String)">
+			<summary>
+			Register a COM type library
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.RegisterExeServer(System.String)">
+			<summary>
+			Register exe servers.
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.File">
+			<summary>
+			The name of the file to register. This is provided as an alternate
+			to using the task's fileset.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.Unregister">
+			<summary>Unregistering this time. ( /u paramater )Default is "false".</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterTask.COMRegisterFileSet">
+			<summary>
+			The set of files to register.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.COMRegisterTask.DynamicPInvoke">
+			<summary>
+			Helper class to synamically build an assembly with the correct
+			P/Invoke signature
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterTask.DynamicPInvoke.DynamicDllFuncInvoke(System.String,System.String)">
+			<summary>
+			Register a given dll.
+			</summary>
+			<param name="dll"></param>
+			<param name="entrypoint"></param>
+			<returns></returns>
+		</member>
 		<member name="T:NAnt.Contrib.Tasks.ConcatTask">
 			<summary>
 			A task that concatenates a set of files.
@@ -13607,11 +13714,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.ConcatTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.ConcatTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.ConcatTask.ExecuteTask">
 			<summary>
@@ -13981,11 +14087,10 @@
 			</remarks>
 			<returns>The process that was started.</returns>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.GacTaskBase.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.GacTaskBase.Initialize">
 			<summary>
 			Validates the task's configuration.
 			</summary>
-			<param name="taskNode">The task node.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.GacTaskBase.ExecuteTask">
 			<summary>
@@ -14046,6 +14151,19 @@
 			<summary>
 			Gets the current assembly being operated against.
 			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.GacTaskBase.Managed">
+			<summary>
+			Gets a value indiciating whether the external program is a managed
+			application which should be executed using a runtime engine, if
+			configured.
+			</summary>
+			<value>
+			<see langword="ManagedExecutionMode.Auto" />.
+			</value>
+			<remarks>
+			Modifying this property has no effect.
+			</remarks>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.GacTaskBase.ProgramArguments">
 			<summary>
@@ -14164,6 +14282,19 @@
 			<summary>
 			Fileset are used to define multiple assemblies.
 			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.GacTask.Managed">
+			<summary>
+			Gets a value indiciating whether the external program is a managed
+			application which should be executed using a runtime engine, if
+			configured.
+			</summary>
+			<value>
+			<see langword="ManagedExecutionMode.Auto" />.
+			</value>
+			<remarks>
+			Modifying this property has no effect.
+			</remarks>
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.GacTask.ActionTypes">
 			<summary>
@@ -14542,74 +14673,83 @@
 			Section in the INI file.
 			</summary>
 		</member>
-		<member name="T:NAnt.Contrib.Tasks.MsbuildTask">
+		<member name="T:NAnt.Contrib.Tasks.KillTask">
 			<summary>
-			Builds the specified targets in the project file using <c>MSBuild</c>.
+			Immediately stops a given process.
+			</summary>
+			<remarks>
+			When used in combination with the <see cref="T:NAnt.Core.Tasks.ExecTask"/>, it allows
+			processed to be spawned for a certain duration or task, and then
+			stopped.
+			</remarks>
+			<example>
+			  <para>
+			  Starts a server and a client process on the local computer, and stops
+			  the server process once the client process has finished executing.
+			  </para>
+			  <code>
+				<![CDATA[
+			<exec program="server.exe" pidproperty="server.pid" spawn="true" />
+			<exec program="client.exe" />
+			<kill pid="${server.pid}" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.KillTask.ProcessId">
+			<summary>
+			The unique identifier of the process to stop.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.KillTask.Machine">
+			<summary>
+			The name of the computer on the network on which the process must
+			be stopped. The default is the local computer.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.KillTask.TimeOut">
+			<summary>
+			The maximum amount of time to wait until the process is stopped,
+			expressed in milliseconds.  The default is to wait indefinitely.
+			</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.LoadPropertiesTask">
+			<summary>
+			Loads a file's contents as NAnt properties.
 			</summary>
 			<remarks>
 			  <para>
-			  If a project file is not specified, MSBuild searches the current
-			  working directory for a file that has a file extension that ends in
-			  "proj" and uses that file.
+			  Each line in a .properties file stores a single property, with the
+			  name and value separated by an equals sign.
+			  </para>
+			  <para>
+			  Empty lines and lines that start with a '#' character are skipped.
 			  </para>
 			</remarks>
+			<example>
+			  <code>
+				<![CDATA[
+			<loadproperties file="deployment.properties" />
+				]]>
+			  </code>
+			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.ExecuteTask">
+		<member name="P:NAnt.Contrib.Tasks.LoadPropertiesTask.Encoding">
 			<summary>
-			Starts the external process and captures its output.
+			The encoding to use when loading the file. The default is the
+			system's current ANSI code page.
 			</summary>
 		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.ProjectFile">
+		<member name="P:NAnt.Contrib.Tasks.LoadPropertiesTask.File">
 			<summary>
-			The project to build.
+			The file to load properties from.
 			</summary>
 		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Properties">
+		<member name="P:NAnt.Contrib.Tasks.LoadPropertiesTask.Filters">
 			<summary>
-			Set or override these project-level properties.
+			Chain of filters used to alter the file's content as it is
+			copied.
 			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Target">
-			<summary>
-			Build these targets in this project. Use a semicolon or a comma
-			comma to separate multiple targets.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.NoAutoResponse">
-			<summary>
-			Do not auto-include the MSBuild.rsp file.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Verbosity">
-			<summary>
-			Specifies the amount of information to display in the MSBuild log.
-			</summary>
-		</member>
-		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.ProgramArguments">
-			<summary>
-			Gets the command line arguments for the external program.
-			</summary>
-			<value>
-			The command line arguments for the external program.
-			</value>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter.#ctor">
-			<summary>
-			Initializes a new instance of the <see cref="T:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter"/>
-			class.
-			</summary>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
-			<summary>
-			Converts the given object to the type of this converter, using the
-			specified context and culture information.
-			</summary>
-			<param name="context">An <see cref="T:System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
-			<param name="culture">A <see cref="T:System.Globalization.CultureInfo"/> object. If a <see langword="null"/> is passed, the current culture is assumed.</param>
-			<param name="value">The <see cref="T:System.Object"/> to convert.</param>
-			<returns>
-			An <see cref="T:System.Object"/> that represents the converted value.
-			</returns>
 		</member>
 		<member name="T:NAnt.Contrib.Tasks.MgmtClassGenTask">
 			<summary>
@@ -14641,11 +14781,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.MgmtClassGenTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.MgmtClassGenTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.MgmtClassGenTask.ExecuteTask">
 			<summary>
@@ -14707,6 +14846,88 @@
 			Arguments of program to execute
 			</summary>
 		</member>
+		<member name="T:NAnt.Contrib.Tasks.MsbuildTask">
+			<summary>
+			Builds the specified targets in the project file using <c>MSBuild</c>.
+			</summary>
+			<remarks>
+			  <para>
+			  If a project file is not specified, MSBuild searches the current
+			  working directory for a file that has a file extension that ends in
+			  "proj" and uses that file.
+			  </para>
+			</remarks>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.ExecuteTask">
+			<summary>
+			Starts the external process and captures its output.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.ProjectFile">
+			<summary>
+			The project to build.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Properties">
+			<summary>
+			Set or override these project-level properties.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Target">
+			<summary>
+			Build these targets in this project. Use a semicolon or a comma
+			comma to separate multiple targets.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.NoAutoResponse">
+			<summary>
+			Do not auto-include the MSBuild.rsp file.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Verbosity">
+			<summary>
+			Specifies the amount of information to display in the MSBuild log.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.Managed">
+			<summary>
+			Gets a value indiciating whether the external program is a managed
+			application which should be executed using a runtime engine, if
+			configured.
+			</summary>
+			<value>
+			<see langword="ManagedExecutionMode.Auto" />.
+			</value>
+			<remarks>
+			Modifying this property has no effect.
+			</remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MsbuildTask.ProgramArguments">
+			<summary>
+			Gets the command line arguments for the external program.
+			</summary>
+			<value>
+			The command line arguments for the external program.
+			</value>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter.#ctor">
+			<summary>
+			Initializes a new instance of the <see cref="T:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter"/>
+			class.
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MsbuildTask.VerbosityLevelConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+			<summary>
+			Converts the given object to the type of this converter, using the
+			specified context and culture information.
+			</summary>
+			<param name="context">An <see cref="T:System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+			<param name="culture">A <see cref="T:System.Globalization.CultureInfo"/> object. If a <see langword="null"/> is passed, the current culture is assumed.</param>
+			<param name="value">The <see cref="T:System.Object"/> to convert.</param>
+			<returns>
+			An <see cref="T:System.Object"/> that represents the converted value.
+			</returns>
+		</member>
 		<member name="T:NAnt.Contrib.Tasks.NGenTask">
 			<summary>
 			Pre-translates native code for an assembly containing IL (Intermediary
@@ -14719,12 +14940,6 @@
 				]]>
 			  </code>
 			</example>
-		</member>
-		<member name="M:NAnt.Contrib.Tasks.NGenTask.InitializeTask(System.Xml.XmlNode)">
-			<summary>
-			Initializes task and ensures the supplied attributes are valid.
-			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.NGenTask.Assembly">
 			<summary>Assembly path or display name.</summary>
@@ -14788,11 +15003,10 @@
 			  ]]></code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.NUnitReportTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.NUnitReportTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">Xml node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.NUnitReportTask.ExecuteTask">
 			<summary>
@@ -15294,11 +15508,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.SqlTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.SqlTask.Initialize">
 			<summary>
 			Initializes task and ensures the supplied attributes are valid.
 			</summary>
-			<param name="taskNode">XML node used to define this task instance.</param>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.SqlTask.ExecuteTask">
 			<summary>
@@ -15713,6 +15926,17 @@
 				]]>
 			  </code>
 			</example>
+			<example>
+			  <para>
+			  Check compiled property "vb6.compiled"
+			  </para>
+			  <code>
+				<![CDATA[
+			<echo message="Compiled sucessfully" if="${vb6.compiled}" />
+			<echo message="Compilation not needed" if="${not vb6.compiled}" />
+				]]>
+			  </code>
+			</example>
 		</member>
 		<member name="M:NAnt.Contrib.Tasks.Vb6Task.ExecuteTask">
 			<summary>
@@ -15807,6 +16031,15 @@
 			<summary>
 			Tells Visual Basic which values to use for conditional compilation
 			constants.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.Vb6Task.CompiledProperty">
+			<summary>
+			The name of a property in which will be set to <see langword="true" />
+			if compilation was needed and done without errors (default: "vb6.compiled")
+			This can be used for touching the compilation files if
+			vb6 autoincrement is set to true to avoid recompilation without any
+			other changes.
 			</summary>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.Vb6Task.ProgramFileName">
@@ -16004,6 +16237,46 @@
 			Increment an existing revision number.
 			</summary>
 		</member>
+		<member name="T:NAnt.Contrib.Tasks.WaitForExitTask">
+			<summary>
+			Waits for a given process on the local computer to exit.
+			</summary>
+			<remarks>
+			  <para>
+			  When used in combination with the <see cref="T:NAnt.Core.Tasks.ExecTask"/>, it allows
+			  processed to be spawned for a certain duration or task, and then
+			  wait until the process is finished before continueing.
+			  </para>
+			  <para>
+			  When the process identified by <see cref="P:NAnt.Contrib.Tasks.WaitForExitTask.ProcessId"/> is no longer
+			  running, then the outcome is considered successful.
+			  </para>
+			</remarks>
+			<example>
+			  <para>
+			  Starts two batch processes, and waits for them to finish.
+			  </para>
+			  <code>
+				<![CDATA[
+			<exec program="batch1.exe" pidproperty="batch1.pid" spawn="true" />
+			<exec program="batch2.exe" pidproperty="batch2.pid" spawn="true" />
+			<waitforexit pid="${batch1.pid}" />
+			<waitforexit pid="${batch2.pid}" />
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.WaitForExitTask.ProcessId">
+			<summary>
+			The unique identifier of the process to wait for.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.WaitForExitTask.TimeOut">
+			<summary>
+			The maximum amount of time to wait until the process is exited,
+			expressed in milliseconds.  The default is to wait indefinitely.
+			</summary>
+		</member>
 		<member name="T:NAnt.Contrib.Tasks.WsdlTask">
 			<summary>Generates code for web service clients and xml web services
 			using ASP.NET from WSDL contract files, XSD Schemas and .discomap
@@ -16077,6 +16350,19 @@
 		<member name="P:NAnt.Contrib.Tasks.WsdlTask.BaseUrl">
 			<summary>Base Url to use when calculating the Url fragment.
 			The UrlKey attribute must also be specified. </summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.WsdlTask.Managed">
+			<summary>
+			Gets a value indiciating whether the external program is a managed
+			application which should be executed using a runtime engine, if
+			configured.
+			</summary>
+			<value>
+			<see langword="ManagedExecutionMode.Auto" />.
+			</value>
+			<remarks>
+			Modifying this property has no effect.
+			</remarks>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.WsdlTask.ProgramArguments">
 			<summary>
@@ -16179,11 +16465,10 @@
 			  </code>
 			</example>
 		</member>
-		<member name="M:NAnt.Contrib.Tasks.XsdTask.InitializeTask(System.Xml.XmlNode)">
+		<member name="M:NAnt.Contrib.Tasks.XsdTask.Initialize">
 			<summary>
 			Validates the <see cref="T:NAnt.Core.Task"/>.
 			</summary>
-			<param name="taskNode">The <see cref="T:System.Xml.XmlNode"/> used to initialize the <see cref="T:NAnt.Core.Task"/>.</param>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.XsdTask.Schema">
 			<summary>
@@ -16251,6 +16536,19 @@
 			<summary>
 			XDR Schema to generate an XML Schema for.
 			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.XsdTask.Managed">
+			<summary>
+			Gets a value indiciating whether the external program is a managed
+			application which should be executed using a runtime engine, if
+			configured.
+			</summary>
+			<value>
+			<see langword="ManagedExecutionMode.Auto" />.
+			</value>
+			<remarks>
+			Modifying this property has no effect.
+			</remarks>
 		</member>
 		<member name="P:NAnt.Contrib.Tasks.XsdTask.ProgramArguments">
 			<summary>
@@ -17281,6 +17579,7 @@
 			Create a new instance
 			</summary>
 			<param name="providerName">Name of hash algorithm to use</param>
+			<exception cref="T:System.ArgumentException">The specified hash algorithm does not exist.</exception>
 		</member>
 		<member name="M:NAnt.Contrib.Util.ChecksumHelper.CalculateChecksum(System.String)">
 			<summary>
@@ -17545,11 +17844,6 @@
 			<param name="Key"></param>
 			<param name="String"></param>
 		</member>
-		<member name="M:NAnt.Contrib.Util.IniFile.Flush">
-			<summary>
-			' Stores all the cached changes to your INI file
-			</summary>
-		</member>
 		<member name="T:NAnt.Contrib.Util.SqlHelper">
 			<summary>
 			Helper class used to execute Sql Statements.
@@ -17654,14 +17948,6 @@
 			<summary>
 			Allows foreach().
 			</summary>
-			<returns></returns>
-		</member>
-		<member name="M:NAnt.Contrib.Util.SqlStatementList.StripComments(System.String)">
-			<summary>
-			Strips all single line comments
-			in the specified sql
-			</summary>
-			<param name="sql"></param>
 			<returns></returns>
 		</member>
 		<member name="M:NAnt.Contrib.Util.SqlStatementList.ExpandProps(System.String)">

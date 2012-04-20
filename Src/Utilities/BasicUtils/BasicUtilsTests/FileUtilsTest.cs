@@ -561,7 +561,9 @@ namespace SIL.Utils
 				tw.Close();
 			}
 
-			FileUtils.OpenFileForRead("file", Encoding.ASCII);
+			using (FileUtils.OpenFileForRead("file", Encoding.ASCII))
+			{
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -633,7 +635,9 @@ namespace SIL.Utils
 			ExpectedMessage = "Illegal characters in path.")]
 		public void OpenFileForBinaryWrite_BogusPath()
 		{
-			FileUtils.OpenFileForBinaryWrite("f\x00ile", Encoding.UTF8);
+			using (FileUtils.OpenFileForBinaryWrite("f\x00ile", Encoding.UTF8))
+			{
+			}
 		}
 		#endregion
 
@@ -663,7 +667,9 @@ namespace SIL.Utils
 			ExpectedMessage = "Illegal characters in path.")]
 		public void OpenWrite_BogusPath()
 		{
-			FileUtils.OpenWrite("ti\x00mbuk2");
+			using (FileUtils.OpenWrite("ti\x00mbuk2"))
+			{
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -676,7 +682,9 @@ namespace SIL.Utils
 			ExpectedMessage = "Could not find file timbuk2")]
 		public void OpenWrite_FileDoesNotExist()
 		{
-			FileUtils.OpenWrite("timbuk2");
+			using (FileUtils.OpenWrite("timbuk2"))
+			{
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -689,9 +697,12 @@ namespace SIL.Utils
 			ExpectedMessage = "File file is locked (open for write).")]
 		public void OpenWrite_FileLocked()
 		{
-			FileUtils.OpenFileForWrite("file", Encoding.ASCII);
-
-			FileUtils.OpenWrite("file");
+			using (FileUtils.OpenFileForWrite("file", Encoding.ASCII))
+			{
+				using (FileUtils.OpenWrite("file"))
+				{
+				}
+			}
 		}
 		#endregion
 

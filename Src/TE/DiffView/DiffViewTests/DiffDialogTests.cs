@@ -703,7 +703,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: I think this test is failing because of layout differences possibly caused by RomRender")]
 		public void KeyboardHandling_arrowsNonEditable()
 		{
 			CompleteInitialize(true, m_philemonRev);
@@ -1402,7 +1401,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: I think this test is failing because of layout differences possibly caused by RomRender")]
 		public void Edit_EnterAtEndOfNonUltimateSectionHeadPara()
 		{
 			CompleteInitialize(true, m_philemonRev);

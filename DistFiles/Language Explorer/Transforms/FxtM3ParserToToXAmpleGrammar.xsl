@@ -27,12 +27,13 @@ Preamble
 	<xsl:variable name="LexEntries" select="$entries/LexEntry"/>
 
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-   <xsl:key name="FSID" match="//FS" use="@Id"/>
-   <xsl:key name="InflClassID" match="//MoInflClass" use="@Id"/>
-   <xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-   <xsl:key name="SlotsID" match="//MoInflAffixSlot" use="@Id"/>
-   <xsl:key name="StemMsaID" match="//MoStemMsa" use="@Id"/>
-   <xsl:key name="StemNameID" match="//MoStemName" use="@Id"/>
+   <xsl:key name="FSID" match="FS" use="@Id"/><!-- this looks like a mistake, but Andy will have to fix it. -->
+   <xsl:key name="InflClassID" match="MoInflClass" use="@Id"/>
+   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+   <xsl:key name="SlotsID" match="MoInflAffixSlot" use="@Id"/>
+   <xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
+   <xsl:key name="StemNameID" match="MoStemName" use="@Id"/>
+   <xsl:key name="AnyId" match="*" use="@id"/>
    <!-- included stylesheets (i.e. things common to other style sheets) -->
    <xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="XAmpleTemplateVariables.xsl"/>
@@ -2410,6 +2411,7 @@ TemplateWithNestedPOS
 ================================================================
 Revision History
 - - - - - - - - - - - - - - - - - - -
+27-Mar-2012    Steve McConnel  Tweak for effiency in libxslt based processing.
 09-Mar-2006      Andy Black    Handle category hierarchy for unclassified affixes
 09-Dec-2005      Andy Black    Undo "use template disjunction for fromPOS, envPOS, and toPOS instead of constraint disjunction" because it was so inefficient
 23-Sep-2005	 Andy Black	Revise derivational affixation so the resulting stem defaults to the cat of the original stem and the tocat does priority union

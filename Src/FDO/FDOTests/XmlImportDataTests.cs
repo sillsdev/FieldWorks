@@ -16,18 +16,18 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -48,6 +48,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyTestCache()")]
 		public void CreateTestCache()
 		{
 			m_now = DateTime.Now;

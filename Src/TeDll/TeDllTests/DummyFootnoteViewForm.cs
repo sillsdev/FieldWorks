@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -340,7 +341,7 @@ namespace SIL.FieldWorks.TE
 			//
 			// DummyFootnoteViewForm
 			//
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(292, 273);
 			this.Name = "DummyFootnoteViewForm";
 			this.Text = "DummyFootnoteViewForm";
@@ -356,13 +357,18 @@ namespace SIL.FieldWorks.TE
 		/// Returns the parent's SettingsKey if parent implements ISettings, otherwise null.
 		/// </summary>
 		///-------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public Microsoft.Win32.RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
 
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("FootnoteViewTest");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("FootnoteViewTest");
+				}
 			}
 		}
 

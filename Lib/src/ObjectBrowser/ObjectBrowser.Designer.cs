@@ -21,8 +21,11 @@ namespace SIL.ObjectBrowser
 			{
 				if (components != null)
 					components.Dispose();
+				if (m_InspectorWnd != null)
+					m_InspectorWnd.Dispose();
 			}
 
+			m_InspectorWnd = null;
 			base.Dispose(disposing);
 		}
 

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -755,12 +756,17 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the project specific settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey ProjectSpecificSettingsKey
 		{
 			get
 			{
 				Debug.Assert(Cache != null, "The app's cache has not been created yet.");
-				return SettingsKey.CreateSubKey(Cache.ProjectId.Name);
+				using (var regKey = SettingsKey)
+				{
+					return regKey.CreateSubKey(Cache.ProjectId.Name);
+				}
 			}
 		}
 

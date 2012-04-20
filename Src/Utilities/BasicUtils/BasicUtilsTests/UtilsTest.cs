@@ -573,25 +573,31 @@ namespace SIL.Utils
 		public void RunProcess_existingCommand_noError()
 		{
 			bool errorTriggered = false;
-			MiscUtils.RunProcess("find", "blah",
-				(exception) => { errorTriggered = true; });
-			Assert.That(errorTriggered, Is.False);
+			using (MiscUtils.RunProcess("find", "blah",
+				(exception) => { errorTriggered = true; }))
+			{
+				Assert.That(errorTriggered, Is.False);
+			}
 		}
 
 		[Test]
 		public void RunProcess_nonexistentCommand_givesError()
 		{
 			bool errorTriggered = false;
-			MiscUtils.RunProcess("nonexistentCommand", "",
-				(exception) => { errorTriggered = true; });
-			Assert.That(errorTriggered, Is.True);
+			using (MiscUtils.RunProcess("nonexistentCommand", "",
+				(exception) => { errorTriggered = true; }))
+			{
+				Assert.That(errorTriggered, Is.True);
+			}
 		}
 
 		[Test]
 		public void RunProcess_allowsNullErrorHandler()
 		{
 			Assert.DoesNotThrow(() => {
-				MiscUtils.RunProcess("nonexistentCommand", "", null);
+				using (MiscUtils.RunProcess("nonexistentCommand", "", null))
+				{
+				}
 			});
 		}
 		#endregion // RunProcess tests

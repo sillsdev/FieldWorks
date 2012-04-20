@@ -444,7 +444,6 @@ namespace SIL.FieldWorks.IText
 			{
 				CheckDisposed();
 
-				// ISilDataAccess sda = m_caches.DataAccess; // CS0219
 				int chvo = MorphCount;
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
@@ -1109,7 +1108,6 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
-			// int wsAnalysis = m_caches.MainCache.DefaultAnalWs; // CS0219
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			IVwCacheDa cda = (IVwCacheDa)m_caches.DataAccess;
 			if (CurrentAnalysisTree.Analysis == null)
@@ -1899,7 +1897,6 @@ namespace SIL.FieldWorks.IText
 				else
 					defSenseReal = senseReal;
 			}
-			// string gloss = defSenseReal.Gloss.get_String(m_caches.MainCache.DefaultAnalWs).Text; // CS0219
 			int hvoDefSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, defSenseReal.Hvo,
 				LexSenseTags.kflidGloss);
 
@@ -3061,19 +3058,6 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-// CS0169
-#if false
-		/// <summary>
-		/// Make a selection at the end of the indicated morpheme in the morphs line.
-		/// That is, at the end of the postfix if there is one, otherwise, the end of the form.
-		/// </summary>
-		/// <param name="index"></param>
-		private void SelectAtEndOfMorph(int index)
-		{
-			SelectAtEndOfMorph(index, 0);
-		}
-#endif
-
 		private void SelectAtEndOfMorph(int index, int cPrevOccurrences)
 		{
 			ISilDataAccess sda = m_caches.DataAccess;
@@ -4081,7 +4065,6 @@ namespace SIL.FieldWorks.IText
 				int ihvoEnd;
 				ITsTextProps ttpBogus;
 				// Main array of information retrived from sel that made combo.
-				// SelLevInfo[] rgvsli = // CS0219
 				SelLevInfo.AllTextSelInfo(sel, cvsli,
 					out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);

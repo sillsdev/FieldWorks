@@ -42,7 +42,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	{
 		private Mediator m_mediator;
 		private bool m_fDisposeMediator;
-		//private XmlNode m_configurationParameters; // CS0414
 		private FdoCache m_cache;
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
@@ -296,7 +295,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			using (new WaitCursor(this))
 			{
 				m_mediator = mediator;
-				// m_configurationParameters = configurationParameters; // CS0414
 
 				m_btnRefresh.Image = ResourceHelper.RefreshIcon;
 
@@ -631,21 +629,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				m_lblExplainDisabled.Text = m_lblExplainText; // original message says not all checked.
 		}
-// CS0169
-#if false
-		private void FirePropChanged(int hvo)
-		{
-			int vhFlid = BaseVirtualHandler.GetInstalledHandlerTag(m_cache, "WfiWordform", "OccurrencesInTexts");
-			ISilDataAccess sda = m_cache.MainCacheAccessor;
-			sda.PropChanged(null,
-				(int)PropChangeType.kpctNotifyAll,
-				hvo,
-				vhFlid,
-				0, // These three numbers are ignored in PropChanged code, as it just reloads it all.
-				0,
-				1);
-		}
-#endif
 
 	#region Event handlers
 
@@ -703,13 +686,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			SetEnabledState();
 		}
 
-// CS0169
-#if false
-		private void m_tcSpelling_Selected(object sender, TabControlEventArgs e)
-		{
-			SetEnabledState();
-		}
-#endif
 		/// <summary>
 		/// Flag set if we changed anything and need to reload lists.
 		/// </summary>

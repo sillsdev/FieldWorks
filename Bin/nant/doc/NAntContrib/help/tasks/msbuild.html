@@ -20,7 +20,7 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;msbuild&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;msbuild&gt;</h1>
@@ -111,7 +111,8 @@
 		<tr>
 		  <td valign="top">useruntimeengine</td>
 		  <td style="text-align: center;">bool</td>
-		  <td> Specifies whether the external program should be executed using a runtime engine, if configured. The default is <b>false</b>. </td>
+		  <td>
+			<i>Deprecated.</i>  Specifies whether the external program is a managed application which should be executed using a runtime engine, if configured. The default is <b>false</b>. </td>
 		  <td style="text-align: center;">False</td>
 		</tr>
 	  </table>
@@ -127,19 +128,19 @@
 	<div class="nested-element"> Set or override these project-level properties. <p> Sets a property in the current project. </p><p class="i2"><b>Note:</b> NAnt uses a number of predefined properties.</p><h3>Parameters</h3><div class="table"><table><tr><th>Attribute</th><th style="text-align: center;">Type</th><th>Description</th><th style="text-align: center;">Required</th></tr><tr><td valign="top" class="required">name</td><td style="text-align: center;">string</td><td> The name of the NAnt property to set. </td><td style="text-align: center;">True</td></tr><tr><td valign="top" class="required">value</td><td style="text-align: center;">string</td><td> The value to assign to the NAnt property. <p style="font-weight: bold;">
 						This attribute's properties will not be automatically expanded!
 					</p></td><td style="text-align: center;">True</td></tr><tr><td valign="top">dynamic</td><td style="text-align: center;">bool</td><td> Specifies whether references to other properties should not be expanded when the value of the property is set, but expanded when the property is actually used. By default, properties will be expanded when set. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">overwrite</td><td style="text-align: center;">bool</td><td> Specifies whether the value of a property should be overwritten if the property already exists (unless the property is read-only). The default is <b>true</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">readonly</td><td style="text-align: center;">bool</td><td> Specifies whether the property is read-only or not. The default is <b>false</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">failonerror</td><td style="text-align: center;">bool</td><td> Determines if task failure stops the build, or is just reported. The default is <b>true</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">if</td><td style="text-align: center;">bool</td><td> If <b>true</b> then the task will be executed; otherwise, skipped. The default is <b>true</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">unless</td><td style="text-align: center;">bool</td><td> Opposite of <code>if</code>. If <b>false</b> then the task will be executed; otherwise, skipped. The default is <b>false</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">verbose</td><td style="text-align: center;">bool</td><td> Determines whether the task should report detailed build log messages. The default is <b>false</b>. </td><td style="text-align: center;">False</td></tr></table></div><h3>Examples</h3><ul class="examples"><li><p> Define a <code>debug</code> property with value <b>true</b>. </p><pre class="code">
-&lt;property name="debug" value="true" /&gt;
-	</pre></li><li><p> Use the user-defined <code>debug</code> property. </p><pre class="code">
-&lt;property name="trace" value="${debug}" /&gt;
-	</pre></li><li><p> Define a read-only property. This is just like passing in the param on the command line. </p><pre class="code">
-&lt;property name="do_not_touch_ME" value="hammer" readonly="true" /&gt;
-	</pre></li><li><p> Define a property, but do not overwrite the value if the property already exists (eg. it was specified on the command line). </p><pre class="code">
-&lt;project name="property-example"&gt;
-  &lt;property name="debug" value="true" overwrite="false" /&gt;
-  &lt;echo message="debug: ${debug}" /&gt;
-&lt;/project&gt;
-	</pre><p> Executing this build file with the command line option <code>-D:debug=false</code>, would cause the value specified on the command line to remain unaltered. </p><pre class="code">
-[echo] debug: false
-	</pre></li></ul></div>
+			&lt;property name="debug" value="true" /&gt;
+				</pre></li><li><p> Use the user-defined <code>debug</code> property. </p><pre class="code">
+			&lt;property name="trace" value="${debug}" /&gt;
+				</pre></li><li><p> Define a read-only property. This is just like passing in the param on the command line. </p><pre class="code">
+			&lt;property name="do_not_touch_ME" value="hammer" readonly="true" /&gt;
+				</pre></li><li><p> Define a property, but do not overwrite the value if the property already exists (eg. it was specified on the command line). </p><pre class="code">
+			&lt;project name="property-example"&gt;
+			  &lt;property name="debug" value="true" overwrite="false" /&gt;
+			  &lt;echo message="debug: ${debug}" /&gt;
+			&lt;/project&gt;
+				</pre><p> Executing this build file with the command line option <code>-D:debug=false</code>, would cause the value specified on the command line to remain unaltered. </p><pre class="code">
+			[echo] debug: false
+				</pre></li></ul></div>
 	<h4>
 	  <a id="property">
 	  </a>
@@ -152,7 +153,7 @@
 	  </a>
 					&lt;arg&gt;
 				</h4>
-	<div class="nested-element"> The command-line arguments for the external program. <p> Represents a command-line argument. </p><h3>Parameters</h3><div class="table"><table><tr><th>Attribute</th><th style="text-align: center;">Type</th><th>Description</th><th style="text-align: center;">Required</th></tr><tr><td valign="top">dir</td><td style="text-align: center;">directory</td><td> The value for a directory-based command-line argument; will be replaced with the absolute path of the directory. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">file</td><td style="text-align: center;">file</td><td> The name of a file as a single command-line argument; will be replaced with the absolute filename of the file. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">if</td><td style="text-align: center;">bool</td><td> Indicates if the argument should be passed to the external program. If <b>true</b> then the argument will be passed; otherwise, skipped. The default is <b>true</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">line</td><td style="text-align: center;">string</td><td> List of command-line arguments; will be passed to the executable as is. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">path</td><td style="text-align: center;">&lt;path&gt;</td><td> The value for a PATH-like command-line argument; you can use <code>:</code> or <code>;</code> as path separators and NAnt will convert it to the platform's local conventions, while resolving references to environment variables. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">unless</td><td style="text-align: center;">bool</td><td> Indicates if the argument should not be passed to the external program. If <b>false</b> then the argument will be passed; otherwise, skipped. The default is <b>false</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">value</td><td style="text-align: center;">string</td><td> A single command-line argument; can contain space characters. </td><td style="text-align: center;">False</td></tr></table></div><h3>Nested Elements:</h3><!--Element--><h4><a id="path"></a>
+	<div class="nested-element"> The command-line arguments for the external program. <p> Represents a command-line argument. </p><p> When passed to an external application, the argument will be quoted when appropriate. This does not apply to the <code>line</code> parameter, which is always passed as is. </p><h3>Parameters</h3><div class="table"><table><tr><th>Attribute</th><th style="text-align: center;">Type</th><th>Description</th><th style="text-align: center;">Required</th></tr><tr><td valign="top">dir</td><td style="text-align: center;">directory</td><td> The value for a directory-based command-line argument; will be replaced with the absolute path of the directory. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">file</td><td style="text-align: center;">file</td><td> The name of a file as a single command-line argument; will be replaced with the absolute filename of the file. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">if</td><td style="text-align: center;">bool</td><td> Indicates if the argument should be passed to the external program. If <b>true</b> then the argument will be passed; otherwise, skipped. The default is <b>true</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">line</td><td style="text-align: center;">string</td><td> List of command-line arguments; will be passed to the executable as is. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">path</td><td style="text-align: center;">&lt;path&gt;</td><td> The value for a PATH-like command-line argument; you can use <code>:</code> or <code>;</code> as path separators and NAnt will convert it to the platform's local conventions, while resolving references to environment variables. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">unless</td><td style="text-align: center;">bool</td><td> Indicates if the argument should not be passed to the external program. If <b>false</b> then the argument will be passed; otherwise, skipped. The default is <b>false</b>. </td><td style="text-align: center;">False</td></tr><tr><td valign="top">value</td><td style="text-align: center;">string</td><td> A single command-line argument; can contain space characters. </td><td style="text-align: center;">False</td></tr></table></div><h3>Nested Elements:</h3><!--Element--><h4><a id="path"></a>
 					&lt;<a href="http://nant.sourceforge.net/help/types/path.html">path</a>&gt;
 				</h4><div class="nested-element"> Sets a single command-line argument and treats it like a PATH - ensures the right separator for the local platform is used. <p /></div><h4><a id="path"></a>
 					&lt;/<a href="http://nant.sourceforge.net/help/types/path.html">path</a>&gt;
@@ -170,7 +171,7 @@
 				</h4>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

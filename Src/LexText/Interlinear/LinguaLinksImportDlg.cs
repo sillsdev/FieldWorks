@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.IText
 			// Copied from the LexImportWizard dlg Init (LexImportWizard.cs)
 			// Ensure that we have the default encoding converter (to/from MS Windows Code Page
 			// for Western European languages)
-			EncConverters encConv = new EncConverters();
+			SilEncConverters40.EncConverters encConv = new SilEncConverters40.EncConverters();
 			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			string sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
 			bool fMustCreateEncCnv = true;
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.IText
 						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
 						ECInterfaces.ProcessTypeFlags.CodePageConversion);
 				}
-				catch (ECException exception)
+				catch (SilEncConverters40.ECException exception)
 				{
 					MessageBox.Show(exception.Message, ITextStrings.ksConvMapError,
 						MessageBoxButtons.OK);
@@ -508,66 +508,8 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion
 
-// CS0169
-#if false
-		/// <summary>
-		/// This is temporary behavior until a full import dialog/wizard is written which allows
-		/// the user to specify the original LinguaLinks language project dump file.
-		/// </summary>
-		private void linkLabel1_LinkClicked(object sender,
-			System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-		{
-			// Fire up a file chooser to select an XML file.
-			// Try importing the selected file.
-			// Report success or failure.
-			var openFileDialog = new OpenFileDialogAdapter();
-			openFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
-			openFileDialog.FilterIndex = 0;
-			openFileDialog.CheckFileExists = true;
-			openFileDialog.Multiselect = false;
-			openFileDialog.Title = ITextStrings.ksSelectLLFWXMLFile;
-			if (openFileDialog.ShowDialog() == DialogResult.OK)
-			{
-				using (new SIL.Utils.WaitCursor(this))
-				{
-					StatusBarProgressPanel panel =
-						m_mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
-					ProgressReporter prog = new ProgressReporter(panel);
-					string sXmlFile = openFileDialog.FileName;
-					m_sLogFile = sXmlFile;
-					int ich = m_sLogFile.LastIndexOf(".");
-					if (ich >= 0)
-						m_sLogFile.Remove(ich, m_sLogFile.Length - ich);
-					m_sLogFile += "-Import.log";
-					try
-					{
-						XmlImportData xid = new XmlImportData(m_cache);
-						bool fOk = xid.ImportData(sXmlFile, prog as IAdvInd);
-						if (fOk)
-						{
-							MessageBox.Show(this,
-								String.Format(ITextStrings.ksSuccessLoadingLL,
-									sXmlFile, m_cache.DatabaseName, System.Environment.NewLine, m_sLogFile),
-								ITextStrings.ksLLImportSucceeded,
-								MessageBoxButtons.OK, MessageBoxIcon.Information);
-						}
-					}
-					catch
-					{
-						MessageBox.Show(this,
-							String.Format(ITextStrings.ksFailedLoadingLL,
-								sXmlFile, m_cache.DatabaseName, System.Environment.NewLine, m_sLogFile),
-							ITextStrings.ksLLImportFailed,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-				}
-			}
-		}
-#endif
-
 		private void ShowFinishLabel()
 		{
-			//MessageBox.Show(Convert.ToString(Control.ModifierKeys));
 			if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				lblFinishWOImport.Visible = true;

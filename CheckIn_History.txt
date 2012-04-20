@@ -5833,3 +5833,4 @@ GordonM, 18 Apr 2012. Fix crashing bug related to sound controls in prep for LT-
 KenZ, 18 Apr 2012. Checked in FlexBridge 0.3.27 for Randy
 Andy Black, 18 Apr 2012.  Fix LT-12970 "Morph Sketch fails to show optional slots in templates"
 RandyR, 18 Apr 2012. Checked in FlexBridge 0.3.28
+EberhardB, 20 Apr 2012. Integration Calgary/WW -> Calgary.

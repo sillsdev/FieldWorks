@@ -1,0 +1,58 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>FrameworkFunctions.GetToolPath Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">FrameworkFunctions.GetToolPath Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Gets the absolute path of the specified tool for the current target framework. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Function(Name:="get-tool-path")&gt;</div>Public Function GetToolPath( _<br />   ByVal <i>tool</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a> _<br />) As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />
+		<div class="attribute">[Function(Name="get-tool-path")]</div>public <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> GetToolPath(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>tool</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>tool</i>
+		</dt>
+		<dd>The file name of the tool to search for.</dd>
+	  </dl>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> The absolute path to <i>tool</i> if found in one of the configured tool paths; otherwise, an error is reported. </p>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> The configured tool paths are scanned in the order in which they are defined in the framework configuration. </p>
+			  <p> The file name of the tool to search should include the extension. </p>
+			<h4 class="dtH4">Exceptions</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Exception Type</th><th width="50%">Condition</th></tr><tr valign="top"><td width="50%"><a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemIOFileNotFoundExceptionClassTopic.asp">FileNotFoundException</a></td><td width="50%"><i>tool</i> could not be found in the configured tool paths.</td></tr></table></div><h4 class="dtH4">Example</h4><p>
+			  <p>Use <b>gacutil</b> to install an assembly in the GAC.</p>
+			  <pre class="code">
+&lt;exec program="${framework::get-tool-path('gacutil.exe')}" managed="strict"&gt;
+	&lt;arg value="/i" /&gt;
+	&lt;arg file="Cegeka.HealthFramework.dll" /&gt;
+&lt;/exec&gt;
+
+  </pre>
+			</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Functions.FrameworkFunctions.html">FrameworkFunctions Class</a> | <a href="NAnt.Core.Functions.html">NAnt.Core.Functions Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="GetToolPath method"></param><param name="Keyword" value="GetToolPath method, FrameworkFunctions class"></param><param name="Keyword" value="FrameworkFunctions.GetToolPath method"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

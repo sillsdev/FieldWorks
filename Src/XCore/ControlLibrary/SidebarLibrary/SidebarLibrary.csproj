@@ -119,9 +119,6 @@
 	<Compile Include="CommandBarUnused\ChevronMenu.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="CommandBarUnused\CommandBarMenu.cs">
-	  <SubType>Component</SubType>
-	</Compile>
 	<Compile Include="CommandBarUnused\Rebar.cs">
 	  <SubType>Component</SubType>
 	</Compile>
@@ -149,9 +146,6 @@
 	<Compile Include="General\TextUtil.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="MenuUnused\ColorGroup.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="MenuUnused\DrawCommand.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -163,9 +157,6 @@
 	</Compile>
 	<Compile Include="MenuUnused\MenuControlDesigner.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="MenuUnused\MenuItemEx.cs">
-	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="MenuUnused\PopupMenu.cs">
 	  <SubType>Code</SubType>
@@ -240,9 +231,6 @@
 	<EmbeddedResource Include="CommandBarUnused\ChevronMenu.resx">
 	  <DependentUpon>ChevronMenu.cs</DependentUpon>
 	</EmbeddedResource>
-	<EmbeddedResource Include="CommandBarUnused\CommandBarMenu.resx">
-	  <DependentUpon>CommandBarMenu.cs</DependentUpon>
-	</EmbeddedResource>
 	<EmbeddedResource Include="CommandBarUnused\Rebar.resx">
 	  <DependentUpon>Rebar.cs</DependentUpon>
 	</EmbeddedResource>
@@ -254,9 +242,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="MenuUnused\MenuControl.resx">
 	  <DependentUpon>MenuControl.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="MenuUnused\MenuItemEx.resx">
-	  <DependentUpon>MenuItemEx.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="Resources\Controls.resX" />
 	<EmbeddedResource Include="Resources\DragCursor.cur" />
@@ -316,6 +301,21 @@
 	<EmbeddedResource Include="WinControls\TreeViewEx.resx">
 	  <DependentUpon>TreeViewEx.cs</DependentUpon>
 	</EmbeddedResource>
+	<Compile Include="Menu\MenuItemEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<EmbeddedResource Include="Menu\MenuItemEx.resx">
+	  <DependentUpon>MenuItemEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<Compile Include="Menu\ColorGroup.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CommandBar\CommandBarMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<EmbeddedResource Include="CommandBar\CommandBarMenu.resx">
+	  <DependentUpon>CommandBarMenu.cs</DependentUpon>
+	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -341,4 +341,8 @@
 	<PostBuildEvent>
 	</PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+	<Folder Include="Menu\" />
+	<Folder Include="CommandBar\" />
+  </ItemGroup>
 </Project>

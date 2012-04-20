@@ -22,8 +22,7 @@
 	<OutputType>Library</OutputType>
 	<RootNamespace>SIL.FieldWorks.TE</RootNamespace>
 	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
+	<FileUpgradeFlags>0</FileUpgradeFlags>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<OldToolsVersion>3.5</OldToolsVersion>

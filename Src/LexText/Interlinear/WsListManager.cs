@@ -222,7 +222,6 @@ namespace SIL.FieldWorks.IText
 					ILgWritingSystem[] wssAnalysis = AnalysisWss;
 					List<ITsString> labels = new List<ITsString>();
 					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					// int wsUi = m_lp.Cache.DefaultUserWs; // CS0219
 					foreach (IWritingSystem ws in AnalysisWss)
 					{
 						string sAbbr = ws.Abbreviation;

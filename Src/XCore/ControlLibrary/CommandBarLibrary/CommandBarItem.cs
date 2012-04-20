@@ -44,11 +44,14 @@ namespace Reflector.UserInterface
 
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
-				this.image = null;
-				this.text = null;
+				if (image != null)
+					image.Dispose();
 			}
+			image = null;
+			text = null;
 
 			base.Dispose(disposing);
 		}

@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,17 +166,21 @@ namespace SIL.FieldWorks.XWorks
 			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		private RegistryKey RegistryKey
 		{
 			get
 			{
 				Debug.Assert(Cache != null);
 				Debug.Assert(m_sRegKeyName != null);
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("GeneratedHtmlViewer\\" +
-					Cache.ProjectId.Name + "\\" + m_sRegKeyName);
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("GeneratedHtmlViewer\\" +
+						Cache.ProjectId.Name + "\\" + m_sRegKeyName);
+				}
 			}
 		}
-
 
 		/// <summary>
 		/// FDO cache.

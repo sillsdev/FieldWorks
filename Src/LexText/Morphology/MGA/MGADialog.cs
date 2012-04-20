@@ -154,15 +154,18 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile,
 				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
-			float fRatio = CreateGraphics().DpiX / 96.0f; // try to adjust for screen resolution
-			// on start-up, ensure the selected gloss panel is wide enough for all the buttons
-			splitContainerVertical.SplitterDistance =
-				splitContainerVertical.Width - (buttonAcceptGloss.Width
-				+ buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
+			using (var graphics = CreateGraphics())
+			{
+				float fRatio = graphics.DpiX / 96.0f; // try to adjust for screen resolution
+				// on start-up, ensure the selected gloss panel is wide enough for all the buttons
+				splitContainerVertical.SplitterDistance =
+					splitContainerVertical.Width - (buttonAcceptGloss.Width
+					+ buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
 
-			Text += " " + m_cache.ProjectId.UiName;
+				Text += " " + m_cache.ProjectId.UiName;
 
-			ResumeLayout();
+				ResumeLayout();
+			}
 		}
 
 		/// <summary>

@@ -12,6 +12,7 @@
 // Responsibility: FW team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -60,7 +61,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tbProjectsFolder.TextChanged += m_tbProjectsFolder_TextChanged;
 		}
 
-		void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
+		private void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
 		{
 			m_cbShareMyProjects.Enabled = false;
 			m_btnOK.Enabled = true;
@@ -127,6 +130,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						invalidPaths.Add("/tmp");
 						invalidPaths.Add("/usr");
 						invalidPaths.Add("/var");
+
+						// DriveInfo.GetDrives() is only implemented on Linux (which is ok here).
+						// TODO-Linux: IsReady always returns true on Mono.
 						foreach (DriveInfo d in DriveInfo.GetDrives())
 						{
 							if (!d.IsReady || d.AvailableFreeSpace == 0)

@@ -1,19 +1,20 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
 
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
-using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -49,6 +50,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle launching of the MSA editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())

@@ -1,4 +1,6 @@
-﻿namespace SIL.ObjectBrowser
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SIL.ObjectBrowser
 {
 	partial class InspectorWnd
 	{
@@ -13,6 +15,9 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		// TODO-Linux: VirtualMode is not supported on Mono
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.gridInspector = new InspectorGrid();

@@ -241,9 +241,11 @@ namespace SIL.Utils
 			{
 				string body = m_emailBody.Replace(System.Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
 
-				Process p = new Process();
-				p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, m_emailSubject, body);
-				p.Start();
+				using (Process p = new Process())
+				{
+					p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, m_emailSubject, body);
+					p.Start();
+				}
 			}
 			catch(Exception)
 			{

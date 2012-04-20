@@ -600,42 +600,45 @@ namespace SIL.FieldWorks.Discourse
 			EndSetupTask();
 			// SUT has its own UOW
 
-			// SUT
-			m_logic.AddOrRemoveMarker(new RowColPossibilityMenuItem(row0col1, marker.Hvo));
-			VerifyInsertMarker(marker);
-
-			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
-			Cache.ActionHandlerAccessor.Undo();
-			VerifyRemovedMarker(allParaOccurrences);
-
-			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
-			Cache.ActionHandlerAccessor.Redo();
-			VerifyInsertMarker(marker);
-
-			// Now make sure we can delete it again.
-			using (var item = new RowColPossibilityMenuItem(row0col1, marker.Hvo))
+			using (var menuItem = new RowColPossibilityMenuItem(row0col1, marker.Hvo))
 			{
-				item.Checked = true;
-				m_logic.AddOrRemoveMarker(item);
-				VerifyRemovedMarker(allParaOccurrences);
-			}
+				// SUT
+				m_logic.AddOrRemoveMarker(menuItem);
+				VerifyInsertMarker(marker);
 
-			// Now test Undo
-			using (new NotifyChangeSpy(m_mockRibbon.Decorator))
-			{
+				// Now test Undo
 				Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
 				Cache.ActionHandlerAccessor.Undo();
-				VerifyInsertMarker(marker);
-			}
+				VerifyRemovedMarker(allParaOccurrences);
 
-			// And now Redo
-			using (new NotifyChangeSpy(m_mockRibbon.Decorator))
-			{
+				// And now Redo
 				Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
 				Cache.ActionHandlerAccessor.Redo();
-				VerifyRemovedMarker(allParaOccurrences);
+				VerifyInsertMarker(marker);
+
+				// Now make sure we can delete it again.
+				using (var item = new RowColPossibilityMenuItem(row0col1, marker.Hvo))
+				{
+					item.Checked = true;
+					m_logic.AddOrRemoveMarker(item);
+					VerifyRemovedMarker(allParaOccurrences);
+				}
+
+				// Now test Undo
+				using (new NotifyChangeSpy(m_mockRibbon.Decorator))
+				{
+					Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+					Cache.ActionHandlerAccessor.Undo();
+					VerifyInsertMarker(marker);
+				}
+
+				// And now Redo
+				using (new NotifyChangeSpy(m_mockRibbon.Decorator))
+				{
+					Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+					Cache.ActionHandlerAccessor.Redo();
+					VerifyRemovedMarker(allParaOccurrences);
+				}
 			}
 		}
 

@@ -1,0 +1,133 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>FrameworkTypes Enumeration</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">FrameworkTypes Enumeration</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Defines the types of frameworks. </p>
+	  <p>This enumeration has a <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemFlagsAttributeClassTopic.asp">
+						FlagsAttribute</a>
+						attribute that allows a bitwise combination of its member values.</p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Serializable, _
+ Flags&gt;</div>Public Enum FrameworkTypes</div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[Serializable]</div>
+		<div class="attribute">[Flags]</div>
+		<div>public enum FrameworkTypes</div>
+	  </div>
+	  <h4 class="dtH4">Members</h4>
+	  <div class="tablediv">
+		<table class="dtTABLE" cellspacing="0">
+		  <tr valign="top">
+			<th width="40%">Member Name</th>
+			<th width="40%">Description</th>
+			<th width="20%">Value</th>
+		  </tr>
+<tr valign="top"><td><b>NotInstalled</b></td><td> Frameworks that are supported on the current platform, but are not installed. </td><td>1</td></tr>
+<tr valign="top"><td><b>Installed</b></td><td> Frameworks that are installed on the current system. </td><td>2</td></tr>
+<tr valign="top"><td><b>InstallStateMask</b></td><td> Retrieves installation state attributes. </td><td>3</td></tr>
+<tr valign="top"><td><b>Desktop</b></td><td> Frameworks that typically target full desktop devices. </td><td>4</td></tr>
+<tr valign="top"><td><b>Compact</b></td><td> Frameworks that target compact devices. </td><td>8</td></tr>
+<tr valign="top"><td><b>Browser</b></td><td> Frameworks that run in a browser. </td><td>16</td></tr>
+<tr valign="top"><td><b>DeviceMask</b></td><td> Retrieves device attributes. </td><td>28</td></tr>
+<tr valign="top"><td><b>Mono</b></td><td> Frameworks released as part of the open-source <a href="http://www.mono-project.com">Mono</a> project. </td><td>32</td></tr>
+<tr valign="top"><td><b>MS</b></td><td> Frameworks released by Microsoft. </td><td>64</td></tr>
+<tr valign="top"><td><b>VendorMask</b></td><td> Retrieves vendor attributes. </td><td>96</td></tr>
+<tr valign="top"><td><b>All</b></td><td> All frameworks supported on the current platform, regarless of their installation state, target device or vendor. </td><td>3</td></tr></table>
+	  </div>
+	  <h4 class="dtH4">Requirements</h4>
+	  <p>
+		<b>Namespace: </b>
+		<a href="NAnt.Core.html">NAnt.Core</a>
+	  </p>
+	  <p>
+		<b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.html">NAnt.Core Namespace</a>
+	  </p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="FrameworkTypes enumeration">
+		</param>
+		<param name="Keyword" value="NAnt.Core.FrameworkTypes enumeration">
+		</param>
+		<param name="Keyword" value="NotInstalled enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.NotInstalled enumeration member">
+		</param>
+		<param name="Keyword" value="Installed enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.Installed enumeration member">
+		</param>
+		<param name="Keyword" value="InstallStateMask enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.InstallStateMask enumeration member">
+		</param>
+		<param name="Keyword" value="Desktop enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.Desktop enumeration member">
+		</param>
+		<param name="Keyword" value="Compact enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.Compact enumeration member">
+		</param>
+		<param name="Keyword" value="Browser enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.Browser enumeration member">
+		</param>
+		<param name="Keyword" value="DeviceMask enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.DeviceMask enumeration member">
+		</param>
+		<param name="Keyword" value="Mono enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.Mono enumeration member">
+		</param>
+		<param name="Keyword" value="MS enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.MS enumeration member">
+		</param>
+		<param name="Keyword" value="VendorMask enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.VendorMask enumeration member">
+		</param>
+		<param name="Keyword" value="All enumeration member">
+		</param>
+		<param name="Keyword" value="FrameworkTypes.All enumeration member">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

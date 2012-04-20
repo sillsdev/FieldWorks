@@ -1,0 +1,63 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>ReplaceString Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ReplaceString Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Replaces all occurrences of a given string in the original input with user-supplied replacement string. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Core.Filters.ReplaceStringMembers.html">ReplaceString Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Filters.ChainableReader.html">NAnt.Core.Filters.ChainableReader</a><br />         <a href="NAnt.Core.Filters.Filter.html">NAnt.Core.Filters.Filter</a><br />            <b>NAnt.Core.Filters.ReplaceString</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;ElementName(Name:="replacestring")&gt;</div>Public Class ReplaceString<div>    Inherits <a href="NAnt.Core.Filters.Filter.html">Filter</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[ElementName(Name="replacestring")]</div>
+		<div>public class ReplaceString<b> : <a href="NAnt.Core.Filters.Filter.html">Filter</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> This filter replaces all occurrences of a given string in the original input stream with a user-supplied replacement string. By default string comparisons are case sensitive but this can be changed by setting the optional <a href="NAnt.Core.Filters.ReplaceString.IgnoreCase.html">IgnoreCase</a> attribute to <b>true</b>. </p>
+			<p> To use this filter specify the string to be replaced with the <a href="NAnt.Core.Filters.ReplaceString.From.html">From</a> attribute and the string to replace it with using the <a href="NAnt.Core.Filters.ReplaceString.To.html">To</a> attribute. </p>
+			<p> Filters are intended to be used as a element of a <a href="NAnt.Core.Filters.FilterChain.html">FilterChain</a>. </p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Replace all occurrences of "3.14" with "PI". </p>
+			  <pre class="code">
+&lt;replacestring from="3.14" to="PI" /&gt;
+
+  </pre>
+
+			  <p> Replace all occurrences of "string", "String", etc. with "System.String". </p>
+			  <pre class="code">
+&lt;replacestring from="String" to="System.String" ignorecase="true" /&gt;
+
+  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Core.Filters.html">NAnt.Core.Filters</a></p><p><b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Filters.ReplaceStringMembers.html">ReplaceString Members</a> | <a href="NAnt.Core.Filters.html">NAnt.Core.Filters Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="ReplaceString class, about ReplaceString class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

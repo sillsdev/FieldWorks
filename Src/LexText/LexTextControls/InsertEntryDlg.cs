@@ -18,12 +18,13 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using Microsoft.Win32;
 
@@ -142,12 +143,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("LingCmnDlgs");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("LingCmnDlgs");
+				}
 			}
 		}
 
@@ -510,22 +516,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void OnLoad(EventArgs e)
 		{
 			Size size = Size;
-			base.OnLoad (e);
+			base.OnLoad(e);
 			if (Size != size)
 				Size = size;
+#if __MonoCS__
+			// Mono doesn't seem to fire the Activated event, so call the method here.
+			// This fixes FWNX-783, setting the focus in the gloss textbox.
+			SetInitialFocus();
+#endif
 		}
-
 
 		bool m_fInitialized;
 		/// <summary>
-		/// This shouldn't be needed, but without it, the dialog can start up with the focus
-		/// in the lexical form text box, but the keyboard set to the analysis writing system
-		/// instead of the vernacular writing system.  See LT-4719.
+		/// Set the initial focus to either the lexical form or the gloss.
 		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnActivated(EventArgs e)
+		void SetInitialFocus()
 		{
-			base.OnActivated(e);
 			if (!m_fInitialized)
 			{
 				if (m_fLexicalFormInitialFocus)
@@ -544,6 +550,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				m_fInitialized = true;
 			}
+		}
+
+		/// <summary>
+		/// This shouldn't be needed, but without it, the dialog can start up with the focus
+		/// in the lexical form text box, but the keyboard set to the analysis writing system
+		/// instead of the vernacular writing system.  See LT-4719.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			SetInitialFocus();
 		}
 
 #if __MonoCS__

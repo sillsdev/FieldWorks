@@ -1444,20 +1444,6 @@ namespace SIL.FieldWorks.IText
 				m_tbSearchText.Tss : ((HvoTreeNode)m_cbSearchText.SelectedItem).Tss;
 		}
 
-// CS0169
-#if false
-		private IMatcher GetRegExpMatcher(int ws)
-		{
-			SetupSearchPattern(ws);
-			IMatcher matcher = new RegExpMatcher(m_vwPattern);
-			if (!matcher.IsValid())
-			{
-				ShowRegExpMatcherError(matcher);
-			}
-			return matcher;
-		}
-#endif
-
 		/// <summary>
 		/// Concordance contains all occurrences of analyses which contain the specified lex entry, in the sense
 		/// that they point to an MoForm whose owner's LexemeForm matches the pattern.

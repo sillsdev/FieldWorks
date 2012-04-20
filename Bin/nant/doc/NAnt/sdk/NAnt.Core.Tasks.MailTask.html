@@ -1,0 +1,69 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>MailTask Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">MailTask Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Sends an SMTP message. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Core.Tasks.MailTaskMembers.html">MailTask Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <b>NAnt.Core.Tasks.MailTask</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;TaskName(Name:="mail")&gt;</div>Public Class MailTask<div>    Inherits <a href="NAnt.Core.Task.html">Task</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[TaskName(Name="mail")]</div>
+		<div>public class MailTask<b> : <a href="NAnt.Core.Task.html">Task</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> Text and text files to include in the message body may be specified as well as binary attachments. </p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Sends an email from <code>nant@sourceforge.net</code> to three recipients with a subject about the attachments. The body of the message will be the combined contents of all <code>.txt</code> files in the base directory. All zip files in the base directory will be included as attachments. The message will be sent using the <code>smtpserver.anywhere.com</code> SMTP server. </p>
+			  <pre class="code">
+
+			&lt;mail
+				from="nant@sourceforge.net"
+				tolist="recipient1@sourceforge.net"
+				cclist="recipient2@sourceforge.net"
+				bcclist="recipient3@sourceforge.net"
+				subject="Msg 7: With attachments"
+				mailhost="smtpserver.anywhere.com"&gt;
+				&lt;files&gt;
+					&lt;include name="*.txt" /&gt;
+				&lt;/files&gt;
+				&lt;attachments&gt;
+					&lt;include name="*.zip" /&gt;
+				&lt;/attachments&gt;
+			&lt;/mail&gt;
+
+			  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Core.Tasks.html">NAnt.Core.Tasks</a></p><p><b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Tasks.MailTaskMembers.html">MailTask Members</a> | <a href="NAnt.Core.Tasks.html">NAnt.Core.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="MailTask class, about MailTask class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

@@ -186,7 +186,7 @@
 	<Compile Include="BlueCircleButton.cs">
 	  <SubType>Component</SubType>
 	</Compile>
-	<Compile Include="BlueCircleButton.designer.cs">
+	<Compile Include="BlueCircleButton.Designer.cs">
 	  <DependentUpon>BlueCircleButton.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ConfigParentNode.cs">

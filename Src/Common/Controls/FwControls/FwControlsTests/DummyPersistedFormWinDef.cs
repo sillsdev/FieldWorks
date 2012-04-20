@@ -19,6 +19,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -48,10 +49,6 @@ namespace SIL.FieldWorks.Common.Controls
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-#if __MonoCS__
-			// TODO-Linux: AutoScaleBaseSize is now deprecated - regardless it proberbly not wanted for unit tests
-			this.AutoScaleMode = AutoScaleMode.None;
-#endif
 		}
 
 		/// <summary>
@@ -120,10 +117,10 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// DummyPersistedFormWinDef
 			//
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.AccessibleDescription = ((string)(resources.GetObject("$this.AccessibleDescription")));
 			this.AccessibleName = ((string)(resources.GetObject("$this.AccessibleName")));
 			this.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("$this.Anchor")));
-			this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
 			this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
 			this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
 			this.AutoScrollMinSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMinSize")));
@@ -164,9 +161,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
-			get { return RegistryHelper.CompanyKey.CreateSubKey("FwTest"); }
+			get
+			{
+				using (var regKey = RegistryHelper.CompanyKey)
+				{
+					return regKey.CreateSubKey("FwTest");
+				}
+			}
 		}
 
 		/// <summary>

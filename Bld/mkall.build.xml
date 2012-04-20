@@ -23,6 +23,7 @@
 		<if test="${fw-mkall-internal-error and (not property::exists('fw-build-error'))}">
 			<property name="fw-build-error" value="********* mkall failed ********"/>
 		</if>
+		<call target="EncConvertersDlls" failonerror="false"/>
 	</target>
 	<!-- -->
 	<target name="mkall-internal" description="Make all of FieldWorks - don't call directly">
@@ -159,85 +160,24 @@
 			</fileset>
 		</attrib>
 	</target>
-	<target name="EncConvertersDlls" description="Copy and Register the EncodingConverters files">
+	<target name="EncConvertersDlls" description="Copy the EncodingConverters files">
 		<copy todir="${dir.outputBase}">
-			<fileset basedir="${dir.fwoutputlibBase}">
-				<include name="SilEncConverters40.dll"/>
-				<include name="SilEncConverters40.pdb"/>
-				<include name="ECInterfaces.dll"/>
-				<include name="ECInterfaces.pdb"/>
+			<fileset basedir="${dir.fwoutputlibPlatformBase}">
+				<include name="*.*"/>
 			</fileset>
 		</copy>
-		<!-- I (KZ) switched to an external call to regsvr32 because comregisterex was doing strange things.
-			When registering with regsvr32 we call u_init in CIcuECModule which locks cnvalias.icu. Then
-			we call u_cleanup in DllRegisterServer which releases the lock, and finally CIcuECModule which
-			currently does not call u_cleanup. When using comregisterex, we call u_init, then CIcuECModule
-			destructor, then another u_init, then u_cleanup in DllRegisterServer, but at this point cnvalias.icu
-			is still locked, apparently because the first u_init was called on a different thread that isn't released
-			until nant stops. This breaks the build process because we can't call IcuData to reset the ICU
-			directory prior to checking or building installers. The error can be seen by running a temporary
-			nant target: <target name="testLockedIcu" depends="EncConvertersDlls"><call target="IcuData"
-			cascade="true"/></target> Note that this is not an issue if we have u_cleanup in the
-			CIcuECModule destructor, but this apparently causes other problems. -->
-		<!-- NB: Only one of these will be run. -->
-		<!--comregisterex file="${dir.fwoutputlibBase}/IcuEC40b.dll" failonerror="false" unless="${clean}"/-->
-		<!--comregisterex file="/s/u ${dir.fwoutputlibBase}/IcuEC40b.dll" failonerror="false" unregister="true" if="${clean}"/-->
-		<property name="args" value="" if="${user::is-admin()}"/>
-		<property name="args" value="/c" unless="${user::is-admin()}"/>
-		<property name="dir" value="${config}" if="${user::is-admin()}"/>
-		<property name="dir" value="release" unless="${user::is-admin()}"/>
-		<choose>
-			<when test="${user::is-admin()}">
-				<regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
-					<assemblies>
-						<include name="${dir.outputBase}/SilEncConverters40.dll"/>
-						<include name="${dir.fwoutputlib}/${dir}/AIGuesserEC.dll"/>
-					</assemblies>
-				</regasm>
-				<exec program="regsvr32.exe" commandline="/s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" unless="${clean}" verbose="true"/>
-				<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" if="${clean}"/>
-			</when>
-			<otherwise>
-			<if test="${not platform::is-unix()}">
-				<regasm assembly="${dir.outputBase}\SilEncConverters40.dll"
-						regfile="${dir.outputBase}\SilEncConverters40.reg" unregister="false" failonerror="false"/>
-				<importregistry regfile="${dir.outputBase}\SilEncConverters40.reg"
-								unregister="false" peruser="true" failonerror="false"/>
-				<delete file="${dir.outputBase}\SilEncConverters40.reg" failonerror="false"/>
-				<regasm assembly="${fwroot}\Lib\${dir}\AIGuesserEC.dll"
-						regfile="${dir.outputBase}\AIGuesserEC.reg" unregister="false" failonerror="false"/>
-				<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
-								unregister="false" peruser="true" failonerror="false"/>
-				<delete file="${dir.outputBase}\AIGuesserEC.reg" failonerror="false"/>
-				<!-- IcuEC40b.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
-				<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-					  commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40b.dll"
-					  failonerror="false" if="${clean}"/>
-				<if test="${not clean}">
-					<copy file="${fwroot}\Lib\${dir}\IcuEC40b.dll" todir="${path::get-temp-path()}"/>
-					<checksum algorithm="MD5">
-						<fileset>
-							<include name="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
-						</fileset>
-					</checksum>
-					<property name="IcuEcChanged" value="true"/>
-					<if test="${file::exists(fwroot + '\Lib\' + dir + '\IcuEC40b.dll.MD5')}">
-						<loadfile property="newIcuEc" file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
-						<loadfile property="oldIcuEc" file="${fwroot}\Lib\${dir}\IcuEC40b.dll.MD5" />
-						<property name="IcuEcChanged" value="${newIcuEc != oldIcuEc}"/>
-					</if>
-					<!-- If IcuEC40a didn't change then we have nothing to do. Otherwise we register with admin privileges -->
-					<if test="${IcuEcChanged}">
-						<echo message="Register IcuEC40b.dll file with admin privileges"/>
-						<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-							  commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40b.dll" failonerror="false"/>
-						<copy file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll.MD5')}" todir="${fwroot}\Lib\${dir}"/>
-					</if>
-				</if>
-			</if> <!-- not is unix-->
-			</otherwise>
-		</choose>
-		</target>
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${dir.fwoutputlibPlatform}">
+				<include name="*.config"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
+		<copy todir="${dir.outputBase}/EC/Plugins">
+			<fileset basedir="${dir.fwoutputlibPlatform}/ECPlugins">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+	</target>
 	<target name="copy-nmockDll" description="Copy the nmock files. This gets around something bizarre that breaks the build machine. remakefw ends up copying the dll, but mkall doesn't even though both use buildtest.">
 		<copy todir="${dir.outputBase}">
 			<fileset basedir="${fwroot}/Bin/nmock/">
@@ -301,6 +241,7 @@
 				<include name="icu*.dll"/>
 			</fileset>
 		</copy>
+		<delete dir="${dir.fwdistfiles}/SIL/Repository" failonerror="false" if="${platform::is-unix()}"/>
 		<choose>
 			<when test="${user::is-admin() or platform::is-unix()}">
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" value="${dir.fwdistfiles}" verbose="${verbose}"/>
@@ -311,8 +252,10 @@
 					 verbose="${verbose}" />
 				<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}" />
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir" value="${path::combine(path::combine(tmp, 'EC'), 'Plugins')}" verbose="${verbose}" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${dir.outputBase}" verbose="${verbose}"  if="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
 			</when>
 			<otherwise>
 				<readregistry property="rootCodeDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" failonerror="false" verbose="${verbose}"/>
@@ -355,7 +298,7 @@
 '
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>
 
-					<property name="tmp" value="${path::combine(path::combine(tmp, 'EC'), 'Plugins')}"/>
+					<property name="tmp" value="${path::combine(tmp, 'Plugins')}"/>
 					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters40 /v PluginDir /d "${tmp}" /f
 '
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>

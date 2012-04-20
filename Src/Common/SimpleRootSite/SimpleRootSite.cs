@@ -11,21 +11,22 @@
 // File: SimpleRootSite.cs
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
-using Accessibility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
+using System.Windows.Forms;
 using System.Windows.Automation.Provider;
+using Accessibility;
+
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -2359,6 +2360,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public virtual void Print(PrintDocument pd)
 		{
 			CheckDisposed();
@@ -4842,6 +4845,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set focus to our window
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void SwitchFocusHere()
 		{
 			if (FindForm() == Form.ActiveForm)
@@ -6101,6 +6106,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="pvo">Overlay</param>
 		/// <param name="itag">Index of tag</param>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
 			CheckDisposed();

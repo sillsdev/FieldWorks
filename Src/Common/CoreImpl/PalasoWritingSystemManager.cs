@@ -22,6 +22,9 @@ namespace SIL.CoreImpl
 		private IFwWritingSystemStore m_localStore;
 		private IFwWritingSystemStore m_globalStore;
 		private readonly Dictionary<int, PalasoWritingSystem> m_handleWss = new Dictionary<int, PalasoWritingSystem>();
+		// List of render engines that get created during our lifetime. On Dispose we have to
+		// call Release on them because they hold a reference to us. See FWNX-837.
+		private readonly List<IRenderEngine> m_renderEngines = new List<IRenderEngine>();
 
 		private PalasoWritingSystem m_userWritingSystem;
 		private int m_nextHandle = 999000001;
@@ -61,6 +64,14 @@ namespace SIL.CoreImpl
 		{
 			GlobalWritingSystemStore = globalStore;
 			LocalWritingSystemStore = localStore;
+		}
+
+		/// <summary>
+		/// Registers a render engine. This should be called after creating a new render engine.
+		/// </summary>
+		internal void RegisterRenderEngine(IRenderEngine engine)
+		{
+			m_renderEngines.Add(engine);
 		}
 
 		/// <summary>

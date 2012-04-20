@@ -272,8 +272,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Tests the DefaultBackupDirectory property for use on Windows
 		/// </summary>
 		[Test]
-		[Platform(Exclude="Linux")]
-		public void DefaultBackupDirectory_Window()
+		[Platform(Exclude="Linux", Reason="Test is Windows specific")]
+		public void DefaultBackupDirectory_Windows()
 		{
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 				Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Tests the DefaultBackupDirectory property for use on Linux
 		/// </summary>
 		[Test]
-		[Platform(Include="Linux")]
+		[Platform(Include="Linux", Reason="Test is Linux specific")]
 		public void DefaultBackupDirectory_Linux()
 		{
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
 			/// variable is set</summary>
 			[Test]
-			[Platform(Include="Linux")]
+			[Platform(Include="Linux", Reason="Test is Linux specific")]
 			public void Linux()
 			{
 				Assert.AreEqual("/var/lib/fieldworks",
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>Tests the GetFolderPath method for CommonApplicationData when no environment
 			/// variable is set</summary>
 			[Test]
-			[Platform(Exclude="Linux")]
+			[Platform(Exclude="Linux", Reason="Test is Windows specific")]
 			public void Windows()
 			{
 				Assert.AreEqual(
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
 			/// variable is set</summary>
 			[Test]
-			[Platform(Include="Linux")]
+			[Platform(Include="Linux", Reason="Test is Linux specific")]
 			public void Linux()
 			{
 				Assert.AreEqual("/bla",
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>Tests the GetFolderPath method for CommonApplicationData when the environment
 			/// variable is set</summary>
 			[Test]
-			[Platform(Exclude="Linux")]
+			[Platform(Exclude="Linux", Reason="Test is Windows specific")]
 			public void Windows()
 			{
 				Assert.AreEqual(

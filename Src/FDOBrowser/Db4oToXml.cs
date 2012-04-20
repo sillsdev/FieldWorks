@@ -26,13 +26,12 @@ using Db4objects.Db4o.Linq;
 namespace FDOBrowser
 {
 
-
 	internal class Db4oToXmlConverter
 	{
 
 		internal static CmObjectSurrogateTypeHandler CMOSTHandler = new CmObjectSurrogateTypeHandler();
 
-	// extracted from the CellarPropertyType enum
+		// extracted from the CellarPropertyType enum
 		protected static string GetFlidTypeAsString(CellarPropertyType flidType)
 		{
 			string retval;
@@ -104,7 +103,7 @@ namespace FDOBrowser
 			return retval;
 		}
 
-	// Just copied from the db4o settings used in Flex
+		// Just copied from the db4o settings used in Flex
 		internal static void doConfig(Db4objects.Db4o.Config.IEmbeddedConfiguration config)
 		{
 			config.Common.StringEncoding = StringEncodings.Utf8();
@@ -137,7 +136,6 @@ namespace FDOBrowser
 			config.Common.ObjectClass(type).MinimumActivationDepth(2);
 			config.Common.ObjectClass(type).MaximumActivationDepth(2);
 
-
 			type = typeof(CustomFieldInfo);
 			config.Common.ObjectClass(type).CascadeOnDelete(true);
 			config.Common.ObjectClass(type).UpdateDepth(2);
@@ -149,21 +147,17 @@ namespace FDOBrowser
 			config.Common.ObjectClass(type).UpdateDepth(2);
 			config.Common.ObjectClass(type).MinimumActivationDepth(2);
 			config.Common.ObjectClass(type).MaximumActivationDepth(2);
-
-
-
 		}
 
-	// Just gets the version from the opened db40 file
+		// Just gets the version from the opened db40 file
 		internal static int GetModelVersionNumber(IEmbeddedObjectContainer db)
 		{
-		   var result =  db.Query<ModelVersionNumber>();
-		   if (result.Count > 0)
-			  return result[0].m_modelVersionNumber;
-		   else
-			   return 0;
+			var result = db.Query<ModelVersionNumber>();
+			if (result.Count > 0)
+				return result[0].m_modelVersionNumber;
+			else
+				return 0;
 		}
-
 
 		internal static void GetAndWriteCustomFieldInfo(IEmbeddedObjectContainer db, XmlWriter writer)
 		{
@@ -171,7 +165,6 @@ namespace FDOBrowser
 			foreach (CustomFieldInfo cfi in db.Query<CustomFieldInfo>().ToArray())
 			{
 				customfields.Add(cfi);
-
 			}
 			if (customfields.Count > 0)
 			{
@@ -197,32 +190,32 @@ namespace FDOBrowser
 				writer.WriteEndElement();
 			}
 		}
+
 		internal static void GetAndWriteSurrogates(IEmbeddedObjectContainer db, XmlWriter outfile)
 		{
-
-		// These two lines code uses the CachedProjectInformation to accumulate the raw data from Db4o to a manageable form
+			// These two lines code uses the CachedProjectInformation to accumulate the raw data from Db4o to a manageable form
 			var results = db.Query<CmObjectSurrogate>();
 			var asBytes = results.ToArray();
 
-		// And this line causes all the data to be available.  Not putting this statement in causes the follow reads to hit
-		// a premature end of the data
+			// And this line causes all the data to be available.  Not putting this statement in causes the follow reads to hit
+			// a premature end of the data
 			CMOSTHandler.CachedProjectInformation.Compressor.Dispose();
 
 			byte[] compressedBytes = CMOSTHandler.CachedProjectInformation.CompressedMemoryStream.ToArray();
-			var stream = new GZipStream(new MemoryStream(compressedBytes), CompressionMode.Decompress);
-
-			var temp = new byte[16];
-			var unicoding = new UnicodeEncoding();
-
-			var xml = ReadNextSurrogateXml(stream, unicoding);
-			while (xml != null)
+			using (var stream = new GZipStream(new MemoryStream(compressedBytes), CompressionMode.Decompress))
 			{
-		// just copy from in to out
-				outfile.WriteRaw(xml);
+				var temp = new byte[16];
+				var unicoding = new UnicodeEncoding();
 
-				xml = ReadNextSurrogateXml(stream, unicoding);
+				var xml = ReadNextSurrogateXml(stream, unicoding);
+				while (xml != null)
+				{
+					// just copy from in to out
+					outfile.WriteRaw(xml);
+
+					xml = ReadNextSurrogateXml(stream, unicoding);
+				}
 			}
-
 		}
 
 		// Churn through the byte stream just to extract the XML
@@ -235,127 +228,91 @@ namespace FDOBrowser
 			string className = encoder.GetString(stream.ReadBytes(stream.ReadInt()));
 			byte[] xmldata = stream.ReadBytes(stream.ReadInt());
 			long id = stream.ReadLong();
-			return  UnicodeEncoding.UTF8.GetString(xmldata);
-
+			return UnicodeEncoding.UTF8.GetString(xmldata);
 		}
 
-
-	// The main routine
-		/*
-		public void db4o2xml(string db4ofile, string xmlfile)
+		// The main routine
+		public void db4o2xml(string db4ofile, string xmlfile, bool compressed)
 		{
-
-			var config = Db4oEmbedded.NewConfiguration();
-			doConfig(config);
-			CMOSTHandler.CachedProjectInformation = new CachedProjectInformation();
-
-
-			var db = Db4oEmbedded.OpenFile(config, db4ofile);
-
-		// from FDOXmlServices.WriterSettings
-			var settings = new XmlWriterSettings
+			if (File.Exists(xmlfile))
 			{
-				OmitXmlDeclaration = false,
-				CheckCharacters = true,
-				ConformanceLevel = ConformanceLevel.Document,
-				Encoding = new UTF8Encoding(false),
-				Indent = true,
-				IndentChars = (""),
-				NewLineOnAttributes = false
-			};
-
-			var outfile = XmlTextWriter.Create(xmlfile, settings);
-
-
-			outfile.WriteStartElement("languageproject");
-
-			var modelversion = GetModelVersionNumber(db);
-			outfile.WriteAttributeString("version", modelversion.ToString());
-
-			GetAndWriteCustomFieldInfo(db,outfile);
-
-			GetAndWriteSurrogates(db, outfile);
-
-			outfile.WriteEndElement();
-
-			db.Close();
-			outfile.Close();
-		}
-		*/
-		public void db4o2xml(string db4ofile, string xmlfile,bool compressed)
-		{
-
-			if ( File.Exists(xmlfile))
-			{
-				DialogResult d = MessageBox.Show("There is already an XML file by that name.  Do you wish to overwrite it?","caption",
+				DialogResult d = MessageBox.Show("There is already an XML file by that name.  Do you wish to overwrite it?", "caption",
 					MessageBoxButtons.YesNo);
 				if (d == DialogResult.No)
 				{
 					MessageBox.Show("Extract was not saved.");
 					return;
-
 				}
-
 			}
-
 
 			var config = Db4oEmbedded.NewConfiguration();
 			doConfig(config);
 			CMOSTHandler.CachedProjectInformation = new CachedProjectInformation();
 
-
-			var db = Db4oEmbedded.OpenFile(config, db4ofile);
-
-			// from FDOXmlServices.WriterSettings
-			var settings = new XmlWriterSettings
+			using (var db = Db4oEmbedded.OpenFile(config, db4ofile))
 			{
-				OmitXmlDeclaration = false,
-				CheckCharacters = true,
-				ConformanceLevel = ConformanceLevel.Document,
-				Encoding = new UTF8Encoding(false),
-				Indent = true,
-				IndentChars = (""),
-				NewLineOnAttributes = false
-			};
-			XmlWriter xmlstream;
-			Stream outstream;
-			Stream zipstream = null;
+				// from FDOXmlServices.WriterSettings
+				var settings = new XmlWriterSettings
+				{
+					OmitXmlDeclaration = false,
+					CheckCharacters = true,
+					ConformanceLevel = ConformanceLevel.Document,
+					Encoding = new UTF8Encoding(false),
+					Indent = true,
+					IndentChars = (""),
+					NewLineOnAttributes = false
+				};
+				XmlWriter xmlstream = null;
+				Stream outstream = null;
+				Stream zipstream = null;
 
-			if (compressed)
-			{
-				outstream = new FileStream(xmlfile + ".gz", FileMode.Create, FileAccess.Write);
-				zipstream = new GZipStream(outstream, CompressionMode.Compress);
-				xmlstream = XmlTextWriter.Create(zipstream, settings);
+				try
+				{
+					if (compressed)
+					{
+						outstream = new FileStream(xmlfile + ".gz", FileMode.Create, FileAccess.Write);
+						zipstream = new GZipStream(outstream, CompressionMode.Compress);
+						xmlstream = XmlTextWriter.Create(zipstream, settings);
 
+					}
+					else
+					{
+						outstream = new FileStream(xmlfile, FileMode.Create, FileAccess.Write);
+						xmlstream = XmlTextWriter.Create(outstream, settings);
+					}
+
+					xmlstream.WriteStartElement("languageproject");
+
+					var modelversion = GetModelVersionNumber(db);
+					xmlstream.WriteAttributeString("version", modelversion.ToString());
+
+					GetAndWriteCustomFieldInfo(db, xmlstream);
+
+					GetAndWriteSurrogates(db, xmlstream);
+
+					xmlstream.WriteEndElement();
+
+					db.Close();
+
+					//xmlstream.Flush();
+					xmlstream.Close();
+					if (zipstream != null)
+					{
+						zipstream.Close();
+					}
+					outstream.Close();
+				}
+				finally
+				{
+					if (outstream != null)
+						outstream.Dispose();
+					if (zipstream != null)
+						zipstream.Dispose();
+					var disposable = xmlstream as IDisposable;
+					if (disposable != null)
+						disposable.Dispose();
+				}
 			}
-			else
-			{
-
-				outstream = new FileStream(xmlfile, FileMode.Create, FileAccess.Write);
-				xmlstream = XmlTextWriter.Create(outstream, settings);
-			}
-
-
-			xmlstream.WriteStartElement("languageproject");
-
-			var modelversion = GetModelVersionNumber(db);
-			xmlstream.WriteAttributeString("version", modelversion.ToString());
-
-			GetAndWriteCustomFieldInfo(db, xmlstream);
-
-			GetAndWriteSurrogates(db, xmlstream);
-
-			xmlstream.WriteEndElement();
-
-			db.Close();
-
-			//xmlstream.Flush();
-			xmlstream.Close();
-			if (zipstream != null)
-			{
-				zipstream.Close();
-			}
-			outstream.Close();
 		}
 	}
 }

@@ -18,16 +18,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Controls;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -122,6 +123,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <remarks>
 		/// Subclasses should override this method, if the SimpleListChooser is not suitable.
 		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";

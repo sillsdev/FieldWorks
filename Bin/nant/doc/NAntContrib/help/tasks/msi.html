@@ -20,12 +20,12 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;msi&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;msi&gt;</h1>
 	<p> Creates a Windows Installer (also known as Microsoft Installer, or MSI) setup database for installing software on the Windows Platform. </p>
-	<p> Requires <code>cabarc.exe</code> in the path. This tool is part of the <a href="http://msdn.microsoft.com/library/en-us/dncabsdk/html/cabdl.asp">Microsoft Cabinet SDK</a>. </p>
+	<p> Requires <code>cabarc.exe</code> in the path. This tool is part of the <a href="http://msdn2.microsoft.com/en-us/library/ms974336.aspx">Microsoft Cabinet SDK</a>. </p>
 	<p> Requires <code>mergemod.dll</code> version 2.0 or greater. This dll is part of the <a href="http://www.microsoft.com/msdownload/platformsdk/instmsi.htm">Microsoft Platform SDK</a>. </p>
 	<p> See the <a href="http://msdn.microsoft.com/library/en-us/msi/setup/roadmap_to_windows_installer_documentation.asp?frame=true">Roadmap to Windows Installer Documentation</a> at Microsoft's MSDN website for more information. </p>
 	<h3>Parameters</h3>
@@ -207,14 +207,15 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Define a sample features structure.</p>
-		<pre class="code">&lt;features&gt;
-	&lt;feature name="F__Default" title="My Product" display="1" typical="true" directory="TARGETDIR"&gt;
-		&lt;description&gt;My Product from ACME, Inc. &lt;/description&gt;
-		&lt;feature name="F__MainFiles" display="0" typical="true" /&gt;
-	&lt;/feature&gt;
-	&lt;feature name="F__Help" title="My Product Help Files" display="1" typical="false" directory="D__ACME_MyProduct_Help" /&gt;
-&lt;/features&gt;
-	</pre>
+		<pre class="code">
+			&lt;features&gt;
+				&lt;feature name="F__Default" title="My Product" display="1" typical="true" directory="TARGETDIR"&gt;
+					&lt;description&gt;My Product from ACME, Inc. &lt;/description&gt;
+					&lt;feature name="F__MainFiles" display="0" typical="true" /&gt;
+				&lt;/feature&gt;
+				&lt;feature name="F__Help" title="My Product Help Files" display="1" typical="false" directory="D__ACME_MyProduct_Help" /&gt;
+			&lt;/features&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -335,16 +336,17 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Define specific summary information.</p>
-		<pre class="code">&lt;summaryinformation&gt;
-	&lt;title&gt;Installation Database&lt;/title&gt;
-	&lt;subject&gt;${install.productname}&lt;/subject&gt;
-	&lt;author&gt;${install.manufacturer}&lt;/author&gt;
-	&lt;keywords&gt;MSI, database, NAnt, Installer&lt;/keywords&gt;
-	&lt;comments&gt;This installer database contains the logic and data required to install NAnt&lt;/comments&gt;
-	&lt;template&gt;;1033&lt;/template&gt;
-	&lt;creatingapplication&gt;NAnt - http://nant.sf.net &lt;/creatingapplication&gt;
-&lt;/summaryinformation&gt;
-	</pre>
+		<pre class="code">
+			&lt;summaryinformation&gt;
+				&lt;title&gt;Installation Database&lt;/title&gt;
+				&lt;subject&gt;${install.productname}&lt;/subject&gt;
+				&lt;author&gt;${install.manufacturer}&lt;/author&gt;
+				&lt;keywords&gt;MSI, database, NAnt, Installer&lt;/keywords&gt;
+				&lt;comments&gt;This installer database contains the logic and data required to install NAnt&lt;/comments&gt;
+				&lt;template&gt;;1033&lt;/template&gt;
+				&lt;creatingapplication&gt;NAnt - http://nant.sf.net &lt;/creatingapplication&gt;
+			&lt;/summaryinformation&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -389,14 +391,15 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Define the required properties.</p>
-		<pre class="code">&lt;properties&gt;
-	&lt;property name="ProductName" value="My Product" /&gt;
-	&lt;property name="ProductVersion" value="1.0.0" /&gt;
-	&lt;property name="Manufacturer" value="ACME Inc." /&gt;
-	&lt;property name="ProductCode" value="{29D8F096-3371-4cba-87E1-A8C6511F7B4C}" /&gt;
-	&lt;property name="UpgradeCode" value="{69E66919-0DE1-4280-B4C1-94049F76BA1A}" /&gt;
-&lt;/properties&gt;
-	</pre>
+		<pre class="code">
+			&lt;properties&gt;
+				&lt;property name="ProductName" value="My Product" /&gt;
+				&lt;property name="ProductVersion" value="1.0.0" /&gt;
+				&lt;property name="Manufacturer" value="ACME Inc." /&gt;
+				&lt;property name="ProductCode" value="{29D8F096-3371-4cba-87E1-A8C6511F7B4C}" /&gt;
+				&lt;property name="UpgradeCode" value="{69E66919-0DE1-4280-B4C1-94049F76BA1A}" /&gt;
+			&lt;/properties&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -657,25 +660,27 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Get the path of the web directory and the version of IIS. Create new properties in the Msi file with those values.</p>
-		<pre class="code">&lt;search&gt;
-	&lt;registry type="registry" path="Software\Microsoft\InetStp" root="machine" &gt;
-		&lt;value name="PathWWWRoot" setproperty="IISWWWROOT" /&gt;
-	&lt;/registry&gt;
-	&lt;registry type="registry" path="SYSTEM\CurrentControlSet\Services\W3SVC\Parameters" root="machine" &gt;
-			&lt;value name="MajorVersion" setproperty="IISVERSION" /&gt;
-	&lt;/registry&gt;
-&lt;/search&gt;
-	</pre>
+		<pre class="code">
+			&lt;search&gt;
+				&lt;registry type="registry" path="Software\Microsoft\InetStp" root="machine" &gt;
+					&lt;value name="PathWWWRoot" setproperty="IISWWWROOT" /&gt;
+				&lt;/registry&gt;
+				&lt;registry type="registry" path="SYSTEM\CurrentControlSet\Services\W3SVC\Parameters" root="machine" &gt;
+						&lt;value name="MajorVersion" setproperty="IISVERSION" /&gt;
+				&lt;/registry&gt;
+			&lt;/search&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Shows two ways to get the default key value for the specified key. Create new properties in the Msi file with those values.</p>
-		<pre class="code">&lt;search&gt;
-	&lt;registry type="registry" path="Software\Microsoft\MessengerService" root="machine" &gt;
-		&lt;value setproperty="MSGSRVNAME" /&gt;
-		&lt;value name="" setproperty="MSGSRVNAME2" /&gt;
-	&lt;/registry&gt;
-&lt;/search&gt;
-	</pre>
+		<pre class="code">
+			&lt;search&gt;
+				&lt;registry type="registry" path="Software\Microsoft\MessengerService" root="machine" &gt;
+					&lt;value setproperty="MSGSRVNAME" /&gt;
+					&lt;value name="" setproperty="MSGSRVNAME2" /&gt;
+				&lt;/registry&gt;
+			&lt;/search&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -723,14 +728,15 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Create a check to make sure that IIS 5.x is installed.</p>
-		<pre class="code">&lt;launchconditions&gt;
-	&lt;launchcondition name="CheckIIS" condition="(IISVERSION = &amp;quot;#5&amp;quot;)" &gt;
-		&lt;description&gt;
-			This setup requires Internet information Server 5.x.  Please install Internet Information Server and run this setup again.
-		&lt;/description&gt;
-	&lt;/launchcondition&gt;
-&lt;/launchconditions&gt;
-	</pre>
+		<pre class="code">
+			&lt;launchconditions&gt;
+				&lt;launchcondition name="CheckIIS" condition="(IISVERSION = &amp;quot;#5&amp;quot;)" &gt;
+					&lt;description&gt;
+						This setup requires Internet information Server 5.x.  Please install Internet Information Server and run this setup again.
+					&lt;/description&gt;
+				&lt;/launchcondition&gt;
+			&lt;/launchconditions&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -783,35 +789,36 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p> Build the IniFile table. Since the WriteIniValues and RemoveIniValues actions exist in the template, they will use this table. </p>
-		<pre class="code">&lt;tables&gt;
-	&lt;table name="IniFile"&gt;
-		&lt;columns&gt;
-			&lt;column name="IniFile" nullable="false" category="Identifier" key="true" description="The key for this table." /&gt;
-			&lt;column name="FileName" nullable="false" category="Text" description="The localizable name of the .ini file in which to write the information. " /&gt;
-			&lt;column name="DirProperty" nullable="true" category="Identifier" description="Name of a property having a value that resolves to the full path of the folder containing the .ini file. " /&gt;
-			&lt;column name="Section" nullable="false" category="Formatted" description="The localizable .ini file section." /&gt;
-			&lt;column name="Key" nullable="false" category="Formatted" description="The localizable .ini file key within the section" /&gt;
-			&lt;column name="Value" nullable="false" category="Formatted" description="The localizable value to be written. " /&gt;
-			&lt;column name="Action" nullable="false" category="Integer" description="The type of modification to be made. " /&gt;
-			&lt;column name="Component_" nullable="false" category="Identifier" description="External key into the first column of the Component table referencing the component that controls the installation of the .ini value. " /&gt;
-		&lt;/columns&gt;
-		&lt;rows&gt;
-			&lt;row&gt;
-				&lt;columns&gt;
-					&lt;column name="IniFile" value="MyInternetShortcut" /&gt;
-					&lt;column name="FileName" value="MyInternetAddr.url" /&gt;
-					&lt;column name="DirProperty" value="D__MYDIR" /&gt;
-					&lt;column name="Section" value="InternetShortcut" /&gt;
-					&lt;column name="Key" value="URL" /&gt;
-					&lt;column name="Value" value="[TARGETURL]" /&gt;
-					&lt;column name="Action" value="0" /&gt;
-					&lt;column name="Component_" value="C__Documentation" /&gt;
-				&lt;/columns&gt;
-			&lt;/row&gt;
-		&lt;/rows&gt;
-	&lt;/table&gt;
-&lt;/tables&gt;
-	</pre>
+		<pre class="code">
+			&lt;tables&gt;
+				&lt;table name="IniFile"&gt;
+					&lt;columns&gt;
+						&lt;column name="IniFile" nullable="false" category="Identifier" key="true" description="The key for this table." /&gt;
+						&lt;column name="FileName" nullable="false" category="Text" description="The localizable name of the .ini file in which to write the information. " /&gt;
+						&lt;column name="DirProperty" nullable="true" category="Identifier" description="Name of a property having a value that resolves to the full path of the folder containing the .ini file. " /&gt;
+						&lt;column name="Section" nullable="false" category="Formatted" description="The localizable .ini file section." /&gt;
+						&lt;column name="Key" nullable="false" category="Formatted" description="The localizable .ini file key within the section" /&gt;
+						&lt;column name="Value" nullable="false" category="Formatted" description="The localizable value to be written. " /&gt;
+						&lt;column name="Action" nullable="false" category="Integer" description="The type of modification to be made. " /&gt;
+						&lt;column name="Component_" nullable="false" category="Identifier" description="External key into the first column of the Component table referencing the component that controls the installation of the .ini value. " /&gt;
+					&lt;/columns&gt;
+					&lt;rows&gt;
+						&lt;row&gt;
+							&lt;columns&gt;
+								&lt;column name="IniFile" value="MyInternetShortcut" /&gt;
+								&lt;column name="FileName" value="MyInternetAddr.url" /&gt;
+								&lt;column name="DirProperty" value="D__MYDIR" /&gt;
+								&lt;column name="Section" value="InternetShortcut" /&gt;
+								&lt;column name="Key" value="URL" /&gt;
+								&lt;column name="Value" value="[TARGETURL]" /&gt;
+								&lt;column name="Action" value="0" /&gt;
+								&lt;column name="Component_" value="C__Documentation" /&gt;
+							&lt;/columns&gt;
+						&lt;/row&gt;
+					&lt;/rows&gt;
+				&lt;/table&gt;
+			&lt;/tables&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -865,12 +872,13 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Define a sample directory structure.</p>
-		<pre class="code">&lt;directories&gt;
-	&lt;directory name="D__ACME" foldername="ACME" root="TARGETDIR" &gt;
-		&lt;directory name="D__ACME_MyProduct" foldername="My Product" /&gt;
-	&lt;/directory&gt;
-&lt;/directories&gt;
-	</pre>
+		<pre class="code">
+			&lt;directories&gt;
+				&lt;directory name="D__ACME" foldername="ACME" root="TARGETDIR" &gt;
+					&lt;directory name="D__ACME_MyProduct" foldername="My Product" /&gt;
+				&lt;/directory&gt;
+			&lt;/directories&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -920,10 +928,11 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Append the installation path to the user PATH variable.</p>
-		<pre class="code">&lt;environment&gt;
-	&lt;variable name="PATH" append="'[TARGETDIR]'" component="C__MainFiles" /&gt;
-&lt;/environment&gt;
-	</pre>
+		<pre class="code">
+			&lt;environment&gt;
+				&lt;variable name="PATH" append="'[TARGETDIR]'" component="C__MainFiles" /&gt;
+			&lt;/environment&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1025,45 +1034,48 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Define a sample component structure.</p>
-		<pre class="code">&lt;components&gt;
-	&lt;component name="C__MainFiles" id="{26AA7144-E683-441D-9843-3C79AEC1C636}" attr="2" directory="TARGETDIR" feature="F__MainFiles" &gt;
-		&lt;key file="default.aspx" /&gt;
-		&lt;fileset basedir="${install.dir}"&gt;
-			&lt;include name="*.*" /&gt;
-		&lt;/fileset&gt;
-	&lt;/component&gt;
-&lt;/components&gt;
-	</pre>
+		<pre class="code">
+			&lt;components&gt;
+				&lt;component name="C__MainFiles" id="{26AA7144-E683-441D-9843-3C79AEC1C636}" attr="2" directory="TARGETDIR" feature="F__MainFiles" &gt;
+					&lt;key file="default.aspx" /&gt;
+					&lt;fileset basedir="${install.dir}"&gt;
+						&lt;include name="*.*" /&gt;
+					&lt;/fileset&gt;
+				&lt;/component&gt;
+			&lt;/components&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Install files to TARGETDIR and assemblies to the GAC (Global Assembly Cache). Do not install MyOtherAssembly.dll to the GAC, but rather install it with the other files (to TARGETDIR)</p>
-		<pre class="code">&lt;components&gt;
-	&lt;component name="C__MainFiles" id="{26AA7144-E683-441D-9843-3C79AEC1C636}" attr="2" directory="TARGETDIR" feature="F__MainFiles" installassembliestogac="true" &gt;
-		&lt;key file="MyAssemblyName.xml" /&gt;
-		&lt;fileset basedir="${install.dir}"&gt;
-			&lt;include name="*.*" /&gt;
-		&lt;/fileset&gt;
-		&lt;forceid file="MyOtherAssembly.dll" id="_4EB7CCB23D394958988ED817DA00B9D1" installtogac="false" /&gt;
-	&lt;/component&gt;
-&lt;/components&gt;
-	</pre>
+		<pre class="code">
+			&lt;components&gt;
+				&lt;component name="C__MainFiles" id="{26AA7144-E683-441D-9843-3C79AEC1C636}" attr="2" directory="TARGETDIR" feature="F__MainFiles" installassembliestogac="true" &gt;
+					&lt;key file="MyAssemblyName.xml" /&gt;
+					&lt;fileset basedir="${install.dir}"&gt;
+						&lt;include name="*.*" /&gt;
+					&lt;/fileset&gt;
+					&lt;forceid file="MyOtherAssembly.dll" id="_4EB7CCB23D394958988ED817DA00B9D1" installtogac="false" /&gt;
+				&lt;/component&gt;
+			&lt;/components&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Assign a registry entry to a specific component.</p>
-		<pre class="code">&lt;components&gt;
-	&lt;component name="C__RegistryEntry" id="{06C654AA-273D-4E39-885C-3E5225D9F336}" attr="4" directory="TARGETDIR" feature="F__DefaultFeature" &gt;
-		&lt;key file="R__822EC365A8754FACBF6C713BFE4E57F0" /&gt;
-	&lt;/component&gt;
-&lt;/components&gt;
-.
-.
-.
-&lt;registry&gt;
-	&lt;key path="SOFTWARE\MyCompany\MyProduct\" root="machine" component="C__RegistryEntry"&gt;
-		 &lt;value id="R__822EC365A8754FACBF6C713BFE4E57F0" name="MyKeyName" value="MyKeyValue" /&gt;
-	&lt;/key&gt;
-&lt;/registry&gt;
-	</pre>
+		<pre class="code">
+			&lt;components&gt;
+				&lt;component name="C__RegistryEntry" id="{06C654AA-273D-4E39-885C-3E5225D9F336}" attr="4" directory="TARGETDIR" feature="F__DefaultFeature" &gt;
+					&lt;key file="R__822EC365A8754FACBF6C713BFE4E57F0" /&gt;
+				&lt;/component&gt;
+			&lt;/components&gt;
+			.
+			.
+			.
+			&lt;registry&gt;
+				&lt;key path="SOFTWARE\MyCompany\MyProduct\" root="machine" component="C__RegistryEntry"&gt;
+					 &lt;value id="R__822EC365A8754FACBF6C713BFE4E57F0" name="MyKeyName" value="MyKeyValue" /&gt;
+				&lt;/key&gt;
+			&lt;/registry&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1155,10 +1167,11 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add a web folder dialog:</p>
-		<pre class="code">&lt;dialogs&gt;
-	&lt;dialog name="WebFolderDlg" hcenter="50" vcenter="50" width="370" height="270" attr="39" title="[ProductName] [Setup]" firstcontrol="Next" defaultcontrol="Next" cancelcontrol="Cancel" /&gt;
-&lt;/dialogs&gt;
-	</pre>
+		<pre class="code">
+			&lt;dialogs&gt;
+				&lt;dialog name="WebFolderDlg" hcenter="50" vcenter="50" width="370" height="270" attr="39" title="[ProductName] [Setup]" firstcontrol="Next" defaultcontrol="Next" cancelcontrol="Cancel" /&gt;
+			&lt;/dialogs&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1268,61 +1281,60 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Remove the Browse button from the customize dialog and add controls for a web dialog</p>
-		<pre class="code">&lt;controls&gt;
-	&lt;!-- Remove the Browse button from customize dialog --&gt;
-	&lt;control dialog="CustomizeDlg" name="Browse" type="PushButton"
-		x="304" y="200" width="56" height="17" attr="3" remove="true" /&gt;
-	&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
-		x="25" y="85" width="175" height="95" attr="7" remove="true" /&gt;
-
-	&lt;!-- Re add the tree control with the proper next control --&gt;
-	&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
-		x="25" y="85" width="175" height="95" attr="7"
-		property="_BrowseProperty" text="Tree of selections" nextcontrol="Reset" /&gt;
-
-	&lt;!-- Adds the controls associated with the webfolder dialog --&gt;
-	&lt;control dialog="WebFolderDlg" name="BannerBitmap" type="Bitmap"
-		x="0" y="0" width="374" height="44" attr="1"
-		text="[BannerBitmap]" nextcontrol="VDirLabel" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Title" type="Text"
-		x="15" y="6" width="200" height="15" attr="196611"
-		text="[DlgTitleFont]Virtual Directory Information" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Description" type="Text"
-		x="25" y="23" width="280" height="15" attr="196611"
-		text="Please enter your virtual directory and port information." /&gt;
-	&lt;control dialog="WebFolderDlg" name="BannerLine" type="Line"
-		x="0" y="44" width="374" height="0" attr="1" /&gt;
-	&lt;control dialog="WebFolderDlg" name="VDirLabel" type="Text"
-		x="18" y="73" width="348" height="15" attr="3"
-		text="&amp;Virtual directory:"
-		nextcontrol="Edit_VDir" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Edit_VDir" type="Edit"
-		x="18" y="85" width="252" height="18" attr="7"
-		property="TARGETVDIR"
-		text="[TARGETVDIR]"
-		nextcontrol="PortLabel" /&gt;
-	&lt;control dialog="WebFolderDlg" name="PortLabel" type="Text"
-		x="18" y="110" width="348" height="15" attr="3"
-		text="&amp;Port:"
-		nextcontrol="Edit_Port" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Edit_Port" type="Edit"
-		x="18" y="122" width="48" height="18" attr="7"
-		property="TARGETPORT"
-		text="[TARGETPORT]"
-		nextcontrol="Back" /&gt;
-	&lt;control dialog="WebFolderDlg" name="BottomLine" type="Line"
-		x="0" y="234" width="374" height="0" attr="1" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Back" type="PushButton"
-		x="180" y="243" width="56" height="17" attr="3"
-		text="[ButtonText_Back]" nextcontrol="Next" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Next" type="PushButton"
-		x="236" y="243" width="56" height="17" attr="3"
-		text="[ButtonText_Next]" nextcontrol="Cancel" /&gt;
-	&lt;control dialog="WebFolderDlg" name="Cancel" type="PushButton"
-		x="304" y="243" width="56" height="17" attr="3"
-		text="[ButtonText_Cancel]" nextcontrol="BannerBitmap" /&gt;
-&lt;/controls&gt;
-	</pre>
+		<pre class="code">
+			&lt;controls&gt;
+				&lt;!-- Remove the Browse button from customize dialog --&gt;
+				&lt;control dialog="CustomizeDlg" name="Browse" type="PushButton"
+					x="304" y="200" width="56" height="17" attr="3" remove="true" /&gt;
+				&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
+					x="25" y="85" width="175" height="95" attr="7" remove="true" /&gt;
+							&lt;!-- Re add the tree control with the proper next control --&gt;
+				&lt;control dialog="CustomizeDlg" name="Tree" type="SelectionTree"
+					x="25" y="85" width="175" height="95" attr="7"
+					property="_BrowseProperty" text="Tree of selections" nextcontrol="Reset" /&gt;
+							&lt;!-- Adds the controls associated with the webfolder dialog --&gt;
+				&lt;control dialog="WebFolderDlg" name="BannerBitmap" type="Bitmap"
+					x="0" y="0" width="374" height="44" attr="1"
+					text="[BannerBitmap]" nextcontrol="VDirLabel" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Title" type="Text"
+					x="15" y="6" width="200" height="15" attr="196611"
+					text="[DlgTitleFont]Virtual Directory Information" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Description" type="Text"
+					x="25" y="23" width="280" height="15" attr="196611"
+					text="Please enter your virtual directory and port information." /&gt;
+				&lt;control dialog="WebFolderDlg" name="BannerLine" type="Line"
+					x="0" y="44" width="374" height="0" attr="1" /&gt;
+				&lt;control dialog="WebFolderDlg" name="VDirLabel" type="Text"
+					x="18" y="73" width="348" height="15" attr="3"
+					text="&amp;Virtual directory:"
+					nextcontrol="Edit_VDir" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Edit_VDir" type="Edit"
+					x="18" y="85" width="252" height="18" attr="7"
+					property="TARGETVDIR"
+					text="[TARGETVDIR]"
+					nextcontrol="PortLabel" /&gt;
+				&lt;control dialog="WebFolderDlg" name="PortLabel" type="Text"
+					x="18" y="110" width="348" height="15" attr="3"
+					text="&amp;Port:"
+					nextcontrol="Edit_Port" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Edit_Port" type="Edit"
+					x="18" y="122" width="48" height="18" attr="7"
+					property="TARGETPORT"
+					text="[TARGETPORT]"
+					nextcontrol="Back" /&gt;
+				&lt;control dialog="WebFolderDlg" name="BottomLine" type="Line"
+					x="0" y="234" width="374" height="0" attr="1" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Back" type="PushButton"
+					x="180" y="243" width="56" height="17" attr="3"
+					text="[ButtonText_Back]" nextcontrol="Next" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Next" type="PushButton"
+					x="236" y="243" width="56" height="17" attr="3"
+					text="[ButtonText_Next]" nextcontrol="Cancel" /&gt;
+				&lt;control dialog="WebFolderDlg" name="Cancel" type="PushButton"
+					x="304" y="243" width="56" height="17" attr="3"
+					text="[ButtonText_Cancel]" nextcontrol="BannerBitmap" /&gt;
+			&lt;/controls&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1384,17 +1396,18 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Remove the control condition for the Browse button from the customize dialog and add control conditions for a web dialog</p>
-		<pre class="code">&lt;controlconditions&gt;
-	&lt;!-- Remove control condition for Browse button on customizeDlg --&gt;
-	&lt;controlcondition dialog="CustomizeDlg" control="Browse" action="Hide"
-		condition="Installed" remove="true" /&gt;
-	&lt;!-- Add control conditions for the web folder dialog --&gt;
-	&lt;controlcondition dialog="WebFolderDlg" control="Back" action="Disable"
-		condition="ShowUserRegistrationDlg=""" /&gt;
-	&lt;controlcondition dialog="WebFolderDlg" control="Back" action="Enable"
-		condition="ShowUserRegistrationDlg&lt;&gt;""" /&gt;
-&lt;/controlconditions&gt;
-	</pre>
+		<pre class="code">
+			&lt;controlconditions&gt;
+				&lt;!-- Remove control condition for Browse button on customizeDlg --&gt;
+				&lt;controlcondition dialog="CustomizeDlg" control="Browse" action="Hide"
+					condition="Installed" remove="true" /&gt;
+				&lt;!-- Add control conditions for the web folder dialog --&gt;
+				&lt;controlcondition dialog="WebFolderDlg" control="Back" action="Disable"
+					condition="ShowUserRegistrationDlg=""" /&gt;
+				&lt;controlcondition dialog="WebFolderDlg" control="Back" action="Enable"
+					condition="ShowUserRegistrationDlg&lt;&gt;""" /&gt;
+			&lt;/controlconditions&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1470,44 +1483,43 @@
 		<p>Remove the control events for the Browse button from the customize dialog and add events conditions for a web dialog</p>
 		<pre class="code">
 		  <!-- Make sure the dialog is put into the execute order -->
-&lt;controlevents&gt;
-	&lt;!-- Remove the old control events --&gt;
-	&lt;controlevent dialog="UserRegistrationDlg" control="Next" name="NewDialog"
-		argument="SetupTypeDlg" condition="ProductID" remove="true" /&gt;
-	&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
-		argument="LicenseAgreementDlg" condition="ShowUserRegistrationDlg &lt;&gt; 1" remove="true" /&gt;
-	&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
-		argument="UserRegistrationDlg" condition="ShowUserRegistrationDlg = 1" remove="true" /&gt;
-	&lt;!-- Remove control events for Browse button on CustomizeDlg --&gt;
-	&lt;controlevent dialog="CustomizeDlg" control="Browse" name="SelectionBrowse"
-		argument="BrowseDlg" condition="1" remove="true" /&gt;
-
-	&lt;!-- Add new control events for the web dialog --&gt;
-	&lt;controlevent dialog="UserRegistrationDlg" control="Next" name="NewDialog"
-		argument="WebFolderDlg" condition="ProductID" /&gt;
-	&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
-		argument="WebFolderDlg" condition="ShowWebFolderDlg &lt;&gt; 1" /&gt;
-	&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
-		argument="WebFolderDlg" condition="ShowWebFolderDlg = 1" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Cancel" name="SpawnDialog"
-		argument="CancelDlg" order="0" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Back" name="NewDialog"
-		argument="LicenseAgreementDlg" condition="ShowUserRegistrationDlg&lt;&gt;1"
-		order="0" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Back" name="NewDialog"
-		argument="UserRegistrationDlg" condition="ShowUserRegistrationDlg=1"
-		order="0" /&gt;
-	&lt;!-- Virtual Directory Control Events --&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Next" name="DoAction"
-		argument="WEBCA_CreateURLs" condition="1" order="0" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Next" name="DoAction"
-		argument="WEBCA_EvaluateURLsMB" condition="1" order="1" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Next" name="SetTargetPath"
-		argument="TARGETDIR" condition="1" order="2" /&gt;
-	&lt;controlevent dialog="WebFolderDlg" control="Next" name="NewDialog"
-		argument="SetupTypeDlg" condition="1" order="3" /&gt;
-&lt;/controlevents&gt;
-	</pre>
+			&lt;controlevents&gt;
+				&lt;!-- Remove the old control events --&gt;
+				&lt;controlevent dialog="UserRegistrationDlg" control="Next" name="NewDialog"
+					argument="SetupTypeDlg" condition="ProductID" remove="true" /&gt;
+				&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
+					argument="LicenseAgreementDlg" condition="ShowUserRegistrationDlg &lt;&gt; 1" remove="true" /&gt;
+				&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
+					argument="UserRegistrationDlg" condition="ShowUserRegistrationDlg = 1" remove="true" /&gt;
+				&lt;!-- Remove control events for Browse button on CustomizeDlg --&gt;
+				&lt;controlevent dialog="CustomizeDlg" control="Browse" name="SelectionBrowse"
+					argument="BrowseDlg" condition="1" remove="true" /&gt;
+							&lt;!-- Add new control events for the web dialog --&gt;
+				&lt;controlevent dialog="UserRegistrationDlg" control="Next" name="NewDialog"
+					argument="WebFolderDlg" condition="ProductID" /&gt;
+				&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
+					argument="WebFolderDlg" condition="ShowWebFolderDlg &lt;&gt; 1" /&gt;
+				&lt;controlevent dialog="SetupTypeDlg" control="Back" name="NewDialog"
+					argument="WebFolderDlg" condition="ShowWebFolderDlg = 1" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Cancel" name="SpawnDialog"
+					argument="CancelDlg" order="0" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Back" name="NewDialog"
+					argument="LicenseAgreementDlg" condition="ShowUserRegistrationDlg&lt;&gt;1"
+					order="0" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Back" name="NewDialog"
+					argument="UserRegistrationDlg" condition="ShowUserRegistrationDlg=1"
+					order="0" /&gt;
+				&lt;!-- Virtual Directory Control Events --&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Next" name="DoAction"
+					argument="WEBCA_CreateURLs" condition="1" order="0" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Next" name="DoAction"
+					argument="WEBCA_EvaluateURLsMB" condition="1" order="1" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Next" name="SetTargetPath"
+					argument="TARGETDIR" condition="1" order="2" /&gt;
+				&lt;controlevent dialog="WebFolderDlg" control="Next" name="NewDialog"
+					argument="SetupTypeDlg" condition="1" order="3" /&gt;
+			&lt;/controlevents&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1561,47 +1573,51 @@
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add the a couple registry entries on the target machine.</p>
-		<pre class="code">&lt;registry&gt;
-	&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
-		&lt;value name="ProductVersion" value="1.0.0" /&gt;
-		&lt;value name="ProductDir" value="[TARGETDIR]" /&gt;
-		&lt;value name="VirtualDir" value="[TARGETVDIR]" /&gt;
-	&lt;/key&gt;
-&lt;/registry&gt;
-	</pre>
+		<pre class="code">
+			&lt;registry&gt;
+				&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
+					&lt;value name="ProductVersion" value="1.0.0" /&gt;
+					&lt;value name="ProductDir" value="[TARGETDIR]" /&gt;
+					&lt;value name="VirtualDir" value="[TARGETVDIR]" /&gt;
+				&lt;/key&gt;
+			&lt;/registry&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Add a default key value to the specified registry key path</p>
-		<pre class="code">&lt;registry&gt;
-	&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
-		&lt;value value="1.0.0" /&gt;
-	&lt;/key&gt;
-&lt;/registry&gt;
-	</pre>
+		<pre class="code">
+			&lt;registry&gt;
+				&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
+					&lt;value value="1.0.0" /&gt;
+				&lt;/key&gt;
+			&lt;/registry&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Another way to add a default key value to the specified registry key path</p>
-		<pre class="code">&lt;registry&gt;
-	&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
-		&lt;value name="" value="1.0.0" /&gt;
-	&lt;/key&gt;
-&lt;/registry&gt;
-	</pre>
+		<pre class="code">
+			&lt;registry&gt;
+				&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
+					&lt;value name="" value="1.0.0" /&gt;
+				&lt;/key&gt;
+			&lt;/registry&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Specify hexadecimal value (REG_BINARY) for the default key</p>
-		<pre class="code">&lt;registry&gt;
-	&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
-		&lt;value&gt;
-1a,81,0a,03,01,00,06,00,00,00,d3,15,fd,00,01,00,00,00,00,00,01,
-00,00,00,00,00,00,00,00,00,00,00,b0,90,ce,09,01,00,00,00,00,00,ff,ff,ff,00,
-00,00,00,00,00,00,00,00,6d,7a,0a,03,01,00,00,00,00,00,00,00,38,40,00,00,00,
-00,00,00,00,00,00,00,00,00,90,01,00,00,00,00,00,01,00,00,00,00,0f,00,00,00,
-f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
-		&lt;/value&gt;
-	&lt;/key&gt;
-&lt;/registry&gt;
-	</pre>
+		<pre class="code">
+			&lt;registry&gt;
+				&lt;key component="C__MainFiles" root="machine" path="SOFTWARE\ACME\My Product\" &gt;
+					&lt;value&gt;
+			1a,81,0a,03,01,00,06,00,00,00,d3,15,fd,00,01,00,00,00,00,00,01,
+			00,00,00,00,00,00,00,00,00,00,00,b0,90,ce,09,01,00,00,00,00,00,ff,ff,ff,00,
+			00,00,00,00,00,00,00,00,6d,7a,0a,03,01,00,00,00,00,00,00,00,38,40,00,00,00,
+			00,00,00,00,00,00,00,00,00,90,01,00,00,00,00,00,01,00,00,00,00,0f,00,00,00,
+			f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
+					&lt;/value&gt;
+				&lt;/key&gt;
+			&lt;/registry&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1645,10 +1661,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add a compiled help icon to the msi database; To be used with a shortcut.</p>
-		<pre class="code">&lt;icons&gt;
-	&lt;icon name="CHMICON" value="${resource.dir}\chm.ico" /&gt;
-&lt;/icons&gt;
-	</pre>
+		<pre class="code">
+			&lt;icons&gt;
+				&lt;icon name="CHMICON" value="${resource.dir}\chm.ico" /&gt;
+			&lt;/icons&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1750,12 +1767,13 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add a compiled help icon to the msi database; To be used with a shortcut.</p>
-		<pre class="code">&lt;shortcuts&gt;
-	&lt;shortcut name="HelpFiles" directory="D__PROGRAMMENU_ACME_MYPRODUCT" filename="Help File" component="C__MainFiles" target="[$C__MainFiles]\Help.chm" icon="CHMICON" iconindex="0" showcmd="3" &gt;
-		&lt;description&gt;My Product help documentation&lt;/description&gt;
-	&lt;/shortcut&gt;
-&lt;/shortcuts&gt;
-	</pre>
+		<pre class="code">
+			&lt;shortcuts&gt;
+				&lt;shortcut name="HelpFiles" directory="D__PROGRAMMENU_ACME_MYPRODUCT" filename="Help File" component="C__MainFiles" target="[$C__MainFiles]\Help.chm" icon="CHMICON" iconindex="0" showcmd="3" &gt;
+					&lt;description&gt;My Product help documentation&lt;/description&gt;
+				&lt;/shortcut&gt;
+			&lt;/shortcuts&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1799,10 +1817,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add the custom action dll to create/modify virtual directories</p>
-		<pre class="code">&lt;binaries&gt;
-	&lt;binary name="MSVBDPCADLL" value="${resource.dir}\MSVBDPCA.DLL" /&gt;
-&lt;/binaries&gt;
-	</pre>
+		<pre class="code">
+			&lt;binaries&gt;
+				&lt;binary name="MSVBDPCADLL" value="${resource.dir}\MSVBDPCA.DLL" /&gt;
+			&lt;/binaries&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1858,22 +1877,23 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add some custom actions related to the virtual directory dialog and custom action.</p>
-		<pre class="code">&lt;customactions&gt;
-	&lt;!-- Custom actions creating entry points into the custom action dll specified in the binary table --&gt;
-	&lt;customaction action="WEBCA_GatherWebFolderProperties" type="1" source="MSVBDPCADLL" target="GatherWebFolderProperties" /&gt;
-	&lt;customaction action="WEBCA_ApplyWebFolderProperties" type="1537" source="MSVBDPCADLL" target="ApplyWebFolderProperties" /&gt;
-	&lt;customaction action="WEBCA_RollbackApplyWebFolderProperties" type="1281" source="MSVBDPCADLL" target="RollbackApplyWebFolderProperties" /&gt;
-	&lt;customaction action="WEBCA_CreateURLs" type="1" source="MSVBDPCADLL" target="CreateURLs" /&gt;
-	&lt;customaction action="WEBCA_EvaluateURLs" type="1" source="MSVBDPCADLL" target="EvaluateURLs" /&gt;
-	&lt;customaction action="WEBCA_EvaluateURLsNoFail" type="1" source="MSVBDPCADLL" target="EvaluateURLsNoFail" /&gt;
-	&lt;customaction action="WEBCA_EvaluateURLsMB" type="1" source="MSVBDPCADLL" target="EvaluateURLsMB" /&gt;
-	&lt;customaction action="WEBCA_CreateAppRoots" type="1" source="MSVBDPCADLL" target="CreateAppRoots" /&gt;
+		<pre class="code">
+			&lt;customactions&gt;
+				&lt;!-- Custom actions creating entry points into the custom action dll specified in the binary table --&gt;
+				&lt;customaction action="WEBCA_GatherWebFolderProperties" type="1" source="MSVBDPCADLL" target="GatherWebFolderProperties" /&gt;
+				&lt;customaction action="WEBCA_ApplyWebFolderProperties" type="1537" source="MSVBDPCADLL" target="ApplyWebFolderProperties" /&gt;
+				&lt;customaction action="WEBCA_RollbackApplyWebFolderProperties" type="1281" source="MSVBDPCADLL" target="RollbackApplyWebFolderProperties" /&gt;
+				&lt;customaction action="WEBCA_CreateURLs" type="1" source="MSVBDPCADLL" target="CreateURLs" /&gt;
+				&lt;customaction action="WEBCA_EvaluateURLs" type="1" source="MSVBDPCADLL" target="EvaluateURLs" /&gt;
+				&lt;customaction action="WEBCA_EvaluateURLsNoFail" type="1" source="MSVBDPCADLL" target="EvaluateURLsNoFail" /&gt;
+				&lt;customaction action="WEBCA_EvaluateURLsMB" type="1" source="MSVBDPCADLL" target="EvaluateURLsMB" /&gt;
+				&lt;customaction action="WEBCA_CreateAppRoots" type="1" source="MSVBDPCADLL" target="CreateAppRoots" /&gt;
 
-	&lt;!-- Custom actions to set default control values in the webfolder dialog --&gt;
-	&lt;customaction action="WEBCA_TARGETVDIR" type="307" source="TARGETVDIR" target="Default VDir" /&gt;
-	&lt;customaction action="WEBCA_TARGETPORT" type="307" source="TARGETPORT" target="80" /&gt;
-&lt;/customactions&gt;
-	</pre>
+				&lt;!-- Custom actions to set default control values in the webfolder dialog --&gt;
+				&lt;customaction action="WEBCA_TARGETVDIR" type="307" source="TARGETVDIR" target="Default VDir" /&gt;
+				&lt;customaction action="WEBCA_TARGETPORT" type="307" source="TARGETPORT" target="80" /&gt;
+			&lt;/customactions&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1929,29 +1949,30 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add the sequences to support virtual directories</p>
-		<pre class="code">&lt;sequences&gt;
-	&lt;sequence type="installexecute" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_EvaluateURLs" value="753" condition="NOT Installed" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_GatherWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_ApplyWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_RollbackApplyWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
-	&lt;sequence type="installexecute" action="WEBCA_CreateAppRoots" value="3701" condition="NOT Installed" /&gt;
-	&lt;sequence type="installui" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="installui" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="installui" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
-	&lt;sequence type="installui" action="WEBCA_EvaluateURLsNoFail" value="753" condition="NOT Installed" /&gt;
-	&lt;sequence type="adminexecute" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="adminexecute" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="adminexecute" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
-	&lt;sequence type="adminexecute" action="WEBCA_EvaluateURLs" value="753" condition="NOT Installed" /&gt;
-	&lt;sequence type="adminui" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="adminui" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
-	&lt;sequence type="adminui" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
-	&lt;sequence type="adminui" action="WEBCA_EvaluateURLsNoFail" value="753" condition="NOT Installed" /&gt;
-&lt;/sequences&gt;
-	</pre>
+		<pre class="code">
+			&lt;sequences&gt;
+				&lt;sequence type="installexecute" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_EvaluateURLs" value="753" condition="NOT Installed" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_GatherWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_ApplyWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_RollbackApplyWebFolderProperties" value="3701" condition="NOT Installed" /&gt;
+				&lt;sequence type="installexecute" action="WEBCA_CreateAppRoots" value="3701" condition="NOT Installed" /&gt;
+				&lt;sequence type="installui" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="installui" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="installui" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
+				&lt;sequence type="installui" action="WEBCA_EvaluateURLsNoFail" value="753" condition="NOT Installed" /&gt;
+				&lt;sequence type="adminexecute" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="adminexecute" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="adminexecute" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
+				&lt;sequence type="adminexecute" action="WEBCA_EvaluateURLs" value="753" condition="NOT Installed" /&gt;
+				&lt;sequence type="adminui" action="WEBCA_TARGETVDIR" value="750" condition="TARGETVDIR=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="adminui" action="WEBCA_TARGETPORT" value="750" condition="TARGETPORT=&amp;quot;&amp;quot;" /&gt;
+				&lt;sequence type="adminui" action="WEBCA_CreateURLs" value="752" condition="NOT Installed" /&gt;
+				&lt;sequence type="adminui" action="WEBCA_EvaluateURLsNoFail" value="753" condition="NOT Installed" /&gt;
+			&lt;/sequences&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -1999,39 +2020,40 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add the related action text for the web folder actions.</p>
-		<pre class="code">&lt;actiontext&gt;
-	&lt;action name="WEBCA_GatherWebFolderProperties" &gt;
-		&lt;description&gt;Gathering web folder properties&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_ApplyWebFolderProperties" &gt;
-		&lt;description&gt;Applying web folder properties&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_RollbackApplyWebFolderProperties" &gt;
-		&lt;description&gt;Removing web folder properties&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_CreateURLs" &gt;
-		&lt;description&gt;Creating URLs&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_EvaluateURLs" &gt;
-		&lt;description&gt;Evaluating URLs&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_EvaluateURLsNoFail" &gt;
-		&lt;description&gt;Evaluating URLs and do not fail if URL is invalid&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_EvaluateURLsMB" &gt;
-		&lt;description&gt;Evaluating URLs&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_CreateAppRoots" &gt;
-		&lt;description&gt;Creating application roots&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_TARGETVDIR" &gt;
-		&lt;description&gt;Set TARGETVDIR property to the specified virtual dir&lt;/description&gt;
-	&lt;/action&gt;
-	&lt;action name="WEBCA_TARGETPORT" &gt;
-		&lt;description&gt;Set TARGETPORT property to the specified virtual dir port&lt;/description&gt;
-	&lt;/action&gt;
-&lt;/actiontext&gt;
-	</pre>
+		<pre class="code">
+			&lt;actiontext&gt;
+				&lt;action name="WEBCA_GatherWebFolderProperties" &gt;
+					&lt;description&gt;Gathering web folder properties&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_ApplyWebFolderProperties" &gt;
+					&lt;description&gt;Applying web folder properties&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_RollbackApplyWebFolderProperties" &gt;
+					&lt;description&gt;Removing web folder properties&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_CreateURLs" &gt;
+					&lt;description&gt;Creating URLs&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_EvaluateURLs" &gt;
+					&lt;description&gt;Evaluating URLs&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_EvaluateURLsNoFail" &gt;
+					&lt;description&gt;Evaluating URLs and do not fail if URL is invalid&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_EvaluateURLsMB" &gt;
+					&lt;description&gt;Evaluating URLs&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_CreateAppRoots" &gt;
+					&lt;description&gt;Creating application roots&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_TARGETVDIR" &gt;
+					&lt;description&gt;Set TARGETVDIR property to the specified virtual dir&lt;/description&gt;
+				&lt;/action&gt;
+				&lt;action name="WEBCA_TARGETPORT" &gt;
+					&lt;description&gt;Set TARGETPORT property to the specified virtual dir port&lt;/description&gt;
+				&lt;/action&gt;
+			&lt;/actiontext&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2089,10 +2111,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Add the aspx app mapping</p>
-		<pre class="code">&lt;appmappings&gt;
-	&lt;appmapping directory="D__ACME_MyProduct" extension=".aspx" exepath="[DOTNETFOLDER]aspnet_isapi.dll" verbs="GET,HEAD,POST,DEBUG" /&gt;
-&lt;/appmappings&gt;
-	</pre>
+		<pre class="code">
+			&lt;appmappings&gt;
+				&lt;appmapping directory="D__ACME_MyProduct" extension=".aspx" exepath="[DOTNETFOLDER]aspnet_isapi.dll" verbs="GET,HEAD,POST,DEBUG" /&gt;
+			&lt;/appmappings&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2138,10 +2161,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Convert the TARGETURL property to a directory and store that information in TARGETDIR</p>
-		<pre class="code">&lt;urlproperties&gt;
-	&lt;urlproperty name="TARGETURL" property="TARGETDIR" /&gt;
-&lt;/urlproperties&gt;
-	</pre>
+		<pre class="code">
+			&lt;urlproperties&gt;
+				&lt;urlproperty name="TARGETURL" property="TARGETDIR" /&gt;
+			&lt;/urlproperties&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2193,10 +2217,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Convert the virtual directory and port to a url and store the value in a property.</p>
-		<pre class="code">&lt;vdirproperties&gt;
-	&lt;vdirproperty name="TARGETVDIR" portproperty="TARGETPORT" urlproperty="TARGETURL" /&gt;
-&lt;/vdirproperties&gt;
-	</pre>
+		<pre class="code">
+			&lt;vdirproperties&gt;
+				&lt;vdirproperty name="TARGETVDIR" portproperty="TARGETPORT" urlproperty="TARGETURL" /&gt;
+			&lt;/vdirproperties&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2248,10 +2273,11 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Convert the virtual directory and port to a url and store the value in a property.</p>
-		<pre class="code">&lt;approots&gt;
-	&lt;approot component="C__MainFiles" urlproperty="TARGETURL" inprocflag="2" /&gt;
-&lt;/approots&gt;
-	</pre>
+		<pre class="code">
+			&lt;approots&gt;
+				&lt;approot component="C__MainFiles" urlproperty="TARGETURL" inprocflag="2" /&gt;
+			&lt;/approots&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2303,12 +2329,13 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 	  <h3>Examples</h3>
 	  <li>
 		<p>Specify permissions for the directory structure.</p>
-		<pre class="code">&lt;iisproperties&gt;
-	&lt;iisproperty directory="TARGETDIR" attr="626" defaultdoc="Default.aspx" /&gt;
-	&lt;iisproperty directory="D__BIN" attr="112" /&gt;
-	&lt;iisproperty directory="D__SomeSubDir" attr="114" /&gt;
-&lt;/iisproperties&gt;
-	</pre>
+		<pre class="code">
+			&lt;iisproperties&gt;
+				&lt;iisproperty directory="TARGETDIR" attr="626" defaultdoc="Default.aspx" /&gt;
+				&lt;iisproperty directory="D__BIN" attr="112" /&gt;
+				&lt;iisproperty directory="D__SomeSubDir" attr="114" /&gt;
+			&lt;/iisproperties&gt;
+				</pre>
 	  </li>
 	  <p> Represents the an element based on a schema definition. </p>
 	  <p />
@@ -2320,7 +2347,7 @@ f0,ff,ff,ff,54,69,6d,65,73,20,4e,65,77,20,52,6f,6d,61,6e,f4,6f,d4,08,02,00
 				</h4>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

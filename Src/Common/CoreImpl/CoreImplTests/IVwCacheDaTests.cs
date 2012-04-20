@@ -14,6 +14,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -44,6 +45,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Unit tests, gets disposed in teardown method")]
 		public void TestSetup()
 		{
 			RegistryHelper.CompanyName = "SIL";

@@ -340,7 +340,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			// System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(VectorReferenceLauncher)); // CS0219
 			this.m_vectorRefView = CreateVectorReverenceView();
 			this.SuspendLayout();
 			//

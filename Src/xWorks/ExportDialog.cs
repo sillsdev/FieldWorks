@@ -1478,7 +1478,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_description_LinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			Process.Start(e.LinkText);
+			using (Process.Start(e.LinkText))
+			{
+			}
 		}
 
 		/// <summary>

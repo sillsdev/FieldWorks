@@ -1,0 +1,73 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>AssemblyNameFunctions.GetVersion Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">AssemblyNameFunctions.GetVersion Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Gets the version of the assembly. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Function(Name:="get-version")&gt;</div>Public Shared Function GetVersion( _<br />   ByVal <i>assemblyName</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> _<br />) As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemVersionClassTopic.asp">Version</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />
+		<div class="attribute">[Function(Name="get-version")]</div>public static <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemVersionClassTopic.asp">Version</a> GetVersion(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> <i>assemblyName</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>assemblyName</i>
+		</dt>
+		<dd>The <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> of the assembly.</dd>
+	  </dl>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> The version of the assembly. </p>
+	  <h4 class="dtH4">Example</h4>
+	  <p>
+			  <p> Output the major version of the <code>nunit.framework</code> assembly to the build log. </p>
+			  <pre class="code">
+&lt;echo message="${version::get-major-version(assemblyname::get-version(assemblyname::get-assembly-name('nunit.framework.dll')))}" /&gt;
+
+  </pre>
+			</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.Functions.AssemblyNameFunctions.html">AssemblyNameFunctions Class</a> | <a href="NAnt.Core.Functions.html">NAnt.Core.Functions Namespace</a> | <a href="NAnt.Core.Functions.AssemblyFunctions.GetName.html">GetName</a> | <a href="NAnt.Core.Functions.VersionFunctions.html">VersionFunctions</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="GetVersion method">
+		</param>
+		<param name="Keyword" value="GetVersion method, AssemblyNameFunctions class">
+		</param>
+		<param name="Keyword" value="AssemblyNameFunctions.GetVersion method">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

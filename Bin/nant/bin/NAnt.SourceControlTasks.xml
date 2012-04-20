@@ -297,6 +297,16 @@
 			class.
 			</summary>
 		</member>
+		<member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.ToCvsDateTimeString(System.DateTime)">
+			<summary>
+			Converts a <see cref="T:System.DateTime"/> value to a <see cref="T:System.String"/>
+			representation that can be interpreted by cvs.
+			</summary>
+			<param name="item"><see cref="T:System.DateTime"/> to convert.</param>
+			<returns>
+			<see cref="T:System.String"/> interpretation of <paramref name="item"/>.
+			</returns>
+		</member>
 		<member name="M:NAnt.SourceControl.Tasks.AbstractCvsTask.PrepareProcess(System.Diagnostics.Process)">
 			<summary>
 			Build up the command line arguments, determine which executable is being
@@ -440,12 +450,10 @@
 				To use a cvs client in your path instead of sharpcvslib specify
 					the property:
 				&gt;property name="sourcecontrol.usesharpcvslib" value="false"&lt;
-
-				The default settings is to use sharpcvslib and the setting closest
+							The default settings is to use sharpcvslib and the setting closest
 				to the task execution is used to determine which value is used
 				to execute the process.
-
-				For instance if the attribute usesharpcvslib was set to false
+							For instance if the attribute usesharpcvslib was set to false
 				and the global property was set to true, the usesharpcvslib is
 				closes to the point of execution and would be used and is false.
 				Therefore the sharpcvslib binary would NOT be used.

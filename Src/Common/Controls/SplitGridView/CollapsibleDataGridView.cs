@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -225,6 +226,8 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"></see> that
 		/// contains the event data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			HitTestInfo info = HitTest(e.X, e.Y);
@@ -251,6 +254,7 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 				// (calculated as width from the left edge of the column to the right edge of
 				// the grid) - except the last column which can occupy max percentage of the
 				// entire width.
+				// TODO-Linux: GetColumnDisplayRectangle() does not use cutOverflow parameter on Mono.
 				Rectangle colRect = GetColumnDisplayRectangle(iColumn, false);
 				int remainingWidth = (iColumn == ColumnCount - 1) ? Width : Width - colRect.Left;
 #if !__MonoCS__
@@ -468,6 +472,8 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 		/// <param name="fForceHeightChanged"><c>true</c> to fire a RowHeightChanged event even
 		/// when nothing changed</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		internal void ResizeRows(bool fForceHeightChanged)
 		{
 			// ClientRectangle is empty if we're minimized
@@ -511,6 +517,7 @@ namespace SIL.FieldWorks.Common.Controls.SplitGridView
 
 				// last row gets extra pixels that are left over because of rounding
 				int iLastRow = LastVisibleRow;
+				// TODO-Linux: GetRowDisplayRectangle() does not use cutOverflow parameter on Mono.
 				if (iLastRow > -1 && !GetRowDisplayRectangle(iLastRow, true).IsEmpty)
 					Rows[iLastRow].Height += autoFillHeight - sumFilled;
 			}

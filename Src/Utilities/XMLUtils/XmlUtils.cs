@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
+#region // Copyright (c) 2003, 2012, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2012' company='SIL International'>
+//		Copyright (c) 2003, 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,9 +16,10 @@
 // This makes available some utilities for handling XML Nodes
 // </remarks>
 // --------------------------------------------------------------------------------------------
-#if __MonoCS__
-#define UsingDotNetTransforms
-#endif
+//We're changing to using libxslt (wrapped in the LibXslt class) on Linux/Mono.
+//#if __MonoCS__
+//#define UsingDotNetTransforms
+//#endif
 
 using System;
 using System.Collections.Generic;
@@ -833,6 +834,20 @@ namespace SIL.Utils
 				}
 			}
 #else // not UsingDotNetTransforms
+#if __MonoCS__
+			if (parameterList != null)
+			{
+				foreach(XSLParameter rParam in parameterList)
+				{
+					// Following is a specially recognized parameter name
+					if (rParam.Name == "prmSDateTime")
+					{
+						rParam.Value = GetCurrentDateTime();
+					}
+				}
+			}
+			SIL.Utils.LibXslt.TransformFileToFile(sTransformName, parameterList, sInputPath, sOutputName);
+#else
 			//.Net framework XML transform is still slower than something like MSXML2
 			// (this is so especially for transforms using xsl:key).
 			MSXML2.XSLTemplate60Class xslt = new MSXML2.XSLTemplate60Class();
@@ -859,9 +874,12 @@ namespace SIL.Utils
 			xslProc.input = xmlDoc;
 			AddParameters(parameterList, xslProc);
 			xslProc.transform();
-			StreamWriter sr = File.CreateText(sOutputName);
-			sr.Write(xslProc.output);
-			sr.Close();
+			using (StreamWriter sr = File.CreateText(sOutputName))
+			{
+				sr.Write(xslProc.output);
+				sr.Close();
+			}
+#endif // __MonoCS__
 #endif // UsingDotNetTransforms
 #if DEBUG
 			DateTime end = DateTime.Now;
@@ -890,6 +908,7 @@ namespace SIL.Utils
 			}
 		}
 #else
+#if !__MonoCS__
 		/// <summary>
 		/// Add parameters to a transform
 		/// </summary>
@@ -912,11 +931,12 @@ namespace SIL.Utils
 			}
 		}
 #endif
+#endif // UsingDotNetTransforms
 		/// <summary>
 		/// Are we using the .Net XSLT transforms?
 		/// </summary>
 		/// <returns>true if we're using .Net XSLT transforms
-		/// false if we're using MSXML2</returns>
+		/// false if we're using MSXML2 or LibXslt</returns>
 		public static bool UsingDotNetTransforms()
 		{
 #if UsingDotNetTransforms
@@ -925,7 +945,44 @@ namespace SIL.Utils
 			return false;
 #endif
 		}
-			private static string GetCurrentDateTime()
+
+		/// <summary>
+		/// Are we using the Microsoft's MSXML2 XSLT transforms?
+		/// </summary>
+		/// <returns>true if we're using MSXML2 XSLT transforms
+		/// false if we're using .Net or LibXslt</returns>
+		public static bool UsingMSXML2Transforms()
+		{
+#if UsingDotNetTransforms
+			return false;
+#else
+#if __MonoCS__
+			return false;
+#else
+			return true;
+#endif
+#endif
+		}
+
+		/// <summary>
+		/// Are we using the libxslt.so XSLT transforms?
+		/// </summary>
+		/// <returns>true if we're using libxslt.so transforms
+		/// false if we're using MSXML2 or .Net</returns>
+		public static bool UsingLibXsltTransforms()
+		{
+#if UsingDotNetTransforms
+			return false;
+#else
+#if __MonoCS__
+			return true;
+#else
+			return false;
+#endif
+#endif
+		}
+
+		private static string GetCurrentDateTime()
 		{
 			DateTime now;
 			now = DateTime.Now;
