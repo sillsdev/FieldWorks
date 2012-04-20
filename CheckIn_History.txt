@@ -5837,3 +5837,4 @@ EberhardB, 20 Apr 2012. Integration Calgary/WW -> Calgary.
 LastufkaM 20 Apr 2012 LT-12767 Improve the receive from from colleague (obtain)option for Send/Receive
 SteveMc, April 20, 2012.  Valid Encoding Converter DLLs (built with VS 2008).
 GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40 project.
+SteveMc, April 20, 2012. Encoding Converter DLLs built with VS 2010 (and targetting .Net 4).
