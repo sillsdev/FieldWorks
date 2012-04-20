@@ -192,3 +192,4 @@ NaylorJ, 17 April 2012. Fixed additional issue with LT-12948 where adding to a C
 NaylorJ, 18 April 2012. Fixed an additional set of LT-12948 issues Relations and ComplexForms. Added new logging feature to warn when intersecting collections are merged.
 NaylorJ, 20 April 2012. Fixed a problem where Tree relations were being duplicated instead of added to.
 NaylorJ, 20 April 2012. Fixed a crash in the new code for Tree relations, empty LexReference objects will no longer cause an issue.
+NaylorJ, 20 April 2012. Integrated WW changeset 37354 into this branch to fix LT-12891.

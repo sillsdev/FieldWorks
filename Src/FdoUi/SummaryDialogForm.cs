@@ -407,7 +407,16 @@ namespace SIL.FieldWorks.FdoUi
 				var sda = (ObjectListPublisher)m_xv.DecoratedDataAccess;
 				sda.CacheVecProp(RootHvo, m_rghvo.ToArray());
 			}
+			if (entry != null)
+				OtherResult = entry;
 		}
+
+		/// <summary>
+		/// Gives the entries resulting from the dialog shown by clicking the Other button.
+		/// N.B. Don't make this a non-Auto property and add a CheckDisposed(), because it
+		/// will almost certainly be disposed when we use it! It works!
+		/// </summary>
+		public ILexEntry OtherResult { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
