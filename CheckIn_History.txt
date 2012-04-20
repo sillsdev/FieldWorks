@@ -5835,3 +5835,4 @@ Andy Black, 18 Apr 2012.  Fix LT-12970 "Morph Sketch fails to show optional slot
 RandyR, 18 Apr 2012. Checked in FlexBridge 0.3.28
 EberhardB, 20 Apr 2012. Integration Calgary/WW -> Calgary.
 LastufkaM 20 Apr 2012 LT-12767 Improve the receive from from colleague (obtain)option for Send/Receive
+SteveMc, April 20, 2012.  Valid Encoding Converter DLLs (built with VS 2008).
