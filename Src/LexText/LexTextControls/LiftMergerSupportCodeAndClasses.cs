@@ -3041,6 +3041,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			foreach (ILexReference lr in lrt.MembersOC) //for every potential reference
 			{
+				if(lr.TargetsRS.Count == 0) //why this should be I don't know, probably due to some defect elsewhere.
+					continue;
 				int firstTargetHvo = lr.TargetsRS.First().Hvo;
 				if (firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
 				{

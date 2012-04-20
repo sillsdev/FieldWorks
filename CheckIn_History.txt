@@ -191,3 +191,4 @@ NaylorJ, 13 April 2012. Fixed bug LT-12948. Relations of the same type should no
 NaylorJ, 17 April 2012. Fixed additional issue with LT-12948 where adding to a ComplexForm component list created a new list on merge.
 NaylorJ, 18 April 2012. Fixed an additional set of LT-12948 issues Relations and ComplexForms. Added new logging feature to warn when intersecting collections are merged.
 NaylorJ, 20 April 2012. Fixed a problem where Tree relations were being duplicated instead of added to.
+NaylorJ, 20 April 2012. Fixed a crash in the new code for Tree relations, empty LexReference objects will no longer cause an issue.
