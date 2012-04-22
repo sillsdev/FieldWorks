@@ -5839,3 +5839,4 @@ SteveMc, April 20, 2012.  Valid Encoding Converter DLLs (built with VS 2008).
 GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40 project.
 SteveMc, April 20, 2012. Encoding Converter DLLs built with VS 2010 (and targetting .Net 4).
 RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.29
+RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.31. Added LIFT Bridge installer 1.4.13.
