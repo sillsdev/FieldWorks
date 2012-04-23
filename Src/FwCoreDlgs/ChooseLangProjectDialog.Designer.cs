@@ -46,12 +46,15 @@
 			this.m_tblLayoutLocations = new System.Windows.Forms.TableLayoutPanel();
 			this.m_tblLayoutProjects = new System.Windows.Forms.TableLayoutPanel();
 			this.m_tblLayoutOuter = new System.Windows.Forms.TableLayoutPanel();
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			((System.ComponentModel.ISupportInitialize)(this.m_splitContainer)).BeginInit();
 			this.m_splitContainer.Panel1.SuspendLayout();
 			this.m_splitContainer.Panel2.SuspendLayout();
 			this.m_splitContainer.SuspendLayout();
 			this.m_tblLayoutLocations.SuspendLayout();
 			this.m_tblLayoutProjects.SuspendLayout();
 			this.m_tblLayoutOuter.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			//
 			// m_hostsTreeView
@@ -170,13 +173,20 @@
 			// m_tblLayoutOuter
 			//
 			resources.ApplyResources(this.m_tblLayoutOuter, "m_tblLayoutOuter");
-			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenFwDataProject, 0, 1);
-			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenBridgeProject, 0, 2);
 			this.m_tblLayoutOuter.Controls.Add(this.m_splitContainer, 0, 0);
 			this.m_tblLayoutOuter.Controls.Add(this.m_btnOk, 1, 1);
 			this.m_tblLayoutOuter.Controls.Add(this.m_btnHelp, 3, 1);
 			this.m_tblLayoutOuter.Controls.Add(this.m_btnCancel, 2, 1);
+			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenFwDataProject, 0, 2);
+			this.m_tblLayoutOuter.Controls.Add(this.m_linkOpenBridgeProject, 0, 1);
 			this.m_tblLayoutOuter.Name = "m_tblLayoutOuter";
+			//
+			// pictureBox1
+			//
+			this.pictureBox1.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.chorus32;
+			resources.ApplyResources(this.pictureBox1, "pictureBox1");
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.TabStop = false;
 			//
 			// ChooseLangProjectDialog
 			//
@@ -184,6 +194,7 @@
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.m_btnCancel;
+			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this.m_tblLayoutOuter);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -193,6 +204,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.m_splitContainer.Panel1.ResumeLayout(false);
 			this.m_splitContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.m_splitContainer)).EndInit();
 			this.m_splitContainer.ResumeLayout(false);
 			this.m_tblLayoutLocations.ResumeLayout(false);
 			this.m_tblLayoutLocations.PerformLayout();
@@ -200,6 +212,7 @@
 			this.m_tblLayoutProjects.PerformLayout();
 			this.m_tblLayoutOuter.ResumeLayout(false);
 			this.m_tblLayoutOuter.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -222,5 +235,6 @@
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutProjects;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutLocations;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutOuter;
+		private System.Windows.Forms.PictureBox pictureBox1;
 	}
 }

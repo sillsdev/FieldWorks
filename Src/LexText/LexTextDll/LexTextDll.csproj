@@ -105,7 +105,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
 	</Reference>
-	<Reference Include="SimpleRootSite, Version=7.3.0.12649, Culture=neutral, processorArchitecture=x86" />
+	<Reference Include="SimpleRootSite, Version=7.3.0.12649, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
 	<Reference Include="System.Core" />
 	<Reference Include="FwUtils, Version=5.5.0.26385, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

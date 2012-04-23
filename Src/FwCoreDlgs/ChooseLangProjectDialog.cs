@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
@@ -454,7 +456,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the click event for the OK button.
+		/// Handles the click event for the Open button.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void OkButtonClick(object sender, EventArgs e)
@@ -535,7 +537,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			string dummy;
-			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain, out dummy);
+			string projectName;
+			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain, out projectName, out dummy);
+			Project = projectName;
+			Server = null;
+			DialogResult = String.IsNullOrEmpty(Project) ? DialogResult.Cancel : DialogResult.OK;
+			OkButtonClick(null, null);
 		}
 
 		private void HelpButtonClick(object sender, EventArgs e)
@@ -548,5 +555,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_btnAddHost.Enabled = !String.IsNullOrEmpty(m_txtAddHost.Text);
 		}
 		#endregion
+
 	}
 }

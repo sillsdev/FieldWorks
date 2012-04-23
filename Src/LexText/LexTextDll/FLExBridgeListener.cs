@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -62,16 +65,23 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return cache.ProjectId.ProjectFolder != null;
 		}
 
+		/// <summary>
+		/// The method/delegate that gets invoked when View->Conflict Report is clicked
+		/// via the OnShowConflictReport message
+		/// </summary>
+		/// <param name="commandObject">Includes the XML command element of the OnShowConflictReport message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnShowConflictReport(object commandObject)
 		{
 			string url;
+			string projectPath;
 			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
 								   Environment.UserName,
-								   FLExBridgeHelper.ConflictViewer, out url);
+								   FLExBridgeHelper.ConflictViewer, out projectPath, out url);
 			if (!string.IsNullOrEmpty(url))
 			{
 				// TODO: Jump to url
-				var args = new LocalLinkArgs() {Link = url};
+				var args = new Common.RootSites.LocalLinkArgs {Link = url};
 				if (_mediator != null)
 				{
 					_mediator.SendMessage("HandleLocalHotlink", args);
@@ -91,16 +101,29 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true; // We dealt with it.
 		}
 
+		/// <summary>
+		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
+		/// via the OnFLExBridge message
+		/// </summary>
+		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnFLExBridge(object commandObject)
 		{
+			if (IsDb4oProject)
+			{
+				MessageBox.Show(LexTextStrings.ksDb4oProjectNotShareableDlgText, LexTextStrings.ksDb4oProjectNotShareableTitle, MessageBoxButtons.OK);
+				return true;
+			}
 			//Unlock project
 			string url;
 			ProjectLockingService.UnlockCurrentProject(Cache);
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
+			string projectPath;
 			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
 																	  Environment.UserName,
-																	  FLExBridgeHelper.SendReceive, out url);
+																	  FLExBridgeHelper.SendReceive,
+																	  out projectPath, out url);
 			if(dataChanged)
 			{
 				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
@@ -122,6 +145,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			return true;
 		}
+
+		protected bool IsDb4oProject
+		{
+			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
+		}
+
 		#region Implementation of IDisposable
 
 		private bool DetectConflicts(string path, Dictionary<string, long> savedState)

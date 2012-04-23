@@ -2873,4 +2873,25 @@
 	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Active_field_templates.htm</value>
 	<comment>Grammar - Category Edit, Active slice help topic </comment>
   </data>
+  <data name="khtpChoose-PhonologicalRuleEdit-PhSegRuleRHS-ExcludedProperties" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Choose_excluded_properties.htm</value>
+	<comment>Choose Excluded Properties</comment>
+  </data>
+  <data name="khtpChoose-PhonologicalRuleEdit-PhSegRuleRHS-RequiredCategories" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Choose_required_categories.htm</value>
+	<comment>Choose Required Categories</comment>
+  </data>
+  <data name="khtpChoose-PhonologicalRuleEdit-PhSegRuleRHS-RequiredProperties" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Choose_required_properties.htm</value>
+	<comment>Choose Required Properties</comment>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhSegRuleRHS-ExcludedProperties" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Excluded_Properties.htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhSegRuleRHS-RequiredCategories" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Required_Categories.htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhSegRuleRHS-RequiredProperties" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Required_Properties.htm</value>
+  </data>
 </root>
