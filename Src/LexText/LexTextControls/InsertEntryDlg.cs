@@ -1705,9 +1705,7 @@ catch(Exception e)
 				// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 				// Need to use a wait cursor while creating dialog, but not when showing it.
 				using (new WaitCursor(m_lnkAssistant))
-					dlg = MiscUtils.IsUnix ?
-						new MGADialog(m_cache, m_mediator, m_tbLexicalForm.Text) :
-						new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
+					dlg = new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
 
 				using (dlg)
 				{
