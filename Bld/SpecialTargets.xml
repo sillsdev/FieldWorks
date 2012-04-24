@@ -40,6 +40,7 @@
 		<property name="bld-debug" value="false"/>
 		<property name="bld-bounds" value="false"/>
 		<property name="bld-release" value="true"/>
+		<property name="verifyset" value="dispose-release"/>
 		<call target="setenvLinux"/>
 	</target>
 
