@@ -5841,3 +5841,4 @@ SteveMc, April 20, 2012. Encoding Converter DLLs built with VS 2010 (and targett
 RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.29
 RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.31. Added LIFT Bridge installer 1.4.13.
 AnnB, 23 Apr, 2012. LT-12968 - Hook up Help buttons in new Grammar fields and choosers
+Randyr, 24 April 2012. Updated FLEx Bridge installer (0.3.32) and LIFT Bridge installer(1.4.15).
