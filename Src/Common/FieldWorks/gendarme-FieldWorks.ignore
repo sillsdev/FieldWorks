@@ -20,7 +20,7 @@ M: System.Collections.Generic.List`1<System.Diagnostics.Process> SIL.FieldWorks.
 M: System.Void SIL.FieldWorks.FieldWorks::FollowLink(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.FwApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)
 # Linux:
-M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey10::<>m__E()
+M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey10::<>m__F()
 # Windows:
 M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass33::<KickOffAppFromOtherProcess>b__32()
 M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.String,System.Func`1<SIL.FieldWorks.ProjectId>)
