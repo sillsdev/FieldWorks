@@ -1,0 +1,14 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# m_KeyboadSwitcher gets disposed in Close() which in turn gets called from KeyboardControllerImpl.Dispose
+T: SIL.FieldWorks.Common.Keyboarding.Linux.IbusKeyboardAdaptor
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithNativeFieldsShouldBeDisposableRule
+
+# No need to release XklConfigRegistry or XklEngine
+T: X11.XKlavier.XklConfigRegistry
+T: X11.XKlavier.XklEngine

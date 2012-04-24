@@ -1,0 +1,14 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Added to control and disposed there
+M: System.Void SIL.FieldWorks.LexText.Controls.MGA.MGADialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.LexText.Controls.MGA.MasterItem::ResetDescription(System.Windows.Forms.RichTextBox)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.LexText.Controls.MGA.GlossListBoxItem

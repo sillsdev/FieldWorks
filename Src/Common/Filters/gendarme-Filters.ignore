@@ -1,0 +1,14 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.Filters.BadSpellingMatcher
+T: SIL.FieldWorks.Filters.SpellCheckMethod
+T: SIL.FieldWorks.Filters.ManyOnePathSortItem
+T: SIL.FieldWorks.Filters.ProblemAnnotationFilter
+T: SIL.FieldWorks.Filters.PropertyRecordSorter
+T: SIL.FieldWorks.Filters.WritingSystemComparer
+T: SIL.FieldWorks.Filters.RecordSorter/FdoCompare
+T: SIL.FieldWorks.Filters.WfiRecordFilterListProvider

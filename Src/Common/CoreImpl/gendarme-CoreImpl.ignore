@@ -1,0 +1,27 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Replacing/normalizing newlines
+M: System.String SIL.CoreImpl.StringUtils::NormalizeNewLines(System.String)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Mutex doesn't implicitly implement Dispose, so we have to cast...
+T: SIL.CoreImpl.GlobalFileWritingSystemStore
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# m_lock is disposed when the application exits
+T: SIL.CoreImpl.SingletonsContainer/SingletonsContainerImpl
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# we're returning a reference
+M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<GetAllEmbeddedObjectGuids>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.CoreImpl.KernelExtensions/<Runs>d__5::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.CoreImpl.TsRunPart/<Words>d__0::System.Collections.IEnumerable.GetEnumerator()

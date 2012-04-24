@@ -1,0 +1,23 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# object is added to menu and disposed there
+M: System.Boolean SIL.FieldWorks.Common.RootSites.SpellCheckHelper::ShowContextMenu(System.Drawing.Point,SIL.FieldWorks.Common.RootSites.SimpleRootSite)
+M: System.Int32 SIL.FieldWorks.Common.RootSites.SpellCheckHelper::MakeSpellCheckMenuOptions(System.Drawing.Point,SIL.FieldWorks.Common.RootSites.SimpleRootSite,System.Windows.Forms.ContextMenuStrip)
+
+# object is disposed in finally block
+M: System.Void SIL.FieldWorks.Common.RootSites.FwBaseVc::DisplayEmbeddedObject(SIL.FieldWorks.Common.COMInterfaces.IVwEnv,System.Int32)
+
+# returns a reference
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.RootSites.CollectorEnvServices/<CollectEditableSelectionPoints>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.RootSites.CollectorEnvServices/<CollectPictureSelectionPoints>d__e::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.Common.RootSites.StringMeasureEnv
+T: SIL.FieldWorks.Common.RootSites.SpellCheckHelper
+T: SIL.FieldWorks.Common.RootSites.FwBaseVc

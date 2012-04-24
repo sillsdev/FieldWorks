@@ -1,0 +1,39 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.Common.UIAdapters.SIBAdapter
+T: SIL.FieldWorks.Common.UIAdapters.ToolStripItemExtender
+
+# added to collection and disposed there, or reference only
+T: SIL.FieldWorks.Common.UIAdapters.TMAdapter
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to collection and disposed there
+M: System.Void SIL.FieldWorks.Common.UIAdapters.SIBAdapter::SetupViewMenuForSideBarTabs(SIL.FieldWorks.Common.UIAdapters.ITMAdapter,System.String)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::BuildToolbarList()
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::ReadContextMenus(System.Xml.XmlNode)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::ReadSingleToolbarDef(System.Xml.XmlNode)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::ReadToolbarItems(System.Xml.XmlNode,System.Object)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::HandleBuildingWindowList(System.Object,System.ComponentModel.CancelEventArgs)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::AddMenuItem(SIL.FieldWorks.Common.UIAdapters.TMItemProperties,System.String,System.String)
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::AddContextMenuItem(SIL.FieldWorks.Common.UIAdapters.TMItemProperties,System.String,System.String,System.String)
+
+# reference only
+M: System.Void SIL.FieldWorks.Common.UIAdapters.TMAdapter::ReadImagesResources(System.Xml.XmlNode)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.Common.UIAdapters.CommandInfo
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Replacing characters
+M: System.Void SIL.FieldWorks.Common.UIAdapters.SIBAdapter::SetupViewMenuForSideBarTabs(SIL.FieldWorks.Common.UIAdapters.ITMAdapter,System.String)

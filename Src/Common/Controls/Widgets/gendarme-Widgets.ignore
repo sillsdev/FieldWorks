@@ -1,0 +1,46 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# object is added to collection and disposed there
+M: System.Void SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewDataSource::AddColumn(System.String,System.Int32)
+M: System.Void SIL.FieldWorks.Common.Widgets.FwMultilingualPropView::OnHandleCreated(System.EventArgs)
+M: System.Void SIL.FieldWorks.Common.Widgets.ToolStripControlComboBox::set_DropDownControl(System.Windows.Forms.Control)
+
+# object is assigned to a control and disposed there
+M: System.Void SIL.FieldWorks.Common.Widgets.FwTextBoxColumn::HandleCellFormatting(System.Object,System.Windows.Forms.DataGridViewCellFormattingEventArgs)
+
+# reference only
+M: System.Boolean SIL.FieldWorks.Common.Widgets.FwComboMessageFilter::PreFilterMessage(System.Windows.Forms.Message&)
+M: System.Boolean SIL.FieldWorks.Common.Widgets.FwPopupMessageFilter::PreFilterMessage(System.Windows.Forms.Message&)
+M: System.Void SIL.FieldWorks.Common.Widgets.ToolStripControlComboBox::OnOwnerLayoutCompleted(System.Object,System.EventArgs)
+M: System.Void SIL.FieldWorks.Common.Widgets.VSTabControl::DrawTabItem(System.Drawing.Graphics,System.Int32,System.Windows.Forms.VisualStyles.TabItemState,System.Drawing.Rectangle,System.Drawing.StringFormat)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Object is a reference and will be disposed by parent
+T: SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewDataSource
+T: SIL.FieldWorks.Common.Widgets.VSTabControl/NativeUpDown
+T: SIL.FieldWorks.Common.Widgets.TextBoxVc
+T: SIL.FieldWorks.Common.Widgets.LabeledMultiStringViewVc
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Object is a reference and will be disposed by parent
+T: SIL.FieldWorks.Common.Widgets.FwComboMessageFilter
+T: SIL.FieldWorks.Common.Widgets.FwPopupMessageFilter
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# dealing with keyboard input
+M: System.Void SIL.FieldWorks.Common.Widgets.TextBoxEditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.COMInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
+
+#-----------------------------------------------------------------------------------------------
+R: SIL.Gendarme.Rules.DebugDispose.EnsureDebugDisposeMissDispStatementRule
+
+# Bug in DataGridView on .NET
+M: System.Void SIL.FieldWorks.Common.Widgets.FwTextBoxColumn::Dispose(System.Boolean)

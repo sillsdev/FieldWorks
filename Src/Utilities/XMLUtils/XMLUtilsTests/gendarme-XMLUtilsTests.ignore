@@ -1,0 +1,8 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Unit tests, tests encoding/decoding XML attributes
+M: System.Void SIL.Utils.XmlUtilsTest::MakeSafeXmlAttributeTest()
+M: System.Void SIL.Utils.XmlUtilsTest::DecodeXmlAttributeTest()

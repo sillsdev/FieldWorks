@@ -1,0 +1,50 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+# variables are passed in and should be disposed by parent
+T: SIL.FieldWorks.IText.ChooseAnalysisHandler
+T: SIL.FieldWorks.IText.InterlinVc
+T: SIL.FieldWorks.IText.SandboxBase/SandboxVc
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+# Factory method, will be disposed in caller
+M: SIL.FieldWorks.IText.IAnalysisControlInternal SIL.FieldWorks.IText.FocusBoxController::CreateNewSandbox(SIL.FieldWorks.FDO.DomainServices.AnalysisOccurrence)
+
+# added to other object and disposed there
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingChild::AddListToMenu(System.Windows.Forms.ToolStrip,SIL.FieldWorks.FDO.ICmPossibility)
+M: SIL.FieldWorks.IText.IComboHandler SIL.FieldWorks.IText.SandboxBase/InterlinComboHandler::MakeCombo(XCore.IHelpTopicProvider,System.Int32,SIL.FieldWorks.IText.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
+
+# just a reference
+M: System.Boolean SIL.FieldWorks.IText.SandboxBase::IsInGlossMode()
+M: System.String SIL.FieldWorks.IText.SandboxBase/IhMorphForm::EditMorphBreaks()
+M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::CreateNewEntry(System.Boolean,SIL.FieldWorks.FDO.ILexEntry&,SIL.FieldWorks.FDO.IMoForm&,SIL.FieldWorks.FDO.ILexSense&)
+M: System.Int32 SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewSenseDlg(SIL.FieldWorks.Common.COMInterfaces.ITsString,SIL.FieldWorks.FDO.ILexEntry)
+M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::OnSelectVariantOf(System.Object,System.EventArgs)
+M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewAllomorphDlg()
+
+# Disposed in object's Close() method
+M: System.Boolean SIL.FieldWorks.IText.SandboxBase::HandleRightClickOnObject(System.Int32,XCore.IxCoreColleague)
+
+# TODO: Not sure how this menu gets disposed
+M: System.Void SIL.FieldWorks.IText.InterlinDocForAnalysis::InterlinDocForAnalysis_RightMouseClickedEvent(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
+
+# GetEnumerator() returns an object
+M: System.Collections.IEnumerator SIL.FieldWorks.IText.InterlinMaster/<FindControls>d__2`1::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# variables are passed in and should be disposed in caller
+T: SIL.FieldWorks.IText.FocusBoxController/UndoRedoApproveAnalysis
+T: SIL.FieldWorks.IText.InterlinLineChoices
+T: SIL.FieldWorks.IText.InterlinearTextsRecordClerk/CreateAndInsertStText
+T: SIL.FieldWorks.IText.InterlinearTextsRecordClerk/UndoableCreateAndInsertStText
+T: SIL.FieldWorks.IText.InterAreaBookmark
+T: SIL.FieldWorks.IText.InterlinVc/DisplayWordBundleMethod
+T: SIL.FieldWorks.IText.InterlinearExporter
+T: SIL.FieldWorks.IText.LinguaLinksImport
+T: SIL.FieldWorks.IText.SandboxBase/GetRealAnalysisMethod
+T: SIL.FieldWorks.IText.SandboxBase/MorphemeBreaker
+T: SIL.FieldWorks.IText.WordBreakGuesser

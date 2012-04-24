@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void SIL.FieldWorks.TE.KeyTermRenderingsControl::OnKeyTermRefPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.TE.KeyTermRef

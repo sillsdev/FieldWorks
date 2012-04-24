@@ -139,6 +139,12 @@
 	<target name="buildtlb" description="Build TLB files if they are out of date">
 		<property name="buildtlb" value="true"/>
 	</target>
+	<target name="noverifyfail" description="Don't abort build if verify step fails">
+		<property name="verifyfail" value="false"/>
+	</target>
+	<target name="autoUpdateIgnores" description="Comment all ignored gendarme rules that no longer produce a defect">
+		<property name="autoUpdateIgnores" value="true"/>
+	</target>
 	<target name="nunitreport-init">
 		<patternset id="TestResultsPattern">
 			<include name="*-results.xml"/>
