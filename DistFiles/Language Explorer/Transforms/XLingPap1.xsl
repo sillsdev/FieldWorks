@@ -8,8 +8,8 @@
    <!-- ===========================================================
 	  Keys
 	  =========================================================== -->
-   <xsl:key name="LanguageID" match="//language" use="@id"/>
-   <xsl:key name="TypeID" match="//type" use="@id"/>
+   <xsl:key name="LanguageID" match="language" use="@id"/>
+   <xsl:key name="TypeID" match="type" use="@id"/>
    <!-- ===========================================================
 	  Global variables
 	  =========================================================== -->

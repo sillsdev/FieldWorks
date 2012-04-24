@@ -154,7 +154,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 		private string TransformToXml(string sInputFile)
 		{
-			string sOutput = CreateTempFile(CreateWordGrammarDebuggerFileName(), "xml");
+			// Don't overwrite the input file before transforming it! (why +"A" on the next line)
+			string sOutput = CreateTempFile(CreateWordGrammarDebuggerFileName()+"A", "xml");
 			string sName = m_sDataBaseName + "XAmpleWordGrammarDebugger" + ".xsl";
 			string sTransform = Path.Combine(Path.GetDirectoryName(sOutput), sName);
 			XmlUtils.TransformFileToFile(sTransform, new XmlUtils.XSLParameter[0], sInputFile, sOutput);

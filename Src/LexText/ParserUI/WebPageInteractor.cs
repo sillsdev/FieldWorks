@@ -52,6 +52,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			int start = javascript.IndexOf('(');
 			int end = javascript.IndexOf(')');
+			// omit any enclosing quotation marks
+			if (javascript[start + 1] == '"')
+				++start;
+			if (javascript[end - 1] == '"')
+				--end;
 			return javascript.Substring(start + 1, end - start - 1);
 		}
 
@@ -85,21 +90,24 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			GeckoNode onClick = parentTable.Attributes["onclick"];
 			if (onClick == null)
+				onClick = e.Target.Attributes["onclick"];
+			if (onClick == null)
 				return;
 
-			if (onClick.TextContent.Contains("JumpToToolBasedOnHvo"))
+			var js = onClick.TextContent;
+			if (js.Contains("JumpToToolBasedOnHvo"))
 			{
-				JumpToToolBasedOnHvo(Int32.Parse(GetParameterFromJavaScriptFunctionCall(onClick.TextContent)));
+				JumpToToolBasedOnHvo(Int32.Parse(GetParameterFromJavaScriptFunctionCall(js)));
 			}
-			if (onClick.TextContent.Contains("ShowWordGrammarDetail"))
+			if (js.Contains("ShowWordGrammarDetail") || js.Contains("ButtonShowWGDetails"))
 			{
-				ShowWordGrammarDetail(GetParameterFromJavaScriptFunctionCall(onClick.TextContent));
+				ShowWordGrammarDetail(GetParameterFromJavaScriptFunctionCall(js));
 			}
-			if (onClick.TextContent.Contains("TryWordGrammarAgain"))
+			if (js.Contains("TryWordGrammarAgain"))
 			{
-				TryWordGrammarAgain(GetParameterFromJavaScriptFunctionCall(onClick.TextContent));
+				TryWordGrammarAgain(GetParameterFromJavaScriptFunctionCall(js));
 			}
-			if (onClick.TextContent.Contains("GoToPreviousWordGrammarPage"))
+			if (js.Contains("GoToPreviousWordGrammarPage"))
 			{
 				GoToPreviousWordGrammarPage();
 			}
@@ -184,7 +192,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ShowWordGrammarDetail(string sNodeId)
 		{
 			string sForm = AdjustForm(m_tbWordForm.Text);
-			m_htmlControl.URL = m_parserTrace.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
+			var url = m_parserTrace.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
+			m_htmlControl.URL = url;
 		}
 		/// <summary>
 		/// Try another pass in the Word Grammar Debugger

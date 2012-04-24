@@ -15,7 +15,7 @@ Revision History is at the end of this file.
 Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
-   <xsl:key name="Language" match="//language" use="@lang"/>
+   <xsl:key name="Language" match="language" use="@lang"/>
    <xsl:param name="sHyphen" select="'-'"/>
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

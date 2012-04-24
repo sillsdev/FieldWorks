@@ -13,7 +13,7 @@ FieldWorks Language Explorer discourse chart XML to XLingPap mapper for Stage 1.
 Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
-	<xsl:key name="Language" match="//language" use="@lang"/>
+	<xsl:key name="Language" match="language" use="@lang"/>
 	<xsl:param name="sHyphen" select="'-'"/>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
