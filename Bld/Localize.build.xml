@@ -133,7 +133,7 @@
 								<property name="resBaseName" value="${RootNamespace}.${fileName}.${language}"/>
 								<property name="resBaseName" value="${RootNamespace}.${subFolder}.${fileName}.${language}" if="${bool::parse(isSubdir)==true}"/>
 								<exec program="${JavaExeName}"
-									  commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language} outputdir=${dir.fwoutput}"/>
+									commandline="-Xmx128m -jar ${path::get-full-path(fwroot + '/Bin/saxon/saxon.jar')} -o ${path::get-full-path(dir.fwoutput + '/' + language + '/' + partialDir + '/' + resBaseName + '.resx')} ${resxFile} LocalizeResx.xsl lang=${language} outputdir=file://${string::replace(dir.fwoutput, '\', '/')}"/>
 								<echo file="${dir.fwoutput}/${language}/${projDir}/${projName}.include" append="true">${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resources
 								</echo>
 							</do>
