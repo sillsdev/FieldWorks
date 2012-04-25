@@ -5845,3 +5845,5 @@ Randyr, 24 April 2012. Updated FLEx Bridge installer (0.3.32) and LIFT Bridge in
 EricP, 25 April 2012. LT-7581 work: Data migration to change Irregularly Inflected Form variant types
 	to class LexEntryInflType. Also added some a record list changes to allow creating new possibility items of LexEntryInflType.
 EricP, 25 April 2012. Upgrade NewLangProj according to changelist 37944 (DataMigration7000057).
+EricP, 25 April 2012. LT-7581. (7000058) Data migration to fill GlossAppend fields
+	for the standard system Plural and Past variant types.

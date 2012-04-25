@@ -313,6 +313,7 @@
 	<Compile Include="DomainServices\CmPictureServices.cs" />
 	<Compile Include="DomainServices\ConstraintFailure.cs" />
 	<Compile Include="DomainServices\CopyObject.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000058.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000047.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000036.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000035.cs" />

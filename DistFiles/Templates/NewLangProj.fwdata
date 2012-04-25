@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<languageproject version="7000057">
+<languageproject version="7000058">
 <rt class="CmPossibility" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
 <Abbreviation>
 <AUni ws="en">Evnt</AUni>
@@ -649,6 +649,9 @@
 <Discussion>
 <objsur guid="b72df880-ea5e-11de-8e18-0013722f8dec" t="o" />
 </Discussion>
+<GlossAppend>
+  <AUni ws="en">.pst</AUni>
+</GlossAppend>
 <IsProtected val="true" />
 <Name>
 <AUni ws="en">Past</AUni>
@@ -768,6 +771,9 @@
 <Discussion>
 <objsur guid="b716211a-ea5e-11de-8768-0013722f8dec" t="o" />
 </Discussion>
+<GlossAppend>
+  <AUni ws="en">.pl</AUni>
+</GlossAppend>
 <IsProtected val="true" />
 <Name>
 <AUni ws="en">Plural</AUni>
