@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -188,7 +189,7 @@ namespace AddConverterDlgTests
 		{
 			base.FixtureSetup();
 
-			var encConverters = new SilEncConverters40.EncConverters();
+			var encConverters = new EncConverters();
 			// Remove any encoding converters we created that have been left over due to a crash
 			// or other mishap.  (That's why we use wierd names starting with ZZZUnitTest, so
 			// there won't be any conceivable conflict with user chosen names.  Inconceivable
@@ -248,7 +249,9 @@ namespace AddConverterDlgTests
 		/// </summary>
 		public override void FixtureTeardown()
 		{
-			SilEncConverters40.EncConverters encConverters;
+			base.FixtureTeardown();
+
+			EncConverters encConverters;
 			// Dispose managed resources here.
 			if (m_myCtrl != null)
 			{
@@ -258,7 +261,7 @@ namespace AddConverterDlgTests
 			}
 			else
 			{
-				encConverters = new SilEncConverters40.EncConverters();
+				encConverters = new EncConverters();
 			}
 			if (m_myDlg != null)
 			{
@@ -278,14 +281,21 @@ namespace AddConverterDlgTests
 			}
 			if (!String.IsNullOrEmpty(m_bogusFileName))
 			{
-				File.Delete(m_bogusFileName);
-				m_bogusFileName = null;
+				try
+				{
+					File.Delete(m_bogusFileName);
+					m_bogusFileName = null;
+				}
+				catch (IOException e)
+				{
+					// occasionally some process still has a lock on this file - just ignore
+				}
 			}
 			// Remove any encoding converters that we may have created during this test run.
 			RemoveTestConverters(encConverters, "Installed mappings after test teardown:");
 		}
 
-		void RemoveTestConverters(SilEncConverters40.EncConverters encConverters, string testMessage)
+		void RemoveTestConverters(EncConverters encConverters, string testMessage)
 		{
 			// Remove any encoding converters that were added for these tests.
 			encConverters.Remove("ZZZUnitTestCC");
