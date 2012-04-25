@@ -338,6 +338,7 @@
 	<Compile Include="DomainServices\DataMigration\DataMigration7000051.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000052.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000056.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000057.cs" />
 	<Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
 	<Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
 	  <SubType>Form</SubType>
@@ -636,7 +637,9 @@
 	<WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="MasterFieldWorksModel.xml" />
+	<None Include="MasterFieldWorksModel.xml">
+	  <SubType>Designer</SubType>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<None Include="MasterFieldWorksModel.xsd" />
