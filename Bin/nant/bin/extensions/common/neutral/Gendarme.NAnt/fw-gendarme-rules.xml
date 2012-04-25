@@ -30,15 +30,8 @@
 		<rules include="EnsureDebugDisposeFinalizerRule | EnsureDebugDisposeMissDispStatementRule" from="FwGendarmeRules.dll"/>
 	</ruleset>
 
-	<!-- checking for dispose issues in a release build. -->
+	<!-- Don't check for anything in a release build. -->
 	<ruleset name="dispose-release">
-		<rules include="OnlyUseDisposeForIDisposableTypesRule" from="Gendarme.Rules.BadPractice.dll"/>
-		<rules include="DisposableFieldsShouldBeDisposedRule | EnsureLocalDisposalRule"
-			from="Gendarme.Rules.Correctness.dll"/>
-		<rules include="TypesWithDisposableFieldsShouldBeDisposableRule | TypesWithNativeFieldsShouldBeDisposableRule | UseCorrectDisposeSignaturesRule"
-			from="Gendarme.Rules.Design.dll"/>
-		<rules include="ExitCodeIsLimitedOnUnixRule | FeatureRequiresRootPrivilegeOnUnixRule | MonoCompatibilityReviewRule | NewLineLiteralRule"
-			from="Gendarme.Rules.Portability.dll" />
 	</ruleset>
 
 	<ruleset name="portability">
