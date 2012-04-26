@@ -5851,3 +5851,4 @@ RandyR, 25 April 2012. Checked in Flex Bridge 0.3.34.
 KenZ, 26 Apr 2012. Integrated 7.2.4 to WW
 GordonM, 26 Apr 2012. LT-12953 better dialog when doing S/R on fwdb file.
 NaylorJ, 26 Apr 2012. Take one of the localization build changes.
+NaylorJ, 26 Apr 2012. Take two on the localization changes, the po2xml task has now been fully and successfully ported to C# as far as I can tell.
