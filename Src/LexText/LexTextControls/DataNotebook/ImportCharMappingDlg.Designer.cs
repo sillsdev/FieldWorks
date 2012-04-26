@@ -205,6 +205,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			this.Controls.Add(this.m_groupDest);
 			this.Controls.Add(this.m_groupStdFmt);
 			this.Name = "ImportCharMappingDlg";
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.m_groupStdFmt.ResumeLayout(false);
 			this.m_groupStdFmt.PerformLayout();
