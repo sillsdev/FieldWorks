@@ -143,6 +143,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			bool fDifferentStyle = m_StyleInfo == null ? true : (styleInfo.Name != m_StyleInfo.Name);
 
+			// Don't use a 0 size bullet. Fixes FWNX-575.
+			if (styleInfo != null && styleInfo.IBullet != null)
+				if (styleInfo.IBullet.Value.FontInfo.FontSize.Value == 0)
+					styleInfo.IBullet.Value.FontInfo.m_fontSize =
+						new InheritableStyleProp<int>(FontInfo.kDefaultFontSize);
+
 			m_StyleInfo = styleInfo;
 			m_preview.IsRightToLeft = m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ?
 				m_DefaultTextDirectionRtoL : m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
