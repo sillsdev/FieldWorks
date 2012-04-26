@@ -89,8 +89,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 
 			GeckoNode onClick = parentTable.Attributes["onclick"];
-			if (onClick == null)
-				onClick = e.Target.Attributes["onclick"];
+			// The next two lines are needed to fix FWNX-725, but if they're not commented out, the
+			// program silently disappears shortly after the TryAWordDlg dialog is closed *if this
+			// method is ever invoked by clicking on the HTML control anywhere*.  Somehow, either
+			// e.Target.Attributes["onclick"] or onClick.TextContent must set some state in the browser
+			// that causes this horrendous behavior.
+			//if (onClick == null)
+			//	onClick = e.Target.Attributes["onclick"];
 			if (onClick == null)
 				return;
 
