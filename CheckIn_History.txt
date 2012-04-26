@@ -193,3 +193,4 @@ NaylorJ, 18 April 2012. Fixed an additional set of LT-12948 issues Relations and
 NaylorJ, 20 April 2012. Fixed a problem where Tree relations were being duplicated instead of added to.
 NaylorJ, 20 April 2012. Fixed a crash in the new code for Tree relations, empty LexReference objects will no longer cause an issue.
 NaylorJ, 20 April 2012. Integrated WW changeset 37354 into this branch to fix LT-12498.
+----------------- FW7.2.5 -------------------------------------------------------------------------------
