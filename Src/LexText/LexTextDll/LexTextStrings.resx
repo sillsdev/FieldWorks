@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAreaXLostItsDefaultTool" xml:space="preserve">
 	<value>Your settings have developed a problem in which they don't know what tool is the default for the area {0}. Please report this problem.</value>
@@ -224,11 +224,16 @@ Would you like to do this now?</value>
 	<value>FlexErrors@sil.org</value>
 	<comment>Email address for sending bug reports to</comment>
   </data>
-	<data name="ksDb4oProjectNotShareableDlgText">
-		<value xml:space="preserve">This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.
-To change the format of your projects, use File &gt; Project Management &gt; Project Locations and Sharing... and clear the checkbox labeled Share Projects stored on this computer. Click OK. </value>
-	</data>
-	<data name="ksDb4oProjectNotShareableTitle">
-		<value xml:space="preserve">Project format not compatible for Send/Receive</value>
-	</data>
+  <data name="ksDb4oProjectNotShareableTextLine1" xml:space="preserve">
+	<value>This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.</value>
+  </data>
+  <data name="ksDb4oProjectNotShareableTitle" xml:space="preserve">
+	<value>Project format not compatible for Send/Receive</value>
+  </data>
+  <data name="ksClickOK" xml:space="preserve">
+	<value>Click OK.</value>
+  </data>
+  <data name="ksDb4oProjectNotShareableTextLine2" xml:space="preserve">
+	<value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
+  </data>
 </root>

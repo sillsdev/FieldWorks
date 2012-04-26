@@ -111,7 +111,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (IsDb4oProject)
 			{
-				MessageBox.Show(LexTextStrings.ksDb4oProjectNotShareableDlgText, LexTextStrings.ksDb4oProjectNotShareableTitle, MessageBoxButtons.OK);
+				var dlg = new Db4oSendReceiveDialog();
+				if (dlg.ShowDialog() == DialogResult.Abort)
+				{
+					// User clicked on link
+					_mediator.SendMessage("FileProjectSharingLocation", null);
+				}
 				return true;
 			}
 			//Unlock project
@@ -146,7 +151,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
-		protected bool IsDb4oProject
+		protected virtual bool IsDb4oProject
 		{
 			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
 		}
