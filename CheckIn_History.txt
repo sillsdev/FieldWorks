@@ -5848,3 +5848,4 @@ EricP, 25 April 2012. Upgrade NewLangProj according to changelist 37944 (DataMig
 EricP, 25 April 2012. LT-7581. (7000058) Data migration to fill GlossAppend fields
 	for the standard system Plural and Past variant types.
 RandyR, 25 April 2012. Checked in Flex Bridge 0.3.34.
+KenZ, 26 Apr 2012. Integrated 7.2.4 to WW

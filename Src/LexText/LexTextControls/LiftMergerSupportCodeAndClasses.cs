@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -2339,7 +2340,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						break;
 					}
-					if (!prev.ComplexFormTypes.ContainsSequence(pend.ComplexFormTypes))
+					if (!prev.ComplexFormTypes.ContainsCollection(pend.ComplexFormTypes))
 						break;
 				}
 				pend.Target = GetObjectFromTargetIdString(m_rgPendingLexEntryRefs[i].TargetId);
@@ -2350,37 +2351,48 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rgRefs;
 		}
 
+		/// <summary>
+		/// A LexEntryRef is matched if it is has same type, summary and hideMinorEntry value
+		/// and if the collections all intersect.
+		/// </summary>
+		/// <param name="ler"></param>
+		/// <param name="refType"></param>
+		/// <param name="complexEntryTypes"></param>
+		/// <param name="variantEntryTypes"></param>
+		/// <param name="hideMinorEntry"></param>
+		/// <param name="summary"></param>
+		/// <param name="componentLexemes"></param>
+		/// <param name="primaryLexemes"></param>
+		/// <returns></returns>
 		private bool MatchLexEntryRef(ILexEntryRef ler, int refType, List<ILexEntryType> complexEntryTypes,
-			List<ILexEntryType> variantEntryTypes, int hideMinorEntry, LiftMultiText summary,
+			List<ILexEntryType> variantEntryTypes, LiftMultiText summary,
 			List<ICmObject> componentLexemes, List<ICmObject> primaryLexemes)
 		{
 			if (ler.RefType != refType)
 				return false;
-			if (ler.HideMinorEntry != hideMinorEntry)
-				return false;
-			if (ler.ComplexEntryTypesRS.Count != complexEntryTypes.Count)
-				return false;
-			if (ler.VariantEntryTypesRS.Count != variantEntryTypes.Count)
-				return false;
-			if (ler.ComponentLexemesRS.Count != componentLexemes.Count)
-				return false;
-			if (ler.PrimaryLexemesRS.Count != primaryLexemes.Count)
-				return false;
 			AddNewWsToAnalysis();
 			if (summary != null && !MatchMultiString(ler.Summary, summary))
 				return false;
-			for (int i = 0; i < complexEntryTypes.Count; i++)
-				if (complexEntryTypes[i] != ler.ComplexEntryTypesRS[i])
-					return false;
-			for (int i = 0; i < variantEntryTypes.Count; i++)
-				if (variantEntryTypes[i] != ler.VariantEntryTypesRS[i])
-					return false;
-			for (int i = 0; i < componentLexemes.Count; i++)
-				if (componentLexemes[i] != ler.ComponentLexemesRS[i])
-					return false;
-			for (int i = 0; i < primaryLexemes.Count; i++)
-				if (primaryLexemes[i] != ler.PrimaryLexemesRS[i])
-					return false;
+			if ((complexEntryTypes.Count() != 0 || ler.ComplexEntryTypesRS.Count != 0)
+				&& complexEntryTypes.Intersect(ler.ComplexEntryTypesRS).Count() == 0)
+			{
+				return false;
+			}
+			if ((variantEntryTypes.Count() != 0 || ler.VariantEntryTypesRS.Count != 0)
+				&& variantEntryTypes.Intersect(ler.VariantEntryTypesRS).Count() == 0)
+			{
+				return false;
+			}
+			if ((componentLexemes.Count() != 0 || ler.ComponentLexemesRS.Count != 0)
+				&& componentLexemes.Intersect(ler.ComponentLexemesRS).Count() == 0)
+			{
+				return false;
+			}
+			if ((primaryLexemes.Count() != 0 || ler.PrimaryLexemesRS.Count != 0)
+				&& primaryLexemes.Intersect(ler.PrimaryLexemesRS).Count() == 0)
+			{
+				return false;
+			}
 			return true;
 		}
 
@@ -2459,7 +2471,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				summary = rgRefs[0].Summary.Content;
 			foreach (var candidate in le.EntryRefsOS)
 			{
-				if (MatchLexEntryRef(candidate, refType, complexEntryTypes, variantEntryTypes, rgRefs[0].HideMinorEntry,
+				if (MatchLexEntryRef(candidate, refType, complexEntryTypes, variantEntryTypes,
 					summary, componentLexemes, primaryLexemes))
 				{
 					ler = candidate;
@@ -2487,6 +2499,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (summary != null)
 					MergeInMultiString(ler.Summary, LexEntryRefTags.kflidSummary, summary, ler.Guid);
 			}
+			else // Adjust collection contents if necessary
+			{
+				AdjustCollectionContents(complexEntryTypes, ler.ComplexEntryTypesRS, ler);
+				AdjustCollectionContents(variantEntryTypes, ler.VariantEntryTypesRS, ler);
+				AdjustCollectionContents(componentLexemes, ler.ComponentLexemesRS, ler);
+				AdjustCollectionContents(primaryLexemes, ler.PrimaryLexemesRS, ler);
+			}
+
 			// Create an empty sense if a complex form came in without a sense.  See LT-9153.
 			if (le.SensesOS.Count == 0 &&
 				(ler.ComplexEntryTypesRS.Count > 0 || ler.PrimaryLexemesRS.Count > 0))
@@ -2494,6 +2514,54 @@ namespace SIL.FieldWorks.LexText.Controls
 				bool fNeedNewId;
 				CreateNewLexSense(Guid.Empty, le, out fNeedNewId);
 				EnsureValidMSAsForSenses(le);
+			}
+		}
+
+		/// <summary>
+		/// This method will set the contents of the given ReferenceSequence(second param) to the union with the list (first param)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="complexEntryTypes"></param>
+		/// <param name="referenceCollection"></param>
+		/// <param name="lexEntryRef"></param>
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, ILexEntryRef lexEntryRef) where T : class, ICmObject
+		{
+			AdjustCollectionContents(complexEntryTypes, referenceCollection,
+									 lexEntryRef.VariantEntryTypesRS.Count == 0 ? LexTextControls.ksComplexFormType : LexTextControls.ksVariantType, lexEntryRef.Owner);
+		}
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, ILexReference lexEntryRef) where T : class, ICmObject
+		{
+			AdjustCollectionContents(complexEntryTypes, referenceCollection,
+									 lexEntryRef.TypeAbbreviation(m_cache.DefaultVernWs, lexEntryRef), referenceCollection.First());
+		}
+
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, string typeName, ICmObject owner) where T : class, ICmObject
+		{
+			if (referenceCollection.Count != complexEntryTypes.Count)
+			{
+				//add an error message for intersecting sets which do not have a subset-superset relationship.
+				if(!complexEntryTypes.ContainsCollection(referenceCollection) && !referenceCollection.ContainsCollection(complexEntryTypes))
+				{
+					foreach (var newItem in complexEntryTypes)
+					{
+						var col = new CombinedCollection(owner, m_cache, this)
+									{
+										TypeName = typeName,
+										BadValue = newItem is ILexEntry
+													? ((ILexEntry) newItem).HeadWordForWs(m_cache.DefaultVernWs).Text
+													: ((ILexEntry) (((ILexSense) newItem).Owner)).HeadWordForWs(m_cache.DefaultVernWs).Text
+									};
+						m_combinedCollections.Add(col);
+					}
+				}
+				var union = complexEntryTypes.Union(referenceCollection.AsEnumerable());
+				foreach (var lexEntryType in union)
+				{
+					if(!referenceCollection.Contains(lexEntryType))
+					{
+						referenceCollection.Add(lexEntryType);
+					}
+				}
 			}
 		}
 
@@ -2656,8 +2724,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
-					StoreTreeRelation(lrt, rgRelation,
-						ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt));
+					StoreTreeRelation(lrt, rgRelation);
 					break;
 			}
 		}
@@ -2836,46 +2903,56 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// This method returns true if there is an existing collection belonging to an entry or sense
-		/// related to the given ILexRefType which EXACTLY matches the contents of the given set.
+		/// related to the given ILexRefType which is  matches the contents of the given set.
 		/// This method is to prevent duplication of sets of relations due to the fact they are replicated in
 		/// all the members of the relation in the LIFT file.
 		/// </summary>
 		/// <param name="lrt">The ILexRefType to inspect</param>
 		/// <param name="setRelation">The Set of hvo's to check</param>
 		/// <returns>true if the collection has already been added.</returns>
-		private static bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
+		private bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
 		{
 			//check each reference in the lexreftype
 			foreach (ILexReference lr in lrt.MembersOC)
 			{
-				if (lr.TargetsRS.Count != setRelation.Count)
-					continue; //number of items differed, try next
-				bool fSame = true;
+				var currentSet = new List<int>();
+				var otherSet = new List<int>(setRelation);
 				//for every object in the target sequence of the LexReference
 				foreach (ICmObject cmo in lr.TargetsRS)
 				{
-					//if the given set doesn't have this it isn't the same relation
-					if (!setRelation.Contains(cmo.Hvo))
+					currentSet.Add(cmo.Hvo);
+				}
+				var intersectors = currentSet.Intersect(otherSet);
+				if(intersectors.Count() == 0) //the two sets share no entries
+				{
+					continue;
+				}
+				//If the sets intersect, but did not have a subset-superset relationship then we might be doing
+				//something the user did not expect or want, so log it for them.
+				if(!intersectors.ContainsCollection(otherSet) && !intersectors.ContainsCollection(currentSet))
+				{
+
+					CombinedCollection conflictingData;
+					foreach(var item in currentSet)
 					{
-						fSame = false;
-						break;
+						if (!intersectors.Contains(item))
+						{
+							conflictingData = new CombinedCollection(GetObjectForId(intersectors.First()), m_cache, this);
+							conflictingData.TypeName = lr.TypeAbbreviation(m_cache.DefaultUserWs, GetObjectForId(item));
+							conflictingData.BadValue = GetObjectForId(item).DeletionTextTSS.Text;
+							m_combinedCollections.Add(conflictingData);
+						}
 					}
 				}
-				if (fSame)
-					return true; //all items matched
+				var otherObjects = new List<ICmObject>();
+				foreach (var hvo in otherSet)
+				{
+					otherObjects.Add(GetObjectForId(hvo));
+				}
+				AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
+				return true;
 			}
 			return false;
-		}
-
-		private bool IsMember(int[] targets, int hvo)
-		{
-			for (int i = targets.Length - 1; i >= 0; i--)
-			{
-				if (targets[i] == hvo)
-					return true;
-			}
-			return false;
-
 		}
 
 		private void StoreSequenceRelation(ILexRefType lrt, List<
@@ -2911,13 +2988,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation,
-			bool fFirst)
+		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			if (fFirst)
+			if (TreeRelationAlreadyExists(lrt, rgRelation))
 			{
-				if (TreeRelationAlreadyExists(lrt, rgRelation))
-					return;
+				return;
+			}
+			if(ObjectIsFirstInRelation(rgRelation[0].RelationType, lrt))
+			{
 				ILexReference lr = CreateNewLexReference();
 				lrt.MembersOC.Add(lr);
 				lr.TargetsRS.Add(rgRelation[0].CmObject);
@@ -2927,11 +3005,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				for (int i = 0; i < rgRelation.Count; ++i)
+				foreach (var pendingRelation in rgRelation)
 				{
-					if (TreeRelationAlreadyExists(lrt, rgRelation[i]))
-						continue;
-					m_rgPendingTreeTargets.Add(rgRelation[i]);
+					m_rgPendingTreeTargets.Add(pendingRelation);
 				}
 			}
 		}
@@ -2953,49 +3029,92 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		/// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
+		/// related to the given list of pending relations.
+		/// If it does then those relations which are not yet included will be added to the matching ILexReference.
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <returns>true if a match was found</returns>
 		private bool TreeRelationAlreadyExists(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (ILexReference lr in lrt.MembersOC) //for every potential reference
 			{
-				if (lr.TargetsRS.Count != rgRelation.Count + 1)
+				if(lr.TargetsRS.Count == 0) //why this should be I don't know, probably due to some defect elsewhere.
 					continue;
-				if (lr.TargetsRS[0].Hvo != rgRelation[0].ObjectHvo)
-					continue;
-				int[] rghvoRef = new int[rgRelation.Count];
-				for (int i = 0; i < rghvoRef.Length; ++i)
-					rghvoRef[i] = lr.TargetsRS[i + 1].Hvo;
-				int[] rghvoNew = new int[rgRelation.Count];
-				for (int i = 0; i < rghvoNew.Length; ++i)
-					rghvoNew[i] = rgRelation[i].TargetHvo;
-				Array.Sort(rghvoRef);
-				Array.Sort(rghvoNew);
-				bool fSame = true;
-				for (int i = 0; i < rghvoRef.Length; ++i)
+				int firstTargetHvo = lr.TargetsRS.First().Hvo;
+				if (firstTargetHvo == rgRelation[0].ObjectHvo) //if the target of the first relation is the first item in the list
 				{
-					if (rghvoRef[i] != rghvoNew[i])
+					foreach (var pendingRelation in rgRelation)
 					{
-						fSame = false;
-						break;
+						var pendingObj = GetObjectForId(pendingRelation.TargetHvo);
+						if (firstTargetHvo == pendingRelation.ObjectHvo
+							&& HasMatchingUnicodeAlternative(pendingRelation.RelationType.ToLowerInvariant(),
+															 lrt.Abbreviation, lrt.Name))
+						{
+							if (!lr.TargetsRS.Contains(pendingObj))
+								lr.TargetsRS.Add(pendingObj); //add each item which is not yet in this list
+						}
+						else
+						{
+							m_rgPendingTreeTargets.Add(pendingRelation);
+						}
 					}
-				}
-				if (fSame)
 					return true;
+				}
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// This method will test if a TreeRelation already exists in a lex reference of the given ILexRefType
+		/// related to the given PendingRelation.
+		/// If it does then the relation will be added to the matching ILexReference if necessary.
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <returns>true if a match was found</returns>
 		private bool TreeRelationAlreadyExists(ILexRefType lrt, PendingRelation rel)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			//The object who contains the other end of this relation, i.e. the entry with the Part
+			//may not have been processed, so if we are dealing with the Whole we need to make sure that
+			//the part is present.
+			if (!ObjectIsFirstInRelation(rel.RelationType, lrt))
 			{
-				if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
-					continue;
-				if (IsMember(lr.TargetsRS.ToHvoArray(), rel.ObjectHvo))
+				foreach (ILexReference lr in lrt.MembersOC)
+				{
+					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.TargetHvo)
+						continue;
+					var pendingObj = GetObjectForId(rel.ObjectHvo);
+					if (!lr.TargetsRS.Contains(pendingObj))
+						lr.TargetsRS.Add(pendingObj);
 					return true;
+				}
+			}
+			else
+			{
+				foreach (ILexReference lr in lrt.MembersOC)
+				{
+					if (lr.TargetsRS.Count == 0 || lr.TargetsRS[0].Hvo != rel.ObjectHvo)
+						continue;
+					var pendingObj = GetObjectForId(rel.TargetHvo);
+					if (!lr.TargetsRS.Contains(pendingObj))
+						lr.TargetsRS.Add(pendingObj);
+					return true;
+				}
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// This method will return true if the given type is the name, or main part of this reference type.
+		/// as opposed to the ReversalName i.e. in a Part/Whole relation Part would return true, where Whole would
+		/// return false.
+		/// </summary>
+		/// <param name="sType"></param>
+		/// <param name="lrt"></param>
+		/// <returns></returns>
 		private bool ObjectIsFirstInRelation(string sType, ILexRefType lrt)
 		{
 			if (HasMatchingUnicodeAlternative(sType.ToLowerInvariant(), lrt.Abbreviation, lrt.Name))
@@ -3878,6 +3997,36 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 		List<InvalidRelation> m_rgInvalidRelation = new List<InvalidRelation>();
 
+		 /// <summary>
+		/// This class stores the data needed to construct a warning message to the user
+		/// that a relation element in the imported file is invalid.
+		/// </summary>
+		class CombinedCollection : PendingErrorReport
+		{
+
+			private ICmObject _cmObject;
+			public CombinedCollection(ICmObject owner, FdoCache cache, FlexLiftMerger merger)
+				: base(owner.Guid, 0, 0, cache, merger)
+			{
+				_cmObject = owner;
+			}
+
+			internal string TypeName
+			{
+				get; set;
+			}
+
+			internal string BadValue
+			{
+				get; set;
+			}
+
+			internal string ErrorMessage
+			{
+				get { return String.Format(LexTextControls.ksAddedToCombinedCollection, BadValue, TypeName, EntryHtmlReference()); }
+			}
+		}
+		List<CombinedCollection> m_combinedCollections = new List<CombinedCollection>();
 
 		/// <summary>
 		/// This class stores the information for one range element from a *-feature-value range.

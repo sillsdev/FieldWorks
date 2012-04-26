@@ -304,6 +304,24 @@ namespace SIL.FieldWorks.LexText.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Added Item.
+		/// </summary>
+		internal static string ksAddedItem {
+			get {
+				return ResourceManager.GetString("ksAddedItem", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to {0} added to the {1} of {2}..
+		/// </summary>
+		internal static string ksAddedToCombinedCollection {
+			get {
+				return ResourceManager.GetString("ksAddedToCombinedCollection", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to The inflection feature I need is not shown here.  Add inflection features to {0}..
 		/// </summary>
 		internal static string ksAddFeaturesToX {
@@ -607,6 +625,15 @@ namespace SIL.FieldWorks.LexText.Controls {
 		internal static string ksClickToPreviewAssumptions {
 			get {
 				return ResourceManager.GetString("ksClickToPreviewAssumptions", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Combined Collections.
+		/// </summary>
+		internal static string ksCombinedCollections {
+			get {
+				return ResourceManager.GetString("ksCombinedCollections", resourceCulture);
 			}
 		}
 
