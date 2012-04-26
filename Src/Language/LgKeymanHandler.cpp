@@ -21,12 +21,6 @@ Description:  A wrapper for the keyman program.
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#if !WIN32
-static const GUID KeyboardSwitcher_guid("4ED1E8bC-DAdE-11DE-B350-0019DBf4566E");
-
-#define CLSID_KeyboardSwitcher KeyboardSwitcher_guid
-#endif
-
 //:>********************************************************************************************
 //:>A bit of special header information needed only in this file, for interacting with Keyman.
 //:>********************************************************************************************

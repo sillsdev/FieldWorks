@@ -9,8 +9,5 @@
 
 #include <COM.h>
 
-class ITsStringRaw;
-class ITsTextPropsRaw;
-
-template<> const GUID __uuidof(ITsStringRaw)("2AC0CB90-B14B-11d2-B81D-00400541F9DA");
-template<> const GUID __uuidof(ITsTextPropsRaw)("31BDA5F0-D286-11d3-9BBC-00400541F9E9");
+DEFINE_UUIDOF(ITsStringRaw,0x2AC0CB90,0xB14B,0x11d2,0xB8,0x1D,0x00,0x40,0x05,0x41,0xF9,0xDA);
+DEFINE_UUIDOF(ITsTextPropsRaw,0x31BDA5F0,0xD286,0x11d3,0x9B,0xBC,0x00,0x40,0x05,0x41,0xF9,0xE9);

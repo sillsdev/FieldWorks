@@ -20,7 +20,7 @@ Last reviewed:
 namespace TestViews
 {
 	// {D10C12E2-BF77-4f1d-84EA-79BC983FAB0C}
-	LOCAL_DEFINE_GUID(uidSimulatedFootnote, 0xd10c12e2, 0xbf77, 0x4f1d, 0x84, 0xea, 0x79,
+	DEFINE_GUID(uidSimulatedFootnote, 0xd10c12e2, 0xbf77, 0x4f1d, 0x84, 0xea, 0x79,
 		0xbc, 0x98, 0x3f, 0xab, 0xc);
 
 	class TestVwTxtSrc : public unitpp::suite

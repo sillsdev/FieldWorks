@@ -180,7 +180,8 @@ OBJ_OTHER = \
 	$(INT_DIR)/TextProps1.o \
 
 OBJ_LIB = \
-	$(INT_DIR)/Language_GUIDs.o
+	$(INT_DIR)/Language_GUIDs.o \
+	$(INT_DIR)/LanguageExtra_GUIDs.o
 
 #OBJ_GRUTIL = \
 #	$(GRUTIL_LIB)/GrUtil.o \
