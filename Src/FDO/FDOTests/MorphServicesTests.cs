@@ -337,21 +337,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			let.GlossPrepend.set_String(wsGlossDefault, glossPrepend);
 			let.GlossAppend.set_String(wsGlossDefault, glossAppend);
 
-			//var possFactory = sl.GetInstance<ICmPossibilityFactory>();
-			//var dataReader = (IDataReader)sl.GetInstance<IDataSetup>();
-			//var leitfFactoryInternal = sl.GetInstance<ILexEntryInflTypeFactoryInternal>();
-			//leitfFactoryInternal.Create(
-			//        new Guid(),
-			//        dataReader.GetNextRealHvo(),
-			//        owningList,
-			//        0, // owningList.PossibilitiesOS.Count - 1, // Zero based ord.
-			//        variantTypeName, TsStringUtils.GetWsAtOffset(variantTypeName, 0),
-			//        abbr, TsStringUtils.GetWsAtOffset(abbr, 0));););
-
 			return let;
 		}
 
-		static internal ILexEntryType LookupLexEntryType(IFdoServiceLocator sl, string variantTypeName, IWritingSystem ws)
+		static internal ILexEntryType LookupLexEntryTypeByName(IFdoServiceLocator sl, string variantTypeName, IWritingSystem ws)
 		{
 			var eng = sl.WritingSystemManager.UserWritingSystem;
 			var letRepo = sl.GetInstance<ILexEntryTypeRepository>();
@@ -361,6 +350,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			return let;
 		}
 
+		static internal ILexEntryType LookupLexEntryType(IFdoServiceLocator sl, Guid guidVariantType)
+		{
+			var letRepo = sl.GetInstance<ILexEntryInflTypeRepository>();
+			return letRepo.GetObject(guidVariantType);
+		}
 
 		static internal void SetupLexEntryVariant(FdoCache cache, string morphForm, IVariantComponentLexeme componentLexeme, ILexEntryType let, out ILexEntryRef lef)
 		{
@@ -379,11 +373,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var newMainEntry = GetNewMainEntry();
 
 			// Setup variant data
-			const string variantTypeNameIIV = "Irregular Inflectional Variant";
-			var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			string variantTypeName = variantTypeNameIIV;
-
-			ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+			ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 			ILexEntryRef newLer;
 			SetupLexEntryVariant(Cache, "vaIrrInflVar", newBoundStem, letIrrInflVariantType, out newLer);
 			AddVariantOf(newLer, newMainEntry, letIrrInflVariantType);
@@ -477,15 +467,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ILexEntry newMainEntry = GetNewMainEntry();
 
 			// Setup variant data
-			const string variantTypeNameIIV = "Irregular Inflectional Variant";
-			var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			string variantTypeName = variantTypeNameIIV;
-
-			ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+			ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 			ITsStrFactory sf = TsStrFactoryClass.Create();
 			// Create new variantType
 			var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+			var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 														sf.MakeString("NewPlural", eng.Handle),
 														sf.MakeString("NPl.", eng.Handle),
@@ -696,13 +683,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					newMainEntry.SensesOS.Add(Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create());
 					newMainEntry.SensesOS[1].Gloss.set_String(Cache.DefaultAnalWs, "mainEntrySense2");
 
-					const string variantTypeNameDialectal = "Dialectal Variant";
-					var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-					string variantTypeName = variantTypeNameDialectal;
-
-					ILexEntryType letDialectalVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameDialectal, eng);
+					ILexEntryType letDialectalVariantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDialectalVar);
 					// For some reason the reverse abbr isn't already set up in the test cache
 					const string variantReverseAbbr = "dial. var. of";
+					var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 					letDialectalVariantType.ReverseAbbr.set_String(eng.Handle, variantReverseAbbr);
 					ILexEntryRef newLer;
 					SetupLexEntryVariant(Cache, "vaDialVar", newMainEntry.SensesOS[0], letDialectalVariantType, out newLer);
@@ -710,8 +694,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				});
 
 			var variant = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaDialVar").FirstOrDefault();
-
-			//IDictionary<ILexEntryRef, Func<IWritingSystem, ITsString>> refToGloss = new Dictionary<ILexEntryRef, Func<IWritingSystem, ITsString>>();
 			var variantRefs = DomainObjectServices.GetVariantRefs(variant);
 			Assert.That(variantRefs.Count(), Is.EqualTo(2));
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
@@ -746,15 +728,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					ILexEntry newMainEntry = GetNewMainEntry();
 
 					// Setup variant data
-					const string variantTypeNameIIV = "Irregular Inflectional Variant";
-					var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-					string variantTypeName = variantTypeNameIIV;
-
-					ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+					ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 					ITsStrFactory sf = TsStrFactoryClass.Create();
 					// Create new variantType
 					var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+					var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 					ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 																sf.MakeString("NewPlural", eng.Handle),
 																sf.MakeString("NPl.", eng.Handle),
@@ -764,8 +743,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				});
 
 			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPlural").FirstOrDefault();
-			// IDictionary<ILexEntryRef, Func<ILexEntryType, IWritingSystem, ITsString>> refToGlossOption = new Dictionary<ILexEntryRef, Func<ILexEntryType, IWritingSystem, ITsString>>();
-
 			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
 			var variantRefPl = variantRefs.First();
 			IMultiUnicode gloss;
@@ -790,15 +767,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry();
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("NPl.", eng.Handle),
@@ -832,15 +806,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry();
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("NPl.", eng.Handle),
@@ -875,15 +846,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry();
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("NPl.", eng.Handle),
@@ -973,15 +941,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry();
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("NPl.", eng.Handle),
@@ -1016,15 +981,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss:"");
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("NPl.", eng.Handle),
@@ -1059,15 +1021,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "");
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("", eng.Handle),
@@ -1104,15 +1063,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense");
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("", eng.Handle),
@@ -1150,15 +1106,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "");
 
 				// Setup variant data
-				const string variantTypeNameIIV = "Irregular Inflectional Variant";
-				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				string variantTypeName = variantTypeNameIIV;
-
-				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, variantTypeNameIIV, eng);
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
 				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
 															sf.MakeString("NewPlural", eng.Handle),
 															sf.MakeString("", eng.Handle),
