@@ -5854,3 +5854,4 @@ NaylorJ, 26 Apr 2012. Take one of the localization build changes.
 NaylorJ, 26 Apr 2012. Take two on the localization changes, the po2xml task has now been fully and successfully ported to C# as far as I can tell.
 KenZ, 26 Apr 2012. Migrated sample and test projects after Eric's changes.
 EricP, 27 Apr 2012. Refactor MorphServices tests to use guids for LexEntryInflType variant types.
+NaylorJ, 27 Apr 2012. Completed the fix to the localization build. I believe all the things broken by the linux integration into ww are now repaired.

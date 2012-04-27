@@ -71,5 +71,15 @@ namespace SIL.FieldWorks.Build.Tasks
 		{
 			get { return "resgen"; }
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Get the name of the program executed by this task.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override string Name
+		{
+			get { return "resgen"; }
+		}
 	}
 }

@@ -139,7 +139,7 @@
 							</do>
 						</foreach>
 
-						<cd dir="${folder}"/>
+<!--						<cd dir="${folder}"/>  -->
 						<echo message="about to execute resgenex task in nant" if="${verbose}"/>
 						<resgenex todir="${dir.fwoutput}/${language}/${partialDir}" verbose="${verbose}"
 								basedir="${folder}">
