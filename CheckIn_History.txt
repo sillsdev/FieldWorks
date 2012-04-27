@@ -5823,7 +5823,8 @@ Andy Black, 7 April 2012.  LT-10621 "Hermit Crab: Enable phonological rules to a
 RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.22.
 GordonM, 11 April 2012. LT-12926 Fix double quote crash.
 KenZ, 12 Apr 2012. Fixed LT-12950 crash when creating new project.
-RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust indentation in StylesDlg paragraph tab.
+RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust
+	indentation in StylesDlg paragraph tab.
 KenZ, 12 Apr 2012. Added new FB installer from Randy to fix crash due to the new phonology possibility list.
 KenZ. 12 Apr 2012. Added another new FB installer from Randy to fix LT-12952.
 NaylorJ, 16 Apr 2012. Integrated 3 LiftBridge fixes related to LT-12948 from 7.2.4
@@ -5836,14 +5837,16 @@ RandyR, 18 Apr 2012. Checked in FlexBridge 0.3.28
 EberhardB, 20 Apr 2012. Integration Calgary/WW -> Calgary.
 LastufkaM 20 Apr 2012 LT-12767 Improve the receive from from colleague (obtain)option for Send/Receive
 SteveMc, April 20, 2012.  Valid Encoding Converter DLLs (built with VS 2008).
-GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40 project.
+GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40
+	project.
 SteveMc, April 20, 2012. Encoding Converter DLLs built with VS 2010 (and targetting .Net 4).
 RandyR, 21 April 2012. Checked in Flex Bridge 0.3.29
 RandyR, 21 April 2012. Checked in Flex Bridge 0.3.31. Added LIFT Bridge installer 1.4.13.
 AnnB, 23 Apr, 2012. LT-12968 - Hook up Help buttons in new Grammar fields and choosers
 Randyr, 24 April 2012. Updated FLEx Bridge installer (0.3.32) and LIFT Bridge installer(1.4.15).
 EricP, 25 April 2012. LT-7581 work: Data migration to change Irregularly Inflected Form variant types
-	to class LexEntryInflType. Also added some a record list changes to allow creating new possibility items of LexEntryInflType.
+	to class LexEntryInflType. Also added some a record list changes to allow creating new
+	possibility items of LexEntryInflType.
 EricP, 25 April 2012. Upgrade NewLangProj according to changelist 37944 (DataMigration7000057).
 EricP, 25 April 2012. LT-7581. (7000058) Data migration to fill GlossAppend fields
 	for the standard system Plural and Past variant types.
@@ -5851,7 +5854,11 @@ RandyR, 25 April 2012. Checked in Flex Bridge 0.3.34.
 KenZ, 26 Apr 2012. Integrated 7.2.4 to WW
 GordonM, 26 Apr 2012. LT-12953 better dialog when doing S/R on fwdb file.
 NaylorJ, 26 Apr 2012. Take one of the localization build changes.
-NaylorJ, 26 Apr 2012. Take two on the localization changes, the po2xml task has now been fully and successfully ported to C# as far as I can tell.
+NaylorJ, 26 Apr 2012. Take two on the localization changes, the po2xml task has now been fully and
+	successfully ported to C# as far as I can tell.
 KenZ, 26 Apr 2012. Migrated sample and test projects after Eric's changes.
 EricP, 27 Apr 2012. Refactor MorphServices tests to use guids for LexEntryInflType variant types.
-NaylorJ, 27 Apr 2012. Completed the fix to the localization build. I believe all the things broken by the linux integration into ww are now repaired.
+NaylorJ, 27 Apr 2012. Completed the fix to the localization build. I believe all the things broken
+	by the linux integration into ww are now repaired.
+RickM, 27 Apr 2012. LT-12964 Manual refresh required to see changes after reopening - if another
+	project is also open

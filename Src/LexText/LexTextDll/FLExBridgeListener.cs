@@ -137,7 +137,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var manager = app.FwManager;
 				var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
+
 				var newApp = manager.ReopenProject(Cache.ProjectId.Name, appArgs);
+				//This is really weird and enough time has been spent on this issue. LT-12964
+				//calling MasterRefresh via the mediator does not work. Calling OnMasterRefresh twice is needed
+				//for changes to show up that occurred due to the Send/Receive operation.
+				//((FwXWindow)newApp.ActiveMainWindow).Mediator.SendMessage("MasterRefresh", null);
+				((FwXWindow)newApp.ActiveMainWindow).OnMasterRefresh(null);
+				((FwXWindow)newApp.ActiveMainWindow).OnMasterRefresh(this);
+
 				if (conflictOccurred)
 				{
 					((FwXWindow) newApp.ActiveMainWindow).Mediator.SendMessage("ShowConflictReport", null);
