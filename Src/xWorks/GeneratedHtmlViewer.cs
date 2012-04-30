@@ -348,11 +348,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public bool OnSaveAsWebpage(object parameterObj)
 		{
-			var param = parameterObj as Tuple<string, string>;
+			var param = parameterObj as Tuple<string, string, string>;
 			if (param == null)
 				return false; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
+			string sXsltFiles = param.Item3;
 			string directory = Path.GetDirectoryName(outPath);
 			if (!Directory.Exists(directory))
 			{
@@ -364,7 +365,23 @@ namespace SIL.FieldWorks.XWorks
 					case "GrammarSketchXLingPaper":
 							if (File.Exists(m_sAlsoSaveFileName))
 							{
-								CopyFile(m_sAlsoSaveFileName, outPath);
+								string sInputFile = m_sAlsoSaveFileName;
+								if (!string.IsNullOrEmpty(sXsltFiles))
+								{
+									string sNewFileName = Path.GetFileNameWithoutExtension(outPath);
+									string sTempFileName = Path.Combine(Path.GetTempPath(), sNewFileName);
+									string sOutputFile = sTempFileName;
+									XmlUtils.XSLParameter[] parameterList = null;
+									string[] rgsXslts = sXsltFiles.Split(new[] { ';' });
+									int cXslts = rgsXslts.GetLength(0);
+									for (int ix = 0; ix < cXslts; ++ix)
+									{
+											sOutputFile = sOutputFile + (ix + 1);
+											XmlUtils.TransformFileToFile(Path.Combine(TransformPath, rgsXslts[ix]), parameterList, sInputFile, sOutputFile + ".xml");
+											sInputFile = sOutputFile;
+									}
+								}
+								CopyFile(sInputFile, outPath);
 								return true;
 							}
 						break;

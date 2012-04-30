@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.AllowCancel = true;
 								progressDlg.Restartable = true;
 								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType);
+								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 						}
 					}
@@ -758,8 +758,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var outPath = (string)args[0];
 			var sDataType = (string) args[1];
+			var sXslts = (string) args[2];
 			m_progressDlg = progress;
-			var parameter = new Tuple<string, string>(sDataType, outPath);
+			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
 			m_mediator.SendMessage("SaveAsWebpage", parameter);
 			m_progressDlg.Step(1000);
 			return null;

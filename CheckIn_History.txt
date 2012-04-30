@@ -5862,3 +5862,7 @@ NaylorJ, 27 Apr 2012. Completed the fix to the localization build. I believe all
 	by the linux integration into ww are now repaired.
 RickM, 27 Apr 2012. LT-12964 Manual refresh required to see changes after reopening - if another
 	project is also open
+Andy Black, 30 Apr 2012. Fix LT-13001 "Grammar Sketch export to XLingPaper format produces a file
+	that cannot be loaded into the XMLmind XML Editor" and LT-13002 "Grammar Sketch export to
+	XLingPaper format includes type attributes on section elements. These should be removed on
+	export."
