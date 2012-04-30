@@ -5866,3 +5866,4 @@ Andy Black, 30 Apr 2012. Fix LT-13001 "Grammar Sketch export to XLingPaper forma
 	that cannot be loaded into the XMLmind XML Editor" and LT-13002 "Grammar Sketch export to
 	XLingPaper format includes type attributes on section elements. These should be removed on
 	export."
+KenZ, 30 Apr 2012. LT-12717 Fixed Text Movies link so it works now from the Linux downloads.sil.org
