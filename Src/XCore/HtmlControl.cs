@@ -24,7 +24,9 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using MsHtmHstInterop;
 using System.Runtime.InteropServices;
+#if __MonoCS__
 using Skybound.Gecko;
+#endif
 
 namespace XCore
 {
