@@ -170,6 +170,9 @@ void WpApp::Init(void)
 		CheckHr(qtool->NewMainWnd(stuEmpty.Bstr(), vstuFilenames[ifile].Bstr(), 0, 0,
 			wsUser, 0, 0, &pidNew, &htool));
 	}
+
+	SetGraphiteLoggingForAllEnc(GraphiteLogging());
+
 }
 
 /*----------------------------------------------------------------------------------------------
