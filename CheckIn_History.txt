@@ -5873,3 +5873,4 @@ RandyR, 1 May 2012. Checked in Flex Bridge 0.3.35.
 SteveMc, May 2, 2012.  Updated Po2Xml, ProcessLanguagesBld, and FwNant/ResGenEx to reflect
 	changes made for those to work on Linux.
 AlistairI, 2 May 2012. Revamped Encoding Converters. Restored speed of localization build.
+SteveMc, May 2, 2012.  Fixed a few remaining bugs in Po2Xml.
