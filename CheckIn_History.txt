@@ -5869,3 +5869,4 @@ Andy Black, 30 Apr 2012. Fix LT-13001 "Grammar Sketch export to XLingPaper forma
 KenZ, 30 Apr 2012. LT-12717 Fixed Text Movies link so it works now from the Linux downloads.sil.org
 SteveMc, April 30, 2012.  Fixed LT-13011 "Modifications in change 37891 make Try a word no
 	longer use utf-8 on Windows".
+RandyR, 1 May 2012. Checked in Flex Bridge 0.3.35.
