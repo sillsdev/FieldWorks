@@ -18,6 +18,7 @@ using NAnt.Core.Attributes;
 using NAnt.DotNet.Tasks;
 using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace SIL.FieldWorks.Build.Tasks
 {
@@ -40,26 +41,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		[TaskAttribute("basedir", Required = false)]
 		public string BaseDir
 		{
-			get { return m_baseDirectory.FullName; }
+			get { return m_baseDirectory == null ? null : m_baseDirectory.FullName; }
 			set { m_baseDirectory = new System.IO.DirectoryInfo(value); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the working directory for the application.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override DirectoryInfo BaseDirectory
-		{
-			get
-			{
-				if (m_baseDirectory == null)
-				{
-					return base.BaseDirectory;
-				}
-				return m_baseDirectory;
-			}
-			set { m_baseDirectory = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -69,17 +52,47 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public override string ExeName
 		{
-			get { return "resgen"; }
+			get
+			{
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+				{
+					if (File.Exists("/usr/local/bin/resgen"))
+						return "/usr/local/bin/resgen";
+					else
+						return "/usr/bin/resgen";
+				}
+				else
+				{
+					return "resgen";
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get the name of the program executed by this task.
+		/// Get the name of this task.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public override string Name
 		{
-			get { return "resgen"; }
+			get
+			{
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					return "resgenex";
+				else
+					return "resgen";
+			}
+		}
+
+		/// <summary>
+		/// Set the working directory for the process to our very own basedir task attribute.
+		/// </summary>
+		protected override void PrepareProcess(Process process)
+		{
+			base.PrepareProcess(process);
+			var dir = BaseDir;
+			if (dir != null && Directory.Exists(dir))
+				process.StartInfo.WorkingDirectory = dir;
 		}
 	}
 }
