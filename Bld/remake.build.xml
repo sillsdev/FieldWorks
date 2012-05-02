@@ -262,4 +262,12 @@
 		</copy>
 	</target>
 
+	<target name="CopySEC" description="Copy extra Encoding Converters files that developers like to have">
+		<copy todir="${dir.outputBase}"  failonerror="false" flatten="false">
+			<fileset basedir="${fwroot}/DistFiles/Windows/EC for Developers/">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+	</target>
+
 </project>

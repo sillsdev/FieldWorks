@@ -163,15 +163,13 @@
 	<target name="EncConvertersDlls" description="Copy the EncodingConverters files, registering them on Windows">
 		<!-- Perforce changelist 37891 on 2012-04-20 did away with all of the following Windows stuff and replaced
 		it with the subequent Linux stuff. This broke the Windows build and put junk in the installer, so it is
-		here reinstated, with conditional branching for Windows and Linux, using the minimal change needed in the
+		here largely reinstated, with conditional branching for Windows and Linux, using the minimal change needed in the
 		Windows branch. -->
 		<if test="${not platform::is-unix()}">
-			<copy todir="${dir.outputBase}">
-				<fileset basedir="${dir.fwoutputlibPlatformBase}">
-					<include name="SilEncConverters40.dll"/>
-					<include name="SilEncConverters40.pdb"/>
-					<include name="ECInterfaces.dll"/>
-					<include name="ECInterfaces.pdb"/>
+			<echo message="Copying EC files to '${dir.outputBase}'"/>
+			<copy todir="${dir.outputBase}"  failonerror="false" flatten="false">
+				<fileset basedir="${fwroot}/DistFiles/Windows/EC/">
+					<include name="**/*"/>
 				</fileset>
 			</copy>
 			<!-- I (KZ) switched to an external call to regsvr32 because comregisterex was doing strange things.
