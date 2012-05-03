@@ -65,7 +65,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
@@ -85,7 +85,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	  <Name>Accessibility</Name>
@@ -289,6 +289,25 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="PictureSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityAtomicReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityAtomicReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityAtomicReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityAutoComplete.cs" />
+	<Compile Include="PossibilityReferenceVectorSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityVectorReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PossibilityVectorReferenceView.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="ReferenceComboBoxSlice.cs">

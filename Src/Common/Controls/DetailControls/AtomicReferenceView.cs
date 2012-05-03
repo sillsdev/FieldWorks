@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -40,9 +41,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected AtomicReferenceVc m_atomicReferenceVc;
 		// this is used to guarantee correct initial size.
-		private int m_hOld = 0;
-
-		private System.ComponentModel.IContainer components = null;
+		private int m_hOld;
+		protected string m_displayWs;
 
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
@@ -73,21 +73,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
 			}
 			m_atomicReferenceVc = null;
 			m_rootObj = null;
 			m_displayNameProperty = null;
 		}
 
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
+			Mediator mediator, string displayWs)
+		{
+			CheckDisposed();
+			m_displayWs = displayWs;
+			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty, mediator);
+		}
 
 		/// <summary>
 		/// Set the item from the chooser.
 		/// </summary>
-		/// <param name="realHvo">ID of the object from the chooser.</param>
+		/// <param name="obj">the object from the chooser.</param>
 		public void SetObject(ICmObject obj)
 		{
 			CheckDisposed();
@@ -114,24 +117,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private void SetRootBoxObj()
+		protected virtual void SetRootBoxObj()
 		{
 			if (m_rootObj != null && m_rootObj.IsValidObject) // if not, hopefully the parent slice eventually gets deleted!
 			{
 				// The ViewSizeChanged logic should be triggered automatically by a notification
 				// from the rootbox.
 				int h1 = m_rootb.Height;
-				int w1 = m_rootb.Width;
 				m_rootb.SetRootObject(m_rootObj.Hvo, m_atomicReferenceVc, kFragAtomicRef, m_rootb.Stylesheet);
-				int h2 = m_rootb.Height;
-				int w2 = m_rootb.Width;
-				if (h1 != h2)
+				if (h1 != m_rootb.Height)
 				{
 					if (ViewSizeChanged != null)
-						ViewSizeChanged(this, new FwViewSizeEventArgs(h2, w2));
-				}
-				if (w1 != w2 && w2 > Width)
-				{
+						ViewSizeChanged(this, new FwViewSizeEventArgs(m_rootb.Height, m_rootb.Width));
 				}
 			}
 		}
@@ -171,8 +168,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			SetReferenceVc();
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = GetDataAccess();
 			SetRootBoxObj();
+		}
+
+		protected virtual ISilDataAccess GetDataAccess()
+		{
+			return m_fdoCache.DomainDataByFlid;
 		}
 
 		public virtual void SetReferenceVc()

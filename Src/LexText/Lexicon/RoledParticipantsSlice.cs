@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -118,7 +117,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var sliceElem = new XElement("slice",
 				new XAttribute("label", roledPartic.RoleRA.Name.BestAnalysisAlternative.Text),
 				new XAttribute("field", "Participants"),
-				new XAttribute("editor", "defaultVectorReference"),
+				new XAttribute("editor", "possVectorReference"),
 				new XAttribute("menu", "mnuDataTree-Participants"));
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
@@ -232,7 +231,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (node != null)
 					displayWs = XmlUtils.GetAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS.Cast<ICmObject>(),
+			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS,
 				DisplayNameProperty, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistenceProvider, labels, m_fieldName,

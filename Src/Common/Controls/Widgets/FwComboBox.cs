@@ -1761,6 +1761,8 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		ComboBoxState m_state = ComboBoxState.Normal;
 
+		private bool m_activateOnShow;
+
 		#endregion Data members
 
 		#region Properties
@@ -1863,6 +1865,25 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
+		///
+		/// </summary>
+		public bool ActivateOnShow
+		{
+			get
+			{
+				CheckDisposed();
+				return m_activateOnShow;
+			}
+
+			set
+			{
+				CheckDisposed();
+				m_activateOnShow = value;
+				m_listForm.TopMost = value;
+			}
+		}
+
+		/// <summary>
 		/// Find the width that will display the full width of all items.
 		/// Note that if the height is set to less than the natural height,
 		/// some additional space may be wanted for a scroll bar.
@@ -1952,19 +1973,18 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		#region Construction and disposal
 
+
 		/// <summary>
 		/// Make one.
 		/// </summary>
 		public ComboListBox()
 		{
+			m_activateOnShow = true;
 			HasBorder = true;
 			Dock = DockStyle.Fill; // It fills the list form.
 			// Create a form to hold the list.
-			m_listForm = new Form();
-			m_listForm.Size = Size;
-			m_listForm.FormBorderStyle = FormBorderStyle.None;
+			m_listForm = new Form {Size = Size, FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual, TopMost = true};
 			m_listForm.Controls.Add(this);
-			m_listForm.StartPosition = FormStartPosition.Manual; // allows us to use Location.
 			m_listForm.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
 
@@ -2080,7 +2100,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				popupBounds.Offset(screenBounds.Left - popupBounds.Left, 0);
 			}
 			m_listForm.Location = new Point(popupBounds.Left, popupBounds.Top);
-			m_listForm.Show();
+
+			if (m_activateOnShow)
+				m_listForm.Show(m_previousForm);
+			else
+				ShowInactiveTopmost(m_previousForm, m_listForm);
 
 			if (m_comboMessageFilter != null)
 			{
@@ -2092,7 +2116,38 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			m_comboMessageFilter = new FwComboMessageFilter(this);
 			Application.AddMessageFilter(m_comboMessageFilter);
-			FocusAndCapture();
+			if (m_activateOnShow)
+				FocusAndCapture();
+		}
+
+		private const int SW_SHOWNOACTIVATE = 4;
+		private const int HWND_TOPMOST = -1;
+		private const uint SWP_NOACTIVATE = 0x0010;
+
+		[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+		private static extern bool SetWindowPos(
+			 int hWnd,           // window handle
+			 int hWndInsertAfter,    // placement-order handle
+			 int X,          // horizontal position
+			 int Y,          // vertical position
+			 int cx,         // width
+			 int cy,         // height
+			 uint uFlags);       // window positioning flags
+
+		[DllImport("user32.dll")]
+		private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+		private const int GWL_HWNDPARENT = -8;
+
+		[DllImport("user32.dll")]
+		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+		private static void ShowInactiveTopmost(Form owner, Form frm)
+		{
+			if (owner != null)
+				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
+			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
+			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
 		}
 
 		/// <summary>
@@ -2191,6 +2246,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					// Highlight this item
 					HighlightedItem = Items[i];
+					ScrollHighlightIntoView();
 					fFound = true;
 					break;
 				}
@@ -2492,7 +2548,7 @@ namespace SIL.FieldWorks.Common.Widgets
 							xPos > c.ClientSize.Width ||	// x is to big
 							yPos > c.ClientSize.Height)		// y is to big
 						{
-							;	// this is our exit case - event outside of client space...
+							// this is our exit case - event outside of client space...
 						}
 						else
 							return false;

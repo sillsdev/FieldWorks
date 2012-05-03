@@ -5875,3 +5875,5 @@ SteveMc, May 2, 2012.  Updated Po2Xml, ProcessLanguagesBld, and FwNant/ResGenEx 
 AlistairI, 2 May 2012. Revamped Encoding Converters. Restored speed of localization build.
 SteveMc, May 2, 2012.  Fixed a few remaining bugs in Po2Xml.
 KenZ, 2 May 2012. Fixed build script to use new locations for enc converters when setting registry and registering.
+DamienD, 3 May 2012. LT-10677: Type-ahead to select existing list items, VS2010 wanted to update some
+	project files.

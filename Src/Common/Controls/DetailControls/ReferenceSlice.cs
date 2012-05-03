@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			((ReferenceLauncher)Control).UpdateDisplayFromDatabase();
 		}
 
-		protected string DisplayNameProperty
+		protected virtual string DisplayNameProperty
 		{
 			get
 			{
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		protected string BestWsName
+		protected virtual string BestWsName
 		{
 			get
 			{

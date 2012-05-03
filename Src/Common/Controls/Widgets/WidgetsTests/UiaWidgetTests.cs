@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests;
@@ -67,11 +66,11 @@ namespace SIL.FieldWorks.Common.Widgets
 
 	internal class TestFwList : IFwListBox, IDisposable
 	{
-		private VwCacheDa m_CacheDa = VwCacheDaClass.Create();
+		private VwCacheDa m_cacheDa = VwCacheDaClass.Create();
 
 		public TestFwList()
 		{
-			DataAccess = m_CacheDa;
+			DataAccess = m_cacheDa;
 			DataAccess.WritingSystemFactory = new PalasoWritingSystemManager();
 		}
 
@@ -83,6 +82,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		public ISilDataAccess DataAccess { get; private set; }
 
 		public int SelectedIndex { get; set; }
+
+		public bool Updating
+		{
+			get { return false; }
+		}
 
 		#region Disposable stuff
 		#if DEBUG
@@ -114,14 +118,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				if (m_CacheDa != null)
+				if (m_cacheDa != null)
 				{
-					m_CacheDa.ClearAllData();
-					if (Marshal.IsComObject(m_CacheDa))
-						Marshal.ReleaseComObject(m_CacheDa);
+					m_cacheDa.ClearAllData();
+					if (Marshal.IsComObject(m_cacheDa))
+						Marshal.ReleaseComObject(m_cacheDa);
 				}
 			}
-			m_CacheDa = null;
+			m_cacheDa = null;
 
 			IsDisposed = true;
 		}

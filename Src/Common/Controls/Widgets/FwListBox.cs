@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
@@ -39,6 +37,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		int SelectedIndex { get; set; }
+
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="IFwListBox"/> is updating.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if updating; otherwise, <c>false</c>.
+		/// </value>
+		bool Updating { get; }
 	}
 
 	/// <summary>
@@ -77,17 +83,17 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal InnerFwListBox m_innerFwListBox;
 		private ObjectCollection m_items;
 		/// <summary>The index actually selected.</summary>
-		protected int m_SelectedIndex;
+		protected int m_selectedIndex;
 		/// <summary>The index highlighted, may be different from selected during tracking in
 		/// combo. This is set true in a combo box, when we want to track mouse movement by
 		/// highlighting the item hovered over. When it is true, changing the selected index does
 		/// not trigger events, but a MouseDown does.</summary>
-		protected int m_HighlightedIndex;
-		private bool m_fTracking = false;
+		protected int m_highlightedIndex;
+		private bool m_fTracking;
 		// Add if we need them.
 		//public event EventHandler SelectedValueChanged;
 		//public event EventHandler ValueMemberChanged;
-		private Control m_tabStopControl = null;	// see comments on TabStopControl property.
+		private Control m_tabStopControl;	// see comments on TabStopControl property.
 
 		/// <summary>
 		/// This is set true in a combo box, when we want to track mouse movement by highlighting
@@ -170,22 +176,21 @@ namespace SIL.FieldWorks.Common.Widgets
 		public FwListBox()
 		{
 			m_items = new ObjectCollection(this);
-			m_innerFwListBox = new InnerFwListBox(this);
-			m_innerFwListBox.Dock = DockStyle.Fill;
-			m_innerFwListBox.ReadOnlyView = true;		// ComboBoxStyle is always DropDownList.
-			this.BorderStyle = BorderStyle.Fixed3D;
-			this.Controls.Add(m_innerFwListBox);
+			m_innerFwListBox = new InnerFwListBox(this) {Dock = DockStyle.Fill, ReadOnlyView = true};
+			// ComboBoxStyle is always DropDownList.
+			BorderStyle = BorderStyle.Fixed3D;
+			Controls.Add(m_innerFwListBox);
 			// This causes us to get a notification when the string gets changed.
 			m_sda = m_innerFwListBox.DataAccess;
 			m_sda.AddNotification(this);
 
 			// This makes it, by default if the container's initialization doesn't change it,
 			// the same default size as a standard list box.
-			this.Size = new Size(120,84);
+			Size = new Size(120,84);
 			// And, if not changed, it's background color is white.
-			this.BackColor = SystemColors.Window;
-			m_SelectedIndex = -1; // initially nothing selected.
-			m_HighlightedIndex = -1; // nor highlighted.
+			BackColor = SystemColors.Window;
+			m_selectedIndex = -1; // initially nothing selected.
+			m_highlightedIndex = -1; // nor highlighted.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -245,6 +250,32 @@ namespace SIL.FieldWorks.Common.Widgets
 				CheckDisposed();
 				return m_items;
 			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="FwListBox"/> is updating.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if updating; otherwise, <c>false</c>.
+		/// </value>
+		public bool Updating { get; private set; }
+
+		/// <summary>
+		/// Begins the update.
+		/// </summary>
+		public void BeginUpdate()
+		{
+			Updating = true;
+		}
+
+		/// <summary>
+		/// Ends the update.
+		/// </summary>
+		public void EndUpdate()
+		{
+			Updating = false;
+			if (Visible)
+				m_innerFwListBox.RefreshDisplay();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,7 +350,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				return m_SelectedIndex;
+				return m_selectedIndex;
 			}
 			set
 			{
@@ -327,9 +358,9 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				if (value < -1 || value >= m_items.Count)
 					throw new ArgumentOutOfRangeException("value", value, "index out of range");
-				if (m_SelectedIndex != value)
+				if (m_selectedIndex != value)
 				{
-					m_SelectedIndex = value;
+					m_selectedIndex = value;
 					HighlightedIndex = value;
 					if (!IgnoreSelectedIndexChange)
 						RaiseSelectedIndexChanged();
@@ -356,7 +387,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				return m_HighlightedIndex;
+				return m_highlightedIndex;
 			}
 			set
 			{
@@ -364,10 +395,10 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				if (value < -1 || value >= m_items.Count)
 					throw new ArgumentOutOfRangeException("value", value, "index out of range");
-				if (m_HighlightedIndex != value)
+				if (m_highlightedIndex != value)
 				{
-					int oldSelIndex = m_HighlightedIndex;
-					m_HighlightedIndex = value;
+					int oldSelIndex = m_highlightedIndex;
+					m_highlightedIndex = value;
 					// Simulate replacing the old and new item with themselves, to produce
 					// the different visual effect.
 					if (oldSelIndex != -1 && oldSelIndex < m_items.Count)
@@ -377,12 +408,12 @@ namespace SIL.FieldWorks.Common.Widgets
 							InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
 							oldSelIndex, 1, 1);
 					}
-					if (m_HighlightedIndex != -1)
+					if (m_highlightedIndex != -1)
 					{
 						m_innerFwListBox.DataAccess.PropChanged(null,
 							(int)PropChangeType.kpctNotifyAll,
 							InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
-							m_HighlightedIndex, 1, 1);
+							m_highlightedIndex, 1, 1);
 					}
 				}
 			}
@@ -413,16 +444,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				return GetItem(m_SelectedIndex);
+				return GetItem(m_selectedIndex);
 			}
 			set
 			{
 				CheckDisposed();
 
-				int tmpIndex = SelectedIndex;
+				int tmpIndex;
 				SetItem(value, out tmpIndex);
 				// reset the initial highlighted item to this.
-				this.SelectedIndex = tmpIndex;
+				SelectedIndex = tmpIndex;
 			}
 		}
 
@@ -444,11 +475,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				int tmpIndex = HighlightedIndex;
+				int tmpIndex;
 				SetItem(value, out tmpIndex);
 				HighlightedIndex = tmpIndex;
-				if (this.Visible)
-					ScrollHighlightIntoView();
 			}
 		}
 
@@ -482,7 +511,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			int index = m_items.IndexOf(item);
 			if (index < 0)
-				throw new ArgumentOutOfRangeException("value", item, "object not found in list");
+				throw new ArgumentOutOfRangeException("item", item, "object not found in list");
 			itemIndex = index;
 		}
 
@@ -496,7 +525,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		protected internal bool IsSelected(int index)
 		{
-			return index == m_SelectedIndex;
+			return index == m_selectedIndex;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -508,7 +537,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		protected internal bool IsHighlighted(int index)
 		{
-			return index == m_HighlightedIndex;
+			return index == m_highlightedIndex;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -516,12 +545,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Scroll so that the selection can be seen.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void ScrollHighlightIntoView()
+		public void ScrollHighlightIntoView()
 		{
-			if (HighlightedIndex < 0)
+			if (!Visible || HighlightedIndex < 0)
 				return;
-			Debug.Assert(this.Visible == true, "Dropdown list must be visible to scroll into it.");
-			SelLevInfo[] rgvsli = new SelLevInfo[1];
+			Debug.Assert(Visible, "Dropdown list must be visible to scroll into it.");
+			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = HighlightedIndex;
 			rgvsli[0].tag = InnerFwListBox.ktagItems;
 			EnsureRoot();
@@ -543,9 +572,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				if (m_SelectedIndex < 0)
+				if (m_selectedIndex < 0)
 					return null;
-				return TextOfItem(m_items[m_SelectedIndex]);
+				return TextOfItem(m_items[m_selectedIndex]);
 			}
 			set
 			{
@@ -556,8 +585,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				int newsel = FindIndexOfTss(value);
 				if (newsel == -1)
 					throw new ArgumentOutOfRangeException("value", value, "string not found in list");
-				else
-					SelectedIndex = newsel;
+
+				SelectedIndex = newsel;
 			}
 		}
 
@@ -697,8 +726,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			else
 			{
 				// By default just close the ComboListBox.
-				if (this is ComboListBox)
-					(this as ComboListBox).HideForm();
+				var clb = this as ComboListBox;
+				if (clb != null)
+					clb.HideForm();
 			}
 		}
 
@@ -735,7 +765,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// on the control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public class ObjectCollection : IList, IEnumerable, IFWDisposable
+		public class ObjectCollection : IList, IFWDisposable
 		{
 			private ArrayList m_list;
 			private IFwListBox m_owner;
@@ -912,10 +942,13 @@ namespace SIL.FieldWorks.Common.Widgets
 							InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index);
 						m_owner.DataAccess.SetString(hvo,
 							InnerFwListBox.ktagText, newText);
-						m_owner.DataAccess.PropChanged(null,
-							(int)PropChangeType.kpctNotifyAll,
-							hvo, InnerFwListBox.ktagText,
-							0, newText.Length, oldText.Length);
+						if (!m_owner.Updating)
+						{
+							m_owner.DataAccess.PropChanged(null,
+														   (int) PropChangeType.kpctNotifyAll,
+														   hvo, InnerFwListBox.ktagText,
+														   0, newText.Length, oldText.Length);
+						}
 					}
 				}
 			}
@@ -943,24 +976,29 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// </summary>
 			/// <param name="items"></param>
 			/// ------------------------------------------------------------------------------------
-			public void AddRange(Object[] items)
+			public void AddRange(IEnumerable items)
 			{
 				CheckDisposed();
 
 				int index = m_list.Count; // nb index is count BEFORE Add.
-				m_list.AddRange(items);
-				for (int i = 0; i < items.Length; ++i)
+				int i = 0;
+				foreach (object item in items)
 				{
+					m_list.Add(item);
 					int hvoNew = m_owner.DataAccess.MakeNewObject(InnerFwListBox.kclsItem,
 						InnerFwListBox.khvoRoot,
 						InnerFwListBox.ktagItems, index + i);
 					m_owner.DataAccess.SetString(hvoNew,
-						InnerFwListBox.ktagText,  m_owner.TextOfItem(items[i]));
+						InnerFwListBox.ktagText,  m_owner.TextOfItem(item));
+					i++;
 				}
-				m_owner.DataAccess.PropChanged(null,
-					(int)PropChangeType.kpctNotifyAll,
-					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
-					index, items.Length, 0);
+				if (!m_owner.Updating)
+				{
+					m_owner.DataAccess.PropChanged(null,
+												   (int) PropChangeType.kpctNotifyAll,
+												   InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
+												   index, i, 0);
+				}
 			}
 
 			/// ------------------------------------------------------------------------------------
@@ -988,10 +1026,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				if (cda == null)
 					return; // This can happen, when this is called when 'disposing' is false.
 				cda.CacheVecProp(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, new int[0], 0);
-				m_owner.DataAccess.PropChanged(null,
-					(int)PropChangeType.kpctNotifyAll,
-					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
-					0, 0, citems);
+				if (!m_owner.Updating)
+				{
+					m_owner.DataAccess.PropChanged(null,
+												   (int) PropChangeType.kpctNotifyAll,
+												   InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
+												   0, 0, citems);
+				}
 
 				m_owner.SelectedIndex = -1;
 
@@ -1036,7 +1077,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				get
 				{
 					CheckDisposed();
-					return null;
+					return this;
 				}
 			}
 
@@ -1108,10 +1149,13 @@ namespace SIL.FieldWorks.Common.Widgets
 					InnerFwListBox.ktagItems, index);
 				m_owner.DataAccess.SetString(hvoNew,
 					InnerFwListBox.ktagText, m_owner.TextOfItem(item));
-				m_owner.DataAccess.PropChanged(null,
-					(int)PropChangeType.kpctNotifyAll,
-					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
-					index, 1, 0);
+				if (!m_owner.Updating)
+				{
+					m_owner.DataAccess.PropChanged(null,
+												   (int) PropChangeType.kpctNotifyAll,
+												   InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
+												   index, 1, 0);
+				}
 
 				if (m_owner.SelectedIndex >= index)
 					m_owner.SelectedIndex = m_owner.SelectedIndex + 1;
@@ -1149,10 +1193,13 @@ namespace SIL.FieldWorks.Common.Widgets
 					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index);
 				m_owner.DataAccess.DeleteObjOwner(
 					InnerFwListBox.khvoRoot, hvoObj, InnerFwListBox.ktagItems, index);
-				m_owner.DataAccess.PropChanged(null,
-					(int)PropChangeType.kpctNotifyAll,
-					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
-					index, 0, 1);
+				if (!m_owner.Updating)
+				{
+					m_owner.DataAccess.PropChanged(null,
+												   (int) PropChangeType.kpctNotifyAll,
+												   InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems,
+												   index, 0, 1);
+				}
 
 				if (m_owner.SelectedIndex >= index)
 					m_owner.SelectedIndex = m_owner.SelectedIndex - 1;
@@ -1203,12 +1250,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected internal const int khvoRoot = 7003; // likewise.
 		protected internal const int kclsItem = 5007;
 		// Our own cache, so we need to get rid of it.
-		protected IVwCacheDa m_CacheDa; // Main cache object
-		protected ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
+		protected IVwCacheDa m_cacheDa; // Main cache object
+		protected ISilDataAccess m_dataAccess; // Another interface on m_CacheDa.
 		protected FwListBox m_owner;
 		private ListBoxVc m_vc;
 
-		protected int m_WritingSystem; // Writing system to use when Text is set.
+		protected int m_writingSystem; // Writing system to use when Text is set.
 
 		// Set this false to (usually temporarily) disable changing the background color
 		// for the selected item. This allows us to get an accurate figure for the overall
@@ -1221,14 +1268,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal InnerFwListBox(FwListBox owner)
 		{
 			m_owner = owner;
-			m_CacheDa = VwCacheDaClass.Create();
-			m_DataAccess = (ISilDataAccess)m_CacheDa;
+			m_cacheDa = VwCacheDaClass.Create();
+			m_dataAccess = (ISilDataAccess)m_cacheDa;
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
 			m_wsf = new PalasoWritingSystemManager();
-			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
-			this.VScroll = true;
-			this.AutoScroll = true;
+			m_dataAccess.WritingSystemFactory = WritingSystemFactory;
+			VScroll = true;
+			AutoScroll = true;
 		}
 
 		internal new ISilDataAccess DataAccess
@@ -1237,7 +1284,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				return m_DataAccess;
+				return m_dataAccess;
 			}
 		}
 
@@ -1255,15 +1302,15 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				if (m_WritingSystem == 0)
-					m_WritingSystem = WritingSystemFactory.UserWs;
-				return m_WritingSystem;
+				if (m_writingSystem == 0)
+					m_writingSystem = WritingSystemFactory.UserWs;
+				return m_writingSystem;
 			}
 			set
 			{
 				CheckDisposed();
 
-				m_WritingSystem = value;
+				m_writingSystem = value;
 			}
 		}
 
@@ -1337,12 +1384,12 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					base.WritingSystemFactory = value;
 					// Enhance JohnT: this should probably be done by the base class.
-					m_DataAccess.WritingSystemFactory = value;
-					m_WritingSystem = 0; // gets reloaded if used.
-					if (m_vc != null)
-					{
-						m_vc.UpdateBlankString(this);
-					}
+					m_dataAccess.WritingSystemFactory = value;
+					m_writingSystem = 0; // gets reloaded if used.
+					//if (m_vc != null)
+					//{
+					//	m_vc.UpdateBlankString(this);
+					//}
 					if (m_rootb != null)
 						m_rootb.Reconstruct();
 				}
@@ -1370,7 +1417,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				return;
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_DataAccess;
+			m_rootb.DataAccess = m_dataAccess;
 			if (m_vc == null)
 				m_vc = new ListBoxVc(this);
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, m_styleSheet);
@@ -1391,16 +1438,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (disposing)
 			{
 				// Cleanup managed stuff here.
-				if (m_CacheDa != null)
-					m_CacheDa.ClearAllData();
+				if (m_cacheDa != null)
+					m_cacheDa.ClearAllData();
 			}
 			// Cleanup unmanaged stuff here.
-			m_DataAccess = null;
-			if (m_CacheDa != null)
+			m_dataAccess = null;
+			if (m_cacheDa != null)
 			{
-				if (Marshal.IsComObject(m_CacheDa))
-					Marshal.ReleaseComObject(m_CacheDa);
-				m_CacheDa = null;
+				if (Marshal.IsComObject(m_cacheDa))
+					Marshal.ReleaseComObject(m_cacheDa);
+				m_cacheDa = null;
 			}
 			m_owner = null; // It will get disposed on its own, if it hasn't been already.
 			m_vc = null;
@@ -1410,7 +1457,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			if (this.Visible && e.Button == MouseButtons.Left)
+			if (Visible && e.Button == MouseButtons.Left)
 			{
 				base.OnMouseUp (e);
 				if (m_owner.SelectedIndex == m_owner.HighlightedIndex)
@@ -1460,7 +1507,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				Rectangle rcSrcRoot;
 				Rectangle rcDstRoot;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				Point pt = new Point(e.X, e.Y);
+				var pt = new Point(e.X, e.Y);
 				HighlightFromMouse(PixelToView(pt), rcSrcRoot, rcDstRoot);
 			}
 		}
@@ -1476,7 +1523,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					e.Handled = true;
 				}
 			}
-			else if ((int)e.KeyChar == '\r' || (int)e.KeyChar == '\t')
+			else if (e.KeyChar == '\r' || e.KeyChar == '\t')
 			{
 				// If we're in a ComboBox, we must handle the ENTER key here, otherwise
 				// SimpleRootSite may handle it inadvertently forcing the parent dialog to close (cf. LT-2280).
@@ -1551,8 +1598,6 @@ namespace SIL.FieldWorks.Common.Widgets
 					}
 					break;
 				}
-				default:
-					break;
 			}
 		}
 
@@ -1574,14 +1619,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal ListBoxVc(IFwListBoxSite listbox)
 		{
 			m_listbox = listbox;
-			UpdateBlankString(listbox);
+			//UpdateBlankString(listbox);
 		}
 
-		public void UpdateBlankString(IFwListBoxSite listbox)
-		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssBlanks = tsf.MakeString (new string(' ', 200), m_listbox.WritingSystemCode);
-		}
+		//public void UpdateBlankString(IFwListBoxSite listbox)
+		//{
+		//    ITsStrFactory tsf = TsStrFactoryClass.Create();
+		//    m_tssBlanks = tsf.MakeString (new string(' ', 200), m_listbox.WritingSystemCode);
+		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1644,7 +1689,8 @@ namespace SIL.FieldWorks.Common.Widgets
 						// the Windows build, not just the Linux build!)
 						vwenv.AddString(tss);
 					}
-					vwenv.AddString(m_tssBlanks);
+					// REVIEW (DamienD): Why do we add blanks here? I commented this out.
+					//vwenv.AddString(m_tssBlanks);
 					vwenv.CloseParagraph();
 					break;
 			}
@@ -1659,8 +1705,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected virtual void DisplayList(IVwEnv vwenv)
 		{
 			vwenv.OpenDiv();
-			vwenv.AddObjVecItems((int)InnerFwListBox.ktagItems, this,
-				(int)InnerFwListBox.kfragItems);
+			vwenv.AddObjVecItems(InnerFwListBox.ktagItems, this,
+				InnerFwListBox.kfragItems);
 			vwenv.CloseDiv();
 		}
 	}

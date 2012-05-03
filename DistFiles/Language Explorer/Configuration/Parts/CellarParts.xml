@@ -180,7 +180,7 @@
 			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="Text-Detail-Genres" type="Detail">
-			<slice field="Genres" label="Genres" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Genres" label="Genres" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Genres" tool="genresEdit" />

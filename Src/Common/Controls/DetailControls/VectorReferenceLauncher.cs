@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		#region Data Members
 
-		private System.ComponentModel.IContainer components = null;
 		protected VectorReferenceView m_vectorRefView;
 
 		/// <summary>
@@ -73,10 +72,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
 			}
 			m_vectorRefView = null; // Should all be disposed automatically, since it is in the Controls collection.
 
@@ -117,7 +112,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get the mediator from the view.
 		/// </summary>
-		protected override XCore.Mediator Mediator
+		protected override Mediator Mediator
 		{
 			get { return m_vectorRefView.Mediator; }
 		}
@@ -144,7 +139,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var contents = from hvo in (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid)
+			var contents = from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
 						   select m_cache.ServiceLocator.GetObject(hvo);
 
 			return new SimpleListChooser(m_persistProvider,
@@ -181,7 +176,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.OnBackColorChanged(e);
 			if (m_vectorRefView != null)
 			{
-				m_vectorRefView.BackColor = this.BackColor;
+				m_vectorRefView.BackColor = BackColor;
 			}
 		}
 
@@ -202,15 +197,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (this.m_panel != null && this.m_vectorRefView != null)
+			if (m_panel != null && m_vectorRefView != null)
 			{
-				int w = this.Width - this.m_panel.Width;
+				int w = Width - m_panel.Width;
 				int h1 = RootBoxHeight;
 				if (w < 0)
 					w = 0;
-				if (w == this.m_vectorRefView.Width)
+				if (w == m_vectorRefView.Width)
 					return; // cuts down on recursive calls.
-				this.m_vectorRefView.Width = w;
+				m_vectorRefView.Width = w;
 				m_vectorRefView.PerformLayout();
 				int h2 = RootBoxHeight;
 				CheckViewSizeChanged(h1, h2);
@@ -223,9 +218,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
-			base.OnLeave (e);
-			if (this.m_vectorRefView != null && this.m_vectorRefView.RootBox != null)
-				this.m_vectorRefView.RootBox.DestroySelection();
+			base.OnLeave(e);
+			if (m_vectorRefView != null && m_vectorRefView.RootBox != null)
+				m_vectorRefView.RootBox.DestroySelection();
 		}
 
 		#endregion // Overrides
@@ -258,11 +253,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// FWR-3238 Keep these lines inside the UOW block, since for some reason
 					// 'this' is disposed after we come out of the block.
 					UpdateDisplayFromDatabase();
-					m_vectorRefView.ReloadVector();
 					int h2 = RootBoxHeight;
 					CheckViewSizeChanged(h1, h2);
 				});
 			}
+		}
+
+		public override void UpdateDisplayFromDatabase()
+		{
+			m_vectorRefView.ReloadVector();
 		}
 
 		protected virtual IEnumerable<ICmObject> Targets
@@ -271,7 +270,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (m_obj == null)
 					return new ICmObject[0];
-				return from hvo in (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid)
+				return from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
 					   select m_cache.ServiceLocator.GetObject(hvo);
 			}
 
@@ -296,7 +295,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Add the specified objects to the property the launcher is editing. Caller makes UOW.
 		/// </summary>
-		/// <param name="objToAdd"></param>
+		/// <param name="objectsToAdd"></param>
 		protected virtual void AddNewObjectsToProperty(IEnumerable<ICmObject> objectsToAdd)
 		{
 			if (objectsToAdd.Count() == 0)
@@ -339,7 +338,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.m_vectorRefView = CreateVectorReverenceView();
 			this.SuspendLayout();
 			//

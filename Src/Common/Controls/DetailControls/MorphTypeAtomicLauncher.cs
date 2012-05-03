@@ -8,24 +8,14 @@ using System.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
-	public class MorphTypeAtomicLauncher : AtomicReferenceLauncher
+	public class MorphTypeAtomicLauncher : PossibilityAtomicReferenceLauncher
 	{
-		private System.ComponentModel.IContainer components = null;
-		const string m_ksPath = "/group[@id='DialogStrings']/";
-
-		public MorphTypeAtomicLauncher()
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+		private const string m_ksPath = "/group[@id='DialogStrings']/";
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -39,10 +29,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
 			}
 			base.Dispose( disposing );
 		}
@@ -54,7 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected new MorphTypeChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			string sShowAllTypes = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
-			MorphTypeChooser x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
+			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
 				m_flid, sShowAllTypes, m_mediator.HelpTopicProvider);
 			x.Cache = m_cache;
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
@@ -91,7 +77,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (MorphTypeChooser chooser = GetChooser(labels))
 			{
 				bool fMadeMorphTypeChange = false;
-				ILexEntry entry = m_obj.Owner as ILexEntry;
+				var entry = (ILexEntry) m_obj.Owner;
 				chooser.InitializeExtras(m_configurationNode, Mediator);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
@@ -106,7 +92,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//    chooser.ShowAllTypesCheckBoxVisible = false;
 				if (chooser.ShowDialog() == DialogResult.OK)
 				{
-					var selected = chooser.ChosenOne.Object as IMoMorphType;
+					var selected = (IMoMorphType) chooser.ChosenOne.Object;
 					var original = Target as IMoMorphType;
 					string sUndo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
 					string sRedo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
@@ -156,7 +142,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							else
 							{
 								//have to switch from stem to affix
-								fMadeMorphTypeChange = ChangeStemToAffix(entry, selected, sUndo, sRedo);
+								fMadeMorphTypeChange = ChangeStemToAffix(entry, selected);
 							}
 						}
 						else
@@ -165,7 +151,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							if (IsStemType(selected))
 							{
 								//have to switch from affix to stem
-								fMadeMorphTypeChange = ChangeAffixToStem(entry, selected, sUndo, sRedo);
+								fMadeMorphTypeChange = ChangeAffixToStem(entry, selected);
 							}
 							else
 							{
@@ -184,15 +170,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		protected override bool AllowEmptyItem
+		{
+			get { return false; }
+		}
+
 		/// <summary>
 		/// Change the affix to a stem (possibly)
 		/// </summary>
 		/// <param name="entry"></param>
-		/// <param name="selectedHvo"></param>
-		/// <param name="sUndo"></param>
-		/// <param name="sRedo"></param>
+		/// <param name="type"></param>
 		/// <returns>true if change made; false otherwise</returns>
-		private bool ChangeAffixToStem(ILexEntry entry, IMoMorphType type, string sUndo, string sRedo)
+		private bool ChangeAffixToStem(ILexEntry entry, IMoMorphType type)
 		{
 			var affix = m_obj as IMoAffixForm;
 			if (affix == null)
@@ -227,7 +216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 
 				case MoAffixAllomorphTags.kClassId:
-					var allo = affix as IMoAffixAllomorph;
+					var allo = (IMoAffixAllomorph) affix;
 					fLoseInfixLoc = allo.PositionRS.Count > 0;
 					fLoseGramInfo = allo.MsEnvPartOfSpeechRA != null || allo.MsEnvFeaturesOA != null;
 					break;
@@ -275,7 +264,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						fLoseGramInfo = true;
 					}
-					continue;
 				}
 			}
 			if (fLoseInflCls || fLoseInfixLoc || fLoseGramInfo || fLoseRule)
@@ -312,7 +300,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		private bool ChangeStemToAffix(ILexEntry entry, IMoMorphType type, string sUndo, string sRedo)
+		private bool ChangeStemToAffix(ILexEntry entry, IMoMorphType type)
 		{
 			var stem = m_obj as IMoStemAllomorph;
 			if (stem == null)
@@ -342,11 +330,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				var msa = rgmsaStem[i] as IMoStemMsa;
 				if (msa != null &&
-					msa.FromPartsOfSpeechRC.Count > 0 ||
+					(msa.FromPartsOfSpeechRC.Count > 0 ||
 					msa.InflectionClassRA != null ||
 					msa.ProdRestrictRC.Count > 0 ||
 					msa.StratumRA != null ||
-					msa.MsFeaturesOA != null)
+					msa.MsFeaturesOA != null))
 				{
 					fLoseGramInfo = true;
 					break;
@@ -375,8 +363,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{
-			DataTree dtree = this.Slice.ContainingDataTree;
-			int idx = this.Slice.IndexInContainer;
+			DataTree dtree = Slice.ContainingDataTree;
+			int idx = Slice.IndexInContainer;
 			dtree.DoNotRefresh = true;	// don't let the datatree repeatedly redraw itself...
 			entry.ReplaceMoForm(origForm, newForm);
 			newForm.MorphTypeRA = type;
@@ -395,7 +383,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// now fix the record list, since it may be showing MoForm dependent columns (e.g. MorphType, Homograph, etc...)
 			dtree.FixRecordList();
 			dtree.DoNotRefresh = false;
-			Slice sliceT = dtree.Slices[idx] as Slice;
+			Slice sliceT = dtree.Slices[idx];
 			if (sliceT != null && sliceT is MorphTypeAtomicReferenceSlice)
 			{
 				// When the new slice is created, the launch button is placed in the middle of
@@ -425,15 +413,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			return false;
 		}
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			components = new System.ComponentModel.Container();
-		}
-		#endregion
 	}
 }

@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
-			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator);
+			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator, displayWs);
 		}
 		#endregion // Construction, Initialization, and Disposition
 

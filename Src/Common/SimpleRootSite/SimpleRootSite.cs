@@ -4454,7 +4454,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-				EditingHelper.OnKeyDown(e);
+				if (!e.Handled)
+					EditingHelper.OnKeyDown(e);
 			}
 		}
 

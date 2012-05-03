@@ -23,7 +23,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -51,9 +50,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected VectorReferenceVc m_VectorReferenceVc;
 		protected string m_displayWs;
 
-		internal System.Xml.XmlNode ConfigurationNode { get; set; }
+		internal XmlNode ConfigurationNode { get; set; }
 
-		private System.ComponentModel.IContainer components = null;
 		private string m_textStyle;
 
 		/// <summary>
@@ -72,7 +70,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
-			XCore.Mediator mediator, string displayWs)
+			Mediator mediator, string displayWs)
 		{
 			CheckDisposed();
 			m_displayWs = displayWs;
@@ -93,10 +91,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
 			}
 			m_VectorReferenceVc = null;
 			m_rootObj = null;
@@ -119,7 +113,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual void ReloadVector()
 		{
 			CheckDisposed();
-			m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+			m_rootb.SetRootObject(m_rootObj == null ? 0 : m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
 		}
 
 		/// <summary>
@@ -157,19 +151,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_VectorReferenceVc = CreateVectorReferenceVc();
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = GetDataAccess();
 			SetupRoot();
 		}
 
 		protected override void SetupRoot()
 		{
 			m_VectorReferenceVc.Reuse(m_rootFlid, m_displayNameProperty, m_displayWs);
-			m_rootb.SetRootObject(m_rootObj == null ? 0 : m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+			ReloadVector();
 		}
 
 		protected virtual VectorReferenceVc CreateVectorReferenceVc()
 		{
 			return new VectorReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+		}
+
+		protected virtual ISilDataAccess GetDataAccess()
+		{
+			return m_fdoCache.DomainDataByFlid;
 		}
 
 		#endregion // RootSite required methods
@@ -249,21 +248,44 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="e"></param>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Delete)
-				Delete();
-			if (e.KeyCode == Keys.Left)
-				MoveItem(false);
-			if (e.KeyCode == Keys.Right)
-				MoveItem(true);
+			HandleKeyDown(e);
 			if (!IsDisposed)		// Delete() can cause the view to be removed.
 				base.OnKeyDown(e);
 		}
 
+		protected virtual void HandleKeyDown(KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Delete)
+			{
+				Delete();
+				e.Handled = true;
+			}
+			else if (e.KeyCode == Keys.Left)
+			{
+				MoveItem(false);
+				e.Handled = true;
+			}
+			else if (e.KeyCode == Keys.Right)
+			{
+				MoveItem(true);
+				e.Handled = true;
+			}
+		}
+
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
+			HandleKeyPress(e);
+			if (!IsDisposed)
+				base.OnKeyPress(e);
+		}
+
+		protected virtual void HandleKeyPress(KeyPressEventArgs e)
+		{
 			if (e.KeyChar == (char)Keys.Back)
+			{
 				Delete();
-			base.OnKeyPress(e);
+				e.Handled = true;
+			}
 		}
 
 		internal bool CanMoveItem(bool forward, out bool visible)
@@ -285,7 +307,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				() => ReorderItems(vals));
 
 			// Create a new selection of the moved object.
-			SelLevInfo[] rgvsli = new SelLevInfo[1];
+			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = ihvo;
 			rgvsli[0].tag = m_rootFlid;
 			IVwSelection vwselWhole = m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null,
@@ -550,21 +572,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var flidVirt = Cache.MetaDataCacheAccessor.GetFieldId2(clsid, field, true);
 					//var flidReal = Cache.MetaDataCacheAccessor.GetFieldId2(clsid, visField, true);
 					// remove the item from the virtual list property - thus adding it to the real property
-					RemoveObjectFromEditableList(flidVirt, ihvo, undoText, redoText);
+					RemoveObjectFromEditableList(ihvo, undoText, redoText);
 				}
 				return;
 			}
-			RemoveObjectFromEditableList(m_rootFlid, ihvo, undoText, redoText);
+			RemoveObjectFromEditableList(ihvo, undoText, redoText);
 		}
 
 		/// <summary>
 		/// Remove the indicated object from the editable list which can be virtual (like FdoInvertSet).
 		/// </summary>
-		/// <param name="flid">Field id of list belonging to this vector ref</param>
 		/// <param name="ihvo">view handle of the object to remove</param>
 		/// <param name="undoText">text to appear with the Edit/Undo menu item</param>
 		/// <param name="redoText">text to appear with the Edit/Redo menu item</param>
-		private void RemoveObjectFromEditableList(int flid, int ihvo, string undoText, string redoText)
+		private void RemoveObjectFromEditableList(int ihvo, string undoText, string redoText)
 		{
 			int startHeight = m_rootb.Height;
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
@@ -612,6 +633,60 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		#endregion
 
+		public ICmObject SelectedObject
+		{
+			get
+			{
+				IVwSelection sel = m_rootb.Selection;
+				if (sel == null)
+				{
+					return null; // nothing selected, give up.
+				}
+
+				int cvsli = sel.CLevels(false);
+				// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
+				cvsli--;
+				if (cvsli == 0)
+				{
+					// No object in selection, so quit.
+					return null;
+				}
+				ITsString tss;
+				int ichAnchor;
+				bool fAssocPrev;
+				int tag;
+				int ws;
+				int hvoObj;
+				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj,
+					out tag, out ws);
+				if (m_fdoCache.ServiceLocator.IsValidObjectId(hvoObj))
+					return m_fdoCache.ServiceLocator.GetObject(hvoObj);
+				return null;
+			}
+
+			set
+			{
+				if (value == null)
+				{
+					m_rootb.MakeSimpleSel(true, true, true, true);
+				}
+				else
+				{
+					int count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+					int i;
+					for (i = 0; i < count; ++i)
+					{
+						int hvo = m_fdoCache.DomainDataByFlid.get_VecItem(m_rootObj.Hvo, m_rootFlid, i);
+						if (hvo == value.Hvo)
+							break;
+					}
+					var levels = new SelLevInfo[1];
+					levels[0].ihvo = i;
+					levels[0].tag = m_rootFlid;
+					m_rootb.MakeTextSelInObj(0, levels.Length, levels, 0, null, true, true, true, true, true);
+				}
+			}
+		}
 	}
 
 	#region VectorReferenceVc class

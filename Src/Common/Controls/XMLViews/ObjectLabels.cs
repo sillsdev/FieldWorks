@@ -18,8 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -120,17 +118,14 @@ namespace SIL.FieldWorks.Common.Controls
 		public static IEnumerable<ObjectLabel> CreateObjectLabels(FdoCache cache, IEnumerable<ICmObject> objs,
 			string displayNameProperty, string displayWs, bool fIncludeNone)
 		{
-			var labels = new List<ObjectLabel>();
-
 			foreach(var obj in objs)
 			{
-				labels.Add(CreateObjectLabel(cache, obj, displayNameProperty,
-					displayWs));
+				yield return CreateObjectLabel(cache, obj, displayNameProperty,
+					displayWs);
 			}
 			// You get a pretty green dialog box if this is inserted first!?
 			if (fIncludeNone)
-				labels.Add(new NullObjectLabel(cache));
-			return labels;
+				yield return new NullObjectLabel(cache);
 		}
 
 		/// <summary>
@@ -589,7 +584,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				return CreateObjectLabels(m_cache, Possibility.SubPossibilitiesOS.Cast<ICmObject>(), m_displayNameProperty, m_displayWs);
+				return CreateObjectLabels(m_cache, Possibility.SubPossibilitiesOS, m_displayNameProperty, m_displayWs);
 			}
 		}
 
@@ -652,7 +647,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				return CreateObjectLabels(m_cache, InflectionClass.SubclassesOC.Cast<ICmObject>(), m_displayNameProperty, m_displayWs);
+				return CreateObjectLabels(m_cache, InflectionClass.SubclassesOC, m_displayNameProperty, m_displayWs);
 			}
 		}
 
