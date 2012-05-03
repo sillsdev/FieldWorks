@@ -195,11 +195,10 @@
 					<regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
 						<assemblies>
 							<include name="${dir.outputBase}/SilEncConverters40.dll"/>
-							<include name="${dir.fwoutputlib}/${dir}/AIGuesserEC.dll"/>
 						</assemblies>
 					</regasm>
-					<exec program="regsvr32.exe" commandline="/s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" unless="${clean}" verbose="true"/>
-					<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/Lib/${dir}/IcuEC40b.dll" failonerror="false" if="${clean}"/>
+					<exec program="regsvr32.exe" commandline="/s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false" unless="${clean}" verbose="true"/>
+					<exec program="regsvr32.exe" commandline="/u /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false" if="${clean}"/>
 				</when>
 				<otherwise>
 					<regasm assembly="${dir.outputBase}\SilEncConverters40.dll"
@@ -207,17 +206,12 @@
 					<importregistry regfile="${dir.outputBase}\SilEncConverters40.reg"
 									unregister="false" peruser="true" failonerror="false"/>
 					<delete file="${dir.outputBase}\SilEncConverters40.reg" failonerror="false"/>
-					<regasm assembly="${fwroot}\Lib\${dir}\AIGuesserEC.dll"
-							regfile="${dir.outputBase}\AIGuesserEC.reg" unregister="false" failonerror="false"/>
-					<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
-									unregister="false" peruser="true" failonerror="false"/>
-					<delete file="${dir.outputBase}\AIGuesserEC.reg" failonerror="false"/>
 					<!-- IcuEC40b.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
 					<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-							commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40b.dll"
+							commandline="regsvr32.exe /u /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll"
 							failonerror="false" if="${clean}"/>
 					<if test="${not clean}">
-						<copy file="${fwroot}\Lib\${dir}\IcuEC40b.dll" todir="${path::get-temp-path()}"/>
+						<copy file="${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" todir="${path::get-temp-path()}"/>
 						<checksum algorithm="MD5">
 							<fileset>
 								<include name="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
@@ -233,8 +227,8 @@
 						<if test="${IcuEcChanged}">
 							<echo message="Register IcuEC40b.dll file with admin privileges"/>
 							<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
-									commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40b.dll" failonerror="false"/>
-							<copy file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll.MD5')}" todir="${fwroot}\Lib\${dir}"/>
+									commandline="regsvr32.exe /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false"/>
+							<copy file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll.MD5')}" todir="${fwroot}/DistFiles/Windows/EC"/>
 						</if>
 					</if>
 				</otherwise>
@@ -331,10 +325,11 @@
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" value="${dir.icuData}" verbose="${verbose}" />
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" value="${dir.icu}"
 					 verbose="${verbose}" />
+				<property name="tmpWin" value="${path::combine(fwroot, 'DistFiles\Windows')}"/>
 				<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${tmp}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmp, 'Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${path::combine(tmpWin, 'EC Common')}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmpWin, 'EC\EC\Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${dir.outputBase}" verbose="${verbose}"  if="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
 			</when>
