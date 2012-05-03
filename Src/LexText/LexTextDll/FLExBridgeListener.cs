@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -19,6 +17,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 	{
 		private Mediator _mediator;
 		private FdoCache Cache { get; set; }
+
 		#region IxCoreColleague Members
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -47,6 +46,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		#endregion
 
+		/// <summary>
+		/// Determine whether or not to display the View Conflict Report menu item.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
 		public bool OnDisplayShowConflictReport(object parameters, ref UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
@@ -73,25 +78,31 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnShowConflictReport(object commandObject)
 		{
-			string url;
-			string projectPath;
-			FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+			bool dummy1;
+			string dummy2;
+			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
 								   Environment.UserName,
-								   FLExBridgeHelper.ConflictViewer, out projectPath, out url);
-			if (!string.IsNullOrEmpty(url))
+								   FLExBridgeHelper.ConflictViewer, out dummy1, out dummy2);
+			if (!success)
 			{
-				// TODO: Jump to url
-				var args = new Common.RootSites.LocalLinkArgs {Link = url};
-				if (_mediator != null)
-				{
-					_mediator.SendMessage("HandleLocalHotlink", args);
-					if (args.LinkHandledLocally)
-						return true;
-				}
+				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
+				ReportDuplicateBridge();
 			}
 			return true;
 		}
 
+		private void ReportDuplicateBridge()
+		{
+			FwCoreDlgs.ChooseLangProjectDialog.ReportDuplicateBridge();
+		}
+
+		/// <summary>
+		/// Determine whether or not to show the Send/Receive Project menu item.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
@@ -125,10 +136,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
 			string projectPath;
-			var dataChanged = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
+			bool dataChanged;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
 																	  Environment.UserName,
-																	  FLExBridgeHelper.SendReceive,
-																	  out projectPath, out url);
+																	  FLExBridgeHelper.SendReceive, out dataChanged,
+																	  out projectPath);
+			if (!success)
+			{
+				ReportDuplicateBridge();
+				ProjectLockingService.LockCurrentProject(Cache);
+				return true;
+			}
 			if(dataChanged)
 			{
 				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
@@ -164,8 +182,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
 		}
 
-		#region Implementation of IDisposable
-
 		private bool DetectConflicts(string path, Dictionary<string, long> savedState)
 		{
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
@@ -187,12 +203,27 @@ namespace SIL.FieldWorks.XWorks.LexText
 				result[file] = new FileInfo(file).Length;
 			}
 			return result;
-		}		/// <summary>
+		}
+
+		private void JumpToFlexObject(object sender, FLExJumpEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(e.JumpUrl))
+			{
+				var args = new LocalLinkArgs() { Link = e.JumpUrl };
+				if (_mediator != null)
+					_mediator.SendMessage("HandleLocalHotlink", args);
+			}
+		}
+
+		#region Implementation of IDisposable
+
+		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		/// <filterpriority>2</filterpriority>
 		public void Dispose()
 		{
+			FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 			_mediator.RemoveColleague(this);
 			IsDisposed = true;
 		}

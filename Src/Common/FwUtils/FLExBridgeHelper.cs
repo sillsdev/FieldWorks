@@ -28,10 +28,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ConflictViewer = @"view_notes";
 
+		/// <summary>
+		/// Event handler delegate that passes a jump URL.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public delegate void JumpEventHandler(object sender, FLExJumpEventArgs e);
+
+		/// <summary>
+		/// Event to enabled FLExBridgeListener to find out when the Conflict Report title was clicked.
+		/// </summary>
+		public static event JumpEventHandler FLExJumpUrlChanged;
+
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object waitObject = new object();
-		private static string sjumpUrl;
+		private static object conflictHost;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 
@@ -42,12 +54,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectFolder">optional</param>
 		/// <param name="userName"></param>
 		/// <param name="command"></param>
+		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
-		/// <param name="url">If this out param is other than null, it is a link to jump to in FLEx.</param>
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, out string projectName, out string url)
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command,
+			out bool changesReceived, out string projectName)
 		{
-			sjumpUrl = "";
+			changesReceived = false;
 			string args = "";
+			projectName = "";
 			if (userName != null)
 			{
 				AddArg(ref args, "-u", userName);
@@ -57,12 +71,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AddArg(ref args, "-p", projectFolder);
 			}
 			AddArg(ref args, "-v", command);
-			ServiceHost host = new ServiceHost(typeof (FLExBridgeService),
-											   new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint")});
+			ServiceHost host;
+			try
+			{
+				host = new ServiceHost(typeof (FLExBridgeService),
+												   new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint")});
 
-			//open host ready for business
-			host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
-			host.Open();
+				//open host ready for business
+				host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
+				host.Open();
+			}
+			catch (InvalidOperationException) // Can happen if Conflict Report is open and we try to run FLExBridge again.
+			{
+				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
+			}
+			if (command == ConflictViewer)
+			{
+				LaunchConflictViewer(args); // launching separately here avoids blocking FLEx while viewer is open.
+				conflictHost = host; // so we can kill the host when the bridge quits
+				return true; // In the case of the Conflict Report returning true means we were successful in starting up.
+			}
 			//Start up a thread to wait until the bridge work is completed.
 			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
 			waitOnBridgeThread.Start();
@@ -72,13 +100,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			waitOnBridgeThread.Join();
 				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.
 			projectName = _projectName;
+			changesReceived = _receivedChanges;
 			Cursor.Current = Cursors.Default;
-			//let the service host cleanup happen in another thread so the user can get on with life.
+			KillTheHost(host);
+
+			return true;
+		}
+
+		private static void KillTheHost(ServiceHost host)
+		{
+			// Let the service host cleanup happen in another thread so the user can get on with life.
 			Thread letTheHostDie = new Thread(host.Close);
 			letTheHostDie.Start();
+		}
 
-			url = sjumpUrl;
-			return _receivedChanges;
+		private static void LaunchConflictViewer(string args)
+		{
+			Process.Start(FullFieldWorksBridgePath(), args); // don't bother with all the pipes for the Conflict Report
 		}
 
 		/// <summary>
@@ -158,15 +196,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			#region Implementation of IFLExBridgeService
 
 			/// <summary>
-			/// This method signals that FLExBridge completed normally, but with a URL to jump to.
+			/// This method signals that FLExBridge completed normally.
 			/// </summary>
 			/// <param name="changesReceived">true if the send/receive or other operation resulted in local changes</param>
-			/// <param name="jumpUrl">If we use this method, it's because the user clicked on a conflict title link.</param>
-			public void BridgeWorkComplete(bool changesReceived, string jumpUrl)
+			public void BridgeWorkComplete(bool changesReceived)
 			{
 				_receivedChanges = changesReceived;
-				sjumpUrl = jumpUrl;
 				AlertFLEx();
+				if (conflictHost != null)
+					KillTheHost((ServiceHost)conflictHost);
 			}
 
 			public void BridgeReady()
@@ -177,6 +215,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public void InformFwProjectName(string fwProjectName)
 			{
 				_projectName = fwProjectName;
+			}
+
+			/// <summary>
+			/// FLExBridge user clicked on the title of a particular conflict in the conflict report.
+			/// </summary>
+			/// <param name="jumpUrl">Url of the FLEx object to jump to.</param>
+			public void BridgeSentJumpUrl(string jumpUrl)
+			{
+				if (FLExJumpUrlChanged != null)
+					FLExJumpUrlChanged(this, new FLExJumpEventArgs(jumpUrl));
 			}
 
 			/// <summary>
@@ -198,13 +246,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private interface IFLExBridgeService
 		{
 			[OperationContract]
-			void BridgeWorkComplete(bool changesReceived, string jumpUrl);
+			void BridgeWorkComplete(bool changesReceived);
 
 			[OperationContract]
 			void BridgeReady();
 
 			[OperationContract]
 			void InformFwProjectName(string fwProjectName);
+
+			[OperationContract]
+			void BridgeSentJumpUrl(string jumpUrl);
 		}
 
 		#endregion
@@ -212,14 +263,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Service interface for the methods in FLEXBridge that we can call
 		/// </summary>
-		[ServiceContractAttribute]
+		[ServiceContract]
 		private interface IFLExService
 		{
-
-			[OperationContract]
-			void BridgeWorkOngoing();
-
-			[OperationContractAttribute(AsyncPattern = true)]
+			[OperationContract(AsyncPattern = true)]
 			IAsyncResult BeginBridgeWorkOngoing(AsyncCallback callback, object asyncState);
 
 			void EndBridgeWorkOngoing(IAsyncResult result);
@@ -230,27 +277,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		private interface IFLExServiceChannel : IFLExService, IClientChannel
 		{
-		}
-
-		/// <summary>
-		/// This client
-		/// </summary>
-		private class FLExServiceClient : ClientBase<IFLExService>, IFLExService
-		{
-			public void BridgeWorkOngoing()
-			{
-				Channel.BridgeWorkOngoing();
-			}
-
-			public IAsyncResult BeginBridgeWorkOngoing(AsyncCallback callback, object asyncState)
-			{
-				return Channel.BeginBridgeWorkOngoing(callback, asyncState);
-			}
-
-			public void EndBridgeWorkOngoing(IAsyncResult result)
-			{
-				Channel.EndBridgeWorkOngoing(result);
-			}
 		}
 
 		/// <summary>
@@ -283,4 +309,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#endregion
 	}
+
+	/// <summary>
+	/// Event args plus jump URL
+	/// </summary>
+	public class FLExJumpEventArgs : EventArgs
+	{
+		private readonly string _jumpUrl;
+
+		/// <summary>
+		/// Set up event args with a URL to jump to.
+		/// </summary>
+		/// <param name="jumpUrl"></param>
+		public FLExJumpEventArgs(string jumpUrl)
+		{
+			_jumpUrl = jumpUrl;
+		}
+
+		/// <summary>
+		/// URL that FLEx should jump to when processing this event.
+		/// </summary>
+		public string JumpUrl
+		{
+			get { return _jumpUrl; }
+		}
+	}
+
 }

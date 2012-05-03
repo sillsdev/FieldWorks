@@ -5878,3 +5878,4 @@ KenZ, 2 May 2012. Fixed build script to use new locations for enc converters whe
 DamienD, 3 May 2012. LT-10677: Type-ahead to select existing list items, VS2010 wanted to update some
 	project files.
 AnnB, 3 May 2012. Integrated Graphite changes from WorldPad_Maint to WW for SharonC.
+GordonM, 3 May 2012. Finished LT-12980 (and 12982 hopefully). Will need new FLExBridge.
