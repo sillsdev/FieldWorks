@@ -330,6 +330,7 @@
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${path::combine(tmpWin, 'EC Common')}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmpWin, 'EC\EC\Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir" value="${path::combine(tmpWin, 'EC\EC\Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${dir.outputBase}" verbose="${verbose}"  if="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
 			</when>
