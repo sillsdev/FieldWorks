@@ -41,6 +41,13 @@ Description:
 #define tag_Silf 0x53696c66
 #endif
 
+//#define tag_Feat				0x74616546
+//#define tag_Glat				0x74616c47
+//#define tag_Gloc				0x636f6c47
+//#define tag_CharToIndexMap      0x70616d63        /* 'cmap' */
+//#define tag_OS_2                0x322f534f        /* 'OS/2' */
+//#define tag_Postscript          0x74736f70        /* 'post' */
+
 /////#include "IGrGraphics.h"
 #include "GrResult.h"
 

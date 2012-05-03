@@ -211,14 +211,18 @@ typedef enum SlotAttrName {
 	kslatUserDefnV1, // version 1.0 of the font tables
 	kslatMeasureSol,	kslatMeasureEol,
 	kslatJStretch,		kslatJShrink,	kslatJStep,		kslatJWeight,	kslatJWidth,
+
+	kslatSegsplit = kslatJStretch + 29,
+
 	// this must be last:
 	kslatUserDefn = kslatJStretch + 30,
-	// I think 30 is somewhat arbitrary. We at least need to save 15 slots for more levels of
-	// justification attributes.
+	// I think 30 is somewhat arbitrary. We at least need to save 15 slots (5 attrs * 3 levels)
+	// for more levels of justification attributes.
 
 	kslatMax,
 
 	kslatNoEffect = kslatMax + 1	// for internal use
+
 } SlotAttrName;
 
 
