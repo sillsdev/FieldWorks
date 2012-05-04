@@ -82,9 +82,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return new NullObjectLabel(cache);
 
 			var classId = obj.ClassID;
-			var baseClassId = classId == CmPossibilityTags.kClassId ? classId : obj.Cache.MetaDataCacheAccessor.GetBaseClsId(classId);
-
-			return CmPossibilityTags.kClassId == baseClassId
+			return cache.ClassIsOrInheritsFrom(classId, CmPossibilityTags.kClassId)
 					? new CmPossibilityLabel(cache, obj as ICmPossibility, displayNameProperty, displayWs)
 					: (MoInflClassTags.kClassId == classId
 						? new MoInflClassLabel(cache, obj as IMoInflClass, displayNameProperty, displayWs)
