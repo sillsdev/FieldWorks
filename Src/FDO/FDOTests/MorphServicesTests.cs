@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -462,7 +461,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		///
 		/// </summary>
-		private void DoSetupNewInflVariantTypes()
+		private void DoSetupNewInflVariantTypes_OneTypePerEntryRef()
 		{
 			ILexEntry newMainEntry = GetNewMainEntry();
 
@@ -506,7 +505,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetNewInflVariantTypesOfMainEntryVariants()
 		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupNewInflVariantTypes);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupNewInflVariantTypes_OneTypePerEntryRef);
 
 			var mainEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("mainEntry").FirstOrDefault();
 			var variantRefsOfmainEntry = mainEntry.VariantFormEntryBackRefs;
@@ -535,122 +534,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				gloss = mainOrFirstSense.Gloss;
 		}
 
-		private static ITsString MakeGlossWithReverseAbbrs(IMultiUnicode gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
-		{
-			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
-				return GetTssGloss(gloss, wsGloss);
-			var cache = variantEntryTypes.First().Cache;
-			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			IList<IMultiUnicode> reverseAbbrs = (from variantType in variantEntryTypes
-												  select variantType.ReverseAbbr).ToList();
-			var sb = TsIncStrBldrClass.Create();
-			AddGloss(sb, gloss, wsGloss);
-			const string sBeginSeparator = "+";
-			if (reverseAbbrs.Count() > 0)
-				sb.AppendTsString(TsStringUtils.MakeTss(sBeginSeparator, wsUser.Handle));
-			AddVariantTypeGlossInfo(sb, wsGloss, reverseAbbrs, wsUser);
-			return sb.Text.Length > 0 ? sb.GetString() : null;
-		}
-
-		private static void AddGloss(TsIncStrBldr sb, IMultiUnicode gloss, IWritingSystem wsGloss)
-		{
-			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
-			sb.AppendTsString(tssGloss);
-		}
-
-		private static ITsString GetTssGloss(IMultiUnicode gloss, IWritingSystem wsGloss)
-		{
-			int wsActual;
-			var tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
-			if (tssGloss == null || tssGloss.Length == 0)
-				tssGloss = gloss.NotFoundTss;
-			return tssGloss;
-		}
-
-		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, IWritingSystem wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, IWritingSystem wsUser)
-		{
-			const string sSeriesSeparator = ",";
-			var fBeginSeparator = true;
-			foreach (var multiUnicodeAccessor in multiUnicodeAccessors)
-			{
-				int wsActual2;
-				var tssVariantTypeInfo = multiUnicodeAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
-				// just concatenate them together separated by comma.
-				if (tssVariantTypeInfo == null || tssVariantTypeInfo.Length <= 0) continue;
-				if (!fBeginSeparator)
-					sb.AppendTsString(TsStringUtils.MakeTss(sSeriesSeparator, wsUser.Handle));
-				sb.AppendTsString((tssVariantTypeInfo));
-				fBeginSeparator = false;
-			}
-
-			// Handle the special case where no reverse abbr was found.
-			if (fBeginSeparator && multiUnicodeAccessors.Count > 0)
-			{
-				sb.AppendTsString(multiUnicodeAccessors.ElementAt(0).NotFoundTss);
-			}
-		}
-
-
-		/// <summary>
-		/// </summary>
-		/// <param name="variantEntryType"></param>
-		/// <param name="gloss"></param>
-		/// <param name="wsGloss"></param>
-		/// <returns></returns>
-		private static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiUnicode gloss, IWritingSystem wsGloss)
-		{
-			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
-			if (gloss == null)
-				return null;
-
-			ITsString tssGlossPrepend = null;
-			ITsString tssGlossAppend = null;
-			if (inflVariantEntryType != null)
-			{
-				int wsActual1;
-				tssGlossPrepend =
-					inflVariantEntryType.GlossPrepend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
-				tssGlossAppend =
-					inflVariantEntryType.GlossAppend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
-			}
-
-			if ((tssGlossPrepend == null || tssGlossPrepend.Length == 0) &&
-				(tssGlossAppend == null || tssGlossAppend.Length == 0))
-			{
-				return MakeGlossWithReverseAbbrs(gloss, wsGloss, new[]{variantEntryType});
-			}
-			int wsActual2;
-			ITsString tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
-			if (tssGloss.Length == 0)
-				tssGloss = gloss.NotFoundTss;
-
-			var sb = TsIncStrBldrClass.Create();
-			var cache = inflVariantEntryType.Cache;
-			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			const string sGroupSeparator = ".";
-
-			if (tssGlossPrepend.Length != 0)
-			{
-				sb.AppendTsString(tssGlossPrepend);
-				string extractedAppendSeparator = ExtractDivider(tssGlossPrepend.Text, -1);
-				if (String.IsNullOrEmpty(extractedAppendSeparator))
-					sb.AppendTsString(TsStringUtils.MakeTss(sGroupSeparator, wsUser.Handle));
-			}
-
-			sb.AppendTsString(tssGloss);
-			if (sb.Text.Length == 0)
-				return null; // TODO: add default value for gloss?
-
-			if (tssGlossAppend.Length != 0)
-			{
-				string extractedAppendSeparator = ExtractDivider(tssGlossAppend.Text, 0);
-				if (String.IsNullOrEmpty(extractedAppendSeparator))
-					sb.AppendTsString(TsStringUtils.MakeTss(sGroupSeparator, wsUser.Handle));
-				sb.AppendTsString(tssGlossAppend);
-			}
-
-			return sb.GetString();
-		}
 
 		private static void GetMainEntryAndSenseStack(IVariantComponentLexeme mainEntryOrSense, out ILexEntry mainEntry, out ILexSense mainOrFirstSense)
 		{
@@ -701,14 +584,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				IMultiUnicode gloss1;
 				GetMainVariantGloss(variantRefs.ElementAt(0), out gloss1);
 
-				var variantGloss = MakeGlossWithReverseAbbrs(gloss1, analWs, variantRefs.ElementAt(0).VariantEntryTypesRS);
+				var variantGloss = MorphServices.MakeGlossWithReverseAbbrs(gloss1, analWs, variantRefs.ElementAt(0).VariantEntryTypesRS);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1+dial. var. of"));
 			}
 			{
 				IMultiUnicode gloss2;
 				GetMainVariantGloss(variantRefs.ElementAt(1), out gloss2);
-				var variantGloss = MakeGlossWithReverseAbbrs(gloss2, analWs, variantRefs.ElementAt(1).VariantEntryTypesRS);
+				var variantGloss = MorphServices.MakeGlossWithReverseAbbrs(gloss2, analWs, variantRefs.ElementAt(1).VariantEntryTypesRS);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense2+dial. var. of"));
 			}
@@ -750,7 +633,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1+NPl."));
 			}
@@ -789,7 +672,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("GP.mainEntrySense1"));
 			}
@@ -828,7 +711,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo(@"GP\mainEntrySense1"));
 			}
@@ -868,34 +751,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1.GA"));
 			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="s"></param>
-		/// <param name="startingChr">0, for starting at the beginning, otherwise search from the end.</param>
-		/// <returns></returns>
-		static string ExtractDivider(string s, int startingChr)
-		{
-			if (String.IsNullOrEmpty(s))
-				return "";
-			string extracted = "";
-			if (startingChr == 0)
-			{
-				var match = Regex.Match(s, @"^\W+");
-				extracted = match.Value;
-			}
-			else
-			{
-				var match = Regex.Match(s, @"\W+$");
-				extracted = match.Value;
-			}
-			return extracted;
 		}
 
 		/// <summary>
@@ -905,11 +764,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ExtractDivider_AtEnd()
 		{
 			{
-				string extractedDivider = ExtractDivider("+S", 0);
+				string extractedDivider = MorphServices.ExtractDivider("+S", 0);
 				Assert.That(extractedDivider, Is.EqualTo("+"));
 			}
 			{
-				string extractedDivider2 = ExtractDivider("S", 0);
+				string extractedDivider2 = MorphServices.ExtractDivider("S", 0);
 				Assert.That(extractedDivider2, Is.EqualTo(""));
 			}
 		}
@@ -921,11 +780,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ExtractDivider_AtBeginning()
 		{
 			{
-				string extractedDivider = ExtractDivider("S+", -1);
+				string extractedDivider = MorphServices.ExtractDivider("S+", -1);
 				Assert.That(extractedDivider, Is.EqualTo("+"));
 			}
 			{
-				string extractedDivider2 = ExtractDivider("S", -1);
+				string extractedDivider2 = MorphServices.ExtractDivider("S", -1);
 				Assert.That(extractedDivider2, Is.EqualTo(""));
 			}
 		}
@@ -963,7 +822,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1/GA"));
 			}
@@ -1003,7 +862,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("***.GA"));
 			}
@@ -1043,7 +902,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("***+***"));
 			}
@@ -1087,7 +946,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense.PL"));
 			}
@@ -1130,9 +989,147 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var variantTypePl = variantRefPl.VariantEntryTypesRS[0];
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(variantTypePl, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("***+***"));
+			}
+		}
+
+		/// <summary>
+		/// join each gloss append together (".pl.pst").
+		///
+		/// NOTE: This is a special case where the user has not yet made a choice between .pst and .pl
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfEntry_MultipleVariantTypesPerEntryRef_GlossAppend()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense");
+
+				// Setup variant data
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", ".pl");
+				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPast", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", "pst");
+				ILexEntryRef newLerPluralPast;
+				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
+				newLerPluralPast.VariantEntryTypesRS.Add(letNewPst);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPluralPast").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var glossWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				ITsIncStrBldr sbPrepend;
+				ITsIncStrBldr sbAppend;
+				MorphServices.JoinGlossAffixesOfInflVariantTypes(variantRefPl.VariantEntryTypesRS, glossWs, out sbPrepend, out sbAppend);
+				Assert.That(sbAppend.Text, Is.EqualTo(".pl.pst"));
+				Assert.That(sbPrepend.Text, Is.Null);
+			}
+		}
+
+		/// <summary>
+		///
+		/// join each gloss prepend together ("pst.pl.")
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfEntry_MultipleVariantTypesPerEntryRef_GlossPrepend()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense");
+
+				// Setup variant data
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"pl", "");
+				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPast", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"pst.", "");
+				ILexEntryRef newLerPluralPast;
+				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
+				newLerPluralPast.VariantEntryTypesRS.Add(letNewPst);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPluralPast").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var glossWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				ITsIncStrBldr sbPrepend;
+				ITsIncStrBldr sbAppend;
+				MorphServices.JoinGlossAffixesOfInflVariantTypes(variantRefPl.VariantEntryTypesRS, glossWs, out sbPrepend, out sbAppend);
+				Assert.That(sbPrepend.Text, Is.EqualTo("pl.pst."));
+				Assert.That(sbAppend.Text, Is.Null);
+			}
+		}
+
+		/// <summary>
+		/// join each gloss append together ("pl. (gloss) .pst")
+		/// </summary>
+		[Test]
+		public void GlossOfInflVariantOfEntry_MultipleVariantTypesPerEntryRef_MixGlossPrependAppend()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry newMainEntry = GetNewMainEntry(mainEntrySenseGloss: "mainEntrySense");
+
+				// Setup variant data
+				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
+
+				ITsStrFactory sf = TsStrFactoryClass.Create();
+				// Create new variantType
+				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
+				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPlural", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"pl.", "");
+				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
+															sf.MakeString("NewPast", eng.Handle),
+															sf.MakeString("", eng.Handle),
+															"", ".pst");
+				ILexEntryRef newLerPluralPast;
+				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
+				newLerPluralPast.VariantEntryTypesRS.Add(letNewPst);
+			});
+
+			var variantPl = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("vaNewPluralPast").FirstOrDefault();
+			var variantRefs = DomainObjectServices.GetVariantRefs(variantPl);
+			var variantRefPl = variantRefs.First();
+			IMultiUnicode gloss;
+			GetMainVariantGloss(variantRefPl, out gloss);
+			var glossWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
+			{
+				ITsIncStrBldr sbPrepend;
+				ITsIncStrBldr sbAppend;
+				MorphServices.JoinGlossAffixesOfInflVariantTypes(variantRefPl.VariantEntryTypesRS, glossWs, out sbPrepend, out sbAppend);
+				Assert.That(sbPrepend.Text, Is.EqualTo("pl."));
+				Assert.That(sbAppend.Text, Is.EqualTo(".pst"));
 			}
 		}
 
@@ -1188,7 +1185,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			GetMainVariantGloss(variantRef, out gloss);
 			var analWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
 			{
-				var variantGloss = MakeGlossOptionWithInflVariantTypes(null, gloss, analWs);
+				var variantGloss = MorphServices.MakeGlossOptionWithInflVariantTypes(null, gloss, analWs);
 				Assert.That(variantGloss, Is.Not.Null);
 				Assert.That(variantGloss.Text, Is.EqualTo("mainEntrySense1"));
 			}
