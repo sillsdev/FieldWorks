@@ -92,6 +92,15 @@ namespace SIL.FieldWorks.Resources {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to No guid attribute on factory style [{0}].
+		/// </summary>
+		internal static string ksNoGuidOnFactoryStyle {
+			get {
+				return ResourceManager.GetString("ksNoGuidOnFactoryStyle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to {0}%.
 		/// </summary>
 		internal static string ksPercentage {

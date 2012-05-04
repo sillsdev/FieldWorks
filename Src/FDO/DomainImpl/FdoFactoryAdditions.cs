@@ -1305,6 +1305,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return retval;
 		}
 
+		/// <summary>
+		/// Create a new style with a fixed guid.
+		/// </summary>
+		/// <param name="cache">project cache</param>
+		/// <param name="guid">the factory set guid</param>
+		/// <returns>A style interface</returns>
+		public IStStyle Create(FdoCache cache, Guid guid)
+		{
+			int hvo = ((IDataReader)cache.ServiceLocator.DataSetup).GetNextRealHvo();
+			var retval = new StStyle(cache, hvo, guid);
+			return retval;
+		}
 		#endregion
 	}
 	#endregion

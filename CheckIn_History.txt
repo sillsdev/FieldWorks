@@ -5885,3 +5885,4 @@ EricP, 4 May 2012. Forgot to submit this CheckIn_History.txt with changelist 380
 AnnB, 4 May 2012.  LT-13019 Comment out test that compares the backup library to the default since they aren't always the same.
 EricP, 4 May 2012. Fix ObjectLabels to create labels for all descendent (sub)classes of CmPossibility.
 	This enables Variant Type choosers to select LexEntryInflType sub possibilities.
+LastufkaM, 4 May 2012. LT-12921 Duplicate "Dictionary-Minor" style causes crash: added guids to factory styles so send/receive won't duplicate them and abort.
