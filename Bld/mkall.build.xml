@@ -329,10 +329,9 @@
 				<property name="tmpLib" value="${path::combine(fwroot, 'Lib')}"/>
 				<property name="tmp" value="${path::combine(tmpLib, 'Release')}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${path::combine(tmpWin, 'EC Common')}" verbose="${verbose}"  unless="${platform::is-unix()}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(tmpWin, 'EC\EC\Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir" value="${path::combine(tmpWin, 'EC\EC\Plugins')}" verbose="${verbose}" unless="${platform::is-unix()}"/>
 				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" value="${dir.outputBase}" verbose="${verbose}"  if="${platform::is-unix()}"/>
-				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir" value="${path::combine(dir.outputBase, 'EC/Plugins')}" verbose="${verbose}" if="${platform::is-unix()}"/>
 			</when>
 			<otherwise>
 				<readregistry property="rootCodeDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\${fwversion}.0\RootCodeDir" failonerror="false" verbose="${verbose}"/>
@@ -341,7 +340,7 @@
 				<readregistry property="icu40DataDir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" failonerror="false" verbose="${verbose}"/>
 				<readregistry property="icu40Dir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" failonerror="false" verbose="${verbose}"/>
 				<readregistry property="ecRootDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir" failonerror="false" verbose="${verbose}"/>
-				<readregistry property="ecPluginDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\PluginDir" failonerror="false" verbose="${verbose}"/>
+				<readregistry property="ecPluginDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir" failonerror="false" verbose="${verbose}"/>
 				<property name="updateRegistry" value="${not property::exists('rootCodeDir') or not property::exists('rootDataDir') or not property::exists('projectsDir')
 						  or not property::exists('icu40DataDir') or not property::exists('icu40Dir') or not property::exists('ecRootDir')
 						  or not property::exists('ecPluginDir')}" verbose="${verbose}"/>
@@ -376,7 +375,7 @@
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>
 
 					<property name="tmp" value="${path::combine(tmp, 'Plugins')}"/>
-					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters40 /v PluginDir /d "${tmp}" /f
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters40 /v DeveloperPluginDir /d "${tmp}" /f
 '
 						  file="${dir.outputBase}\updateRegistry.cmd" append="true" verbose="${verbose}"/>
 
