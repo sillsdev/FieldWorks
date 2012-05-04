@@ -270,15 +270,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// Tests the DefaultBackupDirectory property for use on Windows
+		/// This test validates that the a machine's backup directory is the same as the default, which is not a valid assumption.  LT-13019.
 		/// </summary>
-		[Test]
-		[Platform(Exclude="Linux", Reason="Test is Windows specific")]
-		public void DefaultBackupDirectory_Windows()
-		{
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
-		}
-
+		///[Test]
+		///[Platform(Exclude="Linux", Reason="Test is Windows specific")]
+		///public void DefaultBackupDirectory_Windows()
+		///{
+		///	Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+		///		Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
+		///}
+		///
 		/// <summary>
 		/// Tests the DefaultBackupDirectory property for use on Linux
 		/// </summary>
