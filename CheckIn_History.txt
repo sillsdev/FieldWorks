@@ -5880,3 +5880,5 @@ DamienD, 3 May 2012. LT-10677: Type-ahead to select existing list items, VS2010 
 AnnB, 3 May 2012. Integrated Graphite changes from WorldPad_Maint to WW for SharonC.
 GordonM, 3 May 2012. Finished LT-12980 (and 12982 hopefully). Will need new FLEx Bridge.
 RandyR, 3 May 2012. Checked in Flex Bridge 0.3.36.
+EricP, 4 May 2012. Forgot to submit this CheckIn_History.txt with changelist 38009:
+	(LT-7581) Initial support for GlossPrepend/GlossAppend in InterlinVc for variants with irregularly inflected form types.
