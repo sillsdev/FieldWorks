@@ -5888,3 +5888,4 @@ EricP, 4 May 2012. Fix ObjectLabels to create labels for all descendent (sub)cla
 LastufkaM, 4 May 2012. LT-12921 Duplicate "Dictionary-Minor" style causes crash: added guids to factory styles so send/receive won't duplicate them and abort.
 EricP, 7 May 2012. Fixed an interlinear gloss line bug I introduced in my last checkin.
 RandyR, 3 May 2012. Checked in Flex Bridge 0.3.37.
+AnnB, 7 May 2012. LT-12983 - New or additional info for the Options dialog box, Interface tab.
