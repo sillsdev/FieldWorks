@@ -1580,6 +1580,8 @@ namespace SIL.FieldWorks.IText
 
 						if (flid == 0)
 							vwenv.AddString(m_tssMissingSense);
+						else
+							vwenv.AddObjProp(flid, this, kfragLineChoices + i);
 						break;
 
 					case InterlinLineChoices.kflidLexPos:
