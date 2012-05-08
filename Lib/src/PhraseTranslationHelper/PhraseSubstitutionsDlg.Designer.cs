@@ -28,9 +28,16 @@ namespace SILUBS.PhraseTranslationHelper
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+
+				// REVIEW: it might be better to add the two drop downs to the Controls collection
+				if (m_regexMatchDropDown != null)
+					m_regexMatchDropDown.Dispose();
+				if (m_regexReplaceDropDown != null)
+					m_regexReplaceDropDown.Dispose();
 			}
 			base.Dispose(disposing);
 		}

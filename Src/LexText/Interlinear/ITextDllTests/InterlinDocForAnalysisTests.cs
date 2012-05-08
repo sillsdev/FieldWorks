@@ -346,6 +346,17 @@ namespace SIL.FieldWorks.IText
 			m_mediator = new Mediator();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (m_mediator != null)
+					m_mediator.Dispose();
+			}
+			m_mediator = null;
+			base.Dispose(disposing);
+		}
+
 		internal override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
 			var sandbox = new MockSandbox();
