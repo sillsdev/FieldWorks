@@ -228,9 +228,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
+	<Compile Include="..\..\AssemblyInfoForTests.cs">
+	  <Link>AssemblyInfo.cs</Link>
+	</Compile>
+	<None Include="..\..\AppForTests.config">
+	  <Link>App.config</Link>
 	</None>
 	<Compile Include="AnalysisAdjusterTests.cs" />
 	<Compile Include="AnalysisGuessServicesTests.cs" />
@@ -370,7 +372,6 @@
 	<Compile Include="FdoCacheTests.cs" />
 	<Compile Include="fdoStringsTests.cs" />
 	<Compile Include="FdoTestBase.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
 	<Compile Include="IFwMetaDataCacheTests.cs" />
 	<Compile Include="IDomainDataByFlidTests.cs" />
 	<Compile Include="VectorTests.cs" />
