@@ -58,7 +58,8 @@ fi
 
 if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
-	[ ! -d ${FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks} ] && mkdir $FW_CommonAppData
+	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
+	[ ! -d $FW_CommonAppData ] && mkdir $FW_CommonAppData
 fi
 
 
