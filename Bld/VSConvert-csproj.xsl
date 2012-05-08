@@ -217,6 +217,7 @@
 				</if>
 				<call target="register-internal"/>
 				<xsl:apply-templates select="ms:ItemGroup/ms:None[@Include='App.config']" mode="compile"/>
+				<xsl:apply-templates select="ms:ItemGroup/ms:None[contains(@Include, 'AppForTests.config')]" mode="compile"/>
 
 				<xsl:call-template name="IncludePostTarget">
 					<xsl:with-param name="GlobalNodes" select="$GlobalInclude/fw:include/fw:post-build"/>
@@ -712,7 +713,7 @@
 			</sources>
 		</versionex>
 	</xsl:template>
-	<xsl:template match="ms:None[@Include='App.config']" mode="compile">
+	<xsl:template match="ms:None[@Include='App.config' or contains(@Include, 'AppForTests.config')]" mode="compile">
 		<copy file="${{dir.srcProj}}/{translate(@Include,'\','/')}"
 			tofile="${{dir.buildOutput}}/${{project.output}}.config" failonerror="false"/>
 	</xsl:template>

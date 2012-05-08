@@ -162,16 +162,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
 	<EmbeddedResource Include="basicTest.xml" />
 	<EmbeddedResource Include="Properties\Resources.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	</EmbeddedResource>
 	<Compile Include="ConfigurationLoadTests.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="IncludeXmlTests.cs" />
@@ -195,9 +191,12 @@
 	<None Include="InventoryLaterTestFiles\Override1Layouts.xml" />
 	<None Include="CreateOverrideTestData.xml" />
 	<Content Include="listitems.bmp" />
-	<Compile Include="..\..\xWorks\xWorksTests\AssemblyInfo.cs">
+	<Compile Include="..\..\AssemblyInfoForTests.cs">
 	  <Link>AssemblyInfo.cs</Link>
 	</Compile>
+	<None Include="..\..\AppForTests.config">
+	  <Link>App.config</Link>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
