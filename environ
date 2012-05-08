@@ -14,6 +14,8 @@ ARCH=$(uname -m)
 XULRUNNER=$(ls -d /usr/lib/xulrunner-1.9.2* | tail -1)
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
+MONO_RUNTIME=v4.0.30319
+
 # Directory settings
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
@@ -76,6 +78,7 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	MONO_PATH MONO_REGISTRY_PATH \
+	MONO_RUNTIME \
 	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING FW_CommonAppData
 
 #DEBUG_ENABLE_PTR_VALIDATION
