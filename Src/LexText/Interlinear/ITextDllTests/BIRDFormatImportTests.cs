@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -135,7 +136,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -160,7 +163,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -184,7 +189,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
 		}
 
 		[Test]
@@ -196,7 +203,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
 		}
 
 		[Test]
@@ -208,7 +217,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
 		}
 
 		[Test]
@@ -220,7 +231,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
 		[Test]
@@ -232,7 +245,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
 		[Test]
@@ -265,12 +280,14 @@ namespace SIL.FieldWorks.IText
 		{
 			//an interliner text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
-							"<word><morphemes analysisStatus='invalid'/></word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+					"<word><morphemes analysisStatus='invalid'/></word>" +
+				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
