@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Change the Project Directory to some temporary directory to ensure, other units tests don't add projects
 			// which would slow these tests down.
 			m_oldProjectDirectory = DirectoryFinder.ProjectsDirectory;
-			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), "UnitTestProjects");
+			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(DirectoryFinder.ProjectsDirectory);
 
 			RemotingServer.Start();
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			RemotingServer.Stop();
 
-			Directory.Delete(DirectoryFinder.ProjectsDirectory);
+			Directory.Delete(DirectoryFinder.ProjectsDirectory, true);
 			DirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
 
 			m_db4OServerInfo = null;

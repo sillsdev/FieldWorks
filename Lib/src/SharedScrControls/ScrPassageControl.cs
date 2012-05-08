@@ -12,13 +12,14 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Resources;
 using System.Windows.Forms.VisualStyles;
 using SIL.Utils;
@@ -276,6 +277,8 @@ namespace SILUBS.SharedScrControls
 		/// Gets or sets the caption to use when displaying an error in a message box.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public string ErrorCaption
 		{
 			get
@@ -553,6 +556,8 @@ namespace SILUBS.SharedScrControls
 		///	Scripture reference is valid.)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void DisplayErrorMessage()
 		{
 			MessageBox.Show(FindForm(),
@@ -705,6 +710,8 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="spDropDown gets assigned to m_dropdownForm and disposed there")]
 		private void DisplayDropDown()
 		{
 			// Create, position, and display the drop-down form.
@@ -833,6 +840,7 @@ namespace SILUBS.SharedScrControls
 
 			bool fCanceled = ((ScrPassageDropDown)m_dropdownForm).Canceled;
 			ScrReference curRef = ((ScrPassageDropDown)m_dropdownForm).CurrentScRef;
+			m_dropdownForm.Dispose();
 			m_dropdownForm = null;
 
 			// If the drop-down wasn't canceled, then save the reference chosen from it.

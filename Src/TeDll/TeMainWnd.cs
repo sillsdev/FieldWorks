@@ -17,6 +17,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
@@ -1497,6 +1498,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>True if successful; false if user chooses to exit app</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ParatextHelper.GetAssociatedProject returns a reference (?)")]
 		public override bool OnFinishedInit()
 		{
 			CheckDisposed();
@@ -4339,6 +4342,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="args"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ParatextHelper.GetAssociatedProject returns a reference (?)")]
 		protected bool OnFileExportUsfmParatext(object args)
 		{
 			AdjustScriptureAnnotations();

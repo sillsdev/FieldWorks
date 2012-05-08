@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -11,7 +12,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Tests special algorithm for sorting big files.
 	/// </summary>
 	[TestFixture]
-	public class TestBigSorting
+	public class TestBigSorting: BaseTest
 	{
 		/// <summary>
 		/// See if if can sort an empty list.

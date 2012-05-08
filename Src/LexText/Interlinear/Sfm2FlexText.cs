@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace SIL.FieldWorks.IText
 	/// from a single stream as a dictionary from text name to a stream from which the FlexText for a text
 	/// of that name can be read.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_writer gets disposed in Convert method")]
 	internal class Sfm2FlexText
 	{
 		private Dictionary<string, InterlinearMapping> m_mappings = new Dictionary<string, InterlinearMapping>();
@@ -33,7 +36,8 @@ namespace SIL.FieldWorks.IText
 		private string m_pendingMarker; // marker pushed back because not the extra one we were looking for
 		private byte[] m_pendingData; // data corresponding to m_pendingMarker.
 		List<string> m_openElements = new List<string>();
-		List<string> m_docStructure = new List<string>(new [] { "document", "interlinear-text", "paragraphs", "paragraph", "phrases", "phrase", "words", "word" });
+		List<string> m_docStructure = new List<string>(new [] { "document", "interlinear-text",
+			"paragraphs", "paragraph", "phrases", "phrase", "words", "word" });
 		// set emptied when we open a new phrase recording non-repeatable item-type/writing system combinations that have already occurred.
 		private HashSet<Tuple<InterlinDestination, string>> m_itemsInThisPhrase = new HashSet<Tuple<InterlinDestination, string>>();
 		// set emptied when we open a new text recording non-repeatable item-type/writing system combinations that have already occurred.
@@ -44,68 +48,74 @@ namespace SIL.FieldWorks.IText
 			m_reader = reader;
 			m_wsf = wsf;
 			m_tsf = TsStrFactoryClass.Create();
-			var output = new MemoryStream();
-			m_writer = XmlWriter.Create(output, new XmlWriterSettings() { CloseOutput = true });
-			WriteStartElement("document");
-			foreach (var mapping in mappings)
-				m_mappings[mapping.Marker] = mapping;
-			string marker;
-			byte[] data;
-			byte[] badData;
-			while (GetNextSfmMarkerAndData(out marker, out data))
+			using (var output = new MemoryStream())
 			{
-				InterlinearMapping mapping;
-				if (!m_mappings.TryGetValue(marker, out mapping))
-					continue; // ignore any markers we don't know.
-				switch (mapping.Destination)
+				using (m_writer = XmlWriter.Create(output, new XmlWriterSettings() { CloseOutput = true }))
 				{
+					WriteStartElement("document");
+					foreach (var mapping in mappings)
+						m_mappings[mapping.Marker] = mapping;
+					string marker;
+					byte[] data;
+					byte[] badData;
+					while (GetNextSfmMarkerAndData(out marker, out data))
+					{
+						InterlinearMapping mapping;
+						if (!m_mappings.TryGetValue(marker, out mapping))
+							continue; // ignore any markers we don't know.
+						switch (mapping.Destination)
+						{
 						// Todo: many cases need more checks for correct state.
-					default: // Ignored
-						break;
-					case InterlinDestination.Source:
-						MakeRootItem(mapping, data, "source");
-						break;
-					case InterlinDestination.Abbreviation:
-						MakeRootItem(mapping, data, "title-abbreviation");
-						break;
-					case InterlinDestination.Title:
-						MakeRootItem(mapping, data, "title");
-						break;
-					case InterlinDestination.Comment:
-						MakeRootItem(mapping, data, "comment");
-						break;
-					case InterlinDestination.ParagraphBreak:
-						HandleParaBreak();
-						break;
-					case InterlinDestination.Reference:
-						HandleReference(mapping, data);
-						break;
-					case InterlinDestination.Baseline:
-						HandleBaseline(mapping, data);
-						break;
-					case InterlinDestination.FreeTranslation:
-						MakeRepeatableItem(mapping, data, "gls", "phrase", m_itemsInThisPhrase);
-						break;
-					case InterlinDestination.LiteralTranslation:
-						MakeRepeatableItem(mapping, data, "lit", "phrase", m_itemsInThisPhrase);
-						break;
-					case InterlinDestination.Note:
-						MakeItem(mapping, data, "note", "phrase");
-						break;
+							default: // Ignored
+								break;
+							case InterlinDestination.Source:
+								MakeRootItem(mapping, data, "source");
+								break;
+							case InterlinDestination.Abbreviation:
+								MakeRootItem(mapping, data, "title-abbreviation");
+								break;
+							case InterlinDestination.Title:
+								MakeRootItem(mapping, data, "title");
+								break;
+							case InterlinDestination.Comment:
+								MakeRootItem(mapping, data, "comment");
+								break;
+							case InterlinDestination.ParagraphBreak:
+								HandleParaBreak();
+								break;
+							case InterlinDestination.Reference:
+								HandleReference(mapping, data);
+								break;
+							case InterlinDestination.Baseline:
+								HandleBaseline(mapping, data);
+								break;
+							case InterlinDestination.FreeTranslation:
+								MakeRepeatableItem(mapping, data, "gls", "phrase", m_itemsInThisPhrase);
+								break;
+							case InterlinDestination.LiteralTranslation:
+								MakeRepeatableItem(mapping, data, "lit", "phrase", m_itemsInThisPhrase);
+								break;
+							case InterlinDestination.Note:
+								MakeItem(mapping, data, "note", "phrase");
+								break;
+						}
+					}
+					m_writer.Close();
 				}
-			}
-			m_writer.Close();
-			var result = output.ToArray();
-			if (Form.ActiveForm != null && (Form.ModifierKeys & Keys.Shift) == Keys.Shift)
-			{
-				// write out the intermediate file
-				var intermediatePath = Path.Combine(Path.GetDirectoryName(reader.FileName),
+				var result = output.ToArray();
+				if (Form.ActiveForm != null && (Form.ModifierKeys & Keys.Shift) == Keys.Shift)
+				{
+					// write out the intermediate file
+					var intermediatePath = Path.Combine(Path.GetDirectoryName(reader.FileName),
 					Path.GetFileNameWithoutExtension(reader.FileName) + "-intermediate.xml");
-				var stream = File.Create(intermediatePath);
-				stream.Write(result, 0, result.Length);
-				stream.Close();
+					using (var stream = File.Create(intermediatePath))
+					{
+						stream.Write(result, 0, result.Length);
+						stream.Close();
+					}
+				}
+				return result;
 			}
-			return result;
 		}
 
 		/// <summary>

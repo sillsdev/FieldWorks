@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -139,11 +140,15 @@ namespace SIL.FieldWorks.IText
 					components.Dispose();
 				if (m_clerk != null)
 					m_clerk.ConcordanceControl = null;
+				if (m_pOSPopupTreeManager != null)
+					m_pOSPopupTreeManager.Dispose();
+
 				// Don't dispose of the clerk, since it can monitor relevant PropChanges
 				// that affect the NeedToReloadVirtualProperty.
 			}
 			m_clerk = null;
 			m_mediator = null;
+			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
 
@@ -595,6 +600,8 @@ namespace SIL.FieldWorks.IText
 		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
 		/// </summary>
 		/// <param name="line"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_pOSPopupTreeManager gets disposed in Dispose()")]
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			if(m_pOSPopupTreeManager != null)
@@ -612,12 +619,12 @@ namespace SIL.FieldWorks.IText
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
-											 m_cache,
-											 m_cache.LanguageProject.PartsOfSpeechOA,
-											 m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-											 false,
-											 m_mediator,
-											 (Form)m_mediator.PropertyTable.GetValue("window"));
+											m_cache,
+											m_cache.LanguageProject.PartsOfSpeechOA,
+											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
+											false,
+											m_mediator,
+											(Form)m_mediator.PropertyTable.GetValue("window"));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;

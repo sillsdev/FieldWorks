@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
@@ -116,6 +117,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// </summary>
 		/// <param name="actionHandler"></param>
 		/// <param name="task"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See comment")]
 		public static void DoSomehow(IActionHandler actionHandler, Action task)
 		{
 			var uowService = ((UndoStack)actionHandler).UowService;
@@ -124,6 +127,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			else if (uowService.CurrentProcessingState == UnitOfWorkService.FdoBusinessTransactionState.ReadyForBeginTask)
 				Do(actionHandler, task);
 			else
+				// The new NonUndoableUnitOfWorkHelper disposes itself when it gets the PropChanged
+				// event from the action Handler.
 				new NonUndoableUnitOfWorkHelper(actionHandler, task);
 		}
 

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
@@ -13,6 +14,8 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class ConcordanceContainer : XCore.MultiPane, IRefreshableRoot
 	{
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ReCurseControls() returns a reference")]
 		public bool RefreshDisplay()
 		{
 			ConcordanceControl concordanceControl = ReCurseControls(this);

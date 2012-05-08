@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -298,6 +299,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			#endregion INotifyControlInCurrentSlice implementation
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="FindForm() returns a reference")]
 			private void DoValidation(bool refresh)
 			{
 				Form frm = FindForm();

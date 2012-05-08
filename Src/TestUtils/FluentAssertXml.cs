@@ -158,12 +158,13 @@ namespace Palaso.TestUtilities
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
 			settings.ConformanceLevel = ConformanceLevel.Fragment;
-			XmlWriter writer = XmlWriter.Create(Console.Out, settings);
-			node.WriteContentTo(writer);
-			writer.Flush();
-			Console.WriteLine();
+			using (XmlWriter writer = XmlWriter.Create(Console.Out, settings))
+			{
+				node.WriteContentTo(writer);
+				writer.Flush();
+				Console.WriteLine();
+			}
 		}
-
 
 		public  void HasNoMatchForXpath(string xpath, XmlNamespaceManager nameSpaceManager)
 		{

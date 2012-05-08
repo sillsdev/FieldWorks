@@ -32,10 +32,17 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	[TestFixture]
 	public class FdoCacheTests : MemoryOnlyBackendProviderTestBase
 	{
+		private string m_oldProjectDirectory;
+
 		/// <summary>Setup for db4o client server tests.</summary>
-		[TestFixtureSetUp]
-		public void Init()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
+			m_oldProjectDirectory = DirectoryFinder.ProjectsDirectory;
+			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(DirectoryFinder.ProjectsDirectory);
+
 			try
 			{
 				// Allow db4o client server unit test to work without running the window service.
@@ -51,10 +58,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		}
 
 		/// <summary>Stop db4o client server.</summary>
-		[TestFixtureTearDown]
-		public void UnInit()
+		public override void FixtureTeardown()
 		{
 			FwRemoteDatabaseConnector.RemotingServer.Stop();
+			Directory.Delete(DirectoryFinder.ProjectsDirectory, true);
+			DirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
+			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------

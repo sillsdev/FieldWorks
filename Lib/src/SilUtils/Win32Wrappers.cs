@@ -15,6 +15,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms.VisualStyles;
@@ -1204,6 +1205,8 @@ namespace SIL.Utils
 		public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType);
 #else
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="temp is a reference")]
 		public static int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType)
 		{
@@ -1496,6 +1499,8 @@ namespace SIL.Utils
 		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr GetParent(IntPtr hWnd);
 #else
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="temp is a reference")]
 		public static IntPtr GetParent(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1505,11 +1510,14 @@ namespace SIL.Utils
 			return IntPtr.Zero;
 		}
 #endif
+
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll")]
 		public extern static bool SetForegroundWindow(IntPtr hWnd);
 #else
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="temp is a reference")]
 		public static bool SetForegroundWindow(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1522,6 +1530,7 @@ namespace SIL.Utils
 			return false;
 		}
 #endif
+
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll")]
@@ -1539,6 +1548,8 @@ namespace SIL.Utils
 		[DllImport("user32.dll")]
 		public extern static bool GetWindowRect(IntPtr hWnd, out Rect rect);
 #else
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="temp is a reference")]
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1974,8 +1985,11 @@ System.Reflection.BindingFlags.Static );
 #else
 		public static int GetWindowThreadProcessId(IntPtr hwnd, out int procID)
 		{
-			procID = System.Diagnostics.Process.GetCurrentProcess().Id;
-			return System.Threading.Thread.CurrentThread.ManagedThreadId;
+			using (var process = System.Diagnostics.Process.GetCurrentProcess())
+			{
+				procID = process.Id;
+				return System.Threading.Thread.CurrentThread.ManagedThreadId;
+			}
 		}
 
 		[DllImport ("libc")]

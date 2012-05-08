@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.ServiceModel;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -39,6 +40,8 @@ namespace SIL.FieldWorks.LexicalProvider
 	[ServiceBehavior(IncludeExceptionDetailInFaults = true,
 		InstanceContextMode = InstanceContextMode.Single,
 		MaxItemsInObjectGraph = 2147483647)]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public sealed class LexicalProviderImpl : ILexicalProvider
 	{
 		private const string kAnalysisPrefix = "Analysis:";

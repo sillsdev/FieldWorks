@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
@@ -446,6 +447,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bookNode">The book node.</param>
 		/// <returns><c>true</c> if the dummy node was replaced by real child node(s)</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private bool FillInBookChildren(TreeNode bookNode)
 		{
 			IScrBook book = bookNode.Tag as IScrBook;

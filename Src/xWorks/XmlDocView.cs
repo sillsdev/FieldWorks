@@ -14,10 +14,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -591,6 +592,8 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		protected override void OnMouseClick(MouseEventArgs e)
 		{
 			if ((ModifierKeys & Keys.Control) == Keys.Control)
@@ -924,6 +927,8 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void GiveSimpleWarning(ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
@@ -952,6 +957,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
 			msg = String.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
 							m_mediator.HelpTopicProvider.HelpFile,

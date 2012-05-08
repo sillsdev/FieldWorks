@@ -23,10 +23,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Windows.Forms;
@@ -485,6 +486,8 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Replacing new line characters")]
 		public static string ConvertMultiparagraphToSafeXml(string sInput)
 		{
 			string sOutput = sInput;
@@ -683,8 +686,12 @@ namespace SIL.Utils
 		/// <param name="xml"></param>
 		/// <param name="targetType"></param>
 		/// <returns>null if we didn't deserialize the object</returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		static public object DeserializeXmlString(string xml, Type targetType)
 		{
+			// TODO-Linux: System.Boolean System.Type::op_{Ine,E}quality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (String.IsNullOrEmpty(xml) || targetType == null)
 				return null;
 			using (MemoryStream stream = new MemoryStream())
@@ -741,6 +748,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static System.Reflection.MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
 			string sMethodName, string sContext, out System.Type typeFound)
 		{
@@ -771,6 +780,8 @@ namespace SIL.Utils
 				string sMsg = MakeGetStaticMethodErrorMessage(sMainMsg, sContext);
 				throw new RuntimeConfigurationException(sMsg, error);
 			}
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			Debug.Assert(typeFound != null);
 			System.Reflection.MethodInfo mi = null;
 			try

@@ -423,6 +423,8 @@ namespace SIL.FieldWorks.TE
 		/// Method adapted from TextCollectionControl method of same name, to use our dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ScrText gets added to ScrTextCollection")]
 		private void SelectTexts()
 		{
 			// Create list of current items
@@ -451,6 +453,7 @@ namespace SIL.FieldWorks.TE
 				{
 					if (ScrTextCollection.Get(nameVar) == null)
 					{
+						// REVIEW: I'm not sure how/if ScrTextCollection gets disposed
 						ScrText scrText = new ScrText(nameVar);
 						ScrTextCollection.Add(scrText);
 					}

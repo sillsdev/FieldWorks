@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		private class ParatextHelperAdapter : IParatextHelper
 		{
-			static ParatextHelperAdapter()
+			/// <summary/>
+			public ParatextHelperAdapter()
 			{
 				try
 				{

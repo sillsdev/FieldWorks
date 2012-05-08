@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SIL.Utils;
 using Paratext;
 
@@ -51,6 +52,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns><c>true</c> if the Paratext mappings were loaded successfully; <c>false</c>
 		/// otherwise</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See REVIEW comment")]
 		public bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
 		{
 			// If the new project ID is null, then do not load mappings.
@@ -61,6 +64,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ScrText scParatextText;
 			try
 			{
+				// REVIEW (EberhardB): I'm not sure if ScrTextCollection.Get() returns a
+				// reference to a ScrText or a new object (in which case we would have to
+				// call Dispose() on it)
 				scParatextText = ScrTextCollection.Get(project);
 			}
 			catch (Exception ex)

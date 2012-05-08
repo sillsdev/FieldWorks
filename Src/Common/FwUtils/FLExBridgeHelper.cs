@@ -57,28 +57,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AddArg(ref args, "-p", projectFolder);
 			}
 			AddArg(ref args, "-v", command);
-			ServiceHost host = new ServiceHost(typeof (FLExBridgeService),
-											   new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint")});
-
-			//open host ready for business
-			host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
-			host.Open();
-			//Start up a thread to wait until the bridge work is completed.
-			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
-			waitOnBridgeThread.Start();
-			//Launch the bridge process.
-			Process.Start(FullFieldWorksBridgePath(), args);
-			Cursor.Current = Cursors.WaitCursor;
-			waitOnBridgeThread.Join();
+			using (ServiceHost host = new ServiceHost(typeof (FLExBridgeService),
+				new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint")}))
+			{
+				//open host ready for business
+				host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
+				host.Open();
+				//Start up a thread to wait until the bridge work is completed.
+				Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
+				waitOnBridgeThread.Start();
+				//Launch the bridge process.
+				using (Process.Start(FullFieldWorksBridgePath(), args));
+				Cursor.Current = Cursors.WaitCursor;
+				waitOnBridgeThread.Join();
 				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.
-			projectName = _projectName;
-			Cursor.Current = Cursors.Default;
-			//let the service host cleanup happen in another thread so the user can get on with life.
-			Thread letTheHostDie = new Thread(host.Close);
-			letTheHostDie.Start();
+				projectName = _projectName;
+				Cursor.Current = Cursors.Default;
+				//let the service host cleanup happen in another thread so the user can get on with life.
+				Thread letTheHostDie = new Thread(host.Close);
+				letTheHostDie.Start();
 
-			url = sjumpUrl;
-			return _receivedChanges;
+				url = sjumpUrl;
+				return _receivedChanges;
+			}
 		}
 
 		/// <summary>
@@ -91,24 +92,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				//wait until we are notified that the bridge is listening.
 				Monitor.Wait(waitObject, -1); // infinite timeout
-				var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
-																	  new EndpointAddress("net.pipe://localhost/FLExEndpoint/FLExPipe"));
-				var channelClient = factory.CreateChannel();
-				channelClient.OperationTimeout = TimeSpan.MaxValue;
-				channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
-				while (true)
+				using (var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
+					new EndpointAddress("net.pipe://localhost/FLExEndpoint/FLExPipe")))
 				{
-					try
+					var channelClient = factory.CreateChannel();
+					channelClient.OperationTimeout = TimeSpan.MaxValue;
+					channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
+					while (true)
 					{
-						//wait for a notify\pulse event and release the lock to other threads, re-aquires the lock before continueing.
-						Monitor.Wait(waitObject, -1); // infinite timeout
-						break;
+						try
+						{
+							//wait for a notify\pulse event and release the lock to other threads, re-aquires the lock before continueing.
+							Monitor.Wait(waitObject, -1); // infinite timeout
+							break;
+						}
+						catch (ThreadInterruptedException)
+						{
+							continue; //This bizarre case is usually the result of spurious hardware interrupts, we still want to wait
+						}
+						//all other exceptions should bust out of this method
 					}
-					catch (ThreadInterruptedException)
-					{
-						continue; //This bizarre case is usually the result of spurious hardware interrupts, we still want to wait
-					}
-					//all other exceptions should bust out of this method
 				}
 			}
 			finally

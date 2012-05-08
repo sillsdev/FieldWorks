@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -15,6 +16,8 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="_mediator is a reference")]
 	class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
@@ -107,6 +110,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="newApp is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
 			if (IsDb4oProject)
@@ -174,15 +179,36 @@ namespace SIL.FieldWorks.XWorks.LexText
 				result[file] = new FileInfo(file).Length;
 			}
 			return result;
-		}		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		/// <filterpriority>2</filterpriority>
+		}
+
+		#region Disposable stuff
+		#if DEBUG
+		/// <summary/>
+		~FLExBridgeListener()
+		{
+			Dispose(false);
+		}
+		#endif
+
+		/// <summary/>
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
 			_mediator.RemoveColleague(this);
+			}
 			IsDisposed = true;
 		}
+		#endregion
 
 		#endregion
 

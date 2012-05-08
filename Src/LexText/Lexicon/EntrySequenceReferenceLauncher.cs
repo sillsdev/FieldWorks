@@ -351,6 +351,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#endregion
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_parentWindow is a reference")]
 	internal class AddPrimaryLexemeChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntryRef m_lexEntryRef;
@@ -416,6 +418,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// 1) It expects an ILexEntry instead of an ILexEntryRef;
 	/// 2) It displays the EntryGoDlg instead of the LinkEntryOrSenseDlg.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_parentWindow is a reference")]
 	internal class AddComplexFormChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntry m_lexEntry;

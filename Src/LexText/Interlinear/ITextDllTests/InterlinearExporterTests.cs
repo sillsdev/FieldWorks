@@ -20,14 +20,9 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinearExporterTestsBase : InterlinearTestBase
 	{
-		protected FDO.IText m_text1 = null;
-		XmlDocument m_textsDefn;
-		XmlDocument m_exportedXml;
-		XmlWriter m_writer = null;
-		InterlinearExporter m_exporter = null;
-		protected InterlinLineChoices m_choices = null;
-		MemoryStream m_stream = null;
-		InterlinVc m_vc = null;
+		protected FDO.IText m_text1;
+		protected InterlinLineChoices m_choices;
+		private XmlDocument m_textsDefn;
 
 
 		[TestFixtureSetUp]
@@ -35,8 +30,6 @@ namespace SIL.FieldWorks.IText
 		{
 			base.FixtureSetup();
 			m_textsDefn = new XmlDocument();
-			m_exportedXml = new XmlDocument();
-			m_vc = new InterlinVc(Cache);
 		}
 
 		protected virtual FDO.IText SetupDataForText1()
@@ -53,23 +46,23 @@ namespace SIL.FieldWorks.IText
 
 		protected XmlDocument ExportToXml(string mode)
 		{
-			using (m_stream = new MemoryStream())
-			using (m_writer = new XmlTextWriter(m_stream, System.Text.Encoding.UTF8))
+			XmlDocument exportedXml = new XmlDocument();
+			using (var vc = new InterlinVc(Cache))
+			using (var stream = new MemoryStream())
+			using (var writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8))
 			{
-				m_exporter = InterlinearExporter.Create(mode, Cache, m_writer, m_text1.ContentsOA, m_choices, m_vc);
-				m_exporter.WriteBeginDocument();
-				m_exporter.ExportDisplay();
-				m_exporter.WriteEndDocument();
-				m_writer.Flush();
-				m_stream.Seek(0, SeekOrigin.Begin);
-				m_exportedXml.Load(m_stream);
+				var exporter = InterlinearExporter.Create(mode, Cache, writer, m_text1.ContentsOA, m_choices, vc);
+				exporter.WriteBeginDocument();
+				exporter.ExportDisplay();
+				exporter.WriteEndDocument();
+				writer.Flush();
+				stream.Seek(0, SeekOrigin.Begin);
+				exportedXml.Load(stream);
 			}
-			m_writer = null;
-			m_stream = null;
 #pragma warning disable 219
-			string xml = m_exportedXml.InnerXml;
+			string xml = exportedXml.InnerXml;
 #pragma warning restore 219
-			return m_exportedXml;
+			return exportedXml;
 		}
 
 		protected XmlDocument ExportToXml()
@@ -239,6 +232,7 @@ namespace SIL.FieldWorks.IText
 			/// Validate that the guids for each paragraph, and each phrase and word annotation are unique.
 			/// </summary>
 			[Test]
+			[Platform(Exclude = "Linux", Reason = "Need to fix validation (FWNX-852)")]
 			public void ValidateELANExport()
 			{
 				m_choices.Add(InterlinLineChoices.kflidWord);
@@ -255,7 +249,7 @@ namespace SIL.FieldWorks.IText
 				//validate export xml against schema
 				var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
 
-				string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates\Interlinear");
+				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
 				string file = Path.Combine(p, "FlexInterlinear.xsd");
 				settings.Schemas.Add("", file);
 				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);

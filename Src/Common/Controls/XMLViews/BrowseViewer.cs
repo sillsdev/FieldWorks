@@ -19,11 +19,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
 using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -2579,9 +2580,9 @@ namespace SIL.FieldWorks.Common.Controls
 				InitSorter(Sorter);
 			}
 			else if (fOrderChanged)
-			{
-				SyncSortArrows(Sorter);
-			}
+				{
+					SyncSortArrows(Sorter);
+				}
 			// The record list will take care of triggering any needed layout or refresh.
 			// Trying to do it explicitly here led to LT-8090 and other problems.
 
@@ -2589,6 +2590,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollContainer.PerformLayout();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ch gets added to Columns collection and disposed there")]
 		private void RebuildHeaderColumns(List<XmlNode> colSpecs, Dictionary<XmlNode, int> widths)
 		{
 			m_lvHeader.BeginUpdate();

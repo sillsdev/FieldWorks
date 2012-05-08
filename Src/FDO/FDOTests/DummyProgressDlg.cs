@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
@@ -24,6 +25,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Simple implementation for testing
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_threadHelper is a singleton and disposed by the SingletonsContainer")]
 	public class DummyProgressDlg : IThreadedProgress
 	{
 		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();

@@ -231,15 +231,17 @@ namespace XCore
 		[Test]
 		public void Prioritize()
 		{
-			Mediator mediator = new Mediator();
-			mediator.AddColleague(new LowColleague());
-			mediator.AddColleague(new HighColleague());
-			mediator.AddColleague(new MedColleague());
+			using (Mediator mediator = new Mediator())
+			{
+				mediator.AddColleague(new LowColleague());
+				mediator.AddColleague(new HighColleague());
+				mediator.AddColleague(new MedColleague());
 
-			ArrayList testList = new ArrayList();
-			ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
-			mediator.SendMessage("AddTestItem", testList);
-			CollectionAssert.AreEqual(testList, expectedResult, "Mediator message Prioritization is broken.");
+				ArrayList testList = new ArrayList();
+				ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
+				mediator.SendMessage("AddTestItem", testList);
+				CollectionAssert.AreEqual(testList, expectedResult, "Mediator message Prioritization is broken.");
+			}
 		}
 	}
 	/// <summary>

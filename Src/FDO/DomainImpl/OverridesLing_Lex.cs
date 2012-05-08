@@ -18,6 +18,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -2905,6 +2906,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Overrides the method, so we can also merge similar MSAs and allomorphs, after the main merge.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
 		{
 			if (!(objSrc is ILexEntry))
@@ -2987,6 +2990,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				for (i = formList.Count - 1; i >= 0; --i)
 				{
 					IMoForm formToConsider = formList[i];
+					// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					if (formToProcess.GetType() == formToConsider.GetType()
 						&& formToProcess.Form.VernacularDefaultWritingSystem.Text == formToConsider.Form.VernacularDefaultWritingSystem.Text
 						&& formToProcess.MorphTypeRA == formToConsider.MorphTypeRA)

@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -29,6 +30,8 @@ namespace SIL.CoreImpl
 	/// HDC in the VwGraphics.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="m_parent is a reference")]
 	public class GraphicsManager : IFWDisposable
 	{
 		private volatile int m_cactInitGraphics = 0;

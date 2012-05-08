@@ -4030,6 +4030,8 @@ namespace SIL.FieldWorks.Discourse
 			view.ResumeLayout();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeNotesColumnHeader(ListView view)
 		{
 			// Add one more column for notes.
@@ -4038,6 +4040,8 @@ namespace SIL.FieldWorks.Discourse
 			view.Columns.Add(ch);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private void MakeTemplateColumnHeaders(ListView view)
 		{
 			foreach (var col in AllMyColumns)
@@ -4054,6 +4058,8 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeRowNumberColumnHeader(ListView view)
 		{
 			var ch = new ColumnHeader();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -15,7 +16,8 @@ namespace SIL.FieldWorks.IText
 	public partial class LinguaLinksImport
 	{
 		//this delegate is used for alerting the user of new writing systems found in the import
-		private delegate DialogResult ShowDialogAboveProgressbarDelegate(IThreadedProgress progress, string text, string title, MessageBoxButtons buttons);
+		private delegate DialogResult ShowDialogAboveProgressbarDelegate(IThreadedProgress progress,
+			string text, string title, MessageBoxButtons buttons);
 
 		private static ImportInterlinearOptions s_importOptions;
 
@@ -29,15 +31,18 @@ namespace SIL.FieldWorks.IText
 		/// <param name="title"></param>
 		/// <param name="buttons"></param>
 		/// <returns></returns>
-		private static DialogResult ShowDialogAboveProgressbar(IThreadedProgress progress, string text, string title, MessageBoxButtons buttons)
+		private static DialogResult ShowDialogAboveProgressbar(IThreadedProgress progress,
+			string text, string title, MessageBoxButtons buttons)
 		{
 			return MessageBox.Show(progress.Form,
-								   text,
-								   title,
-								   buttons,
-								   MessageBoxIcon.Warning);
+				text,
+				title,
+				buttons,
+				MessageBoxIcon.Warning);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="Cache is a reference")]
 		internal class TextCreationParams
 		{
 			internal Interlineartext InterlinText;

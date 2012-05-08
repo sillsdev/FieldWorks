@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -773,7 +774,8 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			// Set the combobox index to the second Paratext project in the list (NSF).
 			ComboBox cbo = ReflectionHelper.GetField(m_importWizard, "cboPTLangProj") as ComboBox;
 			// We have to manually add the projects because they could not be loaded.
-			cbo.Items.AddRange(new object[] { m_ptHelper.AddProject("NEC"), m_ptHelper.AddProject("NSF") });
+			cbo.Items.AddRange(new object[] { m_ptHelper.Projects.Where(x => x.Name == "NEC"),
+				m_ptHelper.Projects.Where(x => x.Name == "NSF") });
 
 			cbo.SelectedIndex = 1;
 

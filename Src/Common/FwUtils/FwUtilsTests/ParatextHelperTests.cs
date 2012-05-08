@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext;
@@ -29,10 +30,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class MockParatextHelper : IParatextHelper
+	public class MockParatextHelper : IParatextHelper, IDisposable
 	{
 		/// <summary>The list of projects to simulate in Paratext</summary>
 		public readonly List<ScrText> Projects = new List<ScrText>();
+
+		#region Disposable stuff
+		#if DEBUG
+		/// <summary/>
+		~MockParatextHelper()
+		{
+			Dispose(false);
+		}
+		#endif
+
+		/// <summary/>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary/>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+				foreach (var scrText in Projects)
+					scrText.Dispose();
+
+				Projects.Clear();
+			}
+			IsDisposed = true;
+		}
+		#endregion
 
 		#region IParatextHelper implementation
 		/// ------------------------------------------------------------------------------------
@@ -92,9 +128,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName)
+		public void AddProject(string shortName)
 		{
-			return AddProject(shortName, null);
+			AddProject(shortName, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -102,9 +138,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName, string associatedProject)
+		public void AddProject(string shortName, string associatedProject)
 		{
-			return AddProject(shortName, associatedProject, null, true, false);
+			AddProject(shortName, associatedProject, null, true, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -112,9 +148,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName, string associatedProject, string baseProject)
+		public void AddProject(string shortName, string associatedProject, string baseProject)
 		{
-			return AddProject(shortName, associatedProject, baseProject, true, false);
+			AddProject(shortName, associatedProject, baseProject, true, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -122,10 +158,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName, string associatedProject, string baseProject,
+		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource)
 		{
-			return AddProject(shortName, associatedProject, baseProject, editable, isResource, "0010000000");
+			AddProject(shortName, associatedProject, baseProject, editable, isResource, "0010000000");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -133,10 +169,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName, string associatedProject, string baseProject,
+		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource, string booksPresent)
 		{
-			return AddProject(shortName, associatedProject, baseProject, editable, isResource,
+			AddProject(shortName, associatedProject, baseProject, editable, isResource,
 				booksPresent, DerivedTranslationType.BackTranslation);
 		}
 
@@ -145,7 +181,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrText AddProject(string shortName, string associatedProject, string baseProject,
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ScrText gets added to Projects collection and disposed there")]
+		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource, string booksPresent, DerivedTranslationType derivedTranslationType)
 		{
 			ScrText scrText = new ScrText();
@@ -162,7 +200,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				scrText.BooksPresent = booksPresent;
 
 			Projects.Add(scrText);
-			return scrText;
 		}
 		#endregion
 	}
@@ -179,22 +216,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude="Linux", Reason = "fails on Linux on build machine in fixture setup")]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_ptHelper gets disposed in TearDown()")]
 	public class ParatextHelperTests : BaseTest
 	{
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 
 		#region Setup/Teardown
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -214,7 +242,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[SetUp]
 		public void Setup()
 		{
-			m_ptHelper.Projects.Clear();
+			m_ptHelper = new MockParatextHelper();
+			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
+		}
+
+		/// <summary/>
+		[TearDown]
+		public void TearDown()
+		{
+			m_ptHelper.Dispose();
 		}
 		#endregion
 
@@ -240,6 +276,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="found is a reference")]
 		public void GetAssociatedProject()
 		{
 			m_ptHelper.AddProject("MNKY", "Soup");

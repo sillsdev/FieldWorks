@@ -98,6 +98,8 @@ namespace XCore
 				m_justCheckingForReceivers = justCheckingForReceivers;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -118,6 +120,8 @@ namespace XCore
 				{
 					Type parmType = m_parameterTypes[i];
 					object parmValue = m_parameterList[i];
+					// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					if (asItem.m_parameterTypes[i] != parmType || asItem.m_parameterList[i] != parmValue)
 						return false;
 				}

@@ -123,7 +123,7 @@
 	</target>
 	<!-- -->
 	<target name="MigrateSqlDbs" description="Build the MigrateSqlDbs program." depends="BasicUtils,FDO,FwControls,FwResources,FwUtils">
-		<call target="MigrateSqlDbs-nodep" cascade="false"/>
+		<call target="MigrateSqlDbs-nodep" cascade="false" unless="${platform::is-unix()}"/>
 	</target>
 	<target name="MigrateSqlDbs-nodep">
 		<property name="dir.srcProj" value="${fwroot}/Src/MigrateSqlDbs"/>

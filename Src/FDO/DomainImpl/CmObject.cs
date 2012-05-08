@@ -18,6 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -28,7 +30,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
@@ -691,6 +692,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="fLoseNoStringData"></param>
 		/// <param name="flidList">List of property flids to consider for merging</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public void MergeSelectedPropertiesOfObject(ICmObject objSrc, bool fLoseNoStringData, int[] flidList)
 		{
 			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
@@ -995,6 +998,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 								}
 								break;
 							}
+							// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+							// is marked with [MonoTODO] and might not work as expected in 4.0.
 							else if (fLoseNoStringData && nType == (int)CellarPropertyType.OwningAtomic && srcObj != null
 								&& currentObj.GetType() == srcObj.GetType())
 							{

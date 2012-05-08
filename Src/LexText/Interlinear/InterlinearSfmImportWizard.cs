@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -131,113 +133,120 @@ namespace SIL.FieldWorks.IText
 
 		private string GetFiles(string currentFiles)
 		{
-			var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm,
-				FileFilterType.AllFiles);
-			openFileDialog.CheckFileExists = true;
-			openFileDialog.Multiselect = true; // can import multiple files
-
-			var files = currentFiles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			string dir = string.Empty;
-			string initialFileName = string.Empty;
-			openFileDialog.FileName = "";
-			if (files.Length > 0)
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
-				var firstFilePath = files[0].Trim();
-				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
-				// Now we make sure parts are valid before setting the values in the openfile dialog.
-				try
-				{
-					dir = Path.GetDirectoryName(firstFilePath);
-					if (File.Exists(firstFilePath))
-						initialFileName = Path.GetFileName(firstFilePath);
-				}
-				catch
-				{
-				}
-			}
-			if (Directory.Exists(dir))
-				openFileDialog.InitialDirectory = dir;
-			// It doesn't seem to be possible to open the dialog with more than one file selected.
-			// However there will often be only one so that's at least somewhat helpful.
-			openFileDialog.FileName = initialFileName;
-			openFileDialog.Title = ITextStrings.ksSelectInterlinFile;
-			while (true) // loop until approved set of files or cancel
-			{
-				if (openFileDialog.ShowDialog() != DialogResult.OK)
-					return currentFiles;
-				var badFiles = new List<string>();
-				foreach (var fileName in openFileDialog.FileNames)
-				{
-					if (!new Sfm2Xml.IsSfmFile(fileName).IsValid)
-						badFiles.Add(fileName);
-				}
-				if (badFiles.Count > 0)
-				{
-					string msg = String.Format(ITextStrings.ksInvalidInterlinearFiles,
-						string.Join(", ", badFiles.ToArray()));
-					DialogResult dr = MessageBox.Show(this, msg,
-						ITextStrings.ksPossibleInvalidFile,
-						MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-					if (dr == DialogResult.Yes)
-						return string.Join(", ", openFileDialog.FileNames);
-					if (dr == DialogResult.No)
-						continue; // loop and show dialog again...hopefully same files selected.
-					break; // user must have chosen cancel, break out of loop
-				}
-				return string.Join(", ", openFileDialog.FileNames);
-			}
-			return currentFiles; // leave things unchanged.
-		}
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm,
+					FileFilterType.AllFiles);
+				openFileDialog.CheckFileExists = true;
+				openFileDialog.Multiselect = true; // can import multiple files
 
-		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
-		{
-			var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
-			openFileDialog.CheckFileExists = checkFileExists;
-			openFileDialog.Multiselect = false;
-
-			bool done = false;
-			while (!done)
-			{
-				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
-				// Now we make sure parts are valid before setting the values in the openfile dialog.
+				var files = currentFiles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 				string dir = string.Empty;
-				try
+				string initialFileName = string.Empty;
+				openFileDialog.FileName = "";
+				if (files.Length > 0)
 				{
-					dir = Path.GetDirectoryName(pathForInitialDirectory);
+					var firstFilePath = files[0].Trim();
+					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
+					// Now we make sure parts are valid before setting the values in the openfile dialog.
+					try
+					{
+						dir = Path.GetDirectoryName(firstFilePath);
+						if (File.Exists(firstFilePath))
+							initialFileName = Path.GetFileName(firstFilePath);
+					}
+					catch
+					{
+					}
 				}
-				catch { }
 				if (Directory.Exists(dir))
 					openFileDialog.InitialDirectory = dir;
-				if (File.Exists(currentFile))
-					openFileDialog.FileName = currentFile;
-				else
-					openFileDialog.FileName = "";
-
-				openFileDialog.Title = title;
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				// It doesn't seem to be possible to open the dialog with more than one file selected.
+				// However there will often be only one so that's at least somewhat helpful.
+				openFileDialog.FileName = initialFileName;
+				openFileDialog.Title = ITextStrings.ksSelectInterlinFile;
+				while (true) // loop until approved set of files or cancel
 				{
-					if (!(isValidFile(openFileDialog.FileName)))
+					if (openFileDialog.ShowDialog() != DialogResult.OK)
+						return currentFiles;
+					var badFiles = new List<string>();
+					foreach (var fileName in openFileDialog.FileNames)
 					{
-						string msg = String.Format(ITextStrings.ksInvalidFileAreYouSure,
-							openFileDialog.FileName);
+						if (!new Sfm2Xml.IsSfmFile(fileName).IsValid)
+							badFiles.Add(fileName);
+					}
+					if (badFiles.Count > 0)
+					{
+						string msg = String.Format(ITextStrings.ksInvalidInterlinearFiles,
+							string.Join(", ", badFiles.ToArray()));
 						DialogResult dr = MessageBox.Show(this, msg,
 							ITextStrings.ksPossibleInvalidFile,
 							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
-							return openFileDialog.FileName;
-						else if (dr == DialogResult.No)
-							continue;
-						else
-							break;	// exit with current still
+							return string.Join(", ", openFileDialog.FileNames);
+						if (dr == DialogResult.No)
+							continue; // loop and show dialog again...hopefully same files selected.
+						break; // user must have chosen cancel, break out of loop
 					}
-					return openFileDialog.FileName;
+					return string.Join(", ", openFileDialog.FileNames);
 				}
-				else
-					done = true;
+				return currentFiles; // leave things unchanged.
 			}
-			return currentFile;
+		}
+
+		private string GetFile(string currentFile, string pathForInitialDirectory,
+			FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
+		{
+			using (var openFileDialog = new OpenFileDialogAdapter())
+			{
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
+				openFileDialog.CheckFileExists = checkFileExists;
+				openFileDialog.Multiselect = false;
+
+				bool done = false;
+				while (!done)
+				{
+					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
+					// Now we make sure parts are valid before setting the values in the openfile dialog.
+					string dir = string.Empty;
+					try
+					{
+						dir = Path.GetDirectoryName(pathForInitialDirectory);
+					}
+					catch
+					{
+					}
+					if (Directory.Exists(dir))
+						openFileDialog.InitialDirectory = dir;
+					if (File.Exists(currentFile))
+						openFileDialog.FileName = currentFile;
+					else
+						openFileDialog.FileName = "";
+
+					openFileDialog.Title = title;
+					if (openFileDialog.ShowDialog() == DialogResult.OK)
+					{
+						if (!(isValidFile(openFileDialog.FileName)))
+						{
+							string msg = String.Format(ITextStrings.ksInvalidFileAreYouSure,
+								openFileDialog.FileName);
+							DialogResult dr = MessageBox.Show(this, msg,
+								ITextStrings.ksPossibleInvalidFile,
+								MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+							if (dr == DialogResult.Yes)
+								return openFileDialog.FileName;
+							else if (dr == DialogResult.No)
+									continue;
+								else
+									break;	// exit with current still
+						}
+						return openFileDialog.FileName;
+					}
+					else
+						done = true;
+				}
+				return currentFile;
+			}
 		}
 
 		protected override void OnNextButton()
@@ -476,6 +485,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="RecordClerk.FindClerk() returns a reference")]
 		protected override void OnFinishButton()
 		{
 			base.OnFinishButton();
@@ -534,16 +545,18 @@ namespace SIL.FieldWorks.IText
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
 					continue;
-				var stage2Input = new MemoryStream(stage1);
-				var stage2Converter = new LinguaLinksImport(m_cache, null, null);
-				// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
-				// Allocate 5 progress units to the ImportInterlinear, in case it can do better resolution.
-				// Enhance JohnT: we could divide the progress up based on the lengths of the files,
-				// and possibly converter.Convert could move the bar along based on how far through the file it is.
-				// ImportInterlinear could do something similar. However, procesing a single file is so quick
-				// that this very crude approximation is good enough.
-				dlg.Position += 50;
-				stage2Converter.ImportInterlinear(dlg, stage2Input, 50, ref m_firstNewText);
+				using (var stage2Input = new MemoryStream(stage1))
+				{
+					var stage2Converter = new LinguaLinksImport(m_cache, null, null);
+					// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
+					// Allocate 5 progress units to the ImportInterlinear, in case it can do better resolution.
+					// Enhance JohnT: we could divide the progress up based on the lengths of the files,
+					// and possibly converter.Convert could move the bar along based on how far through the file it is.
+					// ImportInterlinear could do something similar. However, procesing a single file is so quick
+					// that this very crude approximation is good enough.
+					dlg.Position += 50;
+					stage2Converter.ImportInterlinear(dlg, stage2Input, 50, ref m_firstNewText);
+				}
 			}
 			return null;
 		}
@@ -570,9 +583,11 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlSerializer serializer = new XmlSerializer(mappingsToSave.GetType());
-				var writer = new StreamWriter(path);
-				serializer.Serialize(writer, mappingsToSave);
-				writer.Close();
+				using (var writer = new StreamWriter(path))
+				{
+					serializer.Serialize(writer, mappingsToSave);
+					writer.Close();
+				}
 			}
 			catch (IOException ex)
 			{
@@ -592,10 +607,12 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlSerializer serializer = new XmlSerializer(typeof(List<InterlinearMapping>));
-				var reader = new StreamReader(path);
-				var result = (List<InterlinearMapping>)serializer.Deserialize(reader);
-				reader.Close();
-				return result;
+				using (var reader = new StreamReader(path))
+				{
+					var result = (List<InterlinearMapping>)serializer.Deserialize(reader);
+					reader.Close();
+					return result;
+				}
 			}
 			catch (IOException ex)
 			{

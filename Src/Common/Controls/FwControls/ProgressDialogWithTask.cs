@@ -14,6 +14,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
@@ -102,6 +103,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_worker gets disposed in Dispose()")]
 		private void InitOnOwnerThread(Form owner)
 		{
 			if (m_synchInvoke != null && m_synchInvoke.InvokeRequired)

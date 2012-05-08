@@ -40,30 +40,32 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void LoadParatext5Project()
 		{
-			ScrObjWrapper wrapper = new ScrObjWrapper();
-			IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext5);
-			settings.StartRef = new BCVRef(1, 1, 1);
-			settings.EndRef = new BCVRef(66, 22, 21);
-			TempSFFileMaker fileMaker = new TempSFFileMaker();
+			using (ScrObjWrapper wrapper = new ScrObjWrapper())
+			{
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext5);
+				settings.StartRef = new BCVRef(1, 1, 1);
+				settings.EndRef = new BCVRef(66, 22, 21);
+				TempSFFileMaker fileMaker = new TempSFFileMaker();
 
-			string fileName = fileMaker.CreateFile("EXO",
+				string fileName = fileMaker.CreateFile("EXO",
 				new string[] {@"\mt Exodus", @"\c 1", @"\v 1 This is fun!"});
-			settings.AddFile(fileName, ImportDomain.Main, null, null);
+				settings.AddFile(fileName, ImportDomain.Main, null, null);
 
-			wrapper.LoadScriptureProject(settings);
-			Assert.IsFalse(wrapper.BooksPresent.Contains(1));
-			Assert.IsTrue(wrapper.BooksPresent.Contains(2));
-			string sText, sMarker;
-			ImportDomain domain;
-			Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
-			Assert.AreEqual(fileName, wrapper.CurrentFileName);
-			Assert.AreEqual(1, wrapper.CurrentLineNumber);
-			Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentFirstRef);
-			Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentLastRef);
-			Assert.AreEqual(2, wrapper.ExternalPictureFolders.Count);
-			Assert.AreEqual(Cache.LangProject.LinkedFilesRootDir, wrapper.ExternalPictureFolders[0]);
-			Assert.AreEqual(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+				wrapper.LoadScriptureProject(settings);
+				Assert.IsFalse(wrapper.BooksPresent.Contains(1));
+				Assert.IsTrue(wrapper.BooksPresent.Contains(2));
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(fileName, wrapper.CurrentFileName);
+				Assert.AreEqual(1, wrapper.CurrentLineNumber);
+				Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentFirstRef);
+				Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentLastRef);
+				Assert.AreEqual(2, wrapper.ExternalPictureFolders.Count);
+				Assert.AreEqual(Cache.LangProject.LinkedFilesRootDir, wrapper.ExternalPictureFolders[0]);
+				Assert.AreEqual(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
 				wrapper.ExternalPictureFolders[1]);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -77,22 +79,24 @@ namespace SIL.FieldWorks.TE
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyScriptureProjectSet()
 		{
-			ScrObjWrapper wrapper = new ScrObjWrapper();
-			IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+			using (ScrObjWrapper wrapper = new ScrObjWrapper())
+			{
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
 
-			Unpacker.UnPackParatextTestProjects();
-			settings.ParatextScrProj = "KAM";
-			settings.StartRef = new BCVRef(1, 1, 1);
-			settings.EndRef = new BCVRef(66, 22, 21);
-			settings.ImportAnnotations = true;
-			settings.ImportBackTranslation = false;
-			settings.ImportTranslation = false;
-			wrapper.LoadScriptureProject(settings);
-			string sText, sMarker;
-			ImportDomain domain;
-			Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
-			Assert.AreEqual(3, wrapper.ExternalPictureFolders.Count);
-			Assert.AreEqual(Path.Combine(Unpacker.PTProjectDirectory, @"KAM\Figures"), wrapper.ExternalPictureFolders[0]);
+				Unpacker.UnPackParatextTestProjects();
+				settings.ParatextScrProj = "KAM";
+				settings.StartRef = new BCVRef(1, 1, 1);
+				settings.EndRef = new BCVRef(66, 22, 21);
+				settings.ImportAnnotations = true;
+				settings.ImportBackTranslation = false;
+				settings.ImportTranslation = false;
+				wrapper.LoadScriptureProject(settings);
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(3, wrapper.ExternalPictureFolders.Count);
+				Assert.AreEqual(Path.Combine(Unpacker.PTProjectDirectory, @"KAM\Figures"), wrapper.ExternalPictureFolders[0]);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -105,21 +109,23 @@ namespace SIL.FieldWorks.TE
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyBTProjectSet()
 		{
-			ScrObjWrapper wrapper = new ScrObjWrapper();
-			IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+			using (ScrObjWrapper wrapper = new ScrObjWrapper())
+			{
+				IScrImportSet settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
 
-			Unpacker.UnPackParatextTestProjects();
-			settings.ParatextBTProj = "KAM";
-			settings.StartRef = new BCVRef(1, 1, 1);
-			settings.EndRef = new BCVRef(66, 22, 21);
-			settings.ImportAnnotations = true;
-			settings.ImportBackTranslation = false;
-			settings.ImportTranslation = false;
-			wrapper.LoadScriptureProject(settings);
-			string sText, sMarker;
-			ImportDomain domain;
-			Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
-			Assert.AreEqual(Path.Combine(Unpacker.PTProjectDirectory, @"KAM\Figures"), wrapper.ExternalPictureFolders[0]);
+				Unpacker.UnPackParatextTestProjects();
+				settings.ParatextBTProj = "KAM";
+				settings.StartRef = new BCVRef(1, 1, 1);
+				settings.EndRef = new BCVRef(66, 22, 21);
+				settings.ImportAnnotations = true;
+				settings.ImportBackTranslation = false;
+				settings.ImportTranslation = false;
+				wrapper.LoadScriptureProject(settings);
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(Path.Combine(Unpacker.PTProjectDirectory, @"KAM\Figures"), wrapper.ExternalPictureFolders[0]);
+			}
 		}
 	}
 }

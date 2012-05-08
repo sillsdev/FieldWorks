@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -672,6 +673,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is a Flags enum).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, CheckState state)
 		{
 			CheckDisposed();
@@ -680,6 +683,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 			for (int i = list.Count - 1; i >= 0; i--)
 			{
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (list[i].GetType() != nodeType)
 					list.RemoveAt(i);
 			}

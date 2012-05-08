@@ -52,6 +52,9 @@ using SIL.CoreImpl;
 using Skybound.Gecko;
 #endif
 
+[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
+	Justification="Gendarme bug? We only return values >= 0")]
+
 namespace SIL.FieldWorks
 {
 	#region FieldWorks class
@@ -221,7 +224,7 @@ namespace SIL.FieldWorks
 				{
 					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider(FwUtils.ksFlexAbbrev));
 					if (projId == null)
-						return -1; // User probably canceled
+						return 1; // User probably canceled
 					try
 					{
 						// Use PipeHandle because this will probably be used to locate a named pipe using
@@ -231,7 +234,7 @@ namespace SIL.FieldWorks
 					catch (Exception e)
 					{
 						Logger.WriteError(e);
-						return -2;
+						return 2;
 					}
 					return 0;
 				}
@@ -264,16 +267,16 @@ namespace SIL.FieldWorks
 			catch (ApplicationException ex)
 			{
 				MessageBox.Show(ex.Message, FwUtils.ksSuiteName);
-				return -2;
+				return 2;
 			}
 			catch (Exception ex)
 			{
 				SafelyReportException(ex, s_activeMainWnd, true);
-				return -2;
+				return 2;
 			}
 			finally
 			{
-				Dispose();
+				StaticDispose();
 			}
 			return 0;
 		}
@@ -318,6 +321,8 @@ namespace SIL.FieldWorks
 		/// <param name="appArgs">The command-line arguments.</param>
 		/// <returns>Indication of whether application was successfully created.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static bool CreateApp(FwAppArgs appArgs)
 		{
 			FwApp app = GetOrCreateApplication(appArgs);
@@ -993,6 +998,8 @@ namespace SIL.FieldWorks
 		/// <param name="args">The application arguments.</param>
 		/// <returns>The project to run, or null if no project could be determined</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static ProjectId DetermineProject(FwAppArgs args)
 		{
 			// Get project information from one of three places, in this order of preference:
@@ -1072,6 +1079,8 @@ namespace SIL.FieldWorks
 		/// process.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static bool LaunchProject(FwAppArgs args, ref ProjectId projectId)
 		{
 			while (true)
@@ -1305,6 +1314,8 @@ namespace SIL.FieldWorks
 		/// project being opened; <c>null</c> if the user chooses to exit.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static ProjectId ShowWelcomeDialog(FwAppArgs args, IHelpTopicProvider helpTopicProvider,
 			ProjectId projectId, FwStartupException exception)
 		{
@@ -2283,6 +2294,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static void CheckForMovingExternalLinkDirectory(FwApp app)
 		{
 			// Don't crash here if we have a data problem -- that may be due to another issue that
@@ -2312,42 +2325,45 @@ namespace SIL.FieldWorks
 			}
 			if ((Math.Max(launchesFlex, launchesTe) != 9) || (Math.Min(launchesFlex, launchesTe) >= 9))
 				return;
-			var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks");
-			string oldDir = null;
-			if (rk != null)
-				oldDir = rk.GetValue("RootDataDir") as string;
-			if (oldDir == null)
+			using (var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks"))
 			{
-				// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-				oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				string oldDir = null;
+				if (rk != null)
+					oldDir = rk.GetValue("RootDataDir") as string;
+				if (oldDir == null)
+				{
+					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
+					oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				}
+				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
+				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
+				newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
+				// This isn't foolproof since the currently open project on the 9th time may
+				// not even be one that was migrated. But it will probably work for most users.
+				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
+					return;
+				DialogResult res;
+				if (app == s_teApp)
+				{
+					// TE doesn't have a help topic for this insane dialog box.
+					res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo);
+				}
+				else
+				{
+					// TODO-Linux: Help is not implemented in Mono
+					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
+					res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo, MessageBoxIcon.None,
+						MessageBoxDefaultButton.Button1, 0, app.HelpFile,
+						"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
+				}
+				if (res != DialogResult.Yes)
+					return;
+				MoveExternalLinkDirectoryAndFiles(app);
 			}
-			oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
-			var newDir = app.Cache.LangProject.LinkedFilesRootDir;
-			newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
-			// This isn't foolproof since the currently open project on the 9th time may
-			// not even be one that was migrated. But it will probably work for most users.
-			if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
-				return;
-			DialogResult res;
-			if (app == s_teApp)
-			{
-				// TE doesn't have a help topic for this insane dialog box.
-				res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo);
-			}
-			else
-			{
-				const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
-				res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo, MessageBoxIcon.None,
-					MessageBoxDefaultButton.Button1, 0, app.HelpFile,
-					"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
-			}
-			if (res != DialogResult.Yes)
-				return;
-			MoveExternalLinkDirectoryAndFiles(app);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3083,10 +3099,10 @@ namespace SIL.FieldWorks
 		/// Releases unmanaged and managed resources
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void Dispose()
+		private static void StaticDispose()
 		{
 			s_appServerMode = false; // Make sure the cache can be cleaned up
-			LexicalProviderManager.Dispose(); // Must be done before disposing the cache
+			LexicalProviderManager.StaticDispose(); // Must be done before disposing the cache
 			if (s_serviceChannel != null)
 			{
 				ChannelServices.UnregisterChannel(s_serviceChannel);
@@ -3115,8 +3131,10 @@ namespace SIL.FieldWorks
 		{
 			try
 			{
-				RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0", true);
-				key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0", true))
+				{
+					key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
+				}
 			}
 			catch
 			{

@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -2925,11 +2926,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsAbstractStructure other)
 		{
 			if (other == null)
 				return false;
 
+			// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			return other.GetType() == GetType();
 		}
 
@@ -2966,11 +2971,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsFeatureSpecification other)
 		{
 			if (other == null)
 				return false;
 
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (other.GetType() != GetType())
 				return false;
 

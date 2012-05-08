@@ -381,6 +381,7 @@
 	<Compile Include="XmlImportDataTests.cs" />
 	<Compile Include="XmlListTests.cs" />
 	<Compile Include="XmlTranslatedListsTests.cs" />
+	<Compile Include="FdoInvertSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="buildinclude.xml" />

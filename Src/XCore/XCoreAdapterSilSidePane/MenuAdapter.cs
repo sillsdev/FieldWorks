@@ -286,7 +286,7 @@ namespace XCore
 			// menu items to. It is not added to the shown contextMenu.
 			ToolStripMenuItem item = new ToolStripMenuItem();
 			item.AccessibilityObject.Name = group.Id;
-				//item.GetType().Name;
+			//item.GetType().Name;
 			item.Tag = group;
 			group.ReferenceWidget = item;
 			group.PopulateNow();
@@ -295,18 +295,19 @@ namespace XCore
 			bool menuOK = false;
 			foreach (var menuItem in item.DropDown.Items)
 			{
-				if(menuItem is ToolStripMenuItem)
+				if (menuItem is ToolStripMenuItem)
 				{
-					if(((ToolStripMenuItem) menuItem).Text == "Show in Word Analyses")
+					if (((ToolStripMenuItem)menuItem).Text == "Show in Word Analyses")
 					{
 						menuOK = true;
 						break;
 					}
 				}
 			}
-			if(!menuOK)
+			if (!menuOK)
 			{
-				Debug.Print("Show in Word Analyses is missing: \r\n" +  m_mediator.GetColleaguesDumpString());
+				Debug.WriteLine("Show in Word Analyses is missing:");
+				Debug.WriteLine(m_mediator.GetColleaguesDumpString());
 			}
 			// NOTE: we intentionally leave contextMenu undisposed. If we dispose it after
 			// contextMenu.Show then the mouse clicks on the menu items don't get handled.

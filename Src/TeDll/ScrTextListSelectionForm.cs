@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -215,7 +216,9 @@ namespace SIL.FieldWorks.TE
 			uiSavedSelectionsMenu.Show(uiLoadSelections, 0, uiLoadSelections.Height);
 		}
 
-		void LoadSavedSelectionItem_Click(object sender, EventArgs e)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ScrTextCollection.Get returns a reference (?)")]
+		private void LoadSavedSelectionItem_Click(object sender, EventArgs e)
 		{
 			SavedScrTextList savedList =
 				(sender as ToolStripMenuItem).Tag as SavedScrTextList;

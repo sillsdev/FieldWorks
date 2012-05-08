@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -50,8 +51,12 @@ namespace SIL.FieldWorks.Filters
 			return Accept(arg);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public bool SameMatcher(IMatcher other)
 		{
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (other.GetType() != this.GetType())
 				return false;
 			ExactLiteralMatcher other1 = other as ExactLiteralMatcher;

@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -905,7 +906,8 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		//[Ignore("Until I get it working.")]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Unit test - we're testing with different combinations of newline chars")]
 		public void TestLiftImport4()
 		{
 			// Setup
@@ -2853,7 +2855,7 @@ namespace LexTextControlsTests
 					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 				}
-				if (i == 1)
+				else if (i == 1)
 				{
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
@@ -2861,7 +2863,7 @@ namespace LexTextControlsTests
 					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
 					Assert.IsTrue(attr.Value.Equals("en"));
 				}
-				if (i == 2)
+				else if (i == 2)
 				{
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
 					Assert.IsTrue(attr.Value.Equals("es"));

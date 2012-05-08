@@ -574,29 +574,31 @@ namespace SIL.FieldWorks.TE
 			{
 				try
 				{
-					ScrText paraTextSO = new ScrText(ShortName);
-					string folder = paraTextSO.Directory;
-					m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
-					BaseOutputFolder = folder;
-					m_fUserModifiedFolder = false;
-					CalculateDisplayOutputFolder();
+					using (ScrText paraTextSO = new ScrText(ShortName))
+					{
+						string folder = paraTextSO.Directory;
+						m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
+						BaseOutputFolder = folder;
+						m_fUserModifiedFolder = false;
+						CalculateDisplayOutputFolder();
 
-					FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
+						FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
 						m_BTfileNameScheme;
-					currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
-					currentFileNameScheme.m_schemeFormat =
+						currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
+						currentFileNameScheme.m_schemeFormat =
 						FileNameFormat.GetSchemeFormatFromParatextForm(paraTextSO.FileNameForm);
-					m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
-					//if (ExportScriptureDomain)
-					//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
-					currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
+						m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
+						//if (ExportScriptureDomain)
+						//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
+						currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
 
-					// set file name scheme control with properties that check the export domain.
-					fileNameSchemeCtrl.ClearUserModifiedNameScheme();
-					fileNameSchemeCtrl.Prefix = FileNamePrefix;
-					fileNameSchemeCtrl.Scheme = FileNameScheme;
-					fileNameSchemeCtrl.Suffix = FileNameSuffix;
-					fileNameSchemeCtrl.Extension = FileNameExtension;
+						// set file name scheme control with properties that check the export domain.
+						fileNameSchemeCtrl.ClearUserModifiedNameScheme();
+						fileNameSchemeCtrl.Prefix = FileNamePrefix;
+						fileNameSchemeCtrl.Scheme = FileNameScheme;
+						fileNameSchemeCtrl.Suffix = FileNameSuffix;
+						fileNameSchemeCtrl.Extension = FileNameExtension;
+					}
 				}
 				catch
 				{

@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -30,6 +31,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// <summary>
 	/// </summary>
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_matchingMorphs gets disposed in FixtureTearDown()")]
 	public class MatchingMorphsLogicTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private SetupMatchingMorphs m_matchingMorphs;

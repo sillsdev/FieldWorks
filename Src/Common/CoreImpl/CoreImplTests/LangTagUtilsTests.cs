@@ -12,7 +12,7 @@ namespace SIL.CoreImpl
 	/// </summary>
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
+		Justification="Unit test - m_DebugProces gets disposed in FixtureTeardown")]
 	public class LangTagUtilsTests : FwCOMTestBase // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;
