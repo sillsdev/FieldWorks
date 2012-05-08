@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var settings = new XmlReaderSettings {ValidationType = ValidationType.Schema};
 
-			string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates\Interlinear");
+			string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates/Interlinear");
 			string file = Path.Combine(p, "FlexInterlinear.xsd");
 			settings.Schemas.Add("", file);
 			//settings.ValidationEventHandler += ValidationCallBack;
@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ValidateFlexTextFile()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
+			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			XmlDocument doc = new XmlDocument();
 			doc.Load(file);
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ImportParatextExportBasic()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
+			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 

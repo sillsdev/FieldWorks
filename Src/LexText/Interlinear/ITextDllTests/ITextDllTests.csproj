@@ -262,12 +262,6 @@
 	<None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-	  <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
-	  <Name>FwCoreDlgs</Name>
-	</ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>

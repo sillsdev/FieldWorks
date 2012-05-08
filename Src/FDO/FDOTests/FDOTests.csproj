@@ -132,15 +132,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=5.5.0.20472, Culture=neutral, processorArchitecture=MSIL">
-	  <Name>FDO</Name>
+	<Reference Include="FDO">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
 	</Reference>
 	<Reference Include="FwResources, Version=6.9.2.18788, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
 	</Reference>
 	<Reference Include="FwUtils">
 	  <Name>FwUtils</Name>
