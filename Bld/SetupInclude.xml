@@ -203,6 +203,10 @@
 		<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>
 	</if>
 
+	<!-- Copy updated definitions file for Gendarme -->
+	<copy todir="${environment::get-folder-path('LocalApplicationData')}/Gendarme"
+		file="${fwroot}/Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/definitions-2.9.zip"/>
+
 	<if test="${not platform::is-unix()}">
 		<!-- replace c:\fw\DistFiles in the current path with the right fwroot directory -->
 		<!-- We have to use the original value from the registry, so that we get the path that
