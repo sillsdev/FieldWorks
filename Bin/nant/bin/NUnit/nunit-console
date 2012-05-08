@@ -13,4 +13,4 @@ else
 fi
 # Mono has problem with unload appdomain, therefore we have to set env variable (see comment in
 # mono/mono/metadata/appdomain.c)
-MONO_NO_UNLOAD=1 exec mono --debug ${0}.exe -noshadow "$@"
+MONO_NO_UNLOAD=1 exec mono $FRAMEWORK_VERSION --debug ${0}.exe -noshadow "$@"
