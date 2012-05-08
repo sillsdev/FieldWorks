@@ -524,34 +524,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private static void GetMainVariantGloss(ILexEntryRef variantRef, out IMultiUnicode gloss)
 		{
-			var mainEntryOrSense = variantRef.ComponentLexemesRS[0] as IVariantComponentLexeme;
-			// find first gloss
-			ILexEntry mainEntry;
-			ILexSense mainOrFirstSense;
+			ILexSense mainOrFirstSense = MorphServices.GetMainOrFirstSenseOfVariant(variantRef);
 			gloss = null;
-			GetMainEntryAndSenseStack(mainEntryOrSense, out mainEntry, out mainOrFirstSense);
 			if (mainOrFirstSense != null)
 				gloss = mainOrFirstSense.Gloss;
-		}
-
-
-		private static void GetMainEntryAndSenseStack(IVariantComponentLexeme mainEntryOrSense, out ILexEntry mainEntry, out ILexSense mainOrFirstSense)
-		{
-			if (mainEntryOrSense is ILexEntry)
-			{
-				mainEntry = mainEntryOrSense as ILexEntry;
-				mainOrFirstSense = mainEntry.SensesOS.Count > 0 ? mainEntry.SensesOS[0] : null;
-			}
-			else if (mainEntryOrSense is ILexSense)
-			{
-				mainOrFirstSense = mainEntryOrSense as ILexSense;
-				mainEntry = mainOrFirstSense.Entry;
-			}
-			else
-			{
-				mainEntry = null;
-				mainOrFirstSense = null;
-			}
 		}
 
 		/// <summary>

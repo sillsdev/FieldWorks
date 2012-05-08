@@ -63,14 +63,6 @@ namespace SIL.FieldWorks.IText
 		/// what we have to regenerate when doing special prompts (Press Enter to ...).
 		/// </summary>
 		private const int kfragFreeformBundle = 100035;
-		/// <summary>
-		/// use with EntryRef to display the variant type info
-		/// </summary>
-		internal const int kfragVariantTypesPrepend = 100036;
-		/// <summary>
-		/// use with EntryRef to display the variant type info
-		/// </summary>
-		internal const int kfragVariantTypesAppend = 100037;
 		// These ones are special: we select one ws by adding its index in to this constant.
 		// So a good-sized range of kfrags after this must be unused for each one.
 		// This one is used for isolated wordforms (e.g., in Words area) using the current list of
@@ -775,47 +767,6 @@ namespace SIL.FieldWorks.IText
 				if (openedParagraph)
 					vwenv.CloseParagraph();
 				break;
-			case kfragVariantTypesPrepend:
-				var entryRef1 = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().GetObject(hvo);
-				var glossWs1 = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
-				vwenv.OpenParagraph();
-				ITsIncStrBldr sbPrepend1;
-				ITsIncStrBldr sbAppend1;
-				MorphServices.JoinGlossAffixesOfInflVariantTypes(entryRef1.VariantEntryTypesRS, glossWs1, out sbPrepend1, out sbAppend1);
-				// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
-				vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-				if (sbPrepend1.Text != null)
-					vwenv.AddString(sbPrepend1.GetString());
-				else if (m_fRtl)
-					vwenv.AddString(m_tssMissingGlossPrepend);
-				vwenv.CloseParagraph();
-				break;
-			case kfragWordGloss:	// displaying forms of a known WfiGloss.
-				foreach (int wsId in m_WsList.AnalysisWsIds)
-				{
-					int idx = m_lineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, wsId);
-					if (idx >= 0)
-					{
-						SetColor(vwenv, LabelRGBFor(idx));
-						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, wsId, this);
-					}
-				}
-				break;
-			case kfragVariantTypesAppend:
-				var entryRef2 = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().GetObject(hvo);
-				var glossWs2 = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultAnalWs);
-				vwenv.OpenParagraph();
-				ITsIncStrBldr sbPrepend2;
-				ITsIncStrBldr sbAppend2;
-				MorphServices.JoinGlossAffixesOfInflVariantTypes(entryRef2.VariantEntryTypesRS, glossWs2, out sbPrepend2, out sbAppend2);
-				// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
-				vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-				if (sbAppend2.Text != null)
-					vwenv.AddString(sbAppend2.GetString());
-				else if (!m_fRtl)
-					vwenv.AddString(m_tssMissingGlossAppend);
-				vwenv.CloseParagraph();
-				break;
 			case kfragMorphType: // for export only at present, display the
 				vwenv.AddObjProp(MoFormTags.kflidMorphType, this, kfragPossibiltyAnalysisName);
 				break;
@@ -901,7 +852,7 @@ namespace SIL.FieldWorks.IText
 				else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.Count)
 				{
 					var spec = m_lineChoices[frag - kfragLineChoices];
-					int ws = GetRealWsOrBestWsForContext(hvo, spec);
+					var ws = GetRealWsOrBestWsForContext(hvo, spec);
 					vwenv.AddStringAltMember(spec.StringFlid, ws, this);
 				}
 				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
@@ -927,6 +878,13 @@ namespace SIL.FieldWorks.IText
 #if DEBUG
 			//TimeRecorder.End("Display");
 #endif
+		}
+
+		private void JoinGlossAffixesOfInflVariantTypes(ILexEntryRef entryRef1, int wsPreferred, out ITsIncStrBldr sbPrepend1, out ITsIncStrBldr sbAppend1)
+		{
+			var glossWs1 = Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred);
+			MorphServices.JoinGlossAffixesOfInflVariantTypes(entryRef1.VariantEntryTypesRS, glossWs1,
+															 out sbPrepend1, out sbAppend1);
 		}
 
 		/// <summary>
@@ -1542,38 +1500,70 @@ namespace SIL.FieldWorks.IText
 							else
 							{
 								flid = WfiMorphBundleTags.kflidSense;
+
 								var variantTest = wmb.MorphRA.Owner as ILexEntry;
 								ILexEntryRef ler;
 								if (variantTest.IsVariantOfSenseOrOwnerEntry(wmb.SenseRA, out ler))
 								{
-									vwenv.OpenParagraph();
-									// see if we have an irregularly inflected form type reference
-									var leitFirst =
-										ler.VariantEntryTypesRS.Where(
-											let => let.ClassID == LexEntryInflTypeTags.kClassId).FirstOrDefault();
+									var wsPreferred = GetRealWsOrBestWsForContext(wmb.SenseRA.Hvo, spec);
+									var testGloss = wmb.SenseRA.Gloss.get_String(wsPreferred);
+									// don't bother adding anything for an empty gloss.
+									if (testGloss.Text != null && testGloss.Text.Length >= 0)
+									{
+										vwenv.OpenParagraph();
+										// see if we have an irregularly inflected form type reference
+										var leitFirst =
+											ler.VariantEntryTypesRS.Where(
+												let => let.ClassID == LexEntryInflTypeTags.kClassId).FirstOrDefault();
 
-									// add any GlossPrepend info
-									if (leitFirst != null)
-									{
-										vwenv.OpenInnerPile();
-										vwenv.AddObj(ler.Hvo, this, kfragVariantTypesPrepend);
-										vwenv.CloseInnerPile();
+										// add any GlossPrepend info
+										if (leitFirst != null)
+										{
+											vwenv.OpenInnerPile();
+											ITsIncStrBldr sbPrepend;
+											ITsIncStrBldr sbAppend;
+											JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+																			   out sbAppend);
+											vwenv.OpenParagraph();
+											// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
+											vwenv.NoteDependency(new[] {ler.Hvo},
+																 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
+											if (sbPrepend.Text != null)
+												vwenv.AddString(sbPrepend.GetString());
+											else if (m_fRtl)
+												vwenv.AddString(m_tssMissingGlossPrepend);
+											vwenv.CloseParagraph();
+											vwenv.CloseInnerPile();
+										}
+										// add gloss of main entry or sense
+										{
+											vwenv.OpenInnerPile();
+											vwenv.AddObjProp(WfiMorphBundleTags.kflidSense, this,
+															 kfragLineChoices + i);
+											vwenv.CloseInnerPile();
+										}
+										// now add variant type info
+										if (leitFirst != null)
+										{
+											vwenv.OpenInnerPile();
+											ITsIncStrBldr sbPrepend;
+											ITsIncStrBldr sbAppend;
+											JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+																			   out sbAppend);
+											vwenv.OpenParagraph();
+											// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
+											vwenv.NoteDependency(new[] {ler.Hvo},
+																 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
+											if (sbAppend.Text != null)
+												vwenv.AddString(sbAppend.GetString());
+											else if (!m_fRtl)
+												vwenv.AddString(m_tssMissingGlossAppend);
+											vwenv.CloseParagraph();
+											vwenv.CloseInnerPile();
+										}
+										vwenv.CloseParagraph();
+										break;
 									}
-									// add gloss of main entry or sense
-									{
-										vwenv.OpenInnerPile();
-										vwenv.AddObjProp(WfiMorphBundleTags.kflidSense, this, kfragLineChoices + i);
-										vwenv.CloseInnerPile();
-									}
-									// now add variant type info
-									if (leitFirst != null)
-									{
-										vwenv.OpenInnerPile();
-										vwenv.AddObj(ler.Hvo, this, kfragVariantTypesAppend);
-										vwenv.CloseInnerPile();
-									}
-									vwenv.CloseParagraph();
-									break;
 								}
 							}
 						}
