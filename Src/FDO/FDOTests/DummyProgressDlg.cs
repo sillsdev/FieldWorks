@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -25,7 +26,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// ----------------------------------------------------------------------------------------
 	public class DummyProgressDlg : IThreadedProgress
 	{
-		private readonly ThreadHelper m_threadHelper = new ThreadHelper();
+		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();
 
 		#region IProgress and IThreadedProgress Members
 		/// <summary></summary>
