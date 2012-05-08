@@ -147,12 +147,10 @@
 	<Reference Include="ManagedVwDrawRootBuffered">
 	  <HintPath>..\..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
 	</Reference>
-	<Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="NDesk.DBus">
 	  <HintPath>..\..\..\Output\Debug\NDesk.DBus.dll</HintPath>
 	</Reference>
-	<Reference Include="ibusdotnet, Version=1.0.3840.28367, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="ibusdotnet">
 	  <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
 	</Reference>
 	<Reference Include="KeyboardSwitcher">
