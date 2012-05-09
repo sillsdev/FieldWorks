@@ -135,12 +135,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			ProjectLockingService.UnlockCurrentProject(Cache);
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
-			string projectPath;
+			string dummy;
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
 			bool dataChanged;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
-																	  Environment.UserName,
-																	  FLExBridgeHelper.SendReceive, out dataChanged,
-																	  out projectPath);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, Environment.UserName,
+								FLExBridgeHelper.SendReceive, out dataChanged, out dummy);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -154,15 +153,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var manager = app.FwManager;
-				var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
+				//var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
+				var appArgs = new FwAppArgs(fullProjectFileName); // this should be all that's necessary
 
 				var newApp = manager.ReopenProject(Cache.ProjectId.Name, appArgs);
-				//This is really weird and enough time has been spent on this issue. LT-12964
-				//calling MasterRefresh via the mediator does not work. Calling OnMasterRefresh twice is needed
-				//for changes to show up that occurred due to the Send/Receive operation.
-				//((FwXWindow)newApp.ActiveMainWindow).Mediator.SendMessage("MasterRefresh", null);
-				((FwXWindow)newApp.ActiveMainWindow).OnMasterRefresh(null);
-				((FwXWindow)newApp.ActiveMainWindow).OnMasterRefresh(this);
 
 				if (conflictOccurred)
 				{
