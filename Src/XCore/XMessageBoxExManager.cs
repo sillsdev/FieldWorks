@@ -295,9 +295,19 @@ namespace XCore
 				//	null property if there were no other properties.
 				if (pair != null)
 				{
-					MessageBoxExManager.SavedResponses.Add(pair.key, pair.value);
+					AddSavedResponsesSafely(MessageBoxExManager.SavedResponses, pair);
 				}
 			}
+		}
+
+		private void AddSavedResponsesSafely(Dictionary<string, string> responseDict, StringPair pair)
+		{
+			// The original code here threw an exception if the pair key was already in the dictionary.
+			// We don't want to overwrite what's in memory with what's on disk, so we'll skip them in that case.
+			string dummyValue;
+			if(responseDict.TryGetValue(pair.key, out dummyValue))
+				return;
+			responseDict.Add(pair.key, pair.value);
 		}
 
 		private string SettingsPath()
