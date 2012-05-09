@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
 				waitOnBridgeThread.Start();
 				//Launch the bridge process.
-				using (Process.Start(FullFieldWorksBridgePath(), args));
+				using (Process.Start(FullFieldWorksBridgePath(), args)) {}
 				Cursor.Current = Cursors.WaitCursor;
 				waitOnBridgeThread.Join();
 				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.

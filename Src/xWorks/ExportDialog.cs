@@ -641,7 +641,8 @@ namespace SIL.FieldWorks.XWorks
 				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
 			}
 			using (Process.Start(processInfo))
-				;
+			{
+			}
 		}
 
 		/// <summary>

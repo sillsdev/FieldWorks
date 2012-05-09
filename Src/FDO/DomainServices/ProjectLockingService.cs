@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// REVIEW (EberhardB): I'm not sure this works as intended: XMLBackendProvider.LockProject
 				// returns a FileStream, but XMLBackendProvider.UnlockProject works on a private
 				// variable.
-				using (XMLBackendProvider.LockProject(cache.ProjectId.Path));
+				using (XMLBackendProvider.LockProject(cache.ProjectId.Path)) { }
 			}
 		}
 

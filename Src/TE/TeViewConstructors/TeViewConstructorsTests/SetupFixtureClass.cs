@@ -8,6 +8,7 @@
 // </copyright>
 #endregion
 // ---------------------------------------------------------------------------------------------
+using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,6 +26,8 @@ namespace SIL.FieldWorks.TE
 	[SetUpFixture]
 	public class SetupFixtureClass
 	{
+		private RegistryKey m_RegistryKey;
+
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// SetUp method that will be run once before any tests or setup methods
@@ -38,8 +41,8 @@ namespace SIL.FieldWorks.TE
 			RegistryHelper.ProductName = "FieldWorks";
 
 			FwRegistrySettings.Init();
-			using (var key = RegistryHelper.SettingsKey(FwSubKey.TE, "Dummy"))
-				TeProjectSettings.InitSettings(key);
+			m_RegistryKey = RegistryHelper.SettingsKey(FwSubKey.TE, "Dummy");
+			TeProjectSettings.InitSettings(m_RegistryKey);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -56,6 +59,9 @@ namespace SIL.FieldWorks.TE
 				"SIL.FieldWorks.Resources.ResourceHelper", "ShutdownHelper");
 			ReflectionHelper.CallStaticMethod("CoreImpl.dll",
 				"SIL.CoreImpl.SingletonsContainer", "Release");
+			if (m_RegistryKey != null)
+				m_RegistryKey.Dispose();
+			m_RegistryKey = null;
 		}
 	}
 }
