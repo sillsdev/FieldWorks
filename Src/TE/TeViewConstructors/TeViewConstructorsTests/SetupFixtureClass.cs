@@ -9,6 +9,7 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using Microsoft.Win32;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -24,6 +25,8 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[SetUpFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_RegistryKey gets disposed in TearDown() method")]
 	public class SetupFixtureClass
 	{
 		private RegistryKey m_RegistryKey;
