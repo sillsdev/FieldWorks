@@ -5893,3 +5893,4 @@ EricP, 8 May 2012. (LT-7581) LT- Allow gloss variant affixes to be sensitive to 
 EricP, 9 May 2012. (LT-7581) Support adding irregularly inflected forms in Sandbox/FocusBox on LexGloss lines.
 GordonM, 9 May 2012. Fixed LT-13031 so project reopens correctly after S/R changes.
 GordonM, 9 May 2012. Kept re-read of settings file from crashing (LT-13031).
+AnnB, May 9, 2012. LT-10490 - Check box for "Match diactrics" is not fully visible in french

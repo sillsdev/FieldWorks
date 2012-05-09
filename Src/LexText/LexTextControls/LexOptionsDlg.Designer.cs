@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LexOptionsDlg));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
+			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
 			this.m_tabPlugins = new System.Windows.Forms.TabPage();
@@ -44,7 +45,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.label3 = new System.Windows.Forms.Label();
 			label1 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
@@ -73,6 +73,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabInterface.Controls.Add(this.m_userInterfaceChooser);
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
+			//
+			// label3
+			//
+			resources.ApplyResources(this.label3, "label3");
+			this.label3.Name = "label3";
 			//
 			// label2
 			//
@@ -149,11 +154,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
-			//
-			// label3
-			//
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
 			//
 			// LexOptionsDlg
 			//

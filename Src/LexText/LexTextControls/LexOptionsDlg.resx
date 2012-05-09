@@ -160,7 +160,7 @@
 	<value>tabInterface</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-	<value>9, 103</value>
+	<value>9, 115</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
 	<value>340, 46</value>
@@ -187,7 +187,7 @@
 	<value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-	<value>9, 63</value>
+	<value>9, 75</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
 	<value>340, 40</value>
@@ -214,10 +214,10 @@
 	<value>UserInterfaceChooser</value>
   </data>
   <data name="m_userInterfaceChooser.Location" type="System.Drawing.Point, System.Drawing">
-	<value>135, 15</value>
+	<value>192, 15</value>
   </data>
   <data name="m_userInterfaceChooser.Size" type="System.Drawing.Size, System.Drawing">
-	<value>218, 21</value>
+	<value>161, 21</value>
   </data>
   <data name="m_userInterfaceChooser.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
@@ -226,7 +226,7 @@
 	<value>m_userInterfaceChooser</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.0.19724, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.0.23921, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
 	<value>m_tabInterface</value>
@@ -260,90 +260,6 @@
   </data>
   <data name="&gt;&gt;m_tabInterface.ZOrder" xml:space="preserve">
 	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_labelRights.Name" xml:space="preserve">
-	<value>m_labelRights</value>
-  </data>
-  <data name="&gt;&gt;m_labelRights.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_labelRights.Parent" xml:space="preserve">
-	<value>m_tabPlugins</value>
-  </data>
-  <data name="&gt;&gt;m_labelRights.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_labelPluginBlurb.Name" xml:space="preserve">
-	<value>m_labelPluginBlurb</value>
-  </data>
-  <data name="&gt;&gt;m_labelPluginBlurb.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_labelPluginBlurb.Parent" xml:space="preserve">
-	<value>m_tabPlugins</value>
-  </data>
-  <data name="&gt;&gt;m_labelPluginBlurb.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_lvPlugins.Name" xml:space="preserve">
-	<value>m_lvPlugins</value>
-  </data>
-  <data name="&gt;&gt;m_lvPlugins.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lvPlugins.Parent" xml:space="preserve">
-	<value>m_tabPlugins</value>
-  </data>
-  <data name="&gt;&gt;m_lvPlugins.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="m_tabPlugins.Location" type="System.Drawing.Point, System.Drawing">
-	<value>4, 22</value>
-  </data>
-  <data name="m_tabPlugins.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 3, 3, 3</value>
-  </data>
-  <data name="m_tabPlugins.Size" type="System.Drawing.Size, System.Drawing">
-	<value>359, 184</value>
-  </data>
-  <data name="m_tabPlugins.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_tabPlugins.Text" xml:space="preserve">
-	<value>Plugins</value>
-  </data>
-  <data name="&gt;&gt;m_tabPlugins.Name" xml:space="preserve">
-	<value>m_tabPlugins</value>
-  </data>
-  <data name="&gt;&gt;m_tabPlugins.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tabPlugins.Parent" xml:space="preserve">
-	<value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;m_tabPlugins.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>13, 13</value>
-  </data>
-  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>367, 210</value>
-  </data>
-  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
-	<value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
-	<value>3</value>
   </data>
   <data name="m_labelRights.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
@@ -405,6 +321,18 @@
   <data name="&gt;&gt;m_labelPluginBlurb.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
+  <data name="m_chName.Text" xml:space="preserve">
+	<value>Name</value>
+  </data>
+  <data name="m_chName.Width" type="System.Int32, mscorlib">
+	<value>125</value>
+  </data>
+  <data name="m_chDescription.Text" xml:space="preserve">
+	<value>Description</value>
+  </data>
+  <data name="m_chDescription.Width" type="System.Int32, mscorlib">
+	<value>225</value>
+  </data>
   <data name="m_lvPlugins.Location" type="System.Drawing.Point, System.Drawing">
 	<value>3, 42</value>
   </data>
@@ -426,17 +354,53 @@
   <data name="&gt;&gt;m_lvPlugins.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="m_chName.Text" xml:space="preserve">
-	<value>Name</value>
+  <data name="m_tabPlugins.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
   </data>
-  <data name="m_chName.Width" type="System.Int32, mscorlib">
-	<value>125</value>
+  <data name="m_tabPlugins.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
   </data>
-  <data name="m_chDescription.Text" xml:space="preserve">
-	<value>Description</value>
+  <data name="m_tabPlugins.Size" type="System.Drawing.Size, System.Drawing">
+	<value>359, 184</value>
   </data>
-  <data name="m_chDescription.Width" type="System.Int32, mscorlib">
-	<value>225</value>
+  <data name="m_tabPlugins.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_tabPlugins.Text" xml:space="preserve">
+	<value>Plugins</value>
+  </data>
+  <data name="&gt;&gt;m_tabPlugins.Name" xml:space="preserve">
+	<value>m_tabPlugins</value>
+  </data>
+  <data name="&gt;&gt;m_tabPlugins.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabPlugins.Parent" xml:space="preserve">
+	<value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabPlugins.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 13</value>
+  </data>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>367, 210</value>
+  </data>
+  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
+	<value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
+	<value>3</value>
   </data>
   <data name="m_btnOK.AccessibleName" xml:space="preserve">
 	<value>btnOK</value>
