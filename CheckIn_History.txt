@@ -5890,3 +5890,4 @@ EricP, 7 May 2012. Fixed an interlinear gloss line bug I introduced in my last c
 RandyR, 3 May 2012. Checked in Flex Bridge 0.3.37.
 AnnB, 7 May 2012. LT-12983 - New or additional info for the Options dialog box, Interface tab.
 EricP, 8 May 2012. (LT-7581) LT- Allow gloss variant affixes to be sensitive to line ws
+EricP, 9 May 2012. (LT-7581) Support adding irregularly inflected forms in Sandbox/FocusBox on LexGloss lines.
