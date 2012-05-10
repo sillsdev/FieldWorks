@@ -85,25 +85,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
 			}
+			//Start up a thread to wait until the bridge work is completed.
+			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
+			waitOnBridgeThread.Start();
 			if (command == ConflictViewer)
 			{
 				LaunchConflictViewer(args); // launching separately here avoids blocking FLEx while viewer is open.
 				conflictHost = host; // so we can kill the host when the bridge quits
-				return true; // In the case of the Conflict Report returning true means we were successful in starting up.
 			}
-			//Start up a thread to wait until the bridge work is completed.
-			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
-			waitOnBridgeThread.Start();
-			//Launch the bridge process.
-			Process.Start(FullFieldWorksBridgePath(), args);
-			Cursor.Current = Cursors.WaitCursor;
-			waitOnBridgeThread.Join();
+			else
+			{
+				//Launch the bridge process.
+				Process.Start(FullFieldWorksBridgePath(), args);
+				Cursor.Current = Cursors.WaitCursor;
 				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.
-			projectName = _projectName;
-			changesReceived = _receivedChanges;
-			Cursor.Current = Cursors.Default;
-			KillTheHost(host);
-
+				waitOnBridgeThread.Join();
+				projectName = _projectName;
+				changesReceived = _receivedChanges;
+				Cursor.Current = Cursors.Default;
+				KillTheHost(host);
+			}
 			return true;
 		}
 
@@ -129,11 +130,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				//wait until we are notified that the bridge is listening.
 				Monitor.Wait(waitObject, -1); // infinite timeout
-				var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
-																	  new EndpointAddress("net.pipe://localhost/FLExEndpoint/FLExPipe"));
-				var channelClient = factory.CreateChannel();
-				channelClient.OperationTimeout = TimeSpan.MaxValue;
-				channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
+				BeginEmergencyExitChute();
 				while (true)
 				{
 					try
@@ -153,6 +150,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				Monitor.Exit(waitObject); //release the lock on waitObject
 			}
+		}
+
+		private static void BeginEmergencyExitChute()
+		{
+			var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
+																  new EndpointAddress(
+																	"net.pipe://localhost/FLExEndpoint/FLExPipe"));
+			var channelClient = factory.CreateChannel();
+			channelClient.OperationTimeout = TimeSpan.MaxValue;
+			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
 		}
 
 		private static void AddArg(ref string extant, string flag, string value)
@@ -303,6 +310,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			finally
 			{
+				if (conflictHost != null)
+					KillTheHost((ServiceHost)conflictHost);
 				Monitor.Exit(waitObject);
 			}
 		}
