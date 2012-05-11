@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		public override int Priority
 		{
-			get { throw new NotImplementedException(); }
+			get { return 0; }
 		}
 
 		/// ------------------------------------------------------------------------------------

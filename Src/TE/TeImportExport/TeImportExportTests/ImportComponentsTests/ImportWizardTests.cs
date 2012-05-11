@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	public class ImportWizardTests: ScrInMemoryFdoTestBase
 	{
 		#region Data members
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 		private IScrImportSet m_settings;
 		private ImportWizardWrapper m_importWizard;
 		private FwStyleSheet m_styleSheet;
@@ -454,6 +454,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
@@ -464,8 +465,10 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureTeardown()
 		{
-			base.FixtureTeardown();
+			m_ptHelper.Dispose();
+			m_ptHelper = null;
 			ParatextHelper.Manager.Reset();
+			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------

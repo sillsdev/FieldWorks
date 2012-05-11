@@ -814,10 +814,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Marshal.ReleaseComObject(m_chrPropEng);
 					m_chrPropEng = null;
 				}
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
 				if (components != null)
 					components.Dispose();
 			}
 
+			m_openFileDialog = null;
 			m_validCharsGridMngr = null;
 			m_chkBoxColHdrHandler = null;
 			m_inventoryCharComparer = null;
