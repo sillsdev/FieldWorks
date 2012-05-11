@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -29,6 +30,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ConflictViewer = @"view_notes";
 
 		/// <summary>
+		/// Project name grafted to the pipe URI so multiple projects can S/R simultaneously
+		/// </summary>
+		private static string _sFwProjectName = "";
+
+		/// <summary>
 		/// Event handler delegate that passes a jump URL.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -51,9 +57,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
 		/// is closed.
 		/// </summary>
-		/// <param name="projectFolder">optional</param>
-		/// <param name="userName"></param>
-		/// <param name="command"></param>
+		/// <param name="projectFolder">The entire FieldWorks project folder path.
+		/// Must include the project folder and project name with "fwdata" extension.
+		/// Empty is OK if not send_receive command.</param>
+		/// <param name="userName">TBD: someone should explain what this is for</param>
+		/// <param name="command">obtain, start, send_receive, view_notes</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command,
@@ -66,16 +74,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				AddArg(ref args, "-u", userName);
 			}
-			if (projectFolder != null)
-			{
+			if (!String.IsNullOrEmpty(projectFolder))
+			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
+				_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
 			}
 			AddArg(ref args, "-v", command);
+
 			ServiceHost host;
 			try
 			{
-				host = new ServiceHost(typeof (FLExBridgeService),
-												   new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint")});
+				host = new ServiceHost(typeof(FLExBridgeService),
+												   new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName) });
 
 				//open host ready for business
 				host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
@@ -156,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
 																  new EndpointAddress(
-																	"net.pipe://localhost/FLExEndpoint/FLExPipe"));
+																	"net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe"));
 			var channelClient = factory.CreateChannel();
 			channelClient.OperationTimeout = TimeSpan.MaxValue;
 			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
