@@ -1547,27 +1547,26 @@ namespace SIL.FieldWorks.IText
 		}
 
 		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec,
-			InterlinLineChoices lineChoices, int vernWsContext,
-			out ITsString result)
+			InterlinLineChoices lineChoices, int vernWsContext, out ITsString result)
 		{
 			FdoCache cache = possibleVariant.Cache;
-			var vcLexGlossFrag = new InterlinVc(cache)
-									 {
-										 LineChoices = lineChoices,
-										 PreferredVernWs = vernWsContext
-			};
-
-			result = null;
-			var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
-								{
-									RequestAppendSpaceForFirstWordInNewParagraph = false
-								};
-			if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec))
+			using (var vcLexGlossFrag = new InterlinVc(cache))
 			{
-				result = collector.Result;
-				return true;
+				vcLexGlossFrag.LineChoices = lineChoices;
+				vcLexGlossFrag.PreferredVernWs = vernWsContext;
+
+				result = null;
+				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
+				{
+					RequestAppendSpaceForFirstWordInNewParagraph = false
+				};
+				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec))
+				{
+					result = collector.Result;
+					return true;
+				}
+				return false;
 			}
-			return false;
 		}
 
 		/// <summary>

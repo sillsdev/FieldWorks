@@ -2406,10 +2406,12 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
 			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
-			var stream = new StreamReader(logFile);
-			string data = stream.ReadToEnd();
-			stream.Close();
-			Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
+			using (var stream = new StreamReader(logFile))
+			{
+				string data = stream.ReadToEnd();
+				stream.Close();
+				Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
+			}
 		}
 
 		private static readonly string[] s_LT12948Test = new[]
