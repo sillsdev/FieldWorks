@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<refentry>
+  <refmeta>
+	<refentrytitle>fieldworks-flex</refentrytitle>
+	<manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+	<refname>fieldworks-flex</refname>
+	<refpurpose>FieldWorks Language Explorer</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+	<cmdsynopsis>
+	  <command>fieldworks-flex</command>
+	  <arg><option>-db</option> <replaceable>project</replaceable></arg>
+	  <arg><option>-help</option></arg>
+	  <arg><option>-include</option> <replaceable>flags</replaceable></arg>
+	  <arg><option>-locale</option> <replaceable>langid</replaceable></arg>
+	  <arg><option>-restore</option> <replaceable>file</replaceable></arg>
+	  <arg><option>-s</option> <replaceable>server</replaceable></arg>
+	  <arg><option>-type</option> <replaceable>value</replaceable></arg>
+	</cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+	<title>DESCRIPTION</title>
+
+	<para>fieldworks-flex</para>
+
+	<variablelist>
+	  <varlistentry>
+		<term><option>-help</option></term>
+		<listitem>
+		  <para>Display the list of command line options.</para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-db</option> <parameter>project</parameter></term>
+		<listitem>
+		  <para>Specify the name of the project to load.</para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-type</option> <parameter>value</parameter></term>
+		<listitem>
+		  <para>
+			Specify the database type of the project, either "xml" or "db4ocs".
+			This can usually be inferred.</para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-s</option> <parameter>server</parameter></term>
+		<listitem>
+		  <para>
+			Specify the name of the server providing the project.  This is not
+			needed if the project files are located on the local machine.
+		  </para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-restore</option> <parameter>file</parameter></term>
+		<listitem>
+		  <para>Specify the FieldWorks backup file to be restored and then loaded.</para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-include</option> <parameter>flags</parameter></term>
+		<listitem>
+		  <para>
+			Paired with the -restore option, the flags parameter indicates which optional
+			files to restore.  The flags parameter has the form "clsf", where:
+			<simplelist type="vert" columns="1">
+			  <member>c - configuration files</member>
+			  <member>l - linked files (audio-visual media, pictures, etc.)</member>
+			  <member>s - spelling dictionary files</member>
+			  <member>f - supporting files (fonts, keyboards, converters)</member>
+			</simplelist>
+		  </para>
+		</listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+		<term><option>-locale</option> <parameter>langid</parameter></term>
+		<listitem>
+		  <para>
+			Specify the language identifier for the desired user interface localization.
+		  </para>
+		</listitem>
+	  </varlistentry>
+	</variablelist>
+	<para>
+	  fieldworks-flex provides tools for dictionary development and morphological analysis via
+	  parsing or interlinearization.  A tool for recording cultural observations and analyses
+	  is also included in fieldworks-flex.
+	</para>
+	<para>
+	  A FieldWorks project consists of data related to a particular language and the people who
+	  speak it. The last project with edited data when you exit fieldworks-flex is the project
+	  that opens the next time you start it.
+	</para>
+  </refsection>
+
+  <refsection>
+	<title>NOTES</title>
+
+	<para>
+	  /usr/bin/fieldworks-flex is a wrapper around the C# program
+	  /usr/lib/fieldworks/FieldWorks.exe with the command line argument "-app Flex".
+	</para>
+  </refsection>
+</refentry>

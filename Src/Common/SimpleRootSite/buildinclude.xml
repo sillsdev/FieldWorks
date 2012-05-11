@@ -4,9 +4,9 @@
 	<if test="${platform::is-unix()}">
 	<copy todir="${dir.buildOutput}">
 	  <fileset>
-		<include name="${fwroot}/DistFiles/ibusdotnet.dll"/>
-		<include name="${fwroot}/DistFiles/NDesk.DBus.dll"/>
-		<include name="${fwroot}/DistFiles/NDesk.DBus.dll.config"/>
+		<include name="${dir.fwoutputlibPlatformBase}/ibusdotnet.dll"/>
+		<include name="${dir.fwoutputlibPlatformBase}/NDesk.DBus.dll"/>
+		<include name="${dir.fwoutputlibPlatformBase}/NDesk.DBus.dll.config"/>
 	  </fileset>
 	</copy>
 	</if>

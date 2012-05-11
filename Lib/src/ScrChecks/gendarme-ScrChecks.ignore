@@ -1,0 +1,15 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Characters that get ignored
+M: System.Void SILUBS.ScriptureChecks.CharactersCheck::GetParameters()
+M: System.Void SILUBS.ScriptureChecks.CharactersCheck::InventoryTokens(System.Int32,SILUBS.ScriptureChecks.TextInventory,System.Collections.Generic.IEnumerable`1<SILUBS.SharedScrUtils.ITextToken>)
+
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# GetEnumerator() returns an object
+M: System.Collections.IEnumerator SILUBS.ScriptureChecks.CharactersCheck/<ParseCharacterSequences>d__0::System.Collections.IEnumerable.GetEnumerator()

@@ -373,11 +373,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
 			ann.DateTimeCreated = utcNow.ToString();
 			ann.DateTimeModified = utcNow.AddDays(1).ToString();
-#if __MonoCS__ // work around https://bugzilla.novell.com/show_bug.cgi?id=594559
-			ann.DateTimeResolved = "0003-01-01 20:00:00";
-#else
 			ann.DateTimeResolved = "0003-01-01 20:00:00.00";
-#endif
 			AddParasTo(ann.Discussion, "This is my discussion");
 			AddParasTo(ann.Resolution, "This is my resolution for the note");
 			AddParasTo(ann.Quote, "This is the quoted text");

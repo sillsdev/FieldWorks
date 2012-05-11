@@ -202,6 +202,17 @@
 	<if test="${not property::exists('dir.nunitreport')}">
 		<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>
 	</if>
+	<if test="${not property::exists('verifyset')}">
+		<!-- Gendarme rule set. See Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/fw-gendarme-rules.xml -->
+		<!-- for possible values. -->
+		<property name="verifyset" value="dispose"/>
+	</if>
+	<if test="${not property::exists('verifyfail')}">
+		<property name="verifyfail" value="true"/>
+	</if>
+	<if test="${not property::exists('autoUpdateIgnores')}">
+		<property name="autoUpdateIgnores" value="false"/>
+	</if>
 
 	<!-- Copy updated definitions file for Gendarme -->
 	<copy todir="${environment::get-folder-path('LocalApplicationData')}/Gendarme"

@@ -1,0 +1,25 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# factory method, caller will dispose
+M: SIL.FieldWorks.IText.IAnalysisControlInternal SIL.FieldWorks.IText.TestableFocusBox::CreateNewSandbox(SIL.FieldWorks.FDO.DomainServices.AnalysisOccurrence)
+
+# variables are owned by control, will be disposed by control
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_MarkupTags()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_NoSel()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_SelMatchesTag()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_SelFirstOfTag()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_MultiAnnSelLast()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_MultiAnnSelExtra()
+M: System.Void SIL.FieldWorks.IText.InterlinTaggingTests::MakeContextMenu_CheckedStates_SelCoversMultiSideBySideAnn()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit tests, object disposed in TearDown method
+T: SIL.FieldWorks.IText.AddWordsToLexiconTests
+T: SIL.FieldWorks.IText.FocusBoxControllerTests
+T: SIL.FieldWorks.IText.InterlinTaggingTests
+T: SIL.FieldWorks.IText.SandboxEntryComboHandlerLogicTests

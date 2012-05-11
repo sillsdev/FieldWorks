@@ -1,0 +1,28 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to controls collection and disposed there
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwBorderTab::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwFontAttributes::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwFontTab::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwParagraphTab::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.KeyboardControl::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton::mi_Popup(System.Object,System.EventArgs)
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FontFeaturesButton::OnClick(System.EventArgs)
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton::OnClick(System.EventArgs)
+
+# reference only
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab::m_txtStyleName_Validating(System.Object,System.ComponentModel.CancelEventArgs)
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.StyleComboListHelper::CtrlDrawItem(System.Object,System.Windows.Forms.DrawItemEventArgs)
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.StyleListBoxHelper::CtrlDrawItem(System.Object,System.Windows.Forms.DrawItemEventArgs)
+M: System.Void SIL.FieldWorks.FwCoreDlgControls.StyleListViewHelper::CtrlDrawSubItem(System.Object,System.Windows.Forms.DrawListViewSubItemEventArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.FwCoreDlgControls.BaseStyleListHelper

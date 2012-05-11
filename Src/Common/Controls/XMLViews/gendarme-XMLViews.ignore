@@ -1,0 +1,73 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.Common.Controls.ReconstructPreservingBVScrollPosition
+T: SIL.FieldWorks.Common.Controls.FlatListChooserBEditControl
+T: SIL.FieldWorks.Common.Controls.FilterComboItem
+T: SIL.FieldWorks.Common.Controls.ManyOnePathSortItemReadWriter
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::HandleConfigIconClick(SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::RebuildHeaderColumns(System.Collections.Generic.List`1<System.Xml.XmlNode>)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::InsertColumn(System.Xml.XmlNode,System.Int32)
+M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::MakeItems()
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeListChoiceFilterItem(SIL.FieldWorks.Common.Controls.FilterSortItem,SIL.FieldWorks.Common.Widgets.FwComboBox,System.String,XCore.Mediator)
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeIntCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowFuncButtons()
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowAnyAllNoneButtons(SIL.FieldWorks.Common.Controls.ListMatchOptions,System.Boolean)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::InitHelpBrowser()
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontForDialog(System.Int32[],SIL.FieldWorks.Common.COMInterfaces.IVwStylesheet,SIL.FieldWorks.Common.COMInterfaces.ILgWritingSystemFactory)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ReplaceTreeView(System.String)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFromWritingSystem(System.Int32,XCore.Mediator)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::AddChooserCommand(SIL.FieldWorks.Common.Controls.ChooserCommand)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::m_lvHeader_CheckIconClick(System.Object,SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
+M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::populateListChoiceTargetCombo()
+M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeOrReuseItems()
+M: System.Collections.Generic.List`1<SIL.FieldWorks.Common.Controls.ListClassTargetFieldItem> SIL.FieldWorks.Common.Controls.BulkEditBar::ListItemsClassesInfo(SIL.Utils.Set`1<System.Int32>)
+
+# reference only
+M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitDeleteTab()
+M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitStringCombo(SIL.FieldWorks.Common.Controls.FwOverrideComboBox,System.Boolean)
+
+# Returns object
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>d__0::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.Common.Controls.BulkEditBar/BulkEditTabPageSettings
+T: SIL.FieldWorks.Common.Controls.DoItMethod
+T: SIL.FieldWorks.Common.Controls.BulkEditSpecControl
+T: SIL.FieldWorks.Common.Controls.OwnStringPropReadWriter
+T: SIL.FieldWorks.Common.Controls.ChooserCommand
+T: SIL.FieldWorks.Common.Controls.ConfiguredExport
+T: SIL.FieldWorks.Common.Controls.ListChoiceFilter
+T: SIL.FieldWorks.Common.Controls.ObjectLabel
+T: SIL.FieldWorks.Common.Controls.PartGenerator
+T: SIL.FieldWorks.Common.Controls.XmlBrowseRDEView/CreateObjectFromEntryRowUndoAction
+T: SIL.FieldWorks.Common.Controls.XmlBrowseViewBaseVc/ItemsCollectorEnv
+T: SIL.FieldWorks.Common.Controls.RootDisplayCommand
+T: SIL.FieldWorks.Common.Controls.TargetColumnChangedEventArgs
+T: SIL.FieldWorks.Common.Controls.LayoutFinder
+T: SIL.FieldWorks.Common.Controls.XmlBrowseViewBaseVc
+T: SIL.FieldWorks.Common.Controls.XmlVc
+
+# will be added to control and disposed there
+T: SIL.FieldWorks.Common.Controls.IntChooserBEditControl
+T: SIL.FieldWorks.Common.Controls.ComplexListChooserBEditControl
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
+
+# not executed on Linux (FWNX-464)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::InitHelpBrowser()
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::m_printButton_Click(System.Object,System.EventArgs)

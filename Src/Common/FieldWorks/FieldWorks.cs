@@ -365,32 +365,71 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static bool SetUICulture(FwAppArgs args)
 		{
-			// TODO WS: is this setting the correct UI culture?
-
-			// Try the UI locale was found on the command-line;
+			// Try the UI locale found on the command-line (if any).
 			string locale = args.Locale;
+			// If that doesn't exist, try the UI locale found in the registry.
 			if (string.IsNullOrEmpty(args.Locale))
-				// Try the UI locale found in the registry.
 				locale = (string)FwRegistryHelper.FieldWorksRegistryKey.GetValue(FwRegistryHelper.UserLocaleValueName, string.Empty);
+			// If that doesn't exist, try the current system UI locale set at program startup.
+			if (string.IsNullOrEmpty(locale) && Thread.CurrentThread.CurrentUICulture != null)
+				locale = Thread.CurrentThread.CurrentUICulture.Name;
+			// If that doesn't exist, just use English ("en").
 			if (string.IsNullOrEmpty(locale))
+			{
 				locale = "en";
-			try
-			{
-				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
 			}
-			catch (ArgumentException e)
+			else
 			{
-				Logger.WriteError(e);
-				if (MessageBox.Show(e.Message + Environment.NewLine + Properties.Resources.kstidFallbackToEnglishUi,
-					Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
+				// Check whether the desired locale has a localization, ignoring the
+				// country code if necessary.  Fall back to English ("en") if no
+				// localization exists.
+				var rgsLangs = GetAvailableLangsFromSatelliteDlls();
+				if (!rgsLangs.Contains(locale))
 				{
-					return false;
+					int idx = locale.IndexOf('-');
+					if (idx > 0)
+						locale = locale.Substring(0, idx);
+					if (!rgsLangs.Contains(locale))
+					{
+						locale = "en";
+						if (MessageBox.Show(string.Format(Properties.Resources.kstidFallbackToEnglishUi, args.Locale),
+							Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
+						{
+							return false;
+						}
+					}
 				}
-				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en");
 			}
+			if (locale != Thread.CurrentThread.CurrentUICulture.Name)
+				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
 
 			s_sWsUser = Thread.CurrentThread.CurrentUICulture.Name;
 			return true;
+		}
+
+		/// <summary>
+		/// Get the available localizations.
+		/// </summary>
+		private static List<string> GetAvailableLangsFromSatelliteDlls()
+		{
+			List<string> rgsLangs = new List<string>();
+			// Get the folder in which the program file is stored.
+			string sDllLocation = Path.GetDirectoryName(Application.ExecutablePath);
+
+			// Get all the sub-folders in the program file's folder.
+			string[] rgsDirs = Directory.GetDirectories(sDllLocation);
+
+			// Go through each sub-folder and if at least one file in a sub-folder ends
+			// with ".resource.dll", we know the folder stores localized resources and the
+			// name of the folder is the culture ID for which the resources apply. The
+			// name of the folder is stripped from the path and used to add a language
+			// to the list.
+			foreach (string dir in rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0))
+			{
+				var locale = Path.GetFileName(dir);
+				rgsLangs.Add(locale);
+			}
+			return rgsLangs;
 		}
 
 		/// ------------------------------------------------------------------------------------

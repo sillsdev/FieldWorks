@@ -65,7 +65,7 @@ LINK_LIBS := \
 	$(OUT_DIR)/libDebugProcs.a \
 	$(COM_OUT_DIR)/libGraphiteTlb.a \
 	$(COM_OUT_DIR)/libViewsTlb.a \
-	$(COM_OUT_DIR)/libFwKernelTlb.a
+	$(COM_OUT_DIR)/libLanguageTlb.a
 
 all: $(OUT_DIR)/testLanguage
 

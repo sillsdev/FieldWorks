@@ -220,7 +220,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override void OnSelectedIndexChanged(EventArgs e)
 		{
 			base.OnSelectedIndexChanged(e);
-			// Change the current dialog on the fly, but don't touch the main program.
 			var ldi = (LanguageDisplayItem) SelectedItem;
 			m_sNewUserWs = ldi.Locale;
 		}

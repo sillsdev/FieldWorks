@@ -1,0 +1,56 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Reference only
+T: SIL.FieldWorks.XWorks.LinkListener
+T: SIL.FieldWorks.XWorks.RecordBarHandler
+T: SIL.FieldWorks.XWorks.RecordClerk
+T: SIL.FieldWorks.XWorks.WritingSystemListHandler
+T: SIL.FieldWorks.XWorks.CombinedStylesListHandler
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDataTreeInsert(System.Object)
+M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDisplayDataTreeInsert(System.Object,XCore.UIItemDisplayProperties&)
+M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDisplayDataTreeCopy(System.Object,XCore.UIItemDisplayProperties&)
+M: System.Void SIL.FieldWorks.XWorks.ExportDialog::InitFromMainControl(System.Object)
+M: System.IO.Stream SIL.FieldWorks.XWorks.FwXApp::get_ApplicationIconStream()
+M:  System.Boolean SIL.FieldWorks.XWorks.FwXWindow::FocusControlHandlesMessage(System.String,System.Object[])
+M: System.Void SIL.FieldWorks.XWorks.TreeBarHandler::tree_MouseClicked(System.Object,System.Windows.Forms.MouseEventArgs)
+M: System.Boolean SIL.FieldWorks.XWorks.RecordBrowseView::OnRecordNavigation(System.Object)
+M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::get_SkipShowRecord()
+M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::SetCurrentFromRelatedClerk()
+M: System.Void SIL.FieldWorks.XWorks.RecordView::InitBase(XCore.Mediator,System.Xml.XmlNode)
+M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDataTreeCopy(System.Object)
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.XWorks.GeneratedHtmlViewer::InitHtmlControl()
+
+# Gendarme bug. Object is disposed in Dispose method
+M: System.Void SIL.FieldWorks.XWorks.CustomListDlg::InitializeHelpProvider()
+
+# Disposes of itself when menu closes since true passed
+M: System.Void SIL.FieldWorks.XWorks.RecordBrowseView::OnFwRightMouseClick(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
+
+# Returns an object
+M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.InterestingTextList/<get_InterestingTexts>d__4::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.XWorks.DTMenuHandler
+T: SIL.FieldWorks.XWorks.DeleteCustomList
+T: SIL.FieldWorks.XWorks.ExportDialog/TranslatedListsExporter
+T: SIL.FieldWorks.XWorks.InterestingTextList
+T: SIL.FieldWorks.XWorks.LocalDragItem
+T: SIL.FieldWorks.XWorks.RecordClerk/ListUpdateHelper/ListUpdateHelperOptions
+T: SIL.FieldWorks.XWorks.RecordNavigationInfo
+T: SIL.FieldWorks.XWorks.ListChangedEventArgs
+T: SIL.FieldWorks.XWorks.RecordList/CpiPathBasedCreateAndInsert
+T: SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter
+T: SIL.FieldWorks.XWorks.ConcDecorator

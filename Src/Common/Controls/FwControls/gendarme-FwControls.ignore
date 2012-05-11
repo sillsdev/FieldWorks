@@ -1,0 +1,45 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# m_owner is a reference; we call Dispose for m_progressDialog
+T: SIL.FieldWorks.Common.Controls.ProgressDialogWithTask
+
+# member variable is a reference, owned and disposed by parent
+T: SIL.FieldWorks.Common.Controls.CollapsibleSplitter
+T: ControlExtenders.DockExtender
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# reference only
+M: System.Void SIL.FieldWorks.Common.Controls.CharacterInfoToolTip::HandleDraw(System.Object,System.Windows.Forms.DrawToolTipEventArgs)
+M: System.Boolean SIL.FieldWorks.Common.Controls.FwTextPanel::ProcessMnemonic(System.Char)
+M: System.Void ControlExtenders.Floaty::OnMove(System.EventArgs)
+
+# added to collection and disposed there
+M: System.Void SIL.FieldWorks.Common.Controls.LanguageSetup::InitializeComponent()
+M: System.Void SIL.FieldWorks.Common.Controls.WizardDialog::set_StepPageCount(System.Int32)
+M: ControlExtenders.IFloaty ControlExtenders.DockExtender::Attach(System.Windows.Forms.ScrollableControl,System.Windows.Forms.Control,System.Boolean)
+
+# factory method
+M: ControlExtenders.IFloaty ControlExtenders.DockExtender::Attach(System.Windows.Forms.ScrollableControl,System.Windows.Forms.Control,System.Windows.Forms.Splitter)
+
+# we are calling Dispose(), gendarme doesn't recognize it
+M: System.Void SIL.FieldWorks.Common.Controls.ExplorerBarItem::DrawButtonBackground(System.Drawing.Graphics)
+M: System.Void SIL.FieldWorks.Common.Controls.ProgressDialogWithTask::InitOnOwnerThread()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
+
+# extension method that implements Dispose
+T: SIL.FieldWorks.Common.Controls.FilterScrSectionDialogExtensions
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only, object owned by parent and disposed there
+T: SIL.FieldWorks.Common.Controls.FwContainer/FwSite
+T: SIL.FieldWorks.Common.Controls.LanguageSetup/TrapEnterFilter
+T: SIL.FieldWorks.Common.Controls.ProgressBarWrapper

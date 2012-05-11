@@ -793,6 +793,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Debug.WriteLineIf(!disposing, "********** Missing Dispose() call for " + GetType().Name + ". **********");
 			if (disposing)
 			{
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
+
 				if (m_fDisposeWsManager)
 				{
 					var disposable = m_wsManager as IDisposable;
@@ -824,6 +827,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_validCharsGridMngr = null;
 			m_chkBoxColHdrHandler = null;
 			m_inventoryCharComparer = null;
+			m_openFileDialog = null;
 
 			base.Dispose(disposing);
 

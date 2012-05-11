@@ -19,34 +19,34 @@ Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<!-- Using keys instead of IDs (so no DTD or XSD required) -->
-	<xsl:key name="AdhocGroup" match="//MoAdhocProhibGr/Members" use="@dst"/>
-	<xsl:key name="BearableFeaturesID" match="//FsClosedFeature" use="@Id"/>
-	<xsl:key name="BoundaryMarkersID" match="//PhBdryMarker" use="@Id"/>
-	<xsl:key name="ContextsID" match="//PhSequenceContext | //PhIterationContext | PhSimpleContextBdry | PhSimpleContextSeg | PhSimpleContextNC" use="@Id"/>
-	<xsl:key name="FsClosedFeaturesID" match="//FsClosedFeature" use="@Id"/>
-	<xsl:key name="FsComplexFeaturesID" match="//FsComplexFeature" use="@Id"/>
-	<xsl:key name="FsFeatStrucsID" match="//FsFeatStruc" use="@Id"/>
-	<xsl:key name="FsSymFeatValsID" match="//FsSymFeatVal" use="@Id"/>
-	<xsl:key name="ExceptionFeaturesID" match="//ProdRestrict/CmPossibility" use="@Id"/>
-	<xsl:key name="InflectableFeatsID" match="//FsClosedFeature | //FsComplexFeature" use="@Id"/>
-	<xsl:key name="InflectionClassesID" match="//MoInflClass" use="@Id"/>
-	<xsl:key name="InflAffixMsaID" match="//MoInflAffMsa" use="@Id"/>
-	<xsl:key name="LexAllos" match="//LexEntry/AlternateForms | //LexEntry/LexemeForm" use="@dst"/>
-	<xsl:key name="LexEntryMsa" match="//LexEntry/MorphoSyntaxAnalysis" use="@dst"/>
-	<xsl:key name="LexEntrySense" match="//LexEntry/Sense" use="@dst"/>
-	<xsl:key name="MoFormsID" match="//MoAffixAllomorph | // MoStemAllomorph" use="@Id"/>
-	<xsl:key name="MorphTypeID" match="//MoMorphType" use="@Id"/>
-	<xsl:key name="MsaID" match="//MoStemMsa | //MoInflAffMsa | //MoDerivAffMsa | //MoUnclassifiedAffixMsa " use="@Id"/>
-	<xsl:key name="NaturalClassesID" match="//PhNCSegments | //PhNCFeatures" use="@Id"/>
-	<xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-	<xsl:key name="PhEnvironmentsID" match="//PhEnvironment" use="@Id"/>
-	<xsl:key name="PhFeatureConstraintsID" match="//PhFeatureConstraint" use="@Id"/>
-	<xsl:key name="PhonemesID" match="//PhPhoneme" use="@Id"/>
-	<xsl:key name="PhonRuleFeatsID" match="//PhonRuleFeat" use="@Id"/>
-	<xsl:key name="SensesID" match="//LexSense" use="@Id"/>
-	<xsl:key name="SensesMsa" match="//LexSense" use="@Msa"/>
-	<xsl:key name="SlotsID" match="//MoInflAffixSlot" use="@Id"/>
-	<xsl:key name="StemNamesID" match="//MoStemName" use="@Id"/>
+	<xsl:key name="AdhocGroup" match="MoAdhocProhibGr/Members" use="@dst"/>
+	<xsl:key name="BearableFeaturesID" match="FsClosedFeature" use="@Id"/>
+	<xsl:key name="BoundaryMarkersID" match="PhBdryMarker" use="@Id"/>
+	<xsl:key name="ContextsID" match="PhSequenceContext | PhIterationContext | PhSimpleContextBdry | PhSimpleContextSeg | PhSimpleContextNC" use="@Id"/>
+	<xsl:key name="FsClosedFeaturesID" match="FsClosedFeature" use="@Id"/>
+	<xsl:key name="FsComplexFeaturesID" match="FsComplexFeature" use="@Id"/>
+	<xsl:key name="FsFeatStrucsID" match="FsFeatStruc" use="@Id"/>
+	<xsl:key name="FsSymFeatValsID" match="FsSymFeatVal" use="@Id"/>
+	<xsl:key name="ExceptionFeaturesID" match="ProdRestrict/CmPossibility" use="@Id"/>
+	<xsl:key name="InflectableFeatsID" match="FsClosedFeature | FsComplexFeature" use="@Id"/>
+	<xsl:key name="InflectionClassesID" match="MoInflClass" use="@Id"/>
+	<xsl:key name="InflAffixMsaID" match="MoInflAffMsa" use="@Id"/>
+	<xsl:key name="LexAllos" match="LexEntry/AlternateForms | LexEntry/LexemeForm" use="@dst"/>
+	<xsl:key name="LexEntryMsa" match="LexEntry/MorphoSyntaxAnalysis" use="@dst"/>
+	<xsl:key name="LexEntrySense" match="LexEntry/Sense" use="@dst"/>
+	<xsl:key name="MoFormsID" match="MoAffixAllomorph |  MoStemAllomorph" use="@Id"/>
+	<xsl:key name="MorphTypeID" match="MoMorphType" use="@Id"/>
+	<xsl:key name="MsaID" match="MoStemMsa | MoInflAffMsa | MoDerivAffMsa | MoUnclassifiedAffixMsa " use="@Id"/>
+	<xsl:key name="NaturalClassesID" match="PhNCSegments | PhNCFeatures" use="@Id"/>
+	<xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+	<xsl:key name="PhEnvironmentsID" match="PhEnvironment" use="@Id"/>
+	<xsl:key name="PhFeatureConstraintsID" match="PhFeatureConstraint" use="@Id"/>
+	<xsl:key name="PhonemesID" match="PhPhoneme" use="@Id"/>
+	<xsl:key name="PhonRuleFeatsID" match="PhonRuleFeat" use="@Id"/>
+	<xsl:key name="SensesID" match="LexSense" use="@Id"/>
+	<xsl:key name="SensesMsa" match="LexSense" use="@Msa"/>
+	<xsl:key name="SlotsID" match="MoInflAffixSlot" use="@Id"/>
+	<xsl:key name="StemNamesID" match="MoStemName" use="@Id"/>
 	<!-- Using a parameter to set language of sketch; default is English (en)  -->
 	<xsl:param name="sSketchLangICULocale">
 		<xsl:text>en</xsl:text>
@@ -66,41 +66,41 @@ Preamble
 	<!-- need to set analysis/gloss font size, especially for non-roman scripts -->
 	<xsl:param name="prmGlossFontSize"/>
 	<!--		<xsl:text>740664001</xsl:text>-->
-	<xsl:variable name="bVernRightToLeft" select="//VernWss/WritingSystem/@RightToLeft"/>
-	<xsl:variable name="bGlossRightToLeft" select="//AnalysisWss/WritingSystem/@RightToLeft"/>
+	<xsl:variable name="bVernRightToLeft" select="/M3Dump/LangProject/VernWss/WritingSystem/@RightToLeft"/>
+	<xsl:variable name="bGlossRightToLeft" select="/M3Dump/LangProject/AnalysisWss/WritingSystem/@RightToLeft"/>
 	<xsl:param name="sWordWorksTransformPath">
 		<xsl:text>C:/fw/DistFiles/Language Explorer/Transforms</xsl:text>
 	</xsl:param>
 	<xsl:variable name="sEnvironmentPositionTag" select="'.Position'"/>
-	<xsl:variable name="POSes" select="//PartOfSpeech"/>
-	<xsl:variable name="PartsOfSpeech" select="//PartsOfSpeech"/>
+	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech"/>
+	<xsl:variable name="POSes" select="$PartsOfSpeech//PartOfSpeech"/>
 	<xsl:variable name="toplevelPOSes" select="$PartsOfSpeech/PartOfSpeech[not($POSes/SubPossibilities/@dst=@Id)]"/>
-	<xsl:variable name="MoInflAffixTemplates" select="//MoInflAffixTemplate"/>
-	<xsl:variable name="MorphoSyntaxAnalyses" select="//MorphoSyntaxAnalyses"/>
-	<xsl:variable name="LexEntries" select="//LexEntry"/>
-	<xsl:variable name="MoMorphTypes" select="//MoMorphType"/>
-	<xsl:variable name="MoStemAllomorphs" select="//MoStemAllomorph"/>
-	<xsl:variable name="MoAffixAllomorphs" select="//MoAffixAllomorph"/>
-	<xsl:variable name="PhoneEnvs" select="//PhoneEnv"/>
-	<xsl:variable name="Positions" select="//Position"/>
-	<xsl:variable name="MoInflAffMsas" select="//MoInflAffMsa"/>
-	<xsl:variable name="MoDerivAffMsas" select="//MoDerivAffMsa"/>
-	<xsl:variable name="MoInflClasses" select="//MoInflClass"/>
-	<xsl:variable name="MoStemNames" select="//MoStemName"/>
-	<xsl:variable name="MoAdhocProhibGrs" select="//MoAdhocProhibGr"/>
-	<xsl:variable name="MoMorphAdhocProhibs" select="//MoMorphAdhocProhib"/>
-	<xsl:variable name="MoAlloAdhocProhibs" select="//MoAlloAdhocProhib"/>
-	<xsl:variable name="FsFeatStrucTypes" select="//FsFeatStrucType[Name!='Phon']"/>
-	<xsl:variable name="ProdRestricts" select="//ProdRestrict"/>
-	<xsl:variable name="InflectionClasses" select="//InflectionClasses"/>
-	<xsl:variable name="PhEnvironments" select="//PhEnvironment"/>
-	<xsl:variable name="PhPhonemes" select="//PhPhoneme"/>
+	<xsl:variable name="MoInflAffixTemplates" select="$POSes/AffixTemplates/MoInflAffixTemplate"/>
+	<xsl:variable name="MorphoSyntaxAnalyses" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses"/>
+	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
+	<xsl:variable name="MoMorphTypes" select="/M3Dump/MoMorphTypes/MoMorphType"/>
+	<xsl:variable name="MoStemAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoStemAllomorph"/>
+	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
+	<xsl:variable name="PhoneEnvs" select="/M3Dump/Lexicon/Allomorphs//PhoneEnv"/>
+	<xsl:variable name="Positions" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph/Position"/>
+	<xsl:variable name="MoInflAffMsas" select="$MorphoSyntaxAnalyses/MoInflAffMsa"/>
+	<xsl:variable name="MoDerivAffMsas" select="$MorphoSyntaxAnalyses/MoDerivAffMsa"/>
+	<xsl:variable name="MoInflClasses" select="$POSes/InflectionClasses//MoInflClass"/>
+	<xsl:variable name="MoStemNames" select="$POSes/StemNames/MoStemName"/>
+	<xsl:variable name="MoAdhocProhibGrs" select="/M3Dump/MoMorphData/AdhocCoProhibitions//MoAdhocProhibGr"/>
+	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/MoMorphData/AdhocCoProhibitions/MoMorphAdhocProhib"/>
+	<xsl:variable name="MoAlloAdhocProhibs" select="/M3Dump/MoMorphData/AdhocCoProhibitions/MoAlloAdhocProhib"/>
+	<xsl:variable name="FsFeatStrucTypes" select="/M3Dump//Types/FsFeatStrucType[Name!='Phon']"/>
+	<xsl:variable name="ProdRestricts" select="/M3Dump//ProdRestrict"/>
+	<xsl:variable name="InflectionClasses" select="/M3Dump//InflectionClasses"/>
+	<xsl:variable name="PhEnvironments" select="/M3Dump/PhPhonData/Environments/PhEnvironment"/>
+	<xsl:variable name="PhPhonemes" select="/M3Dump/PhPhonData/PhonemeSets/PhPhonemeSet/Phonemes/PhPhoneme"/>
 	<!-- variable used to tell if the Feature System section should be included or not.  May need to add check for other types of features. -->
-	<xsl:variable name="FeatureSystem" select="//FeatureSystem/Features/FsClosedFeature | //FeatureSystem/Features/FsComplexFeature"/>
+	<xsl:variable name="FeatureSystem" select="/M3Dump/FeatureSystem/Features/FsClosedFeature | /M3Dump/FeatureSystem/Features/FsComplexFeature"/>
 	<!-- variable used to tell if the Phonological Rules section should be included or not. -->
-	<xsl:variable name="PhonologicalRules" select="//PhonRules/PhRegularRule | //PhonRules/PhMetathesisRule"/>
+	<xsl:variable name="PhonologicalRules" select="/M3Dump/PhPhonData/PhonRules/PhRegularRule | //PhonRules/PhMetathesisRule"/>
 	<!-- variable used to tell if the Phonological Feature System section should be included or not. -->
-	<xsl:variable name="PhonologicalFeatureSystem" select="//PhFeatureSystem/Features/FsClosedFeature"/>
+	<xsl:variable name="PhonologicalFeatureSystem" select="/M3Dump/PhFeatureSystem/Features/FsClosedFeature"/>
 	<!-- variable used to tell if the exception "features" section should be included or not. -->
 	<xsl:variable name="ProdRestrict" select="$ProdRestricts/CmPossibility"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
@@ -563,7 +563,7 @@ Main template
 						</dl>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:if test="//MoInflAffixSlot/@Optional = 'true'">
+				<xsl:if test="$POSes/AffixSlots/MoInflAffixSlot/@Optional = 'true'">
 					<p>In the inflectional templates expressed below, parentheses indicate that a slot is optional.</p>
 				</xsl:if>
 				<xsl:for-each select="$toplevelPOSes">
@@ -972,7 +972,7 @@ Main template
 			</section1>
 			<section1 id="sCompounding" type="tH1">
 				<secTitle>Compounding</secTitle>
-				<xsl:variable name="CompoundRules" select="//MoEndoCompound | //MoExoCompound"/>
+				<xsl:variable name="CompoundRules" select="/M3Dump/MoMorphData/CompoundRules/MoEndoCompound | /M3Dump/MoMorphData/CompoundRules/MoExoCompound"/>
 				<p>
 					<xsl:text>In this analysis of  </xsl:text>
 					<xsl:value-of select="$sLangName"/>
@@ -1239,7 +1239,7 @@ Main template
 									</xsl:call-template>
 								</p>
 							</xsl:if>
-							<xsl:variable name="stems" select="//MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
+							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
 							<xsl:choose>
 								<xsl:when test="$stems">
 									<xsl:variable name="iCount" select="count($stems)"/>
@@ -1677,8 +1677,8 @@ Main template
 			</section1>
 			<section1 id="sNaturalClasses" type="tH1">
 				<secTitle>Natural Classes</secTitle>
-				<xsl:variable name="NCSegments" select="//PhNCSegments"/>
-				<xsl:variable name="NCFeatures" select="//PhNCFeatures[Name[not(contains(.,'Created automatically'))]]"/>
+				<xsl:variable name="NCSegments" select="/M3Dump/PhPhonData/NaturalClasses/PhNCSegments"/>
+				<xsl:variable name="NCFeatures" select="/M3Dump/PhPhonData/NaturalClasses/PhNCFeatures[Name[not(contains(.,'Created automatically'))]]"/>
 				<xsl:variable name="iCountSegments" select="count($NCSegments)"/>
 				<xsl:variable name="iCountFeatures" select="count($NCFeatures)"/>
 				<xsl:variable name="iCount" select="$iCountSegments + $iCountFeatures"/>
@@ -2459,7 +2459,7 @@ Main template
 						</xsl:attribute>
 					</xsl:if>
 					<xsl:attribute name="font-family">
-						<xsl:value-of select="//VernWss/WritingSystem/DefaultFont"/>
+						<xsl:value-of select="/M3Dump/LangProject/VernWss/WritingSystem/DefaultFont"/>
 					</xsl:attribute>
 					<xsl:attribute name="font-weight">bold</xsl:attribute>
 					<xsl:attribute name="color">blue</xsl:attribute>
@@ -2474,7 +2474,7 @@ Main template
 						</xsl:attribute>
 					</xsl:if>
 					<xsl:attribute name="font-family">
-						<xsl:value-of select="//AnalysisWss/WritingSystem/DefaultFont"/>
+						<xsl:value-of select="/M3Dump/LangProject/AnalysisWss/WritingSystem/DefaultFont"/>
 					</xsl:attribute>
 				</language>
 				<language id="lIPA" name="IPA">
@@ -2638,7 +2638,7 @@ Main template
 					<th>Phonological Features</th>
 				</xsl:if>
 			</tr>
-			<xsl:for-each select="//Representation">
+			<xsl:for-each select="/M3Dump/PhPhonData/PhonemeSets/PhPhonemeSet//Codes/PhCode/Representation">
 				<xsl:sort select="."/>
 				<xsl:variable name="phoneme" select="ancestor::PhPhoneme"/>
 				<xsl:if test="$phoneme">
@@ -3437,7 +3437,7 @@ CalculateUnusedBearableFeatures
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="CalculateUnusedBearableFeatures">
-		<xsl:for-each select="//BearableFeature">
+		<xsl:for-each select="$POSes/BearableFeatures/BearableFeature">
 			<xsl:sort select="../../Name"/>
 			<xsl:variable name="pos">
 				<xsl:value-of select="../../@Id"/>
@@ -3451,7 +3451,7 @@ CalculateUnusedBearableFeatures
 				<xsl:value-of select="$idFeature"/>
 				<xsl:text>;</xsl:text>
 			</xsl:variable>
-			<xsl:variable name="values" select="//FsClosedValue[@Feature=$idFeature] | //FsNegatedValue[@Feature=$idFeature]"/>
+			<xsl:variable name="values" select="//FsFeatStruc/FsClosedValue[@Feature=$idFeature] | //FsFeatStruc/FsNegatedValue[@Feature=$idFeature]"/>
 			<xsl:choose>
 				<xsl:when test="count($values)=0">
 					<!-- there are none at all; remember POS id and bearable feature dst -->
@@ -3579,7 +3579,7 @@ CalculateUnusedInflectionClassesStems
 			<xsl:variable name="idInflClass">
 				<xsl:value-of select="@Id"/>
 			</xsl:variable>
-			<xsl:if test="count(//MoStemMsa[@InflectionClass=$idInflClass]) + count($MoDerivAffMsas[@ToInflectionClass=$idInflClass])=0">
+			<xsl:if test="count($MorphoSyntaxAnalyses/MoStemMsa[@InflectionClass=$idInflClass]) + count($MoDerivAffMsas[@ToInflectionClass=$idInflClass])=0">
 				<xsl:value-of select="$idInflClass"/>
 				<xsl:text>,</xsl:text>
 			</xsl:if>
@@ -3593,7 +3593,7 @@ CalculateUnusedInflectionClassesStems
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="CalculateUnusedSlots">
-		<xsl:for-each select="//MoInflAffixSlot">
+		<xsl:for-each select="$POSes/AffixSlots/MoInflAffixSlot">
 			<xsl:variable name="idSlot">
 				<xsl:value-of select="@Id"/>
 			</xsl:variable>

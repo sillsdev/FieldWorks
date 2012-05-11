@@ -1,0 +1,8 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.Common.FXT.XDumper/SingleLexReference
+T: SIL.FieldWorks.Common.FXT.XDumper

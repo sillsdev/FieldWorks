@@ -1,0 +1,26 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Factory method
+M: XCore.ToolStripManager XCore.AdapterBase::get_Manager()
+
+# Added to control and disposed there
+M: System.Windows.Forms.MenuStrip XCore.MenuAdapter::get_MyMenuStrip()
+M: System.Void XCore.MenuAdapter::CreateUIForChoiceGroupCollection(XCore.ChoiceGroupCollection)
+M: System.Void XCore.MenuAdapter::CreateUIForChoiceGroup(XCore.ChoiceGroup)
+M: System.Void XCore.MenuAdapter::ShowContextMenu(XCore.ChoiceGroup,System.Drawing.Point,XCore.TemporaryColleagueParameter,XCore.MessageSequencer)
+M: System.Void XCore.SidebarAdapter::MakeListControl(XCore.ChoiceGroup)
+M: System.Void XCore.PaneBar::AddHotlink(XCore.ChoiceBase)
+M: System.Void XCore.PanelButton::SetLabel()
+M: System.Void XCore.PanelMenu::Display()
+M: System.Void XCore.ReBarAdapter::InitializeToolStrips()
+M: System.Void XCore.ReBarAdapter::FillToolbar(XCore.ChoiceGroup,System.Windows.Forms.ToolStrip)
+M: System.Void XCore.PaneBar::AddMenu(XCore.ChoiceGroup)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: XCore.AdapterBase

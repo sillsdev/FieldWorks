@@ -1,0 +1,54 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# reference only
+M: System.Void SIL.FieldWorks.Common.PrintLayout.HeaderFooterLayoutTests::HeaderFooterLayout()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.LazyPrintLayoutTests::SmallEstimates()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PublicationPageCollection()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::CreateAndPrepareToDrawPublicationPages()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::ElementFromPoint()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::EditPageBroken()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_FirstPage()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_MiddlePage()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_LastPage()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_LastPage_fUp()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_ExactPage()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::PageFromPrinterY_ExactPage_fUp()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::FootnoteLayout()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::Pub_ThreeDivisions_EachDivStartsNewPage()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::Pub_ThreeDivisions_Continuous_WithSeparateFootnoteStreams()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::Pub_ThreeDivisions_Continuous_SharedFootnoteStream_RepeatedOrcs()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::Pub_ThreeDivisions_Continuous_SharedFootnoteStream()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests::Pub_MixedColumnDivisions_AlternatingContinuousAndPageBreak()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.TwoColumnPrintLayoutTests::PageElementsDontOverlap_FootnotesInTwoDivisions()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageTests::GetLastElement_OneElement()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageTests::GetLastElement_TwoElementsLtoR()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageTests::GetLastElement_ThreeElementsLtoR()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageTests::GetLastElement_TwoElementsRtoL()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageTests::GetLastElement_TwoElementsRtoLStandard()
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::CreatePages_MultiDivContinuous()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::CreatePages_MultiDivNewPage()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# simulating key press
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::EditPageBroken()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests::EditPageBroken_TwoColumns()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# unit test. Disposed in tear down method
+T: SIL.FieldWorks.Common.PrintLayout.HeaderFooterLayoutTests
+T: SIL.FieldWorks.Common.PrintLayout.LazyPrintLayoutTests
+T: SIL.FieldWorks.Common.PrintLayout.PrintLayoutTests
+T: SIL.FieldWorks.Common.PrintLayout.PrintLayoutWithFootnotesTests
+T: SIL.FieldWorks.Common.PrintLayout.TwoColumnPrintLayoutTests
+
+# reference only
+T: SIL.FieldWorks.Common.PrintLayout.DummyPrintConfigurer

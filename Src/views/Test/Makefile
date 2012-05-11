@@ -97,8 +97,6 @@ VIEWS_OBJS = \
 
 DEPS = $(PRECOMPS:%.gch=%.d)
 
--include $(DEPS)
-
 all: $(OUT_DIR)/testViews
 
 $(OUT_DIR)/testViews: $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS)
@@ -145,3 +143,5 @@ $(INT_DIR)/Collection.cpp: \
 	TestVwTableBox.h
 	@echo Collecting tests for testViews
 	$(COLLECT) $^ >$@
+
+-include $(DEPS)

@@ -68,9 +68,9 @@
   <ItemGroup>
 	<Reference Include="System" />
 	<Reference Include="System.Drawing" />
-	<Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\NDesk.DBus.dll</HintPath>
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="NDesk.DBus">
+	  <HintPath>..\..\..\Output\Debug\NDesk.DBus.dll</HintPath>
 	</Reference>
 	<Reference Include="BasicUtils, Version=6.9.3.0, Culture=neutral, PublicKeyToken=null">
 	  <SpecificVersion>False</SpecificVersion>
@@ -80,9 +80,8 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="ibusdotnet, Version=1.0.1.27630, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\ibusdotnet.dll</HintPath>
+	<Reference Include="ibusdotnet">
+	  <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
 	</Reference>
 	<Reference Include="System.Windows.Forms" />
   </ItemGroup>

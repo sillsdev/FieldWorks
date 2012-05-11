@@ -1,0 +1,23 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# reference only
+M: System.Void SIL.FieldWorks.Common.Controls.ContextMenuEx::ProcessInitPopup(SIL.FieldWorks.Common.Controls.ContextMenuEx/MSG)
+M: System.Void SIL.FieldWorks.Common.Controls.DrawOfficeXPMenuHelper::SIL.FieldWorks.Common.Controls.IMenuDrawingHelper.DrawMenu(System.Drawing.Rectangle,System.Windows.Forms.DrawItemState,System.Int32)
+M: System.Void SIL.FieldWorks.Common.Controls.MenuExtender::SetImageList(System.Windows.Forms.MenuItem,System.Windows.Forms.ImageList)
+M: System.Void SIL.FieldWorks.Common.Controls.MenuExtender::AddContextMenu(System.Windows.Forms.ContextMenu,System.Windows.Forms.MenuItem[],System.String[])
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.Common.Controls.MainMenuMerge
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.Common.Controls.DrawOfficeXPMenuHelper
+T: SIL.FieldWorks.Common.Controls.DrawStandardMenuHelper

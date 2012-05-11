@@ -15,6 +15,12 @@ Last reviewed:
 #endif
 #include "testViews.h"
 
+#ifndef WIN32
+// These define GUIDs that we need to define globally somewhere
+#include "TestVwTxtSrc.h"
+#include "TestLayoutPage.h"
+#endif
+
 namespace unitpp
 {
 	void GlobalSetup(bool verbose)

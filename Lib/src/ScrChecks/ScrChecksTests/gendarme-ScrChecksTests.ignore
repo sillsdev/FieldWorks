@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# GetEnumerator() returns an object
+M: System.Collections.IEnumerator SILUBS.ScriptureChecks.UnitTestChecksDataSource/<TextTokens>d__0::System.Collections.IEnumerable.GetEnumerator()

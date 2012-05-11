@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					ToolStripItem item = items[i];
 					items.RemoveAt(i);
-					overflow.DropDown.Items.Add(item);
+					overflow.DropDown.Items.Insert(0, item);
 				}
 
 				CalculateOverflow(contextMenu, overflow.DropDownItems, maxHeight);

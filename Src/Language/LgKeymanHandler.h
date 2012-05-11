@@ -19,6 +19,8 @@ Description:
 #if !WIN32
 #include "ViewsTlb.h"
 DEFINE_COM_PTR(IIMEKeyboardSwitcher);
+class KeyboardSwitcher;
+#define CLSID_KeyboardSwitcher __uuidof(KeyboardSwitcher)
 #endif
 
 /*----------------------------------------------------------------------------------------------

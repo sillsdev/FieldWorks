@@ -1,0 +1,16 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Reference only
+T: SIL.FieldWorks.WordWorks.Parser.ParseFiler
+T: SIL.FieldWorks.WordWorks.Parser.TaskReport
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.WordWorks.Parser.ParserUpdateEventArgs
+T: SIL.FieldWorks.WordWorks.Parser.ParserScheduler/ParserWork
+T: SIL.FieldWorks.WordWorks.Parser.HCParserWorker/FwXmlOutput

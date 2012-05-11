@@ -1,0 +1,30 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.IgnoreAppMessageProccessing
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# will be closed when other app appears
+M: System.Void SIL.FieldWorks.ApplicationBusyDialog::ShowOnSeparateThread(SIL.FieldWorks.Common.FwUtils.FwAppArgs,SIL.FieldWorks.ApplicationBusyDialog/WaitFor,SIL.FieldWorks.Common.Framework.FwApp,SIL.FieldWorks.Common.Framework.FwApp)
+
+# Will eventually be disposed
+M: System.Boolean SIL.FieldWorks.FieldWorks::LaunchApplicationFromCommandLine(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
+
+# Reference only
+M: System.Collections.Generic.List`1<System.Diagnostics.Process> SIL.FieldWorks.FieldWorks::get_ExistingProcesses()
+M: System.Void SIL.FieldWorks.FieldWorks::FollowLink(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
+M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.FwApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)
+# Linux:
+M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey10::<>m__F()
+# Windows:
+M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass33::<KickOffAppFromOtherProcess>b__32()
+M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.String,System.Func`1<SIL.FieldWorks.ProjectId>)
+M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.FwApp)
+
+# Object added to control and disposed there
+M: System.Void SIL.FieldWorks.WelcomeToFieldWorksDlg::InitializeComponent()
