@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
@@ -205,6 +206,8 @@ namespace SILUBS.PhraseTranslationHelper
 		#endregion
 
 		#region Implementation of IEnumerable
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Caller is responsible to dispose enumerator")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

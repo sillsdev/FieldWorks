@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
@@ -986,12 +987,15 @@ namespace SIL.FieldWorks.XWorks
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object - caller responsible to dispose")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("ExportInterlinearDialog");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+					return regKey.CreateSubKey("ExportInterlinearDialog");
 			}
 		}
 
