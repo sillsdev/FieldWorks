@@ -40,6 +40,9 @@
 		<command id="CmdDataTree-Insert-MorphType" label="Insert Morpheme Type" message="DataTreeInsert" icon="AddSubItem">
 			<parameters field="SubPossibilities" className="MoMorphType"/>
 		</command>
+	<command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+	  <parameters field="SubPossibilities" className="LexEntryInflType"/>
+	</command>
 		<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 			<parameters field="SubPossibilities" className="LexEntryType"/>
 		</command>

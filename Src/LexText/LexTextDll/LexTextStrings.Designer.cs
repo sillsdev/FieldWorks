@@ -133,6 +133,15 @@ namespace SIL.FieldWorks.XWorks.LexText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Click OK..
+		/// </summary>
+		public static string ksClickOK {
+			get {
+				return ResourceManager.GetString("ksClickOK", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new category will then be available for you to choose..
 		/// </summary>
 		public static string ksCreatingCustomGramCategory {
@@ -160,12 +169,20 @@ namespace SIL.FieldWorks.XWorks.LexText {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.
-		///To change the format of your projects, use File &gt; Project Management &gt; Project Locations and Sharing... and clear the checkbox labeled Share Projects stored on this computer. Click OK. .
+		///   Looks up a localized string similar to This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive..
 		/// </summary>
-		public static string ksDb4oProjectNotShareableDlgText {
+		public static string ksDb4oProjectNotShareableTextLine1 {
 			get {
-				return ResourceManager.GetString("ksDb4oProjectNotShareableDlgText", resourceCulture);
+				return ResourceManager.GetString("ksDb4oProjectNotShareableTextLine1", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to To change the format of your projects, use the link below and clear the checkbox labeled &apos;Share Projects stored on this computer&apos;..
+		/// </summary>
+		public static string ksDb4oProjectNotShareableTextLine2 {
+			get {
+				return ResourceManager.GetString("ksDb4oProjectNotShareableTextLine2", resourceCulture);
 			}
 		}
 

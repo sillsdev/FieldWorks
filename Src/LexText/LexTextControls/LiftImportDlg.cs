@@ -306,8 +306,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			try
 			{
 				m_progressDlg.Message = LexTextControls.ksValidatingInputFile;
-				ValidationProgress prog = new ValidationProgress(m_progressDlg);
-				Validator.CheckLiftWithPossibleThrow(sFilename, prog);
+				Validator.CheckLiftWithPossibleThrow(sFilename);
 				return true;
 			}
 			catch (LiftFormatException lfe)

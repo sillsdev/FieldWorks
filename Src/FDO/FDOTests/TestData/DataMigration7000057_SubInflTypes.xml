@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageproject version="7000056">
+  <rt class="LexEntryType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Irregularly Inflected Form</AUni>
+	</Name>
+	<SubPossibilities>
+	  <objsur guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" t="o" />
+	  <objsur guid="1df6f9da-7b69-44e4-b98d-13a0cee17b77" t="o" />
+	</SubPossibilities>
+  </rt>
+		<rt class="LexEntryType" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		  <IsProtected val="true" />
+		  <Name>
+			<AUni ws="en">Plural</AUni>
+		  </Name>
+		  <SubPossibilities>
+			<objsur guid="2bd3437f-8bde-495c-a12b-d0c8feb7c3e9" t="o" />
+		  </SubPossibilities>
+		</rt>
+			  <rt class="LexEntryType" guid="2bd3437f-8bde-495c-a12b-d0c8feb7c3e9" ownerguid="a32f1d1c-4832-46a2-9732-c2276d6547e8">
+				<IsProtected val="false" />
+				<Name>
+				  <AUni ws="en">PluralChild</AUni>
+				</Name>
+			  </rt>
+		<rt class="LexEntryType" guid="1df6f9da-7b69-44e4-b98d-13a0cee17b77" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		  <IsProtected val="false" />
+		  <Name>
+			<AUni ws="en">NonStandard</AUni>
+			<SubPossibilities>
+			  <objsur guid="208cc589-f10f-485b-bdcc-843f046d4146" t="o" />
+			</SubPossibilities>
+		  </Name>
+		</rt>
+			  <rt class="LexEntryType" guid="208cc589-f10f-485b-bdcc-843f046d4146" ownerguid="1df6f9da-7b69-44e4-b98d-13a0cee17b77">
+				<IsProtected val="false" />
+				<Name>
+				  <AUni ws="en">NonStandardChild</AUni>
+				</Name>
+			  </rt>
+  <rt class="LexEntryType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Past</AUni>
+	</Name>
+	<SubPossibilities>
+	  <objsur guid="7c607ea9-c1a0-4b7f-aee7-06ead42ac299" t="o" />
+	</SubPossibilities>
+  </rt>
+		<rt class="LexEntryType" guid="7c607ea9-c1a0-4b7f-aee7-06ead42ac299" ownerguid="837ebe72-8c1d-4864-95d9-fa313c499d78">
+		  <IsProtected val="false" />
+		  <Name>
+			<AUni ws="en">PastChild</AUni>
+		  </Name>
+		</rt>
+</languageproject>

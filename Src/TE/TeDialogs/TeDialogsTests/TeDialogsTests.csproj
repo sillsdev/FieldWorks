@@ -34,6 +34,8 @@
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkProfile />
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -46,10 +48,8 @@
 	<MapFileExtensions>true</MapFileExtensions>
 	<ApplicationRevision>0</ApplicationRevision>
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -97,7 +97,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -242,12 +242,6 @@
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\LexText\Interlinear\ITextDll.csproj">
-	  <Project>{ADF93BBC-BF8B-42F2-8791-7A04DD1AFA51}</Project>
-	  <Name>ITextDll</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

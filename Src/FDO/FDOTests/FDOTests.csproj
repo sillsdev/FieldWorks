@@ -252,6 +252,7 @@
 	<Compile Include="ClientServerServicesTests.cs" />
 	<Compile Include="ClientServerTests.cs" />
 	<Compile Include="ConfigureHomographTests.cs" />
+	<Compile Include="DataMigrationTests\DataMigration7000058Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000047Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000036Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000035Tests.cs" />
@@ -281,6 +282,7 @@
 	<Compile Include="DataMigrationTests\DataMigration7000051Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000052Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000056Tests.cs" />
+	<Compile Include="DataMigrationTests\DataMigration7000057Tests.cs" />
 	<Compile Include="DataSortingServiceTests.cs" />
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />
@@ -390,6 +392,10 @@
 	<WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+	<Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
+	<Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
+	<Content Include="TestData\DataMigration7000057_Normal.xml" />
+	<Content Include="TestData\DataMigration7000057_SubInflTypes.xml" />
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
 	<None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

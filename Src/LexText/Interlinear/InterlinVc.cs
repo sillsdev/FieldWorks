@@ -119,6 +119,8 @@ namespace SIL.FieldWorks.IText
 		internal WsListManager m_WsList;
 		ITsString m_tssMissingAnalysis; // The whole analysis is missing. This shows up on the morphs line.
 		ITsString m_tssMissingGloss; // A word gloss is missing.
+		ITsString m_tssMissingGlossPrepend;
+		ITsString m_tssMissingGlossAppend;
 		ITsString m_tssMissingSense;
 		ITsString m_tssMissingMsa;
 		ITsString m_tssMissingAnalysisPos;
@@ -173,6 +175,8 @@ namespace SIL.FieldWorks.IText
 			PreferredVernWs = cache.DefaultVernWs;
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 			m_tssMissingGloss = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+			m_tssMissingGlossPrepend = m_tsf.MakeString(ITextStrings.ksStars + MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix, m_wsAnalysis);
+			m_tssMissingGlossAppend = m_tsf.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingSense = m_tssMissingGloss;
 			m_tssMissingMsa = m_tssMissingGloss;
 			m_tssMissingAnalysisPos = m_tssMissingGloss;
@@ -763,18 +767,6 @@ namespace SIL.FieldWorks.IText
 				if (openedParagraph)
 					vwenv.CloseParagraph();
 				break;
-
-			case kfragWordGloss:	// displaying forms of a known WfiGloss.
-				foreach (int wsId in m_WsList.AnalysisWsIds)
-				{
-					int idx = m_lineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, wsId);
-					if (idx >= 0)
-					{
-						SetColor(vwenv, LabelRGBFor(idx));
-						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, wsId, this);
-					}
-				}
-				break;
 			case kfragMorphType: // for export only at present, display the
 				vwenv.AddObjProp(MoFormTags.kflidMorphType, this, kfragPossibiltyAnalysisName);
 				break;
@@ -860,7 +852,7 @@ namespace SIL.FieldWorks.IText
 				else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.Count)
 				{
 					var spec = m_lineChoices[frag - kfragLineChoices];
-					int ws = GetRealWsOrBestWsForContext(hvo, spec);
+					var ws = GetRealWsOrBestWsForContext(hvo, spec);
 					vwenv.AddStringAltMember(spec.StringFlid, ws, this);
 				}
 				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
@@ -886,6 +878,13 @@ namespace SIL.FieldWorks.IText
 #if DEBUG
 			//TimeRecorder.End("Display");
 #endif
+		}
+
+		private void JoinGlossAffixesOfInflVariantTypes(ILexEntryRef entryRef1, int wsPreferred, out ITsIncStrBldr sbPrepend1, out ITsIncStrBldr sbAppend1)
+		{
+			var glossWs1 = Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred);
+			MorphServices.JoinGlossAffixesOfInflVariantTypes(entryRef1.VariantEntryTypesRS, glossWs1,
+															 out sbPrepend1, out sbAppend1);
 		}
 
 		/// <summary>
@@ -1489,9 +1488,9 @@ namespace SIL.FieldWorks.IText
 						int flid = 0;
 						if (wmb != null)
 						{
+							vwenv.NoteDependency(new[] { hvo }, new[] { WfiMorphBundleTags.kflidSense }, 1);
 							if (wmb.SenseRA == null)
 							{
-								vwenv.NoteDependency(new[] {hvo}, new[] {WfiMorphBundleTags.kflidSense}, 1);
 								if (ShowDefaultSense && wmb.DefaultSense != null)
 								{
 									flid = wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
@@ -1501,6 +1500,12 @@ namespace SIL.FieldWorks.IText
 							else
 							{
 								flid = WfiMorphBundleTags.kflidSense;
+								vwenv.NoteDependency(new[] {wmb.Hvo}, new[] {WfiMorphBundleTags.kflidMorph}, 1);
+								if (wmb.MorphRA != null && DisplayLexGlossWithInflType(vwenv, wmb.MorphRA.Owner as ILexEntry, wmb.SenseRA, spec))
+								{
+									break;
+								}
+
 							}
 						}
 
@@ -1539,6 +1544,108 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			vwenv.CloseInnerPile();
+		}
+
+		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec,
+			InterlinLineChoices lineChoices, int vernWsContext,
+			out ITsString result)
+		{
+			FdoCache cache = possibleVariant.Cache;
+			var vcLexGlossFrag = new InterlinVc(cache)
+									 {
+										 LineChoices = lineChoices,
+										 PreferredVernWs = vernWsContext
+			};
+
+			result = null;
+			var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
+								{
+									RequestAppendSpaceForFirstWordInNewParagraph = false
+								};
+			if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec))
+			{
+				result = collector.Result;
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// NOTE: this routine is ignorant of calling context, so caller must provide NoteDependency to the possibleVariant and the sense
+		/// (e.g. vwenv.NoteDependency(new[] { wfiMorphBundle.Hvo }, new[] { WfiMorphBundleTags.kflidSense }, 1);
+		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="possibleVariant"></param>
+		/// <param name="sense"></param>
+		/// <param name="spec"></param>
+		/// <returns>true if there was anything to display </returns>
+		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec)
+		{
+			int iLineChoice = m_lineChoices.IndexOf(spec);
+			ILexEntryRef ler;
+			if (possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
+			{
+				var wsPreferred = GetRealWsOrBestWsForContext(sense.Hvo, spec);
+				var testGloss = sense.Gloss.get_String(wsPreferred);
+				// don't bother adding anything for an empty gloss.
+				if (testGloss.Text != null && testGloss.Text.Length >= 0)
+				{
+					vwenv.OpenParagraph();
+					// see if we have an irregularly inflected form type reference
+					var leitFirst =
+						ler.VariantEntryTypesRS.Where(
+							let => let.ClassID == LexEntryInflTypeTags.kClassId).FirstOrDefault();
+
+					// add any GlossPrepend info
+					if (leitFirst != null)
+					{
+						vwenv.OpenInnerPile();
+						ITsIncStrBldr sbPrepend;
+						ITsIncStrBldr sbAppend;
+						JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+														   out sbAppend);
+						vwenv.OpenParagraph();
+						// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
+						vwenv.NoteDependency(new[] {ler.Hvo},
+											 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
+						if (sbPrepend.Text != null)
+							vwenv.AddString(sbPrepend.GetString());
+						else if (m_fRtl)
+							vwenv.AddString(m_tssMissingGlossPrepend);
+						vwenv.CloseParagraph();
+						vwenv.CloseInnerPile();
+					}
+					// add gloss of main entry or sense
+					{
+						vwenv.OpenInnerPile();
+						// NOTE: remember to NoteDependency from OuterObject
+						vwenv.AddObj(sense.Hvo, this, kfragLineChoices + iLineChoice);
+						vwenv.CloseInnerPile();
+					}
+					// now add variant type info
+					if (leitFirst != null)
+					{
+						vwenv.OpenInnerPile();
+						ITsIncStrBldr sbPrepend;
+						ITsIncStrBldr sbAppend;
+						JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+														   out sbAppend);
+						vwenv.OpenParagraph();
+						// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
+						vwenv.NoteDependency(new[] {ler.Hvo},
+											 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
+						if (sbAppend.Text != null)
+							vwenv.AddString(sbAppend.GetString());
+						else if (!m_fRtl)
+							vwenv.AddString(m_tssMissingGlossAppend);
+						vwenv.CloseParagraph();
+						vwenv.CloseInnerPile();
+					}
+					vwenv.CloseParagraph();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>

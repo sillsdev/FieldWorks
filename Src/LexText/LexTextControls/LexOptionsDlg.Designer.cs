@@ -33,14 +33,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LexOptionsDlg));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
+			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
 			this.m_tabPlugins = new System.Windows.Forms.TabPage();
 			this.m_labelRights = new System.Windows.Forms.Label();
 			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
-			this.m_chName = new System.Windows.Forms.ColumnHeader();
-			this.m_chDescription = new System.Windows.Forms.ColumnHeader();
+			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
@@ -66,11 +67,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_tabInterface
 			//
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
+			this.m_tabInterface.Controls.Add(this.label3);
 			this.m_tabInterface.Controls.Add(this.label2);
 			this.m_tabInterface.Controls.Add(label1);
 			this.m_tabInterface.Controls.Add(this.m_userInterfaceChooser);
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
+			//
+			// label3
+			//
+			resources.ApplyResources(this.label3, "label3");
+			this.label3.Name = "label3";
 			//
 			// label2
 			//
@@ -187,5 +194,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.ColumnHeader m_chDescription;
 		private System.Windows.Forms.Label m_labelRights;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
 	}
 }

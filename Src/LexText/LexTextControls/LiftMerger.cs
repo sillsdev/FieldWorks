@@ -5548,12 +5548,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			ICmPicture pictMatching = null;
 			int cMatches = 0;
 			AddNewWsToBothVernAnal();
+			if (sFile == null)
+				return pictMatching;
+			// sFile may or may not have pictures as first part of path. May also have nested subdirectories.
+			// By default Lift uses "pictures" in path and Flex uses "Pictures" in path.
+			if (sFile.Length > 9)
+			{
+				var tpath = sFile.Substring(0, 9).ToLowerInvariant();
+				if (tpath == "pictures\\" || tpath == "pictures/")
+					sFile = sFile.Substring(9);
+			}
 			foreach (ICmPicture pict in rgpictures)
 			{
 				if (pict.PictureFileRA == null)
 					continue;	// should NEVER happen!
-				if (pict.PictureFileRA.InternalPath == sFile ||
-					Path.GetFileName(pict.PictureFileRA.InternalPath) == sFile)
+				var fpath = pict.PictureFileRA.InternalPath;
+				if (fpath == null)
+					continue;
+				if (fpath.Length > 9)
+				{
+					var tpath = fpath.Substring(0, 9).ToLowerInvariant();
+					if (tpath == "pictures\\" || tpath == "pictures/")
+						fpath = fpath.Substring(9);
+				}
+				if (sFile == fpath)
 				{
 					int cCurrent = MultiTsStringMatches(pict.Caption, lmtLabel);
 					if (cCurrent >= cMatches)

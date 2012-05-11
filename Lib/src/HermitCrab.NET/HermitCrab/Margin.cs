@@ -156,14 +156,18 @@ namespace SIL.HermitCrab
 		internal override IList<Match> Match(PhoneticShapeNode node, Direction dir, ModeType mode,
 			VariableValues instantiatedVars)
 		{
-			if (node.Type == PhoneticShapeNode.NodeType.MARGIN)
+			switch (node.Type)
 			{
-				Margin margin = node as Margin;
-				if (m_marginType != margin.MarginType)
-					return new List<Match>();
+				case PhoneticShapeNode.NodeType.MARGIN:
+					Margin margin = node as Margin;
+					if (m_marginType != margin.MarginType)
+						return new List<Match>();
 
-				// move to next node
-				return MatchNext(node, dir, mode, instantiatedVars);
+					// move to next node
+					return MatchNext(node, dir, mode, instantiatedVars);
+
+				case PhoneticShapeNode.NodeType.BOUNDARY:
+					return Match(node.GetNext(dir), dir, mode, instantiatedVars);
 			}
 
 			return new List<Match>();

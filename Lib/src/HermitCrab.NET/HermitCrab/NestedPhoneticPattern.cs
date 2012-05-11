@@ -255,12 +255,18 @@ namespace SIL.HermitCrab
 				if (x.EntireMatch.Count == 0 || y.EntireMatch.Count == 0)
 					return false;
 
-				return x.EntireMatch[x.EntireMatch.Count - 1] == y.EntireMatch[y.EntireMatch.Count - 1];
+				return x.EntireMatch[0] == y.EntireMatch[0] && x.EntireMatch[x.EntireMatch.Count - 1] == y.EntireMatch[y.EntireMatch.Count - 1];
 			}
 
 			public int GetHashCode(Match obj)
 			{
-				return obj.EntireMatch.Count == 0 ? 0 : RuntimeHelpers.GetHashCode(obj.EntireMatch[obj.EntireMatch.Count - 1]);
+				int code = 23;
+				if (obj.EntireMatch.Count > 0)
+				{
+					code = code * 31 + RuntimeHelpers.GetHashCode(obj.EntireMatch[0]);
+					code = code * 31 + RuntimeHelpers.GetHashCode(obj.EntireMatch[obj.EntireMatch.Count - 1]);
+				}
+				return code;
 			}
 		}
 	}

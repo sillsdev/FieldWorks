@@ -1077,6 +1077,8 @@ void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting
 		case kslatBreak:		nOldVal = pslotIn->BreakWeight();		break;
 		case kslatDir:			nOldVal = pslotIn->Directionality();	break;
 
+		case kslatSegsplit:		nOldVal = 0;	break;
+
 		default:
 			//	Kind of attribute that it makes no sense to increment.
 			gAssert(false);
@@ -1174,6 +1176,8 @@ void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting
 	case kslatDir:			pslotOut->SetDirectionality(DirCode(nVal)); break;
 	case kslatInsert:		pslotOut->SetInsertBefore(bool(nVal));		break;
 
+	case kslatSegsplit:		break;	// not handled
+
 	case kslatNoEffect:
 		// Do nothing.
 		break;
@@ -1263,6 +1267,8 @@ void GrPass::DoPushSlotAttr(GrTableManager * ptman,
 	case kslatBreak:		nVal = pslot->BreakWeight();		break;
 	case kslatDir:			nVal = pslot->Directionality();		break;
 	case kslatInsert:		nVal = pslot->InsertBefore();		break;
+
+	case kslatSegsplit:		nVal = 0;							break;
 
 	case kslatUserDefn:		nVal = pslot->UserDefn(slati);		break;
 

@@ -228,8 +228,24 @@ namespace SIL.FieldWorks.XWorks
 			var pssl = (ICmPossibilityList)m_owningObject;
 			int possClass = pssl.ItemClsid;
 			string sPossClass = VirtualListPublisher.MetaDataCache.GetClassName(possClass);
-			if (sPossClass != className)
+			// for the special case of the VariantEntryTypes list, allow inserting a LexEntryInflType object
+			// as long as the currently selected object has a parent of that class.
+			if (PropertyName == "VariantEntryTypes")
+			{
+				// return null only if the class of the owner does not match the given className
+				// in case of owner being the list itself, use the general class for the list items.
+				var currentObjOwner = CurrentObject.Owner;
+				string classNameOfOwnerOfCurrentObject = currentObjOwner.Hvo == pssl.Hvo
+														 ? sPossClass
+														 : currentObjOwner.ClassName;
+				if (classNameOfOwnerOfCurrentObject != className)
+					return null;
+			}
+			else if (sPossClass != className)
+			{
 				return null;
+			}
+
 			foreach(ClassAndPropInfo cpi in m_insertableClasses)
 			{
 				if (cpi.signatureClassName == className)

@@ -1289,10 +1289,25 @@ namespace SIL.FieldWorks.IText
 						if (senseReal != null) // either all-the-way real, or default.
 						{
 							// Create the corresponding dummy.
-							int hvoSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
-																		 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
-							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoSense);
-							cda.CacheIntProp(hvoSense, ktagSbNamedObjGuess, fGuessing);
+							int hvoLexSenseSec;
+							// Add any irregularly inflected form type info to the LexGloss.
+							ILexEntryRef lerTest;
+							ILexEntry possibleVariant = null;
+							if (mf != null)
+								possibleVariant = mf.Owner as ILexEntry;
+							if (possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
+							{
+								hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda);
+							}
+							else
+							{
+								// add normal LexGloss without variant info
+								hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
+											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
+							}
+							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
+							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
 						}
 
 						// Get the MSA, if any.
@@ -1399,13 +1414,13 @@ namespace SIL.FieldWorks.IText
 			MoveSelectionIcon(new SelLevInfo[0], tag);
 		}
 
-		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoCategory, int flidMain, int hvoSbWord,
+		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain, int hvoSbWord,
 			ISilDataAccess sdaMain, IVwCacheDa cda, ITsStrFactory tsf)
 		{
-			int hvoWordPos = m_caches.FindOrCreateSec(hvoCategory,
+			int hvoSec = m_caches.FindOrCreateSec(hvoMain,
 				kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-			CopyStringsToSecondary(flidChoices, sdaMain, hvoCategory, flidMain, cda, hvoWordPos, ktagSbNamedObjName, tsf);
-			return hvoWordPos;
+			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName, tsf);
+			return hvoSec;
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain)
@@ -1509,12 +1524,27 @@ namespace SIL.FieldWorks.IText
 		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
 			ISilDataAccess sdaMain, int hvoMain, int flidMain)
 		{
+			CacheStringAltForAllCurrentWs(currentWsList, cda, hvoSec, flidSec,
+				delegate(int ws1)
+				{
+					ITsString tssMain;
+					if (hvoMain != 0)
+						tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
+					else
+						tssMain = TsStringUtils.MakeTss("", ws1);
+					return tssMain;
+				});
+		}
+
+		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
+			Func<int, ITsString> createStringAlt)
+		{
 			foreach (int ws1 in currentWsList)
 			{
-				ITsString tssMain;
-				if (hvoMain != 0)
-					tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
-				else
+				ITsString tssMain = null;
+				if (createStringAlt != null)
+					tssMain = createStringAlt(ws1);
+				if (tssMain == null)
 					tssMain = TsStringUtils.MakeTss("", ws1);
 				cda.CacheStringAlt(hvoSec, flidSec, ws1, tssMain);
 			}
@@ -1670,6 +1700,24 @@ namespace SIL.FieldWorks.IText
 					CopyStringsToSecondary(writingSystems, sdaMain, hvoEntryToDisplay,
 						LexEntryTags.kflidCitationForm, cda, hvoEntry, ktagSbNamedObjName, tsf);
 			}
+		}
+
+		private void CacheLexGlossWithInflTypeForAllCurrentWs(ILexEntry possibleVariant, int hvoLexSenseSec, int wsVern, IVwCacheDa cda)
+		{
+			IList<int> currentAnalysisWsList = m_caches.MainCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToArray();
+			CacheStringAltForAllCurrentWs(currentAnalysisWsList, cda, hvoLexSenseSec, ktagSbNamedObjName,
+				delegate(int wsLexGloss)
+					{
+						var hvoSenseReal = m_caches.RealHvo(hvoLexSenseSec);
+						var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSenseReal);
+						var spec = m_choices.CreateSpec(InterlinLineChoices.kflidLexGloss, wsLexGloss);
+						var choices = new InterlinLineChoices(Cache, m_choices.m_wsDefVern,
+															m_choices.m_wsDefAnal);
+						choices.Add(spec);
+						ITsString tssResult;
+						return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, out tssResult) ?
+									tssResult : null;
+					});
 		}
 
 		/// <summary>
@@ -1897,8 +1945,20 @@ namespace SIL.FieldWorks.IText
 				else
 					defSenseReal = senseReal;
 			}
-			int hvoDefSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, defSenseReal.Hvo,
-				LexSenseTags.kflidGloss);
+			int hvoDefSense;
+			if (variantSense != null && defSenseReal == variantSense)
+			{
+				hvoDefSense = m_caches.FindOrCreateSec(defSenseReal.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
+				var cda = (IVwCacheDa)m_caches.DataAccess;
+				int wsVern = RawWordformWs;
+				CacheLexGlossWithInflTypeForAllCurrentWs(entryReal, hvoDefSense, wsVern, cda);
+			}
+			else
+			{
+				// add normal LexGloss without variant info
+				hvoDefSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, defSenseReal.Hvo,
+					LexSenseTags.kflidGloss);
+			}
 
 			// We're guessing the gloss if we just took the first sense, but if the user chose
 			// one it is definite.

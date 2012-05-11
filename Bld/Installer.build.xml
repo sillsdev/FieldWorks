@@ -305,7 +305,7 @@
 
 	<target name="BuildAllMergeModules"
 					description="Build the FW and SEC merge modules"
-					depends="BuildEcOnlyMergeModules,BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+					depends="BuildEcOnlyMergeModules,BuildFwEcSharedMergeModules">
 		<echo message="Built all merge modules."/>
 	</target>
 
@@ -317,7 +317,7 @@
 
 	<target name="BuildFwMergeModules"
 					description="Build the FW merge modules"
-					depends="BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+					depends="BuildFwEcSharedMergeModules">
 		<echo message="Built FW merge modules."/>
 	</target>
 
@@ -349,27 +349,6 @@
 		<property name="MergeModule" value="SEC_PythonEC"/>
 		<call target="BuildMergeModule"/>
 
-	</target>
-
-	<target name="BuildFwOnlyMergeModules" description="Build the merge modules used exclusively in FW installer.">
-
-		<echo message="Building merge modules exclusive to FW."/>
-
-		<!--EncConverter specifics for FW-->
-		<property name="MergeModule" value="FW_EC_40"/>
-		<call target="BuildMergeModule"/>
-
-		<!--ICU specifics for FW-->
-		<property name="MergeModule" value="FW_ICU40"/>
-		<call target="BuildMergeModule"/>
-
-		<!--Perl specifics for FW-->
-		<property name="MergeModule" value="FW_PerlEC"/>
-		<call target="BuildMergeModule"/>
-
-		<!--Python specifics for FW-->
-		<property name="MergeModule" value="FW_PythonEC"/>
-		<call target="BuildMergeModule"/>
 	</target>
 
 	<target name="BuildFwEcSharedMergeModules" description="Build the merge modules shared by both SEC and FW installers.">

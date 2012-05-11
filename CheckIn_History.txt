@@ -5823,7 +5823,8 @@ Andy Black, 7 April 2012.  LT-10621 "Hermit Crab: Enable phonological rules to a
 RandyR, 6 April 2012. Updated FLEx Bridge installer to 0.3.22.
 GordonM, 11 April 2012. LT-12926 Fix double quote crash.
 KenZ, 12 Apr 2012. Fixed LT-12950 crash when creating new project.
-RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust indentation in StylesDlg paragraph tab.
+RickM, 12 Apr 2012, Partially fixed LT-12512 Subentry formatting glitches.  Now user can adjust
+	indentation in StylesDlg paragraph tab.
 KenZ, 12 Apr 2012. Added new FB installer from Randy to fix crash due to the new phonology possibility list.
 KenZ. 12 Apr 2012. Added another new FB installer from Randy to fix LT-12952.
 NaylorJ, 16 Apr 2012. Integrated 3 LiftBridge fixes related to LT-12948 from 7.2.4
@@ -5836,8 +5837,64 @@ RandyR, 18 Apr 2012. Checked in FlexBridge 0.3.28
 EberhardB, 20 Apr 2012. Integration Calgary/WW -> Calgary.
 LastufkaM 20 Apr 2012 LT-12767 Improve the receive from from colleague (obtain)option for Send/Receive
 SteveMc, April 20, 2012.  Valid Encoding Converter DLLs (built with VS 2008).
-GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40 project.
+GordonM, 20 Apr 2012. LT-12953 Added message box to explain why Send/Receive can't be done on db40
+	project.
 SteveMc, April 20, 2012. Encoding Converter DLLs built with VS 2010 (and targetting .Net 4).
-RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.29
-RandyR, 21 Apr 2012. Checked in Flex Bridge 0.3.31. Added LIFT Bridge installer 1.4.13.
+RandyR, 21 April 2012. Checked in Flex Bridge 0.3.29
+RandyR, 21 April 2012. Checked in Flex Bridge 0.3.31. Added LIFT Bridge installer 1.4.13.
 AnnB, 23 Apr, 2012. LT-12968 - Hook up Help buttons in new Grammar fields and choosers
+Randyr, 24 April 2012. Updated FLEx Bridge installer (0.3.32) and LIFT Bridge installer(1.4.15).
+EricP, 25 April 2012. LT-7581 work: Data migration to change Irregularly Inflected Form variant types
+	to class LexEntryInflType. Also added some a record list changes to allow creating new
+	possibility items of LexEntryInflType.
+EricP, 25 April 2012. Upgrade NewLangProj according to changelist 37944 (DataMigration7000057).
+EricP, 25 April 2012. LT-7581. (7000058) Data migration to fill GlossAppend fields
+	for the standard system Plural and Past variant types.
+RandyR, 25 April 2012. Checked in Flex Bridge 0.3.34.
+KenZ, 26 Apr 2012. Integrated 7.2.4 to WW
+GordonM, 26 Apr 2012. LT-12953 better dialog when doing S/R on fwdb file.
+NaylorJ, 26 Apr 2012. Take one of the localization build changes.
+NaylorJ, 26 Apr 2012. Take two on the localization changes, the po2xml task has now been fully and
+	successfully ported to C# as far as I can tell.
+KenZ, 26 Apr 2012. Migrated sample and test projects after Eric's changes.
+EricP, 27 Apr 2012. Refactor MorphServices tests to use guids for LexEntryInflType variant types.
+NaylorJ, 27 Apr 2012. Completed the fix to the localization build. I believe all the things broken
+	by the linux integration into ww are now repaired.
+RickM, 27 Apr 2012. LT-12964 Manual refresh required to see changes after reopening - if another
+	project is also open
+Andy Black, 30 Apr 2012. Fix LT-13001 "Grammar Sketch export to XLingPaper format produces a file
+	that cannot be loaded into the XMLmind XML Editor" and LT-13002 "Grammar Sketch export to
+	XLingPaper format includes type attributes on section elements. These should be removed on
+	export."
+KenZ, 30 Apr 2012. LT-12717 Fixed Text Movies link so it works now from the Linux downloads.sil.org
+SteveMc, April 30, 2012.  Fixed LT-13011 "Modifications in change 37891 make Try a word no
+	longer use utf-8 on Windows".
+RandyR, 1 May 2012. Checked in Flex Bridge 0.3.35.
+SteveMc, May 2, 2012.  Updated Po2Xml, ProcessLanguagesBld, and FwNant/ResGenEx to reflect
+	changes made for those to work on Linux.
+AlistairI, 2 May 2012. Revamped Encoding Converters. Restored speed of localization build.
+SteveMc, May 2, 2012.  Fixed a few remaining bugs in Po2Xml.
+KenZ, 2 May 2012. Fixed build script to use new locations for enc converters when setting registry and registering.
+DamienD, 3 May 2012. LT-10677: Type-ahead to select existing list items, VS2010 wanted to update some
+	project files.
+AnnB, 3 May 2012. Integrated Graphite changes from WorldPad_Maint to WW for SharonC.
+GordonM, 3 May 2012. Finished LT-12980 (and 12982 hopefully). Will need new FLEx Bridge.
+RandyR, 3 May 2012. Checked in Flex Bridge 0.3.36.
+EricP, 4 May 2012. Forgot to submit this CheckIn_History.txt with changelist 38009:
+	(LT-7581) Initial support for GlossPrepend/GlossAppend in InterlinVc for variants with irregularly inflected form types.
+AnnB, 4 May 2012.  LT-13019 Comment out test that compares the backup library to the default since they aren't always the same.
+EricP, 4 May 2012. Fix ObjectLabels to create labels for all descendent (sub)classes of CmPossibility.
+	This enables Variant Type choosers to select LexEntryInflType sub possibilities.
+LastufkaM, 4 May 2012. LT-12921 Duplicate "Dictionary-Minor" style causes crash: added guids to factory styles so send/receive won't duplicate them and abort.
+EricP, 7 May 2012. Fixed an interlinear gloss line bug I introduced in my last checkin.
+RandyR, 3 May 2012. Checked in Flex Bridge 0.3.37.
+AnnB, 7 May 2012. LT-12983 - New or additional info for the Options dialog box, Interface tab.
+EricP, 8 May 2012. (LT-7581) LT- Allow gloss variant affixes to be sensitive to line ws
+EricP, 9 May 2012. (LT-7581) Support adding irregularly inflected forms in Sandbox/FocusBox on LexGloss lines.
+GordonM, 9 May 2012. Fixed LT-13031 so project reopens correctly after S/R changes.
+GordonM, 9 May 2012. Kept re-read of settings file from crashing (LT-13031).
+AnnB, May 9, 2012. LT-10490 - Check box for "Match diactrics" is not fully visible in french
+RandyR, 3 May 2012. Checked in Flex Bridge 0.3.38.
+DamienD, 10 May 2012. Fixed incorrect handling of boundaries when matching word initial or final in environments in HC.NET,
+	fixed bug in optional sequences in HC.NET.
+Gordon 'n Jason, 10 May 2012. Fix errors in Conflict Report communication with FLEx.

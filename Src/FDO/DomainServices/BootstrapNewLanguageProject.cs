@@ -375,17 +375,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						abbr = tsf.MakeString("fr. var. of", eng.Handle);
 						break;
 					case 3:
-						guid = new Guid("01D4FBC1-3B0C-4f52-9163-7AB0D4F4711C");
+						guid = LexEntryTypeTags.kguidLexTypIrregInflectionVar;
 						name = tsf.MakeString("Irregular Inflectional Variant", eng.Handle);
 						abbr = tsf.MakeString("irr. inf. var. of", eng.Handle);
 						break;
 					case 4:
-						guid = new Guid("a32f1d1c-4832-46a2-9732-c2276d6547e8");
+						guid = LexEntryTypeTags.kguidLexTypPluralVar;
 						name = tsf.MakeString("Plural Variant", eng.Handle);
 						abbr = tsf.MakeString("pl. var. of", eng.Handle);
 						break;
 					case 5:
-						guid = new Guid("837ebe72-8c1d-4864-95d9-fa313c499d78");
+						guid = LexEntryTypeTags.kguidLexTypPastVar;
 						name = tsf.MakeString("Past Variant", eng.Handle);
 						abbr = tsf.MakeString("pst. var. of", eng.Handle);
 						break;
@@ -396,14 +396,29 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						break;
 				}
 
-				// Create the LexEntryType.
-				lexEntryTypeFactory.Create(
-					guid,
-					dataReader.GetNextRealHvo(),
-					entryTypesList,
-					i - 1, // Zero based ord.
-					name, eng.Handle,
-					abbr, eng.Handle);
+				// for Irregularly Inflected Variant Types, use LexEntryInflType factory
+				if (guid == LexEntryTypeTags.kguidLexTypIrregInflectionVar ||
+					guid == LexEntryTypeTags.kguidLexTypPluralVar ||
+					guid == LexEntryTypeTags.kguidLexTypPastVar)
+				{
+					entryTypesList.PossibilitiesOS.Insert(i - 1,
+						new LexEntryInflType(cache, dataReader.GetNextRealHvo(), guid));
+					var leit = entryTypesList.PossibilitiesOS[i - 1] as ILexEntryInflType;
+					leit.Name.set_String(eng.Handle, name);
+					leit.Abbreviation.set_String(eng.Handle, abbr);
+					// todo: ReverseAbbr
+				}
+				else
+				{
+					// Create the LexEntryType.
+					lexEntryTypeFactory.Create(
+						guid,
+						dataReader.GetNextRealHvo(),
+						entryTypesList,
+						i - 1, // Zero based ord.
+						name, eng.Handle,
+						abbr, eng.Handle);
+				}
 			}
 		}
 

@@ -418,7 +418,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		//	Parse the "Sill" table.
 		if (pSillTbl)
 		{
-			grstrm.OpenBuffer((byte *)pSillTbl, cbFeatSz);
+			grstrm.OpenBuffer((byte *)pSillTbl, cbSillSz);
 			f = ReadSillTable(grstrm, 0);
 			grstrm.Close();
 			if (!f)

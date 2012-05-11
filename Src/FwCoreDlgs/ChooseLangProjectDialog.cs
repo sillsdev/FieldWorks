@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,7 +24,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
@@ -536,13 +534,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string dummy;
+			bool dummy;
 			string projectName;
-			FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain, out projectName, out dummy);
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain,
+				out dummy, out projectName);
+			if (!success)
+			{
+				ReportDuplicateBridge();
+				Project = "";
+			}
 			Project = projectName;
 			Server = null;
 			DialogResult = String.IsNullOrEmpty(Project) ? DialogResult.Cancel : DialogResult.OK;
 			OkButtonClick(null, null);
+		}
+
+		/// <summary>
+		/// Reports to the user that a copy of FLExBridge is already running.
+		/// NB. Also used by LexTextDll.FLExBridgeListener.
+		/// </summary>
+		public static void ReportDuplicateBridge()
+		{
+			MessageBox.Show(FWCoreDlgsErrors.kBridgeAlreadyRunning, FWCoreDlgsErrors.kFlexBridge,
+				MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
 
 		private void HelpButtonClick(object sender, EventArgs e)

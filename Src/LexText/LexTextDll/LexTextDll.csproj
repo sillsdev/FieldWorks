@@ -197,6 +197,12 @@
 	<Compile Include="AreaListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
+	<Compile Include="Db4oSendReceiveDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="Db4oSendReceiveDialog.Designer.cs">
+	  <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
+	</Compile>
 	<Compile Include="FLExBridgeListener.cs" />
 	<Compile Include="FlexHelpTopicProvider.cs" />
 	<Compile Include="FlexStylesXmlAccessor.cs" />
@@ -222,6 +228,9 @@
 	</Compile>
 	<None Include="AssemblyInfo.cs" />
 	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<EmbeddedResource Include="Db4oSendReceiveDialog.resx">
+	  <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
+	</EmbeddedResource>
 	<EmbeddedResource Include="HelpTopicPaths.resx">
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>

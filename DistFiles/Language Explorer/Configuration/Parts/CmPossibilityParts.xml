@@ -45,7 +45,7 @@
 		  <slice field="Description" label="Description" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
 	  </part>
 	<part id="CmPossibility-Detail-Status" type="Detail">
-		<slice id="CmPossibilityStatus" field="Status" label="Status" editor="defaultAtomicReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityStatus" field="Status" label="Status" editor="possAtomicReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Status list" tool="statusEdit"/>
@@ -56,7 +56,7 @@
 		<slice id="CmPossibilityDiscussion" field="Discussion" label="Discussion" editor="sttext"  menu="mnuDataTree-Help"/>
 	</part>
 	<part id="CmPossibility-Detail-Confidence" type="Detail">
-		<slice id="CmPossibilityConfidence" field="Confidence" label="Confidence" editor="defaultAtomicReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityConfidence" field="Confidence" label="Confidence" editor="possAtomicReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analysis"/>
 			<chooserInfo title="Choose Confidence Level">
 				<chooserLink type="goto" label="Edit the list of Confidence levels" tool="confidenceEdit"/>
@@ -64,7 +64,7 @@
 		</slice>
 	</part>
 	<part id="CmPossibility-Detail-Researchers" type="Detail">
-		<slice id="CmPossibilityResearchers" field="Researchers" label="Researchers" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityResearchers" field="Researchers" label="Researchers" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo guicontrol="PeopleFlatList">
 				<chooserLink type="goto" label="Edit the list of Researchers" tool="peopleEdit"/>
@@ -72,7 +72,7 @@
 		</slice>
 	</part>
 	<part id="CmPossibility-Detail-Restrictions" type="Detail">
-		<slice id="CmPossibilityRestrictions" field="Restrictions" label="Restrictions" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityRestrictions" field="Restrictions" label="Restrictions" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analysis"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the list of Restrictions" tool="restrictionsEdit"/>
@@ -139,7 +139,7 @@
 		  <seq field="Questions" layout="RDE"/>
 	</part>
 	<part id="CmSemanticDomain-Detail-OcmRefs" type="Detail">
-		<slice field="OcmRefs" label="Anthropology Categories" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice field="OcmRefs" label="Anthropology Categories" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams displayProperty="LongName" ws="best analysis"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit"/>
@@ -147,7 +147,7 @@
 		</slice>
 	</part>
 	<part id="CmSemanticDomain-Detail-RelatedDomains" type="Detail">
-		<slice field="RelatedDomains" label="Related Domains" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice field="RelatedDomains" label="Related Domains" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams displayProperty="LongName" ws="best analysis"/>
 			<chooserInfo>
 				<!-- THIS PUTS US IN THE SAME PLACE! chooserLink type="goto" label="Edit the Semantic Domains" tool="semanticDomainEdit"/ -->
@@ -263,7 +263,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-Positions" type="Detail">
-		<slice field="Positions" label="Positions" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice field="Positions" label="Positions" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Positions list" tool="positionsEdit"/>
@@ -271,7 +271,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-PlacesOfResidence" type="Detail">
-		<slice field="PlacesOfResidence" label="Place of Residence" editor="defaultVectorReference"  menu="mnuDataTree-Help">
+		<slice field="PlacesOfResidence" label="Place of Residence" editor="possVectorReference"  menu="mnuDataTree-Help">
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit"/>
@@ -279,7 +279,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-Education" type="Detail">
-		<slice field="Education" label="Education" editor="defaultAtomicReference"  menu="mnuDataTree-Help">
+		<slice field="Education" label="Education" editor="possAtomicReference"  menu="mnuDataTree-Help">
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Education list" tool="educationEdit"/>
@@ -287,7 +287,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-PlaceOfBirth" type="Detail">
-		<slice field="PlaceOfBirth" label="Place of Birth" editor="defaultAtomicReference"  menu="mnuDataTree-Help">
+		<slice field="PlaceOfBirth" label="Place of Birth" editor="possAtomicReference"  menu="mnuDataTree-Help">
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit"/>

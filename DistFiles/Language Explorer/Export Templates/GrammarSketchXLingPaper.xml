@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<template format="xml" type="grammarSketch" datatype="GrammarSketchXLingPaper">
+<template format="xml" type="grammarSketch" datatype="GrammarSketchXLingPaper" xslt="XLingPaperForXXE.xsl">
 	<FxtDocumentDescription dataLabel="Grammar Sketch" formatLabel="XLingPaper XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">Export Grammar Sketch as an XLingPaper file.</FxtDocumentDescription>
 </template>

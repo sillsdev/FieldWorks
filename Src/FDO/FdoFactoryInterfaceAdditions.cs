@@ -301,6 +301,14 @@ namespace SIL.FieldWorks.FDO
 		IStStyle Create(IFdoOwningCollection<IStStyle> styleList, string name,
 			ContextValues context, StructureValues structure, FunctionValues function,
 			bool isCharStyle, int userLevel, bool isBuiltin);
+
+		/// <summary>
+		/// Create a new style with a fixed guid.
+		/// </summary>
+		/// <param name="cache">project cache</param>
+		/// <param name="guid">the factory set guid</param>
+		/// <returns>A style interface</returns>
+		IStStyle Create(FdoCache cache, Guid guid);
 	}
 
 	public partial interface ICmBaseAnnotationFactory

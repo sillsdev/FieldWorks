@@ -138,32 +138,27 @@ namespace LexTextControlsTests
 		private string TryImport(string sOrigFile, string sOrigRangesFile, FlexLiftMerger.MergeStyle mergeStyle, int expectedCount)
 		{
 			string logfile = null;
-			try
-			{
-				IProgress progressDlg = new DummyProgressDlg();
-				var fMigrationNeeded = Migrator.IsMigrationNeeded(sOrigFile);
-				var sFilename = fMigrationNeeded
-									? Migrator.MigrateToLatestVersion(sOrigFile)
-									: sOrigFile;
-				var flexImporter = new FlexLiftMerger(Cache, mergeStyle, true);
-				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
-				flexImporter.LiftFile = sOrigFile;
 
-				//The following are the calls to import the Ranges file and then the Data file.
-				if (!String.IsNullOrEmpty(sOrigRangesFile))
-					flexImporter.LoadLiftRanges(sOrigRangesFile);
-				var cEntries = parser.ReadLiftFile(sFilename);
+			IProgress progressDlg = new DummyProgressDlg();
+			var fMigrationNeeded = Migrator.IsMigrationNeeded(sOrigFile);
+			var sFilename = fMigrationNeeded
+								? Migrator.MigrateToLatestVersion(sOrigFile)
+								: sOrigFile;
+			var flexImporter = new FlexLiftMerger(Cache, mergeStyle, true);
+			var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
+			flexImporter.LiftFile = sOrigFile;
 
-				Assert.AreEqual(expectedCount, cEntries);
-				if (fMigrationNeeded)
-					File.Delete(sFilename);
-				flexImporter.ProcessPendingRelations(progressDlg);
-				logfile = flexImporter.DisplayNewListItems(sOrigFile, cEntries);
-			}
-			catch (Exception error)
-			{
-				return null;
-			}
+			//The following are the calls to import the Ranges file and then the Data file.
+			if (!String.IsNullOrEmpty(sOrigRangesFile))
+				flexImporter.LoadLiftRanges(sOrigRangesFile);
+			var cEntries = parser.ReadLiftFile(sFilename);
+
+			Assert.AreEqual(expectedCount, cEntries);
+			if (fMigrationNeeded)
+				File.Delete(sFilename);
+			flexImporter.ProcessPendingRelations(progressDlg);
+			logfile = flexImporter.DisplayNewListItems(sOrigFile, cEntries);
+
 			return logfile;
 		}
 
@@ -2317,7 +2312,7 @@ namespace LexTextControlsTests
 			"  </entry>",
 			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
 			"    <lexical-unit>",
-			"      <form lang=\"fr\"><text>todo</text></form>",
+			"      <form lang=\"fr\"><text>to</text></form>",
 			"    </lexical-unit>",
 			"    <trait  name=\"morph-type\" value=\"stem\"/>",
 			"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
@@ -2343,6 +2338,78 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
 			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
+		}
+
+		private static readonly string[] s_ComponentTest2 = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>do</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+			"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>to</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
+			"<relation type=\"Compare\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>zoo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"<relation type=\"Compare\" ref=\"todo_10af904a-7395-4a37-a195-44001127ae40\"/>",
+			"<relation type=\"Compare\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void TestImportWarnsOnNonSubsetCollectionMerge()
+		{
+
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			var sOrigFile = CreateInputFile(s_ComponentTest);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var sMergeFile = CreateInputFile(s_ComponentTest2);
+			var logFile = TryImport(sMergeFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
+			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
+			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
+			var stream = new StreamReader(logFile);
+			string data = stream.ReadToEnd();
+			stream.Close();
+			Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
 		}
 
 		private static readonly string[] s_LT12948Test = new[]
@@ -2469,9 +2536,95 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count());
-			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count);
-			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count());
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Wrong number of Components.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+		}
+
+		private static readonly string[] mergeTestOld = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" guid=\"be4eb9fd-58fd-49fe-a8ef-e13a96646806\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>do</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:56:03Z\" id=\"todo_10af904a-7395-4a37-a195-44001127ae40\" guid=\"10af904a-7395-4a37-a195-44001127ae40\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"<relation type=\"_component-lexeme\" ref=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"1\">",
+			"<trait name=\"is-primary\" value=\"true\"/>",
+			"<trait name=\"variant-type\" value=\"Dialectal Variant\"/>",
+			"</relation>",
+			"<relation type=\"_component-lexeme\" ref=\"do_be4eb9fd-58fd-49fe-a8ef-e13a96646806\" order=\"1\">",
+			"<trait name=\"is-primary\" value=\"true\"/>",
+			"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+			"</relation>",
+			"<relation type=\"_component-lexeme\" ref=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" order=\"2\">",
+			"<trait name=\"is-primary\" value=\"true\"/>",
+			"<trait name=\"complex-form-type\" value=\"Compound\"/>",
+			"</relation>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"to_9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"9bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"zoo_6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\" guid=\"6bfa6fc4-0a2d-44ff-9c2c-91460ef3c856\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>todo</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  Test that two component lists which share an entry are considered the same
+		/// list and merged rather than put in two different lists of components.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestMergeWithDiffComponentListKeepOld()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepository = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			var sOrigFile = CreateInputFile(mergeTestOld);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+
+			var sNewFile = CreateInputFile(s_LT12948Test2);
+			TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
+
+			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
+			//should be collected in the same LexEntryRef
+			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexForms, they were incorrectly split.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+			Assert.AreEqual(1, todoEntry.VariantEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of Variants.");
+			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of components.");
+
 		}
 
 		private static readonly string[] s_LT12948Test3 = new[]
@@ -2572,6 +2725,134 @@ namespace LexTextControlsTests
 			Assert.AreEqual(3, bungaloSense.LexSenseReferences.First().TargetsRS.Count);
 			Assert.AreEqual(1, bobEntry.LexEntryReferences.Count());
 			Assert.AreEqual(2, bobEntry.LexEntryReferences.First().TargetsRS.Count);
+		}
+
+		private static string[] treeLiftData = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:31Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>arm</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+			"<gloss lang='en'><text>arm</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>body</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>body</text></gloss>",
+			"<relation type='Part' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>leg</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:44Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>hand</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='72c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static string[] treeLiftData2 = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-04-19T17:47:25Z' dateModified='2012-04-19T18:15:32Z' id='arm_835b9236-c6a4-48fe-b66e-673e40ff040d' guid='835b9236-c6a4-48fe-b66e-673e40ff040d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>arm</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'>",
+			"<gloss lang='en'><text>arm</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"<relation type='Part' ref='72c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='body_a79278be-d698-4def-b104-c4303615683f' guid='a79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>body</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='52c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>body</text></gloss>",
+			"<relation type='Part' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"<relation type='Part' ref='62c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:16:44Z' id='leg_b79278be-d698-4def-b104-c4303615683f' guid='b79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>leg</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='62c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>leg</text></gloss>",
+			"<relation type='Whole' ref='52c632c2-98ad-4f97-b130-2a32992254e3'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-04-19T17:49:04Z' dateModified='2012-04-19T18:15:45Z' id='hand_c79278be-d698-4def-b104-c4303615683f' guid='c79278be-d698-4def-b104-c4303615683f'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>hand</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='72c632c2-98ad-4f97-b130-2a32992254e3'>",
+			"<gloss lang='en'><text>hand</text></gloss>",
+			"<relation type='Whole' ref='5ca96ad0-cb18-4ddc-be8e-3547fc87221f'/>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test, Ignore("The bootstrapping is not sufficient for this to work yet, part and whole end up as different LexRefTypes, which is incorrect.")]
+		public void TestImportDoesNotDuplicateTreeRelations()
+		{
+
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+
+			var sOrigFile = CreateInputFile(treeLiftData);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			var bodySense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
+
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(2, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+
+			var sNewFile = CreateInputFile(treeLiftData2);
+			TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
+			var legSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
+
+			//There should be 2 LexSenseReferences, one for the Whole relationship, and one for the Part relationship.
+			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
+			Assert.AreEqual(3, bodySense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(1, legSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
+			Assert.AreEqual(1, legSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
 		}
 
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)

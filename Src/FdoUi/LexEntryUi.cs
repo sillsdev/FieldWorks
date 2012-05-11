@@ -931,7 +931,7 @@ namespace SIL.FieldWorks.FdoUi
 					ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().GetObject(hvo);
 					bool fNeedInitialPlus = true;
 					vwenv.OpenParagraph();
-					foreach (var let in ler.VariantEntryTypesRS)
+					foreach (var let in ler.VariantEntryTypesRS.Where(let => let.ClassID == LexEntryTypeTags.kClassId))
 					{
 						// just concatenate them together separated by comma.
 						ITsString tssVariantTypeRevAbbr = let.ReverseAbbr.BestAnalysisAlternative;

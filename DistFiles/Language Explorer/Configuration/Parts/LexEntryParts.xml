@@ -718,7 +718,7 @@
 			</multiling>
 		</part>
 		<part id="LexEntry-Detail-EntryType" type="Detail">
-			<slice field="EntryType" label="Entry Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="EntryType" label="Entry Type" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis" changeRequiresRefresh="true" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Entry Types" tool="entryTypeEdit" />
@@ -841,7 +841,7 @@
 			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" optionalWs="all vernacular" menu="mnuDataTree-Pronunciation" />
 		</part>
 		<part id="LexPronunciation-Detail-Location" type="Detail">
-			<slice field="Location" label="Location" editor="defaultAtomicReference" menu="mnuDataTree-Help" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
+			<slice field="Location" label="Location" editor="possAtomicReference" menu="mnuDataTree-Help" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
 				<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit" />
@@ -880,7 +880,7 @@
 	<bin class="LexEntryRef">
 		<part id="LexEntryRef-Detail-VariantEntryTypes" type="Detail">
 			<if field="RefType" intequals="0">
-				<slice field="VariantEntryTypes" label="Variant Type" editor="defaultVectorReference" indent="true"
+				<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" indent="true"
 					   menu="mnuDataTree-VariantSpec" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-VariantEntryTypes">
 					<deParams ws="best analysis" changeRequiresRefresh="true" />
 					<chooserInfo>
@@ -892,7 +892,7 @@
 		<part id="LexEntryRef-Detail-ComplexEntryTypes" type="Detail">
 <!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
 			<if field="RefType" intequals="1">
-				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="defaultVectorReference" menu="mnuDataTree-ComplexFormSpec">
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" menu="mnuDataTree-ComplexFormSpec">
 					<deParams ws="best analysis" changeRequiresRefresh="true" />
 					<chooserInfo>
 						<chooserLink type="goto" label="Edit the Complex Form Types" tool="complexEntryTypeEdit" />
@@ -937,7 +937,7 @@
 		</part>
 		<part id="LexEntryRef-Detail-RefVariantEntryTypes" type="Detail">
 			<if field="RefType" intequals="0">
-		<slice field="VariantEntryTypes" label="Variant Type" editor="defaultVectorReference" sameObject="true" menu="mnuDataTree-Help">
+		<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
 		  <deParams ws="best analysis" changeRequiresRefresh="true" />
 		  <chooserInfo>
 			<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
@@ -948,7 +948,7 @@
 		<part id="LexEntryRef-Detail-RefComplexEntryTypes" type="Detail">
 <!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
 			<if field="RefType" intequals="1">
-				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="defaultVectorReference" menu="mnuDataTree-Help"/>
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" menu="mnuDataTree-Help"/>
 			</if>
 		</part>
 		<part id="LexEntryRef-Detail-RefShowMinorEntry" type="Detail">

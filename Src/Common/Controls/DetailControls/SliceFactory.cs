@@ -120,13 +120,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				case "defaultvectorreference": // second most common.
 					{
-						ReferenceVectorSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
+						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
 						if (rvSlice == null)
 							slice = new ReferenceVectorSlice(cache, obj, flid);
 						else
 						{
 							slice = rvSlice;
 							rvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
+				case "possvectorreference":
+					{
+						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
 						}
 						break;
 					}
@@ -252,6 +264,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					slice = new AtomicReferencePOSSlice(cache, obj, flid, persistenceProvider, mediator);
 					break;
 				}
+				case "possatomicreference":
+				{
+					slice = new PossibilityAtomicReferenceSlice(cache, obj, flid);
+					break;
+				}
 				case "atomicreferenceposdisabled":
 				{
 					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, persistenceProvider, mediator);
@@ -375,7 +392,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (flid == 0)
 				return null;
 			Slice slice = null;
-			CellarPropertyType type = (CellarPropertyType)mdc.GetFieldType(flid);
+			var type = (CellarPropertyType) mdc.GetFieldType(flid);
 			switch (type)
 			{
 				case CellarPropertyType.String:

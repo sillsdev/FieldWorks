@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageproject version="7000056">
+  <rt class="LexEntryType" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+	<Abbreviation>
+	  <AUni ws="en">pl. of</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">The plural form of a noun that does not take the regular inflectional affix for plural.</Run>
+	  </AStr>
+	</Description>
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Plural</AUni>
+	</Name>
+	<ReverseAbbr>
+	  <AUni ws="en">pl.</AUni>
+	</ReverseAbbr>
+	<GlossAppend>
+	  <AUni ws="en">.pL</AUni>
+	</GlossAppend>
+  </rt>
+  <rt class="LexEntryType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+	<Abbreviation>
+	  <AUni ws="en">pst. of</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">The past tense form of a verb that does not take the regular inflectional affix for past tense.</Run>
+	  </AStr>
+	</Description>
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Past</AUni>
+	</Name>
+	<ReverseAbbr>
+	  <AUni ws="en">pst.</AUni>
+	</ReverseAbbr>
+	<GlossAppend>
+	  <AUni ws="en">.pST</AUni>
+	</GlossAppend>
+  </rt>
+</languageproject>

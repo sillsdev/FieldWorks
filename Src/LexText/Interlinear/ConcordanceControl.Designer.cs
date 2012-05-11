@@ -40,9 +40,9 @@ namespace SIL.FieldWorks.IText
 			this.m_chkMatchCase = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.helpProvider = new System.Windows.Forms.HelpProvider();
+			this.m_cbSearchText = new SIL.FieldWorks.Common.Widgets.TreeCombo();
 			this.m_fwtbItem = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_lnkSpecify = new System.Windows.Forms.LinkLabel();
-			this.m_cbSearchText = new TreeCombo();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbSearchText)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwtbItem)).BeginInit();
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.IText
 			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
 			//
-			// label3
+			// m_searchContentLabel
 			//
 			resources.ApplyResources(this.m_searchContentLabel, "m_searchContentLabel");
 			this.m_searchContentLabel.Name = "m_searchContentLabel";
@@ -73,13 +73,15 @@ namespace SIL.FieldWorks.IText
 			//
 			// m_tbSearchText
 			//
+			this.m_tbSearchText.AcceptsReturn = false;
 			this.m_tbSearchText.AdjustStringHeight = true;
 			this.m_tbSearchText.BackColor = System.Drawing.SystemColors.Window;
 			this.m_tbSearchText.controlID = null;
 			resources.ApplyResources(this.m_tbSearchText, "m_tbSearchText");
+			this.m_tbSearchText.HasBorder = true;
 			this.m_tbSearchText.Name = "m_tbSearchText";
-			this.m_tbSearchText.SelectionLength = 0;
-			this.m_tbSearchText.SelectionStart = 0;
+			this.m_tbSearchText.SuppressEnter = false;
+			this.m_tbSearchText.WordWrap = false;
 			//
 			// m_btnRegExp
 			//
@@ -170,14 +172,30 @@ namespace SIL.FieldWorks.IText
 			this.helpProvider.SetShowHelp(this.groupBox1, ((bool)(resources.GetObject("groupBox1.ShowHelp"))));
 			this.groupBox1.TabStop = false;
 			//
+			// m_cbSearchText
+			//
+			this.m_cbSearchText.AdjustStringHeight = true;
+			this.m_cbSearchText.BackColor = System.Drawing.SystemColors.Window;
+			this.m_cbSearchText.DropDownWidth = 120;
+			this.m_cbSearchText.DroppedDown = false;
+			this.m_cbSearchText.HasBorder = true;
+			resources.ApplyResources(this.m_cbSearchText, "m_cbSearchText");
+			this.m_cbSearchText.Name = "m_cbSearchText";
+			this.helpProvider.SetShowHelp(this.m_cbSearchText, ((bool)(resources.GetObject("m_cbSearchText.ShowHelp"))));
+			this.m_cbSearchText.UseVisualStyleBackColor = true;
+			//
 			// m_fwtbItem
 			//
+			this.m_fwtbItem.AcceptsReturn = false;
 			resources.ApplyResources(this.m_fwtbItem, "m_fwtbItem");
 			this.m_fwtbItem.AdjustStringHeight = true;
 			this.m_fwtbItem.BackColor = System.Drawing.SystemColors.Control;
 			this.m_fwtbItem.CausesValidation = false;
 			this.m_fwtbItem.controlID = null;
+			this.m_fwtbItem.HasBorder = true;
 			this.m_fwtbItem.Name = "m_fwtbItem";
+			this.m_fwtbItem.SuppressEnter = false;
+			this.m_fwtbItem.WordWrap = false;
 			//
 			// m_lnkSpecify
 			//
@@ -185,13 +203,6 @@ namespace SIL.FieldWorks.IText
 			this.m_lnkSpecify.Name = "m_lnkSpecify";
 			this.m_lnkSpecify.TabStop = true;
 			this.m_lnkSpecify.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_lnkSpecify_LinkClicked);
-			//
-			// m_cbSearchText
-			//
-			this.m_cbSearchText.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			resources.ApplyResources(this.m_cbSearchText, "m_cbSearchText");
-			this.m_cbSearchText.Name = "m_cbSearchText";
-			this.helpProvider.SetShowHelp(this.m_cbSearchText, ((bool)(resources.GetObject("m_cbSearchText.ShowHelp"))));
 			//
 			// ConcordanceControl
 			//

@@ -685,8 +685,20 @@ bool Segment::rightToLeft()
 ----------------------------------------------------------------------------------------------*/
 int Segment::directionDepth(bool * pfWeak)
 {
-	if (pfWeak)
+if (pfWeak)
+	{
 		*pfWeak = (m_twsh == ktwshOnlyWs);
+
+		// TODO: do we want to add this? If so it needs to be extended to handle
+		// LRM & RLM, etc.
+		//if (*pfWeak && m_ichwMin > 0)
+		//{
+		//	utf16 chw = 0;
+		//	m_pgts->fetch(m_ichwMin - 1, 1, &chw);
+		//	if (chw == 0x202E || chw==0x202D)	// overrides LRO & RLO
+		//		*pfWeak = false;
+		//}
+	}
 
 //	*pnDepth = m_pgts->getDirectionDepth(m_ichwLim);
 //	Assert(*pnDepth == m_nDirDepth);

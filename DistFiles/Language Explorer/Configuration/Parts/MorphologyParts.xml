@@ -173,7 +173,7 @@
 			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -189,7 +189,7 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -516,7 +516,7 @@
 			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -643,7 +643,7 @@
 			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
-			<slice field="ProdRestrict" label='Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2036,7 +2036,7 @@
 			</if>
 		</part>
 		<part id="MoExoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2084,7 +2084,7 @@
 			<obj field="OverridingMsa" label="Overriding MSA" layout="LeftMsa"/>
 		</part>
 		<part id="MoEndoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>

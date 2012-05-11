@@ -80,6 +80,9 @@
 		<command id="CmdJumpToPublicationList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes"/>
 		</command>
+	<command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
+	  <params className="LexEntryInflType"/>
+	</command>
 		<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
 			<params className="LexEntryType"/>
 		</command>
@@ -186,7 +189,9 @@
 			<item command="CmdInsertPossibility" defaultVisible="false"/>
 			<item command="CmdInsertCustomItem" defaultVisible="false"/>
 			<item command="CmdInsertMorphType" defaultVisible="false"/>
+	  <item command="CmdInsertLexEntryInflType" defaultVisible="false"/>
 			<item command="CmdInsertLexEntryType" defaultVisible="false"/>
+	  <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype"/>
 			<item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype"/>
 			<item command="CmdInsertAnthroCategory" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory"/>
@@ -240,7 +245,9 @@
 			<item command="CmdInsertPossibility" defaultVisible="false"/>
 			<item command="CmdInsertCustomItem" defaultVisible="false"/>
 			<item command="CmdInsertMorphType" defaultVisible="false"/>
+	  <item command="CmdInsertLexEntryInflType" defaultVisible="false"/>
 			<item command="CmdInsertLexEntryType" defaultVisible="false"/>
+	  <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype"/>
 			<item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype"/>
 			<item command="CmdInsertAnthroCategory" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory"/>

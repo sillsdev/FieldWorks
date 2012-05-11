@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageproject version="7000056">
+  <rt class="LexEntryType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+	<Abbreviation>
+	  <AUni ws="en">irreg. infl. of</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">An Irregularly Inflected Form is an inflected form of the lexeme that is different from what you would expect from the normal rules of the grammar.</Run>
+	  </AStr>
+	</Description>
+	<Discussion>
+	  <objsur guid="b6f4c056-ea5e-11de-8a9c-0013722f8dec" t="o" />
+	</Discussion>
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Irregularly Inflected Form</AUni>
+	</Name>
+	<ReverseAbbr>
+	  <AUni ws="en">irreg. infl.</AUni>
+	</ReverseAbbr>
+	<SubPossibilities>
+	  <objsur guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" t="o" />
+	  <objsur guid="837ebe72-8c1d-4864-95d9-fa313c499d78" t="o" />
+	</SubPossibilities>
+  </rt>
+  <rt class="StText" guid="b6f4c056-ea5e-11de-8a9c-0013722f8dec" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+	<DateModified val="2011-3-29 16:16:31.321" />
+	<Paragraphs>
+	  <objsur guid="b700ac0e-ea5e-11de-8890-0013722f8dec" t="o" />
+	  <objsur guid="b70c97bc-ea5e-11de-803e-0013722f8dec" t="o" />
+	</Paragraphs>
+  </rt>
+  <rt class="LexEntryType" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+	<Abbreviation>
+	  <AUni ws="en">pl. of</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">The plural form of a noun that does not take the regular inflectional affix for plural.</Run>
+	  </AStr>
+	</Description>
+
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Plural</AUni>
+	</Name>
+	<ReverseAbbr>
+	  <AUni ws="en">pl.</AUni>
+	</ReverseAbbr>
+  </rt>
+  <rt class="LexEntryType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+	<Abbreviation>
+	  <AUni ws="en">pst. of</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">The past tense form of a verb that does not take the regular inflectional affix for past tense.</Run>
+	  </AStr>
+	</Description>
+	<IsProtected val="true" />
+	<Name>
+	  <AUni ws="en">Past</AUni>
+	</Name>
+	<ReverseAbbr>
+	  <AUni ws="en">pst.</AUni>
+	</ReverseAbbr>
+  </rt>
+</languageproject>
