@@ -5898,3 +5898,5 @@ RandyR, 3 May 2012. Checked in Flex Bridge 0.3.38.
 DamienD, 10 May 2012. Fixed incorrect handling of boundaries when matching word initial or final in environments in HC.NET,
 	fixed bug in optional sequences in HC.NET.
 Gordon 'n Jason, 10 May 2012. Fix errors in Conflict Report communication with FLEx.
+Lastufkam, 11 May 2012. LT-13033 FLEx crashes if Send/Receive invoked on a second project
+RandyR, 12 May 2012. Checked in Flex Bridge 0.3.39.
