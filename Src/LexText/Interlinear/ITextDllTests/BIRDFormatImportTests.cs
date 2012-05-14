@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var settings = new XmlReaderSettings {ValidationType = ValidationType.Schema};
 
-			string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates\Interlinear");
+			string p = Path.Combine(DirectoryFinder.FlexFolder, @"Export Templates/Interlinear");
 			string file = Path.Combine(p, "FlexInterlinear.xsd");
 			settings.Schemas.Add("", file);
 			//settings.ValidationEventHandler += ValidationCallBack;
@@ -135,7 +136,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -160,7 +163,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -184,7 +189,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
 		}
 
 		[Test]
@@ -196,7 +203,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
 		}
 
 		[Test]
@@ -208,7 +217,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
 		}
 
 		[Test]
@@ -220,7 +231,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
 		[Test]
@@ -232,7 +245,9 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
 		[Test]
@@ -265,12 +280,14 @@ namespace SIL.FieldWorks.IText
 		{
 			//an interliner text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
-							"<word><morphemes analysisStatus='invalid'/></word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+					"<word><morphemes analysisStatus='invalid'/></word>" +
+				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
+			// TODO-Linux: The message on Mono doesn't state the failing attribute
+			if (!MiscUtils.IsMono)
+				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -295,7 +312,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ValidateFlexTextFile()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
+			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
 			XmlDocument doc = new XmlDocument();
 			doc.Load(file);
@@ -307,20 +324,20 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ImportParatextExportBasic()
 		{
-			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText\Interlinear\ITextDllTests\FlexTextImport");
+			string path = Path.Combine(DirectoryFinder.FwSourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
 			string file = Path.Combine(path, "FlexTextExportOutput.flextext");
-			var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+			using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+			{
+				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+				FDO.IText text = null;
+				var options = new LinguaLinksImport.ImportInterlinearOptions{Progress = new DummyProgressDlg(),
+					BirdData = fileStream, AllottedProgress = 0,
+					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
 
-			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
-			var options = new LinguaLinksImport.ImportInterlinearOptions{Progress = new DummyProgressDlg(),
-				BirdData = fileStream, AllottedProgress = 0,
-				CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
-
-			bool result = li.ImportInterlinear(options, ref text);
-			Assert.True(result, "ImportInterlinear was not successful.");
+				bool result = li.ImportInterlinear(options, ref text);
+				Assert.True(result, "ImportInterlinear was not successful.");
+			}
 		}
-
 		#endregion ScrElements
 
 		[Test]
@@ -341,14 +358,19 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			//The title imported
-			Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
-			//The title abbreviation imported
-			Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					//The title imported
+					Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
+					//The title abbreviation imported
+					Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+				}
+			}
 		}
 
 		[Test]
@@ -379,23 +401,27 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			var para = imported.ContentsOA[0];
-			var spaceArray = new char[] { ' ' };
-			var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
-			var spaceTwo = para.Contents.Text.Substring(5, 1); //should be: " "
-			var spaceThree = para.Contents.Text.Substring(9, 1);
-			var spaceFour = para.Contents.Text.Substring(13, 1);
-			var spaceFive = para.Contents.Text.Substring(15, 1);
-			//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-			Assert.AreEqual(6, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
-			//test to make sure spaces were inserted in each expected place
-			CollectionAssert.AreEqual(new [] {spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive},
-									  new [] {" ", " ", " ", " ", " "});
-
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					var para = imported.ContentsOA[0];
+					var spaceArray = new char[] { ' ' };
+					var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
+					var spaceTwo = para.Contents.Text.Substring(5, 1); //should be: " "
+					var spaceThree = para.Contents.Text.Substring(9, 1);
+					var spaceFour = para.Contents.Text.Substring(13, 1);
+					var spaceFive = para.Contents.Text.Substring(15, 1);
+					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
+					Assert.AreEqual(6, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					//test to make sure spaces were inserted in each expected place
+					CollectionAssert.AreEqual(new [] {" ", " ", " ", " ", " "},
+						new [] {spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive});
+				}
+			}
 		}
 
 		[Test]
@@ -429,25 +455,28 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(),
-				new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current; // why is this null?!
-			var para = imported.ContentsOA[0];
-			var spaceArray = new char[] { ' ' };
-			var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
-			var spaceTwo = para.Contents.Text.Substring(6, 1); //should be: " "
-			var spaceThree = para.Contents.Text.Substring(10, 1);
-			var spaceFour = para.Contents.Text.Substring(13, 1);
-			var spaceFive = para.Contents.Text.Substring(17, 1);
-			var spaceSix = para.Contents.Text.Substring(21, 1);
-			//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-			Assert.AreEqual(7, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
-			//test to make sure spaces were inserted in each expected place
-			CollectionAssert.AreEqual(new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix },
-									  new[] { " ", " ", " ", " ", " ", " " });
-
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current; // why is this null?!
+					var para = imported.ContentsOA[0];
+					var spaceArray = new char[] { ' ' };
+					var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
+					var spaceTwo = para.Contents.Text.Substring(6, 1); //should be: " "
+					var spaceThree = para.Contents.Text.Substring(10, 1);
+					var spaceFour = para.Contents.Text.Substring(13, 1);
+					var spaceFive = para.Contents.Text.Substring(17, 1);
+					var spaceSix = para.Contents.Text.Substring(21, 1);
+					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
+					Assert.AreEqual(7, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					//test to make sure spaces were inserted in each expected place
+					CollectionAssert.AreEqual(new[] { " ", " ", " ", " ", " ", " " },
+						new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix });
+				}
+			}
 		}
 
 		[Test]
@@ -466,20 +495,25 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			var para = imported.ContentsOA[0];
-			var spaceOne = para.Contents.Text.Substring(1, 1); //should be: " "
-			var wordAfter = para.Contents.Text.Substring(2, 5); //should be: "space"
-			var spaceTwo = para.Contents.Text.Substring(7, 1); //should be: " "
-			//test to make sure no space was inserted before the first word.
-			Assert.IsFalse(" ".Equals(para.Contents.GetSubstring(0, 1)));
-			//test to make sure spaces were inserted between "a" and "space", and between "space" and "space"
-			//any extra spaces would result in the "space" word looking like " spac"
-			Assert.IsTrue(spaceOne.Equals(spaceTwo));
-			Assert.IsTrue(wordAfter.Equals("space"));
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					var para = imported.ContentsOA[0];
+					var spaceOne = para.Contents.Text.Substring(1, 1); //should be: " "
+					var wordAfter = para.Contents.Text.Substring(2, 5); //should be: "space"
+					var spaceTwo = para.Contents.Text.Substring(7, 1); //should be: " "
+					//test to make sure no space was inserted before the first word.
+					Assert.IsFalse(" ".Equals(para.Contents.GetSubstring(0, 1)));
+					//test to make sure spaces were inserted between "a" and "space", and between "space" and "space"
+					//any extra spaces would result in the "space" word looking like " spac"
+					Assert.IsTrue(spaceOne.Equals(spaceTwo));
+					Assert.IsTrue(wordAfter.Equals("space"));
+				}
+			}
 		}
 
 		[Test]
@@ -498,12 +532,17 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			var para = imported.ContentsOA[0];
-			Assert.IsTrue(para.Contents.Text.Equals("Text not built from words."));
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					var para = imported.ContentsOA[0];
+					Assert.IsTrue(para.Contents.Text.Equals("Text not built from words."));
+				}
+			}
 		}
 
 		[Test]
@@ -516,13 +555,18 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Empty paragraph was not imported as text content.");
-			var para = imported.ContentsOA[0];
-			Assert.NotNull(para, "The imported paragraph is null?");
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Empty paragraph was not imported as text content.");
+					var para = imported.ContentsOA[0];
+					Assert.NotNull(para, "The imported paragraph is null?");
+				}
+			}
 		}
 
 		[Test]
@@ -538,15 +582,20 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
-			var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator();
-			firstEntry.MoveNext();
-			var imported = firstEntry.Current;
-			Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Paragraph was not imported as text content.");
-			var para = imported.ContentsOA[0];
-			Assert.NotNull(para, "The imported paragraph is null?");
-			Assert.True(para.SegmentsOS[0].Guid.ToString().ToUpper().Equals("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"), "Segment guid not maintained on import.");
-			VerifyMediaLink(imported);
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Paragraph was not imported as text content.");
+					var para = imported.ContentsOA[0];
+					Assert.NotNull(para, "The imported paragraph is null?");
+					Assert.True(para.SegmentsOS[0].Guid.ToString().ToUpper().Equals("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"), "Segment guid not maintained on import.");
+					VerifyMediaLink(imported);
+				}
+			}
 		}
 
 		[Test]
@@ -563,13 +612,19 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LLIMergeExtension(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())), 0, ref text);
-			Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(secondxml.ToCharArray())), 0, ref text);
-			Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
-			Assert.True(Cache.LanguageProject.TextsOC.Count == 1, "Second text not merged with the first.");
-			Assert.True(text.ContentsOA.ParagraphsOS.Count == 1 && text.ContentsOA[0].SegmentsOS.Count == 1, "Segments from second import not merged with the first.");
-			VerifyMediaLink(text);
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.ToCharArray())))
+				{
+					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
+					Assert.True(Cache.LanguageProject.TextsOC.Count == 1, "Second text not merged with the first.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count == 1 && text.ContentsOA[0].SegmentsOS.Count == 1, "Segments from second import not merged with the first.");
+					VerifyMediaLink(text);
+				}
+			}
 		}
 
 		internal class LLIMergeExtension : LinguaLinksImport
@@ -605,10 +660,14 @@ namespace SIL.FieldWorks.IText
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
 
-			Assert.True((Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text.Equals("Jimmy Dorante"),
-				"Speaker was not created during the import.");
+				Assert.AreEqual("Jimmy Dorante",
+					(Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text,
+					"Speaker was not created during the import.");
+			}
 		}
 
 		[Test]
@@ -625,19 +684,24 @@ namespace SIL.FieldWorks.IText
 			ICmPerson newPerson = null;
 			//Create and add Jimmy to the project.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				() => { Cache.LanguageProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-						//person not found create one and add it.
-						newPerson = Cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create();
-						Cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
-						newPerson.Name.set_String(Cache.DefaultVernWs, "Jimmy Dorante");
-					  });
+				() => {
+				Cache.LanguageProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				//person not found create one and add it.
+				newPerson = Cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create();
+				Cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
+				newPerson.Name.set_String(Cache.DefaultVernWs, "Jimmy Dorante");
+			});
+			Assert.NotNull(newPerson);
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			FDO.IText text = null;
-			li.ImportInterlinear(new DummyProgressDlg(), new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), 0, ref text);
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
 
-			//If the import sets the speaker in the segment to our Jimmy, and not a new Jimmy then all is well
-			Assert.True(newPerson != null && text.ContentsOA[0].SegmentsOS[0].SpeakerRA == newPerson, "Speaker not reused.");
+				//If the import sets the speaker in the segment to our Jimmy, and not a new Jimmy then all is well
+				Assert.AreEqual(newPerson, text.ContentsOA[0].SegmentsOS[0].SpeakerRA, "Speaker not reused.");
+			}
 		}
 
 		private static void VerifyMediaLink(FDO.IText imported)
@@ -646,12 +710,14 @@ namespace SIL.FieldWorks.IText
 			var para = imported.ContentsOA[0];
 			Assert.NotNull(mediaFilesContainer, "Media Files not being imported.");
 			Assert.True(mediaFilesContainer.MediaURIsOC.Count == 1, "Media file not imported.");
-			var enumerator = para.SegmentsOS.GetEnumerator();
-			enumerator.MoveNext();
-			var seg = enumerator.Current;
-			Assert.True(seg.BeginTimeOffset.Equals("1"), "Begin offset not imported correctly");
-			Assert.True(seg.EndTimeOffset.Equals("2"), "End offset not imported correctly");
-			Assert.True(seg.MediaURIRA == mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
+			using (var enumerator = para.SegmentsOS.GetEnumerator())
+			{
+				enumerator.MoveNext();
+				var seg = enumerator.Current;
+				Assert.True(seg.BeginTimeOffset.Equals("1"), "Begin offset not imported correctly");
+				Assert.True(seg.EndTimeOffset.Equals("2"), "End offset not imported correctly");
+				Assert.True(seg.MediaURIRA == mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
+			}
 		}
 	}
 }

@@ -3595,22 +3595,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 			}
 
-#if __MonoCS__ // work around mono bug https://bugzilla.novell.com/show_bug.cgi?id=613708
-			// Create a LayoutTreeNode from a TreeNode constructor.
-			protected LayoutTreeNode(TreeNode copyNode) : base(copyNode.Text, copyNode.ImageIndex, copyNode.SelectedImageIndex)
-			{
-				if (copyNode.Nodes != null) {
-					foreach (TreeNode child in copyNode.Nodes)
-						Nodes.Add ((TreeNode)child.Clone ());
-				}
-				this.Tag = copyNode.Tag;
-				this.Checked = copyNode.Checked;
-				this.BackColor = copyNode.BackColor;
-				this.ForeColor = copyNode.ForeColor;
-				this.NodeFont = copyNode.NodeFont;
-			}
-#endif
-
 			/// <summary>
 			/// Copies the tree node and the entire subtree rooted at this tree node.
 			/// This is a partial copy that copies references to objects rather than
@@ -3624,11 +3608,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public override object Clone()
 			{
-#if !__MonoCS__
 				var ltn = (LayoutTreeNode)base.Clone();
-#else // work around mono bug https://bugzilla.novell.com/show_bug.cgi?id=613708
-				LayoutTreeNode ltn = new LayoutTreeNode(this);
-#endif
 				CopyValuesTo(ltn);
 				return ltn;
 			}

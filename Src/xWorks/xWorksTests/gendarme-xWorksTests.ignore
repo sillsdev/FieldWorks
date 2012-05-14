@@ -1,0 +1,53 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void SIL.FieldWorks.XWorks.MockFwXWindow::LoadUIFromXmlDocument(System.Xml.XmlDocument,System.String)
+M: System.Void SIL.FieldWorks.XWorks.XWorksAppTestBase::DoCommandRepeatedly(System.String,System.Int32)
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::DeleteTargetSelection()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::ChoiceFilters()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::ChooseLabel()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::ListChoiceTargetSelection()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::BulkCopyTargetSelection()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::Pronunciations_ListChoice_Locations()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::Pronunciations_StringFields_Multilingual()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::Pronunciations_StringFields_SimpleString()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::Allomorphs_IsAbstractForm()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditBarTests::EntryRefs_ListChoice_VariantEntryTypes()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_AllItemsShouldBeInitiallyCheckedPlusRefreshBehavior()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Unselected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_DescendentItemsShouldInheritSelection_Select()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_DescendentItemsShouldInheritSelection_UnSelect()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_ParentClassesItemsShouldInheritSelection_Selected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_ParentClassesItemsShouldInheritSelection_UnSelected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_Selected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_UnSelected()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_UnselectAll()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests::CheckboxBehavior_SelectParentsThatWereNotInOwnershipTreeOfChildList()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests/PusAndShowAll::FirstBehavior()
+M: System.Void SIL.FieldWorks.XWorks.BulkEditCheckBoxBehaviorTests/PusAndShowAll::FinalBehavior()
+M: System.Void SIL.FieldWorks.XWorks.XWorksAppTestBase::DoCommand(System.String)
+
+# Disposed in teardown method
+M: System.Void SIL.FieldWorks.XWorks.ExportDialogTests::CreateMockCache()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Multiline string
+M: System.Void SIL.FieldWorks.XWorks.AddCustomFieldDialogTests::PopulateListsCombo()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object is disposed in tear down method
+T: SIL.FieldWorks.XWorks.ExportDialogTests
+T: SIL.FieldWorks.XWorks.XWorksAppTestBase
+T: SIL.FieldWorks.XWorks.InterestingTextsTests
+
+# Reference only
+T: SIL.FieldWorks.XWorks.MockFwManager
+T: SIL.FieldWorks.XWorks.BulkEditBarTestsBase

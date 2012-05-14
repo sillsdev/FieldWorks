@@ -51,6 +51,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.Utils;
@@ -875,10 +876,14 @@ namespace SIL.FieldWorks.Filters
 		/// <returns></returns>
 		/// <remarks>For most subclasses, it is enough if it is the same class and pattern.</remarks>
 		/// ---------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool SameMatcher(IMatcher other)
 		{
 			if (!(other is SimpleStringMatcher))
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (other.GetType() != this.GetType())
 				return false;
 			IVwPattern otherPattern = (other as SimpleStringMatcher).m_pattern;

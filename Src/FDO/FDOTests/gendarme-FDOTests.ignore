@@ -1,0 +1,41 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only. Object will be disposed by parent
+T: SIL.FieldWorks.FDO.FDOTests.AdjustmentVerifier
+T: SIL.FieldWorks.FDO.FDOTests.AdjustmentVerifierPlusTags
+T: SIL.FieldWorks.FDO.FDOTests.AdjustmentVerifierPlusChartCells
+T: SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningSequence`1
+T: SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningCollection`1
+T: SIL.FieldWorks.FDO.FDOTests.InterlinearTestBase/FdoValidator
+T: SIL.FieldWorks.FDO.FDOTests.InterlinearTestBase/ParagraphAnnotator
+T: SIL.FieldWorks.FDO.FDOTests.InterlinearTestBase/ParagraphBuilder
+T: SIL.FieldWorks.FDO.FDOTests.InterlinearTestBase/TextBuilder
+
+# Unit test. Object will be disposed in teardown method
+T: SIL.FieldWorks.FDO.FDOTests.CollectSegmentsTests
+T: SIL.FieldWorks.FDO.FDOTests.FdoTestBase
+T: SIL.FieldWorks.FDO.FDOTests.FieldDescriptionTests
+T: SIL.FieldWorks.FDO.FDOTests.XmlImportDataTests
+T: SIL.FieldWorks.FDO.FDOTests.XmlListTests
+T: SIL.FieldWorks.FDO.FDOTests.XmlTranslatedListsTests
+T: SIL.FieldWorks.FDO.FDOTests.ClientServerServicesTests
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Will be disposed by PalasoWritingSystemManager
+M: System.Void SIL.FieldWorks.FDO.FDOTests.DataMigrationTests.DataMigrationTests7000019::DataMigration7000019Test()
+
+# Unit tests testing dispose functionality. Object usually disposed in test
+M: System.Void SIL.FieldWorks.FDO.CoreTests.FdoCacheTests.FdoCacheDisposedTests::CacheCheckDisposedTest()
+M: System.Void SIL.FieldWorks.FDO.CoreTests.FdoCacheTests.FdoCacheDisposedTests::CacheIsDisposedTest()
+M: System.Void SIL.FieldWorks.FDO.CoreTests.FdoCacheTests.FdoCacheDisposedTests::CacheDisposedForFDOObject()
+
+# Reference only
+M: System.Void SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests.BEPPortTests::PortAllBEPsTestsUsingAnAlreadyOpenedSource()
+M: System.Void SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests.BEPPortTests::PortAllBEPsTestsUsingAnUnopenedSource()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningSequence`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FDOTests.ArrayBasedOwningCollection`1::System.Collections.IEnumerable.GetEnumerator()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -58,6 +59,8 @@ namespace SIL.FieldWorks.IText
 
 		#region Implementation of IxCoreColleague
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="RecordClerk.FindClerk() returns a reference")]
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
@@ -80,9 +83,14 @@ namespace SIL.FieldWorks.IText
 			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: I'm not sure if/where Font gets disposed)")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void RebuildStatisticsTable()
 		{
 			statisticsBox.Clear();
+			// TODO-Linux: SelectionTabs isn't implemented on Mono
 			statisticsBox.SelectionTabs = new int[] { 10, 300};
 			//retrieve the default UI font.
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
@@ -103,13 +111,13 @@ namespace SIL.FieldWorks.IText
 			Dictionary<int, int> languageCount = new Dictionary<int, int>();
 			Dictionary<int, Set<String>> languageTypeCount = new Dictionary<int, Set<String>>();
 			//for each interesting text
-			foreach(var text in textList.InterestingTexts)
+			foreach (var text in textList.InterestingTexts)
 			{
 				//if a text is deleted in Interlinear there could be a text in this list which has invalid data.
 				if (text.Hvo < 0)
 					continue;
 				//for every paragraph in the interesting text
-				for(int index = 0; index < text.ParagraphsOS.Count; ++index)
+				for (int index = 0; index < text.ParagraphsOS.Count; ++index)
 				{
 					//count the segments in this paragraph
 					numberOfSegments += text[index].SegmentsOS.Count;
@@ -118,14 +126,14 @@ namespace SIL.FieldWorks.IText
 					foreach (var word in words)
 					{
 						var wordForm = word.Wordform;
-						if(wordForm != null)
+						if (wordForm != null)
 						{
 							var valdWSs = wordForm.Form.AvailableWritingSystemIds;
 							foreach (var ws in valdWSs)
 							{
 								// increase the count of words(tokens) for this language
 								int count = 0;
-								if(languageCount.TryGetValue(ws, out count))
+								if (languageCount.TryGetValue(ws, out count))
 								{
 									languageCount[ws] = count + 1;
 								}
@@ -135,7 +143,7 @@ namespace SIL.FieldWorks.IText
 								}
 								//increase the count of unique words(types) for this language
 								Set<String> pair;
-								if(languageTypeCount.TryGetValue(ws, out pair))
+								if (languageTypeCount.TryGetValue(ws, out pair))
 								{
 									//add the string for this writing system in all lower case to the set, unique count is case insensitive
 									pair.Add(word.Wordform.Form.get_String(ws).Text.ToLower());
@@ -197,7 +205,7 @@ namespace SIL.FieldWorks.IText
 			// it doesn't apply to extra text added adjacent to it.
 			statisticsBox.Select(0, ITextStrings.ksStatisticsView_HeaderText.Length);
 			statisticsBox.SelectionFont = headerFont;
-			statisticsBox.Select(0,0);
+			statisticsBox.Select(0, 0);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()

@@ -98,7 +98,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -286,7 +286,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
+	<Compile Include="..\..\AssemblyInfoForTests.cs">
+	  <Link>AssemblyInfoForTests.cs</Link>
+	</Compile>
 	<Compile Include="..\..\TE\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
 	  <Link>SetupFixtureClass.cs</Link>
 	</Compile>
@@ -300,11 +302,9 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="DraftViewTestBase.cs" />
-	<Compile Include="DummyDraftView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="DummyDraftView.cs" />
 	<Compile Include="DummyFootnoteViewForm.cs">
-	  <SubType>UserControl</SubType>
+	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="FootnoteViewTests.cs" />
 	<Compile Include="SegmentedBtDraftViewTests.cs" />
@@ -340,18 +340,12 @@
 	<Compile Include="DummyDraftViewForm.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="KeyTermsTests.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="KeyTermsTests.cs" />
 	<Compile Include="ScrObjWrapperTests.cs" />
 	<Compile Include="TeAppTests.cs">
 	</Compile>
-	<Compile Include="TeMainWndTests.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="TeMainWndTestsNoWindow.cs">
-	  <SubType>Form</SubType>
-	</Compile>
+	<Compile Include="TeMainWndTests.cs" />
+	<Compile Include="TeMainWndTestsNoWindow.cs" />
 	<EmbeddedResource Include="DummyDraftViewForm.resx">
 	  <DependentUpon>DummyDraftViewForm.cs</DependentUpon>
 	  <SubType>Designer</SubType>
@@ -386,6 +380,11 @@
 	  <ProductName>.NET Framework 3.5 SP1</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="..\..\AppForTests.config">
+	  <Link>AppForTests.config</Link>
+	</None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

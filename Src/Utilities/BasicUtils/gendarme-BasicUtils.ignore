@@ -1,0 +1,66 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only, we don't create the object
+T: SIL.Utils.WaitCursor
+T: SIL.Utils.RegistryGroup
+
+# Dispose is called, but there's no implicit Dispose() method
+T: SIL.Utils.ConsumerThread`2
+T: SIL.Utils.ScriptMaker
+
+# Disposed, potentially on different thread
+T: SIL.Utils.ThreadHelper
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Passed in to m_out, disposed in Dispose()
+M: System.Void SIL.Utils.Logger::InitializeTextWriter()
+
+# Reference
+M: System.Boolean SIL.Utils.ScriptMaker::PreFilterMessage(System.Windows.Forms.Message&)
+M: System.Int32 SIL.Utils.Win32::MessageBox(System.IntPtr,System.String,System.String,System.UInt32)
+M: System.IntPtr SIL.Utils.Win32::GetParent(System.IntPtr)
+M: System.Boolean SIL.Utils.Win32::SetForegroundWindow(System.IntPtr)
+M: System.Boolean SIL.Utils.Win32::GetWindowRect(System.IntPtr,SIL.Utils.Rect&)
+M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>d__5::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>d__4::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>d__c::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeBelow>d__17::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<InOrderTraversal>d__29::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Splitting lines
+M: System.Void SIL.Utils.Logger::WriteEventInternal(System.String)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only, m_writer is passed in
+T: SIL.Utils.TextWriterStream
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
+
+# interface exposes Dispose() for COM objects
+T: SIL.Utils.IComDisposable
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
+
+# Looking at the mono source it looks like DefaultTraceListener.LogFileName is complete
+M: System.Void SIL.Utils.EnvVarTraceListener::.ctor(System.String)
+
+# MainWindowHandle is only used to log information
+M: System.Void SIL.Utils.Logger::WriteEventInternal(System.String)
+
+# Incomplete Mono feature. TODO-Linux comment added.
+M: System.Windows.Forms.DialogResult SIL.Utils.MessageBoxUtils/MessageBoxAdapter::Show(System.Windows.Forms.IWin32Window,System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon,System.Windows.Forms.MessageBoxDefaultButton,System.Windows.Forms.MessageBoxOptions,System.String,System.Windows.Forms.HelpNavigator,System.Object)
+
+# We don't care too much about Mono on Windows
+M: System.Int32 SIL.Utils.MiscUtils::GetDiskDriveStats(System.UInt64&,System.UInt64&)

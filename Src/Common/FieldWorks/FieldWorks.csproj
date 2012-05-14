@@ -200,7 +200,6 @@
 	<Compile Include="LexicalProvider\ILexicalProvider.cs" />
 	<Compile Include="ProjectId.cs" />
 	<Compile Include="FieldWorks.cs" />
-	<None Include="app.config" />
 	<None Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="ProjectMatch.cs" />
 	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />

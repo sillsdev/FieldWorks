@@ -98,7 +98,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -225,11 +225,17 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\..\AssemblyInfoForTests.cs">
+	  <Link>AssemblyInfoForTests.cs</Link>
+	</Compile>
 	<Compile Include="..\..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
 	  <Link>FwSetupFixtureClass.cs</Link>
 	</Compile>
 	<Compile Include="AddWordsToLexiconTests.cs">
 	</Compile>
+	<None Include="..\..\..\AppForTests.config">
+	  <Link>AppForTests.config</Link>
+	</None>
 	<None Include="ConcordanceControlTests.cs" />
 	<Compile Include="ImportInterlinearAnalysesTests.cs" />
 	<Compile Include="InterlinearExporterTests.cs" />
@@ -257,15 +263,6 @@
 	<Content Include="InterlinearExporterTests.xml" />
 	<Content Include="TextEditingTestsTexts.xml" />
 	<Content Include="toolConfigurationForITextDllTests.xml" />
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-	  <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
-	  <Name>FwCoreDlgs</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

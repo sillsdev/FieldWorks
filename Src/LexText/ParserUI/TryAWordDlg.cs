@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -153,6 +154,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
 			m_rootsite = new TryAWordRootSite(m_cache, m_mediator) { Dock = DockStyle.Top };
@@ -173,6 +176,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_mediator.StringTbl.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="HtmlControl gets added to control collection and disposed there")]
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl

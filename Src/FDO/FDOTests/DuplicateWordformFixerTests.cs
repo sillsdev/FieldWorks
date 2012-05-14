@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -9,6 +10,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Tests the DuplicateWordformFixer
 	/// </summary>
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_progress gets disposed in TestTearDown()")]
 	public class DuplicateWordformFixerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IWfiWordformFactory m_wfiFactory;
@@ -22,6 +25,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			base.TestSetup();
 			m_wfiFactory = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
 			m_progress = new ProgressBar();
+		}
+
+		/// <summary/>
+		public override void TestTearDown()
+		{
+			m_progress.Dispose();
+			m_progress = null;
+			base.TestTearDown();
 		}
 
 		/// <summary>

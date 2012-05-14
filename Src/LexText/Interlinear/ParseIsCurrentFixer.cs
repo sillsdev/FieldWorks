@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -11,6 +12,8 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.IText
 {
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class ParseIsCurrentFixer : IUtility
 	{
 		public string Label
@@ -28,6 +31,9 @@ namespace SIL.FieldWorks.IText
 
 		private UtilityDlg m_dlg;
 
+		/// <summary>
+		/// Sets the utility dialog. NOTE: The caller is responsible for disposing the dialog!
+		/// </summary>
 		public UtilityDlg Dialog
 		{
 			set { m_dlg = value; }

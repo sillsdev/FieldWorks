@@ -201,24 +201,26 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				//For an outPath = "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift.tmp"
 				//ranges should be "C:\\Users\\maclean\\AppData\\Local\\LiftBridge\\FolderName\\FileName.lift-ranges"
 				Debug.Assert(outPath.EndsWith(@".lift.tmp"), @"Unexpected argument format from LiftBridge.");
-				if(!outPath.EndsWith(@".lift.tmp"))
+				if (!outPath.EndsWith(@".lift.tmp"))
 					return null; //The liftbridge behavior has changed, we need to change also.
 				var pathWithFilename = outPath.Substring(0, outPath.Length - @".lift.tmp".Length);
 				var outPathRanges = Path.ChangeExtension(pathWithFilename, @"lift-ranges");
-				var stringWriter = new StringWriter(new StringBuilder());
-				exporter.ExportLiftRanges(stringWriter);
-				using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
+				using (var stringWriter = new StringWriter(new StringBuilder()))
 				{
-					var doc = new XmlDocument();
-					doc.LoadXml(stringWriter.ToString());
-					doc.WriteContentTo(xmlWriter);
+					exporter.ExportLiftRanges(stringWriter);
+					using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
+					{
+						var doc = new XmlDocument();
+						doc.LoadXml(stringWriter.ToString());
+						doc.WriteContentTo(xmlWriter);
+					}
+					// At least for now, we won't bother with validation for LiftBridge.
+					//progressDialog.Message = String.Format("Validating LIFT file {0}.",
+					//        Path.GetFileName(outPath));
+					//var prog = new ValidationProgress(progressDialog);
+					//Palaso.Lift.Validation.Validator.CheckLiftWithPossibleThrow(outPath, prog);
+					return outPath;
 				}
-				// At least for now, we won't bother with validation for LiftBridge.
-				//progressDialog.Message = String.Format("Validating LIFT file {0}.",
-				//        Path.GetFileName(outPath));
-				//var prog = new ValidationProgress(progressDialog);
-				//Palaso.Lift.Validation.Validator.CheckLiftWithPossibleThrow(outPath, prog);
-				return outPath;
 			}
 			catch
 			{

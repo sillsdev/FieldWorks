@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,12 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinSfmImportTests : BaseTest
 	{
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="New lines in input strings are different depending on platform")]
+		public InterlinSfmImportTests()
+		{
+		}
+
 		private string input1 =
 			@"\_sh v3.0  943  S Texts
 \id Abu
@@ -81,62 +88,67 @@ namespace SIL.FieldWorks.IText
 			var input = new ByteReader("input1", Encoding.UTF8.GetBytes(input1));
 			var converter = new Sfm2FlexText();
 			var output = converter.Convert(input, mappings, wsf);
-			var outputStream = new MemoryStream(output);
-			var outputElt = XElement.Load(new StreamReader(outputStream));
-			Assert.That(outputElt.Name.LocalName, Is.EqualTo("document"));
-			var textElt = outputElt.Element("interlinear-text");
-			Assert.That(textElt, Is.Not.Null);
-			VerifyItem(textElt, "./item[@type='title']", "fr", "Abu Nawas");
-			VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu");
-			VerifyItem(textElt, "./item[@type='source']", "en", "Guna Bte Rintal");
-			VerifyItem(textElt, "./item[@type='comment']", "en", "a funny story (folk tale?) about the relationship between Abu Nawas and a king");
-			var paragraphs = textElt.Element("paragraphs");
-			Assert.IsNotNull(paragraphs);
-			var para = paragraphs.Element("paragraph");
-			Assert.IsNotNull(para);
-			var phrases = para.Element("phrases");
-			Assert.IsNotNull(phrases);
+			using (var outputStream = new MemoryStream(output))
+			{
+				using (var reader = new StreamReader(outputStream))
+				{
+					var outputElt = XElement.Load(reader);
+					Assert.That(outputElt.Name.LocalName, Is.EqualTo("document"));
+					var textElt = outputElt.Element("interlinear-text");
+					Assert.That(textElt, Is.Not.Null);
+					VerifyItem(textElt, "./item[@type='title']", "fr", "Abu Nawas");
+					VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu");
+					VerifyItem(textElt, "./item[@type='source']", "en", "Guna Bte Rintal");
+					VerifyItem(textElt, "./item[@type='comment']", "en", "a funny story (folk tale?) about the relationship between Abu Nawas and a king");
+					var paragraphs = textElt.Element("paragraphs");
+					Assert.IsNotNull(paragraphs);
+					var para = paragraphs.Element("paragraph");
+					Assert.IsNotNull(para);
+					var phrases = para.Element("phrases");
+					Assert.IsNotNull(phrases);
 
-			var phrase1 = phrases.Element("phrase");
-			Assert.IsNotNull(phrase1);
-			VerifyItem(phrase1, "./item[@type='reference-label']", "en", "Abu Nawas 001");
-			VerifyText(phrase1, new[] {"$$", "Uun", "kono'", "serita'", ",", "dau-dau", "(", "tu",")", "kisa", "Abu", "Nawas", "."},
-				new HashSet<string>(new[] {".", ",", "$$", "(", ")"}), "qaa-x-kal");
-			VerifyItem(phrase1, "./item[@type='gls']", "en", "There was, it is said, a story about Abu Nawas. JT added some more.");
-			VerifyItem(phrase1, "./item[@type='lit']", "en", "There existed, it is said, long ago, this story about Abu Nawas");
-			VerifyItem(phrase1, "./item[@type='note']", "en", "sentence adjunct: reported speech");
-			VerifyItem(phrase1, "./item[@type='note'][2]", "en", "Example hacked by JohnT to exemplify more cases");
+					var phrase1 = phrases.Element("phrase");
+					Assert.IsNotNull(phrase1);
+					VerifyItem(phrase1, "./item[@type='reference-label']", "en", "Abu Nawas 001");
+					VerifyText(phrase1, new[] {"$$", "Uun", "kono'", "serita'", ",", "dau-dau", "(", "tu",")", "kisa", "Abu", "Nawas", "."},
+						new HashSet<string>(new[] {".", ",", "$$", "(", ")"}), "qaa-x-kal");
+					VerifyItem(phrase1, "./item[@type='gls']", "en", "There was, it is said, a story about Abu Nawas. JT added some more.");
+					VerifyItem(phrase1, "./item[@type='lit']", "en", "There existed, it is said, long ago, this story about Abu Nawas");
+					VerifyItem(phrase1, "./item[@type='note']", "en", "sentence adjunct: reported speech");
+					VerifyItem(phrase1, "./item[@type='note'][2]", "en", "Example hacked by JohnT to exemplify more cases");
 
-			var phrase2 = phrases.Elements("phrase").Skip(1).First();
-			VerifyItem(phrase2, "./item[@type='reference-label']", "en", "Abu Nawas 002");
-			VerifyText(phrase2, new[] { "Abu", "Nawas", "kerjo", "ta'", "rojo" },
-				new HashSet<string>(), "qaa-x-kal");
-			VerifyItem(phrase2, "./item[@type='gls']", "en", "Abu Nawas worked for the king.");
+					var phrase2 = phrases.Elements("phrase").Skip(1).First();
+					VerifyItem(phrase2, "./item[@type='reference-label']", "en", "Abu Nawas 002");
+					VerifyText(phrase2, new[] { "Abu", "Nawas", "kerjo", "ta'", "rojo" },
+						new HashSet<string>(), "qaa-x-kal");
+					VerifyItem(phrase2, "./item[@type='gls']", "en", "Abu Nawas worked for the king.");
 
-			var phrase3 = paragraphs.XPathSelectElement("./paragraph[2]/phrases/phrase");
-			VerifyItem(phrase3, "./item[@type='reference-label']", "en", "Abu Nawas 003");
-			VerifyText(phrase3, new[] { "John", "added", "this" },
-				new HashSet<string>(), "qaa-x-kal");
-			VerifyItem(phrase3, "./item[@type='gls']", "en", "and this");
+					var phrase3 = paragraphs.XPathSelectElement("./paragraph[2]/phrases/phrase");
+					VerifyItem(phrase3, "./item[@type='reference-label']", "en", "Abu Nawas 003");
+					VerifyText(phrase3, new[] { "John", "added", "this" },
+						new HashSet<string>(), "qaa-x-kal");
+					VerifyItem(phrase3, "./item[@type='gls']", "en", "and this");
 
-			var text2 = outputElt.Elements("interlinear-text").Skip(1).First();
-			VerifyItem(text2, "./item[@type='title-abbreviation']", "en", "Jt");
+					var text2 = outputElt.Elements("interlinear-text").Skip(1).First();
+					VerifyItem(text2, "./item[@type='title-abbreviation']", "en", "Jt");
 
-			var phrase4 = text2.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyItem(phrase4, "./item[@type='reference-label']", "en", "Jt 001");
-			VerifyText(phrase4, new[] { "A", "second", "text", "in", "two", "parts" },
-				new HashSet<string>(), "qaa-x-kal");
-			VerifyItem(phrase4, "./item[@type='gls']", "en", "its free translation");
-			Assert.That(phrase4.XPathSelectElements("./item[@type='gls']").Count(), Is.EqualTo(1));
+					var phrase4 = text2.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyItem(phrase4, "./item[@type='reference-label']", "en", "Jt 001");
+					VerifyText(phrase4, new[] { "A", "second", "text", "in", "two", "parts" },
+						new HashSet<string>(), "qaa-x-kal");
+					VerifyItem(phrase4, "./item[@type='gls']", "en", "its free translation");
+					Assert.That(phrase4.XPathSelectElements("./item[@type='gls']").Count(), Is.EqualTo(1));
 
-			var phrase5 = text2.XPathSelectElement("./paragraphs/paragraph[2]/phrases/phrase");
-			VerifyText(phrase5, new[] { "second", "para" },
-				new HashSet<string>(), "qaa-x-kal");
+					var phrase5 = text2.XPathSelectElement("./paragraphs/paragraph[2]/phrases/phrase");
+					VerifyText(phrase5, new[] { "second", "para" },
+						new HashSet<string>(), "qaa-x-kal");
 
-			// If we unexpectedly get a second text line AFTER some other known field without a ref line, start a new phrase anyway.
-			var phrase6 = text2.XPathSelectElement("./paragraphs/paragraph[2]/phrases/phrase[2]");
-			VerifyText(phrase6, new[] { "second", "para", "second", "sentence"},
-				new HashSet<string>(), "qaa-x-kal");
+					// If we unexpectedly get a second text line AFTER some other known field without a ref line, start a new phrase anyway.
+					var phrase6 = text2.XPathSelectElement("./paragraphs/paragraph[2]/phrases/phrase[2]");
+					VerifyText(phrase6, new[] { "second", "para", "second", "sentence"},
+						new HashSet<string>(), "qaa-x-kal");
+				}
+			}
 		}
 
 		// \x85 is ellipsis in cp1252, \u2026
@@ -184,14 +196,19 @@ namespace SIL.FieldWorks.IText
 			var input = new ByteReader("input2", Encoding.GetEncoding(1252).GetBytes(input2));
 			var converter = new Sfm2FlexText();
 			var output = converter.Convert(input, mappings, wsf);
-			var outputStream = new MemoryStream(output);
-			var outputElt = XElement.Load(new StreamReader(outputStream));
-			var textElt = outputElt.Element("interlinear-text");
-			VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu\x2026");
-			var phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyText(phrase1, new[] { "John", "added", "this\x017D" },
-				new HashSet<string>(), "qaa-x-kal");
-			encConv.Remove("XXYTestConverter");
+			using (var outputStream = new MemoryStream(output))
+			{
+				using (var reader = new StreamReader(outputStream))
+				{
+					var outputElt = XElement.Load(reader);
+					var textElt = outputElt.Element("interlinear-text");
+					VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu\x2026");
+					var phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyText(phrase1, new[] { "John", "added", "this\x017D" },
+						new HashSet<string>(), "qaa-x-kal");
+					encConv.Remove("XXYTestConverter");
+				}
+			}
 		}
 
 		private string input3 =
@@ -244,60 +261,65 @@ namespace SIL.FieldWorks.IText
 			var input = new ByteReader("input3", Encoding.GetEncoding(1252).GetBytes(input3));
 			var converter = new Sfm2FlexText();
 			var output = converter.Convert(input, mappings, wsf);
-			var outputStream = new MemoryStream(output);
-			var outputElt = XElement.Load(new StreamReader(outputStream));
-			var textElt = outputElt.Element("interlinear-text");
-			VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu");
-			var phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyText(phrase1, new[] { "John", "added", "this" },
-				new HashSet<string>(), "qaa-x-kal");
+			using (var outputStream = new MemoryStream(output))
+			{
+				using (var reader = new StreamReader(outputStream))
+				{
+					var outputElt = XElement.Load(reader);
+					var textElt = outputElt.Element("interlinear-text");
+					VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Abu");
+					var phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyText(phrase1, new[] { "John", "added", "this" },
+						new HashSet<string>(), "qaa-x-kal");
 
-			//\id
-			//\ab MyT
-			//\name MyText
-			//\com Some coments
-			//\com more comments
-			//\p
-			//\ref MyText 001
-			//\t Some text
-			textElt = outputElt.Elements("interlinear-text").Skip(1).First();
-			VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "MyT");
-			VerifyItem(textElt, "./item[@type='title']", "fr", "MyText");
-			VerifyItem(textElt, "./item[@type='comment']", "en", "Some coments more comments");
-			phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyText(phrase1, new[] { "Some", "text" }, new HashSet<string>(), "qaa-x-kal");
+					//\id
+					//\ab MyT
+					//\name MyText
+					//\com Some coments
+					//\com more comments
+					//\p
+					//\ref MyText 001
+					//\t Some text
+					textElt = outputElt.Elements("interlinear-text").Skip(1).First();
+					VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "MyT");
+					VerifyItem(textElt, "./item[@type='title']", "fr", "MyText");
+					VerifyItem(textElt, "./item[@type='comment']", "en", "Some coments more comments");
+					phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyText(phrase1, new[] { "Some", "text" }, new HashSet<string>(), "qaa-x-kal");
 
-			// Verfies that:
-			//	- \name can occur twice and be concatenated
-			//	- \name can force the start of a new text
-			//	- a subsequent \name not following some content is ignored
-			//\name Another
-			//\name Text
-			//\com More comments
-			//\name this is ignored
-			//\p
-			//\ref AT 001
-			//\t third text
-			textElt = outputElt.Elements("interlinear-text").Skip(2).First();
-			VerifyItem(textElt, "./item[@type='title']", "fr", "Another Text");
-			VerifyItem(textElt, "./item[@type='comment']", "en", "More comments");
-			phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyText(phrase1, new[] { "third", "text" }, new HashSet<string>(), "qaa-x-kal");
+					// Verifies that:
+					//	- \name can occur twice and be concatenated
+					//	- \name can force the start of a new text
+					//	- a subsequent \name not following some content is ignored
+					//\name Another
+					//\name Text
+					//\com More comments
+					//\name this is ignored
+					//\p
+					//\ref AT 001
+					//\t third text
+					textElt = outputElt.Elements("interlinear-text").Skip(2).First();
+					VerifyItem(textElt, "./item[@type='title']", "fr", "Another Text");
+					VerifyItem(textElt, "./item[@type='comment']", "en", "More comments");
+					phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyText(phrase1, new[] { "third", "text" }, new HashSet<string>(), "qaa-x-kal");
 
-			// Verfies that:
-			//	- \id can force the start of a new text
-			//  - \ab does not start yet another (when no intervening content)
-			//\id
-			//\ab Yet
-			//\name Yet another
-			//\p
-			//\ref Yet 001
-			//\t fourth text			textElt = outputElt.Elements("interlinear-text").Skip(2).First();
-			textElt = outputElt.Elements("interlinear-text").Skip(3).First();
-			VerifyItem(textElt, "./item[@type='title']", "fr", "Yet another");
-			VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Yet");
-			phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
-			VerifyText(phrase1, new[] { "fourth", "text" }, new HashSet<string>(), "qaa-x-kal");
+					// Verifies that:
+					//	- \id can force the start of a new text
+					//  - \ab does not start yet another (when no intervening content)
+					//\id
+					//\ab Yet
+					//\name Yet another
+					//\p
+					//\ref Yet 001
+					//\t fourth text			textElt = outputElt.Elements("interlinear-text").Skip(2).First();
+					textElt = outputElt.Elements("interlinear-text").Skip(3).First();
+					VerifyItem(textElt, "./item[@type='title']", "fr", "Yet another");
+					VerifyItem(textElt, "./item[@type='title-abbreviation']", "en", "Yet");
+					phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
+					VerifyText(phrase1, new[] { "fourth", "text" }, new HashSet<string>(), "qaa-x-kal");
+				}
+			}
 		}
 
 		private PalasoWritingSystemManager GetWsf()

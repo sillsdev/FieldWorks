@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -900,7 +901,8 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		//[Ignore("Until I get it working.")]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Unit test - we're testing with different combinations of newline chars")]
 		public void TestLiftImport4()
 		{
 			// Setup
@@ -2404,10 +2406,12 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
 			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
-			var stream = new StreamReader(logFile);
-			string data = stream.ReadToEnd();
-			stream.Close();
-			Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
+			using (var stream = new StreamReader(logFile))
+			{
+				string data = stream.ReadToEnd();
+				stream.Close();
+				Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
+			}
 		}
 
 		private static readonly string[] s_LT12948Test = new[]
@@ -3134,7 +3138,7 @@ namespace LexTextControlsTests
 					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 				}
-				if (i == 1)
+				else if (i == 1)
 				{
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
@@ -3142,7 +3146,7 @@ namespace LexTextControlsTests
 					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
 					Assert.IsTrue(attr.Value.Equals("en"));
 				}
-				if (i == 2)
+				else if (i == 2)
 				{
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
 					Assert.IsTrue(attr.Value.Equals("es"));

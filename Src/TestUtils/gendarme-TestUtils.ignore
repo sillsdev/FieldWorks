@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit tests, gets disposed in FixtureTearDown()
+T: SIL.FieldWorks.Test.TestUtils.BaseTest

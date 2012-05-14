@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
@@ -260,7 +261,9 @@ namespace SIL.FieldWorks.TE
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.Windows.Forms.KeyPressEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		void FindComboKeyPress(object sender, KeyPressEventArgs e)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripLabel is added to m_findDropDown.Items collection and disposed there")]
+		private void FindComboKeyPress(object sender, KeyPressEventArgs e)
 		{
 			if (m_findDropDown.Items.Count == 2)
 				m_findDropDown.Items.RemoveAt(1);

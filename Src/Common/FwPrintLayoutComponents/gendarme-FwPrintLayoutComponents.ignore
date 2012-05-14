@@ -1,0 +1,15 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Added to control and disposed there
+M: System.Void SIL.FieldWorks.Common.PrintLayout.HeaderFooterModifyDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.HeaderFooterSetupDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.Common.PrintLayout.PageSetupDlg::InitializeComponent()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.Common.PrintLayout.HeaderFooterVc

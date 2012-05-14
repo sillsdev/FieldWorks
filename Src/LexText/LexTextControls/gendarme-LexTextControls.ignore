@@ -1,0 +1,49 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Reference only
+T: SIL.FieldWorks.LexText.Controls.PopupTreeManager
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void SIL.FieldWorks.LexText.Controls.InflectionFeaturePopupTreeManager::m_treeCombo_AfterSelect(System.Object,System.Windows.Forms.TreeViewEventArgs)
+M: System.Windows.Forms.TreeNode SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::MakeTargetMenuItem()
+M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::ChooseFromMasterCategoryList()
+M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::AddNewMsa()
+M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::EditExistingMsa()
+M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::LoadPopupTree(System.Int32)
+M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::m_treeCombo_BeforeSelect(System.Object,System.Windows.Forms.TreeViewCancelEventArgs)
+M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::m_treeCombo_AfterSelect(System.Object,System.Windows.Forms.TreeViewEventArgs)
+M: System.Void SIL.FieldWorks.LexText.Controls.LexImportWizardCharMarkerDlg::btnStyles_Click(System.Object,System.EventArgs)
+M: System.Void SIL.FieldWorks.LexText.Controls.LexImportWizardMarker::btnAddCustomField_Click(System.Object,System.EventArgs)
+M: System.Boolean SIL.FieldWorks.LexText.Controls.LexImportWizard::EnableNextButton()
+M: System.String SIL.FieldWorks.LexText.Controls.PopupTreeManager::get_TimberLine()
+M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::popupTree_PopupTreeClosed(System.Object,System.Windows.Forms.TreeViewEventArgs)
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.LexText.Controls.LexOptionsDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.LexText.Controls.MasterCategoryListDlg/MasterCategory::ResetDescription(System.Windows.Forms.RichTextBox)
+M: System.Void SIL.FieldWorks.LexText.Controls.AddWritingSystemButton::OnClick(System.EventArgs)
+
+# Disposed in finally block
+M: System.Void SIL.FieldWorks.LexText.Controls.LexImport::ProcessPhase4Log(System.String,SIL.FieldWorks.FDO.Application.ApplicationServices.XmlImportData)
+
+# has a using after creating the object
+M: System.Void SIL.FieldWorks.LexText.Controls.InsertEntryDlg::lnkAssistant_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)
+
+# Returns an object
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoDlg/EntrySearchFieldGetter/<GetEntrySearchFields>d__8::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.RecordGoDlg/<GetRecordSearchFields>d__0::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.LexText.Controls.LexImport
+T: SIL.FieldWorks.LexText.Controls.LexImportWizard/FlexConverter
+T: SIL.FieldWorks.LexText.Controls.FlexLiftMerger
+T: SIL.FieldWorks.LexText.Controls.FlexLiftMerger/PendingErrorReport

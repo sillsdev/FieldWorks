@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -26,6 +27,8 @@ namespace SIL.FieldWorks.LexicalProvider
 	[ServiceBehavior(IncludeExceptionDetailInFaults = true,
 		InstanceContextMode = InstanceContextMode.Single,
 		MaxItemsInObjectGraph = 2147483647)]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public sealed class LexicalServiceProvider : ILexicalServiceProvider
 	{
 		/// <summary>String representing the type of the LexicalProvider</summary>

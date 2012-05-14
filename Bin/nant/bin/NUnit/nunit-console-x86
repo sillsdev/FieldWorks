@@ -1,9 +1,16 @@
 #!/bin/sh
-if [ -z "${TMPDIR}" ]; then
-	export temp=/tmp
-else
+if [ -n "${TMPDIR}" ]; then
 	export temp=${TMPDIR}
+else
+	if [ -n "${FW_ROOT}" ]; then
+		# Create and use temporary directory (mainly for NUnit shadow copy cache) under Obj
+		export temp="${FW_ROOT}/../Obj_$(uname -m)/tmp"
+		mkdir -p $temp
+	else
+		# if all else fails we use /tmp
+		export temp=/tmp
+	fi
 fi
 # Mono has problem with unload appdomain, therefore we have to set env variable (see comment in
 # mono/mono/metadata/appdomain.c)
-MONO_NO_UNLOAD=1 exec mono --debug ${0}.exe "$@"
+MONO_NO_UNLOAD=1 exec mono $FRAMEWORK_VERSION --debug ${0}.exe -noshadow "$@"

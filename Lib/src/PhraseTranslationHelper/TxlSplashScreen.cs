@@ -62,11 +62,13 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				// dispose managed and unmanaged objects
 				Close();
-				var disposable = m_waitHandle as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				if (m_waitHandle != null)
+					m_waitHandle.Dispose();
+				if (m_splashScreen != null)
+					m_splashScreen.Dispose();
 			}
 			m_waitHandle = null;
+			m_splashScreen = null;
 			IsDisposed = true;
 		}
 		#endregion

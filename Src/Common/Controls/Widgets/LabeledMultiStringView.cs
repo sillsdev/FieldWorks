@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -156,10 +157,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			foreach (var sc in m_soundControls)
 			{
 				Controls.Remove(sc);
+				sc.Dispose();
 			}
 			m_soundControls.Clear();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
 		{
 			if (m_rgws == null)

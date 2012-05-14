@@ -11,6 +11,8 @@
 // File: TxlInfo.cs
 // Responsibility: bogle
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
 namespace SILUBS.PhraseTranslationHelper
 {
 	partial class TxlInfo
@@ -26,6 +28,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls get added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label lblProductName;

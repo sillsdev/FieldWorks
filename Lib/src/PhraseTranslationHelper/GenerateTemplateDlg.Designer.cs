@@ -11,6 +11,8 @@
 // File: GenerateTemplateDlg.cs
 // Responsibility: Bogle
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
 namespace SILUBS.PhraseTranslationHelper
 {
 	partial class GenerateTemplateDlg
@@ -26,6 +28,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing && (components != null))
 			{
 				components.Dispose();
@@ -39,6 +42,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls get added to Controls collection and disposed there")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
+		// TODO-Linux: AutoCompletion is not implemented in Mono
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label label1;

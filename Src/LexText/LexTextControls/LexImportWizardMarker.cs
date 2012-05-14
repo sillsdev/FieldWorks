@@ -5,6 +5,9 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
+#if __MonoCS__
+using Skybound.Gecko;
+#endif
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Framework;
@@ -67,6 +70,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Button btnShowInfo;
 #if !__MonoCS__
 		private WebBrowser webBrowserInfo;
+#else // use geckofx on Linux
+		private GeckoWebBrowser m_browser;
 #endif
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
@@ -474,6 +479,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.panelBottom = new System.Windows.Forms.Panel();
 #if !__MonoCS__
 			this.webBrowserInfo = new System.Windows.Forms.WebBrowser();
+#else
+			this.m_browser = new GeckoWebBrowser();
 #endif
 			this.btnShowInfo = new System.Windows.Forms.Button();
 			this.panelBottom.SuspendLayout();
@@ -609,6 +616,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 #if !__MonoCS__
 			this.panelBottom.Controls.Add(this.webBrowserInfo);
+#else
+			this.panelBottom.Controls.Add(this.m_browser);
 #endif
 			resources.ApplyResources(this.panelBottom, "panelBottom");
 			this.panelBottom.Name = "panelBottom";
@@ -621,6 +630,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.webBrowserInfo.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowserInfo.Name = "webBrowserInfo";
 			this.webBrowserInfo.WebBrowserShortcutsEnabled = false;
+#else
+			this.m_browser.NoDefaultContextMenu = true;
+			this.m_browser.MinimumSize = new System.Drawing.Size(20, 20);
+			this.m_browser.Dock = System.Windows.Forms.DockStyle.Fill;
 #endif
 			//
 			// btnShowInfo
@@ -998,6 +1011,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 #if !__MonoCS__
 			webBrowserInfo.Navigate(m_sHelpHtm);
+#else
+			if (m_browser.Handle != IntPtr.Zero)
+				m_browser.Navigate(m_sHelpHtm);
 #endif
 
 			// init transform used in help panel
@@ -1009,10 +1025,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 		private void ShowInfo(Sfm2Xml.LexImportField field)
 		{
-			// See FWNX-484. Fix mono web browser.
-			if (MiscUtils.IsUnix)
-				return;
-
 			XmlNode node = field.Node;
 			////if (node == null)
 			////{
@@ -1020,16 +1032,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			////    webBrowserInfo.DocumentText = "";	// just make it empty for now
 			////    return;
 			////}
+#if __MonoCS__
+			var tempfile = Path.Combine(Path.GetTempPath(), "temphelp.htm");
+			using (StreamWriter w = new StreamWriter(tempfile, false))
+#else
 			using (StringWriter w = new StringWriter())
+#endif
 			using (XmlTextWriter tw = new XmlTextWriter(w))
 			{
-			m_xmlShowInfoDoc.LoadXml(node.OuterXml); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
-
-			m_xslShowInfoTransform.Transform(m_xmlShowInfoDoc, tw);
+				m_xmlShowInfoDoc.LoadXml(node.OuterXml); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
+				m_xslShowInfoTransform.Transform(m_xmlShowInfoDoc, tw);
 #if !__MonoCS__
-			webBrowserInfo.DocumentText = w.GetStringBuilder().ToString();
+				webBrowserInfo.DocumentText = w.GetStringBuilder().ToString();
 #endif
-		}
+			}
+#if __MonoCS__
+			m_browser.Navigate(tempfile);
+#endif
 		}
 
 		private void btnShowInfo_Click(object sender, EventArgs e)

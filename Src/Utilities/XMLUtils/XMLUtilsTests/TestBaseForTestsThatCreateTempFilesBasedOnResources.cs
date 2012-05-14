@@ -16,6 +16,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
@@ -51,6 +52,8 @@ namespace SIL.Utils
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected string CreateTempTestFiles(Type resourcesType, string folderName)
 		{
 			string folderPath = Path.Combine(Path.GetTempPath(), folderName);
@@ -59,6 +62,8 @@ namespace SIL.Utils
 
 			foreach (PropertyInfo pi in props)
 			{
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (pi.PropertyType == typeof(string) && pi.Name.StartsWith(folderName + "__"))
 					CreateSingleTempTestFile(pi.Name);
 			}

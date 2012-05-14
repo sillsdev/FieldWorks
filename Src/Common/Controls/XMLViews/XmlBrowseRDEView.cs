@@ -19,9 +19,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
@@ -900,7 +902,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
-		protected override bool OnRightMouseUp(System.Drawing.Point pt, System.Drawing.Rectangle rcSrcRoot, System.Drawing.Rectangle rcDstRoot)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Context menu - can't dispose right away")]
+		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
 			if (sel == null)

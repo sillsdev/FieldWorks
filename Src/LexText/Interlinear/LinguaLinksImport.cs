@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.AccessControl;
 using System.Text;
 using System.IO;
@@ -211,9 +212,14 @@ namespace SIL.FieldWorks.IText
 			WordGloss
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;
+			/// <summary>
+			/// The bird data. NOTE: caller is responsible for disposing stream!
+			/// </summary>
 			public Stream BirdData;
 			public int AllottedProgress;
 			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;

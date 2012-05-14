@@ -19,6 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 
@@ -59,6 +60,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// <param name="innerComparer">The inner comparer.</param>
 			/// <param name="sortDirection">The sort direction.</param>
 			/// --------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public Comparer(string propertyName, IComparer innerComparer,
 				ListSortDirection sortDirection)
 			{
@@ -68,6 +71,8 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				if (m_InnerComparer == null)
 				{
+					// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					Debug.Assert(m_PropInfo.PropertyType.GetInterface("IComparable") != null,
 						"If no innerComparer is specified the property type has to implement IComparable");
 				}
@@ -282,6 +287,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="propertyName">Name of the property.</param>
 		/// <param name="direction">The direction.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public void Sort(string propertyName, ListSortDirection direction)
 		{
 			// Check to see if the property type we are sorting by implements
@@ -290,6 +297,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			Type interfaceType = propInfo.PropertyType.GetInterface("IComparable");
 
 			IComparer comparer = null;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (m_PropertyIcuLocale.TryGetValue(propertyName, out comparer) || interfaceType != null)
 			{
 				RaiseListChangedEvents = false;

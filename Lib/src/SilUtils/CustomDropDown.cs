@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -30,8 +31,12 @@ namespace SilUtils.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			if (m_hostedControl != null)
-				m_hostedControl.Resize -= HandleHostedControlResize;
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			if (disposing)
+			{
+				if (m_hostedControl != null)
+					m_hostedControl.Resize -= HandleHostedControlResize;
+			}
 
 			base.Dispose(disposing);
 		}
@@ -89,7 +94,9 @@ namespace SilUtils.Controls
 			Size = m_hostedControl.Size;
 		}
 
-		/// ------------------------------------------------------------------------------------
+		// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripControlHost gets added to Items collection and disposed there")]
 		public void AddControl(Control ctrl)
 		{
 			if (ctrl != null)

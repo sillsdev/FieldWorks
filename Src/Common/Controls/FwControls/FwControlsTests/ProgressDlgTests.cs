@@ -37,6 +37,17 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && !IsDisposed)
+			{
+				if (ThreadHelper != null)
+					ThreadHelper.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating wether or not the cancel button is visible.

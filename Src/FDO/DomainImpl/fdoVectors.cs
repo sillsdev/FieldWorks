@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -1090,7 +1091,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public virtual void Replace(int start, int numberToDelete, IEnumerable<ICmObject> thingsToAdd)
 		{
-			if(start + numberToDelete > Count) {
+			if (start + numberToDelete > Count)
+			{
 				throw new IndexOutOfRangeException("You can not replace past the end of the vector.");
 			}
 			//store the order before we begin the replace
@@ -1111,56 +1113,58 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				Debug.Assert(removedAndReAdded.Count + removed.Count() == numberToDelete, "Logic for handling deletes is incomplete, we won't be attempting enough removes.");
 				Debug.Assert(removedAndReAdded.Count + newAdditions.Count == thingsToAdd.Count());
 				//iterator for the things we're adding
-				var itr = thingsToAdd.GetEnumerator();
-				//traverse the removed section and the add section simlutaneously
-				int index = start;
-				bool hasNext = itr.MoveNext(); //get the iterator to the first item.
-				while(hasNext || numberToDelete > 0)
+				using (var itr = thingsToAdd.GetEnumerator())
 				{
-					if (index < Count)
+					//traverse the removed section and the add section simlutaneously
+					int index = start;
+					bool hasNext = itr.MoveNext(); //get the iterator to the first item.
+					while (hasNext || numberToDelete > 0)
 					{
-						//check the current index for removal
-						if (removed.Contains(this[index]))
+						if (index < Count)
 						{
-							removed.Remove(this[index]);
-							RemoveAt(index);
-							--numberToDelete;
-							continue; //we didn't use the iterator, don't advance it
-						}
-						if (removedAndReAdded.Contains(this[index]))
-						{
-							removedAndReAdded.Remove(this[index]);
-							if (!newAdditions.Contains((T)itr.Current))//the item we are adding is not new
+							//check the current index for removal
+							if (removed.Contains(this[index]))
 							{
-								m_items[index] = (T) itr.Current; //avoid all side effects on a move of an existing item.
+								removed.Remove(this[index]);
+								RemoveAt(index);
+								--numberToDelete;
+								continue; //we didn't use the iterator, don't advance it
 							}
-							else//the item we are adding is new
+							if (removedAndReAdded.Contains(this[index]))
 							{
+								removedAndReAdded.Remove(this[index]);
+								if (!newAdditions.Contains((T)itr.Current))//the item we are adding is not new
+								{
+									m_items[index] = (T)itr.Current; //avoid all side effects on a move of an existing item.
+								}
+								else//the item we are adding is new
+								{
 
-								m_items.RemoveAt(index);//remove without side effects
-								Insert(index, (T)itr.Current);//add with side effects
-								newAdditions.Remove((T) itr.Current);
+									m_items.RemoveAt(index);//remove without side effects
+									Insert(index, (T)itr.Current);//add with side effects
+									newAdditions.Remove((T)itr.Current);
+								}
+								++index;
+								--numberToDelete;
+								hasNext = itr.MoveNext(); //we replaced the current index, this is a removal, and a use of the iterator
+								continue;
+							}
+						}
+						if (hasNext) //we have more items to add
+						{
+							if (removedAndReAdded.Contains((T)itr.Current)) //if the item was just moved, insert without side affects
+							{
+								removedAndReAdded.Remove((T)itr.Current);
+								m_items.Insert(index, itr.Current);
+							}
+							else //if the item is new use the insert that fires events
+							{
+								Insert(index, (T)itr.Current);
+								newAdditions.Remove((T)itr.Current);
 							}
 							++index;
-							--numberToDelete;
-							hasNext = itr.MoveNext(); //we replaced the current index, this is a removal, and a use of the iterator
-							continue;
+							hasNext = itr.MoveNext();
 						}
-					}
-					if (hasNext) //we have more items to add
-					{
-						if (removedAndReAdded.Contains((T)itr.Current)) //if the item was just moved, insert without side affects
-						{
-							removedAndReAdded.Remove((T)itr.Current);
-							m_items.Insert(index, itr.Current);
-						}
-						else //if the item is new use the insert that fires events
-						{
-							Insert(index, (T)itr.Current);
-							newAdditions.Remove((T) itr.Current);
-						}
-						++index;
-						hasNext = itr.MoveNext();
 					}
 				}
 			}
@@ -1193,15 +1197,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			newAdditions = new List<T>();
 			var additions = new SortedDictionary<Guid, List<T>>();
 			var removals = new SortedDictionary<Guid, List<T>>();
-			foreach(var add in thingsToAdd)
+			foreach (var add in thingsToAdd)
 			{
-				if(!additions.ContainsKey(add.Guid))
+				if (!additions.ContainsKey(add.Guid))
 				{
 					additions.Add(add.Guid, new List<T>());
 				}
 				additions[add.Guid].Add(add);
 			}
-			foreach(var deleted in deletedSubset)
+			foreach (var deleted in deletedSubset)
 			{
 				if (!removals.ContainsKey(deleted.Guid))
 				{
@@ -1210,47 +1214,48 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				removals[deleted.Guid].Add(deleted);
 			}
 			//simultaneously iterate the addition and removal dictionaries
-			var additionItr = additions.GetEnumerator();
-			var removalsItr = removals.GetEnumerator();
-
-			bool moreAdds = additionItr.MoveNext();
-			bool moreDeletes = removalsItr.MoveNext();
-			while(moreAdds || moreDeletes)
+			using (var additionItr = additions.GetEnumerator())
+			using (var removalsItr = removals.GetEnumerator())
 			{
-				//if there are no more adds, or the remove key is less then the add key these items are not in the adds, remove them
-				if (!moreAdds || (moreDeletes && removalsItr.Current.Key.CompareTo(additionItr.Current.Key) < 0))
+				bool moreAdds = additionItr.MoveNext();
+				bool moreDeletes = removalsItr.MoveNext();
+				while (moreAdds || moreDeletes)
 				{
-					//do removes with all the removals
-					removed.AddRange(removalsItr.Current.Value);
+					//if there are no more adds, or the remove key is less then the add key these items are not in the adds, remove them
+					if (!moreAdds || (moreDeletes && removalsItr.Current.Key.CompareTo(additionItr.Current.Key) < 0))
+					{
+						//do removes with all the removals
+						removed.AddRange(removalsItr.Current.Value);
+						moreDeletes = removalsItr.MoveNext();
+						continue;
+					}
+					//if the remove key is greater then these items are not in the removes, add them.
+					else if (!moreDeletes || (moreAdds && removalsItr.Current.Key.CompareTo(additionItr.Current.Key) > 0))
+					{
+						newAdditions.AddRange(additionItr.Current.Value);
+						moreAdds = additionItr.MoveNext();
+						continue;
+					}
+					//the keys are the same, some replacements
+					//if there are the same number in each list they are all replacements.
+					if (removalsItr.Current.Value.Count == additionItr.Current.Value.Count)
+					{
+						removedAndReAdded.AddRange(removalsItr.Current.Value);
+					}
+					else
+					{
+						List<T> removeList = removalsItr.Current.Value;
+						List<T> addList = additionItr.Current.Value;
+						int theReplacements = Math.Min(removeList.Count, addList.Count);
+						removedAndReAdded.AddRange(removeList.GetRange(0, theReplacements));
+						removeList.RemoveRange(0, theReplacements);
+						addList.RemoveRange(0, theReplacements);
+						newAdditions.AddRange(addList);
+						removed.AddRange(removeList);
+					}
 					moreDeletes = removalsItr.MoveNext();
-					continue;
-				}
-				//if the remove key is greater then these items are not in the removes, add them.
-				else if (!moreDeletes || (moreAdds && removalsItr.Current.Key.CompareTo(additionItr.Current.Key) > 0))
-				{
-					newAdditions.AddRange(additionItr.Current.Value);
 					moreAdds = additionItr.MoveNext();
-					continue;
 				}
-				//the keys are the same, some replacements
-				//if there are the same number in each list they are all replacements.
-				if (removalsItr.Current.Value.Count == additionItr.Current.Value.Count)
-				{
-					removedAndReAdded.AddRange(removalsItr.Current.Value);
-				}
-				else
-				{
-					List<T> removeList = removalsItr.Current.Value;
-					List<T> addList = additionItr.Current.Value;
-					int theReplacements = Math.Min(removeList.Count, addList.Count);
-					removedAndReAdded.AddRange(removeList.GetRange(0, theReplacements));
-					removeList.RemoveRange(0, theReplacements);
-					addList.RemoveRange(0, theReplacements);
-					newAdditions.AddRange(addList);
-					removed.AddRange(removeList);
-				}
-				moreDeletes = removalsItr.MoveNext();
-				moreAdds = additionItr.MoveNext();
 			}
 		}
 

@@ -20,6 +20,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -290,6 +291,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the Click event of the addRenderingToolStripMenuItem control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new AddRenderingDlg(m_selectKeyboard))

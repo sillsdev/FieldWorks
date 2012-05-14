@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
@@ -13,6 +14,8 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="_mediator is a reference")]
 	class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
@@ -118,6 +121,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="newApp is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
 			if (IsDb4oProject)
@@ -209,19 +214,34 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
-		#region Implementation of IDisposable
+		#region Disposable stuff
+		#if DEBUG
+		/// <summary/>
+		~FLExBridgeListener()
+		{
+			Dispose(false);
+		}
+		#endif
 
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		/// <filterpriority>2</filterpriority>
+		/// <summary/>
 		public void Dispose()
 		{
-			FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
-			_mediator.RemoveColleague(this);
-			IsDisposed = true;
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
+				_mediator.RemoveColleague(this);
+			}
+			IsDisposed = true;
+		}
 		#endregion
 
 		#region Implementation of IFWDisposable

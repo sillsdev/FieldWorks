@@ -1949,10 +1949,45 @@ namespace SIL.FieldWorks.IText
 			{
 				pt = PixelToView(new Point(e.X, e.Y));
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+#if __MonoCS__
+				// Adjust the destination to the original scroll position.  This completes
+				// the fix for FWNX-794/851.
+				rcDstRoot.Location = m_ptScrollPos;
+#endif
 				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (sel == null || !HandleClickSelection(sel, false, false))
 					base.OnMouseDown(e);
 			}
+		}
+
+#if __MonoCS__
+		/// <summary>
+		/// The Mono runtime changes the scroll position to the currently existing control
+		/// before passing on to the OnMouseDown method.  This works fine for statically defined
+		/// controls, as the static control appears to be selected before the scrolling occurs.
+		/// However, when the desired control doesn't exist yet, we end up with FWNX-794 (aka
+		/// FWNX-851) because the old Focus Box is the only control available to scroll to.  If
+		/// the internal variable auto_select_child in ContainerControl were protected instead
+		/// of internal, setting it to false in our constructor would be enough to block this
+		/// unwanted scrolling.  But that is rather implementation dependent. (But then, so is
+		/// this fix!)
+		/// </summary>
+		/// <remarks>
+		/// This bug has been reported as https://bugzilla.xamarin.com/show_bug.cgi?id=4969, so
+		/// this fix can be removed after that bug has been fixed in the version of Mono used
+		/// to compile FieldWorks.
+		/// </remarks>
+		private Point m_ptScrollPos;
+#endif
+
+		public override void OriginalWndProc(ref Message msg)
+		{
+#if __MonoCS__
+			// When handling a left mouse button down event, save the original scroll position.
+			if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+				m_ptScrollPos = AutoScrollPosition;
+#endif
+			base.OriginalWndProc(ref msg);
 		}
 
 		/// <summary>

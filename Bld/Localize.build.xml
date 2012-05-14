@@ -25,7 +25,7 @@
 
 	<target name="processLanguages" description="Main target for processing all .po files">
 		<tstamp/>
-		<exec program="ProcessLanguagesBld.exe"
+		<exec program="${fwroot}/Bin/ProcessLanguagesBld.exe"
 			commandline='${config} ${fwroot} ${dir.fwoutput}'
 			failonerror="true" verbose="${verbose}"/>
 		<tstamp/>
@@ -134,15 +134,14 @@
 								<property name="resBaseName" value="${RootNamespace}.${subFolder}.${fileName}.${language}" if="${bool::parse(isSubdir)==true}"/>
 								<!-- The following launch of Java has a separate version for Windows and Linux, because running the Linux version on Windows takes 4 times longer. -->
 								<exec program="${JavaExeName}" unless="${platform::is-unix()}"
-					  commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
-								<exec program="${JavaExeName}" if="${platform::is-unix()}"
-					  commandline="-Xmx128m -jar ${path::get-full-path(fwroot + '/Bin/saxon/saxon.jar')} -o ${path::get-full-path(dir.fwoutput + '/' + language + '/' + partialDir + '/' + resBaseName + '.resx')} ${resxFile} LocalizeResx.xsl lang=${language} outputdir=file://${string::replace(dir.fwoutput, '\', '/')}"/>
+									commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
+								<exec program="xsltproc" if="${platform::is-unix()}"
+									commandline="--stringparam lang ${language} --stringparam outputdir ${dir.fwoutput} -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx LocalizeResx.xsl ${resxFile}"/>
 								<echo file="${dir.fwoutput}/${language}/${projDir}/${projName}.include" append="true">${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resources
 								</echo>
 							</do>
 						</foreach>
 
-						<!--						<cd dir="${folder}"/>  -->
 						<echo message="about to execute resgenex task in nant" if="${verbose}"/>
 						<resgenex todir="${dir.fwoutput}/${language}/${partialDir}" verbose="${verbose}"
 								basedir="${folder}">

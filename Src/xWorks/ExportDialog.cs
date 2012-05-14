@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
@@ -627,6 +628,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void OpenExportFolder(string sDirectory, string sFileName)
 		{
+			// TODO-Linux: this doesn't work on Linux
+
+			// REVIEW: what happens if Windows isn't installed in C:\Windows? What happens if
+			// directory or filename contain spaces?
 			ProcessStartInfo processInfo;
 			if (String.IsNullOrEmpty(sFileName))
 			{
@@ -636,7 +641,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
 			}
-			Process.Start(processInfo);
+			using (Process.Start(processInfo))
+			{
+			}
 		}
 
 		/// <summary>
@@ -802,10 +809,12 @@ namespace SIL.FieldWorks.XWorks
 			using (var w =  new StringWriter())
 			{
 				exporter.ExportLiftRanges(w);
-				var sw = new StreamWriter(outPathRanges);
-				//actually write out to file
-				sw.Write(w.GetStringBuilder().ToString());
-				sw.Close();
+				using (var sw = new StreamWriter(outPathRanges))
+				{
+					//actually write out to file
+					sw.Write(w.GetStringBuilder().ToString());
+					sw.Close();
+				}
 			}
 #if DEBUG
 			var dtExport = DateTime.Now;
@@ -977,12 +986,15 @@ namespace SIL.FieldWorks.XWorks
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object - caller responsible to dispose")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("ExportInterlinearDialog");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+					return regKey.CreateSubKey("ExportInterlinearDialog");
 			}
 		}
 

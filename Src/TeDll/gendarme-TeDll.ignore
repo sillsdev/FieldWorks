@@ -1,0 +1,41 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void SIL.FieldWorks.TE.BtDraftSplitWrapper::SetFocus(System.Boolean)
+M: System.Void SIL.FieldWorks.TE.ContextMenuHelper::ReadImagesResources(System.Xml.XmlNode)
+M: SIL.FieldWorks.Common.COMInterfaces.VwSelectionState SIL.FieldWorks.TE.DraftView::GetNonFocusedSelectionState(System.Windows.Forms.Control)
+M: SIL.FieldWorks.TE.DraftView SIL.FieldWorks.TE.DraftViewWrapper::get_DraftView()
+M: SIL.FieldWorks.TE.DraftView SIL.FieldWorks.TE.SimpleDraftViewWrapper::get_DraftView()
+M: System.Boolean SIL.FieldWorks.TE.ViewWrapper::get_FootnoteViewShowing()
+M: System.Void SIL.FieldWorks.TE.ViewWrapper::SaveSettingsNow()
+
+# Added to control and disposed there
+M: System.Void SIL.FieldWorks.TE.ContextMenuHelper::InitializeContextMenu(System.Xml.XmlDocument,System.Xml.XmlDocument,System.Xml.XmlNode)
+M: System.Void SIL.FieldWorks.TE.DockableUsfmBrowser::InitializeComponent()
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateVerticalView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreatePrintLayoutView(System.String,SIL.FieldWorks.TE.TeViewType,System.String,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateBackTransConsultantCheckView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateBackTransDraftView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateBackTransPrintLayoutView(System.String,SIL.FieldWorks.TE.TeViewType,System.String,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateEditorialChecksView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateKeyTermsView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: System.Boolean SIL.FieldWorks.TE.TeMainWnd::OnViewNotes(System.Object)
+
+# REVIEW: Added to control. Do we have to dispose existing items before adding?
+M: System.Void SIL.FieldWorks.TE.ScrTextListSelectionForm::uiLoadSelections_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)
+M: System.Void SIL.FieldWorks.TE.ScrTextListSelectionForm::uiDeleteSelections_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)
+
+# Factory method
+M: SIL.FieldWorks.Common.Framework.ISelectableView SIL.FieldWorks.TE.TeMainWnd::CreateDraftView(System.String,SIL.FieldWorks.TE.TeViewType,SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties)
+M: SIL.FieldWorks.TE.TeStVc SIL.FieldWorks.TE.DraftView::CreateViewConstructor()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.TE.ContextMenuHelper
+T: SIL.FieldWorks.TE.TeViewProxy
+T: SIL.FieldWorks.TE.VerticalDraftView/VerticalDraftViewLocationTracker

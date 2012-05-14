@@ -212,7 +212,7 @@ Customized Styles not Updated
 	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
   </data>
   <data name="LogoForAbout" type="System.Resources.ResXFileRef, System.Windows.Forms">
-	<value>..\Resources\LogoForAbout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+	<value>../Resources/LogoForAbout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kstidRemoveValidChar" xml:space="preserve">
 	<value>&amp;Remove</value>
@@ -278,6 +278,6 @@ Quotation mark: {2}</value>
 	<value>../Resources/Warning.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="chorus32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-	<value>..\chorus32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+	<value>../chorus32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

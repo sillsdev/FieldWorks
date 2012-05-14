@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -188,7 +189,7 @@ namespace AddConverterDlgTests
 		{
 			base.FixtureSetup();
 
-			var encConverters = new SilEncConverters40.EncConverters();
+			var encConverters = new EncConverters();
 			// Remove any encoding converters we created that have been left over due to a crash
 			// or other mishap.  (That's why we use wierd names starting with ZZZUnitTest, so
 			// there won't be any conceivable conflict with user chosen names.  Inconceivable
@@ -250,43 +251,59 @@ namespace AddConverterDlgTests
 		/// </summary>
 		public override void FixtureTeardown()
 		{
-			SilEncConverters40.EncConverters encConverters;
-				// Dispose managed resources here.
-				if (m_myCtrl != null)
+			base.FixtureTeardown();
+
+			EncConverters encConverters;
+			// Dispose managed resources here.
+			if (m_myCtrl != null)
 			{
 				encConverters = m_myCtrl.Converters;
-					m_myCtrl.Dispose();
+				m_myCtrl.Dispose();
 				m_myCtrl = null;
 			}
 			else
 			{
-				encConverters = new SilEncConverters40.EncConverters();
+				encConverters = new EncConverters();
 			}
-				if (m_myDlg != null)
+
+			if (m_myDlg != null)
 			{
-					m_myDlg.Dispose();
+				m_myDlg.Dispose();
 				m_myDlg = null;
 			}
-			// Delete any temp files that have been created.
-			if (!String.IsNullOrEmpty(m_ccFileName))
+
+			try
 			{
-				File.Delete(m_ccFileName);
-			m_ccFileName = null;
+				// Delete any temp files that have been created.
+				if (!String.IsNullOrEmpty(m_ccFileName))
+				{
+					File.Delete(m_ccFileName);
+					m_ccFileName = null;
+				}
+				if (!String.IsNullOrEmpty(m_mapFileName))
+				{
+					File.Delete(m_mapFileName);
+					m_mapFileName = null;
+				}
+				if (!String.IsNullOrEmpty(m_bogusFileName))
+				{
+					File.Delete(m_bogusFileName);
+					m_bogusFileName = null;
+				}
 			}
-			if (!String.IsNullOrEmpty(m_mapFileName))
+			catch
 			{
-				File.Delete(m_mapFileName);
-			m_mapFileName = null;
+				// for some reason deleting the temporary files occasionally fails - not sure
+				// why. If this happens we just ignore it and continue.
 			}
-			if (!String.IsNullOrEmpty(m_bogusFileName))
-			{
-				File.Delete(m_bogusFileName);
-				m_bogusFileName = null;
-			}
+
 			// Remove any encoding converters that we may have created during this test run.
 			RemoveTestConverters(encConverters, "Installed mappings after test teardown:");
+
+			base.FixtureTeardown();
 		}
-		void RemoveTestConverters(SilEncConverters40.EncConverters encConverters, string testMessage)
+
+		void RemoveTestConverters(EncConverters encConverters, string testMessage)
 		{
 			// Remove any encoding converters that were added for these tests.
 			encConverters.Remove("ZZZUnitTestCC");

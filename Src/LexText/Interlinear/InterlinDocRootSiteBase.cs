@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -551,6 +552,8 @@ namespace SIL.FieldWorks.IText
 			return menu;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem added to menu.Items collection and disposed there")]
 		private void AddHideLineMenuItem(ContextMenuStrip menu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -570,6 +573,8 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="menuItem added to addSubMenu.DropDownItems collection and disposed there")]
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -595,13 +600,15 @@ namespace SIL.FieldWorks.IText
 
 		private IEnumerable<WsComboItem> GetWsComboItems(InterlinLineSpec curSpec)
 		{
-			var dummyCombobox = new ComboBox();
-			var dummyCachedBoxes = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
-			var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(
+			using (var dummyCombobox = new ComboBox())
+			{
+				var dummyCachedBoxes = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
+				var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(
 				Cache, dummyCombobox, dummyCachedBoxes, curSpec.ComboContent);
-			var choices = new WsComboItem[comboObjects.Count];
-			comboObjects.CopyTo(choices, 0);
-			return choices;
+				var choices = new WsComboItem[comboObjects.Count];
+				comboObjects.CopyTo(choices, 0);
+				return choices;
+			}
 		}
 
 		private int GetRealWsFromSpec(InterlinLineSpec spec)
@@ -627,6 +634,8 @@ namespace SIL.FieldWorks.IText
 			return ws;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveUpMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveUpItem = new ToolStripMenuItem(ITextStrings.ksMoveUp) { Tag = ilineChoice };
@@ -634,6 +643,8 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveUpItem);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveDownMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveDownItem = new ToolStripMenuItem(ITextStrings.ksMoveDown) { Tag = ilineChoice };
@@ -641,6 +652,8 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveDownItem);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="AddLineMenuItem gets added to addLineSubMenu.DropDownItems collection and disposed there")]
 		private void AddNewLineMenuItem(ToolStripMenuItem addLineSubMenu, InterlinLineChoices curLineChoices)
 		{
 			// Add menu options to add lines of flids that are in default list, but don't currently appear.

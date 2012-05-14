@@ -23,29 +23,29 @@
 	<xsl:variable name="morphBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $morphBdryGuid]"/>
 	<xsl:variable name="wordBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $wordBdryGuid]"/>
 
-	<xsl:key name="AffixAlloId" match="//MoAffixAllomorph" use="@Id"/>
-	<xsl:key name="StemMsaId" match="//MoStemMsa" use="@Id"/>
-	<xsl:key name="MsaId" match="//MoStemMsa | //MoDerivAffMsa | //MoInflAffMsa | //MoUnclassifiedAffixMsa" use="@Id"/>
-	<xsl:key name="MorphTypeId" match="//MoMorphType" use="@Id"/>
-	<xsl:key name="LexSenseId" match="//LexSense" use="@Id"/>
-	<xsl:key name="StemAlloId" match="//MoStemAllomorph" use="@Id"/>
-	<xsl:key name="AlloId" match="//MoAffixAllomorph | //MoStemAllomorph | //MoAffixProcess" use="@Id"/>
-	<xsl:key name="SlotId" match="//MoInflAffixSlot" use="@Id"/>
-	<xsl:key name="POSId" match="//PartOfSpeech" use="@Id"/>
-	<xsl:key name="NCAbbr" match="//PhNCSegments | //PhNCFeatures" use="Abbreviation"/>
-	<xsl:key name="EnvId" match="//PhEnvironment" use="@Id"/>
-	<xsl:key name="PhonemeId" match="//PhPhoneme" use="@Id"/>
-		   <xsl:key name="Rep" match="//PhPhoneme" use="Codes/PhCode/Representation"/>
-	<xsl:key name="FeatTypeId" match="//FsFeatStrucType" use="@Id"/>
-	<xsl:key name="FeatId" match="//FsComplexFeature | //FsClosedFeature" use="@Id"/>
-	<xsl:key name="InflClassId" match="//MoInflClass" use="@Id"/>
-	<xsl:key name="FeatConstrId" match="//PhFeatureConstraint" use="@Id"/>
-			<xsl:key name="CtxtId" match="//PhSimpleContextBdry | //PhSimpleContextSeg | //PhSimpleContextNC | //PhIterationContext" use="@Id"/>
-	<xsl:key name="BdryId" match="//PhBdryMarker" use="@Id"/>
-	<xsl:key name="AffixProcessId" match="//MoAffixProcess" use="@Id"/>
-	<xsl:key name="NCId" match="//PhNCSegments | //PhNCFeatures" use="@Id"/>
-	<xsl:key name="TermUnitId" match="//PhPhoneme | //PhBdryMarker" use="@Id"/>
-	<xsl:key name="PhonRuleFeatId" match="//PhonRuleFeat" use="@Id"/>
+	<xsl:key name="AffixAlloId" match="MoAffixAllomorph" use="@Id"/>
+	<xsl:key name="StemMsaId" match="MoStemMsa" use="@Id"/>
+	<xsl:key name="MsaId" match="MoStemMsa | MoDerivAffMsa | MoInflAffMsa | MoUnclassifiedAffixMsa" use="@Id"/>
+	<xsl:key name="MorphTypeId" match="MoMorphType" use="@Id"/>
+	<xsl:key name="LexSenseId" match="LexSense" use="@Id"/>
+	<xsl:key name="StemAlloId" match="MoStemAllomorph" use="@Id"/>
+	<xsl:key name="AlloId" match="MoAffixAllomorph | MoStemAllomorph | MoAffixProcess" use="@Id"/>
+	<xsl:key name="SlotId" match="MoInflAffixSlot" use="@Id"/>
+	<xsl:key name="POSId" match="PartOfSpeech" use="@Id"/>
+	<xsl:key name="NCAbbr" match="PhNCSegments | PhNCFeatures" use="Abbreviation"/>
+	<xsl:key name="EnvId" match="PhEnvironment" use="@Id"/>
+	<xsl:key name="PhonemeId" match="PhPhoneme" use="@Id"/>
+	<xsl:key name="Rep" match="PhPhoneme" use="Codes/PhCode/Representation"/>
+	<xsl:key name="FeatTypeId" match="FsFeatStrucType" use="@Id"/>
+	<xsl:key name="FeatId" match="FsComplexFeature | FsClosedFeature" use="@Id"/>
+	<xsl:key name="InflClassId" match="MoInflClass" use="@Id"/>
+	<xsl:key name="FeatConstrId" match="PhFeatureConstraint" use="@Id"/>
+	<xsl:key name="CtxtId" match="PhSimpleContextBdry | PhSimpleContextSeg | PhSimpleContextNC | PhIterationContext" use="@Id"/>
+	<xsl:key name="BdryId" match="PhBdryMarker" use="@Id"/>
+	<xsl:key name="AffixProcessId" match="MoAffixProcess" use="@Id"/>
+	<xsl:key name="NCId" match="PhNCSegments | PhNCFeatures" use="@Id"/>
+	<xsl:key name="TermUnitId" match="PhPhoneme | PhBdryMarker" use="@Id"/>
+	<xsl:key name="PhonRuleFeatId" match="PhonRuleFeat" use="@Id"/>
 	<xsl:include href="MorphTypeGuids.xsl"/>
 	<xsl:include href="XAmpleTemplateVariables.xsl"/>
 

@@ -8,14 +8,14 @@
 	<!-- ===========================================================
 	  Keys
 	  =========================================================== -->
-	<xsl:key name="LanguageID" match="//language" use="@id"/>
-	<xsl:key name="TypeID" match="//type" use="@id"/>
-	<xsl:key name="SectionID" match="//section1 | //section2 | //section3 | //section4 | //section5 | //section6 | //chapter" use="@id"/>
-	<xsl:key name="AppendixID" match="//appendix | //section1 | //section2 | //section3 | //section4 | //section5 | //section6" use="@id"/>
-	<xsl:key name="EndnoteID" match="//endnote" use="@id"/>
-	<xsl:key name="RefWorkID" match="//refWork" use="@id"/>
-	<xsl:key name="ExampleID" match="//example" use="@num"/>
-	<xsl:key name="LetterExampleID" match="//listWord | //listSingle | //listInterlinear | //lineSet" use="@letter"/>
+	<xsl:key name="LanguageID" match="language" use="@id"/>
+	<xsl:key name="TypeID" match="type" use="@id"/>
+	<xsl:key name="SectionID" match="section1 | section2 | section3 | section4 | section5 | section6 | chapter" use="@id"/>
+	<xsl:key name="AppendixID" match="appendix | section1 | section2 | section3 | section4 | section5 | section6" use="@id"/>
+	<xsl:key name="EndnoteID" match="endnote" use="@id"/>
+	<xsl:key name="RefWorkID" match="refWork" use="@id"/>
+	<xsl:key name="ExampleID" match="example" use="@num"/>
+	<xsl:key name="LetterExampleID" match="listWord | listSingle | listInterlinear | lineSet" use="@letter"/>
 	<!-- ===========================================================
 	  Global variables
 	  =========================================================== -->

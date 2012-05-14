@@ -108,10 +108,12 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		{
 			get
 			{
-				RegistryKey key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false);
-				if (key == null)
-					Assert.Ignore("This test requires Paratext to be properly installed.");
-				return key.GetValue(null) as string;
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false))
+				{
+					if (key == null)
+						Assert.Ignore("This test requires Paratext to be properly installed.");
+					return key.GetValue(null) as string;
+				}
 			}
 		}
 

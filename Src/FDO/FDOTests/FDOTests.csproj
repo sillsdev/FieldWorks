@@ -132,15 +132,13 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=5.5.0.20472, Culture=neutral, processorArchitecture=MSIL">
-	  <Name>FDO</Name>
+	<Reference Include="FDO">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
 	</Reference>
 	<Reference Include="FwResources, Version=6.9.2.18788, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
 	</Reference>
 	<Reference Include="FwUtils">
 	  <Name>FwUtils</Name>
@@ -230,9 +228,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
+	<Compile Include="..\..\AssemblyInfoForTests.cs">
+	  <Link>AssemblyInfo.cs</Link>
+	</Compile>
+	<None Include="..\..\AppForTests.config">
+	  <Link>App.config</Link>
 	</None>
 	<Compile Include="AnalysisAdjusterTests.cs" />
 	<Compile Include="AnalysisGuessServicesTests.cs" />
@@ -374,7 +374,6 @@
 	<Compile Include="FdoCacheTests.cs" />
 	<Compile Include="fdoStringsTests.cs" />
 	<Compile Include="FdoTestBase.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
 	<Compile Include="IFwMetaDataCacheTests.cs" />
 	<Compile Include="IDomainDataByFlidTests.cs" />
 	<Compile Include="VectorTests.cs" />
@@ -384,6 +383,7 @@
 	<Compile Include="XmlImportDataTests.cs" />
 	<Compile Include="XmlListTests.cs" />
 	<Compile Include="XmlTranslatedListsTests.cs" />
+	<Compile Include="FdoInvertSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="buildinclude.xml" />

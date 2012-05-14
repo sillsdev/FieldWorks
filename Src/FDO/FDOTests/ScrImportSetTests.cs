@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
@@ -127,10 +128,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_ptHelper gets disposed in FixtureTeardown()")]
 	public class ScrImportSetTests : ScrInMemoryFdoTestBase
 	{
 		#region data members
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 		private IScrImportSet m_importSettings;
 		private ICmAnnotationDefn m_translatorNoteDefn;
 		private ICmAnnotationDefn m_consultantNoteDefn;
@@ -147,6 +150,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
@@ -158,6 +162,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
+			m_ptHelper.Dispose();
 			ParatextHelper.Manager.Reset();
 		}
 

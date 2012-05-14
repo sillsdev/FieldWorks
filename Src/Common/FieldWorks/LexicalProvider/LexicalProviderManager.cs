@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
@@ -61,16 +62,24 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// <param name="provider">The provider.</param>
 		/// <param name="providerType">Type of the provider.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See review comment")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		internal static void StartProvider(Uri providerLocation, object provider, Type providerType)
 		{
 			if (s_runningProviders.ContainsKey(providerType))
 				return;
 
 			string sNamedPipe = providerLocation.ToString();
+			// REVIEW: we don't dispose ServiceHost. It might be better to add it to the
+			// SingletonsContainer
 			ServiceHost providerHost;
 			try
 			{
 				providerHost = new ServiceHost(provider);
+				// TODO-Linux: various properties of NetNamedPipeBinding are marked with MonoTODO
+				// attributes. Test if this affects us.
 				NetNamedPipeBinding binding = new NetNamedPipeBinding();
 				binding.Security.Mode = NetNamedPipeSecurityMode.None;
 				binding.MaxBufferSize *= 4;
@@ -111,7 +120,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// Releases unmanaged and - optionally - managed resources
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static void Dispose()
+		internal static void StaticDispose()
 		{
 			Logger.WriteEvent("Closing service hosts");
 

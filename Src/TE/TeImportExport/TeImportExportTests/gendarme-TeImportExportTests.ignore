@@ -1,0 +1,19 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# unit test. Object disposed in tear down method
+T: SIL.FieldWorks.TE.ImportTests.TeImportTestsBase
+T: SIL.FieldWorks.TE.SFFileListBuilderTests
+T: SIL.FieldWorks.TE.ImportTests.ImportDialogTests
+T: SIL.FieldWorks.TE.ImportTests.TeXmlImportTests
+T: SIL.FieldWorks.TE.ExportTests.ExportParatextDlgTests
+T: SIL.FieldWorks.TE.ExportTests.ExportParatextTests
+T: SIL.FieldWorks.TE.ExportTests.ExportUsfmTests
+T: SIL.FieldWorks.TE.ImportComponentsTests.CharacterMappingSettingsTest
+T: SIL.FieldWorks.TE.ImportComponentsTests.ImportWizardTests
+T: SIL.FieldWorks.TE.ImportComponentsTests.ScrImportSetMessageTest
+
+# reference only
+T: SIL.FieldWorks.TE.ImportTests.MockScrObjWrapper

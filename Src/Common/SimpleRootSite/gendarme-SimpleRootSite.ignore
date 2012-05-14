@@ -1,0 +1,45 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Variable is a reference, will be disposed by parent
+T: SIL.FieldWorks.Common.RootSites.ActiveViewHelper
+T: SIL.FieldWorks.Common.RootSites.EditingHelper
+T: SIL.FieldWorks.Common.RootSites.GraphicsManager
+T: SIL.FieldWorks.Common.RootSites.SelectionRestorer
+T: SIL.FieldWorks.Common.RootSites.HoldGraphics
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Cursor is returned and stored in a static variable
+M: System.Windows.Forms.Cursor SIL.FieldWorks.Common.RootSites.VerticalOrientationManager::get_IBeamCursor()
+
+# Reference only
+M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::OnPaintBackground(System.Windows.Forms.PaintEventArgs)
+M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::Draw(System.Windows.Forms.PaintEventArgs)
+M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::CloseRootBox()
+M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::RegisterForInputLanguageChanges()
+# Linux:
+M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>m__F()
+# Windows:
+M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>b__2()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# dealing with key press
+M: System.Void SIL.FieldWorks.Common.RootSites.EditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.COMInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Variable is a reference
+T: SIL.FieldWorks.Common.RootSites.AccessibilityWrapper
+T: SIL.FieldWorks.Common.RootSites.OrientationManager
+T: SIL.FieldWorks.Common.RootSites.SelPositionInfo
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProvider
+T: SIL.FieldWorks.Common.RootSites.BaseFragmentProvider`1
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTextRangeProvider
+T: SIL.FieldWorks.Common.RootSites.VwBaseVc

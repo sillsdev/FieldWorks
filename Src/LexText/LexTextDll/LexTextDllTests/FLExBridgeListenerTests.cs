@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 using NUnit.Framework;
@@ -33,6 +34,8 @@ namespace LexTextDllTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_listener and m_mediator get disposed in TearDown()")]
 	public class FLExBridgeListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Member Data
@@ -79,6 +82,8 @@ namespace LexTextDllTests
 
 		#region Helper Methods
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="CommandSet gets added to Mediator and disposed there")]
 		private void SetupTestMediator()
 		{
 			m_mediator = new Mediator();

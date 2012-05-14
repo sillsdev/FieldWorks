@@ -1,0 +1,8 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.FwUtils.StringSearcher`1/SortKeyIndex/<GetItems>d__8::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.FwUtils.StringSearcher`1/<GetWsStrings>d__0::System.Collections.IEnumerable.GetEnumerator()

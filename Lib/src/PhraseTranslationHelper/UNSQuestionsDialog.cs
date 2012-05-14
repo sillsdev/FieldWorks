@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -661,13 +662,13 @@ namespace SILUBS.PhraseTranslationHelper
 		{
 			if (e.ColumnIndex == 4)
 			{
-				StringBuilder sbldr = new StringBuilder("Key Terms:\n");
+				StringBuilder sbldr = new StringBuilder();
+				sbldr.AppendLine("Key Terms:");
 				foreach (KeyTermMatch keyTermMatch in m_helper[e.RowIndex].GetParts().OfType<KeyTermMatch>())
 				{
 					foreach (string sEnglishTerm in keyTermMatch.AllTerms.Select(term => term.Term))
 					{
-						sbldr.Append(sEnglishTerm);
-						sbldr.Append(Environment.NewLine);
+						sbldr.AppendLine(sEnglishTerm);
 					}
 				}
 				MessageBox.Show(sbldr.ToString(), "More Key Term Debug Info");
@@ -1159,10 +1160,13 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Handles the Resize event of the dataGridUns control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void dataGridUns_Resize(object sender, EventArgs e)
 		{
 			if (m_lastRowEntered < 0 || m_lastRowEntered >= dataGridUns.RowCount)
 				return;
+			// TODO-Linux: GetRowDisplayRectangle doesn't use cutVoerflow parameter on Mono
 			int heightOfDisplayedPortionOfRow = dataGridUns.GetRowDisplayRectangle(m_lastRowEntered, true).Height;
 			if (heightOfDisplayedPortionOfRow != dataGridUns.Rows[m_lastRowEntered].Height)
 			{
@@ -1565,6 +1569,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="rowIndex">Index of the row to load for.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ktRenderCtrl gets added to m_biblicalTermsPane.Controls collection and disposed there")]
 		private void LoadKeyTermsPane(int rowIndex)
 		{
 			m_loadingBiblicalTermsPane = true;
@@ -1808,7 +1814,7 @@ namespace SILUBS.PhraseTranslationHelper
 			{
 				label.Show();
 				label.Text = (details.Count() == 1) ? (string)label.Tag : sLabelMultiple;
-				contents.Text = details.ToString("\r\n\t");
+				contents.Text = details.ToString(Environment.NewLine + "\t");
 			}
 		}
 		#endregion

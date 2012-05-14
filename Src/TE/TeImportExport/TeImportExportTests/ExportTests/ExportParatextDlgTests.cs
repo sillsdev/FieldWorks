@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 	public class ExportParatextDlgTests: ScrInMemoryFdoTestBase
 	{
 		#region Data members
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 		private DummyParatextDialog m_dummyParaDlg;
 		private FilteredScrBooks m_bookFilter;
 		private IScrBook m_Genesis;
@@ -64,6 +64,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
@@ -74,6 +75,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureTeardown()
 		{
+			m_ptHelper.Dispose();
+			m_ptHelper = null;
 			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
 		}

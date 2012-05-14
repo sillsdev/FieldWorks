@@ -1,6 +1,7 @@
 // This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -87,19 +88,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+
+				if (helpProvider != null)
+					helpProvider.Dispose();
 			}
 			m_cache = null;
 			m_fs = null;
@@ -107,8 +111,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_poses = null;
 			m_mediator = null;
 			m_cache = null;
+			helpProvider = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -170,6 +175,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			linkLabel1.Enabled = m_highestPOS != null;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="helpProvider gets disposed in Dispose()")]
 		private Mediator Mediator
 		{
 			set

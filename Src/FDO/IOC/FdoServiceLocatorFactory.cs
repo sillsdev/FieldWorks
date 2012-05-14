@@ -10,6 +10,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.ServiceLocation;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -395,9 +396,13 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <returns>
 		/// The requested service instance.
 		/// </returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public TService GetInstance<TService>()
 		{
 			// IActionHandler is special - want to return the current one in use.
+			// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (typeof(TService) == typeof(IActionHandler))
 				return (TService)ActionHandler;
 			return m_baseServiceLocator.GetInstance<TService>();

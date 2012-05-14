@@ -52,6 +52,9 @@ using SIL.CoreImpl;
 using Skybound.Gecko;
 #endif
 
+[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
+	Justification="Gendarme bug? We only return values >= 0")]
+
 namespace SIL.FieldWorks
 {
 	#region FieldWorks class
@@ -221,7 +224,7 @@ namespace SIL.FieldWorks
 				{
 					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider(FwUtils.ksFlexAbbrev));
 					if (projId == null)
-						return -1; // User probably canceled
+						return 1; // User probably canceled
 					try
 					{
 						// Use PipeHandle because this will probably be used to locate a named pipe using
@@ -231,7 +234,7 @@ namespace SIL.FieldWorks
 					catch (Exception e)
 					{
 						Logger.WriteError(e);
-						return -2;
+						return 2;
 					}
 					return 0;
 				}
@@ -264,16 +267,16 @@ namespace SIL.FieldWorks
 			catch (ApplicationException ex)
 			{
 				MessageBox.Show(ex.Message, FwUtils.ksSuiteName);
-				return -2;
+				return 2;
 			}
 			catch (Exception ex)
 			{
 				SafelyReportException(ex, s_activeMainWnd, true);
-				return -2;
+				return 2;
 			}
 			finally
 			{
-				Dispose();
+				StaticDispose();
 			}
 			return 0;
 		}
@@ -318,6 +321,8 @@ namespace SIL.FieldWorks
 		/// <param name="appArgs">The command-line arguments.</param>
 		/// <returns>Indication of whether application was successfully created.</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static bool CreateApp(FwAppArgs appArgs)
 		{
 			FwApp app = GetOrCreateApplication(appArgs);
@@ -360,32 +365,71 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static bool SetUICulture(FwAppArgs args)
 		{
-			// TODO WS: is this setting the correct UI culture?
-
-			// Try the UI locale was found on the command-line;
+			// Try the UI locale found on the command-line (if any).
 			string locale = args.Locale;
+			// If that doesn't exist, try the UI locale found in the registry.
 			if (string.IsNullOrEmpty(args.Locale))
-				// Try the UI locale found in the registry.
 				locale = (string)FwRegistryHelper.FieldWorksRegistryKey.GetValue(FwRegistryHelper.UserLocaleValueName, string.Empty);
+			// If that doesn't exist, try the current system UI locale set at program startup.
+			if (string.IsNullOrEmpty(locale) && Thread.CurrentThread.CurrentUICulture != null)
+				locale = Thread.CurrentThread.CurrentUICulture.Name;
+			// If that doesn't exist, just use English ("en").
 			if (string.IsNullOrEmpty(locale))
+			{
 				locale = "en";
-			try
-			{
-				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
 			}
-			catch (ArgumentException e)
+			else
 			{
-				Logger.WriteError(e);
-				if (MessageBox.Show(e.Message + Environment.NewLine + Properties.Resources.kstidFallbackToEnglishUi,
-					Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
+				// Check whether the desired locale has a localization, ignoring the
+				// country code if necessary.  Fall back to English ("en") if no
+				// localization exists.
+				var rgsLangs = GetAvailableLangsFromSatelliteDlls();
+				if (!rgsLangs.Contains(locale))
 				{
-					return false;
+					int idx = locale.IndexOf('-');
+					if (idx > 0)
+						locale = locale.Substring(0, idx);
+					if (!rgsLangs.Contains(locale))
+					{
+						locale = "en";
+						if (MessageBox.Show(string.Format(Properties.Resources.kstidFallbackToEnglishUi, args.Locale),
+							Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
+						{
+							return false;
+						}
+					}
 				}
-				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en");
 			}
+			if (locale != Thread.CurrentThread.CurrentUICulture.Name)
+				Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
 
 			s_sWsUser = Thread.CurrentThread.CurrentUICulture.Name;
 			return true;
+		}
+
+		/// <summary>
+		/// Get the available localizations.
+		/// </summary>
+		private static List<string> GetAvailableLangsFromSatelliteDlls()
+		{
+			List<string> rgsLangs = new List<string>();
+			// Get the folder in which the program file is stored.
+			string sDllLocation = Path.GetDirectoryName(Application.ExecutablePath);
+
+			// Get all the sub-folders in the program file's folder.
+			string[] rgsDirs = Directory.GetDirectories(sDllLocation);
+
+			// Go through each sub-folder and if at least one file in a sub-folder ends
+			// with ".resource.dll", we know the folder stores localized resources and the
+			// name of the folder is the culture ID for which the resources apply. The
+			// name of the folder is stripped from the path and used to add a language
+			// to the list.
+			foreach (string dir in rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0))
+			{
+				var locale = Path.GetFileName(dir);
+				rgsLangs.Add(locale);
+			}
+			return rgsLangs;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -993,6 +1037,8 @@ namespace SIL.FieldWorks
 		/// <param name="args">The application arguments.</param>
 		/// <returns>The project to run, or null if no project could be determined</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static ProjectId DetermineProject(FwAppArgs args)
 		{
 			// Get project information from one of three places, in this order of preference:
@@ -1072,6 +1118,8 @@ namespace SIL.FieldWorks
 		/// process.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static bool LaunchProject(FwAppArgs args, ref ProjectId projectId)
 		{
 			while (true)
@@ -1305,6 +1353,8 @@ namespace SIL.FieldWorks
 		/// project being opened; <c>null</c> if the user chooses to exit.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="app is a reference")]
 		private static ProjectId ShowWelcomeDialog(FwAppArgs args, IHelpTopicProvider helpTopicProvider,
 			ProjectId projectId, FwStartupException exception)
 		{
@@ -2283,6 +2333,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static void CheckForMovingExternalLinkDirectory(FwApp app)
 		{
 			// Don't crash here if we have a data problem -- that may be due to another issue that
@@ -2312,42 +2364,45 @@ namespace SIL.FieldWorks
 			}
 			if ((Math.Max(launchesFlex, launchesTe) != 9) || (Math.Min(launchesFlex, launchesTe) >= 9))
 				return;
-			var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks");
-			string oldDir = null;
-			if (rk != null)
-				oldDir = rk.GetValue("RootDataDir") as string;
-			if (oldDir == null)
+			using (var rk = Registry.LocalMachine.OpenSubKey("Software\\SIL\\FieldWorks"))
 			{
-				// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-				oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				string oldDir = null;
+				if (rk != null)
+					oldDir = rk.GetValue("RootDataDir") as string;
+				if (oldDir == null)
+				{
+					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
+					oldDir = DirectoryFinder.CommonAppDataFolder("SIL/FieldWorks");
+				}
+				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
+				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
+				newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
+				// This isn't foolproof since the currently open project on the 9th time may
+				// not even be one that was migrated. But it will probably work for most users.
+				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
+					return;
+				DialogResult res;
+				if (app == s_teApp)
+				{
+					// TE doesn't have a help topic for this insane dialog box.
+					res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo);
+				}
+				else
+				{
+					// TODO-Linux: Help is not implemented in Mono
+					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
+					res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo, MessageBoxIcon.None,
+						MessageBoxDefaultButton.Button1, 0, app.HelpFile,
+						"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
+				}
+				if (res != DialogResult.Yes)
+					return;
+				MoveExternalLinkDirectoryAndFiles(app);
 			}
-			oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
-			var newDir = app.Cache.LangProject.LinkedFilesRootDir;
-			newDir = newDir.TrimEnd(new [] {Path.PathSeparator});
-			// This isn't foolproof since the currently open project on the 9th time may
-			// not even be one that was migrated. But it will probably work for most users.
-			if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
-				return;
-			DialogResult res;
-			if (app == s_teApp)
-			{
-				// TE doesn't have a help topic for this insane dialog box.
-				res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo);
-			}
-			else
-			{
-				const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
-				res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo, MessageBoxIcon.None,
-					MessageBoxDefaultButton.Button1, 0, app.HelpFile,
-					"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
-			}
-			if (res != DialogResult.Yes)
-				return;
-			MoveExternalLinkDirectoryAndFiles(app);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3083,10 +3138,10 @@ namespace SIL.FieldWorks
 		/// Releases unmanaged and managed resources
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void Dispose()
+		private static void StaticDispose()
 		{
 			s_appServerMode = false; // Make sure the cache can be cleaned up
-			LexicalProviderManager.Dispose(); // Must be done before disposing the cache
+			LexicalProviderManager.StaticDispose(); // Must be done before disposing the cache
 			if (s_serviceChannel != null)
 			{
 				ChannelServices.UnregisterChannel(s_serviceChannel);
@@ -3115,8 +3170,10 @@ namespace SIL.FieldWorks
 		{
 			try
 			{
-				RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0", true);
-				key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0", true))
+				{
+					key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
+				}
 			}
 			catch
 			{

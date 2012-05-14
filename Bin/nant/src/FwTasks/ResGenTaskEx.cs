@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.Build.Tasks
 	public class ResGenTaskEx : ResGenTask
 	{
 		private DirectoryInfo m_baseDirectory;
+		string m_exepath;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -47,7 +48,8 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get the name of the program executed by this task.
+		/// Get the name of the program executed by this task.  On Linux, only the full pathname
+		/// seems to work.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public override string ExeName
@@ -56,16 +58,38 @@ namespace SIL.FieldWorks.Build.Tasks
 			{
 				if (Environment.OSVersion.Platform == PlatformID.Unix)
 				{
-					if (File.Exists("/usr/local/bin/resgen"))
-						return "/usr/local/bin/resgen";
-					else
-						return "/usr/bin/resgen";
+					if (m_exepath == null)
+						ComputeResGenPath();
+					return m_exepath;
 				}
 				else
 				{
 					return "resgen";
 				}
 			}
+		}
+
+		/// <summary>
+		/// Get the full path to the resgen program.
+		/// </summary>
+		private void ComputeResGenPath()
+		{
+			string path = Environment.GetEnvironmentVariable("PATH");
+			if (!String.IsNullOrEmpty(path))
+			{
+				var dirs = path.Split(new char[] { Path.PathSeparator });
+				for (int i = 0; i < dirs.Length; ++i)
+				{
+					var f = Path.Combine(dirs[i], "resgen");
+					if (File.Exists(f))
+					{
+						// Check for executable?
+						m_exepath = f;
+						return;
+					}
+				}
+			}
+			m_exepath = "resgen";
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1154,6 +1154,8 @@ namespace SIL.FieldWorks.TE
 		/// loaded.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ParatextHelper.GetAssociatedProject() returns a reference?")]
 		private void LoadParatextProjectCombos()
 		{
 			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);

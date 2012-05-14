@@ -13,7 +13,7 @@ Revision History is at the end of this file.
 Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    -->
-   <xsl:key name="Unknowns" match="//Unknown" use="LangCode"/>
+   <xsl:key name="Unknowns" match="Unknown" use="LangCode"/>
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Main template (change name of top node; add DTD)

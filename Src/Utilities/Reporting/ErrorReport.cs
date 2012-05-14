@@ -368,6 +368,8 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to report a problem that didn't crash the program,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportProblem(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -376,7 +378,7 @@ namespace SIL.Utils
 			e.Closed += ModelessClosed;
 		}
 
-		static void ModelessClosed(object sender, EventArgs e)
+		private static void ModelessClosed(object sender, EventArgs e)
 		{
 			((ErrorReporter)sender).Dispose();
 		}
@@ -385,6 +387,8 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to make a suggestion,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void MakeSuggestion(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);

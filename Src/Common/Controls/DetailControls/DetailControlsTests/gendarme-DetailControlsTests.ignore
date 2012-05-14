@@ -1,0 +1,10 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Disposed in tear down method
+T: SIL.FieldWorks.Common.Framework.DetailControls.DataTreeTests
+T: SIL.FieldWorks.Common.Framework.DetailControls.DataTreeTestsLive
+T: SIL.FieldWorks.Common.Framework.DetailControls.SliceTests
+T: SIL.FieldWorks.Common.Framework.DetailControls.VectorReferenceLauncherTests

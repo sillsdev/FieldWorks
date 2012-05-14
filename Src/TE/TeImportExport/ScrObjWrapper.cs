@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.TE
 	/// might do.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ScrObjWrapper
+	public class ScrObjWrapper: IDisposable
 	{
 		#region Member data variables
 		/// <summary>
@@ -161,6 +161,41 @@ namespace SIL.FieldWorks.TE
 		{
 			if (m_scTextEnum != null)
 				m_scTextEnum.Cleanup();
+		}
+		#endregion
+
+		#region Disposable stuff
+		#if DEBUG
+		/// <summary/>
+		~ScrObjWrapper()
+		{
+			Dispose(false);
+		}
+		#endif
+
+		/// <summary/>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary/>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+				Cleanup();
+				if (m_ptProjectText != null)
+					m_ptProjectText.Dispose();
+			}
+			m_ptProjectText = null;
+			IsDisposed = true;
 		}
 		#endregion
 

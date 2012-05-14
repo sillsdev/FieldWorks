@@ -11,6 +11,7 @@
 // File: DropDownContainer.cs
 // Responsibility: DavidO
 // --------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SILUBS.SharedScrUtils
@@ -46,8 +47,14 @@ namespace SILUBS.SharedScrUtils
 		/// Initializes a new instance of the <see cref="DropDownContainer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public DropDownContainer()
 		{
+			// TODO-Linux: System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)
+			// is marked with a [MonoTODO] attribute: Setting this is probably unintentional and
+			// can cause Forms to be improperly sized. See
+			// http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details..
 			AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			ClientSize = new System.Drawing.Size(168, 144);
 			ControlBox = false;

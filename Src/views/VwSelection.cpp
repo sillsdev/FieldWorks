@@ -23,12 +23,6 @@ Description:
 DEFINE_THIS_FILE
 #define EDITABLE_SELECTIONS_ONLY 1
 
-#ifndef WIN32
-// GUID attachments
-template<> const GUID __uuidof(VwTextSelection)("102AACD1-AE7E-11d3-9BAF-00400541F9E9");
-template<> const GUID __uuidof(VwPictureSelection)("6AFD893B-6336-48a8-953A-3A6C2879F721");
-#endif //!WIN32
-
 using namespace std;
 
 enum CharacterType { kSpace, kPunc, kAlpha };

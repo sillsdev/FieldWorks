@@ -152,6 +152,7 @@
 	</Reference>
 	<Reference Include="PhraseTranslationHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\PhraseTranslationHelper.dll</HintPath>
 	</Reference>
 	<Reference Include="Reporting, Version=1.0.3681.30972, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

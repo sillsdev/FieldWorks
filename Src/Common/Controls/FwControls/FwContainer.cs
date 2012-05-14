@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -137,8 +138,12 @@ namespace SIL.FieldWorks.Common.Controls
 			/// type serviceType.
 			/// </returns>
 			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public object GetService(Type serviceType)
 			{
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (serviceType == typeof(ISite))
 					return this;
 				return m_Container.GetService(serviceType);
@@ -201,12 +206,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// if the service cannot be resolved.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected override object GetService(Type service)
 		{
 			object obj = base.GetService(service);
 
 			// if the base class doesn't return the service we look if any of the components
 			// is of the requested type
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (obj == null && service != typeof(ContainerFilterService))
 			{
 				foreach (Component component in Components)

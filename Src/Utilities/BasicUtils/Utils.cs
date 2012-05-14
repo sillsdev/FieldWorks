@@ -300,9 +300,13 @@ namespace SIL.Utils
 		/// Returns <c>true</c> if we're running on Mono , otherwise <c>false</c>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static bool IsMono
 		{
-			get { return  (Type.GetType ("Mono.Runtime") != null); }
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type) is
+			// marked with a [MonoTODO] attribute and might not work as expected in 4.0
+			get { return (Type.GetType("Mono.Runtime") != null); }
 		}
 
 		/// ------------------------------------------------------------------------------------

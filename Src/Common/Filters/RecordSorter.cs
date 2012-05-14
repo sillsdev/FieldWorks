@@ -23,6 +23,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using Palaso.WritingSystems.Collation;
@@ -541,10 +542,14 @@ namespace SIL.FieldWorks.Filters
 			/// </summary>
 			/// <param name="obj"></param>
 			/// <returns></returns>
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
 					return false;
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (this.GetType() != obj.GetType())
 					return false;
 				FdoCompare that = (FdoCompare)obj;
@@ -650,10 +655,14 @@ namespace SIL.FieldWorks.Filters
 			/// </summary>
 			/// <param name="obj"></param>
 			/// <returns></returns>
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
 					return false;
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (this.GetType() != obj.GetType())
 					return false;
 				var that = (AndSorterComparer)obj;
@@ -1153,10 +1162,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (this.GetType() != obj.GetType())
 				return false;
 			GenRecordSorter that = (GenRecordSorter)obj;
@@ -1169,6 +1182,8 @@ namespace SIL.FieldWorks.Filters
 			{
 				if (that.m_comp == null)
 					return false;
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (this.m_comp.GetType() != that.m_comp.GetType())
 					return false;
 				else
@@ -1625,10 +1640,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (this.GetType() != obj.GetType())
 				return false;
 			StringFinderCompare that = (StringFinderCompare)obj;
@@ -1800,10 +1819,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (this.GetType() != obj.GetType())
 				return false;
 			var that = (ReverseComparer)obj;
@@ -1919,10 +1942,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			return this.GetType() == obj.GetType();
 		}
 
@@ -2132,10 +2159,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
 				return false;
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (this.GetType() != obj.GetType())
 				return false;
 			IcuComparer that = (IcuComparer)obj;

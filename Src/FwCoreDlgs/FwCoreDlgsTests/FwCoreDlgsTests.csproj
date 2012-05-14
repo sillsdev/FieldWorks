@@ -248,7 +248,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
 	<Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
 	  <Link>FwSetupFixtureClass.cs</Link>
 	</Compile>
@@ -278,9 +277,12 @@
 	<Compile Include="RealSplashScreenTests.cs" />
 	<Compile Include="FwFontDialogTests.cs" />
 	<Compile Include="FwHelpAboutTests.cs" />
-	<Compile Include="..\..\xWorks\xWorksTests\AssemblyInfo.cs">
+	<Compile Include="..\..\AssemblyInfoForTests.cs">
 	  <Link>AssemblyInfo.cs</Link>
 	</Compile>
+	<None Include="..\..\AppForTests.config">
+	  <Link>App.config</Link>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<Content Include="xtst.xml">

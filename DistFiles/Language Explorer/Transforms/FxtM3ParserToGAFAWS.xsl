@@ -15,7 +15,7 @@ Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
   <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-  <xsl:key name="PrefixSlots" match="//PrefixSlots" use="@dst"/>
+  <xsl:key name="PrefixSlots" match="PrefixSlots" use="@dst"/>
   <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Main template

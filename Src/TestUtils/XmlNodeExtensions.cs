@@ -102,7 +102,8 @@ namespace Palaso.Xml
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException("Could not create a namespace manager for the following node:\r\n"+node.OuterXml,error);
+				throw new ApplicationException("Could not create a namespace manager for the following node:" +
+					Environment.NewLine + node.OuterXml, error);
 			}
 		}
 

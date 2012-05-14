@@ -8,21 +8,31 @@ namespace Utils.MessageBoxExLib
 	///
 	/// </summary>
 	[TestFixture]
-	public class MessageBoxTests : NUnitFormTest
+	[Platform(Exclude = "Linux", Reason = "TODO-Linux: depends on nunitforms which is not cross platform")]
+	public class MessageBoxTests
 	{
-		public MessageBoxTests()
+		private NUnitFormTest m_FormTest;
+
+		[SetUp]
+		public void Setup()
 		{
-		}
-		public override bool UseHidden
-		{
-			get
-			{return true;}
+			m_FormTest = new NUnitFormTest();
+			m_FormTest.SetUp();
 		}
 
-		//http://www.dotnetguru2.org/tbarrere/?p=196&more=1&c=1&tb=1&pb=1
+		[TearDown]
+		public void Teardown()
+		{
+			m_FormTest.TearDown();
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown()
+		{
+			MessageBoxExManager.DisposeAllMessageBoxes();
+		}
 
 		[Test]
-		[Platform(Exclude="Linux", Reason="TODO-Linux: depends on nunitforms which is not cross platform")]
 		public void TimeoutOfNewBox()
 		{
 			string name=System.IO.Path.GetTempPath()/*just a hack to get a unique name*/;
@@ -36,13 +46,12 @@ namespace Utils.MessageBoxExLib
 				msgBox.Timeout = 10;
 				msgBox.TimeoutResult = TimeoutResult.Timeout;
 
-				ExpectModal(name, "DoNothing",true);//the nunitforms framework freaks out if we show a dialog with out warning it first
+				m_FormTest.ExpectModal(name, DoNothing, true);//the nunitforms framework freaks out if we show a dialog with out warning it first
 				Assert.AreEqual("Timeout",msgBox.Show());
 			}
 		}
 
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: depends on nunitforms which is not cross platform")]
 		public void RememberOkBox()
 		{
 			string name = "X";
@@ -58,13 +67,13 @@ namespace Utils.MessageBoxExLib
 				msgBox.AllowSaveResponse  = true;
 
 				//click the yes button when the dialog comes up
-				ExpectModal(name, "ConfirmModalByYesAndRemember",true);
+				m_FormTest.ExpectModal(name, ConfirmModalByYesAndRemember, true);
 
-				Assert.AreEqual("Yes", 	msgBox.Show());
+				Assert.AreEqual("Yes", msgBox.Show());
 
-				ExpectModal(name, "DoNothing",false /*don't expect it, because it should use our saved response*/);
+				m_FormTest.ExpectModal(name, DoNothing, false /*don't expect it, because it should use our saved response*/);
 				msgBox.UseSavedResponse = true;
-				Assert.AreEqual("Yes", 	msgBox.Show());
+				Assert.AreEqual("Yes", msgBox.Show());
 			}
 		}
 
@@ -74,7 +83,7 @@ namespace Utils.MessageBoxExLib
 
 		public void ConfirmModalByYes()
 		{
-			ButtonTester t = new ButtonTester("Yes");
+			var t = new ButtonTester("Yes");
 			t.Click();
 		}
 		public void ConfirmModalByYesAndRemember()

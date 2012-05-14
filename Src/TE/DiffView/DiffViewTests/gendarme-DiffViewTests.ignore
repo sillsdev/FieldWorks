@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object disposed in tear down method
+T: SIL.FieldWorks.TE.BookRevListTests
+T: SIL.FieldWorks.TE.AutoMergeTests
+T: SIL.FieldWorks.TE.BookMergerTestsBase
+T: SIL.FieldWorks.TE.DataLossDiffTests
+T: SIL.FieldWorks.TE.DiffDialogTests
+T: SIL.FieldWorks.TE.DiffDialogTests_More
+T: SIL.FieldWorks.TE.SegmentedBtMergeTests

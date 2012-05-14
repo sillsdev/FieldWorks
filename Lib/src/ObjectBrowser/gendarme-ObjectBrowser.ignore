@@ -1,0 +1,9 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Added to control and disposed there
+M: System.Void SIL.ObjectBrowser.InspectorGrid::CreateDefaultColumns()
+M: System.Void SIL.ObjectBrowser.ObjectBrowser::BuildRecentlyUsedFilesMenus()
+M: System.Void SIL.ObjectBrowser.ObjectBrowser::mnuWindow_DropDownOpening(System.Object,System.EventArgs)

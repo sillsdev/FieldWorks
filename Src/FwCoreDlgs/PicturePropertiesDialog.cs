@@ -838,7 +838,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
 				{
-					dialogResult = dlg.ShowDialog();
+					dialogResult = dlg.ShowDialog(m_app == null ? null : m_app.ActiveMainWindow);
 					if (dialogResult == DialogResult.OK)
 					{
 						string file = dlg.FileName;
@@ -886,23 +886,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void UpdatePicInformation()
 		{
-			// update the image
-			int newWidth;
-			int newHeight;
-			float ratio = (float)m_currentImage.Height / m_currentImage.Width;
-
-			if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
+			if (m_currentImage != null)
 			{
-				newWidth = m_picPreview.Width;
-				newHeight = (int)(newWidth * ratio);
-			}
-			else
-			{
-				newHeight = m_picPreview.Height;
-				newWidth = (int)(newHeight * (1f / ratio));
-			}
+				// update the image
+				int newWidth;
+				int newHeight;
+				float ratio = (float)m_currentImage.Height / m_currentImage.Width;
 
-			m_picPreview.Image = new Bitmap(m_currentImage, newWidth, newHeight);
+				if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
+				{
+					newWidth = m_picPreview.Width;
+					newHeight = (int)(newWidth * ratio);
+				}
+				else
+				{
+					newHeight = m_picPreview.Height;
+					newWidth = (int)(newHeight * (1f / ratio));
+				}
+
+				m_picPreview.Image = new Bitmap(m_currentImage, newWidth, newHeight);
+			}
 
 			// Add "(not found)" if the original file isn't available
 			string tmpOriginalPath = m_filePath;

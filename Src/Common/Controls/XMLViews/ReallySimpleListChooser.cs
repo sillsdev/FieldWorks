@@ -2913,6 +2913,12 @@ namespace SIL.FieldWorks.Common.Controls
 							return label.Object;
 					}
 				}
+#if __MonoCS__
+				// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
+				// and getting SelectedObject from the caller.  (See FWNX-853.)
+				if (m_chosenLabel != null)
+					return m_chosenLabel.Object;
+#endif
 				return null;
 			}
 		}

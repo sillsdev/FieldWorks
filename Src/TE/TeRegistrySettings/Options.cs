@@ -154,6 +154,8 @@ namespace SIL.FieldWorks.TE
 						ShowUserDefinedStylesSetting.Dispose();
 					if (AutoStartLibronix != null)
 						AutoStartLibronix.Dispose();
+					if (ShowTranslateUnsQuestions != null)
+						ShowTranslateUnsQuestions.Dispose();
 					//if (UseEnableSendReceiveSyncMsgs != null)
 					//    UseEnableSendReceiveSyncMsgs.Dispose();
 					//UseEnableSendReceiveSyncMsgs = null;
@@ -171,6 +173,7 @@ namespace SIL.FieldWorks.TE
 				ShowStyleLevelSetting = null;
 				ShowUserDefinedStylesSetting = null;
 				AutoStartLibronix = null;
+				ShowTranslateUnsQuestions = null;
 			}
 
 			#endregion

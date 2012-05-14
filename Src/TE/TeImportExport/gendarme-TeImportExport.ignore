@@ -1,0 +1,47 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Reference only.
+T: SIL.FieldWorks.TE.ExportUsfm
+T: SIL.FieldWorks.TE.TeImporter
+T: SIL.FieldWorks.TE.TeImportUi
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Added to collection and disposed there
+M: System.Void SIL.FieldWorks.TE.CharacterMappingSettings::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ConfirmOverlappingFileReplaceDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ExportRtfDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ExportXmlDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.FileNameSchemeCtrl::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ImportDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.MappingDetailsCtrl::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ModifyMapping::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.Paratext5LocationUnknown::InitializeComponent()
+M: System.Void SIL.FieldWorks.Common.Controls.SFFileListBuilder::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ScrImportSetMessage::InitializeComponent()
+
+# Reference only
+M: System.Boolean SIL.FieldWorks.Common.Controls.SFFileListBuilder::AddFileToProject(System.String,SIL.FieldWorks.FDO.DomainServices.IScrImportFileInfo&)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.TE.RtfStyleInfoTable
+T: SIL.FieldWorks.TE.ExportRtf
+T: SIL.FieldWorks.TE.ExportXhtml
+T: SIL.FieldWorks.TE.ExportXml
+T: SIL.FieldWorks.TE.ParatextLdsFileAccessor
+T: SIL.FieldWorks.TE.ParatextSsfFileAccessor
+T: SIL.FieldWorks.TE.TeImportManager
+T: SIL.FieldWorks.TE.XmlScrAnnotationsList
+
+# Variable is created in a using block
+T: SIL.FieldWorks.TE.UsfmStyFileAccessor
+
+# TODO: Ignoring for now
+T: SIL.FieldWorks.FDO.DomainServices.SCTextEnum

@@ -30,10 +30,6 @@ DEFINE_THIS_FILE
 //:>********************************************************************************************
 static DummyFactory g_fact(_T("SIL.Language1.RomRenderSeg"));
 
-#if !WIN32
-template<> const GUID __uuidof(RomRenderSegment)("A124E0C1-DD4B-11d2-8078-0000C0FB81B5");
-#endif
-
 // Added from UniscribeSegment.cpp
 #define kchwHardLineBreak (wchar)0x2028
 

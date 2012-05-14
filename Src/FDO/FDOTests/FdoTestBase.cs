@@ -103,6 +103,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		protected void SetupEverythingButBase()
 		{
+			if (m_cache != null)
+				DisposeEverythingButBase();
+
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -681,6 +684,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		public override void TestSetup()
 		{
+			base.TestSetup();
 			SetupEverythingButBase();
 		}
 
@@ -690,6 +694,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void TestTearDown()
 		{
 			DisposeEverythingButBase();
+			base.TestTearDown();
 		}
 	}
 }

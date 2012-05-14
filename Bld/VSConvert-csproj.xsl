@@ -217,6 +217,7 @@
 				</if>
 				<call target="register-internal"/>
 				<xsl:apply-templates select="ms:ItemGroup/ms:None[@Include='App.config']" mode="compile"/>
+				<xsl:apply-templates select="ms:ItemGroup/ms:None[contains(@Include, 'AppForTests.config')]" mode="compile"/>
 
 				<xsl:call-template name="IncludePostTarget">
 					<xsl:with-param name="GlobalNodes" select="$GlobalInclude/fw:include/fw:post-build"/>
@@ -275,7 +276,22 @@
 				<property name="target" value="${{targetTmp}}"/>
 			</xsl:if>
 		</target>
-		<target name="test" depends="build" description="run the tests">
+		<target name="verify" depends="build" description="Verify code"
+				unless="${{done and not file::exists(dir.buildOutput + '/' + project.FormalName + '-gendarme.failed')}}">
+			<delete file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.html" failonerror="false"/>
+			<!-- add token-file -->
+			<echo file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.failed"/>
+			<gendarme configuration="${{fwroot}}/Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/fw-gendarme-rules.xml"
+				set="${{verifyset}}" assembly="${{dir.buildOutput}}/${{project.output}}"
+				log="Html" file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.html"
+				ignore="${{dir.srcProj}}/gendarme-${{project.FormalName}}.ignore"
+				updateIgnores="${{autoUpdateIgnores}}"
+				verbose="${{verbose}}" failonerror="${{verifyfail}}"/>
+			<!-- remove token file -->
+			<delete file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.failed"
+				unless="${{file::exists(dir.buildOutput + '/' + project.FormalName + '-gendarme.html')}}"/>
+		</target>
+		<target name="test" depends="verify" description="run the tests">
 			<xsl:comment>Rename old asserts.log file</xsl:comment>
 			<if test="${{file::exists(path::combine(path::get-temp-path(), 'asserts.log'))}}">
 				<delete file="${{path::combine(path::get-temp-path(), 'asserts_old.log')}}" failonerror="false"/>
@@ -618,7 +634,9 @@
 						<xsl:otherwise>
 							<xsl:value-of select="ms:DefineConstants"/>
 						</xsl:otherwise>
-					</xsl:choose>;NANT_BUILD;${platform}</xsl:attribute>
+					</xsl:choose><xsl:if test="$kind = 'Debug'">
+						<xsl:text>;CODE_ANALYSIS</xsl:text>
+					</xsl:if>;NANT_BUILD;${platform}</xsl:attribute>
 			</property>
 			<property name="nowarn" value="{translate(ms:NoWarn, ';', ',')}"/>
 			<property name="optimize" value="{ms:Optimize}"/>
@@ -712,7 +730,7 @@
 			</sources>
 		</versionex>
 	</xsl:template>
-	<xsl:template match="ms:None[@Include='App.config']" mode="compile">
+	<xsl:template match="ms:None[@Include='App.config' or contains(@Include, 'AppForTests.config')]" mode="compile">
 		<copy file="${{dir.srcProj}}/{translate(@Include,'\','/')}"
 			tofile="${{dir.buildOutput}}/${{project.output}}.config" failonerror="false"/>
 	</xsl:template>

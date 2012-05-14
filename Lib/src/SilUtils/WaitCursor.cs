@@ -19,6 +19,7 @@
 //#define DEBUG_WAITCURSOR
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SIL.Utils
@@ -38,6 +39,8 @@ namespace SIL.Utils
 	/// This displays the wait cursor inside of the using block.
 	/// </example>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="m_oldCursor and m_parent are references; we don't create the object")]
 	public class WaitCursor : IDisposable
 	{
 #if DEBUG_WAITCURSOR

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
@@ -14,6 +15,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Dummy implementation of IFwMultilingualPropViewDataSource to allow testing FwMultilingualPropView
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="Unit tests - Cache and Grid are never assigned to, so there is no need to call Dispose()")]
 		internal class DummyFwMultilingualPropViewDataSource : IFwMultilingualPropViewDataSource
 		{
 			protected PalasoWritingSystemManager m_writingSystemManager = new PalasoWritingSystemManager();
@@ -48,13 +51,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public void AddColumn(string name, int widthPct)
 			{
-				FwTextBoxColumn col = new FwTextBoxColumn();
-				col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-				col.HeaderText = name;
-				col.FillWeight = (float)widthPct;
-				col.Resizable = DataGridViewTriState.True;
-				col.UseTextPropsFontForCell = true;
-				Grid.Columns.Add(col);
 			}
 
 			public List<FwMultilingualPropView.ColumnInfo> FieldsToDisplay {
