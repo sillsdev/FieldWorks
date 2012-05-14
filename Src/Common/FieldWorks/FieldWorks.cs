@@ -384,7 +384,7 @@ namespace SIL.FieldWorks
 				// country code if necessary.  Fall back to English ("en") if no
 				// localization exists.
 				var rgsLangs = GetAvailableLangsFromSatelliteDlls();
-				if (!rgsLangs.Contains(locale))
+				if (rgsLangs.Count > 0 && !rgsLangs.Contains(locale))
 				{
 					int idx = locale.IndexOf('-');
 					if (idx > 0)
