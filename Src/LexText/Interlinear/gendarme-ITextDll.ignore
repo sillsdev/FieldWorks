@@ -23,6 +23,8 @@ M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::CreateNewEntry(S
 M: System.Int32 SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewSenseDlg(SIL.FieldWorks.Common.COMInterfaces.ITsString,SIL.FieldWorks.FDO.ILexEntry)
 M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::OnSelectVariantOf(System.Object,System.EventArgs)
 M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewAllomorphDlg()
+M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<Import>c__AnonStorey15::<>m__3D()
+M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<>c__DisplayClass4::<Import>b__2()
 
 # Disposed in object's Close() method
 M: System.Boolean SIL.FieldWorks.IText.SandboxBase::HandleRightClickOnObject(System.Int32,XCore.IxCoreColleague)

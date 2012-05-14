@@ -38,7 +38,8 @@ M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitDeleteTab()
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitStringCombo(SIL.FieldWorks.Common.Controls.FwOverrideComboBox,System.Boolean)
 
 # Returns object
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>d__6::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<CreateObjectLabels>d__0::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

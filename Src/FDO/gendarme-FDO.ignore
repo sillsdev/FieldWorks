@@ -38,9 +38,9 @@ M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::StartServer(System.S
 
 # Ext() returns a reference.
 # Linux:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__1AD(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
+M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__203(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 # Windows:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>b__8(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
+M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>b__9(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 
 # GetEnumerator() returns a reference
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FdoVectorUtils/<ConvertCmObjectsToHvos>d__0`1::System.Collections.IEnumerable.GetEnumerator()
@@ -68,6 +68,23 @@ M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.Identit
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<get_DirtyObjects>d__0::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<GetPropChangeInformation>d__d::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoMetaDataCache/<GetIncomingFields>d__1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>d__2e::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_AllComponents>d__33::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>d__45::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>d__4c::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>d__53::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>d__5a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>d__4c::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>d__53::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>d__5a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__61::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>d__1f::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>d__26::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ChkTerm/<get_BcvOccurences>d__d::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntryRef/<get_PrimaryEntryRoots>d__1a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllObjectsOrSurrogates>d__4::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>d__12::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoInvertSet`1::System.Collections.IEnumerable.GetEnumerator()
 
 # The Registry will dispose the PalasoWritingSystemManager (singleton).
 M: SIL.CoreImpl.IWritingSystemManager SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::<CreateServiceLocator>b__a()

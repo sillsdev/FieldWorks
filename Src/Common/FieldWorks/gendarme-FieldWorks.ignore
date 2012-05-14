@@ -22,7 +22,10 @@ M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.Fiel
 # Linux:
 M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey10::<>m__F()
 # Windows:
-M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass33::<KickOffAppFromOtherProcess>b__32()
+M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass36::<KickOffAppFromOtherProcess>b__35()
+M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>c__DisplayClass1::<ShowEntry>b__0()
+M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>c__DisplayClass4::<ShowRelatedWords>b__3()
+
 M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.String,System.Func`1<SIL.FieldWorks.ProjectId>)
 M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.FwApp)
 

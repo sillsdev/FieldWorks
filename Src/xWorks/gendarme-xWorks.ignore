@@ -37,7 +37,7 @@ M: System.Void SIL.FieldWorks.XWorks.CustomListDlg::InitializeHelpProvider()
 M: System.Void SIL.FieldWorks.XWorks.RecordBrowseView::OnFwRightMouseClick(SIL.FieldWorks.Common.RootSites.SimpleRootSite,SIL.FieldWorks.Common.RootSites.FwRightMouseClickEventArgs)
 
 # Returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.InterestingTextList/<get_InterestingTexts>d__4::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.InterestingTextList/<get_InterestingTexts>d__7::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

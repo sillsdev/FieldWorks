@@ -5,6 +5,7 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # Reference only
 M: System.Void SIL.FieldWorks.TE.KeyTermRenderingsControl::OnKeyTermRefPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)
+M: System.Collections.IEnumerator SIL.FieldWorks.TE.KeyTermsTree/<GetAllNodes>d__c::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
