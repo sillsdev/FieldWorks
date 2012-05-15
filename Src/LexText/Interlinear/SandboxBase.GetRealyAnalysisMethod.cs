@@ -158,8 +158,7 @@ namespace SIL.FieldWorks.IText
 					IhMorphEntry.MorphItem matchingMorphItem = new IhMissingEntry.MorphItem(0, null);
 					ITsString tssWf = m_wf.Form.get_String(m_sandbox.RawWordformWs);
 					// go through the combo options for lex entries / senses to see if we can find any existing matches.
-					int hvoSbMorph = m_sda.get_VecItem(m_hvoSbWord, ktagSbWordMorphs, 0);
-					using (IhMorphEntry handler = InterlinComboHandler.MakeCombo(m_helpTopicProvider, ktagWordGlossIcon, m_sandbox, hvoSbMorph) as SandboxBase.IhMorphEntry)
+					using (IhMorphEntry handler = InterlinComboHandler.MakeCombo(m_helpTopicProvider, ktagWordGlossIcon, m_sandbox, 0) as SandboxBase.IhMorphEntry)
 					{
 						List<IhMorphEntry.MorphItem> morphItems = handler.MorphItems;
 						// see if we can use an existing Sense, if it matches the word gloss and word MSA

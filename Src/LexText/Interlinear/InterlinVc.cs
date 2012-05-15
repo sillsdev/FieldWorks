@@ -1488,6 +1488,8 @@ namespace SIL.FieldWorks.IText
 						int flid = 0;
 						if (wmb != null)
 						{
+							vwenv.NoteDependency(new[] { wmb.Hvo }, new[] { WfiMorphBundleTags.kflidMorph }, 1);
+							vwenv.NoteDependency(new[] { wmb.Hvo }, new[] { WfiMorphBundleTags.kflidInflType }, 1);
 							vwenv.NoteDependency(new[] { hvo }, new[] { WfiMorphBundleTags.kflidSense }, 1);
 							if (wmb.SenseRA == null)
 							{
@@ -1500,8 +1502,8 @@ namespace SIL.FieldWorks.IText
 							else
 							{
 								flid = WfiMorphBundleTags.kflidSense;
-								vwenv.NoteDependency(new[] {wmb.Hvo}, new[] {WfiMorphBundleTags.kflidMorph}, 1);
-								if (wmb.MorphRA != null && DisplayLexGlossWithInflType(vwenv, wmb.MorphRA.Owner as ILexEntry, wmb.SenseRA, spec))
+								if (wmb.MorphRA != null &&
+									DisplayLexGlossWithInflType(vwenv, wmb.MorphRA.Owner as ILexEntry, wmb.SenseRA, spec, wmb.InflTypeRA))
 								{
 									break;
 								}
@@ -1546,8 +1548,7 @@ namespace SIL.FieldWorks.IText
 			vwenv.CloseInnerPile();
 		}
 
-		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec,
-			InterlinLineChoices lineChoices, int vernWsContext, out ITsString result)
+		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, InterlinLineChoices lineChoices, int vernWsContext, ILexEntryInflType inflType, out ITsString result)
 		{
 			FdoCache cache = possibleVariant.Cache;
 			using (var vcLexGlossFrag = new InterlinVc(cache))
@@ -1555,12 +1556,14 @@ namespace SIL.FieldWorks.IText
 				vcLexGlossFrag.LineChoices = lineChoices;
 				vcLexGlossFrag.PreferredVernWs = vernWsContext;
 
+
 				result = null;
-				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
-				{
-					RequestAppendSpaceForFirstWordInNewParagraph = false
-				};
-				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec))
+				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor,
+														 possibleVariant.Hvo)
+									{
+										RequestAppendSpaceForFirstWordInNewParagraph = false
+									};
+				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec, inflType))
 				{
 					result = collector.Result;
 					return true;
@@ -1572,19 +1575,24 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// NOTE: this routine is ignorant of calling context, so caller must provide NoteDependency to the possibleVariant and the sense
 		/// (e.g. vwenv.NoteDependency(new[] { wfiMorphBundle.Hvo }, new[] { WfiMorphBundleTags.kflidSense }, 1);
+		///  vwenv.NoteDependency(new[] { wfiMorphBundle.Hvo }, new[] { WfiMorphBundleTags.kflidInflType }, 1);
 		/// </summary>
 		/// <param name="vwenv"></param>
 		/// <param name="possibleVariant"></param>
 		/// <param name="sense"></param>
 		/// <param name="spec"></param>
+		/// <param name="inflType"></param>
 		/// <returns>true if there was anything to display </returns>
-		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec)
+		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec,
+			ILexEntryInflType inflType)
 		{
 			int iLineChoice = m_lineChoices.IndexOf(spec);
 			ILexEntryRef ler;
 			if (possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
 			{
 				var wsPreferred = GetRealWsOrBestWsForContext(sense.Hvo, spec);
+				var wsGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred);
+				var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				var testGloss = sense.Gloss.get_String(wsPreferred);
 				// don't bother adding anything for an empty gloss.
 				if (testGloss.Text != null && testGloss.Text.Length >= 0)
@@ -1599,16 +1607,26 @@ namespace SIL.FieldWorks.IText
 					if (leitFirst != null)
 					{
 						vwenv.OpenInnerPile();
-						ITsIncStrBldr sbPrepend;
-						ITsIncStrBldr sbAppend;
-						JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
-														   out sbAppend);
+						// TODO: add dependency to VariantType GlossPrepend/Append names
+						vwenv.NoteDependency(new[] { ler.Hvo },
+											 new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
 						vwenv.OpenParagraph();
-						// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
-						vwenv.NoteDependency(new[] {ler.Hvo},
-											 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
-						if (sbPrepend.Text != null)
-							vwenv.AddString(sbPrepend.GetString());
+						ITsString tssPrepend = null;
+						if (inflType != null)
+						{
+							tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsGloss, wsUser);
+						}
+						else
+						{
+							ITsIncStrBldr sbPrepend;
+							ITsIncStrBldr sbAppend;
+							JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+															   out sbAppend);
+							if (sbPrepend.Text != null)
+								tssPrepend = sbPrepend.GetString();
+						}
+						if (tssPrepend != null)
+							vwenv.AddString(tssPrepend);
 						else if (m_fRtl)
 							vwenv.AddString(m_tssMissingGlossPrepend);
 						vwenv.CloseParagraph();
@@ -1625,18 +1643,28 @@ namespace SIL.FieldWorks.IText
 					if (leitFirst != null)
 					{
 						vwenv.OpenInnerPile();
-						ITsIncStrBldr sbPrepend;
-						ITsIncStrBldr sbAppend;
-						JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
-														   out sbAppend);
+						// TODO: add dependency to VariantType GlossPrepend/Append names
+						vwenv.NoteDependency(new[] { ler.Hvo },
+											 new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
 						vwenv.OpenParagraph();
-						// TODO: add dependency to VariantType GlossPrepend/Append names, and WfiMorphBundle.InflType
-						vwenv.NoteDependency(new[] {ler.Hvo},
-											 new[] {LexEntryRefTags.kflidVariantEntryTypes}, 1);
-						if (sbAppend.Text != null)
-							vwenv.AddString(sbAppend.GetString());
-						else if (!m_fRtl)
-							vwenv.AddString(m_tssMissingGlossAppend);
+						 ITsString tssAppend = null;
+						 if (inflType != null)
+						 {
+							 tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsGloss, wsUser);
+						 }
+						 else
+						 {
+							 ITsIncStrBldr sbPrepend;
+							 ITsIncStrBldr sbAppend;
+							 JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend,
+																out sbAppend);
+							 if (sbAppend.Text != null)
+								 tssAppend = sbAppend.GetString();
+						 }
+						 if (tssAppend != null)
+							 vwenv.AddString(tssAppend);
+						 else if (!m_fRtl)
+							 vwenv.AddString(m_tssMissingGlossAppend);
 						vwenv.CloseParagraph();
 						vwenv.CloseInnerPile();
 					}

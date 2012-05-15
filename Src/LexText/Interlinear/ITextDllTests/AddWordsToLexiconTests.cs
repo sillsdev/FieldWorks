@@ -236,10 +236,9 @@ namespace SIL.FieldWorks.IText
 						tagIcon = ktagWordPosIcon;
 						break;
 				}
-				List<int> currentMorphs = CurrentMorphs();
 				return InterlinComboHandler.MakeCombo(
 					m_mediator != null ? m_mediator.HelpTopicProvider : null, tagIcon,
-					this, currentMorphs[morphIndex]) as InterlinComboHandler;
+					this, morphIndex) as InterlinComboHandler;
 			}
 
 			internal List<int> GetComboItems(int flid, int morphIndex)

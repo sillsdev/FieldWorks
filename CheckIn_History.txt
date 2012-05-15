@@ -5903,3 +5903,5 @@ RandyR, 12 May 2012. Checked in Flex Bridge 0.3.39.
 EberhardB, 14 May 2012. Integration Calgary/WW -> WW
 KenZ, 14 May 2012. Fixed problem from integration causing Flex to complain about
 	 interface language on every startup.
+EricP, 15 May 2012. (LT-7581) Combo box items for LexGloss line with irregularly
+	inflected form types. Doesn't actually update the real morphbundle yet.

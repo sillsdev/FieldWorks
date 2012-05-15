@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///<param name="wsGloss"></param>
 		///<param name="variantEntryTypes"></param>
 		///<returns></returns>
-		public static ITsString MakeGlossWithReverseAbbrs(IMultiUnicode gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
+		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
 		{
 			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
 				return GetTssGloss(gloss, wsGloss);
@@ -758,28 +758,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="gloss"></param>
 		/// <param name="wsGloss"></param>
 		/// <returns></returns>
-		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiUnicode gloss, IWritingSystem wsGloss)
+		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, IWritingSystem wsGloss)
 		{
 			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
-			if (gloss == null)
+			if (gloss == null || inflVariantEntryType == null)
 				return null;
 
-			ITsString tssGlossPrepend = null;
-			ITsString tssGlossAppend = null;
-			if (inflVariantEntryType != null)
-			{
-				int wsActual1;
-				tssGlossPrepend =
-					inflVariantEntryType.GlossPrepend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
-				tssGlossAppend =
-					inflVariantEntryType.GlossAppend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
-			}
-
-			if ((tssGlossPrepend == null || tssGlossPrepend.Length == 0) &&
-				(tssGlossAppend == null || tssGlossAppend.Length == 0))
-			{
-				return MakeGlossWithReverseAbbrs(gloss, wsGloss, new[]{variantEntryType});
-			}
 			int wsActual2;
 			ITsString tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
 			if (tssGloss.Length == 0)
@@ -788,32 +772,54 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var sb = TsIncStrBldrClass.Create();
 			var cache = inflVariantEntryType.Cache;
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			const string sSeparator = kDefaultSeparatorLexEntryInflTypeGlossAffix;
 
-			if (tssGlossPrepend.Length != 0)
-			{
-				AppendGlossAffix(sb, tssGlossPrepend, true, sSeparator, wsUser);
-			}
+			ITsString tssGlossPrepend = AddTssGlossAffix(sb, inflVariantEntryType.GlossPrepend, wsGloss, wsUser);
 
 			sb.AppendTsString(tssGloss);
 			if (sb.Text.Length == 0)
 				return null; // TODO: add default value for gloss?
 
-			if (tssGlossAppend.Length != 0)
+			ITsString tssGlossAppend = AddTssGlossAffix(sb, inflVariantEntryType.GlossAppend, wsGloss, wsUser);
+
+			if ((tssGlossPrepend == null || tssGlossPrepend.Length == 0) &&
+				(tssGlossAppend == null || tssGlossAppend.Length == 0))
 			{
-				AppendGlossAffix(sb, tssGlossAppend, false, sSeparator, wsUser);
+				return MakeGlossWithReverseAbbrs(gloss, wsGloss, new[] { variantEntryType });
 			}
 
 			return sb.GetString();
 		}
 
-		private static void AddGloss(TsIncStrBldr sb, IMultiUnicode gloss, IWritingSystem wsGloss)
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sb"></param>
+		/// <param name="glossAffixAccessor">GlossPrepend or GlossAppend</param>
+		/// <param name="wsGloss"></param>
+		/// <param name="wsUser"></param>
+		/// <returns></returns>
+		public static ITsString AddTssGlossAffix(TsIncStrBldr sb, IMultiUnicode glossAffixAccessor,
+			IWritingSystem wsGloss, IWritingSystem wsUser)
+		{
+			if (sb == null)
+				sb = TsIncStrBldrClass.Create();
+			int wsActual1;
+			ITsString tssGlossPrepend = glossAffixAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+			if (tssGlossPrepend != null && tssGlossPrepend.Length != 0)
+			{
+				bool isPrepend = (glossAffixAccessor.Flid == LexEntryInflTypeTags.kflidGlossPrepend);
+				AppendGlossAffix(sb, tssGlossPrepend, isPrepend, kDefaultSeparatorLexEntryInflTypeGlossAffix, wsUser);
+			}
+			return tssGlossPrepend;
+		}
+
+		private static void AddGloss(TsIncStrBldr sb, IMultiStringAccessor gloss, IWritingSystem wsGloss)
 		{
 			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
 			sb.AppendTsString(tssGloss);
 		}
 
-		private static ITsString GetTssGloss(IMultiUnicode gloss, IWritingSystem wsGloss)
+		private static ITsString GetTssGloss(IMultiStringAccessor gloss, IWritingSystem wsGloss)
 		{
 			int wsActual;
 			var tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
