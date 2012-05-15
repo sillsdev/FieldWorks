@@ -5910,3 +5910,4 @@ EricP, 15 May 2012. (LT-7581) check in a file missing from last changelist check
 KenZ, 15 May 2012. Fixed to avoid UI question on startup if registry setting is missing.
 GordonM, 15 May 2012. Fix to Dispose problem (& LT-13034).
 KenZ, 15 May 2012. Integrated fix for LT-13082 from 7.2.5 to WW - SFM import duplicating lex refs.
+RandyR, 12 May 2012. Checked in Flex Bridge 0.3.40.
