@@ -102,28 +102,6 @@ namespace SIL.Utils
 	{
 		private static IClipboard s_Clipboard = new ClipboardAdapter();
 
-#if __MonoCS__ // inefficient work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=596402
-			/// ----------------------------------------------------------------------------------------
-			/// <summary>
-			/// Please delete when mono bug https://bugzilla.novell.com/show_bug.cgi?id=596402 is fixed
-			/// </summary>
-			/// ----------------------------------------------------------------------------------------
-			public static string ConvertLiternalUnicodeValues(string text)
-			{
-				Regex rgx = new Regex(@"\\u[0-9a-f]{4}");
-				while(rgx.IsMatch(text))
-				{
-					var literalValue = rgx.Match(text);
-					Debug.Assert(literalValue.Length == 6);
-
-					var num = uint.Parse(literalValue.Value.Substring(2, 4), NumberStyles.AllowHexSpecifier);
-					string nonLiteralValue = String.Format("{0}", (char)num);
-
-					text = text.Replace(literalValue.Value, nonLiteralValue);
-				}
-			   return text;
-			}
-#endif
 		#region ClipboardUtils Manager class
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
@@ -169,11 +147,7 @@ namespace SIL.Utils
 			/// --------------------------------------------------------------------------------
 			public string GetText()
 			{
-#if !__MonoCS__
 				return Clipboard.GetText();
-#else // work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=596402
-				return ConvertLiternalUnicodeValues(Clipboard.GetText());
-#endif
 			}
 
 			/// --------------------------------------------------------------------------------
