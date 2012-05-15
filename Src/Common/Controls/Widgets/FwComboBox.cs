@@ -82,6 +82,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Find the height that will display the full height of all items.
 		/// </summary>
 		int NaturalHeight { get; }
+		/// <summary>
+		/// Returns Control's IsDisposed bool.
+		/// </summary>
+		bool IsDisposed { get; }
 	}
 
 	/// <summary>
@@ -258,7 +262,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					m_comboTextBox.LostFocus -= m_comboTextBox_LostFocus;
 				}
 
-				if (m_dropDownBox != null)
+				if (m_dropDownBox != null && !m_dropDownBox.IsDisposed)
 				{
 					m_dropDownBox.Form.VisibleChanged -= Form_VisibleChanged;
 					m_dropDownBox.Dispose();
@@ -1638,7 +1642,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// If the selection came from choosing in the list box, we need to hide the list
 			// box and focus on the text box.
 			bool fNeedFocus = false;
-			if (ListBox.Form.Visible && !ListBox.KeepDropDownListDuringSelection)
+			if (ListBox.Form != null && ListBox.Form.Visible && !ListBox.KeepDropDownListDuringSelection)
 			{
 				HideDropDownBox();
 				fNeedFocus = true;
