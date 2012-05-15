@@ -5905,3 +5905,4 @@ KenZ, 14 May 2012. Fixed problem from integration causing Flex to complain about
 	 interface language on every startup.
 EricP, 15 May 2012. (LT-7581) Combo box items for LexGloss line with irregularly
 	inflected form types. Doesn't actually update the real morphbundle yet.
+AnnB, 15 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW for SharonC.
