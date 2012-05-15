@@ -534,7 +534,7 @@ namespace SIL.Utils
 						p.Start();
 					}
 				}
-				catch(Exception)
+				catch (Exception)
 				{
 					//swallow it
 				}
@@ -544,9 +544,9 @@ namespace SIL.Utils
 //					System.Diagnostics.Debug.WriteLine(ex.StackTrace);
 //				}
 			}
-			else if(radSelf.Checked)
+			else if (radSelf.Checked)
 			{
-				if(m_emailAddress != null)
+				if (m_emailAddress != null)
 				{
 					m_details.Text = string.Format(ReportingStrings.ksPleaseEMailThisTo0WithThisExactSubject12,
 						m_emailAddress, s_emailSubject, m_details.Text);
@@ -554,12 +554,27 @@ namespace SIL.Utils
 				// Copying to the clipboard works only if thread is STA which is not the case if
 				// called from the Finalizer thread
 				if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+				{
+#if __MonoCS__
+					// Workaround for Xamarin bug #4959. I had a mono fix for that bug
+					// but that doesn't work with FW - I couldn't figure out why not.
+					// This is a dirty hack but at least works :-)
+					var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
+					var clipboard = gtk_clipboard_get(clipboardAtom);
+					if (clipboard != IntPtr.Zero)
+					{
+						gtk_clipboard_set_text(clipboard, m_details.Text, -1);
+						gtk_clipboard_store(clipboard);
+					}
+#else
 					ClipboardUtils.SetDataObject(m_details.Text, true);
+#endif
+				}
 				else
 					Logger.WriteEvent(m_details.Text);
 			}
 
-			if(!m_isLethal || ModifierKeys.Equals(Keys.Shift))
+			if (!m_isLethal || ModifierKeys.Equals(Keys.Shift))
 			{
 				Logger.WriteEvent("Continuing...");
 				return;
@@ -569,6 +584,22 @@ namespace SIL.Utils
 			Logger.WriteEvent("Exiting...");
 			Application.Exit();
 		}
+
+#if __MonoCS__
+		// Workaround for Xamarin bug #4959
+
+		[DllImport("libgdk-x11-2.0")]
+		internal extern static IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static IntPtr gtk_clipboard_get(IntPtr atom);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_store(IntPtr clipboard);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
