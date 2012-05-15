@@ -378,7 +378,7 @@ namespace SIL.FieldWorks
 			{
 				locale = "en";
 			}
-			else
+			else if (locale != "en")
 			{
 				// Check whether the desired locale has a localization, ignoring the
 				// country code if necessary.  Fall back to English ("en") if no
@@ -391,12 +391,13 @@ namespace SIL.FieldWorks
 						locale = locale.Substring(0, idx);
 					if (!rgsLangs.Contains(locale))
 					{
-						locale = "en";
-						if (MessageBox.Show(string.Format(Properties.Resources.kstidFallbackToEnglishUi, args.Locale),
+						if (MessageBox.Show(string.Format(Properties.Resources.kstidFallbackToEnglishUi, locale),
 							Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
 						{
 							return false;
 						}
+						locale = "en";
+						FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, locale);
 					}
 				}
 			}
