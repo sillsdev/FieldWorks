@@ -174,7 +174,7 @@ Field Descriptions
 <meaning app="fw.sil.org" id="func"/>
 </field>
 <!--field sfm="lf" name="Lexical Function and Lexeme" type="string" lang="Vernacular" abbr="true">
-<meaning app="fw.sil.org" id="funold"/>
+<meaning app="fw.sil.org" id="funold" funcWS="en"/>
 </field-->
 <field sfm="ln" name="Lexical function gloss (national)" type="string" lang="National">
 <meaning app="fw.sil.org" id="sires"/>

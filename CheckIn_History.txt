@@ -5909,3 +5909,4 @@ AnnB, 15 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW fo
 EricP, 15 May 2012. (LT-7581) check in a file missing from last changelist checkin (38092).
 KenZ, 15 May 2012. Fixed to avoid UI question on startup if registry setting is missing.
 GordonM, 15 May 2012. Fix to Dispose problem (& LT-13034).
+KenZ, 15 May 2012. Integrated fix for LT-13082 from 7.2.5 to WW - SFM import duplicating lex refs.

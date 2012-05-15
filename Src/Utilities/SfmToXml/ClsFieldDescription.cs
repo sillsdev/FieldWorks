@@ -254,6 +254,12 @@ namespace Sfm2Xml
 			set { m_Type = value; }
 		}
 
+		public string MeaningId
+		{
+			get { return m_meaningId; }
+			set { m_meaningId = value; }
+		}
+
 		public bool IsAbbrField
 		{
 			get { return m_AbbrOrName;}
@@ -303,14 +309,17 @@ namespace Sfm2Xml
 		private void RebuildMeaningEntry(System.Xml.XmlTextWriter xmlOutput, string topAnalysisWS)
 		{
 			m_Meaning = "<meaning app=\"" + m_meaningApp + "\" id=\"" + m_meaningId + "\"";
-			if (IsRef)
+			if (IsRef || MeaningId == "funold")
 			{
 				m_Meaning += " funcWS=\"";
 				if (m_RefFuncWS != string.Empty)
 					m_Meaning += m_RefFuncWS;
 				else
 					m_Meaning += topAnalysisWS;
-				m_Meaning += "\" func=\"" + m_RefFunc + "\"";
+				if (IsRef)
+					m_Meaning += "\" func=\"" + m_RefFunc + "\"";
+				else
+					m_Meaning += "\"";
 			}
 			m_Meaning += "/>";
 			if (xmlOutput != null)
@@ -318,14 +327,15 @@ namespace Sfm2Xml
 				xmlOutput.WriteStartElement("meaning");
 				xmlOutput.WriteAttributeString("app", m_meaningApp);
 				xmlOutput.WriteAttributeString("id", m_meaningId);
-				if (IsRef)
+				if (IsRef || MeaningId == "funold")
 				{
 					if (m_RefFuncWS != string.Empty)
 						xmlOutput.WriteAttributeString("funcWS", m_RefFuncWS);
 					else
 						xmlOutput.WriteAttributeString("funcWS", topAnalysisWS);
 
-					xmlOutput.WriteAttributeString("func", m_RefFunc);
+					if (IsRef)
+						xmlOutput.WriteAttributeString("func", m_RefFunc);
 				}
 				xmlOutput.WriteEndElement();
 			}

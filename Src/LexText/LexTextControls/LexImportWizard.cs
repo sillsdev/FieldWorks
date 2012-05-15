@@ -1597,6 +1597,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					case "lxrel":	// Lexical relation
 					case "cref":	// Cross reference fields
+					case "funold": // Old lexical function field
 						if (data.RefFuncWS == string.Empty)
 							data.RefFuncWS = topAnalysis;	// dont let it be blank for old map files
 						break;
