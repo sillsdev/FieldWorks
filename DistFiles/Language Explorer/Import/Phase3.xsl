@@ -1326,7 +1326,7 @@ DoLexicalRelations
 	  <LexicalRelations>
 		<!-- Do all the lxrel elements -->
 		<xsl:for-each select="lxrel">
-		  <Link wsa="en" abbr="{@func}" wsv="{@ws}" sense="{.}"/>
+		  <Link wsa="{@funcWS}" abbr="{@func}" wsv="{@ws}" sense="{.}"/>
 		</xsl:for-each>
 		<!-- Do all the Function entries -->
 		<xsl:for-each select="Function">
@@ -1339,7 +1339,7 @@ DoLexicalRelations
 		   <xsl:variable name="data"><xsl:value-of select="."/></xsl:variable>
 		   <xsl:variable name="predata"><xsl:value-of select="substring-before($data, '=')"/></xsl:variable>
 		   <xsl:variable name="postdata"><xsl:value-of select="substring-after($data, '=')"/></xsl:variable>
-		   <Link wsa="en" abbr="{user:Trim($predata)}" wsv="{@ws}" sense="{user:Trim($postdata)}"/>
+		   <Link wsa="{@funcWS}" abbr="{user:Trim($predata)}" wsv="{@ws}" sense="{user:Trim($postdata)}"/>
 		</xsl:for-each>
 	  </LexicalRelations>
 	</xsl:if>
@@ -1355,7 +1355,7 @@ DoCrossReferences
 	<xsl:if test="cref or scref or lxrel or Function or funold">
 	  <CrossReferences>
 		<xsl:for-each select="cref | scref | lxrel">
-		  <Link wsa="en" abbr="{@func}" wsv="{@ws}" entry="{.}"></Link>
+		  <Link wsa="{@funcWS}" abbr="{@func}" wsv="{@ws}" entry="{.}"></Link>
 		</xsl:for-each>
 		<!-- Do all the Function entries -->
 		<xsl:for-each select="Function">
@@ -1368,7 +1368,7 @@ DoCrossReferences
 		  <xsl:variable name="data"><xsl:value-of select="."/></xsl:variable>
 		  <xsl:variable name="predata"><xsl:value-of select="substring-before($data, '=')"/></xsl:variable>
 		  <xsl:variable name="postdata"><xsl:value-of select="substring-after($data, '=')"/></xsl:variable>
-		  <Link wsa="en" abbr="{user:Trim($predata)}" wsv="{@ws}" entry="{user:Trim($postdata)}"></Link>
+		  <Link wsa="{@funcWS}" abbr="{user:Trim($predata)}" wsv="{@ws}" entry="{user:Trim($postdata)}"></Link>
 		</xsl:for-each>
 	  </CrossReferences>
    </xsl:if>

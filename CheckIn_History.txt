@@ -194,3 +194,4 @@ NaylorJ, 20 April 2012. Fixed a problem where Tree relations were being duplicat
 NaylorJ, 20 April 2012. Fixed a crash in the new code for Tree relations, empty LexReference objects will no longer cause an issue.
 NaylorJ, 20 April 2012. Integrated WW changeset 37354 into this branch to fix LT-12498.
 ----------------- FW7.2.5 -------------------------------------------------------------------------------
+KenZ, 15 May 2010. Fixed LT-13082 SFM import adding duplicate lexical relations.
