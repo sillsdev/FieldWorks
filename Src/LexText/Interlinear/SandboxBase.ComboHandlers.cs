@@ -285,13 +285,14 @@ namespace SIL.FieldWorks.IText
 			/// <param name="helpTopicProvider">The help topic provider.</param>
 			/// <param name="tagComboIcon">The tag combo icon.</param>
 			/// <param name="sandbox">The sandbox.</param>
-			/// <param name="hvoMorph">The hvo morph.</param>
+			/// <param name="imorph">The index of the morph.</param>
 			/// <returns></returns>
 			/// --------------------------------------------------------------------------------
 			internal static IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider,
-				int tagComboIcon, SandboxBase sandbox, int hvoMorph)
+				int tagComboIcon, SandboxBase sandbox, int imorph)
 			{
-				return MakeCombo(helpTopicProvider, tagComboIcon, sandbox, hvoMorph, null, 0);
+				int hvoSbMorph = sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
+				return MakeCombo(helpTopicProvider, tagComboIcon, sandbox, hvoSbMorph, null, 0);
 			}
 
 			private static IComboHandler MakeCombo(IHelpTopicProvider helpTopicProvider,
@@ -1328,23 +1329,56 @@ namespace SIL.FieldWorks.IText
 			// So, that ill-behaved class has to make its own m_items data member.
 			List<MorphItem> m_morphItems = new List<MorphItem>();
 
+			internal class MorphItemOptions
+			{
+				internal int HvoMoForm;
+				internal int HvoEntry;
+				internal int HvoSense;
+				internal int HvoMsa;
+				internal ILexEntryInflType InflType;
+				internal ILexEntryRef EntryRef;
+				internal ITsString TssName;
+				internal string SenseName;
+				internal string MsaName;
+			}
+
 			internal struct MorphItem : IComparable
 			{
+				/// <summary>
+				/// hvo of the morph form of an entry
+				/// </summary>
 				public int m_hvoMorph;
-				public int m_hvoEntry;
+				/// <summary>
+				/// typically derived from the variant component lexeme
+				/// </summary>
+				public int m_hvoMainEntryOfVariant;
 				public int m_hvoSense;
 				public int m_hvoMsa;
+				public ILexEntryInflType m_inflType;
+				public ILexEntryRef m_entryRef;
 				public ITsString m_name;
 				public string m_nameSense;
 				public string m_nameMsa;
+
+				public MorphItem(MorphItemOptions options)
+					: this(options.HvoMoForm, options.HvoEntry, options.TssName, options.HvoSense, options.SenseName, options.HvoMsa, options.MsaName)
+				{
+					m_inflType = options.InflType;
+					m_entryRef = options.EntryRef;
+					if (m_entryRef != null)
+					{
+						var entry = GetMainEntryOfVariant(m_entryRef);
+						m_hvoMainEntryOfVariant = entry.Hvo;
+					}
+				}
 
 				public MorphItem(int hvoMorph, ITsString tssName)
 					: this(hvoMorph, 0, tssName)
 				{
 				}
 
-				public MorphItem(int hvoMorph, int hvoEntry, ITsString tssName)
-					: this(hvoMorph, hvoEntry, tssName, 0, null, 0, null)
+				public MorphItem(int hvoMorph, int hvoMainEntryOfVariant, ITsString tssName)
+					: this(hvoMorph, hvoMainEntryOfVariant, tssName, 0, null, 0, null)
 				{
 				}
 
@@ -1356,23 +1390,24 @@ namespace SIL.FieldWorks.IText
 				/// <summary>
 				///
 				/// </summary>
-				/// <param name="hvoMorph"></param>
-				/// <param name="hvoEntry">typically the owner of hvoMorph (or 0 if that's the case),
-				/// but for variant specs, this could be hvoMorph's Entry.VariantEntryRef.ComponentLexeme target.</param>
+				/// <param name="hvoMorph">IMoForm (e.g. wmb.MorphRA)</param>
+				/// <param name="hvoMainEntryOfVariant">for variant specs, this is hvoMorph's Entry.VariantEntryRef.ComponentLexeme target, 0 otherwise</param>
 				/// <param name="tssName"></param>
-				/// <param name="hvoSense"></param>
+				/// <param name="hvoSense">ILexSense (e.g. wmb.SensaRA)</param>
 				/// <param name="nameSense"></param>
-				/// <param name="hvoMsa"></param>
+				/// <param name="hvoMsa">IMoMorphSynAnalysis (e.g. wmb.MsaRA)</param>
 				/// <param name="nameMsa"></param>
-				public MorphItem(int hvoMorph, int hvoEntry, ITsString tssName, int hvoSense, string nameSense, int hvoMsa, string nameMsa)
+				public MorphItem(int hvoMorph, int hvoMainEntryOfVariant, ITsString tssName, int hvoSense, string nameSense, int hvoMsa, string nameMsa)
 				{
 					m_hvoMorph = hvoMorph;
-					m_hvoEntry = hvoEntry;
+					m_hvoMainEntryOfVariant = hvoMainEntryOfVariant;
 					m_name = tssName;
 					m_hvoSense = hvoSense;
 					m_nameSense = nameSense;
 					m_hvoMsa = hvoMsa;
 					m_nameMsa = nameMsa;
+					m_inflType = null;
+					m_entryRef = null;
 				}
 
 				/// <summary>
@@ -1386,11 +1421,11 @@ namespace SIL.FieldWorks.IText
 				{
 					var repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 					ILexEntry morphEntryReal = null;
-					if (m_hvoEntry != 0)
+					if (m_hvoMainEntryOfVariant != 0)
 					{
 						// for variant relationships, we want to allow trying to create a
 						// new sense on the entry of which we are a variant.
-						morphEntryReal = repository.GetObject(m_hvoEntry) as ILexEntry;
+						morphEntryReal = repository.GetObject(m_hvoMainEntryOfVariant) as ILexEntry;
 					}
 					else
 					{
@@ -1433,8 +1468,25 @@ namespace SIL.FieldWorks.IText
 					{
 						int compareSenseNames = String.Compare(miX.m_nameSense, miY.m_nameSense);
 						if (compareSenseNames != 0)
+						{
+							// if we have inflectional affix information, order them according to their order in LexEntryRef.VariantEntryTypes.
+							if (miX.m_entryRef != null && miY.m_entryRef != null &&
+								miX.m_entryRef.Hvo == miY.m_entryRef.Hvo)
+							{
+								var commonVariantEntryTypesRs = miX.m_entryRef.VariantEntryTypesRS;
+								int iX = commonVariantEntryTypesRs.IndexOf(miX.m_inflType);
+								int iY = commonVariantEntryTypesRs.IndexOf(miY.m_inflType);
+								if (iX > iY)
+									return 1;
+								if (iX < iY)
+									return -1;
+							}
 							return compareSenseNames;
-						return String.Compare(miX.m_nameMsa, miY.m_nameMsa);
+						}
+
+						var msaCompare = String.Compare(miX.m_nameMsa, miY.m_nameMsa);
+						if (msaCompare != 0)
+							return msaCompare;
 					}
 					// otherwise, try to regroup common lex morphs together.
 					return miX.m_hvoMorph.CompareTo(miY.m_hvoMorph);
@@ -1450,7 +1502,56 @@ namespace SIL.FieldWorks.IText
 				}
 
 				#endregion
+
 			};
+
+			/// <summary>
+			/// Determines if the two MorphItems are based on the same objects, ignoring string values.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="y"></param>
+			/// <returns></returns>
+			bool HaveSameObjs(MorphItem x, MorphItem y)
+			{
+				return x.m_hvoSense == y.m_hvoSense &&
+					   x.m_hvoMainEntryOfVariant == y.m_hvoMainEntryOfVariant &&
+					   x.m_hvoMorph == y.m_hvoMorph &&
+					   x.m_hvoMsa == y.m_hvoMsa &&
+					   x.m_inflType == y.m_inflType &&
+					   x.m_entryRef == y.m_entryRef;
+			}
+
+			static int HvoOrZero(ICmObject co)
+			{
+				return co == null ? 0 : co.Hvo;
+			}
+
+			internal MorphItem CreateCoreMorphItemBasedOnSandboxCurrentState()
+			{
+				var hvoWmb = m_hvoMorph;
+
+				int hvoMorphSense = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphGloss);
+				int hvoInflType = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbNamedObjInflType);
+				ILexEntryInflType inflType = null;
+				if (hvoInflType != 0)
+					inflType = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(m_caches.RealHvo(hvoInflType));
+				int hvoMSA = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphPos);
+				int hvoMorphEntry = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphEntry);
+				var realEntry = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
+
+				var mf = realEntry.LexemeFormOA;
+				ILexSense realSense = null;
+				ILexEntryRef ler = null;
+				if (hvoMorphSense != 0)
+				{
+					realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(m_caches.RealHvo(hvoMorphSense));
+					realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+				}
+
+				//var mi = new MorphItem(options);
+				var mi = GetMorphItem(mf, null, realSense, null, ler, realEntry.Hvo, inflType);
+				return mi;
+			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -1552,26 +1653,29 @@ namespace SIL.FieldWorks.IText
 					BuildMorphItemsFromEntry(mf, parentEntry, null);
 
 					Debug.Assert(parentEntry != null, "MoForm Owner shouldn't be null.");
-					var variantRefs =	from entry in parentEntry.EntryRefsOS
-										where entry.VariantEntryTypesRS != null && entry.VariantEntryTypesRS.Count > 0
-										select entry;
-					foreach (var ler in variantRefs)
+					var variantRefs =	from entryRef in parentEntry.EntryRefsOS
+										where entryRef.VariantEntryTypesRS != null && entryRef.VariantEntryTypesRS.Count > 0
+										select entryRef;
+					// for now, just build morph items for variant EntryRefs having only one component
+					// otherwise, it's ambiguous which component to use to build a WfiAnalysis with.
+					foreach (var ler in variantRefs.Where(ler=>ler.ComponentLexemesRS.Count == 1))
 					{
-						// for now, just build morph items for variant EntryRefs having only one component
-						// otherwise, it's ambiguous which component to use to build a WfiAnalysis with.
-						if (ler.ComponentLexemesRS.Count != 1)
-							continue;
-						IVariantComponentLexeme component = ler.ComponentLexemesRS[0] as IVariantComponentLexeme;
-						ILexEntry entryForMorphBundle = null;
-						if (component.ClassID == LexEntryTags.kClassId)
-							entryForMorphBundle = component as ILexEntry;
-						else if (component.ClassID == LexSenseTags.kClassId)
-							entryForMorphBundle = (component as ILexSense).Entry;
-						BuildMorphItemsFromEntry(mf, entryForMorphBundle, ler);
+						ILexEntry mainEntryOfVariant = GetMainEntryOfVariant(ler);
+						BuildMorphItemsFromEntry(mf, mainEntryOfVariant, ler);
 					}
 				}
 			}
 
+			private static ILexEntry GetMainEntryOfVariant(ILexEntryRef ler)
+			{
+				IVariantComponentLexeme component = ler.ComponentLexemesRS[0] as IVariantComponentLexeme;
+				ILexEntry mainEntryOfVariant = null;
+				if (component.ClassID == LexEntryTags.kClassId)
+					mainEntryOfVariant = component as ILexEntry;
+				else if (component.ClassID == LexSenseTags.kClassId)
+					mainEntryOfVariant = (component as ILexSense).Entry;
+				return mainEntryOfVariant;
+			}
 
 
 			/// <summary>
@@ -1596,28 +1700,57 @@ namespace SIL.FieldWorks.IText
 					int wsActual;
 					tssName = mf.Form.GetAlternativeOrBestTss(m_wsVern, out wsActual);
 				}
-				int wsAnalysis = m_caches.MainCache.DefaultAnalWs;
+				var wsAnalysis = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_caches.MainCache.DefaultAnalWs);
+
 					// Populate morphItems with Sense/Msa level specifics
 				if (le != null)
 				foreach (ILexSense sense in le.AllSenses)
 				{
-					ITsString tssSense = sense.Gloss.get_String(wsAnalysis);
-					if (tssSense.Length == 0)
+					var tssSense = sense.Gloss.get_String(wsAnalysis.Handle);
+					if (ler != null)
+					foreach (var inflType in ler.VariantEntryTypesRS.Where(let => let is ILexEntryInflType).Select(let => let as ILexEntryInflType))
 					{
-						// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
-						tssSense = sense.Definition.get_String(wsAnalysis);
+						var glossAccessor = (tssSense.Length == 0 ? (IMultiStringAccessor) sense.Definition : sense.Gloss);
+						tssSense = MorphServices.MakeGlossOptionWithInflVariantTypes(inflType, glossAccessor, wsAnalysis);
+						var mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, inflType);
+						m_morphItems.Add(mi);
 					}
-
-					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
-					string msaText = null;
-					if (msa != null)
-						msaText = msa.InterlinearName;
-					MorphItem mi = new MorphItem(mf.Hvo, ler != null ? hvoLexEntry : 0, tssName,
-												 sense.Hvo, tssSense.Text, msa != null ? msa.Hvo : 0, msaText);
-					m_morphItems.Add(mi);
+					else
+					{
+						if (tssSense.Length == 0)
+						{
+							// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
+							tssSense = sense.Definition.get_String(wsAnalysis.Handle);
+						}
+						var mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
+						m_morphItems.Add(mi);
+					}
 				}
 				// Make a LexEntry level item
 				m_morphItems.Add(new MorphItem(mf.Hvo, ler != null ? hvoLexEntry : 0, tssName));
+			}
+
+			private static MorphItem GetMorphItem(IMoForm mf, ITsString tssName, ILexSense sense, ITsString tssSense,
+				ILexEntryRef ler, int hvoLexEntry, ILexEntryInflType inflType)
+			{
+				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+				string msaText = null;
+				if (msa != null)
+					msaText = msa.InterlinearName;
+
+				var options = new MorphItemOptions
+				{
+					HvoMoForm = HvoOrZero(mf),
+					HvoEntry = ler != null ? hvoLexEntry : 0,
+					TssName = tssName,
+					HvoSense = HvoOrZero(sense),
+					SenseName = tssSense != null ? tssSense.Text : null,
+					HvoMsa = HvoOrZero(msa),
+					MsaName = msaText,
+					InflType = inflType,
+					EntryRef = ler,
+				};
+				return new MorphItem(options);
 			}
 
 			internal class MorphComboItem : InterlinComboHandlerActionComboItem
@@ -1841,45 +1974,68 @@ namespace SIL.FieldWorks.IText
 					int realHvo = m_sandbox.Caches.RealHvo(sbHvo);
 					if (realHvo <= 0)
 						return base.IndexOfCurrentItem;
-
-					// save the class id
-					var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
-					var co = coRepository.GetObject(realHvo);
-					int classid = co.ClassID;
-					IMoMorphSynAnalysis msa = co as IMoMorphSynAnalysis;
-
+					//int index = ReturnIndexOfMorphItemMatchingCurrentAnalysisLevel(realHvo); // Debug only.
+					var miCurrentSb = CreateCoreMorphItemBasedOnSandboxCurrentState();
 					// Look through our relevant list items to see if we find a match.
 					for (int i = 0; i < m_morphItems.Count; ++i)
 					{
 						MorphItem mi = m_morphItems[i];
-						switch (classid)
-						{
-							case LexSenseTags.kClassId:
-								// See if we match the LexSense
-								if (mi.m_hvoSense == realHvo)
-									return i;
-								break;
-							case LexEntryTags.kClassId:
-								// Otherwise, see if our LexEntry matches MoForm's owner (also a LexEntry)
-								var morph = coRepository.GetObject(mi.m_hvoMorph);
-								var entryReal = morph.Owner as ILexEntry;
-								if (entryReal == co)
-									return i;
-								break;
-							default:
-								// See if we can match on the MSA
-								if (msa != null && mi.m_hvoMsa == realHvo)
-								{
-									// verify the item sense is its owner
-									var ls = coRepository.GetObject(mi.m_hvoSense) as ILexSense;
-									if (msa == ls.MorphoSyntaxAnalysisRA)
-										return i;
-								}
-								break;
-						}
+						if (HaveSameObjs(mi, miCurrentSb))
+							return i;
 					}
+
+					// save the class id
+					//  return ReturnIndexOfMorphItemMatchingCurrentAnalysisLevel(realHvo);
 					return base.IndexOfCurrentItem;
 				}
+			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <param name="realHvo">hvo of current analysis level</param>
+			/// <returns></returns>
+			private int ReturnIndexOfMorphItemMatchingCurrentAnalysisLevel(int realHvo)
+			{
+				var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
+				var co = coRepository.GetObject(realHvo);
+				int classid = co.ClassID;
+				IMoMorphSynAnalysis msa = co as IMoMorphSynAnalysis;
+
+				// Look through our relevant list items to see if we find a match.
+				for (int i = 0; i < m_morphItems.Count; ++i)
+				{
+					MorphItem mi = m_morphItems[i];
+					switch (classid)
+					{
+						case LexSenseTags.kClassId:
+							// See if we match the LexSense
+							if (mi.m_hvoSense == realHvo)
+							{
+								return i;
+							}
+
+							break;
+						case LexEntryTags.kClassId:
+							// Otherwise, see if our LexEntry matches MoForm's owner (also a LexEntry)
+							var morph = coRepository.GetObject(mi.m_hvoMorph);
+							var entryReal = morph.Owner as ILexEntry;
+							if (entryReal == co)
+								return i;
+							break;
+						default:
+							// See if we can match on the MSA
+							if (msa != null && mi.m_hvoMsa == realHvo)
+							{
+								// verify the item sense is its owner
+								var ls = coRepository.GetObject(mi.m_hvoSense) as ILexSense;
+								if (msa == ls.MorphoSyntaxAnalysisRA)
+									return i;
+							}
+							break;
+					}
+				}
+				return base.IndexOfCurrentItem;
 			}
 
 			// This indicates there was a previous real LexEntry recorded. The 'real' subclass
@@ -2445,8 +2601,11 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 				ILexSense senseReal = null;
+				ILexEntryInflType inflType = null;
 				if (mi.m_hvoSense != 0)
 					senseReal = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(mi.m_hvoSense);
+				if (mi.m_inflType != null)
+					inflType = mi.m_inflType;
 				if (fUpdateMorphEntry)
 				{
 					// If we've created something, then updating the sandbox needs to be undone as a unit with it,
@@ -2455,14 +2614,14 @@ namespace SIL.FieldWorks.IText
 					// If we didn't create a sense, we can just let the focus box Undo be discarded.
 					if (m_caches.MainCache.ActionHandlerAccessor.CurrentDepth > 0)
 					{
-						UpdateMorphEntry(morphReal, morphEntryReal, senseReal); // already in UOW, join it
+						UpdateMorphEntry(morphReal, morphEntryReal, senseReal, inflType); // already in UOW, join it
 					}
 					else
 					{
 						// But if we created something in a separate UOW that is now over, we need to make the
 						// focus box action in a new UOW, then merge the two.
 						UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddSense, ITextStrings.ksRedoAddSense, m_caches.MainCache.ActionHandlerAccessor,
-							() => UpdateMorphEntry(morphReal, morphEntryReal, senseReal));
+							() => UpdateMorphEntry(morphReal, morphEntryReal, senseReal, inflType));
 						if (fCreatedSense)
 							((IActionHandlerExtensions)m_caches.MainCache.ActionHandlerAccessor).MergeLastTwoUnitsOfWork();
 					}
@@ -2569,7 +2728,8 @@ namespace SIL.FieldWorks.IText
 			/// Update the sandbox cache to reflect a choice of the real MoForm and the
 			/// entry indicated by the FdoCache hvos passed.
 			/// </summary>
-			internal void UpdateMorphEntry(IMoForm moFormReal, ILexEntry entryReal, ILexSense senseReal)
+			internal void UpdateMorphEntry(IMoForm moFormReal, ILexEntry entryReal, ILexSense senseReal,
+				ILexEntryInflType inflType = null)
 			{
 				CheckDisposed();
 
@@ -2593,10 +2753,11 @@ namespace SIL.FieldWorks.IText
 				// Try to establish the sense.  Call this before SetSelectedEntry and LoadSecDataForEntry.
 				// reset cached gloss, since we should establish the sense according to the real sense or real entry.
 				m_caches.DataAccess.SetObjProp(m_hvoMorph, ktagSbMorphGloss, 0);
-				ILexSense realDefaultSense = m_sandbox.EstablishDefaultSense(m_hvoMorph, entryReal, senseReal);
+				var morphEntry = moFormReal.Owner as ILexEntry;
+				ILexSense realDefaultSense = m_sandbox.EstablishDefaultSense(m_hvoMorph, morphEntry, senseReal, inflType);
 				// Make and install a secondary object to correspond to the real LexEntry.
 				// (The zero says we are not guessing any more, since the user selected this entry.)
-				var morphEntry = moFormReal.Owner as ILexEntry;
+
 				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal != null ? senseReal : realDefaultSense,
 					m_hvoSbWord, m_caches.DataAccess as IVwCacheDa,
 					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor, null);
