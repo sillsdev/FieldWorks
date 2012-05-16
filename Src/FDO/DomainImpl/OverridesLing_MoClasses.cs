@@ -2662,7 +2662,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// <summary>
 	///
 	/// </summary>
-	internal partial class MoInflAffixSlot
+	internal partial class MoInflAffixSlot: IComparable
 	{
 		/// <summary>
 		/// TODO (DamienD): register prop change when dependencies change
@@ -2754,6 +2754,58 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			return tisb.GetString();
 		}
+
+		/// <summary>
+		/// A form that includes the POS name
+		/// </summary>
+		public string LongName
+		{
+			get { return LongNameTSS.Text; }
+		}
+
+		/// <summary>
+		/// Returns the TsString that represents the LongName of this object.
+		/// </summary>
+		public ITsString LongNameTSS
+		{
+			get
+			{
+				var tisb = ShortNameTSS.GetIncBldr();
+				tisb.Append("- ");
+				tisb.Append("[");
+				var owningPOS = this.Owner;
+				tisb.Append(owningPOS.ShortName);
+				tisb.Append("]");
+				return tisb.GetString();
+			}
+		}
+
+	#region IComparable Members
+
+		/// <summary>
+		/// Allow LexEntryType objects to be compared/sorted.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public int CompareTo(object obj)
+		{
+			ILexEntryType that = obj as ILexEntryType;
+			if (that == null)
+				return 1;
+			string s1 = this.SortKey;
+			string s2 = that.SortKey;
+			if (s1 == null)
+				return (s2 == null) ? 0 : 1;
+			else if (s2 == null)
+				return -1;
+			int x = s1.CompareTo(s2);
+			if (x == 0)
+				return this.SortKey2 - that.SortKey2;
+			else
+				return x;
+		}
+
+		#endregion
 	}
 
 	/// <summary></summary>

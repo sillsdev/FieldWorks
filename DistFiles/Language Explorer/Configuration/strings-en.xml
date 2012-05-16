@@ -279,6 +279,8 @@
 		<string id="InflectionFeatureTitle" txt="Choose Inflection Features"/>
 		<string id="InflectionFeaturePrompt" txt="Inflection features for {0}:"/>
 		<string id="InflectionFeatureLink" txt="The inflection feature I need is not shown here.  Add inflection features to {0}."/>
+		<string id="InflectionFeaturesPrompt" txt="All inflection features:"/>
+		<string id="InflectionFeaturesLink" txt="The inflection feature I need is not shown here.  Add inflection features."/>
 	  </group>
 	  <group id="MGA">
 		<string id="ItemConflictDlgMessage" txt="Sorry, but the selected gloss conflicts with '{0}' which has already been inserted."/>

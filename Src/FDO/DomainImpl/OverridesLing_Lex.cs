@@ -3118,6 +3118,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Get all affix slots owned by this part of speech,
+		/// and by any part of speech that owns this one,
+		/// up to the owning list.
+		/// </summary>
+		public IEnumerable<IMoInflAffixSlot> AllAffixSlotsIncludingSubPartsOfSpeech
+		{
+			get
+			{
+				var slots = new SortedSet<IMoInflAffixSlot>(AffixSlotsOC);
+				foreach (var subPos in SubPossibilitiesOS.Cast<PartOfSpeech>())
+				{
+					slots.UnionWith(subPos.AllAffixSlotsIncludingSubPartsOfSpeech);
+				}
+				return slots;
+			}
+		}
+
+		/// <summary>
 		/// Overridden to handle ref props of this class.
 		/// </summary>
 		public override ICmObject ReferenceTargetOwner(int flid)
@@ -7969,7 +7987,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 
 	/// <summary>
-	/// Additional methods needed to support the LexEntryRef class.
+	/// Additional methods needed to support the LexEntryType class.
 	/// </summary>
 	internal partial class LexEntryType : IComparable
 	{
@@ -7999,6 +8017,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Additional methods needed to support the LexEntryInflType class.
+	/// </summary>
+	internal partial class LexEntryInflType
+	{
+		/// <summary>
+		/// Get a set of hvos that are suitable for targets to a reference property.
+		/// Subclasses should override this method to return a sensible list of IDs.
+		/// </summary>
+		/// <param name="flid">The reference property that can store the IDs.</param>
+		/// <returns>A set of hvos.</returns>
+		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+		{
+			switch (flid)
+			{
+				case LexEntryInflTypeTags.kflidSlots:
+					return DomainObjectServices.GetAllSlots(Cache).Cast<ICmObject>();
+				default:
+					return base.ReferenceTargetCandidates(flid);
+			}
+		}
 	}
 
 	internal partial class LexEtymology

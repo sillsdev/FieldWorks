@@ -5911,3 +5911,4 @@ KenZ, 15 May 2012. Fixed to avoid UI question on startup if registry setting is 
 GordonM, 15 May 2012. Fix to Dispose problem (& LT-13034).
 KenZ, 15 May 2012. Integrated fix for LT-13082 from 7.2.5 to WW - SFM import duplicating lex refs.
 RandyR, 12 May 2012. Checked in Flex Bridge 0.3.40.
+Andy Black, 16 May 2012.  UI editing part of LT-7581 "Have parser know about inflectional variant entries"

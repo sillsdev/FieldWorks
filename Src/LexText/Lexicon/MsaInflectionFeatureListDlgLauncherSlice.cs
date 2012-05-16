@@ -12,8 +12,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	public class MsaInflectionFeatureListDlgLauncherSlice : Slice
 	{
 		private System.ComponentModel.IContainer components = null;
-		IFsFeatStruc m_fs;
-		int m_flid;
+		protected IFsFeatStruc m_fs;
+		protected int m_flid;
 
 		public MsaInflectionFeatureListDlgLauncherSlice()
 		{
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private static int GetFlid(XmlNode node, ICmObject obj)
+		protected static int GetFlid(XmlNode node, ICmObject obj)
 		{
 			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			int flid = 0;
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return flid;
 		}
 
-		private static IFsFeatStruc GetFeatureStructureFromMSA(ICmObject obj, int flid)
+		protected static IFsFeatStruc GetFeatureStructureFromMSA(ICmObject obj, int flid)
 		{
 			//IFsFeatStruc fs = obj.GetObjectInAtomicField(flid) as IFsFeatStruc;
 			IFsFeatStruc fs = obj.Cache.GetAtomicPropObject(obj.Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid)) as IFsFeatStruc;
@@ -195,6 +195,55 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				CheckDisposed();
 				return m_flid;
 			}
+		}
+	}
+
+	public class FeatureSystemInflectionFeatureListDlgLauncherSlice : MsaInflectionFeatureListDlgLauncherSlice
+	{
+		public FeatureSystemInflectionFeatureListDlgLauncherSlice()
+			: base()
+		{
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="parent"></param>
+		public override void Install(DataTree parent)
+		{
+			CheckDisposed();
+
+			base.Install(parent);
+
+			FeatureSystemInflectionFeatureListDlgLauncher ctrl = (FeatureSystemInflectionFeatureListDlgLauncher)Control;
+
+			m_flid = GetFlid(m_configurationNode, m_obj);
+			if (m_flid != 0)
+				m_fs = GetFeatureStructureFromMSA(m_obj, m_flid);
+			else
+			{
+				m_fs = m_obj as IFsFeatStruc;
+				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
+			}
+
+			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+				m_fs,
+				m_flid,
+				"Name",
+				ContainingDataTree.PersistenceProvder,
+				Mediator,
+				"Name",
+				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+		}
+
+		/// <summary>
+		/// This method, called once we have a cache and object, is our first chance to
+		/// actually create the embedded control.
+		/// </summary>
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			Control = new FeatureSystemInflectionFeatureListDlgLauncher();
 		}
 	}
 }

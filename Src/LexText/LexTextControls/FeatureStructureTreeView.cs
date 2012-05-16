@@ -55,6 +55,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public void PopulateTreeFromInflectableFeat(IFsFeatDefn defn)
+		{
+			CheckDisposed();
+
+			AddNode(defn, null);
+		}
+
 		public void PopulateTreeFromFeatureStructure(IFsFeatStruc fs)
 		{
 			CheckDisposed();
