@@ -274,6 +274,7 @@ namespace SIL.Utils
 			this.MinimizeBox = false;
 			this.Name = "ErrorReporter";
 			this.ShowIcon = false;
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -461,12 +462,12 @@ namespace SIL.Utils
 			//
 			InitializeComponent();
 
+			SetDialogStringsSoLocatilizationWorks();
+
 			m_viewDetailsOriginalText = viewDetailsLink.Text;
 			m_originalHeightWithoutDetails = Height - m_details.Height - 10;
 			m_originalHeight = Height;
 			m_originalMinSize = MinimumSize;
-
-			SetDialogStringsSoLocatilizationWorks();
 
 			if (m_fUserReport)
 			{
@@ -492,9 +493,7 @@ namespace SIL.Utils
 				btnClose.Enabled = false;
 			}
 
-			var show = s_showDetails; // should it be showing?
 			s_showDetails = true; // the resource-file state of the dialog is showing.
-			ShowDetails(show); // put everything in the desired state.
 
 			if (m_emailAddress == null)
 			{
@@ -542,7 +541,7 @@ namespace SIL.Utils
 			}
 
 			detailsText.AppendLine("Additional information about the computer and project:");
-			foreach(string label in s_properties.Keys )
+			foreach (string label in s_properties.Keys)
 				detailsText.AppendLine(label + ": " + s_properties[label]);
 
 			if (innerMostException != null)
@@ -628,6 +627,14 @@ namespace SIL.Utils
 		private bool m_fSuggestion;
 
 		#region Event Handlers
+		/// <summary/>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			// Initially hide the details
+			ShowDetails(false);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -658,28 +665,6 @@ namespace SIL.Utils
 					radSelf.Checked = true;
 					return;
 				}
-
-				//try
-				//{
-				//    // WARNING! This currently does not work. The main issue seems to be the length of the error report. mailto
-				//    // apparently has some limit on the length of the message, and we are exceeding that.
-				//    //make it safe, but does too much (like replacing spaces with +'s)
-				//    //string s = System.Web.HttpUtility.UrlPathEncode( m_details.Text);
-				//    string body = m_details.Text.Replace(Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
-
-				//    Process p = new Process();
-				//    p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
-				//    p.Start();
-				//}
-				//catch(Exception)
-				//{
-				//    //swallow it
-				//}
-//				catch(Exception ex)
-//				{
-//					System.Diagnostics.Debug.WriteLine(ex.Message);
-//					System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-//				}
 			}
 			else if(radSelf.Checked)
 			{
@@ -777,24 +762,13 @@ namespace SIL.Utils
 			ShowDetails(!s_showDetails);
 		}
 
-		void ShowDetails(bool show)
+		private void ShowDetails(bool show)
 		{
 			viewDetailsLink.Text = show ? ReportingStrings.ksHideDetails : m_viewDetailsOriginalText;
 			if (s_showDetails == show)
 				return; // already in desired state!
 			s_showDetails = show;
 			m_details.Visible = show;
-			// Not currently necessary, all the relevant controls are anchored bottom.
-			//foreach (Control c in Controls)
-			//{
-			//    if (c.Top > m_details.Top)
-			//    {
-			//        if (show)
-			//            c.Top += m_details.Height;
-			//        else
-			//            c.Top -= m_details.Height;
-			//    }
-			//}
 			if (show)
 			{
 				Height = m_originalHeight;
