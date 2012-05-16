@@ -85,6 +85,7 @@
 	</Reference>
 	<Reference Include="FdoUi, Version=7.0.1.19899, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
 	</Reference>
 	<Reference Include="FwControls, Version=6.1.1.19925, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
