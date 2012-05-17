@@ -383,6 +383,7 @@ namespace SIL.FieldWorks.IText
 					var msaRepository = fdoCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 					var mfRepository = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>();
 					var senseRepository = fdoCache.ServiceLocator.GetInstance<ILexSenseRepository>();
+					var inflTypeRepository = fdoCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>();
 					for (int imorph = 0; imorph < m_cmorphs; imorph++)
 					{
 						IWfiMorphBundle mb;
@@ -433,7 +434,11 @@ namespace SIL.FieldWorks.IText
 						if (m_analysisSenses[imorph] != 0)
 						{
 							mb.SenseRA = senseRepository.GetObject(m_analysisSenses[imorph]);
+							// set the InflType if we have one.
+							var hvoSbInflType = GetRealHvoFromSbWmbInflType(imorph);
+							mb.InflTypeRA = hvoSbInflType != 0 ? inflTypeRepository.GetObject(hvoSbInflType) : null;
 						}
+
 					}
 				}
 				else if (fWordGlossLineIsShowing) // If the line is not showing at all, don't bother.
@@ -1032,6 +1037,14 @@ namespace SIL.FieldWorks.IText
 					fCheck = fExactMatch || hvoSense != 0;
 					if (fCheck && hvoSense != m_analysisSenses[imorph])
 						return false;
+					// check InflType setting
+					{
+						int hvoSbInflType = GetRealHvoFromSbWmbInflType(imorph);
+						var hvoRealInflType = m_sdaMain.get_ObjectProp(hvoMb, WfiMorphBundleTags.kflidInflType);
+						if (hvoRealInflType != hvoSbInflType)
+							return false;
+					}
+
 					// and finally the right form...either by pointing to a MoForm in its Morph property,
 					// or by actually storing the string in its Form property.
 					if (m_analysisMorphs[imorph] == 0)
@@ -1062,6 +1075,12 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 				return true;
+			}
+
+			private int GetRealHvoFromSbWmbInflType(int imorph)
+			{
+				var hvoSbMorph = m_sda.get_VecItem(m_hvoSbWord, ktagSbWordMorphs, imorph);
+				return m_caches.RealHvo(m_sda.get_ObjectProp(hvoSbMorph, ktagSbNamedObjInflType));
 			}
 		}
 	}
