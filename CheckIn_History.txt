@@ -5914,3 +5914,4 @@ RandyR, 12 May 2012. Checked in Flex Bridge 0.3.40.
 Andy Black, 16 May 2012.  UI editing part of LT-7581 "Have parser know about inflectional variant entries"
 EricP, 17 May 2012. (LT-7581) confirm WfiMorphBundle.InflType changes in FocusBox
 EricP, 18 May 2012. (LT-7581) enable FocusBox Variant of... dialog to respect LexEntryInflType choices.
+Lastufkam, 11 May 2012. Was going for LT-12877 but this really fixes a piping bug.

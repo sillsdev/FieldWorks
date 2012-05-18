@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -65,6 +64,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="command">obtain, start, send_receive, view_notes</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
+		/// <returns>true if successful, false otherwise</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ServiceHost gets disposed in KillTheHost()")]
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command,
@@ -83,14 +83,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 				_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
 			}
 			AddArg(ref args, "-v", command);
+			if (conflictHost != null)
+			{
+				return false;
+			}
+
+			// make a new FLExBridge
 			ServiceHost host = null;
 			try
 			{
 				host = new ServiceHost(typeof(FLExBridgeService),
-												   new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName) });
+					new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName) });
 
 				//open host ready for business
-				host.AddServiceEndpoint(typeof(IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
+				host.AddServiceEndpoint(typeof (IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
 				host.Open();
 			}
 			catch (InvalidOperationException) // Can happen if Conflict Report is open and we try to run FLExBridge again.
@@ -102,6 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			//Start up a thread to wait until the bridge work is completed.
 			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
 			waitOnBridgeThread.Start();
+			//Launch the bridge process.
 			if (command == ConflictViewer)
 			{
 				LaunchConflictViewer(args); // launching separately here avoids blocking FLEx while viewer is open.
@@ -127,13 +134,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void KillTheHost(ServiceHost host)
 		{
 			// Let the service host cleanup happen in another thread so the user can get on with life.
-			Thread letTheHostDie = new Thread(() => { host.Close(); ((IDisposable)host).Dispose(); });
+			Thread letTheHostDie = new Thread(() =>
+												{
+													try
+													{
+														host.Close();
+														((IDisposable) host).Dispose();
+													}
+													catch(Exception)
+													{
+														//we don't care anymore, just die.
+													}
+												});
 			letTheHostDie.Start();
 		}
 
 		private static void LaunchConflictViewer(string args)
 		{
-			using (Process.Start(FullFieldWorksBridgePath(), args)) {} // don't bother with all the pipes for the Conflict Report
+			using (Process.Start(FullFieldWorksBridgePath(), args))
+			{   // don't bother with all the pipes for the Conflict Report
+			}
 		}
 
 		/// <summary>
@@ -170,13 +190,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void BeginEmergencyExitChute()
 		{
-			using (var factory = new ChannelFactory<IFLExServiceChannel>(new NetNamedPipeBinding(),
-				new EndpointAddress("net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe")))
-			{
-				var channelClient = factory.CreateChannel();
-				channelClient.OperationTimeout = TimeSpan.MaxValue;
-				channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
-			}
+			var factory = new ChannelFactory<IFLExServiceChannel>
+				(new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe"));
+			var channelClient = factory.CreateChannel();
+			channelClient.OperationTimeout = TimeSpan.MaxValue;
+			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
 		}
 
 		private static void AddArg(ref string extant, string flag, string value)
@@ -228,7 +246,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				_receivedChanges = changesReceived;
 				AlertFLEx();
 				if (conflictHost != null)
-					KillTheHost((ServiceHost)conflictHost);
+				{
+					KillTheHost((ServiceHost) conflictHost);
+					conflictHost = null;
+				}
 			}
 
 			public void BridgeReady()
@@ -328,7 +349,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			finally
 			{
 				if (conflictHost != null)
-					KillTheHost((ServiceHost)conflictHost);
+				{
+					KillTheHost((ServiceHost) conflictHost);
+					conflictHost = null;
+				}
 				Monitor.Exit(waitObject);
 			}
 		}
