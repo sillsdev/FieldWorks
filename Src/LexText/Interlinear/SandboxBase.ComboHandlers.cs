@@ -2703,12 +2703,17 @@ namespace SIL.FieldWorks.IText
 							// if we didn't have a starting entry, create one now.
 							ILexEntry variantResult = variantEntryRef.Owner as ILexEntry;
 							int classOfSelectedId = dlg.SelectedObject.ClassID;
+							int hvoVariantType = dlg.SelectedVariantEntryTypeHvo;
+							ILexEntryInflType inflType = null;
+							m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().
+									TryGetObject(hvoVariantType, out inflType);
+
 							// we need to create a new LexEntryRef.
 							ILexEntry morphBundleEntry = dlg.SelectedObject as ILexEntry;
 							ILexSense morphBundleSense = dlg.SelectedObject as ILexSense;
 							if (morphBundleSense != null)
 								morphBundleEntry = morphBundleSense.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
-							UpdateMorphEntry(variantResult.LexemeFormOA, morphBundleEntry, morphBundleSense);
+							UpdateMorphEntry(variantResult.LexemeFormOA, morphBundleEntry, morphBundleSense, inflType);
 						}
 					}
 
