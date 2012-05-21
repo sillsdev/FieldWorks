@@ -826,5 +826,26 @@ namespace SIL.FieldWorks.XWorks
 			}
 			writer.WriteLine("</Field>");
 		}
+
+		/// <summary>
+		/// Allows process to find an appropriate root hvo and change the current root.
+		/// Subclasses (like this one) can override.
+		/// </summary>
+		/// <param name="cmo"></param>
+		/// <param name="clidRoot"></param>
+		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
+		protected override int SetRoot(ICmObject cmo, out int clidRoot)
+		{
+			if (cmo is IRnGenericRec) // this ought to be the case
+			{
+				var hvoRoot = -1;
+				// Need to find the main notebook object.
+				var notebk = m_cache.LanguageProject.ResearchNotebookOA;
+				clidRoot = notebk.ClassID;
+				return notebk.Hvo;
+			}
+			// just for saftey
+			return base.SetRoot(cmo, out clidRoot);
+		}
 	}
 }
