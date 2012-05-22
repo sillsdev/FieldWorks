@@ -5918,3 +5918,5 @@ Lastufkam, 11 May 2012. Was going for LT-12877 but this really fixes a piping bu
 AnnB, 18 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW for SharonC.
 EricP, 22, 2012. LT-7581. Fixed export interlinear issue for the gloss of a variant morpheme.
 	Also staged some changes to enhance Interlinear Export to include glossAppend info.
+Andy Black, 16 May 2012.  Fix LT-13273 "Hermit Crab: lexicon for PC-PATR does not properly
+	 combine clitic "from parts of speech" into a single feature descriptor"
