@@ -15,10 +15,10 @@ Global Settings
 Language Definitions
 =====================================================================-->
 <languages>
-<langDef id="English" xml:lang="en" map="Windows1252&lt;&gt;Unicode"/>
-<langDef id="Vernacular" xml:lang ="Vernacular" map="Windows1252&lt;&gt;Unicode"/>
-<langDef id="Regional" xml:lang ="ignore" map="Windows1252&lt;&gt;Unicode"/>
-<langDef id="National" xml:lang ="ignore" map="Windows1252&lt;&gt;Unicode"/>
+<langDef id="English" xml:lang="en"/>
+<langDef id="Vernacular" xml:lang ="Vernacular"/>
+<langDef id="Regional" xml:lang ="ignore"/>
+<langDef id="National" xml:lang ="ignore"/>
 </languages>
 
 <!--=====================================================================
