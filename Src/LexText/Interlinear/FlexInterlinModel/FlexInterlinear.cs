@@ -994,6 +994,9 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		gls,
 
 		/// <remarks/>
+		glsAppend,
+
+		/// <remarks/>
 		msa,
 
 		/// <remarks/>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Xml;
 using System.IO;
 using System.Xml.Schema;
@@ -106,6 +107,38 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
+			public void ExportBasicInformation()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				string formLexEntry = "went";
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+				pa.BreakIntoMorphs(0, 1, new ArrayList{ leGo.LexemeFormOA });
+				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//word[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='go.PST']", 1);
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 0);
+			}
+
+			[Test]
 			public void ExportVariantTypeInformation_LT9374()
 			{
 				m_choices.Add(InterlinLineChoices.kflidWord);
@@ -121,16 +154,72 @@ namespace SIL.FieldWorks.IText
 
 				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
 				string formLexEntry = "go";
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
-					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.pst", null);
-				pa.SetVariantOf(0, 1, leGo, "fr. var.");
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+				var freeVarType =
+					Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+				freeVarType.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
+				pa.SetVariantOf(0, 1, leGo, freeVarType);
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 
-				AssertThatXmlIn.Dom(exportedDoc).HasAtLeastOneMatchForXpath("//morph/item[@type=\"cf\"]");
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//word[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='go']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='variantTypes']='+fr. var.']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='go.PST']", 1);
+			}
 
+			[Test]
+			[Ignore("to enable soon.")]
+			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
+				string formLexEntry = "go";
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+				var pastVar =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+				pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
+
+				pa.SetVariantOf(0, 1, leGo, pastVar);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='go']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='glossgo']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='glsAppend']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='glsAppend']='.pst']", 1);
+
+				// variantTypes item isn't really needed since it is empty, but don't see any harm in keeping it.
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='variantTypes']='']", 1);
+			}
+
+			[Test]
+			[Ignore("to enable soon.")]
+			public void ExportIrrInflVariantTypeInformation_LT7581_glsPrepend()
+			{
 			}
 
 

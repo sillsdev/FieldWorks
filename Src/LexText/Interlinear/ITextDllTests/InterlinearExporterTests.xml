@@ -2,7 +2,7 @@
 <Texts6001>
 	<Text id="">
 		<Name5>
-			<AUni ws="xkal">Test Text1 for InterlinearExporterTexts</AUni>
+			<AUni ws="qaa-x-kal">Test Text1 for InterlinearExporterTexts</AUni>
 		</Name5>
 		<Description5>
 			<AStr ws="en">
@@ -15,14 +15,14 @@
 					<StTxtPara id="">
 						<Contents16>
 							<Str>
-								<Run ws="qaa-x-xkal">Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.</Run>
+								<Run ws="qaa-x-kal">Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.</Run>
 							</Str>
 						</Contents16>
 					</StTxtPara>
 		  <StTxtPara id="">
 			<Contents16>
 			  <Str>
-				<Run ws="qaa-x-xkal">go went gone</Run>
+				<Run ws="qaa-x-kal">go went gone</Run>
 			  </Str>
 			</Contents16>
 		  </StTxtPara>

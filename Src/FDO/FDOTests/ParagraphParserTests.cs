@@ -507,20 +507,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="iSegment"></param>
 			/// <param name="iSegForm"></param>
 			/// <param name="leMain"></param>
-			/// <param name="variantTypeRevAbbr"></param>
+			/// <param name="variantType"></param>
 			/// <returns>hvo of the resulting LexEntryRef</returns>
-			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, string variantTypeRevAbbr)
+			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, ILexEntryType variantType)
 			{
-				ILexEntryType variantType = null;
-				foreach (ILexEntryType let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
-				{
-					if (let.ReverseAbbr.AnalysisDefaultWritingSystem.Text == variantTypeRevAbbr)
-					{
-						variantType = let;
-						break;
-					}
-				}
-
+				if (variantType == null)
+					throw new ArgumentNullException("requires non-null variantType parameter.");
 				// for now, just create the variant entry and the variant of target, treating the wordform as monomorphemic.
 				ITsString tssVariantLexemeForm = GetBaselineText(iSegment, iSegForm);
 				ILexEntryRef ler = leMain.CreateVariantEntryAndBackRef(variantType, tssVariantLexemeForm);
@@ -528,6 +520,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ArrayList morphs = new ArrayList(1);
 				morphs.Add(variant.LexemeFormOA);
 				BreakIntoMorphs(iSegment, iSegForm, morphs);
+				ILexEntry mainEntry;
+				ILexSense mainSense;
+				MorphServices.GetMainEntryAndSenseStack(ler.ComponentLexemesRS.First() as IVariantComponentLexeme, out mainEntry, out mainSense);
+				SetMorphSense(iSegment, iSegForm, 0, mainSense);
 				return ler;
 			}
 
@@ -712,7 +708,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Creates a new analysis with the given MoForms belonging to the wordform currently
 			/// at the given position and inserts it into the segment's analysis in place of the wordform.
 			/// </summary>
-			virtual internal IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			virtual public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				var actualAnalysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -742,7 +738,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return actualWfiAnalysis;
 			}
 
-			virtual internal IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
+			virtual public IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
 			{
 				var analysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -842,7 +838,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return wfAlternateCase;
 			}
 
-			override internal IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			override public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				IWfiAnalysis wfiAnalysis = base.BreakIntoMorphs(iSegment, iSegForm, moForms);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfiAnalysis.Hvo);

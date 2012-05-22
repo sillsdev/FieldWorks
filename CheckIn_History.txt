@@ -5916,3 +5916,5 @@ EricP, 17 May 2012. (LT-7581) confirm WfiMorphBundle.InflType changes in FocusBo
 EricP, 18 May 2012. (LT-7581) enable FocusBox Variant of... dialog to respect LexEntryInflType choices.
 Lastufkam, 11 May 2012. Was going for LT-12877 but this really fixes a piping bug.
 AnnB, 18 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW for SharonC.
+EricP, 22, 2012. LT-7581. Fixed export interlinear issue for the gloss of a variant morpheme.
+	Also staged some changes to enhance Interlinear Export to include glossAppend info.

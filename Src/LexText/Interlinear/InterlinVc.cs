@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.IText
 		// specs as have the same flid.
 		internal const int kfragSegFfChoices = 1005000;
 		// Constants used to identify 'fake' properties to DisplayVariant.
-		//internal const int ktagAnalysisSummary = -50;
+		internal const int ktagGlossAppend = -50;
 		//internal const int ktagAnalysisMissing = -51;
 		//internal const int ktagSummary = -52;
 		internal const int ktagBundleMissingSense = -53;
@@ -131,6 +131,7 @@ namespace SIL.FieldWorks.IText
 		ITsString m_tssEmptyPara;
 		ITsString m_tssSpace;
 		ITsString m_tssCommaSpace;
+		ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		int m_mpBundleHeight = 0; // millipoint height of interlinear bundle.
 		bool m_fShowMorphBundles = true;
 		bool m_fRtl = false;
@@ -1627,8 +1628,6 @@ namespace SIL.FieldWorks.IText
 						}
 						if (tssPrepend != null)
 							vwenv.AddString(tssPrepend);
-						else if (m_fRtl)
-							vwenv.AddString(m_tssMissingGlossPrepend);
 						vwenv.CloseParagraph();
 						vwenv.CloseInnerPile();
 					}
@@ -1661,10 +1660,23 @@ namespace SIL.FieldWorks.IText
 							 if (sbAppend.Text != null)
 								 tssAppend = sbAppend.GetString();
 						 }
-						 if (tssAppend != null)
-							 vwenv.AddString(tssAppend);
-						 else if (!m_fRtl)
-							 vwenv.AddString(m_tssMissingGlossAppend);
+						{
+							// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+							// this allows InterlinearExporter to know to export a glsAppend item
+							try
+							{
+								if (tssAppend != null)
+									m_tssPendingGlossAffix = tssAppend;
+								else
+									m_tssPendingGlossAffix = m_tssMissingGlossAppend;
+
+								vwenv.AddProp(ktagGlossAppend, this, 0);
+							}
+							finally
+							{
+								m_tssPendingGlossAffix = null;
+							}
+						}
 						vwenv.CloseParagraph();
 						vwenv.CloseInnerPile();
 					}
@@ -2122,6 +2134,11 @@ namespace SIL.FieldWorks.IText
 				bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
 				bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
 				return bldr.GetString();
+			}
+			if (tag == ktagGlossAppend)
+			{
+				// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
+				return m_tssPendingGlossAffix;
 			}
 			switch(frag)
 			{

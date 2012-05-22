@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.IText
 		bool m_fAwaitingHeadwordForm = false; // true after start of headword until we get a string alt.
 		bool m_fDoingMorphType = false; // true during display of MorphType of MoForm.
 		bool m_fDoingInterlinName = false; // true during MSA
+		bool m_fDoingGlossAppend = false; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
 		ITsString m_tssPendingHomographNumber;
@@ -346,6 +347,14 @@ namespace SIL.FieldWorks.IText
 				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
 				m_writer.WriteAttributeString("lang", icuCode);
 			}
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			{
+				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
+				{
+					OpenItem("gls");
+				}
+			}
 			base.AddObj (hvoItem, vc, frag);
 			if (frag == (int)SIL.FieldWorks.FdoUi.VcFrags.kfragHeadWord)
 			{
@@ -359,6 +368,38 @@ namespace SIL.FieldWorks.IText
 				CloseItem();
 				m_fDoingVariantTypes = false;
 			}
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			{
+				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
+				{
+					CloseItem();
+				}
+			}
+		}
+
+		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
+		{
+			if (tag == InterlinVc.ktagGlossAppend)
+			{
+				m_fDoingGlossAppend = true;
+			}
+			base.AddProp(tag, vc, frag);
+			if (tag == InterlinVc.ktagGlossAppend)
+			{
+				m_fDoingGlossAppend = false;
+			}
+
+		}
+
+		public override void AddTsString(ITsString tss)
+		{
+			/* to enable soon
+			 *
+			if (m_fDoingGlossAppend)
+				WriteItem("glsAppend", tss);
+			 */
+			base.AddTsString(tss);
 		}
 
 		public override void AddString(ITsString tss)
