@@ -881,7 +881,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				if (disposing)
 				{
 					// Dispose managed resources here.
-					Clear();
+					ClearAllItems();
 				}
 
 				// Dispose unmanaged resources here, whether disposing is true or false.
@@ -1014,14 +1014,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				CheckDisposed();
 
 				int citems = m_list.Count;
-				for (int i = 0; i < citems; i++)
-				{
-					// Dispose items
-					var disposable = m_list[i] as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-				}
-				m_list.Clear();
+				ClearAllItems();
 				var cda = m_owner.DataAccess as IVwCacheDa;
 				if (cda == null)
 					return; // This can happen, when this is called when 'disposing' is false.
@@ -1037,6 +1030,18 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_owner.SelectedIndex = -1;
 
 				Debug.Assert(m_owner.DataAccess.get_VecSize(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems) == 0);
+			}
+
+			private void ClearAllItems()
+			{
+				foreach (object obj in m_list)
+				{
+					// Dispose items
+					var disposable = obj as IDisposable;
+					if (disposable != null)
+						disposable.Dispose();
+				}
+				m_list.Clear();
 			}
 
 			/// ------------------------------------------------------------------------------------

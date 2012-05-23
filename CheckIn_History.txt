@@ -5921,3 +5921,7 @@ EricP, 22, 2012. LT-7581. Fixed export interlinear issue for the gloss of a vari
 Andy Black, 16 May 2012.  Fix LT-13273 "Hermit Crab: lexicon for PC-PATR does not properly
 	 combine clitic "from parts of speech" into a single feature descriptor"
 KenZ, 22 May 2012. Added FB 0.3.41installer from Randy.
+DamienD, 23 May 2012. LT-13027: Crash creating -infix- Lexical Entry with attaches to specified,
+	LT-13173: FLEx complains when making a new entry in interlinear, LT-13218: crash after deleting
+	variant type from Entry and switching to another area, LT-13196: Crash adding a new sense in the
+	interlinear (affixes?)
