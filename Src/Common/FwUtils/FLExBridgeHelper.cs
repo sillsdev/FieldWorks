@@ -49,6 +49,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
 		private static object waitObject = new object();
+		private static bool flexBridgeTerminated;
 		private static object conflictHost;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
@@ -70,6 +71,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command,
 			out bool changesReceived, out string projectName)
 		{
+			flexBridgeTerminated = false;
 			changesReceived = false;
 			string args = "";
 			projectName = "";
@@ -105,9 +107,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					((IDisposable)host).Dispose();
 				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
 			}
-			//Start up a thread to wait until the bridge work is completed.
-			Thread waitOnBridgeThread = new Thread(WaitOnBridgeMethod);
-			waitOnBridgeThread.Start();
+
 			//Launch the bridge process.
 			if (command == ConflictViewer)
 			{
@@ -121,8 +121,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 				}
 				Cursor.Current = Cursors.WaitCursor;
-				//Join the thread so that messages are still pumped but we halt until FieldworksBridge awakes us.
-				waitOnBridgeThread.Join();
+
+				// Pause UI thread until FLEx Bridge terminates:
+				Monitor.Enter(waitObject);
+				if (flexBridgeTerminated == false)
+					Monitor.Wait(waitObject, -1);
+				Monitor.Exit(waitObject);
+
 				projectName = _projectName;
 				changesReceived = _receivedChanges;
 				Cursor.Current = Cursors.Default;
@@ -153,38 +158,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			using (Process.Start(FullFieldWorksBridgePath(), args))
 			{   // don't bother with all the pipes for the Conflict Report
-			}
-		}
-
-		/// <summary>
-		/// This method will block and do nothing until it is notified that the bridge has exited (normally or abnormally)
-		/// </summary>
-		private static void WaitOnBridgeMethod()
-		{
-			Monitor.Enter(waitObject); //claim\acquire the lock on the waitObject no other threads may acquire a lock until it is released
-			try
-			{
-				//wait until we are notified that the bridge is listening.
-				Monitor.Wait(waitObject, -1); // infinite timeout
-				BeginEmergencyExitChute();
-				while (true)
-				{
-					try
-					{
-						//wait for a notify\pulse event and release the lock to other threads, re-aquires the lock before continueing.
-						Monitor.Wait(waitObject, -1); // infinite timeout
-						break;
-					}
-					catch (ThreadInterruptedException)
-					{
-						continue; //This bizarre case is usually the result of spurious hardware interrupts, we still want to wait
-					}
-					//all other exceptions should bust out of this method
-				}
-			}
-			finally
-			{
-				Monitor.Exit(waitObject); //release the lock on waitObject
 			}
 		}
 
@@ -254,7 +227,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			public void BridgeReady()
 			{
-				AlertFLEx();
+				BeginEmergencyExitChute();
 			}
 
 			public void InformFwProjectName(string fwProjectName)
@@ -278,6 +251,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			private void AlertFLEx()
 			{
 				Monitor.Enter(waitObject); //acquire the lock on the waitObject
+				flexBridgeTerminated = true;
 				Monitor.Pulse(waitObject); //notify a thread waiting on waitObject that it may continue.
 				Monitor.Exit(waitObject); //release the lock on the waitObject so they actually can continue.
 			}
@@ -332,6 +306,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void WorkDoneCallback(IAsyncResult iar)
 		{
 			Monitor.Enter(waitObject);
+			flexBridgeTerminated = true;
 			try
 			{
 				Monitor.Pulse(waitObject);
