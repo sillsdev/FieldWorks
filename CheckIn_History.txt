@@ -5927,3 +5927,5 @@ DamienD, 23 May 2012. LT-13027: Crash creating -infix- Lexical Entry with attach
 	interlinear (affixes?)
 AlistairI, 23 May 2012. LT-13187 (and others): Prevented race conditions and deadlocks when FLEx runs FLExBridge.
 EricP, 24 May 2012. LT-7581 export interlinear glossAppend info for xml and html
+Andy Black, 24 May 2012. LT-13283 "Hermit Crab: phonological rules should optionally be applied to clitics"
+	Make 'Append to Gloss' field in LexEntryInflType records visible only when data is present.

@@ -22,6 +22,7 @@
 	</xsl:variable>
 	<xsl:variable name="morphBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $morphBdryGuid]"/>
 	<xsl:variable name="wordBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $wordBdryGuid]"/>
+	<xsl:variable name="fNotOnClitics" select="/M3Dump/ParserParameters/ParserParameters/HC/NotOnClitics"/>
 
 	<xsl:key name="AffixAlloId" match="MoAffixAllomorph" use="@Id"/>
 	<xsl:key name="StemMsaId" match="MoStemMsa" use="@Id"/>
@@ -785,7 +786,7 @@
 							<xsl:with-param name="phoneme" select="$phoneme"/>
 						</xsl:call-template>
 					</xsl:attribute>
-					<xsl:value-of select="Representation"/>
+					<xsl:value-of select="normalize-space(Representation)"/>
 				</Representation>
 				<xsl:apply-templates select="$phoneme/PhonologicalFeatures/FsFeatStruc" mode="phonological"/>
 			</SegmentDefinition>
@@ -3604,7 +3605,15 @@
 
 	<xsl:template match="PhRegularRule">
 		<xsl:if test="count(StrucDesc/*) > 0 or count(RightHandSides/PhSegRuleRHS/StrucChange/*) > 0">
-			<PhonologicalRule ruleStrata="morphophonemic">
+			<PhonologicalRule>
+				<xsl:attribute name="ruleStrata">
+					<xsl:choose>
+						<xsl:when test="$fNotOnClitics='false'">
+							<xsl:text>morphophonemic clitic</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>morphophonemic</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
 				<xsl:attribute name="id">
 					<xsl:text>prule</xsl:text>
 					<xsl:value-of select="@Id"/>
@@ -3779,8 +3788,15 @@
 		<xsl:variable name="rightEnv" select="substring-after($middleRemain, ' ')"/>
 
 		<xsl:if test="$leftSwitch != -1 and $rightSwitch != -1">
-			<MetathesisRule ruleStrata="morphophonemic">
-				<xsl:attribute name="id">
+			<MetathesisRule>
+				<xsl:attribute name="ruleStrata">
+					<xsl:choose>
+						<xsl:when test="$fNotOnClitics='false'">
+							<xsl:text>morphophonemic clitic</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>morphophonemic</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>				<xsl:attribute name="id">
 					<xsl:text>prule</xsl:text>
 					<xsl:value-of select="@Id"/>
 				</xsl:attribute>
