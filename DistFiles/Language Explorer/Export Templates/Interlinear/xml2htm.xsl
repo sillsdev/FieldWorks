@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-				xmlns="http://www.w3.org/1999/XSL/Format"
 				version="1.0">
 <!--  <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" /> -->
-  <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" />
+  <xsl:output method="html" version="4.0" encoding="UTF-8" omit-xml-declaration="yes" indent="yes" />
 
   <xsl:template match="document">
+	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 	<html>
 	  <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<style type="text/css">
 		 number { vertical-align: top; }
 <!--         span { display: inline-block; border: 1px solid black; vertical-align: top; } -->
 		 span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
 		 table { text-align: left; }
 		</style>
+		<title> &#160; </title>
 	  </head>
 	  <body>
 		<xsl:apply-templates/>
@@ -33,20 +33,20 @@
   </xsl:template>
 
   <xsl:template match="interlinear-text/item[@type='title']">
-	<H1>
+	<h1>
 		<xsl:apply-templates/>
-	</H1>
+  </h1>
   </xsl:template>
   <xsl:template match="interlinear-text/item[@type='title-abbreviation']"/>
   <xsl:template match="interlinear-text/item[@type='source']">
-	<H2>
+	<h2>
 		<xsl:apply-templates/>
-	</H2>
+  </h2>
   </xsl:template>
   <xsl:template match="interlinear-text/item[@type='description']">
-	<H2>
+	<h2>
 		<xsl:apply-templates/>
-	</H2>
+  </h2>
   </xsl:template>
 
   <!-- PARAGRAPH LEVEL -->
@@ -137,6 +137,15 @@
 	</tr>
   </xsl:template>
 
+  <xsl:template match="word/item[@type='punct']">
+	<tr>
+	  <td>
+		<xsl:apply-templates/>
+		<xsl:text>&#160;</xsl:text>
+	  </td>
+	</tr>
+  </xsl:template>
+
   <!-- MORPHEME LEVEL -->
 
   <xsl:template match="morphemes">
@@ -169,6 +178,10 @@
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']">
+  </xsl:template>
+  <xsl:template match="languages">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
@@ -177,19 +190,35 @@
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
 	<xsl:apply-templates/>
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+	<xsl:apply-templates/>
+  </xsl:template>
 
 
   <xsl:template match="morph/item[@type='cf']">
 	<tr>
 	  <td>
 		<xsl:apply-templates/>
-	   <xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
+	   <xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 		<xsl:if test="$homographNumber">
-			<sub><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
+				<sub><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
 		</xsl:if>
-		<xsl:variable name="variantTypes" select="following-sibling::item[@type='variantTypes']"/>
+		<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 		<xsl:if test="$variantTypes">
 			<xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
+		</xsl:if>
+		<xsl:text>&#160;</xsl:text>
+	  </td>
+	</tr>
+  </xsl:template>
+
+  <xsl:template match="morph/item[@type='gls']">
+	<tr>
+	  <td>
+		<xsl:apply-templates/>
+		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+		<xsl:if test="$glsAppend">
+		  <xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
 		</xsl:if>
 		<xsl:text>&#160;</xsl:text>
 	  </td>

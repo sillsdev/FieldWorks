@@ -5926,3 +5926,4 @@ DamienD, 23 May 2012. LT-13027: Crash creating -infix- Lexical Entry with attach
 	variant type from Entry and switching to another area, LT-13196: Crash adding a new sense in the
 	interlinear (affixes?)
 AlistairI, 23 May 2012. LT-13187 (and others): Prevented race conditions and deadlocks when FLEx runs FLExBridge.
+EricP, 24 May 2012. LT-7581 export interlinear glossAppend info for xml and html

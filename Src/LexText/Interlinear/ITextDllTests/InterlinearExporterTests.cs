@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Text;
 using System.Xml;
 using System.IO;
 using System.Xml.Schema;
+using System.Xml.Xsl;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
@@ -52,6 +54,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8))
 			{
+				vc.LineChoices = m_choices;
 				var exporter = InterlinearExporter.Create(mode, Cache, writer, m_text1.ContentsOA, m_choices, vc);
 				exporter.WriteBeginDocument();
 				exporter.ExportDisplay();
@@ -66,6 +69,46 @@ namespace SIL.FieldWorks.IText
 			return exportedXml;
 		}
 
+
+		public delegate T StreamFactory<T>();
+		private delegate void ExtractStream<T>(T stream);
+
+		private static void TransformDoc<T>(XmlDocument usxDocument,
+			StreamFactory<T> createStream, ExtractStream<T> extractStream, string fileXsl)
+			where T : Stream
+		{
+			const bool omitXmlDeclaration = true;
+			string xslt = File.ReadAllText(fileXsl);
+			var xform = new XslCompiledTransform(false);
+			xform.Load(XmlReader.Create(new StringReader(xslt)));
+
+			using (var stream = createStream())
+			{
+				var writerSettings = new XmlWriterSettings();
+				writerSettings.OmitXmlDeclaration = omitXmlDeclaration;
+				if (writerSettings.OmitXmlDeclaration)
+					writerSettings.ConformanceLevel = ConformanceLevel.Auto;
+				var xmlWriter = XmlWriter.Create(stream, writerSettings);
+
+				xform.Transform(usxDocument.CreateNavigator(), new XsltArgumentList(), xmlWriter);
+				xmlWriter.Flush();
+				extractStream(stream);
+			}
+		}
+
+		private static XmlDocument TransformDoc(XmlDocument usxDocument, string fileXsl)
+		{
+			StreamFactory<MemoryStream> createStream = () => new MemoryStream();
+			var transformedDoc = new XmlDocument();
+			ExtractStream<MemoryStream> extractStream = delegate(MemoryStream stream)
+															{
+																stream.Seek(0, SeekOrigin.Begin);
+																transformedDoc.Load(stream);
+															};
+			TransformDoc(usxDocument, createStream, extractStream, fileXsl);
+			return transformedDoc;
+		}
+
 		protected XmlDocument ExportToXml()
 		{
 			return ExportToXml("xml");
@@ -75,8 +118,16 @@ namespace SIL.FieldWorks.IText
 			[SetUp]
 			public void BeforeEachTest()
 			{
+				IWritingSystem wsXkal;
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsXkal);
+				var wsEng = Cache.ServiceLocator.WritingSystemManager.Get("en");
 				m_text1 = SetupDataForText1();
-				m_choices = new InterlinLineChoices(Cache.LanguageProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+				m_choices = new InterlinLineChoices(Cache.LanguageProject, wsXkal.Handle, wsEng.Handle);
+			}
+
+			private void DontIgnore(object sender, ValidationEventArgs e)
+			{
+				throw e.Exception;
 			}
 
 			[TearDown]
@@ -130,12 +181,107 @@ namespace SIL.FieldWorks.IText
 				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//word[item[@type='txt']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='go.PST']", 1);
 
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 0);
+			}
+
+			[Test]
+			public void ExportBasicInformation_xml2html_fixMisc()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				string formLexEntry = "went";
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+				pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
+				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+
+				XmlDocument transformedDoc = TransformDocXml2Html(exportedDoc);
+
+				// /html/body/p[4]/span[5]/table/tr/td
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//item", 0);
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//languages", 0);
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[5]/table/tr/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[5]/table/tr/td").InnerText, Is.EqualTo(". "));
+
+			}
+
+			[Test]
+			public void ExportBasicInformation_multipleWss()
+			{
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsEs.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsXkal.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				string formLexEntry = "went";
+
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+				leGo.LexemeFormOA.Form.set_String(wsEs.Handle, "eswent");
+				pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
+				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//word[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='cf']", 2);
+				Assert.That(exportedDoc.SelectSingleNode("//morph/item[@type='cf'][1]/text()").Value, Is.EqualTo("eswent"));
+				Assert.That(exportedDoc.SelectSingleNode("//morph/item[@type='cf'][2]/text()").Value, Is.EqualTo("went"));
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='go.PST']", 1);
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 0);
+			}
+
+			private void ValidateInterlinearXml(XmlDocument exportedDoc)
+			{
+				var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+
+				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string file = Path.Combine(p, "FlexInterlinear.xsd");
+				settings.Schemas.Add("", file);
+				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);
+
+				//validate export against schema.
+				Assert.DoesNotThrow(() => exportedDoc.Validate(DontIgnore));
 			}
 
 			[Test]
@@ -167,6 +313,8 @@ namespace SIL.FieldWorks.IText
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//word[item[@type='txt']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='go']", 1);
@@ -176,7 +324,52 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
-			[Ignore("to enable soon.")]
+			public void ExportVariantTypeInformation_LT9374_xml2html_multipleWss()
+			{
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsEs.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsXkal.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
+				string formLexEntry = "go";
+
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+				string formLexEntryEs = "es" + formLexEntry;
+				leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
+				var freeVarType =
+					Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+				freeVarType.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
+				pa.SetVariantOf(0, 1, leGo, freeVarType);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
+				XmlDocument transformedDoc = TransformDocXml2Html(exportedDoc);
+
+				// NOTE: the whitespace after "went+fr. var." is &#160;
+				// /html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td").InnerText, Is.EqualTo(formLexEntryEs + "1+fr. var. "));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo(formLexEntry + "1+fr. var. "));
+			}
+
+			[Test]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend()
 			{
 				m_choices.Add(InterlinLineChoices.kflidWord);
@@ -190,7 +383,6 @@ namespace SIL.FieldWorks.IText
 				pa.ReparseParagraph();
 				XmlDocument exportedDoc = ExportToXml();
 
-				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
@@ -206,6 +398,9 @@ namespace SIL.FieldWorks.IText
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='txt']='went']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='cf']='go']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='glossgo']", 1);
@@ -220,6 +415,111 @@ namespace SIL.FieldWorks.IText
 			[Ignore("to enable soon.")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsPrepend()
 			{
+			}
+
+			[Test]
+			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_xml2htm()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, Cache.DefaultAnalWs);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				var exportedDoc = ExportToXml();
+
+				string formLexEntry = "go";
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+				var pastVar =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+				pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
+
+				pa.SetVariantOf(0, 1, leGo, pastVar);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string xslFile = Path.Combine(p, "xml2htm.xsl");
+				var transformedDoc = TransformDoc(exportedDoc, xslFile);
+				// NOTE: The following test in the comment fails whenever a namespace has been defined because it requires you add a
+				// namespace via XmlNamespaceManager (http://mymemorysucks.wordpress.com/2007/08/17/xmldocumentselectnodes-selects-nothing/)
+				/*
+				var testDoc = new XmlDocument();
+				testDoc.LoadXml(@"<html xmlns='http://www.w3.org/1999/xhtml'></html>");
+				AssertThatXmlIn.Dom(testDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html", 1);
+				 */
+
+				// NOTE: the whitespace after "glossgo.pst" is &#160;
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/text()").Value, Is.EqualTo("glossgo.pst "));
+			}
+
+			[Test]
+			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_xml2htm_multipleWss()
+			{
+				var wsfr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsfr.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsEn.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				var exportedDoc = ExportToXml();
+
+				string formLexEntry = "go";
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+				var pastVar =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+				leGo.SensesOS[0].Gloss.set_String(wsfr.Handle, "frglossgo");
+				pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
+
+				pa.SetVariantOf(0, 1, leGo, pastVar);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+				XmlDocument transformedDoc = TransformDocXml2Html(exportedDoc);
+				// NOTE: The following test in the comment fails whenever a namespace has been defined because it requires you add a
+				// namespace via XmlNamespaceManager (http://mymemorysucks.wordpress.com/2007/08/17/xmldocumentselectnodes-selects-nothing/)
+				/*
+				var testDoc = new XmlDocument();
+				testDoc.LoadXml(@"<html xmlns='http://www.w3.org/1999/xhtml'></html>");
+				AssertThatXmlIn.Dom(testDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html", 1);
+				 */
+
+				// NOTE: the whitespace after "glossgo.pst" is &#160;
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/text()").Value, Is.EqualTo("frglossgo.pst "));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td/text()").Value, Is.EqualTo("glossgo.pst "));
+			}
+
+			private XmlDocument TransformDocXml2Html(XmlDocument exportedDoc)
+			{
+				string p = Path.Combine(DirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+				string xslFile = Path.Combine(p, "xml2htm.xsl");
+				return TransformDoc(exportedDoc, xslFile);
 			}
 
 

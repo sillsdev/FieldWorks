@@ -394,11 +394,8 @@ namespace SIL.FieldWorks.IText
 
 		public override void AddTsString(ITsString tss)
 		{
-			/* to enable soon
-			 *
 			if (m_fDoingGlossAppend)
 				WriteItem("glsAppend", tss);
-			 */
 			base.AddTsString(tss);
 		}
 
