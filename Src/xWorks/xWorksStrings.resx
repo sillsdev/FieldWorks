@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Entry" xml:space="preserve">
 	<value>Entry</value>
@@ -226,10 +226,10 @@ Are you SURE you want to delete the field {0}?</value>
 	<value>Redo Move Item</value>
   </data>
   <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
-	<value>The link target is not currently available, probably because a filter excludes it. Do you want to turn off the filter?</value>
+	<value>What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?</value>
   </data>
   <data name="TargetNotFound" xml:space="preserve">
-	<value>Target not found</value>
+	<value>Cannot show normally</value>
   </data>
   <data name="DeletingTheObject" xml:space="preserve">
 	<value>Deleting the object</value>
