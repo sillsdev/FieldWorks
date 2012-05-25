@@ -182,7 +182,7 @@ version="1.0">
 		</draw:frame>
 	</xsl:template>
 
-  <xsl:template match="item[@type!='hn' and @type!='variantTypes']" mode="rowItems">
+  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend']" mode="rowItems">
 	  <text:p>
 		  <xsl:if test="@type='txt'">
 			<xsl:attribute name="text:style-name">Interlin_Morph_<xsl:value-of select="@lang"/></xsl:attribute>
@@ -192,9 +192,6 @@ version="1.0">
 		  </xsl:if>
 		  <xsl:if test="@type='msa'">
 			  <xsl:attribute name="text:style-name">Interlin_Morpheme_POS</xsl:attribute>
-		  </xsl:if>
-		  <xsl:if test="@type='gls'">
-			  <xsl:attribute name="text:style-name">Interlin_Morpheme_Gloss_<xsl:value-of select="@lang"/></xsl:attribute>
 		  </xsl:if>
 		  <xsl:apply-templates/>
 	  </text:p>
@@ -210,6 +207,8 @@ version="1.0">
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
@@ -220,19 +219,33 @@ version="1.0">
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
 	  <xsl:apply-templates/>
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+	<xsl:apply-templates/>
+  </xsl:template>
 
   <xsl:template match="morph/item[@type='cf']" mode="rowItems">
 		<text:p>
 			<xsl:attribute name="text:style-name">Interlin_Cf_<xsl:value-of select="@lang"/></xsl:attribute>
 			<xsl:apply-templates/>
-			<xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
+	  <xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 			<xsl:if test="$homographNumber">
 				<!-- todo: make a subscript with a rPr element-->
 						<xsl:apply-templates select="$homographNumber" mode="hn"/>
 		   </xsl:if>
-	  <xsl:variable name="variantTypes" select="following-sibling::item[@type='variantTypes']"/>
+	  <xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 	  <xsl:if test="$variantTypes">
 		<xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
+	  </xsl:if>
+		</text:p>
+  </xsl:template>
+
+  <xsl:template match="morph/item[@type='gls']" mode="rowItems">
+		<text:p>
+			<xsl:attribute name="text:style-name">Interlin_Morpheme_Gloss_<xsl:value-of select="@lang"/></xsl:attribute>
+			<xsl:apply-templates/>
+	  <xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+	  <xsl:if test="$glsAppend">
+		<xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
 	  </xsl:if>
 		</text:p>
   </xsl:template>
