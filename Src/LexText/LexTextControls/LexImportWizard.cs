@@ -3766,7 +3766,39 @@ namespace SIL.FieldWorks.LexText.Controls
 			// I don't fully understand why, but it seems the base class does some
 			// critical repositioning of buttons. See LT-4675.
 			OnResize(e);
+#if __MonoCS__
+			// This button moving logic works on mono.  At this point, the sizes of the
+			// list views have settled down.  See FWNX-847.
+			int minY = listViewMappingLanguages.Bottom + 7;
+			if (btnAddMappingLanguage.Top < minY)
+			{
+				MoveButton(btnAddMappingLanguage, null, minY);
+				MoveButton(btnModifyMappingLanguage, btnAddMappingLanguage, minY);
+			}
+			minY = listViewContentMapping.Bottom + 7;
+			if (btnModifyContentMapping.Top < minY)
+			{
+				MoveButton(btnModifyContentMapping, null, minY);
+			}
+			minY = listViewCharMappings.Bottom + 7;
+			if (btnAddCharMapping.Top < minY)
+			{
+				MoveButton(btnAddCharMapping, null, minY);
+				MoveButton(btnModifyCharMapping, btnAddCharMapping, minY);
+				MoveButton(btnDeleteCharMapping, btnModifyCharMapping, minY);
+			}
+#endif
 		}
+
+#if __MonoCS__
+		void MoveButton(Button btn, Button btnLeft, int y)
+		{
+			if (btnLeft == null)
+				btn.Location = new Point(btn.Left, y);
+			else
+				btn.Location = new Point(btnLeft.Right + 7, y);
+		}
+#endif
 
 // This moving button logic has issues on mono.
 #if !__MonoCS__
