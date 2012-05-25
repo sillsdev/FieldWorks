@@ -16,7 +16,7 @@
 	<control id="wordListColumns">
 		<columns>
 			<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form" chooserFilter="special" specialItemName="Choose Texts...">
-				<dynamicloaderinfo assemblyPath="ITextdll.dll" class="SIL.FieldWorks.IText.TextsFilterItem" />
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.TextsFilterItem" />
 				<span>
 					<properties>
 						<bold value="off"/>
