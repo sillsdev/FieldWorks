@@ -5931,3 +5931,4 @@ Andy Black, 24 May 2012. LT-13283 "Hermit Crab: phonological rules should option
 	Make 'Append to Gloss' field in LexEntryInflType records visible only when data is present.
 AnnB.. 24 May 2012. LT-5098 "Refine wording of "Target not found" dialog."
 EricP, 25 May 2012. LT-7581. Add glsAppend to export of interlinear to OpenOffice. Fixed a multiple ws issue.
+EricP, 25 May 2012. LT-7581.  Export interlinear glsAppend for Word docs. Fix multi ws issue.

@@ -525,7 +525,7 @@
   This gets invoked only for the items of the first morph of the word. We find all the corresponding items
   in the other morphs (and this one) and output them as a row.
   The homograph number item is omitted because we don't want a separate row for these.-->
-  <xsl:template match="item[@type!='hn' and @type!='variantTypes']" mode="rows">
+  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend']" mode="rows">
 	<w:tr>
 		<xsl:variable name="myType" select="@type"/>
 		<xsl:variable name="myLang" select="@lang"/>
@@ -546,11 +546,6 @@
 			<xsl:if test="@type='txt'">
 				<w:pStyle>
 					<xsl:attribute name="w:val">Interlin Morph <xsl:value-of select="@lang"/></xsl:attribute>
-				</w:pStyle>
-			</xsl:if>
-			<xsl:if test="@type='gls'">
-				<w:pStyle>
-					<xsl:attribute name="w:val">Interlin Morpheme Gloss <xsl:value-of select="@lang"/></xsl:attribute>
 				</w:pStyle>
 			</xsl:if>
 			<xsl:if test="@type='msa'">
@@ -608,6 +603,8 @@
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
@@ -635,7 +632,7 @@
 					<xsl:apply-templates/>
 				</w:t>
 			</w:r>
-			<xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
+			<xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 			<xsl:if test="$homographNumber">
 				<w:r>
 					<w:rPr>
@@ -646,7 +643,7 @@
 					</w:t>
 				</w:r>
 		   </xsl:if>
-			<xsl:variable name="variantTypes" select="following-sibling::item[@type='variantTypes']"/>
+			<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 	  <xsl:if test="$variantTypes">
 		<w:r>
 		  <w:rPr>
@@ -662,4 +659,38 @@
 	</w:tc>
   </xsl:template>
 
+  <xsl:template match="morph/item[@type='gls']" mode="rowItems">
+	<w:tc>
+	  <w:tcPr>
+		<w:noWrap w:val="on"/>
+	  </w:tcPr>
+	  <w:p>
+		<w:pPr>
+		  <w:pStyle>
+			<xsl:attribute name="w:val">Interlin Morpheme Gloss <xsl:value-of select="@lang"/></xsl:attribute>
+		  </w:pStyle>
+		  <xsl:if test="//language[@vernacular='true' and @RightToLeft='true']">
+			<w:bidi/>
+		  </xsl:if>
+		</w:pPr>
+		<w:r>
+		  <w:t>
+			<xsl:apply-templates/>
+		  </w:t>
+		</w:r>
+		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+		<xsl:if test="$glsAppend">
+		  <w:r>
+			<w:rPr>
+			  <w:rStyle w:val="Interlin Variant Types"/>
+			</w:rPr>
+			<w:t>
+			  <xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
+			</w:t>
+		  </w:r>
+		</xsl:if>
+		<xsl:text>&#160;</xsl:text>
+	  </w:p>
+	</w:tc>
+  </xsl:template>
 </xsl:stylesheet>
