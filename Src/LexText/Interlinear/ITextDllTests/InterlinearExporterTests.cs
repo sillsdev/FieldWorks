@@ -414,23 +414,28 @@ namespace SIL.FieldWorks.IText
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr).InnerText, Is.EqualTo(formLexEntry + "1+fr. var."));
 			}
 
-			private XmlNamespaceManager LoadNsmgrForDoc(XmlDocument transformedDocOO)
+			private XmlNamespaceManager LoadNsmgrForDoc(XmlDocument doc)
 			{
-				var rootNode = transformedDocOO.DocumentElement;
-				var nsmgr = new XmlNamespaceManager(transformedDocOO.NameTable);
-				foreach (XmlAttribute attr in rootNode.Attributes)
+				var rootNode = doc.DocumentElement;
+				var nsmgr = new XmlNamespaceManager(doc.NameTable);
+				foreach (XmlNode node in rootNode.SelectNodes("//*"))
 				{
-					if (attr.Prefix != "xmlns")
-						continue;
-					var prefix = attr.LocalName;
-					var urn = attr.Value;
-					if (prefix.Length > 0)
+					foreach (XmlAttribute attr in node.Attributes)
 					{
-						var urnDefined = nsmgr.LookupNamespace(prefix);
-						if (String.IsNullOrEmpty(urnDefined))
-							nsmgr.AddNamespace(prefix, urn);
-					}
+						if (attr.Prefix != "xmlns")
+							continue;
+						var prefix = attr.LocalName;
+						var urn = attr.Value;
+						if (prefix.Length > 0)
+						{
+							var urnDefined = nsmgr.LookupNamespace(prefix);
+							if (String.IsNullOrEmpty(urnDefined))
+							{
+								nsmgr.AddNamespace(prefix, urn);
+							}
 
+						}
+					}
 				}
 				return nsmgr;
 			}
@@ -627,6 +632,10 @@ namespace SIL.FieldWorks.IText
 			}
 
 
+			/// <summary>
+			/// Ideally, this should be broken up into two or three tests as we have done for the other exports,
+			/// however, I (EricP) got tired of making so many tests, so lumped it all into one.
+			/// </summary>
 			[Test]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word_multipleWss()
 			{
@@ -682,6 +691,65 @@ namespace SIL.FieldWorks.IText
 				// w:pStyle
 				Assert.That(transformedDocWord.SelectNodes("//w:pStyle[starts-with(@w:val, '\n') or starts-with(@w:val, ' ')]", nsmgr), Has.Count.EqualTo(0), "style values should not start with whitespace");
 			}
+
+			/// <summary>
+			/// Ideally, this should be broken up into two or three tests as we have done for the other exports,
+			/// however, I (EricP) got tired of making so many tests, so lumped it all into one.
+			/// </summary>
+			[Test]
+			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word2007_multipleWss()
+			{
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
+				var wsfr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
+				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsEs.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsXkal.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsfr.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsEn.Handle);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				var exportedDoc = ExportToXml();
+
+				string formLexEntry = "go";
+
+				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+				const string formLexEntryEs = "eswent";
+				leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
+				var pastVar =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+				leGo.SensesOS[0].Gloss.set_String(wsfr.Handle, "frglossgo");
+				pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
+
+				var ler = pa.SetVariantOf(0, 1, leGo, pastVar);
+				var freeVar = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
+				freeVar.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
+				ler.VariantEntryTypesRS.Add(freeVar);
+
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				var transformedDocWord = TransformDocXml2Word2007(exportedDoc);
+				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
+
+				// TODO: enhance AssertThatXmlIn to handle all prefixes
+				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
+				Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr), Has.Count.EqualTo(1), "test homograph number for lex entry: " + formLexEntryEs);
+				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr).InnerText, Is.EqualTo("1"), "Inaccurate homograph number for lex entry: " + formLexEntryEs);
+				Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[3]", nsmgr), Has.Count.EqualTo(1));
+				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[3]", nsmgr).InnerText, Is.EqualTo("+fr. var."));
+				Assert.That(transformedDocWord.SelectNodes("//*[text()='.pst']", nsmgr), Has.Count.EqualTo(2), "Irregularly inflected types should only match the number of lines for LexGloss");
+				Assert.That(transformedDocWord.SelectNodes("//w:rStyle[starts-with(@w:val, '\n') or starts-with(@w:val, ' ')]", nsmgr), Has.Count.EqualTo(0), "style values should not start with whitespace");
+			}
+
 
 
 			[Test]

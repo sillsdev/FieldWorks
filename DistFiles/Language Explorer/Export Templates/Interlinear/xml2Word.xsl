@@ -613,6 +613,10 @@
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
 	<xsl:apply-templates/>
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+	<xsl:apply-templates/>
+  </xsl:template>
+
 
   <!-- a special item for citation form may include the homograph number (typically as a subscript)-->
 	<xsl:template match="morph/item[@type='cf']" mode="rowItems">
