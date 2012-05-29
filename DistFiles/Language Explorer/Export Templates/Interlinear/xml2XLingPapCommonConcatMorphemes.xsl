@@ -184,35 +184,40 @@ OutputMorphs
 	  <xsl:param name="bIsGloss" select="'N'"/>
 	  <xsl:for-each select="morph">
 		 <xsl:if test="$bAddHyphen='Y' and position()!=1">
-			 <xsl:if test="preceding-sibling::morph[1]/@guid!=$sProclitic and @guid!=$sEnclitic">
-				 <!-- proclitics and enclitics already have an equal sign, so do not add a hyphen -->
-			<xsl:value-of select="$sHyphen"/>
-			 </xsl:if>
+			<xsl:if test="preceding-sibling::morph[1]/@guid!=$sProclitic and @guid!=$sEnclitic">
+			   <!-- proclitics and enclitics already have an equal sign, so do not add a hyphen -->
+			   <xsl:value-of select="$sHyphen"/>
+			</xsl:if>
 		 </xsl:if>
 		 <xsl:choose>
 			<xsl:when test="$bIsGloss='Y' and @guid!=$sBoundRoot and @guid!=$sBoundStem and @guid!=$sRoot and @guid!=$sStem and @guid!=$sPhrase and @guid!=$sDiscontiguousPhrase">
-				<xsl:if test="@guid=$sEnclitic">
-					<xsl:text>=</xsl:text>
-				</xsl:if>
+			   <xsl:if test="@guid=$sEnclitic">
+				  <xsl:text>=</xsl:text>
+			   </xsl:if>
 			   <object type="tGrammaticalGloss">
-				   <xsl:choose>
-					   <xsl:when test="@guid=$sEnclitic">
-						   <xsl:value-of select="substring-after(normalize-space(item[@type=$sType]), '=')"/>
-					   </xsl:when>
-					   <xsl:when test="@guid=$sProclitic">
-						   <xsl:value-of select="substring-before(normalize-space(item[@type=$sType]), '=')"/>
-					   </xsl:when>
-					   <xsl:otherwise>
-						   <xsl:value-of select="normalize-space(item[@type=$sType])"/>
-					   </xsl:otherwise>
-				   </xsl:choose>
+				  <xsl:choose>
+					 <xsl:when test="@guid=$sEnclitic">
+						<xsl:value-of select="substring-after(normalize-space(item[@type=$sType]), '=')"/>
+					 </xsl:when>
+					 <xsl:when test="@guid=$sProclitic">
+						<xsl:value-of select="substring-before(normalize-space(item[@type=$sType]), '=')"/>
+					 </xsl:when>
+					 <xsl:otherwise>
+						<xsl:value-of select="normalize-space(item[@type=$sType])"/>
+					 </xsl:otherwise>
+				  </xsl:choose>
 			   </object>
-				<xsl:if test="@guid=$sProclitic">
-					<xsl:text>=</xsl:text>
-				</xsl:if>
+			   <xsl:if test="@guid=$sProclitic">
+				  <xsl:text>=</xsl:text>
+			   </xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
 			   <xsl:value-of select="normalize-space(item[@type=$sType])"/>
+			   <xsl:if test="$sType='gls'">
+				  <object type="tGrammaticalGloss">
+					 <xsl:value-of select="normalize-space(item[@type='glsAppend'])"/>
+				  </object>
+			   </xsl:if>
 			</xsl:otherwise>
 		 </xsl:choose>
 		 <xsl:if test="$sType='cf'">
@@ -222,14 +227,14 @@ OutputMorphs
 				  <xsl:value-of select="$homographNumber"/>
 			   </object>
 			</xsl:if>
-			 <xsl:variable name="variantTypes" select="item[@type='variantTypes']"/>
-			 <xsl:if test="$variantTypes">
-				 <object type="tVariantTypes">
-					 <xsl:value-of select="$variantTypes"/>
-				 </object>
-			 </xsl:if>
+			<xsl:variable name="variantTypes" select="item[@type='variantTypes']"/>
+			<xsl:if test="$variantTypes">
+			   <object type="tVariantTypes">
+				  <xsl:value-of select="$variantTypes"/>
+			   </object>
+			</xsl:if>
 		 </xsl:if>
 	  </xsl:for-each>
    </xsl:template>
-	<xsl:include href="xml2XLingPapAllCommon.xsl"/>
+   <xsl:include href="xml2XLingPapAllCommon.xsl"/>
 </xsl:stylesheet>

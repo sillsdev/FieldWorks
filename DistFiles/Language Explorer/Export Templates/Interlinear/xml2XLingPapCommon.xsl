@@ -52,6 +52,27 @@ morph/item
 		</item>
 	</xsl:template>
 	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		morph/item[@type='gls']
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template match="morph/item[@type='gls']">
+		<item>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates/>
+			<xsl:apply-templates select="following-sibling::item[@type='glsAppend']" mode="glsAppend"/>
+		</item>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		morph/item[@type='glsAppend']
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+			<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="morph/item[@type='glsAppend']"/>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 morph/item[@type='hn']
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

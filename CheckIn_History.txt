@@ -5933,3 +5933,4 @@ AnnB.. 24 May 2012. LT-5098 "Refine wording of "Target not found" dialog."
 EricP, 25 May 2012. LT-7581. Add glsAppend to export of interlinear to OpenOffice. Fixed a multiple ws issue.
 EricP, 25 May 2012. LT-7581.  Export interlinear glsAppend for Word docs. Fix multi ws issue.
 EricP, 26 May 2012. LT-7581. Export interlinear to Word2007 with glsAppend. Fix a multipleWs and spacing issue.
+Andy Black, 29 May 2012. LT-7581. Add glsAppend to export of interlinear to XLingPaper.
