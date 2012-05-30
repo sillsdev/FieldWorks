@@ -50,6 +50,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTCliticEnvsDump;
 		string m_sM3FXTAffixAlloFeatsDump;
 		string m_sM3FXTLatinDump;
+		string m_sM3FXTIrregularlyInflectedFormsDump;
 		Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 #if __MonoCS__
 		IntPtr m_adTransform;
@@ -125,6 +126,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sM3FXTCliticEnvsDump = Path.Combine(m_sTestPath, "CliticEnvsParserFxtResult.xml");
 			m_sM3FXTAffixAlloFeatsDump = Path.Combine(m_sTestPath, "TestAffixAllomorphFeatsParserFxtResult.xml");
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
+			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
 #if !__MonoCS__
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
@@ -139,6 +141,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sM3FXTCliticEnvsDump);
 			SetupXmlDocument(m_sM3FXTAffixAlloFeatsDump);
 			SetupXmlDocument(m_sM3FXTLatinDump);
+			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
 #endif
 		}
 
@@ -179,6 +182,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTCliticDump, m_adTransform, "CliticAdCtl.txt");
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_adTransform, "AffixAlloFeatsAdCtl.txt");
 			ApplyTransform(m_sM3FXTLatinDump, m_adTransform, "LatinAdCtl.txt");
+			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_adTransform, "IrregularlyInflectedFormsAdCtl.txt");
 		}
 		/// <summary>
 		/// Test creating the lexicon file
@@ -200,6 +204,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTCliticEnvsDump, m_lexTransform, "CliticEnvsLexicon.txt");
 			ApplyTransform(m_sM3FXTRootCliticEnvsDump, m_lexTransform, "RootCliticEnvsLexicon.txt");
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
+			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
 		}
 		/// <summary>
 		/// Test creating the word grammar file

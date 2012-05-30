@@ -246,4 +246,12 @@
 	<value>NotOnClitics</value>
 	<comment>If true, the set of phonological rules will not be applied to clitics; if false, the rules will be applied to clitics.  (This value defaults to true, so we have to use this negative sense to get the default to be 'rules do not apply to clitics' because that was how Hermit Crab worked before we made this parameter available.)</comment>
   </data>
+  <data name="ksSlotNameSeparator" xml:space="preserve">
+	<value>, </value>
+	<comment>Separator to use between multiple slot names when an irregularly inflected form variant fills two or more inflectional affix slots</comment>
+  </data>
+  <data name="ksIrregularlyInflectedFormNullAffix" xml:space="preserve">
+	<value>Automatically generated null affix for the {0} irregularly inflected form</value>
+	<comment>Content used when showing the details of a parse in try a Word for these inflectional affix slot fillers</comment>
+  </data>
 </root>

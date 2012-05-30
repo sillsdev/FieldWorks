@@ -23,6 +23,7 @@ Preamble
 	<xsl:variable name="MoInflAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoInflAffMsa"/>
 	<xsl:variable name="MoDerivAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoDerivAffMsa"/>
 	<xsl:variable name="MoUnclassifiedAffixMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoUnclassifiedAffixMsa"/>
+   <xsl:variable name="LexEntryInflTypes" select="/M3Dump/LexEntryInflTypes/LexEntryInflType"/>
 
 	<!-- MoInflClass may be nested -->
 	<xsl:variable name="MoInflClasses" select="/M3Dump/PartsOfSpeech/PartOfSpeech/InflectionClasses//MoInflClass"/>
@@ -227,6 +228,10 @@ properties
 		   <xsl:text>&#x20;</xsl:text>
 		   <xsl:value-of select="$sStemName"/><xsl:text>Affix</xsl:text><xsl:value-of select="@Id"/>
 	   </xsl:for-each>
+	  <xsl:for-each select="$LexEntryInflTypes">
+		 <xsl:text>&#x20;</xsl:text>
+		 <xsl:value-of select="$sIrregularlyInflectedForm"/><xsl:value-of select="@Id"/>
+	  </xsl:for-each>
 \ap Bound <xsl:for-each select="$PartsOfSpeech">
    <xsl:text>&#x20;</xsl:text><xsl:value-of select="$sMSEnvPOS"/><xsl:value-of select="@Id"/>
 	  </xsl:for-each>

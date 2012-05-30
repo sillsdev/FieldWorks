@@ -238,6 +238,39 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 
 		/// <summary>
+		/// Allows user to convert LexEntryType to LexEntryInflType.
+		/// </summary>
+		public void ConvertLexEntryInflTypes(ProgressBar progressBar)
+		{
+			var processedEntryIds = new List<int>();
+			progressBar.Minimum = 0;
+			progressBar.Maximum = Entries.Count();
+			progressBar.Step = 1;
+			UndoableUnitOfWorkHelper.Do(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
+				() =>
+				{
+					foreach (var le in Entries)
+					{
+						if (processedEntryIds.Contains(le.Hvo))
+						{
+							progressBar.PerformStep();
+							continue;
+						}
+
+						var homographs = Services.GetInstance<ILexEntryRepository>().CollectHomographs(
+							le.HomographForm,
+							le.PrimaryMorphType);
+						CorrectHomographNumbers(homographs);
+						foreach (var homograph in homographs)
+						{
+							processedEntryIds.Add(homograph.Hvo);
+							progressBar.PerformStep();
+						}
+					}
+				});
+		}
+
+		/// <summary>
 		/// Resets the homograph numbers for all entries.
 		/// </summary>
 		public void ResetHomographNumbers(ProgressBar progressBar)
@@ -7635,6 +7668,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						where sense.MorphoSyntaxAnalysisRA != null
 						select sense.MorphoSyntaxAnalysisRA)
 						.Distinct();
+			}
+		}
+
+		/// <summary>
+		/// This is virtual property.  It returns the list of all LexEntryInflType objects in this LexEntryRef
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "LexEntryInflType")]
+		public IEnumerable<ILexEntryInflType> VariantEntryInflTypesRS
+		{
+			get
+			{
+				return (from lexEntryType in m_VariantEntryTypesRS
+				where lexEntryType.ClassID == LexEntryInflTypeTags.kClassId
+				select lexEntryType as ILexEntryInflType);
+
 			}
 		}
 

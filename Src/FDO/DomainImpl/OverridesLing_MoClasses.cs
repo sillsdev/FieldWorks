@@ -3324,19 +3324,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					var le = Owner as ILexEntry;
 
+					tisb.Append(" (");
 					if (le.SensesOS.Count > 0)
 					{
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 							m_cache.DefaultAnalWs);
-						tisb.Append(" (");
 						// Add gloss info.
 						// This is the best Anal WS from the gloss of the first sense.
 						var ls = le.SensesOS[0];
 						tisb.AppendTsString(ls.Gloss.BestAnalysisAlternative);
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 							m_cache.DefaultAnalWs);
-						tisb.Append("):");
 					}
+					tisb.Append("):");
 
 					tisb.AppendTsString(le.HeadWord);
 				}

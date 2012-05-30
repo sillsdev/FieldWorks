@@ -133,6 +133,15 @@ namespace SIL.FieldWorks.LexText.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Automatically generated null affix for the {0} irregularly inflected form.
+		/// </summary>
+		internal static string ksIrregularlyInflectedFormNullAffix {
+			get {
+				return ResourceManager.GetString("ksIrregularlyInflectedFormNullAffix", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Loading Files for Word Set {0}.
 		/// </summary>
 		internal static string ksLoadingFilesForWordSetX {
@@ -300,6 +309,15 @@ namespace SIL.FieldWorks.LexText.Controls {
 		internal static string ksRulesDoNotApplyOnClitics {
 			get {
 				return ResourceManager.GetString("ksRulesDoNotApplyOnClitics", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to , .
+		/// </summary>
+		internal static string ksSlotNameSeparator {
+			get {
+				return ResourceManager.GetString("ksSlotNameSeparator", resourceCulture);
 			}
 		}
 

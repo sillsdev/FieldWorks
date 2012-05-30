@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						ExportAdhocCoProhibitions(morphologicalData, mode),
 						ExportProdRestrict(morphologicalData, mode)),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
+					ExportLexEntryInflTypes(servLoc.GetInstance<ILexEntryInflTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
 					ExportFeatureSystem(languageProject.MsFeatureSystemOA, "FeatureSystem", mode),
 					ExportFeatureSystem(languageProject.PhFeatureSystemOA, "PhFeatureSystem", mode)
@@ -69,6 +70,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportAdhocCoProhibitions(morphologicalData, mode),
 					ExportProdRestrict(morphologicalData, mode),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
+					ExportLexEntryInflTypes(servLoc.GetInstance<ILexEntryInflTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
 					ExportFeatureSystem(languageProject.MsFeatureSystemOA, "FeatureSystem", mode),
 					ExportFeatureSystem(languageProject.PhFeatureSystemOA, "PhFeatureSystem", mode)
@@ -289,6 +291,24 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					new XElement("NumberOfLexEntries", morphType.NumberOfLexEntries)));
 		}
 
+		private static XElement ExportLexEntryInflTypes(IRepository<ILexEntryInflType> irregularlyInflectedFormTypeRepository, Icu.UNormalizationMode mode)
+		{
+			return new XElement("LexEntryInflTypes",
+								from irregularlyInflectedForm in irregularlyInflectedFormTypeRepository.AllInstances()
+								select new XElement("LexEntryInflType",
+													new XAttribute("Id", irregularlyInflectedForm.Hvo),
+													new XAttribute("Guid", irregularlyInflectedForm.Guid.ToString()),
+													ExportBestAnalysis(irregularlyInflectedForm.Name, "Name", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.Abbreviation, "Abbreviation",
+																	   mode),
+													ExportBestAnalysis(irregularlyInflectedForm.Description, "Description", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.GlossPrepend, "GlossPrepend", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.GlossAppend, "GlossAppend", mode),
+													from slot in irregularlyInflectedForm.SlotsRC
+													select ExportItemAsReference(slot, "Slots"),
+													new XElement("InflectionFeatures",
+																 ExportFeatureStructure(irregularlyInflectedForm.InflFeatsOA))));
+		}
 		/// <summary>
 		/// Export the full lexicon when exporting both grammar and lexicon.
 		/// </summary>
@@ -317,7 +337,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						from sense in entry.AllSenses
 						select ExportItemAsReference(sense, "Sense"),
 						from msa in entry.MorphoSyntaxAnalysesOC
-						select ExportItemAsReference(msa, "MorphoSyntaxAnalysis")));
+						select ExportItemAsReference(msa, "MorphoSyntaxAnalysis"),
+						from lexEntryRef in entry.VariantEntryRefs
+						 select new XElement("LexEntryRef",
+							 from componentLexemes in lexEntryRef.ComponentLexemesRS
+							 select ExportItemAsReference(componentLexemes, "ComponentLexeme"),
+						from lexEntryInflType in lexEntryRef.VariantEntryTypesRS
+							select ExportItemAsReference(lexEntryInflType, "LexEntryInflType"))));
 		}
 
 		private static XElement ExportMSAs(IServiceLocator servLoc)

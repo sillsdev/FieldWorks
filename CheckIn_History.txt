@@ -5941,3 +5941,4 @@ EricP, 30 May 2012. Added a service that creates a namespace manager with all th
 	Helpful for xpaths that use multiple prefixes.
 NaylorJ, 30 May 2012. Updated FB Installer to 0.3.42
 KenZ, 30 May 2012. Added config file to address LT-12927.
+Andy Black, 30 May 2012. LT-7581. Enable XAmple parser to handle irregularly inflected forms.

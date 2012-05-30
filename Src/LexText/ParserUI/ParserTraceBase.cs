@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 
@@ -260,7 +261,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			attr = node.SelectSingleNode(sHvo);
 			if (attr != null)
 			{
-				ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(attr.Value));
+				string sObjHvo = attr.Value;
+				// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+				var indexOfPeriod = ParseFiler.IndexOfPeriodInMsaHvo(ref sObjHvo);
+				ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(sObjHvo));
 				switch (obj.GetType().Name)
 				{
 					default:
@@ -282,9 +286,62 @@ namespace SIL.FieldWorks.LexText.Controls
 						IMoUnclassifiedAffixMsa unclassMsa = obj as IMoUnclassifiedAffixMsa;
 						CreateUnclassifedMsaXmlElement(doc, morphNode, unclassMsa);
 						break;
+					case "LexEntry":
+						// is an irregularly inflected form
+						// get the MoStemMsa of its variant
+						var entry = obj as ILexEntry;
+						if (entry.EntryRefsOS.Count > 0)
+						{
+							var index = ParseFiler.IndexOfLexEntryRef(attr.Value, indexOfPeriod);
+							var lexEntryRef = entry.EntryRefsOS[index];
+							var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+							stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
+							CreateStemMsaXmlElement(doc, morphNode, stemMsa);
+						}
+						break;
+					case "LexEntryInflType":
+						// This is one of the null allomorphs we create when building the
+						// input for the parser in order to still get the Word Grammar to have something in any
+						// required slots in affix templates.
+						CreateInflMsaForLexEntryInflType(doc, morphNode, obj as ILexEntryInflType);
+						break;
 				}
 			}
 		}
+
+		protected void CreateInflMsaForLexEntryInflType(XmlDocument doc, XmlNode node, ILexEntryInflType lexEntryInflType)
+		{
+			/*var slots = lexEntryInflType.SlotsRC;
+			IMoInflAffixSlot firstSlot = null;
+			foreach (var slot in slots)
+			{
+				if (firstSlot == null)
+					firstSlot = slot;
+			}*/
+			IMoInflAffixSlot slot;
+			var slotId = node.SelectSingleNode("MoForm/@wordType");
+			if (slotId != null)
+				slot = m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(slotId.InnerText));
+			else
+			{
+				var slots = lexEntryInflType.SlotsRC;
+				IMoInflAffixSlot firstSlot = null;
+				foreach (var slot1 in slots)  // there's got to be a better way to do this...
+				{
+					firstSlot = slot1;
+					break;
+				}
+				slot = firstSlot;
+			}
+			XmlNode nullInflMsaNode;
+			nullInflMsaNode = CreateXmlElement(doc, "inflMsa", node);
+			CreatePOSXmlAttribute(doc, nullInflMsaNode, slot.Owner as IPartOfSpeech, "cat");
+			CreateXmlAttribute(doc, "slot", slot.Hvo.ToString(), nullInflMsaNode);
+			CreateXmlAttribute(doc, "slotAbbr", slot.Name.BestAnalysisAlternative.Text, nullInflMsaNode);
+			CreateXmlAttribute(doc, "slotOptional", "false", nullInflMsaNode);
+			CreateFeatureStructureNodes(doc, nullInflMsaNode, lexEntryInflType.InflFeatsOA, lexEntryInflType.Hvo);
+		}
+
 		protected void CreatePOSXmlAttribute(XmlDocument doc, XmlNode msaNode, IPartOfSpeech pos, string sCat)
 		{
 			if (pos != null)

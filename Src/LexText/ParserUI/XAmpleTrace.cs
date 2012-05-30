@@ -22,7 +22,7 @@
 using System;
 using System.Text;
 using System.Xml;
-
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 using System.Xml.XPath;
@@ -289,7 +289,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ConvertAdHocFailures(XmlDocument doc, bool fTesting, AdhocTraceTest tt)
 		{
-			string sXPath = "//failure[contains(@test,'" + tt.Name + "') and not(contains(@test,'ExcpFeat')) and not(contains(@test,'StemName'))]";
+			string sXPath = "//failure[contains(@test,'" + tt.Name +
+				"') and not(contains(@test,'ExcpFeat')) and not(contains(@test,'StemName')) and not(contains(@test,'IrregInflForm'))]";
 			XmlNodeList nl = doc.SelectNodes(sXPath);
 			if (nl != null)
 			{
@@ -402,6 +403,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public override string GetHvoRepresentation(FdoCache cache, int hvo)
 		{
 			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			// need to handle case where what we have is a fake null morpheme
 			IMoMorphSynAnalysis msa = obj as IMoMorphSynAnalysis;
 			string sResult;
 			if (msa != null)

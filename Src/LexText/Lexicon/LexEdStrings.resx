@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ks_Add" xml:space="preserve">
 	<value>&amp;Add</value>
@@ -493,5 +493,17 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="kProblemMerging" xml:space="preserve">
 	<value>Problem merging remote changes</value>
 	<comment>Dialog caption</comment>
+  </data>
+  <data name="ksCannotRedoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+	<value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
+  </data>
+  <data name="ksConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+	<value>Convert variants to irregularly inflected form variants</value>
+  </data>
+  <data name="ksWhatIsConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+	<value>This utility allows you to select which variants should be converted to irregularly inflected form variants, a special sub-kind of variant.</value>
+  </data>
+  <data name="ksWhenToConvertIrregularlyInflectedFormVariants" xml:space="preserve">
+	<value>Run this utility when you need to convert many of your existing variants to be irregularly inflected form kind of variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
   </data>
 </root>

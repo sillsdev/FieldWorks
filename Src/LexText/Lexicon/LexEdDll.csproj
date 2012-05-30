@@ -288,9 +288,6 @@
 	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="HomographResetter.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="ImageHolder.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -302,6 +299,7 @@
 	<Compile Include="LexEntryImages.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="LexEntryInflTypeConverter.cs" />
 	<Compile Include="LexEntryMenuHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>
