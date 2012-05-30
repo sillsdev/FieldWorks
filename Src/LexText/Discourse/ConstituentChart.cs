@@ -896,6 +896,10 @@ namespace SIL.FieldWorks.Discourse
 				// If anything is wrong with the saved data, ignore it.
 				return false;
 			}
+
+			if (doc.DocumentElement == null || doc.DocumentElement.ChildNodes.Count != m_columnWidths.Length)
+				return false; // prevents crash on deleting a chart-internal template column.
+
 			int i = 0;
 			m_columnPositions[0] = 0;
 			foreach (XmlNode node in doc.DocumentElement.ChildNodes)

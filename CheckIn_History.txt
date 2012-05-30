@@ -195,3 +195,4 @@ NaylorJ, 20 April 2012. Fixed a crash in the new code for Tree relations, empty 
 NaylorJ, 20 April 2012. Integrated WW changeset 37354 into this branch to fix LT-12498.
 ----------------- FW7.2.5 -------------------------------------------------------------------------------
 KenZ, 15 May 2010. Fixed LT-13082 SFM import adding duplicate lexical relations.
+KenZ, 30 May 2010. Integrated Gordon's fix for LTB-1519 crash in discourse due to bad settings
