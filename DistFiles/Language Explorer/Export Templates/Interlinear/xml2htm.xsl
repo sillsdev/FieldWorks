@@ -11,8 +11,10 @@
 		<style type="text/css">
 		 number { vertical-align: top; }
 <!--         span { display: inline-block; border: 1px solid black; vertical-align: top; } -->
-		 span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
-		 table { text-align: left; }
+		  span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
+		  table { text-align: left; }
+		  .homographNum { font-size:xx-small; }
+		  .variantTypes { font-variant:small-caps; }
 		</style>
 		<title> &#160; </title>
 	  </head>
@@ -188,10 +190,10 @@
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
-	<xsl:apply-templates/>
+	<span class="variantTypes"><xsl:apply-templates/></span>
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
-	<xsl:apply-templates/>
+	<span class="variantTypes"><xsl:apply-templates/></span>
   </xsl:template>
 
 
@@ -201,11 +203,11 @@
 		<xsl:apply-templates/>
 	   <xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 		<xsl:if test="$homographNumber">
-				<sub><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
+				<sub class="homographNum"><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
 		</xsl:if>
 		<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 		<xsl:if test="$variantTypes">
-			<xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
+		  <xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
 		</xsl:if>
 		<xsl:text>&#160;</xsl:text>
 	  </td>

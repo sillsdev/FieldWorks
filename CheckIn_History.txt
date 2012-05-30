@@ -5934,3 +5934,4 @@ EricP, 25 May 2012. LT-7581. Add glsAppend to export of interlinear to OpenOffic
 EricP, 25 May 2012. LT-7581.  Export interlinear glsAppend for Word docs. Fix multi ws issue.
 EricP, 26 May 2012. LT-7581. Export interlinear to Word2007 with glsAppend. Fix a multipleWs and spacing issue.
 Andy Black, 29 May 2012. LT-7581. Add glsAppend to export of interlinear to XLingPaper.
+EricP, 30 May 2012. LT-7581 Add homographNum and variantTypes style to HTML export of interlinear
