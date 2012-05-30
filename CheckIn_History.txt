@@ -5937,3 +5937,5 @@ Andy Black, 29 May 2012. LT-7581. Add glsAppend to export of interlinear to XLin
 EricP, 30 May 2012. LT-7581 Add homographNum and variantTypes style to HTML export of interlinear
 EricP, 30 May 2012. LT-7581. Add Interlin_VariantTypes style to OpenOffice export of interlinear
 EricP, 30 May 2012. LT-7581. Add small caps to Interlin Variant Types style Word and Word2007 export of interlinear
+EricP, 30 May 2012. Added a service that creates a namespace manager with all the possible prefixes defined in an XmlDocument.
+	Helpful for xpaths that use multiple prefixes.

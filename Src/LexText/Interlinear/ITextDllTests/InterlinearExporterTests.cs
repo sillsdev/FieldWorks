@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using Palaso.TestUtilities;
+using Palaso.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -414,7 +415,7 @@ namespace SIL.FieldWorks.IText
 				ValidateInterlinearXml(exportedDoc);
 
 				XmlDocument transformedDocOO = TransformDocXml2OO(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocOO);
+				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocOO);
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", nsmgr), Has.Count.EqualTo(1));
@@ -427,32 +428,6 @@ namespace SIL.FieldWorks.IText
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr).InnerText, Is.EqualTo(formLexEntry + "1+fr. var."));
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr).InnerText, Is.EqualTo("+fr. var."));
-			}
-
-			private XmlNamespaceManager LoadNsmgrForDoc(XmlDocument doc)
-			{
-				var rootNode = doc.DocumentElement;
-				var nsmgr = new XmlNamespaceManager(doc.NameTable);
-				foreach (XmlNode node in rootNode.SelectNodes("//*"))
-				{
-					foreach (XmlAttribute attr in node.Attributes)
-					{
-						if (attr.Prefix != "xmlns")
-							continue;
-						var prefix = attr.LocalName;
-						var urn = attr.Value;
-						if (prefix.Length > 0)
-						{
-							var urnDefined = nsmgr.LookupNamespace(prefix);
-							if (String.IsNullOrEmpty(urnDefined))
-							{
-								nsmgr.AddNamespace(prefix, urn);
-							}
-
-						}
-					}
-				}
-				return nsmgr;
 			}
 
 			[Test]
@@ -635,7 +610,7 @@ namespace SIL.FieldWorks.IText
 				//validate export xml against schema
 				ValidateInterlinearXml(exportedDoc);
 				var transformedDocOO = TransformDocXml2OO(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocOO);
+				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocOO);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				// /text:span[@text:style-name='Interlin_VariantTypes']
@@ -703,7 +678,7 @@ namespace SIL.FieldWorks.IText
 				exportedDoc = ExportToXml();
 
 				var transformedDocWord = TransformDocXml2Word(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
@@ -763,7 +738,7 @@ namespace SIL.FieldWorks.IText
 				exportedDoc = ExportToXml();
 
 				var transformedDocWord = TransformDocXml2Word2007(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
@@ -807,7 +782,7 @@ namespace SIL.FieldWorks.IText
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 				var transformedDocWord = TransformDocXml2Word(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
+				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocWord);
 
 				Assert.That(transformedDocWord.SelectNodes("//*[text()='glossgo']", nsmgr), Has.Count.EqualTo(2), "Should only have one LexGloss per line");
 			}
