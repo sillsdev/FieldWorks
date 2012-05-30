@@ -156,6 +156,9 @@
 						</w:style>
 			<w:style w:type="character" w:styleId="Interlin Variant Types">
 			  <w:name w:val="Interlin Variant Types" />
+			  <w:rPr>
+				<w:smallCaps w:val="on"/>
+			  </w:rPr>
 			</w:style>
 			<!--Base style for things typically in the main analysis language -->
 						<w:style w:type="character" w:styleId="Interlin Analysis">
