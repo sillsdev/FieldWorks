@@ -212,15 +212,13 @@ version="1.0">
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
-	  <text:span text:style-name="Interlin_Homograph">
-		  <xsl:apply-templates/>
-	  </text:span>
+	  <text:span text:style-name="Interlin_Homograph"><xsl:apply-templates/></text:span>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
-	  <xsl:apply-templates/>
+	<text:span text:style-name="Interlin_VariantTypes"><xsl:apply-templates/></text:span>
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
-	<xsl:apply-templates/>
+	<text:span text:style-name="Interlin_VariantTypes"><xsl:apply-templates/></text:span>
   </xsl:template>
 
   <xsl:template match="morph/item[@type='cf']" mode="rowItems">
