@@ -33,4 +33,4 @@ fi
 
 cd "$lib"; RUNMODE="INSTALLED" . environ; cd $OLDPWD
 cd "$share" # Temporary
-exec mono --debug "$lib/FieldWorks.exe" -app "$@"
+exec mono --debug "$lib"/"$@"

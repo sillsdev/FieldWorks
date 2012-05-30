@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Unicode Character Properties Editor
+Comment=Unicode Character Properties Editor is a tool for defining Private Use Area characters.
+Exec=unicodechareditor
+Icon=unicodechareditor
+Terminal=false
+Type=Application
+Categories=Education;
