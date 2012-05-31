@@ -22,6 +22,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
+using System.Globalization;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Application.ApplicationServices
@@ -784,7 +785,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			string sDate = xrdr.GetAttribute("date");
 			if (String.IsNullOrEmpty(sDate))
 				throw new Exception("Missing date attribute for <Lists> element");
-			if (!DateTime.TryParse(sDate, out dateOfTranslation))
+			if (!DateTime.TryParse(sDate, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal, out dateOfTranslation))
 				throw new Exception(String.Format("Invalid date attribute value for <Lists> element: {0}", sDate));
 			return dateOfTranslation;
 		}
