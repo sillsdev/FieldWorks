@@ -75,6 +75,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			changesReceived = false;
 			string args = "";
 			projectName = "";
+			_projectName = "";
+			_sFwProjectName = "";
 			if (userName != null)
 			{
 				AddArg(ref args, "-u", userName);
