@@ -3950,7 +3950,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (CurrentSlice.Object is IText)
 					{
 						IRnGenericRec referringRecord;
-						if (NotebookRecordRefersToThisText(out referringRecord))
+						if (NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord))
 							return referringRecord.Guid;
 
 						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
@@ -3986,18 +3986,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			((IText)CurrentSlice.Object).AssociateWithNotebook(true);
 			IRnGenericRec referringRecord;
-			NotebookRecordRefersToThisText(out referringRecord);
+			NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord);
 			return referringRecord;
 		}
 
-		private bool NotebookRecordRefersToThisText(out IRnGenericRec referringRecord)
+		internal static bool NotebookRecordRefersToThisText(IText text, out IRnGenericRec referringRecord)
 		{
 			referringRecord = null;
-			IText currentText = CurrentSlice.Object as IText;
-			if (currentText == null)
+			if (text == null)
 				throw new ArgumentException("Don't call this unless the CurrentSlice.Object is a Text.");
 
-			foreach (var candidate in currentText.ReferringObjects)
+			foreach (var candidate in text.ReferringObjects)
 			{
 				if (candidate is IRnGenericRec)
 				{

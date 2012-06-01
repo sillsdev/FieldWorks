@@ -5949,3 +5949,4 @@ EricP, 1 Jun 2012. LT-13016. Add better interlinear HTML export support for Lite
 	Fixed DOCTYPE line (and commented it out for the sake of tests).
 NaylorJ, 1 Jun 2012. Part of the work for LT-13212 won't build until Gordon commits the rest. If you manage to split us, sorry.
 GordonM, 1 Jun 2012. Rest of work for LT-13212.
+GordonM, 1 Jun 2012. Some bug fixes for LT-13212.

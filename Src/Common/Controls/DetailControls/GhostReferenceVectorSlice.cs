@@ -140,12 +140,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// in one situation, where we need to create a notebook record, associate the current object
 						// with it, and add the values to it.
 						((IText)m_obj).AssociateWithNotebook(false);
-						var recHvo = m_obj.Owner.Hvo;
+						IRnGenericRec notebookRec;
+						DataTree.NotebookRecordRefersToThisText(m_obj as IText, out notebookRec);
+						var recHvo = notebookRec.Hvo;
 						var values = (from obj in chooser.ChosenObjects select obj.Hvo).ToArray();
 						var listFlid = m_flid;
 						if (m_flid == RnGenericRecTags.kflidParticipants)
 						{
-							var defaultRoledParticipant = ((IRnGenericRec)m_obj.Owner).MakeDefaultRoledParticipant();
+							var defaultRoledParticipant = notebookRec.MakeDefaultRoledParticipant();
 							recHvo = defaultRoledParticipant.Hvo;
 							listFlid = RnRoledParticTags.kflidParticipants;
 						}
