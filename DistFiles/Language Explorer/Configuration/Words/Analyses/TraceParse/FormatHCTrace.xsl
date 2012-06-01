@@ -1196,9 +1196,15 @@ ShowMorph
 					<tr>
 						<!-- Note: do not need to do any re-ordering for RTL; the browser does it. -->
 						<xsl:for-each select="Morph">
-							<td valign="top">
-								<xsl:call-template name="ShowMorphSuccess"/>
-							</td>
+
+							<xsl:if test="not(lexEntryInflType)">
+								<!-- This is one of the null allomorphs we create when building the
+									input for the parser in order to still get the Word Grammar to have something in any
+									required slots in affix templates. -->
+								<td valign="top">
+									<xsl:call-template name="ShowMorphSuccess"/>
+								</td>
+							</xsl:if>
 						</xsl:for-each>
 					</tr>
 				</table>

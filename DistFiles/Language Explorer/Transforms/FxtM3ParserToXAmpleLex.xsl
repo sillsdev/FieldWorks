@@ -24,7 +24,6 @@ Preamble
 	<xsl:key name="InflMsaID" match="MoInflAffMsa" use="@Id"/>
 	<xsl:key name="UnclassifiedMsaID" match="MoUnclassifiedAffixMsa" use="@Id"/>
 	<xsl:key name="LexEntryID" match="LexEntry" use="@Id"/>
-	<xsl:key name="LexEntryInflTypeID" match="LexEntryInflType" use="@Id"/>
 	<xsl:key name="LexEntryInflTypeSlots" match="LexEntryInflType/Slots" use="@dst"/>
 	<xsl:key name="LexSenseID" match="LexSense" use="@Id"/>
 	<xsl:key name="MorphTypeID" match="MoMorphType" use="@Id"/>
@@ -33,7 +32,6 @@ Preamble
 	<xsl:key name="PhContextID" match="PhSimpleContextNC | PhSimpleContextSeg | PhSimpleContextBdry | PhIterationContext | PhSequenceContext" use="@Id"/>
 	<xsl:key name="PhBdryID" match="PhBdryMarker" use="@Id"/>
 	<xsl:key name="PhonemeID" match="PhPhoneme" use="@Id"/>
-	<xsl:key name="PrefixSlotsID" match="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/PrefixSlots" use="@Id"/>
 	<xsl:key name="StemAlloID" match="MoStemAllomorph" use="@Id"/>
 	<xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
 	<xsl:key name="ToMsaDst" match="ToMsa" use="@dst"/>
@@ -55,6 +53,7 @@ Preamble
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
 	<xsl:include href="MorphTypeGuids.xsl"/>
 	<xsl:include href="XAmpleTemplateVariables.xsl"/>
+	<xsl:include href="FxtM3ParserCommon.xsl"/>
 	<!-- following is used for writing inflection class MECs -->
 	<xsl:variable name="sExocentricToInflectionClasses">
 		<!-- will use a delimeter to guarantee uniqueness of the class name -->
@@ -74,7 +73,6 @@ Preamble
 	<!-- following is for full reduplication -->
 	<xsl:variable name="sFullRedupPattern" select="'[...]'"/>
 	<xsl:variable name="sPosIdDivider" select="'|'"/>
-	<xsl:variable name="LexEntryInflTypeSlots" select="/M3Dump/LexEntryInflTypes/LexEntryInflType/Slots"/>
 
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -863,7 +861,7 @@ CliticAsAffix
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="allos"/>
 		<xsl:if test="string-length($sTypes) &gt; string-length($sCliticType)">
-<!-- Need to create another record; add space -->
+			<!-- Need to create another record; add space -->
 
 \lx <xsl:value-of select="@Id"/>
 		</xsl:if>
@@ -935,7 +933,7 @@ CliticAsRoot
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="allos"/>
 		<xsl:if test="$bOutputLxField='Y'">
-<!-- Need to create another record; add space -->
+			<!-- Need to create another record; add space -->
 
 \lx <xsl:value-of select="@Id"/>
 		</xsl:if>
@@ -1871,22 +1869,6 @@ Gloss
 		</xsl:if>
 	</xsl:template>
 	<!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		GlossAddition
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-	<xsl:template name="GlossAddition">
-		<xsl:param name="addition"/>
-		<xsl:choose>
-			<xsl:when test="$addition='***'">
-				<!-- output nothing -->
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$addition"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 InflClass
 	Output the InflClass allomorph property if needed
@@ -2027,26 +2009,15 @@ InflClass
 			<xsl:text>
 
 \lx </xsl:text>
-			<xsl:value-of select="$lexEntry/@Id"/>
-			<xsl:variable name="iPos" select="count($lexEntryRef/preceding-sibling::LexEntryRef)"/>
-			<xsl:if test="$iPos &gt; 0">
-				<xsl:text>.</xsl:text>
-				<xsl:value-of select="$iPos"/>
-			</xsl:if>
+			<xsl:call-template name="IdOfIrregularlyInflectedFormEntry">
+				<xsl:with-param name="lexEntry" select="$lexEntry"/>
+				<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+			</xsl:call-template>
 			<xsl:variable name="gloss">
-				<xsl:for-each select="$lexEntryRef/LexEntryInflType">
-					<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-					<xsl:call-template name="GlossAddition">
-						<xsl:with-param name="addition" select="$lexEnryInflType/GlossPrepend"/>
-					</xsl:call-template>
-				</xsl:for-each>
-				<xsl:value-of select="$sVariantOfGloss"/>
-				<xsl:for-each select="$lexEntryRef/LexEntryInflType">
-					<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-					<xsl:call-template name="GlossAddition">
-						<xsl:with-param name="addition" select="$lexEnryInflType/GlossAppend"/>
-					</xsl:call-template>
-				</xsl:for-each>
+				<xsl:call-template name="GlossOfIrregularlyInflectedForm">
+					<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+					<xsl:with-param name="sVariantOfGloss" select="$sVariantOfGloss"/>
+				</xsl:call-template>
 			</xsl:variable>
 			<xsl:call-template name="Gloss">
 				<xsl:with-param name="gloss" select="$gloss"/>

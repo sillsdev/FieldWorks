@@ -403,7 +403,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		public override string GetHvoRepresentation(FdoCache cache, int hvo)
 		{
 			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			// need to handle case where what we have is a fake null morpheme
 			IMoMorphSynAnalysis msa = obj as IMoMorphSynAnalysis;
 			string sResult;
 			if (msa != null)
