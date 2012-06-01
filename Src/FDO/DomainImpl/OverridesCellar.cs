@@ -4547,6 +4547,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (cmPossibilityRepository.TryGetObject(RnResearchNbkTags.kguidRecEvent, out eventItem)) // should succeed except in tests
 				rec.TypeRA = eventItem;
 		}
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic)]
+		public IRnGenericRec AssociatedNotebookRecord
+		{
+			get
+			{
+				EnsureCompleteIncomingRefs();
+				return ReferringObjects.OfType<RnGenericRec>().Select(
+					referringObject => referringObject as IRnGenericRec).FirstOrDefault();
+			}
+		}
+
 	}
 
 	#region ParagraphAnalysisFinder class

@@ -2839,6 +2839,11 @@ namespace SIL.FieldWorks.FDO
 		/// Associate the text with a (newly created) notebook record. Does nothing if it already is.
 		/// </summary>
 		void AssociateWithNotebook(bool makeYourOwnUow);
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		IRnGenericRec AssociatedNotebookRecord { get; }
 	}
 
 	/// <summary>

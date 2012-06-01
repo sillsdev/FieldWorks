@@ -5952,3 +5952,4 @@ GordonM, 1 Jun 2012. Rest of work for LT-13212.
 GordonM, 1 Jun 2012. Some bug fixes for LT-13212.
 KenZ, 1 Jun 2012. Integrated fix for LT-12987,13297 from 7.2 to WW
 Andy Black, 1 June 2012. LT-7581. Enable Hermit Crab parser to handle irregularly inflected forms.
+GordonM, 1 Jun 2012. Added an AssociatedNotebookRecord prop to IText.

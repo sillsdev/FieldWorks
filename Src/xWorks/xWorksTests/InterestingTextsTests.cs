@@ -846,6 +846,11 @@ namespace SIL.FieldWorks.XWorks
 			ContentsOA = new MockStText();
 		}
 
+		public IRnGenericRec AssociatedNotebookRecord
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get or set the MediaFiles

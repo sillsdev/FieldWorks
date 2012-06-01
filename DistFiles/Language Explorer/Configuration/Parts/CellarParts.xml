@@ -194,36 +194,43 @@
 			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo-Notebook"/>
 		</part>
 		<part id="Text-Detail-NotebookFields" type="Detail" >
-			<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Researchers" label="Researchers">
-				<chooserInfo>
-					<!-- Duplicates info in RnGenericRec-Detail-Researchers-->
-					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
-				</chooserInfo>
-			</slice>
-			<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Sources" label="Sources">
-				<chooserInfo>
-					<!-- Duplicates info in RnGenericRec-Detail-Sources-->
-					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
-				</chooserInfo>
-			</slice>
-			<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Participants" label="Participants">
-				<chooserInfo>
-					<!-- Duplicates info in RnGenericRec-Detail-Participants-->
-					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
-				</chooserInfo>
-			</slice>
-			<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Locations" label="Locations">
-				<chooserInfo>
-					<!-- Duplicates info in RnGenericRec-Detail-Locations-->
-					<chooserLink type="goto" label="Edit the list of Locations" tool="locationsEdit" />
-				</chooserInfo>
-			</slice>
-			<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="Anthropology Categories">
-				<chooserInfo helpBrowser="true">
-					<!-- Duplicates info in RnGenericRec-Detail-AnthroCodes-->
-					<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
-				</chooserInfo>
-			</slice>
+			<choice>
+				<where field="AssociatedNotebookRecord" is="RnGenericRec">
+					<obj field="AssociatedNotebookRecord" layout="TextInfoFields"/>
+				</where>
+				<otherwise>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Researchers" label="Researchers">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Researchers-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Sources" label="Sources">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Sources-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Participants" label="Participants">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Participants-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Locations" label="Locations">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Locations-->
+							<chooserLink type="goto" label="Edit the list of Locations" tool="locationsEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="Anthropology Categories">
+						<chooserInfo helpBrowser="true">
+							<!-- Duplicates info in RnGenericRec-Detail-AnthroCodes-->
+							<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
+						</chooserInfo>
+					</slice>
+				</otherwise>
+			</choice>
 		</part>
 
 	</bin>

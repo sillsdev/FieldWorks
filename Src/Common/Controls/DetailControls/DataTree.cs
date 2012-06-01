@@ -3996,15 +3996,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (text == null)
 				throw new ArgumentException("Don't call this unless the CurrentSlice.Object is a Text.");
 
-			foreach (var candidate in text.ReferringObjects)
-			{
-				if (candidate is IRnGenericRec)
-				{
-					referringRecord = candidate as IRnGenericRec;
-					return true;
-				}
-			}
-			return false;
+			referringRecord = text.AssociatedNotebookRecord;
+			return referringRecord != null;
 		}
 
 		/// <summary>
