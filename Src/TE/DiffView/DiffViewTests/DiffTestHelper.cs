@@ -746,7 +746,7 @@ namespace SIL.FieldWorks.TE
 		public static IScrTxtPara[] CreateDummyParas(int count, FdoCache cache)
 		{
 			IText text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			cache.LangProject.TextsOC.Add(text);
+			//cache.LangProject.TextsOC.Add(text);
 			IStText stText = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 

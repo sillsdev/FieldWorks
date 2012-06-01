@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// Test it with IStTxtPara.
 			var text = servLoc.GetInstance<ITextFactory>().Create();
-			lp.TextsOC.Add(text);
+			//lp.TextsOC.Add(text);
 			var txt = servLoc.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = txt;
 			var para = servLoc.GetInstance<IStTxtParaFactory>().Create();

@@ -1106,7 +1106,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				() =>
 				{
 					result = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					Cache.LangProject.TextsOC.Add(result);
+					//Cache.LangProject.TextsOC.Add(result);
 					result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
 					result.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				});

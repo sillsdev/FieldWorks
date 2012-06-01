@@ -2370,15 +2370,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class TextFactory : ITextFactory, IFdoFactoryInternal
 	{
 		/// <summary>
-		/// Basic creation method for an CmMediaURI.
+		/// Basic creation method for a Text.
 		/// </summary>
-		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
+		/// <returns>A new, unowned Text with the given guid</returns>
 		public IText Create(FdoCache cache, Guid guid)
 		{
 			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
 			var newby = new Text(cache, hvo, guid);
-			if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
-				((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
+			// If it gets here the new unowned Text will already be initialized!
+			//if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
+			//    ((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
 			return newby;
 		}
 	}

@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 			var tssFact = Cache.TsStrFactory;
 			var ws = Cache.DefaultVernWs;
 			var text = servLoc.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = servLoc.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var data = servLoc.GetInstance<IDsDiscourseDataFactory>().Create();

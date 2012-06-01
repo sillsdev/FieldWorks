@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string textsDefinitionsPath = ConfigurationFilePath(textsDefinitionRelativePath);
 			textsDefn.Load(textsDefinitionsPath);
 			XmlNode text1Defn = textsDefn.SelectSingleNode("/Texts6001/Text[" + index + "]");
-			tb = new ParagraphParserTests.TextBuilder(Cache, Cache.LangProject.TextsOC);
+			tb = new ParagraphParserTests.TextBuilder(Cache);
 			return tb.BuildText(text1Defn);
 		}
 
@@ -1899,20 +1899,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected internal class TextBuilder
 		{
 			FdoCache m_cache = null;
-			IFdoOwningCollection<FDO.IText> m_owner = null;
+			//IFdoOwningCollection<FDO.IText> m_owner = null;
 			FDO.IText m_text = null;
 			XmlNode m_textDefn = null;
 
 			internal TextBuilder(TextBuilder tbToClone)
-				: this(tbToClone.m_cache, tbToClone.m_owner)
+				: this(tbToClone.m_cache)
 			{
 				m_text = tbToClone.m_text;
 				this.SelectedNode = ParagraphBuilder.Snapshot(tbToClone.SelectedNode);
 			}
 
-			internal TextBuilder(FdoCache cache, IFdoOwningCollection<FDO.IText> owner)
+			internal TextBuilder(FdoCache cache)
 			{
-				m_owner = owner;
+				//m_owner = owner;
 				m_cache = cache;
 			}
 
@@ -2008,10 +2008,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			private FDO.IText CreateText()
 			{
-				Debug.Assert(m_owner != null && m_cache != null);
+				Debug.Assert(m_cache != null);
 				FDO.IText newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				Debug.Assert(m_owner != null);
-				m_owner.Add(newText);
+				//Debug.Assert(m_owner != null);
+				//m_owner.Add(newText);
 				return newText;
 			}
 
@@ -2064,7 +2064,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			internal void DeleteText()
 			{
-				m_owner.Remove(m_text);
+				//m_owner.Remove(m_text);
 				HvoActualStText = 0;
 			}
 
@@ -2509,7 +2509,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IStText MakeText(string title)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var result = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = result;
 			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);

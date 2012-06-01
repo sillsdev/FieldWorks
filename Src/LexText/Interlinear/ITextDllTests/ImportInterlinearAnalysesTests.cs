@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.IText
 			FDO.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.IText
 			FDO.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.IText
 			FDO.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.IText
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
@@ -231,7 +231,7 @@ namespace SIL.FieldWorks.IText
 			var options = CreateImportInterlinearOptions(xml);
 			FDO.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -258,7 +258,7 @@ namespace SIL.FieldWorks.IText
 				 */
 
 				// make sure nothing has changed:
-				Assert.That(Cache.LanguageProject.TextsOC.Count, Is.EqualTo(1));
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.IText
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.IText
 			var options = CreateImportInterlinearOptions(xml);
 			FDO.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.IText
 				 */
 
 				// make sure nothing has changed:
-				Assert.That(Cache.LanguageProject.TextsOC.Count, Is.EqualTo(1));
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.IText
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.IText
 			var options = CreateImportInterlinearOptions(xml);
 			FDO.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -421,7 +421,7 @@ namespace SIL.FieldWorks.IText
 				Assert.That(skippedWord.Guid, Is.EqualTo(segGuid));
 
 				// make sure nothing else has changed:
-				Assert.That(Cache.LanguageProject.TextsOC.Count, Is.EqualTo(1));
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.IText
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.IText
 			var options = CreateImportInterlinearOptions(xml);
 			FDO.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.IText
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
 
 				// make sure nothing else has changed:
-				Assert.That(Cache.LanguageProject.TextsOC.Count, Is.EqualTo(1));
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.IText
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
@@ -561,7 +561,7 @@ namespace SIL.FieldWorks.IText
 			var options = CreateImportInterlinearOptions(xml);
 			FDO.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
-			using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.IText
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
 
 				// make sure nothing else has changed:
-				Assert.That(Cache.LanguageProject.TextsOC.Count, Is.EqualTo(1));
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
 				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");

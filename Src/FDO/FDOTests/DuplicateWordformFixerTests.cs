@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wf2 = MakeWordform("wordXX");
 			var wf3 = MakeWordform("wordXX");
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();

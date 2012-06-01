@@ -2014,7 +2014,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			base.Initialize();
 
-			TextBuilder tb = new TextBuilder(Cache.LangProject.TextsOC);
+			TextBuilder tb = new TextBuilder();
 			UndoableUnitOfWorkHelper.Do("TextEditingTests - Undo Setup texts",
 				"TextEditingTests - Redo Setup texts", m_actionHandler, () =>
 			{

@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.IText
 			[TearDown]
 			public void AfterEachTest()
 			{
-				Cache.LanguageProject.TextsOC.Remove(m_text1);
+				//Cache.LanguageProject.TextsOC.Remove(m_text1);
 			}
 
 			[Test]
@@ -928,7 +928,7 @@ namespace SIL.FieldWorks.IText
 				newPerson.Name.set_String(Cache.DefaultVernWs, "Hiro Protaganist");
 
 				FDO.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				Cache.LangProject.TextsOC.Add(text);
+				//Cache.LangProject.TextsOC.Add(text);
 				text.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				text.MediaFilesOA = Cache.ServiceLocator.GetInstance<ICmMediaContainerFactory>().Create();
 				ICmMediaURI recording = Cache.ServiceLocator.GetInstance<ICmMediaURIFactory>().Create();
@@ -954,7 +954,7 @@ namespace SIL.FieldWorks.IText
 			[TearDown]
 			public void AfterEachTest()
 			{
-				Cache.LanguageProject.TextsOC.Remove(m_text1);
+				//Cache.LanguageProject.TextsOC.Remove(m_text1);
 			}
 
 			[Test]

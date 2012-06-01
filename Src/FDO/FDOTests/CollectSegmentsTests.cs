@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Setup default analysis ws
 			m_wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
 			m_text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(m_text);
+			//Cache.LangProject.TextsOC.Add(m_text);
 			Cache.LangProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			m_para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			IStText text = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();

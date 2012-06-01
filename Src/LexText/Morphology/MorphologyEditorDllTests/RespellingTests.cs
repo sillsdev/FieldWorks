@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					ILangProject proj = Cache.LangProject;
 					FDO.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					proj.TextsOC.Add(text);
+					//proj.TextsOC.Add(text);
 					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			BaseVirtualHandler.InstallVirtuals(doc.DocumentElement, Cache);
 
 			m_text = new Text();
-			Cache.LangProject.TextsOC.Add(m_text);
+			// Cache.LangProject.TextsOC.Add(m_text);
 			string para1 = "Axx simplexx testxx withxx axx lotxx ofxx wordsxx endingxx inxx xx";
 			string para2 = "axx sentencexx axx havingxx axx lotxx ofxx axx";
 			m_para1 = new StTxtPara();

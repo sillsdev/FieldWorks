@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.IText
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_text1 = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(m_text1);
+			//Cache.LangProject.TextsOC.Add(m_text1);
 			var stText1 = stTextFactory.Create();
 			m_text1.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);

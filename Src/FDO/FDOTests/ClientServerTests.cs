@@ -469,7 +469,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				() =>
 					{
 						text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-						Cache.LangProject.TextsOC.Add(text);
+						//Cache.LangProject.TextsOC.Add(text);
 					});
 			IStText stText = null;
 			ICmObjectId id1 = null;

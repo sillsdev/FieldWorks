@@ -39,14 +39,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-SubRecords" type="detail">
-			<choice>
-				<where target="owner" is="RnGenericRec">
-					<seq field="SubRecords" indent="true" layout="SubRecord"/>
-				</where>
-				<otherwise>
-					<seq field="SubRecords" indent="true" layout="SubRecord"/>
-				</otherwise>
-			</choice>
+			<seq field="SubRecords" indent="true" layout="SubRecord"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-HeavySummary" type="detail" paramType="JtLayoutsOfThisClass">

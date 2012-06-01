@@ -5942,9 +5942,10 @@ EricP, 30 May 2012. Added a service that creates a namespace manager with all th
 NaylorJ, 30 May 2012. Updated FB Installer to 0.3.42
 KenZ, 30 May 2012. Added config file to address LT-12927.
 Andy Black, 30 May 2012. LT-7581. Enable XAmple parser to handle irregularly inflected forms.
-NaylorJ, 30 May 2012. Updated FLEx Bridge Installer to 0.3.43 and Lift Bridge installer to 1.4.19.
+RandyR, 30 May 2012. Updated FLEx Bridge Installer to 0.3.43 and Lift Bridge installer to 1.4.19.
 KenZ, 31 May 2012. Roled back file Andy accidentally changed that broke Tools...Utilities.
 AlistairI, 31 May 2012. Fixed deadlock problems when canceling conflict viewer then running Flexbridge to get a repository.
 EricP, 1 Jun 2012. LT-13016. Add better interlinear HTML export support for Literal, Free Translation, Note lines. Revised styles.
 	Fixed DOCTYPE line (and commented it out for the sake of tests).
 NaylorJ, 1 Jun 2012. Part of the work for LT-13212 won't build until Gordon commits the rest. If you manage to split us, sorry.
+GordonM, 1 Jun 2012. Rest of work for LT-13212.

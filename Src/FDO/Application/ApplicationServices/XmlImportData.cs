@@ -152,6 +152,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private IWfiWordformFactory m_factWfiWordForm;
 		private ICmBaseAnnotationFactory m_factCmBaseAnnotation;
 		private ICmIndirectAnnotationFactory m_factCmIndirectAnnotation;
+		private ITextFactory m_factText;
 		private string m_sFilename = "data stream";
 
 		private Dictionary<string, Guid> m_mapIdGuid = new Dictionary<string, Guid>();
@@ -1053,6 +1054,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 									m_factLexEntry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 								cmo = m_factLexEntry.Create();
 								m_nHomograph = 0;
+								break;
+							case TextTags.kClassId:
+								if (m_factText == null)
+									m_factText = m_cache.ServiceLocator.GetInstance<ITextFactory>();
+								cmo = m_factText.Create();
 								break;
 							default:
 								string sMsg = AppStrings.ksUnrecognizedOwnerlessObjectClass;

@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		public void InsertNew()
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var para = stText.AddNewTextPara(null);
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		public void MoveString()
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var para1 = stText.AddNewTextPara(null);
@@ -795,18 +795,18 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		public void get_VecSizeTest()
 		{
 			var lp = Cache.LanguageProject;
-			const int flid = LangProjectTags.kflidTexts;
+			const int flid = LangProjectTags.kflidStyles;
 			var orig = m_sda.get_VecSize(lp.Hvo, flid);
-			Assert.AreEqual(Cache.LanguageProject.TextsOC.Count, orig, "Wrong original count.");
+			Assert.AreEqual(Cache.LanguageProject.StylesOC.Count, orig, "Wrong original count.");
 
 			// Add a text.
-			var txt1 = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			lp.TextsOC.Add(txt1);
+			var style1 = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			lp.StylesOC.Add(style1);
 			var newCount = m_sda.get_VecSize(lp.Hvo, flid);
-			Assert.AreEqual(Cache.LanguageProject.TextsOC.Count, newCount, "Wrong new count (get_VecSize).");
+			Assert.AreEqual(Cache.LanguageProject.StylesOC.Count, newCount, "Wrong new count (get_VecSize).");
 
 			newCount = m_sda.get_VecSizeAssumeCached(lp.Hvo, flid);
-			Assert.AreEqual(Cache.LanguageProject.TextsOC.Count, newCount, "Wrong new count (get_VecSizeAssumeCached).");
+			Assert.AreEqual(Cache.LanguageProject.StylesOC.Count, newCount, "Wrong new count (get_VecSizeAssumeCached).");
 		}
 
 		/// <summary>
@@ -818,14 +818,14 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var lp = Cache.LanguageProject;
 
 			// Add a couple texts.
-			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
-			var txt1 = textFactory.Create();
-			lp.TextsOC.Add(txt1);
-			var txt2 = textFactory.Create();
-			lp.TextsOC.Add(txt2);
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var style1 = styleFactory.Create();
+			lp.StylesOC.Add(style1);
+			var style2 = styleFactory.Create();
+			lp.StylesOC.Add(style2);
 
-			const int flid = LangProjectTags.kflidTexts;
-			var cnt = lp.TextsOC.Count;
+			const int flid = LangProjectTags.kflidStyles;
+			var cnt = lp.StylesOC.Count;
 
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(cnt))
 			{
@@ -834,8 +834,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 				Assert.AreEqual(cnt, chvo, "Wrong number of Hvos.");
 
 				var hvos = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-				Assert.AreEqual(txt1.Hvo, hvos[0], "Wrong Hvo.");
-				Assert.AreEqual(txt2.Hvo, hvos[1], "Wrong Hvo.");
+				Assert.AreEqual(style1.Hvo, hvos[0], "Wrong Hvo.");
+				Assert.AreEqual(style2.Hvo, hvos[1], "Wrong Hvo.");
 			}
 		}
 
@@ -846,13 +846,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		public void get_VecItemTest()
 		{
 			var lp = Cache.LanguageProject;
-			const int flid = LangProjectTags.kflidTexts;
+			const int flid = LangProjectTags.kflidStyles;
 			var orig = m_sda.get_VecSize(lp.Hvo, flid);
-			Assert.AreEqual(Cache.LanguageProject.TextsOC.Count, orig, "Wrong original count.");
+			Assert.AreEqual(Cache.LanguageProject.StylesOC.Count, orig, "Wrong original count.");
 
 			// Add a text.
-			var txt = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			lp.TextsOC.Add(txt);
+			var txt = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			lp.StylesOC.Add(txt);
 			var newCount = m_sda.get_VecSize(lp.Hvo, flid);
 			var newItemHvo = m_sda.get_VecItem(lp.Hvo, flid, newCount - 1);
 			Assert.AreEqual(txt.Hvo, newItemHvo, "Wrong item Hvo.");
@@ -865,17 +865,17 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		public void GetObjIndexTest()
 		{
 			var lp = Cache.LanguageProject;
-			const int flid = LangProjectTags.kflidTexts;
+			const int flid = LangProjectTags.kflidStyles;
 
 			// Add a text.
-			var txt = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			lp.TextsOC.Add(txt);
-			var hvos = new List<int>(lp.TextsOC.ToHvoArray());
-			var idx1 = hvos.IndexOf(txt.Hvo);
-			var idx2 = m_sda.GetObjIndex(lp.Hvo, flid, txt.Hvo);
+			var style = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			lp.StylesOC.Add(style);
+			var hvos = new List<int>(lp.StylesOC.ToHvoArray());
+			var idx1 = hvos.IndexOf(style.Hvo);
+			var idx2 = m_sda.GetObjIndex(lp.Hvo, flid, style.Hvo);
 			Assert.AreEqual(idx1, idx2, "Wrong index for new Text.");
 
-			lp.TextsOC.Remove(txt);
+			lp.StylesOC.Remove(style);
 
 			Assert.AreEqual(-1, m_sda.GetObjIndex(lp.Hvo, flid, lp.Hvo), "Wrong index for LP.");
 		}
@@ -1139,7 +1139,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 		[ExpectedException(typeof(ArgumentException))]
 		public void MakeNewAbstractObjectTest()
 		{
-			m_sda.MakeNewObject(CmObjectTags.kClassId, Cache.LangProject.Hvo, LangProjectTags.kflidTexts, -1);
+			m_sda.MakeNewObject(CmObjectTags.kClassId, Cache.LangProject.Hvo, LangProjectTags.kflidStyles, -1);
 		}
 
 		/// <summary>
@@ -1151,12 +1151,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var servLoc = Cache.ServiceLocator;
 			var lp = Cache.LangProject;
 			// collection
-			var hvoText = m_sda.MakeNewObject(TextTags.kClassId, lp.Hvo, LangProjectTags.kflidTexts, -1);
-			var aText = servLoc.GetInstance<ITextRepository>().GetObject(hvoText);
-			Assert.AreEqual(aText.Owner, lp);
+			var hvoStyle = m_sda.MakeNewObject(StStyleTags.kClassId, lp.Hvo, LangProjectTags.kflidStyles, -1);
+			var aStyle = servLoc.GetInstance<IStStyleRepository>().GetObject(hvoStyle);
+			Assert.AreEqual(aStyle.Owner, lp);
 
 			// atomic
-			var hvoStText = m_sda.MakeNewObject(StTextTags.kClassId, hvoText, TextTags.kflidContents, -2);
+			var aText = servLoc.GetInstance<ITextFactory>().Create();
+			var hvoStText = m_sda.MakeNewObject(StTextTags.kClassId, aText.Hvo, TextTags.kflidContents, -2);
 			var anStText = servLoc.GetInstance<IStTextRepository>().GetObject(hvoStText);
 			Assert.AreEqual(aText.ContentsOA, anStText);
 			Assert.AreEqual(anStText.Owner, aText);

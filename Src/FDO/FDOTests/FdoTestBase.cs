@@ -562,7 +562,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IFdoServiceLocator servloc = Cache.ServiceLocator;
 			IText text = servloc.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			int wsEn = servloc.GetInstance<ILgWritingSystemFactory>().GetWsFromStr("en");
 			text.Name.set_String(wsEn, name);
 
