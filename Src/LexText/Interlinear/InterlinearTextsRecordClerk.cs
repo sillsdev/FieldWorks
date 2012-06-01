@@ -48,6 +48,16 @@ namespace SIL.FieldWorks.IText
 				interestingTexts.AllCoreTexts.Count()) + (string.IsNullOrEmpty(baseStatus) ? "" : "; " + baseStatus);
 		}
 
+		public override bool OnDeleteRecord(object commandObject)
+		{
+			bool result = base.OnDeleteRecord(commandObject);
+			if(result)
+			{
+				GetInterestingTextList().UpdateInterestingTexts();
+			}
+			return result;
+		}
+
 		/// <summary>
 		/// The current object in this view is either a WfiWordform or an StText, and if we can delete
 		/// an StText at all, we want to delete its owning Text.
@@ -306,12 +316,13 @@ namespace SIL.FieldWorks.IText
 			{
 				var newText =
 					Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				Cache.LangProject.TextsOC.Add(newText);
+				//Cache.LangProject.TextsOC.Add(newText);
 				NewStText =
 					Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				newText.ContentsOA = NewStText;
 				Clerk.CreateFirstParagraph(NewStText, wsText);
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
+				Clerk.GetInterestingTextList().UpdateInterestingTexts();
 			}
 
 			#endregion

@@ -5947,3 +5947,4 @@ KenZ, 31 May 2012. Roled back file Andy accidentally changed that broke Tools...
 AlistairI, 31 May 2012. Fixed deadlock problems when canceling conflict viewer then running Flexbridge to get a repository.
 EricP, 1 Jun 2012. LT-13016. Add better interlinear HTML export support for Literal, Free Translation, Note lines. Revised styles.
 	Fixed DOCTYPE line (and commented it out for the sake of tests).
+NaylorJ, 1 Jun 2012. Part of the work for LT-13212 won't build until Gordon commits the rest. If you manage to split us, sorry.
