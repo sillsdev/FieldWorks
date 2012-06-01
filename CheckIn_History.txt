@@ -5945,3 +5945,5 @@ Andy Black, 30 May 2012. LT-7581. Enable XAmple parser to handle irregularly inf
 NaylorJ, 30 May 2012. Updated FLEx Bridge Installer to 0.3.43 and Lift Bridge installer to 1.4.19.
 KenZ, 31 May 2012. Roled back file Andy accidentally changed that broke Tools...Utilities.
 AlistairI, 31 May 2012. Fixed deadlock problems when canceling conflict viewer then running Flexbridge to get a repository.
+EricP, 1 Jun 2012. LT-13016. Add better interlinear HTML export support for Literal, Free Translation, Note lines. Revised styles.
+	Fixed DOCTYPE line (and commented it out for the sake of tests).

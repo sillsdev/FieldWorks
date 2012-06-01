@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				version="1.0">
-<!--  <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" /> -->
   <xsl:output method="html" version="4.0" encoding="UTF-8" omit-xml-declaration="yes" indent="yes" />
-
   <xsl:template match="document">
-	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+	<!-- NOTE, this DOCTYPE causes issues for tests that use AssertThatXmlIn to catch an error and display the DOM -->
+	<!-- <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html[]&gt;</xsl:text> -->
 	<html>
 	  <head>
 		<style type="text/css">
-		 number { vertical-align: top; }
+		  number { vertical-align: top; }
 <!--         span { display: inline-block; border: 1px solid black; vertical-align: top; } -->
 		  span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
 		  table { text-align: left; }
-		  .homographNum { font-size:xx-small; }
-		  .variantTypes { font-variant:small-caps; }
+
+		  .Interlin_Words { }
+		  .Interlin_Frame_Number { }
+		  .Interlin_Frame_Word { margin: 10px 5px 10px 5px; }
+		  .Interlin_Homograph { font-size: xx-small; }
+		  .Interlin_VariantTypes { font-variant: small-caps; }
+
+		  .Interlin_Freeform { }
 		</style>
 		<title> &#160; </title>
 	  </head>
@@ -68,7 +73,7 @@
   </xsl:template>
 
   <xsl:template match="phrase">
-	<p>
+	<p class="Interlin_Words">
 	  <xsl:apply-templates/>
 	</p>
   </xsl:template>
@@ -76,7 +81,7 @@
   <xsl:template match="phrase/item">
 	<xsl:choose>
 	  <xsl:when test="@type='segnum'">
-		<span>
+		<span class="Interlin_Frame_Number">
 		  <xsl:attribute name="lang"><xsl:value-of select="@lang"/></xsl:attribute>
 		  <xsl:value-of select="."/>
 		</span>
@@ -86,8 +91,19 @@
 		<br/>
 	  </xsl:when>
 	  <xsl:when test="@type='gls'">
-		<br/>
-		<xsl:apply-templates/>
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
+	  </xsl:when>
+	  <xsl:when test="@type='lit'">
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
+	  </xsl:when>
+	  <xsl:when test="@type='note'">
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
 	  </xsl:when>
 	</xsl:choose>
   </xsl:template>
@@ -99,7 +115,7 @@
   </xsl:template>
 
   <xsl:template match="word">
-	<span>
+	<span class="Interlin_Frame_Word">
 	  <table cellpadding="0" cellspacing="0">
 		<xsl:apply-templates/>
 	  </table>
@@ -190,10 +206,10 @@
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
-	<span class="variantTypes"><xsl:apply-templates/></span>
+	<span class="Interlin_VariantTypes"><xsl:apply-templates/></span>
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
-	<span class="variantTypes"><xsl:apply-templates/></span>
+	<span class="Interlin_VariantTypes"><xsl:apply-templates/></span>
   </xsl:template>
 
 
@@ -203,7 +219,7 @@
 		<xsl:apply-templates/>
 	   <xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 		<xsl:if test="$homographNumber">
-				<sub class="homographNum"><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
+				<sub class="Interlin_Homograph"><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
 		</xsl:if>
 		<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 		<xsl:if test="$variantTypes">

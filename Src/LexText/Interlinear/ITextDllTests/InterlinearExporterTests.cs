@@ -194,6 +194,87 @@ namespace SIL.FieldWorks.IText
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 0);
 			}
 
+			/// <summary>
+			/// LT-13016. Exported texts were missing Notes and Literal Translation lines.
+			/// </summary>
+			[Test]
+			public void ExportFreeLiteralNoteLines_xml()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidFreeTrans);
+				m_choices.Add(InterlinLineChoices.kflidLitTrans);
+				m_choices.Add(InterlinLineChoices.kflidNote);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				ITsString tssFreeTranslation;
+				pa.SetDefaultFreeTranslation(0, out tssFreeTranslation);
+				ITsString tssLitTranslation;
+				pa.SetDefaultLiteralTranslation(0, out tssLitTranslation);
+				ITsString tssNote1;
+				pa.SetDefaultNote(0, out tssNote1);
+
+				var segment0 = para1.SegmentsOS[0];
+				var note2 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+				segment0.NotesOS.Add(note2);
+				note2.Content.set_String(Cache.DefaultAnalWs, "second note");
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase[item[@type='gls']='" + tssFreeTranslation.Text + @"']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase[item[@type='lit']='" + tssLitTranslation.Text + @"']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@type='note']", 2);
+				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][1]").InnerText, Is.EqualTo(tssNote1.Text));
+				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][2]").InnerText, Is.EqualTo("second note"));
+			}
+
+			/// <summary>
+			/// LT-13016. Exported texts were missing Notes and Literal Translation lines.
+			/// </summary>
+			[Test]
+			public void ExportFreeLiteralNoteLines_html()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidFreeTrans);
+				m_choices.Add(InterlinLineChoices.kflidLitTrans);
+				m_choices.Add(InterlinLineChoices.kflidNote);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				XmlDocument exportedDoc = ExportToXml();
+
+				ITsString tssFreeTranslation;
+				pa.SetDefaultFreeTranslation(0, out tssFreeTranslation);
+				ITsString tssLitTranslation;
+				pa.SetDefaultLiteralTranslation(0, out tssLitTranslation);
+				ITsString tssNote1;
+				pa.SetDefaultNote(0, out tssNote1);
+
+				var segment0 = para1.SegmentsOS[0];
+				var note2 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+				segment0.NotesOS.Add(note2);
+				note2.Content.set_String(Cache.DefaultAnalWs, "second note");
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+				var htmlDoc = TransformDocXml2Html(exportedDoc);
+
+				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='Interlin_Freeform']", 6+4); // "Should be 6 empty and 4 non-empty freeform annotations (Free, Literal, and two Notes)."
+				Assert.That(htmlDoc.SelectNodes(@"//*[@class='Interlin_Freeform']")[6].InnerText, Is.EqualTo(tssFreeTranslation.Text));
+				Assert.That(htmlDoc.SelectNodes(@"//*[@class='Interlin_Freeform']")[7].InnerText, Is.EqualTo(tssLitTranslation.Text));
+				Assert.That(htmlDoc.SelectNodes(@"//*[@class='Interlin_Freeform']")[8].InnerText, Is.EqualTo(tssNote1.Text));
+				Assert.That(htmlDoc.SelectNodes(@"//*[@class='Interlin_Freeform']")[9].InnerText, Is.EqualTo("second note"));
+				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='Interlin_Words']", 4); // "Should be 4 phrases."
+				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='Interlin_Frame_Number']", 4); // "Should be 4 phrase numbers."
+				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='Interlin_Frame_Word']", 4); // "Should be 4 words (including punct)."
+			}
+
 			[Test]
 			public void ExportBasicInformation_xml2html_fixMisc()
 			{
@@ -366,17 +447,17 @@ namespace SIL.FieldWorks.IText
 				// /html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td").InnerText, Is.EqualTo(formLexEntryEs + "1+fr. var. "));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='homographNum']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='homographNum']").InnerText, Is.EqualTo("1"));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='variantTypes']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='variantTypes']").InnerText, Is.EqualTo("+fr. var."));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='Interlin_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo("+fr. var."));
 
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo(formLexEntry + "1+fr. var. "));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='homographNum']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='homographNum']").InnerText, Is.EqualTo("1"));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']").InnerText, Is.EqualTo("+fr. var."));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo("+fr. var."));
 			}
 
 			[Test]
@@ -514,8 +595,8 @@ namespace SIL.FieldWorks.IText
 				// NOTE: the whitespace after "glossgo.pst" is &#160;
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo("glossgo.pst "));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']").InnerText, Is.EqualTo(".pst"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo(".pst"));
 			}
 
 			[Test]
@@ -565,13 +646,13 @@ namespace SIL.FieldWorks.IText
 				// NOTE: the whitespace after "glossgo.pst" is &#160;
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo("frglossgo.pst "));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='variantTypes']").InnerText, Is.EqualTo(".pst"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo(".pst"));
 
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td").InnerText, Is.EqualTo("glossgo.pst "));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td/span[@class='variantTypes']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td/span[@class='variantTypes']").InnerText, Is.EqualTo(".pst"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td/span[@class='Interlin_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[4]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo(".pst"));
 			}
 
 			[Test]

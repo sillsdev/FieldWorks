@@ -646,7 +646,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// Make up a phony Free Translation for the segment.
 			/// </summary>
-			internal virtual void SetDefaultFreeTranslation(int iSegment, out ITsString tssComment)
+			public virtual void SetDefaultFreeTranslation(int iSegment, out ITsString tssComment)
 			{
 				var seg = GetSegment(iSegment);
 				ITsString tssSegment = seg.BaselineText;
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// Make up a phony Literal Translation for the segment.
 			/// </summary>
-			internal virtual void SetDefaultLiteralTranslation(int iSegment, out ITsString tssComment)
+			public virtual void SetDefaultLiteralTranslation(int iSegment, out ITsString tssComment)
 			{
 				var seg = GetSegment(iSegment);
 				ITsString tssSegment = seg.BaselineText;
@@ -670,11 +670,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// Make up a phony Note for the segment.
 			/// </summary>
-			internal virtual void SetDefaultNote(int iSegment, out ITsString tssComment)
+			public virtual void SetDefaultNote(int iSegment, out ITsString tssComment)
 			{
 				var seg = GetSegment(iSegment);
 				ITsString tssSegment = seg.BaselineText;
-				string comment = String.Format("{0}.Type({1}).{2}", iSegment, "literal", tssSegment.Text);
+				string comment = String.Format("{0}.Type({1}).{2}", iSegment, "note", tssSegment.Text);
 				var note = seg.Services.GetInstance<INoteFactory>().Create();
 				seg.NotesOS.Add(note);
 				note.Content.set_String(m_cache.DefaultAnalWs, comment);
