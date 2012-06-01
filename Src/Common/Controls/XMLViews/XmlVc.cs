@@ -3579,8 +3579,9 @@ namespace SIL.FieldWorks.Common.Controls
 					// Not an exact match, if excluding subclasses, condition fails.
 					if (XmlUtils.GetOptionalBooleanAttributeValue(frag, "excludesubclasses", false))
 						return false;
+					//if the uclsidObj is 0, then the target we are investigating is probably null, this counts as failure in my book.
+					int uclsid = uclsidObj != 0 ? mdc.GetBaseClsId(uclsidObj) : 0;
 					// Otherwise OK if clsidObj is a subclass of clsidArg
-					int uclsid = mdc.GetBaseClsId(uclsidObj);
 					while (uclsid != 0)
 					{
 						if (uclsid == uclsidArg)
