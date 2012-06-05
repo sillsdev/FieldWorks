@@ -2868,7 +2868,7 @@ namespace SIL.FieldWorks.Discourse
 						continue;
 					// row is now empty and has disappeared automatically, update counts
 					irow--;
-					crows--;
+					crows = m_chart.RowsOS.Count; // in some rare instances the # of rows may have been reduced by 2!
 				} // row loop
 				if (fReported)
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
