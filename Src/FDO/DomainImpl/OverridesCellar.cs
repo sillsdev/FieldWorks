@@ -4551,7 +4551,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Reports the Notebook record associated with this text, or null if there isn't one.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceAtomic)]
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "Text")]
 		public IRnGenericRec AssociatedNotebookRecord
 		{
 			get

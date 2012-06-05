@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.IText
 			[TearDown]
 			public void AfterEachTest()
 			{
-				//Cache.LanguageProject.TextsOC.Remove(m_text1);
+				m_text1.Delete();
 			}
 
 			[Test]
@@ -954,7 +954,7 @@ namespace SIL.FieldWorks.IText
 			[TearDown]
 			public void AfterEachTest()
 			{
-				//Cache.LanguageProject.TextsOC.Remove(m_text1);
+				m_text1.Delete();
 			}
 
 			[Test]
