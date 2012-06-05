@@ -5954,3 +5954,4 @@ KenZ, 1 Jun 2012. Integrated fix for LT-12987,13297 from 7.2 to WW
 Andy Black, 1 June 2012. LT-7581. Enable Hermit Crab parser to handle irregularly inflected forms.
 GordonM, 1 Jun 2012. Added an AssociatedNotebookRecord prop to IText.
 NaylorJ, 1 Jun 2012. Some additional bug fixes for LT-13212, still has a problem when modifying notebook fields from the Text info area
+RandyR, 5 June 2012. Updated FLEx Bridge installer to 0.3.44.
