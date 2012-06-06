@@ -190,10 +190,22 @@ namespace SIL.FieldWorks.Common.Keyboarding
 				ref string activeOtherImKeyboard, ref bool fSelectLangPending)
 			{
 				var keyboard = GetKeyboard(lcid, otherImKeyboard);
-				keyboard.Activate();
+				ActivateKeyboard(keyboard);
 				nActiveLangId = lcid;
 				activeOtherImKeyboard = otherImKeyboard;
 				fSelectLangPending = true;
+			}
+
+			internal void ActivateKeyboard(IKeyboardDescription keyboard)
+			{
+				// It is tempting to change this to != notation, but that compares
+				// references and doesn't work here.
+				if (!InternalMethods.ActiveKeyboard.Equals(keyboard))
+				{
+					InternalMethods.ActiveKeyboard.Deactivate();
+					keyboard.Activate();
+					InternalMethods.ActiveKeyboard = keyboard;
+				}
 			}
 
 			/// <summary>
@@ -349,6 +361,12 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// Gets or sets the available keyboard adaptors.
 		/// </summary>
 		private static IKeyboardAdaptor[] Adaptors { get; set; }
+
+		internal static void ActivateKeyboard(IKeyboardDescription keyboard)
+		{
+			Instance.ActivateKeyboard(keyboard);
+		}
+
 		#endregion
 
 	}

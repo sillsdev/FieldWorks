@@ -177,11 +177,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				return KeyboardController.GetKeyboard(langId, keyboardName);
 			}
 		}
-
-		/// <summary>
-		/// Gets or sets the active keyboard.
-		/// </summary>
-		public IKeyboardDescription ActiveKeyboard { get; set; }
 		#endregion
 
 		#region ILgTextServices implementation

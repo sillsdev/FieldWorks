@@ -17,6 +17,15 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 	/// </summary>
 	public class LinuxKeyboardHelper: IKeyboardEventHandler, IKeyboardMethods
 	{
+		/// <summary>
+		/// Initializes a new instance of the
+		/// <see cref="SIL.FieldWorks.Common.Keyboarding.Linux.LinuxKeyboardHelper"/> class.
+		/// </summary>
+		public LinuxKeyboardHelper()
+		{
+			ActiveKeyboard = KeyboardDescription.Zero;
+		}
+
 		#region IKeyboardEventHandler implementation
 		/// <summary>
 		/// Called before a property gets updated.
@@ -80,8 +89,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		public void SetFocus(IKeyboardCallback callback)
 		{
 			var keyboard = callback.Keyboard;
-			keyboard.Activate();
-			callback.ActiveKeyboard = keyboard;
+			KeyboardController.ActivateKeyboard(keyboard);
 		}
 
 		/// <summary>
@@ -90,11 +98,8 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		public void KillFocus(IKeyboardCallback callback)
 		{
-			if (callback.ActiveKeyboard != null)
-			{
-				callback.ActiveKeyboard.Deactivate();
-				callback.ActiveKeyboard = null;
-			}
+			ActiveKeyboard.Deactivate();
+			ActiveKeyboard = KeyboardDescription.Zero;
 		}
 
 		/// <summary>
@@ -132,6 +137,11 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		{
 			return false;
 		}
+
+		/// <summary>
+		/// Gets or sets the active keyboard.
+		/// </summary>
+		public IKeyboardDescription ActiveKeyboard { get; set; }
 		#endregion
 	}
 }

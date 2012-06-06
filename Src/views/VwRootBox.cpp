@@ -2158,8 +2158,11 @@ STDMETHODIMP VwRootBox::MouseDown(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 	m_fInDrag = false;
 	m_fNewSelection = false;
 
+#if !defined(MANAGED_KEYBOARDING)
+	// for MANAGED_KEYBOARDING we need to do this after making the selection (FWNX-771)
 	if (OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeDown))
 		return S_OK;
+#endif
 
 	HoldScreenGraphics hg(this);
 	IVwGraphics * pvg = hg.m_qvg;
@@ -2213,6 +2216,12 @@ STDMETHODIMP VwRootBox::MouseDown(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 		//	}
 		//}
 	}
+
+#if defined(MANAGED_KEYBOARDING)
+	// do this after making the selection (FWNX-771)
+	OnMouseEvent(xd, yd, rcSrc1, rcDst1, kmeDown);
+#endif
+
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
