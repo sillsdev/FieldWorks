@@ -24,16 +24,23 @@ namespace X11.XKlavier
 		}
 
 		private string[] m_GroupNames;
+		private IntPtr m_Display;
 
 		public XklEngine()
 		{
-			var disp = X11.Unmanaged.XOpenDisplay(IntPtr.Zero);
-			Engine = xkl_engine_get_instance(disp);
+			m_Display = X11.Unmanaged.XOpenDisplay(IntPtr.Zero);
+			Engine = xkl_engine_get_instance(m_Display);
 		}
 
 		public XklEngine(IntPtr display)
 		{
 			Engine = xkl_engine_get_instance(display);
+		}
+
+		public void Close()
+		{
+			if (m_Display != IntPtr.Zero)
+				X11.Unmanaged.XCloseDisplay(m_Display);
 		}
 
 		internal IntPtr Engine { get; private set; }

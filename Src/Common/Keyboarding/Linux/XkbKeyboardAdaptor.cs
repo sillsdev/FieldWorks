@@ -142,6 +142,8 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 
 		public void Close()
 		{
+			m_engine.Close();
+			m_engine = null;
 		}
 
 		public void ActivateKeyboard(IKeyboardDescription keyboard,
