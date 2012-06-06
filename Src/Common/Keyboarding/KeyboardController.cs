@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 #if __MonoCS__
 using SIL.FieldWorks.Views;
 using SIL.FieldWorks.Common.Keyboarding.Linux;
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#endregion
 
 		#region Class KeyboardControllerImpl
-		private class KeyboardControllerImpl: ILgTextServices, IDisposable
+		private class KeyboardControllerImpl: IDisposable
 		{
 			internal Dictionary<int, IKeyboardDescription> Keyboards =
 				new Dictionary<int, IKeyboardDescription>();
@@ -178,7 +177,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 				return GetKeyboard(null, otherImKeyboard);
 			}
 
-			#region ILgTextServices implementation
 			/// <summary>
 			/// Sets the keyboard.
 			/// </summary>
@@ -197,7 +195,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 				activeOtherImKeyboard = otherImKeyboard;
 				fSelectLangPending = true;
 			}
-			#endregion
 
 			/// <summary>
 			/// Gets the installed keyboard layouts/languages.
