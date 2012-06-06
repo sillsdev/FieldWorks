@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Windows.Forms;
 using Microsoft.Win32;
 
 using SIL.Utils;
@@ -30,18 +31,18 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 	/// ----------------------------------------------------------------------------------------
 	public static class Icu
 	{
-		private const string kIcuUcDllName
+		private const string kIcuUcDllName =
 #if !__MonoCS__
- = "icuuc40.dll";
+			"icuuc40.dll";
 #else // __MonoCS__
-			= "libicuuc.so";
+			"libicuuc.so";
 #endif // __MonoCS__
 
-		private const string kIcuinDllName
+		private const string kIcuinDllName =
 #if !__MonoCS__
- = "icuin40.dll";
+			"icuin40.dll";
 #else // __MonoCS__
-			= "libicui18n.so";
+			"libicui18n.so";
 #endif // __MonoCS__
 
 		private const string kIcuVersion = "_4_0";
@@ -1043,6 +1044,21 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		private static extern int uloc_getDisplayVariant(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out UErrorCode err);
 
+		/// <summary>
+		/// Gets the displayable name.
+		/// </summary>
+		public static string GetDisplayName(string localeID)
+		{
+			string uilocale = Application.CurrentCulture.TwoLetterISOLanguageName;
+			uilocale = uilocale.Replace('-', '_');
+
+			string displayName;
+			UErrorCode uerr;
+			GetDisplayName(localeID, uilocale, out displayName, out uerr);
+			if (uerr == UErrorCode.U_ZERO_ERROR)
+				return displayName;
+			return string.Empty;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the displayable Name.</summary>
