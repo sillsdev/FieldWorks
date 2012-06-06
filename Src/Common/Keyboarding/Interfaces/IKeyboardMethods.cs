@@ -28,7 +28,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>
 		/// Deactivate the input method
 		/// </summary>
-		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		void KillFocus(IKeyboardCallback callback);
 
 		/// <summary>
@@ -42,5 +41,19 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		/// <remarks>Corresponding C++ method is VwTextStore::IsDoingRecommit.</remarks>
 		bool IsEndingComposition(IKeyboardCallback callback);
+
+		/// <summary>
+		/// Enables the input method. This gets called as part of VwRootBox::HandleActivate when
+		/// enabling a selection.
+		/// </summary>
+		/// <remarks>Corresponding C++ method is VwTextStore::SetFocus.</remarks>
+		void EnableInput(IKeyboardCallback callback);
+
+		/// <summary>
+		/// Disables the input method. This gets called as part of VwRootBox::HandleActivate when
+		/// disabling a selection.
+		/// </summary>
+		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
+		void DisableInput(IKeyboardCallback callback);
 	}
 }
