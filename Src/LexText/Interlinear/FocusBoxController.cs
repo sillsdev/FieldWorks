@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.IText
 			{
 				InterlinDoc.RecordGuessIfNotKnown(selected);
 			}
-			int color = (int) CmObjectUi.RGB(DefaultBackColor);
+			int color = (int)CmObjectUi.RGB(DefaultBackColor);
 			//if this sandbox is presenting a wordform with multiple possible analyses then set the
 			//bg color indicator
 			if (selected.Analysis.Analysis == null && selected.Analysis.Wordform != null &&

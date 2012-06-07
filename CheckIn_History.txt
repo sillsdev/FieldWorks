@@ -201,3 +201,4 @@ GordonM, 5 Jun 2012. Fixed LT-12973 so rare chart problem fix doesn't crash.
 GordonM, 7 Jun 2012. Catch one more fwdata corruption case, but not the one in LT-12947.
 LastufkaM, 7 Jun 2012. LT-12882 Environments field only allows the user to type in one environment. Right arrow key no longer works.
 NaylorJ, 7 Jun 2012. Fixed LT-12932, copies of custom views should no longer disappear.
+NaylorJ, 7 Jun 2012. Fixed LT-12897. The cursor behavior when breaking morphemes in the analysis sandbox should be back to what was expected.
