@@ -199,4 +199,5 @@ KenZ, 30 May 2010. Integrated Gordon's fix for LTB-1519 crash in discourse due t
 KenZ, 31 May 2012. Fixed LT-12987,13297 allowing list translations to be installed on non-US systems.
 GordonM, 5 Jun 2012. Fixed LT-12973 so rare chart problem fix doesn't crash.
 GordonM, 7 Jun 2012. Catch one more fwdata corruption case, but not the one in LT-12947.
-LastufkaM 6 Jun 2012. LT-12882 Environments field only allows the user to type in one environment. Right arrow key no longer works.
+LastufkaM, 7 Jun 2012. LT-12882 Environments field only allows the user to type in one environment. Right arrow key no longer works.
+NaylorJ, 7 Jun 2012. Fixed LT-12932, copies of custom views should no longer disappear.
