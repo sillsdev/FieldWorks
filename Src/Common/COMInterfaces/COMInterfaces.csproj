@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.21022</ProductVersion>
+	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -97,9 +97,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
+	<Reference Include="SilUtils, Version=7.2.5.25133, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
