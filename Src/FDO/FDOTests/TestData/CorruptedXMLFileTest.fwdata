@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+	<AdditionalFields>
+		<CustomField class="LexEntry" name="Plural" type="String" wsSelector="-2" />
+	</AdditionalFields>
+	<rt class="StTxtPara" guid="000224f6-f084-4524-a80a-06005654ba1c" ownerguid="78ed35fe-e6de-4bec-a0bd-c861bd5e077b" />
+	<rt class="StText" guid="00023f0e-82e5-4466-bd93-dbed427e0062" ownerguid="0ceee87f-2a3d-4ba1-9198-4f06804c14d3">
+		<DateModified val="2011-2-2 19:19:27.499" />
+		<Paragraphs>
+			<objsur guid="19588da3-adb2-4727-a727-05c02bfbcc91" t="o" />
+		</Paragraphs>
+	</rt>

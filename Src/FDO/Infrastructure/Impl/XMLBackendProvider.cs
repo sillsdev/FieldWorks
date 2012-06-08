@@ -843,6 +843,36 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			while (GetRtElement())
 			{
 			}
+			// Test for incomplete File save (sometimes happens in power failure; see LT-12947)
+			if(!EndMarkerFound())
+				throw new XmlException("File does not end with project end tag.");
+		}
+
+		private bool EndMarkerFound()
+		{
+			var lenEndTag = m_finalClosingTag.Length;
+			if (m_currentIndex < lenEndTag)
+				return false;
+			BackUpToLastCloseBracket(); // after this m_currentIndex will point to last close bracket
+			// Check backwards for match to m_finalClosingTag
+			for (var i = lenEndTag - 1; i > -1; i--, m_currentIndex--)
+			{
+				if (m_currentBuffer[m_currentIndex] == m_finalClosingTag[i])
+					continue;
+				return false;
+			}
+			return true;
+		}
+
+		private void BackUpToLastCloseBracket()
+		{
+			var minLoop = m_currentIndex - 5; // if we don't find the last close bracket in 5 chars, give up
+			for (; m_currentIndex > minLoop; m_currentIndex--)
+			{
+				if (m_currentBuffer[m_currentIndex] == closeBracket)
+					break;
+			}
+			// If we fail to find it, we'll figure it out VERY soon!
 		}
 
 		private static byte closeBracket = Encoding.UTF8.GetBytes(">")[0];

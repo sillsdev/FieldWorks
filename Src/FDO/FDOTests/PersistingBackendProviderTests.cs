@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
@@ -618,6 +619,53 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 			Assert.AreEqual(Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, ksNewProjectName),
 				DirectoryFinder.GetXmlDataFileName(ksNewProjectName)), Cache.ProjectId.Path);
+		}
+
+		/// <summary>
+		/// Tests that a fwdata file that didn't get finished (due to a power outage?) will
+		/// throw an Exception.
+		/// </summary>
+		[Test]
+		[ExpectedException(typeof(FwStartupException))]
+		public void CorruptedXMLFileTest()
+		{
+			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
+
+			var xmlBep = new MockXMLBackendProvider(Cache, projName);
+			// Should throw an XMLException, but this will be caught and because there's
+			// no .bak file, an FwStartupException will be thrown instead.
+			xmlBep.Startup();
+		}
+	}
+
+	/// <summary>
+	/// Minimal XMLBackendProvider for testing the loading of an xml file.
+	/// </summary>
+	internal class MockXMLBackendProvider : XMLBackendProvider
+	{
+
+		public string Project { get; set; }
+		public FdoCache Cache { get; private set; }
+
+		/// <summary>
+		/// Create a minimal XMLBackendProvider for testing the loading of an xml file.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="projName"></param>
+		public MockXMLBackendProvider(FdoCache cache, string projName):
+			base(cache, new IdentityMap((IFwMetaDataCacheManaged)cache.MetaDataCache),
+			new CmObjectSurrogateFactory(cache), (IFwMetaDataCacheManagedInternal)cache.MetaDataCache,
+			new FdoDataMigrationManager())
+		{
+			Project = projName;
+			Cache = cache;
+		}
+
+		public void Startup()
+		{
+			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
+			StartupInternal(ModelVersion);
 		}
 	}
 
