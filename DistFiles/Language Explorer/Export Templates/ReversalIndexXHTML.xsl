@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
 
@@ -48,7 +48,7 @@ display/printout!
 
   <!-- eliminate unneeded levels in the original markup -->
 
-  <xsl:template match="Paragraph|ReversalIndexEntry_Hvo|ReversalIndexEntry_ReversalForm">
+  <xsl:template match="ReversalIndexEntry_Hvo|ReversalIndexEntry_ReversalForm">
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="_ReferringSenses|ReversalIndexEntry_ReferringSenses|LexReference_Targets">
@@ -103,9 +103,14 @@ display/printout!
 	<xsl:apply-templates/>
   </xsl:template>
 
+  <!-- Handle paragraph style elements -->
+  <xsl:template match="Paragraph">
+	<span class="{@style}">
+	  <xsl:apply-templates/>
+	</span>
+  </xsl:template>
 
   <!-- Insert xitem elements as needed -->
-
   <xsl:template match="MoStemAllomorph">
 	<xsl:choose>
 	  <xsl:when test="count(../MoStemAllomorph) > 1"><span class="xitem"><xsl:apply-templates/></span></xsl:when>
@@ -236,17 +241,16 @@ display/printout!
   <!-- I'm not sure whether the id values are needed for senses, but they must be unique.  See FWR-3255. -->
 
   <xsl:template match="LexSenseLink">
-	<xsl:choose>
-	  <xsl:when test="parent::_ReferringSenses|parent::ReversalIndexEntry_ReferringSenses">
-		<xsl:call-template name="ProcessSense">
-		  <xsl:with-param name="id">
-		<xsl:value-of select="ancestor::ReversalIndexEntry/@id"/><xsl:text>_</xsl:text><xsl:value-of select="@target"/>
-	  </xsl:with-param>
-		</xsl:call-template>
-	  </xsl:when>
-	  <xsl:when test="count(../LexEntryLink)+count(../LexSenseLink) > 1"><span class="xitem"><xsl:apply-templates/></span></xsl:when>
-	  <xsl:otherwise>[Otherwise Stuff]<xsl:apply-templates/></xsl:otherwise>
-	</xsl:choose>
+  <xsl:choose>
+	<xsl:when test="parent::Paragraph[@style]">
+	<xsl:call-template name="ProcessSenseLink">
+	  <xsl:with-param name="Style" select="@style"/>
+	</xsl:call-template>
+	</xsl:when>
+	<xsl:otherwise>
+	<xsl:call-template name="ProcessSenseLink"/>
+	</xsl:otherwise>
+  </xsl:choose>
   </xsl:template>
 
   <!-- change LexSense into span with the proper attribute values -->
@@ -827,5 +831,20 @@ MoInflAffixSlot_Name/AStr/Run
 	<xsl:attribute name="lang"><xsl:value-of select="$Lang"/></xsl:attribute>
 	<!--xsl:attribute name="dir"><xsl:value-of select="/html/WritingSystemInfo[@lang=$Lang]/@dir"/></xsl:attribute-->
   </xsl:template>
+	<!-- process the internals of a sense link, this allows us to introduce bullets if necessary -->
+	<xsl:template name="ProcessSenseLink">
+	  <xsl:param name="Style"/>
+	  <xsl:choose>
+		<xsl:when test="ancestor::_ReferringSenses|parent::ReversalIndexEntry_ReferringSenses">
+		  <xsl:call-template name="ProcessSense">
+			<xsl:with-param name="id">
+		  <xsl:value-of select="ancestor::ReversalIndexEntry/@id"/><xsl:text>_</xsl:text><xsl:value-of select="@target"/>
+		</xsl:with-param>
+		  </xsl:call-template>
+		</xsl:when>
+		<xsl:when test="count(../LexEntryLink)+count(../LexSenseLink) > 1"><span class="xitem"><xsl:apply-templates/></span></xsl:when>
+		<xsl:otherwise>[Otherwise Stuff]<xsl:apply-templates/></xsl:otherwise>
+	  </xsl:choose>
+	</xsl:template>
 
 </xsl:stylesheet>
