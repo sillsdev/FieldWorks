@@ -2067,7 +2067,7 @@ To begin importing, click Finish.</value>
 	<value>3</value>
   </data>
   <data name="lblReadyToImport.Text" xml:space="preserve">
-	<value>Ready to Import</value>
+	<value>Ready to import</value>
   </data>
   <data name="&gt;&gt;lblReadyToImport.Name" xml:space="preserve">
 	<value>lblReadyToImport</value>

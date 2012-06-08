@@ -327,13 +327,13 @@ Are you SURE you want to delete the field {0}?</value>
   <data name="DeletingFieldCannotBeUndone0Views" xml:space="preserve">
 	<value>Warning: deleting a field cannot be undone.
 Note: {0} views have been configured to display this field!
-Are you SURE you want to delete the field {1}?.</value>
+Are you SURE you want to delete the field {1}?</value>
   </data>
   <data name="DeletingFieldCannotBeUndone0Items1Views" xml:space="preserve">
 	<value>Warning: deleting a field cannot be undone.
 Note: {0} items in your database have data in this field,
 and {1} views have been configured to display this field!
-Are you SURE you want to delete the field {2}?.</value>
+Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="FirstSelectItemToDelete" xml:space="preserve">
 	<value>You must first select a Custom field to delete from the list.</value>

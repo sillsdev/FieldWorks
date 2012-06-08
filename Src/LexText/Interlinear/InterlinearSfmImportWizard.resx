@@ -1135,7 +1135,7 @@
 	<value>Field Mapping</value>
   </data>
   <data name="$this.StepNames2" xml:space="preserve">
-	<value>Ready to Import</value>
+	<value>Ready to import</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
 	<value>Import Standard Format interlinear texts</value>
