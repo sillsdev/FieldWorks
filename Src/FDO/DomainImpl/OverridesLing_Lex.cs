@@ -240,36 +240,42 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
-		public void ConvertLexEntryInflTypes(ProgressBar progressBar)
+		public void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
 		{
-			var processedEntryIds = new List<int>();
 			progressBar.Minimum = 0;
-			progressBar.Maximum = Entries.Count();
+			progressBar.Maximum = list.Count();
 			progressBar.Step = 1;
-			UndoableUnitOfWorkHelper.Do(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
-				() =>
-				{
-					foreach (var le in Entries)
-					{
-						if (processedEntryIds.Contains(le.Hvo))
-						{
-							progressBar.PerformStep();
-							continue;
-						}
-
-						var homographs = Services.GetInstance<ILexEntryRepository>().CollectHomographs(
-							le.HomographForm,
-							le.PrimaryMorphType);
-						CorrectHomographNumbers(homographs);
-						foreach (var homograph in homographs)
-						{
-							processedEntryIds.Add(homograph.Hvo);
-							progressBar.PerformStep();
-						}
-					}
-				});
+			foreach (var lexEntryType in list)
+			{
+				var leitFactory = m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
+				var leit = leitFactory.Create();
+				leit.ConvertLexEntryType(lexEntryType);
+				lexEntryType.Delete();
+				progressBar.PerformStep();
+			}
 		}
 
+		/// <summary>
+		/// Allows user to convert LexEntryInflType to LexEntryType.
+		/// </summary>
+		public void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		{
+			progressBar.Minimum = 0;
+			progressBar.Maximum = list.Count();
+			progressBar.Step = 1;
+			foreach (var lexEntryInflType in list)
+			{
+				var leit = lexEntryInflType as ILexEntryInflType;
+				if (leit != null)
+				{
+					var letFactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
+					var lexEntryType = letFactory.Create();
+					lexEntryType.ConvertLexEntryType(leit);
+					leit.Delete();
+				}
+				progressBar.PerformStep();
+			}
+		}
 		/// <summary>
 		/// Resets the homograph numbers for all entries.
 		/// </summary>
@@ -8065,6 +8071,107 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Convert a LexEntryType to another LexEntryType
+		/// </summary>
+		/// <param name="lexEntryType">Source LexEntryType </param>
+		public void ConvertLexEntryType(ILexEntryType lexEntryType)
+		{
+			// get right owner and insert this into the same spot as lexEntryInflType
+			int iPossibility;
+			IFdoOwningSequence<ICmPossibility> possibilities;
+			var owner = lexEntryType.OwningPossibility;
+			if (owner != null)
+			{
+				possibilities = owner.SubPossibilitiesOS;
+				iPossibility = possibilities.IndexOf(lexEntryType);
+			}
+			else
+			{
+				var owner2 = lexEntryType.OwningList;
+				possibilities = owner2.PossibilitiesOS;
+				iPossibility = possibilities.IndexOf(lexEntryType);
+			}
+			possibilities.Insert(iPossibility, this);
+
+			// Copy basic attributes
+			BackColor = lexEntryType.BackColor;
+			DateCreated = lexEntryType.DateCreated;
+			DateModified = DateTime.Now;
+			ForeColor = lexEntryType.ForeColor;
+			Hidden = lexEntryType.Hidden;
+			IsProtected = lexEntryType.IsProtected;
+			SortSpec = lexEntryType.SortSpec;
+			UnderColor = lexEntryType.UnderColor;
+			UnderStyle = lexEntryType.UnderStyle;
+			foreach (IWritingSystem ws in lexEntryType.Services.WritingSystems.AnalysisWritingSystems)
+			{
+				int iWs = ws.Handle;
+				var tsAbbreviation = lexEntryType.Abbreviation.get_String(iWs);
+				Abbreviation.set_String(iWs, tsAbbreviation);
+				var tsDescription = lexEntryType.Description.get_String(iWs);
+				Description.set_String(iWs, tsDescription);
+				var tsName = lexEntryType.Name.get_String(iWs);
+				Name.set_String(iWs, tsName);
+				var tsReversAbbr = ReverseAbbr.get_String(ws.Handle);
+				ReverseAbbr.set_String(iWs, tsReversAbbr);
+			}
+
+			// Copy reference attributes
+			ConfidenceRA = lexEntryType.ConfidenceRA;
+			StatusRA = lexEntryType.StatusRA;
+			if (lexEntryType.ResearchersRC.Any())
+			{
+				lexEntryType.ResearchersRC.AddTo(ResearchersRC);
+			}
+			if (lexEntryType.RestrictionsRC.Any())
+			{
+				lexEntryType.RestrictionsRC.AddTo(RestrictionsRC);
+			}
+
+			// Move owning attributes
+			if (lexEntryType.SubPossibilitiesOS.Any())
+			{
+				int iMax = lexEntryType.SubPossibilitiesOS.Count - 1;
+				lexEntryType.SubPossibilitiesOS.MoveTo(0, iMax, SubPossibilitiesOS, 0);
+			}
+			var discussion = lexEntryType.DiscussionOA;
+			if (discussion != null && discussion.ParagraphsOS.Any())
+			{
+				int iMax = lexEntryType.DiscussionOA.ParagraphsOS.Count - 1;
+				var stFactory = m_cache.ServiceLocator.GetInstance<IStTextFactory>();
+				DiscussionOA = stFactory.Create();
+				lexEntryType.DiscussionOA.ParagraphsOS.MoveTo(0, iMax, DiscussionOA.ParagraphsOS, 0);
+			}
+
+			// Move referring objects to this
+			var refs = lexEntryType.ReferringObjects;
+			foreach (var obj in refs)
+			{
+				if (obj.ClassID == WfiMorphBundleTags.kClassId)
+				{
+					var wfiMB = obj as IWfiMorphBundle;
+					wfiMB.InflTypeRA = null;
+				}
+				else
+				{
+					var lexEntryRef = obj as ILexEntryRef;
+					int i = lexEntryRef.VariantEntryTypesRS.IndexOf(lexEntryType);
+					lexEntryRef.VariantEntryTypesRS.RemoveAt(i);
+					lexEntryRef.VariantEntryTypesRS.Insert(i, this);
+				}
+
+			}
+
+			//possibilities.RemoveAt(iPossibility);
+/*			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
+			var flidList = from flid in mdc.GetFields(LexEntryTypeTags.kClassId, true, (int)CellarPropertyTypeFilter.All)
+						   where !m_cache.MetaDataCache.get_IsVirtual(flid)
+						   select flid;
+			// Process all the fields in the source.
+			MergeSelectedPropertiesOfObject(lexEntryInflType, true, flidList.ToArray());*/
+		}
 	}
 
 	/// <summary>

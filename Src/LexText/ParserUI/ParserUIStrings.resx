@@ -252,6 +252,6 @@
   </data>
   <data name="ksIrregularlyInflectedFormNullAffix" xml:space="preserve">
 	<value>Automatically generated null affix for the {0} irregularly inflected form</value>
-	<comment>Content used when showing the details of a parse in try a Word for these inflectional affix slot fillers</comment>
+	<comment>Content used when showing the details of a parse in try a Word for these inflectional affix slot fillers.  {0} is the Name of the irregularly inflected form variant.</comment>
   </data>
 </root>

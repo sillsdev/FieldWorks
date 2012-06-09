@@ -453,7 +453,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_labelsTreeView.CheckBoxes = true;
 			m_labelsTreeView.AfterCheck += m_labelsTreeView_AfterCheck;
 			// We have to allow selections in order to allow keyboard support.  See LT-3068.
-			//m_labelsTreeView.BeforeSelect += new TreeViewCancelEventHandler(m_labelsTreeView_BeforeSelect);
+			m_labelsTreeView.BeforeCheck += new TreeViewCancelEventHandler(m_labelsTreeView_BeforeCheck);
 			m_chosenObjs = new HashSet<ICmObject>();
 			if (chosenObjs != null)
 				m_chosenObjs.UnionWith(chosenObjs);
@@ -659,6 +659,8 @@ namespace SIL.FieldWorks.Common.Controls
 		void m_labelsTreeView_AfterCheck(object sender, TreeViewEventArgs e)
 		{
 			var clickNode = (LabelNode)e.Node;
+			if (!clickNode.Enabled)
+				return;
 			if (m_fEnableCtrlCheck && ModifierKeys == Keys.Control && !Atomic)
 			{
 				using (new WaitCursor())
@@ -2426,17 +2428,30 @@ namespace SIL.FieldWorks.Common.Controls
 		//		e.Cancel = true;
 		//}
 
+		private void m_labelsTreeView_BeforeCheck(object sender, TreeViewCancelEventArgs e)
+		{
+			e.Cancel = !NodeIsEnabled(e.Node as LabelNode);
+		}
+
+		private bool NodeIsEnabled(LabelNode node)
+		{
+			if (node != null)
+				return node.Enabled;
+			return true;
+		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected class LabelNode : TreeNode
+		public class LabelNode : TreeNode
 		{
 			/// <summary></summary>
 			protected IVwStylesheet m_stylesheet;
 
 			private bool m_displayUsage;
+			private bool m_fEnabled;
+			private Color m_enabledColor;
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="LabelNode"/> class.
@@ -2449,6 +2464,8 @@ namespace SIL.FieldWorks.Common.Controls
 				Tag = label;
 				m_stylesheet = stylesheet;
 				m_displayUsage = displayUsage;
+				m_fEnabled = true;
+				m_enabledColor = ForeColor;
 				ITsString tssDisplay = label.AsTss;
 				int wsVern;
 				if (HasVernacularText(tssDisplay, label.Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => ws.Handle),
@@ -2731,6 +2748,27 @@ namespace SIL.FieldWorks.Common.Controls
 					nodeRepresentingCurrentChoice = node;
 				}
 				return nodeRepresentingCurrentChoice;
+			}
+
+			/// <summary>
+			/// Get or set the enabled state of the label node
+			/// </summary>
+			public bool Enabled
+			{
+				get { return m_fEnabled; }
+				set
+				{
+					if (m_fEnabled && !value)
+					{
+						m_enabledColor = ForeColor;
+						ForeColor = SystemColors.GrayText;
+					}
+					else if (!m_fEnabled && value)
+					{
+						ForeColor = m_enabledColor;
+					}
+					m_fEnabled = value;
+				}
 			}
 
 			//was ignored

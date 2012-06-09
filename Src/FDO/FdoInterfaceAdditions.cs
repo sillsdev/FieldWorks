@@ -867,6 +867,15 @@ namespace SIL.FieldWorks.FDO
 		void ResetHomographNumbers(ProgressBar progressBar);
 
 		/// <summary>
+		/// Allows user to convert LexEntryType to LexEntryInflType.
+		/// </summary>
+		void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+
+		/// <summary>
+		/// Allows user to convert LexEntryInflType to LexEntryType.
+		/// </summary>
+		void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+		/// <summary>
 		/// used when dumping the lexical database for the automated Parser
 		/// </summary>
 		/// <remarks> Note that you may not find this method in source code,
@@ -1367,6 +1376,19 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexReference> LexEntryReferences { get; }
 	}
+
+	/// <summary>
+	/// Non-model interface additions for ILexEntryType.
+	/// </summary>
+	public partial interface ILexEntryType
+	{
+		/// <summary>
+		/// Convert one LexEntryType to another LexEntryType
+		/// </summary>
+		/// <param name="lexEntryType"> </param>
+		void ConvertLexEntryType(ILexEntryType lexEntryType);
+	}
+
 
 	/// <summary>
 	/// Non-model interface additions for IMoMorphSynAnalysis.

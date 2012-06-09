@@ -160,11 +160,20 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e make a backup of your database before running this utility so you can restore to it if the results are not what you want)..
+		///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want)..
 		/// </summary>
 		internal static string ksCannotRedoConvertIrregularlyInflectedFormVariants {
 			get {
 				return ResourceManager.GetString("ksCannotRedoConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want)..
+		/// </summary>
+		internal static string ksCannotRedoConvertVariants {
+			get {
+				return ResourceManager.GetString("ksCannotRedoConvertVariants", resourceCulture);
 			}
 		}
 
@@ -329,6 +338,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		internal static string ksConvertIrregularlyInflectedFormVariants {
 			get {
 				return ResourceManager.GetString("ksConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Convert irregularly inflected form variants to variants.
+		/// </summary>
+		internal static string ksConvertVariants {
+			get {
+				return ResourceManager.GetString("ksConvertVariants", resourceCulture);
 			}
 		}
 
@@ -648,6 +666,24 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Redo Convert variants to irregularly inflected form variants.
+		/// </summary>
+		internal static string ksRedoConvertIrregularlyInflectedFormVariants {
+			get {
+				return ResourceManager.GetString("ksRedoConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Redo Convert irregularly inflected form variants to variants.
+		/// </summary>
+		internal static string ksRedoConvertVariants {
+			get {
+				return ResourceManager.GetString("ksRedoConvertVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Redo Create Reversal Index.
 		/// </summary>
 		internal static string ksRedoCreateReversalIndex {
@@ -954,6 +990,24 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Undo Convert variants to irregularly inflected form variants.
+		/// </summary>
+		internal static string ksUndoConvertIrregularlyInflectedFormVariants {
+			get {
+				return ResourceManager.GetString("ksUndoConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Undo Convert irregularly inflected form variants to variants.
+		/// </summary>
+		internal static string ksUndoConvertVariants {
+			get {
+				return ResourceManager.GetString("ksUndoConvertVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Undo Create Reversal Index.
 		/// </summary>
 		internal static string ksUndoCreateReversalIndex {
@@ -1125,11 +1179,20 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This utility allows you to select which variants should be converted to irregularly inflected form variants, a special sub-kind of variant..
+		///   Looks up a localized string similar to This utility allows you to select which variants should be converted to irregularly inflected form variants, which are a special sub-kind of variant..
 		/// </summary>
 		internal static string ksWhatIsConvertIrregularlyInflectedFormVariants {
 			get {
 				return ResourceManager.GetString("ksWhatIsConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to This utility allows you to select which irregularly inflected form variants should be converted to variants (irregularly inflected form variants are a special sub-kind of variant)..
+		/// </summary>
+		internal static string ksWhatIsConvertVariants {
+			get {
+				return ResourceManager.GetString("ksWhatIsConvertVariants", resourceCulture);
 			}
 		}
 
@@ -1143,11 +1206,20 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Run this utility when you need to convert many of your existing variants to be irregularly inflected form kind of variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
+		///   Looks up a localized string similar to Run this utility when you need to convert many of your existing variants to be irregularly inflected form variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
 		/// </summary>
 		internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
 			get {
 				return ResourceManager.GetString("ksWhenToConvertIrregularlyInflectedFormVariants", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Run this utility when you need to convert many of your existing irregularly inflected form variants to be variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
+		/// </summary>
+		internal static string ksWhenToConvertVariants {
+			get {
+				return ResourceManager.GetString("ksWhenToConvertVariants", resourceCulture);
 			}
 		}
 
