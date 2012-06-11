@@ -5959,3 +5959,4 @@ NaylorJ, 5 June 2012. Fixed bug LT-13216, record views in the info pane for text
 RandyR, 5 June 2012. Updated FLEx Bridge installer to 0.3.45.
 RandyR, 7 June 2012. Updated FLEx Bridge installer to 0.3.48.
 Andy Black, 9 June 2012. LT-7581. Add two utilities to convert to and from LexEntryType and LexEntryInflType.
+KenZ, 11 Jun 2012. Updated FlexBridge to 0.3.49 from Randy.
