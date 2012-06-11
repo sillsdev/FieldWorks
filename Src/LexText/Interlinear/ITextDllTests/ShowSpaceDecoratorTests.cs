@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -16,7 +14,7 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class ShowSpaceDecoratorTests : FwCOMTestBase
 	{
-		private string zws = ShowSpaceDecorator.KstrZws;
+		private string zws = AnalysisOccurrence.KstrZws;
 		private ITsStrFactory m_tsf;
 
 		[SetUp]

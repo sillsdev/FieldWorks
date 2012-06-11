@@ -853,26 +853,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var lenEndTag = m_finalClosingTag.Length;
 			if (m_currentIndex < lenEndTag)
 				return false;
-			BackUpToLastCloseBracket(); // after this m_currentIndex will point to last close bracket
-			// Check backwards for match to m_finalClosingTag
-			for (var i = lenEndTag - 1; i > -1; i--, m_currentIndex--)
-			{
-				if (m_currentBuffer[m_currentIndex] == m_finalClosingTag[i])
-					continue;
-				return false;
-			}
-			return true;
-		}
+			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - m_finalClosingTag.Length,
+															  m_currentBufLength - (m_currentIndex - m_finalClosingTag.Length));
 
-		private void BackUpToLastCloseBracket()
-		{
-			var minLoop = m_currentIndex - 5; // if we don't find the last close bracket in 5 chars, give up
-			for (; m_currentIndex > minLoop; m_currentIndex--)
-			{
-				if (m_currentBuffer[m_currentIndex] == closeBracket)
-					break;
-			}
-			// If we fail to find it, we'll figure it out VERY soon!
+			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, m_finalClosingTag.Length));
 		}
 
 		private static byte closeBracket = Encoding.UTF8.GetBytes(">")[0];
