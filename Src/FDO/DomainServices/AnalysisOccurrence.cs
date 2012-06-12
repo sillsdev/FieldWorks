@@ -237,29 +237,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (!HasWordform)
 				return false;
-			var nextOccurrence = SkipZeroWidthSpaceOccurrence(NextAnalysisOccurrence());
+			var nextOccurrence = NextAnalysisOccurrence();
 			return (nextOccurrence != null && nextOccurrence.Segment == Segment && nextOccurrence.HasWordform
 					&& nextOccurrence.BaselineWs == BaselineWs);
 
-		}
-
-		//Zero width spaces, while they are Punctuation, should be treated as a space for phrase making.
-		//Spaces normally result in a wordform being followed by another wordform, so we should skip the
-		//zero width space so it seems like a real space.
-		private static AnalysisOccurrence SkipZeroWidthSpaceOccurrence(AnalysisOccurrence nextOccurrence)
-		{
-			if(nextOccurrence == null)
-				return null;
-
-			if(nextOccurrence.Analysis is IPunctuationForm)
-			{
-				var next = nextOccurrence.Analysis as IPunctuationForm;
-				if(next.Form.Text == KstrZws)
-				{
-					nextOccurrence = nextOccurrence.NextAnalysisOccurrence();
-				}
-			}
-			return nextOccurrence;
 		}
 
 		/// <summary>
@@ -272,7 +253,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return null;
 			int beginOffset = GetMyBeginOffsetInPara();
 			var oldWf1 = Analysis.Wordform;
-			var next = SkipZeroWidthSpaceOccurrence(NextAnalysisOccurrence());
+			var next = NextAnalysisOccurrence();
 			var oldWf2 = next.Analysis.Wordform;
 			int endOffset = next.GetMyEndOffsetInPara();
 			var newForm = Paragraph.Contents.Substring(beginOffset, endOffset - beginOffset);

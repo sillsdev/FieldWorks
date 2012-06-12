@@ -1563,12 +1563,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// <summary>
 		/// Tells whether the full character (starting) at ich is a white-space character.
+		/// Checks for zero width spaces here to handle the unusual writing systems which have no space
+		/// between words.
 		/// </summary>
 		/// <param name="ich"></param>
 		/// <returns></returns>
 		public bool IsWhite(int ich)
 		{
-			return TsStringUtils.IsWhite(m_cpe, m_st, ich);
+			return TsStringUtils.IsWhite(m_cpe, m_st, ich) || StringUtils.FullCharAt(m_st, ich) == AnalysisOccurrence.KchZws;
 		}
 
 		/// <summary>

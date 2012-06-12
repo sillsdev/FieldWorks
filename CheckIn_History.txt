@@ -204,6 +204,7 @@ NaylorJ, 7 Jun 2012. Fixed LT-12932, copies of custom views should no longer dis
 NaylorJ, 7 Jun 2012. Fixed LT-12897. The cursor behavior when breaking morphemes in the analysis sandbox should be back to what was expected.
 GordonM, 8 Jun 2012. Added fix for LT-12947 in the case of incomplete file write due to power failure.
 NaylorJ, 8 Jun 2012. Fixed the "Otherwise Stuff" problem in LT-13256, but the bulleted list part will be a much larger fix.
-NaylorJ, 8 Jun 2012. Fixed LT-13186 Invisible spaces will no longer prevent phrase linking. Also fixed a bug in the detection of incomplete files.
+NaylorJ, 11 Jun 2012. Fixed LT-13186 Invisible spaces will no longer prevent phrase linking. Also fixed a bug in the detection of incomplete files.
 GordonM, 12 Jun 2012. Minor refactor to incomplete file detection.
 GordonM, 12 Jun 2012. Another small mod to incomplete file detection, plus another test.
+NaylorJ, 12 Jun 2012. Fixed LT-13186 a different way. Invisible spaces should no longer end up in the list of Analysis, and phrase creation should still work.
