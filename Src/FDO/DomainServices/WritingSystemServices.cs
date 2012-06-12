@@ -645,9 +645,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public static IWritingSystem GetReversalIndexEntryWritingSystem(FdoCache cache, int hvoObj, IWritingSystem wsDefault)
 		{
+			IReversalIndex ri = null;
+
 			if (hvoObj != 0)
 			{
-				IReversalIndex ri = null;
 				var obj = cache.ServiceLocator.GetObject(hvoObj);
 				var clid = obj.ClassID;
 				switch (clid)
@@ -663,22 +664,29 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// no matter how high up.
 						ri = (IReversalIndex)obj.OwnerOfClass(ReversalIndexTags.kClassId);
 						break;
-					default: // since this doesn't actually depend on the hvo, it's not a bad general default.
-						var rgriCurrent = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-						if (rgriCurrent.Count > 0)
-						{
-							ri = rgriCurrent[0];
-						}
-						else
-						{
-							if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
-								ri = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
-						}
-						break;
 				}
-				if (ri != null)
-					return cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 			}
+
+			// This combines the former "default" case from the above switch (no specific ClassId)
+			// with the case where hvoObj is zero, which happened in LT-12956 in the Form column
+			// of Bulk Edit Reversal Entries:
+			if (ri == null)
+			{
+				var rgriCurrent = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+				if (rgriCurrent.Count > 0)
+				{
+					ri = rgriCurrent[0];
+				}
+				else
+				{
+					if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+						ri = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
+				}
+			}
+
+			if (ri != null)
+				return cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+
 			return wsDefault;
 		}
 
