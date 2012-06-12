@@ -94,9 +94,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-			if (obj == null || !(obj is IKeyboardDescription))
+			var other = obj as IKeyboardDescription;
+			if (other == null)
 				return false;
-			var other = (IKeyboardDescription)obj;
 			return other.Id == Id && other.Name == Name;
 		}
 

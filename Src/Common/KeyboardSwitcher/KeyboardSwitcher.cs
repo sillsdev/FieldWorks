@@ -79,7 +79,6 @@ namespace SIL.FieldWorks.Views
 						context.Reset();
 						GlobalCachedInputContext.KeyboardName = value;
 						context.Disable();
-						GlobalCachedInputContext.Clear();
 						return;
 					}
 
@@ -90,10 +89,7 @@ namespace SIL.FieldWorks.Views
 					{
 						IBusEngineDesc engineDesc = IBusEngineDesc.GetEngineDesc(engine);
 						if (value == FormatKeyboardIdentifier(engineDesc))
-						{
 							context.SetEngine(engineDesc.LongName);
-							break;
-						}
 					}
 
 					GlobalCachedInputContext.KeyboardName = value;

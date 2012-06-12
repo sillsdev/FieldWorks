@@ -57,11 +57,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				action();
 			}
-			catch (NDesk.DBus.DBusConectionErrorException error)
+			catch(NDesk.DBus.DBusConectionErrorException error)
 			{
 				m_ibus = null;
 				m_inputContext = null;
-				SIL.FieldWorks.Views.GlobalCachedInputContext.Clear();
 				NotifyUserOfIBusConnectionDropped();
 			}
 			catch(System.NullReferenceException)
@@ -148,6 +147,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			ProtectedIBusInvoke(() => m_inputContext.FocusOut());
+
+			SIL.FieldWorks.Views.GlobalCachedInputContext.Clear();
 		}
 
 		/// <summary>

@@ -51,32 +51,5 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			}
 		}
 		#endregion
-
-		/// <summary>
-		/// Returns a <see cref="T:System.String"/> that represents the current
-		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionNull"/>.
-		/// </summary>
-		public override string ToString()
-		{
-			return "<no keyboard>";
-		}
-
-		/// <summary>
-		/// Determines whether the specified <see cref="T:System.Object"/> is equal to the current
-		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionNull"/>.
-		/// </summary>
-		public override bool Equals(object obj)
-		{
-			return obj is KeyboardDescriptionNull;
-		}
-
-		/// <summary>
-		/// Serves as a hash function for a
-		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionNull"/> object.
-		/// </summary>
-		public override int GetHashCode()
-		{
-			return 0;
-		}
 	}
 }
