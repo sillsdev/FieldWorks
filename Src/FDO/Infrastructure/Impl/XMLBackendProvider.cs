@@ -850,13 +850,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private bool EndMarkerFound()
 		{
-			var lenEndTag = m_finalClosingTag.Length;
-			if (m_currentIndex < lenEndTag)
+			var lengthEndTag = m_finalClosingTag.Length;
+			if (m_currentIndex < lengthEndTag)
 				return false;
-			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - m_finalClosingTag.Length,
-															  m_currentBufLength - (m_currentIndex - m_finalClosingTag.Length));
+			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - lengthEndTag,
+															  m_currentBufLength - (m_currentIndex - lengthEndTag));
 
-			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, m_finalClosingTag.Length));
+			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, lengthEndTag));
 		}
 
 		private static byte closeBracket = Encoding.UTF8.GetBytes(">")[0];
