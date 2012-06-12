@@ -273,47 +273,50 @@ namespace SIL.FieldWorks.FDO
 			foreach (IWritingSystem ws in writingSystemManager.CheckForNewerGlobalWritingSystems())
 			{
 				if (NewerWritingSystemFound == null)
+				{
 					writingSystemManager.Replace(ws);
+				}
 				else
+				{
 					writingSystemsWithNewerGlobalVersions.Add(ws);
+				}
 			}
 			if (writingSystemsWithNewerGlobalVersions.Count > 0)
 			{
-				var isAnyNewerWsInUseInThisProject = false;
 				IWritingSystem wsUser;
 				writingSystemManager.GetOrSet(userWsIcuLocale, out wsUser);
 
+				var updatedInUseWSs = new StringBuilder();
 				foreach (var ws in writingSystemsWithNewerGlobalVersions)
 				{
-					if (wsUser == ws
-						|| ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws)
-						|| ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws)
-						|| ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Contains(ws))
+					//Build up a string containing all the in use writing systems which have been updated.
+					if (wsUser.Equals(ws) || ServiceLocator.WritingSystems.AllWritingSystems.Contains(ws))
 					{
-						isAnyNewerWsInUseInThisProject = true;
-						break;
+						if (updatedInUseWSs.Length > 0)
+							updatedInUseWSs.Append(", ");
+						updatedInUseWSs.Append(ws.DisplayLabel);
 					}
 				}
-				if (isAnyNewerWsInUseInThisProject)
+				if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
 				{
-				StringBuilder sb = new StringBuilder();
-				foreach (var ws in writingSystemsWithNewerGlobalVersions)
-				{
-					if (sb.Length > 0)
-						sb.Append(", ");
-					sb.Append(ws.DisplayLabel);
-				}
-				if (NewerWritingSystemFound(sb.ToString(), ProjectId.UiName))
-				{
-					foreach (var ws in writingSystemsWithNewerGlobalVersions)
+					//Ask the user if they want to update to the global version for their writing systems
+					if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
+					{
+						//If they said yes, update all the writing systems which have newer versions
+						//even the ones we didn't ask about, since they don't even really know they are there.
+						foreach (var ws in writingSystemsWithNewerGlobalVersions)
+						{
 							writingSystemManager.Replace(ws);
+						}
+					}
 				}
-			}
 				else
 				{
-					// None of them is in use...go ahead and update them.
+					// None of them is in use...go ahead and update them all
 					foreach (var ws in writingSystemsWithNewerGlobalVersions)
+					{
 						writingSystemManager.Replace(ws);
+					}
 				}
 			}
 			writingSystemManager.Save();

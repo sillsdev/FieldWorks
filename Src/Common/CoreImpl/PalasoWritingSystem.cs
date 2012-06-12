@@ -1350,6 +1350,36 @@ namespace SIL.CoreImpl
 		{
 			return DisplayLabel;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof (PalasoWritingSystem)) return false;
+			return Equals((PalasoWritingSystem) obj);
+		}
+
+		/// <summary>
+		/// Equality check for
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(PalasoWritingSystem other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Equals(other.IcuLocale, IcuLocale);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				//Use the base hash code instead of data that might change, Writing Systems are placed in a hash table
+				//so changing the hash after that is problematic.
+				return base.GetHashCode();
+			}
+		}
 	}
 
 	/// <summary>

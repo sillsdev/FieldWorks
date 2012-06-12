@@ -211,3 +211,4 @@ NaylorJ, 12 Jun 2012. Fixed LT-13186 a different way. Invisible spaces should no
 AlistairI, 12 Jun 2012. Fixed LT-12956 (Reversal indexes wrongly sorted by UI language, not analysis ws.)
 RickM, 12 June 2012. LT-13311 LIFT import corrupting data with &, etc.
 NaylorJ, 12 June 2012. Fixed LT-12977 info tab should now be correct in the Concordance when a filter is active in the InterlinearText.
+NaylorJ, 12 June 2012. Fixed LT-13151. The number of times the writing system changed message is shown should be reduced now.
