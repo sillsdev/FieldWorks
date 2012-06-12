@@ -206,3 +206,4 @@ GordonM, 8 Jun 2012. Added fix for LT-12947 in the case of incomplete file write
 NaylorJ, 8 Jun 2012. Fixed the "Otherwise Stuff" problem in LT-13256, but the bulleted list part will be a much larger fix.
 NaylorJ, 8 Jun 2012. Fixed LT-13186 Invisible spaces will no longer prevent phrase linking. Also fixed a bug in the detection of incomplete files.
 GordonM, 12 Jun 2012. Minor refactor to incomplete file detection.
+GordonM, 12 Jun 2012. Another small mod to incomplete file detection, plus another test.

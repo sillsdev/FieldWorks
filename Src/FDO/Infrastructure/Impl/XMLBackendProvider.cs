@@ -850,11 +850,12 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private bool EndMarkerFound()
 		{
+			const int extraBuffer = 5;
 			var lengthEndTag = m_finalClosingTag.Length;
-			if (m_currentIndex < lengthEndTag)
+			if (m_currentIndex < (lengthEndTag + extraBuffer))
 				return false;
-			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - lengthEndTag,
-															  m_currentBufLength - (m_currentIndex - lengthEndTag));
+			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - (lengthEndTag + extraBuffer),
+															  m_currentBufLength - (m_currentIndex - (lengthEndTag + extraBuffer)));
 
 			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, lengthEndTag));
 		}

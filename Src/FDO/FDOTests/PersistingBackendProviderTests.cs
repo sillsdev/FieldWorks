@@ -637,6 +637,22 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// no .bak file, an FwStartupException will be thrown instead.
 			xmlBep.Startup();
 		}
+
+		/// <summary>
+		/// Tests that a fwdata file that was edited and has an extra CR/LF at the end will not
+		/// throw an Exception.
+		/// </summary>
+		[Test]
+		public void SlightlyCorruptedXMLFileTest()
+		{
+			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
+			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
+
+			var xmlBep = new MockXMLBackendProvider(Cache, projName);
+			// Should not throw an XMLException. The code that detects a corrupt file shouldn't
+			// care about an extra character or two at the end of the file after the last tag.
+			xmlBep.Startup();
+		}
 	}
 
 	/// <summary>
