@@ -348,7 +348,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ITsString CreateTsStringFromLiftString(LiftString liftstr, int wsHvo)
 		{
 			ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
-			tsb.Replace(0, tsb.Length, liftstr.Text, m_tpf.MakeProps(null, wsHvo, 0));
+			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
+			tsb.Replace(0, tsb.Length, convertSafeXmlToText, m_tpf.MakeProps(null, wsHvo, 0));
 			int wsSpan;
 			// TODO: handle nested spans.
 			foreach (LiftSpan span in liftstr.Spans)

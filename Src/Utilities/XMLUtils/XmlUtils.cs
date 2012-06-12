@@ -467,6 +467,24 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Convert an encoded string (safe XML) into plain text.
+		/// </summary>
+		/// <param name="sInput"></param>
+		/// <returns></returns>
+		public static string DecodeXml(string sInput)
+		{
+			string sOutput = sInput;
+
+			if (!String.IsNullOrEmpty(sOutput))
+			{
+				sOutput = sOutput.Replace("&amp;", "&");
+				sOutput = sOutput.Replace("&lt;", "<");
+				sOutput = sOutput.Replace("&gt;", ">");
+			}
+			return sOutput;
+		}
+
+		/// <summary>
 		/// Fix the string to be safe in a text region of XML.
 		/// </summary>
 		/// <param name="sInput"></param>
