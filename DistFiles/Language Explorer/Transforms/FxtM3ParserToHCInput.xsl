@@ -346,6 +346,9 @@
 					<xsl:for-each select="ComponentLexeme">
 						<xsl:variable name="componentLexEntry" select="key('LexEntryId',@dst)"/>
 						<xsl:choose>
+							<xsl:when test="$entry/Sense">
+								<!-- do nothing special -->
+							</xsl:when>
 							<xsl:when test="$componentLexEntry">
 								<xsl:for-each select="$componentLexEntry/MorphoSyntaxAnalysis">
 									<xsl:variable name="stemMsa" select="key('StemMsaId',@dst)"/>
@@ -511,9 +514,11 @@
 					</xsl:for-each>
 					<xsl:for-each select="$lexEntryRef/LexEntryInflType">
 						<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
-						<xsl:text>mpr</xsl:text>
-						<xsl:value-of select="$lexEnryInflType/@Id"/>
-						<xsl:text> </xsl:text>
+						<xsl:if test="$lexEnryInflType">
+							<xsl:text>mpr</xsl:text>
+							<xsl:value-of select="$lexEnryInflType/@Id"/>
+							<xsl:text> </xsl:text>
+						</xsl:if>
 					</xsl:for-each>
 				</xsl:variable>
 				<xsl:if test="string-length(normalize-space($mprFeats)) != 0">
