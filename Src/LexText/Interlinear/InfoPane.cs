@@ -68,7 +68,16 @@ namespace SIL.FieldWorks.IText
 			var toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
 			m_xrev = new InterlinearTextsRecordEditView(this);
 			if (clerk.GetType().Name == "InterlinearTextsRecordClerk")
+			{
 				m_xrev.Clerk = clerk;
+			}
+			else
+			{
+				//We want to make sure that the following initialization line will initialize this
+				//clerk if we haven't already set it. Without this assignment to null, the InfoPane
+				//misbehaves in the Concordance view (it uses the filter from the InterlinearTexts view)
+				m_xrev.Clerk = null;
+			}
 			m_xrev.Init(m_mediator, xnControl); // <-- This call will change the ActiveClerk
 			DisplayCurrentRoot();
 			m_xrev.Dock = DockStyle.Fill;

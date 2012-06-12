@@ -210,3 +210,4 @@ GordonM, 12 Jun 2012. Another small mod to incomplete file detection, plus anoth
 NaylorJ, 12 Jun 2012. Fixed LT-13186 a different way. Invisible spaces should no longer end up in the list of Analysis, and phrase creation should still work.
 AlistairI, 12 Jun 2012. Fixed LT-12956 (Reversal indexes wrongly sorted by UI language, not analysis ws.)
 RickM, 12 June 2012. LT-13311 LIFT import corrupting data with &, etc.
+NaylorJ, 12 June 2012. Fixed LT-12977 info tab should now be correct in the Concordance when a filter is active in the InterlinearText.
