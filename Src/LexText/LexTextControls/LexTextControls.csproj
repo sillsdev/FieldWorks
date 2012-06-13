@@ -67,7 +67,7 @@
 	<WarningsAsErrors>0108</WarningsAsErrors>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
@@ -87,7 +87,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.3.0.27165, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -399,6 +399,17 @@
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>LexTextControls.resx</DependentUpon>
 	</Compile>
+	<Compile Include="Sfm2FlexTextWords.cs" />
+	<None Include="SfmWordsMappingDlg.cs">
+	  <SubType>Form</SubType>
+	</None>
+	<None Include="SfmWordsMappingDlg.Designer.cs">
+	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
+	</None>
+	<EmbeddedResource Include="SfmWordsMappingDlg.resx">
+	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
 	<None Include="LiftSynchronizeDlg.cs" />
 	<Compile Include="LiftSynchronizeDlg.Designer.cs">
 	  <DependentUpon>LiftSynchronizeDlg.cs</DependentUpon>
