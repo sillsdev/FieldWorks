@@ -1373,7 +1373,7 @@ namespace SIL.CoreImpl
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return Equals(other.IcuLocale, IcuLocale);
+			return Equals(other.RFC5646, RFC5646);
 		}
 
 		/// <summary>
