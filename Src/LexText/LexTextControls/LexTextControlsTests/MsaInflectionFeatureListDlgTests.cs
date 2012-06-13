@@ -132,17 +132,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNode itemCont = doc.SelectSingleNode("//item[@id='vCont']");
 			msfs.AddFeatureFromXml(itemCont);
 
-			var dlg = new FeatureSystemInflectionFeatureListDlg();
-			ILexEntryInflType cobj = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
-			lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-			dlg.SetDlgInfo(Cache, (Mediator) null, cobj, 0);
+			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
+			{
+				ILexEntryInflType cobj =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
+				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
+				dlg.SetDlgInfo(Cache, (Mediator)null, cobj, 0);
 
-			// load some feature system values into treeview
-			FeatureStructureTreeView tv = dlg.TreeView;
+				// load some feature system values into treeview
+				FeatureStructureTreeView tv = dlg.TreeView;
 
-			Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
-			TreeNodeCollection col = tv.Nodes[0].Nodes;
-			Assert.AreEqual(3, col.Count, "Count of first level nodes in tree view");
+				Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
+				TreeNodeCollection col = tv.Nodes[0].Nodes;
+				Assert.AreEqual(3, col.Count, "Count of first level nodes in tree view");
+			}
 		}
 
 		private void TestFeatureStructureContent(IFsFeatStruc featStruct)
