@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000058">
+	<!-- Language Project (with Text) -->
+	<rt class="LangProject" guid="88ddebd1-dfad-4033-8b1c-896081469f66">
+		<Texts>
+			<objsur guid="9d28219c-6185-416e-828b-b9e304de141c" t="o" />
+		</Texts>
+	</rt>
+	<rt class="RnResearchNbk" guid="7f39cadd-5392-4d1f-81ae-57049ac30596" ownerguid="88ddebd1-dfad-4033-8b1c-896081469f66">
+		<Records>
+			<objsur t="o" guid="2eeb13ab-7844-4406-b60d-a9a1c08363bb" />
+			<objsur t="o" guid="5aedaa5f-6f71-4859-953b-a9bb1b78a813" />
+			<objsur t="o" guid="6e729420-75f0-4474-9f27-7335d7a4d39b" />
+		</Records>
+	</rt>
+	<!-- 1st RnGenericRec (with Text) -->
+	<rt class="RnGenericRec" guid="2eeb13ab-7844-4406-b60d-a9a1c08363bb" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596">
+		<Text>
+			<objsur t="o" guid="bb68f6bc-f233-4cd4-8894-c33b4b4c43ba" />
+		</Text>
+	</rt>
+	<!-- 2nd RnGenericRec (without Text) -->
+	<rt class="RnGenericRec" guid="5aedaa5f-6f71-4859-953b-a9bb1b78a813" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596" />
+	<!-- 3rd RnGenericRec (with Text, but no objsur) -->
+	<rt class="RnGenericRec" guid="6e729420-75f0-4474-9f27-7335d7a4d39b" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596">
+		<Text />
+	</rt>
+
+	<!-- Text for LangProject.Texts -->
+	<rt class="Text" guid ="9d28219c-6185-416e-828b-b9e304de141c" ownerguid="88ddebd1-dfad-4033-8b1c-896081469f66">
+		<Contents />
+	</rt>
+	<!-- Text for 1st RnGenericRec.Text -->
+	<rt class="Text" guid ="bb68f6bc-f233-4cd4-8894-c33b4b4c43ba" ownerguid="2eeb13ab-7844-4406-b60d-a9a1c08363bb">
+		<Contents />
+	</rt>
+</languageproject>

@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 
@@ -188,5 +189,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 			}
 		}
+
+		/// <summary>
+		/// Get tree view of the chooser
+		/// </summary>
+		public TreeView TreeView
+		{
+			get { return m_labelsTreeView; }
+		}
+
 	}
 }

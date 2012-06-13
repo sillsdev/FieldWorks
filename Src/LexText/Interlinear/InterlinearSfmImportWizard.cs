@@ -729,23 +729,15 @@ namespace SIL.FieldWorks.IText
 	/// This is serialized to form the .map file, so change with care.
 	/// It is public only because XmlSerializer requires everything to be.
 	/// </summary>
-	public class InterlinearMapping
+	[Serializable]
+	public class InterlinearMapping : Sfm2FlexTextMappingBase<InterlinDestination>
 	{
 		public InterlinearMapping()
 		{
 		}
 		public InterlinearMapping(InterlinearMapping copyFrom)
+			: base(copyFrom)
 		{
-			Marker = copyFrom.Marker;
-			Destination = copyFrom.Destination;
-			Converter = copyFrom.Converter;
-			WritingSystem = copyFrom.WritingSystem;
-			Count = copyFrom.Count;
 		}
-		public string Marker;
-		public InterlinDestination Destination;
-		public string WritingSystem;
-		public string Converter;
-		internal string Count;
 	}
 }

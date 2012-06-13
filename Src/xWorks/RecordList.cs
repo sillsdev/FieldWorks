@@ -3466,8 +3466,9 @@ namespace SIL.FieldWorks.XWorks
 					realFlid = StTextTags.kflidParagraphs;
 					break;
 				case "Texts":
-					owningObject = cache.LanguageProject;
-					realFlid = LangProjectTags.kflidTexts;
+					Debug.Fail("Texts are no longer owned. We shouldn't be here!");
+					//owningObject = cache.LanguageProject;
+					//realFlid = LangProjectTags.kflidTexts;
 					break;
 				case "MsFeatureSystem":
 					owningObject = cache.LanguageProject;

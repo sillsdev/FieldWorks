@@ -457,12 +457,9 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						FwComboBox combo = ctl as FwComboBox;
 						combo.SelectedIndexChanged -= Combo_SelectedIndexChanged;
-						foreach (Object obj in combo.Items)
-						{
-							if (obj is IDisposable)
-								(obj as IDisposable).Dispose();
-						}
-						combo.Items.Clear();
+						// The Clear() below disposes the items in the ObjectCollection
+						if (combo.ListBox != null && !combo.ListBox.IsDisposed) // ListBox contains Items
+							combo.Items.Clear();
 					}
 				}
 				if (m_items != null)

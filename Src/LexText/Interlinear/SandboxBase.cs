@@ -98,6 +98,8 @@ namespace SIL.FieldWorks.IText
 		//internal const int ktagSbMorphClsid = 6902018;
 		// This is true if the named object is a guess.
 		internal const int ktagSbNamedObjGuess = 6903019;
+		// This is used to store an object corresponding to WfiMorphBundle.InflType.
+		internal const int ktagSbNamedObjInflType = 6903020;
 
 
 		// This group identify the pull-down icons. They must be the only tags in the range
@@ -1298,7 +1300,7 @@ namespace SIL.FieldWorks.IText
 							if (possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
 							{
 								hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda);
+								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);
 							}
 							else
 							{
@@ -1308,6 +1310,14 @@ namespace SIL.FieldWorks.IText
 							}
 							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
 							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
+
+							int hvoInflType = 0;
+							if (mb.InflTypeRA != null)
+							{
+								hvoInflType = m_caches.FindOrCreateSec(mb.InflTypeRA.Hvo,
+														 kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+							}
+							cda.CacheObjProp(hvoMbSec, ktagSbNamedObjInflType, hvoInflType);
 						}
 
 						// Get the MSA, if any.
@@ -1702,7 +1712,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private void CacheLexGlossWithInflTypeForAllCurrentWs(ILexEntry possibleVariant, int hvoLexSenseSec, int wsVern, IVwCacheDa cda)
+		private void CacheLexGlossWithInflTypeForAllCurrentWs(ILexEntry possibleVariant, int hvoLexSenseSec, int wsVern, IVwCacheDa cda,
+			ILexEntryInflType inflType)
 		{
 			IList<int> currentAnalysisWsList = m_caches.MainCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToArray();
 			CacheStringAltForAllCurrentWs(currentAnalysisWsList, cda, hvoLexSenseSec, ktagSbNamedObjName,
@@ -1715,7 +1726,7 @@ namespace SIL.FieldWorks.IText
 															m_choices.m_wsDefAnal);
 						choices.Add(spec);
 						ITsString tssResult;
-						return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, out tssResult) ?
+						return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, inflType, out tssResult) ?
 									tssResult : null;
 					});
 		}
@@ -1870,7 +1881,7 @@ namespace SIL.FieldWorks.IText
 			m_caches.Map(hvoFormSec, defFormReal.Hvo);
 			// This takes too long! Wait at least for a click in the bundle.
 			//SetSelectedEntry(hvoEntryReal);
-			EstablishDefaultSense(hvoMorph, le, null);
+			EstablishDefaultSense(hvoMorph, le, null, null);
 		}
 
 		/// <summary>
@@ -1916,8 +1927,9 @@ namespace SIL.FieldWorks.IText
 		/// The real database id of the sense to use.  If zero, use the first sense of the entry
 		/// (if there is one) as a default.
 		/// </param>
+		/// <param name="inflType"></param>
 		/// <returns>default (real) sense if we found one, null otherwise.</returns>
-		private ILexSense EstablishDefaultSense(int hvoMorph, ILexEntry entryReal, ILexSense senseReal)
+		private ILexSense EstablishDefaultSense(int hvoMorph, ILexEntry entryReal, ILexSense senseReal, ILexEntryInflType inflType)
 		{
 			CheckDisposed();
 
@@ -1925,8 +1937,16 @@ namespace SIL.FieldWorks.IText
 			// If the entry has no sense we can't do anything.
 			if (entryReal.SensesOS.Count == 0)
 			{
-				Debug.Assert(senseReal == null);
-				variantSense = GetSenseForVariantIfPossible(entryReal);
+				if (senseReal != null)
+				{
+					//if ((entryReal as ILexEntry).IsVariantOfSenseOrOwnerEntry(senseReal, out ler))
+					variantSense = senseReal;
+				}
+				else
+				{
+					variantSense = GetSenseForVariantIfPossible(entryReal);
+				}
+
 				if (variantSense == null)
 					return null; // nothing useful we can do.
 			}
@@ -1951,7 +1971,13 @@ namespace SIL.FieldWorks.IText
 				hvoDefSense = m_caches.FindOrCreateSec(defSenseReal.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
 				var cda = (IVwCacheDa)m_caches.DataAccess;
 				int wsVern = RawWordformWs;
-				CacheLexGlossWithInflTypeForAllCurrentWs(entryReal, hvoDefSense, wsVern, cda);
+				CacheLexGlossWithInflTypeForAllCurrentWs(entryReal, hvoDefSense, wsVern, cda, inflType);
+				int hvoInflType = 0;
+				if (inflType != null)
+					hvoInflType = m_caches.FindOrCreateSec(inflType.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
+				cda.CacheObjProp(hvoMorph, ktagSbNamedObjInflType, hvoInflType);
+				m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll,
+						hvoMorph, ktagSbNamedObjInflType, 0, 1, 0);
 			}
 			else
 			{
@@ -3416,7 +3442,7 @@ namespace SIL.FieldWorks.IText
 		/// the original m_hvoAnalysis. May become zero, if the user chooses an alternate case form
 		/// that currently does not exist as a WfiWordform.
 		/// </summary>
-		AnalysisTree CurrentAnalysisTree
+		internal AnalysisTree CurrentAnalysisTree
 		{
 			get; set;
 		}

@@ -140,12 +140,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Msa = msa;
 			}
 
+			public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
+			{
+				Form = form;
+				Msa = msa;
+				InflType = inflType;
+			}
+
 			public IMoForm Form
 			{
 				get; private set;
 			}
 
 			public IMoMorphSynAnalysis Msa
+			{
+				get; private set;
+			}
+
+			public ILexEntryInflType InflType
 			{
 				get; private set;
 			}
@@ -361,11 +373,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				switch ((string) exceptionElem.Attribute("code"))
 				{
 					case "ReachedMaxAnalyses":
-						errorMessage = string.Format(ParserCoreStrings.ksReachedMaxAnalysesAllowed,
+						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxAnalysesAllowed,
 							totalAnalysesValue);
 						break;
 					case "ReachedMaxBufferSize":
-						errorMessage = string.Format(ParserCoreStrings.ksReachedMaxInternalBufferSize,
+						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxInternalBufferSize,
 							totalAnalysesValue);
 						break;
 				}
@@ -381,17 +393,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 				{
 					var wordform = m_wordformRepository.GetObject((int) wordformElem.Attribute("DbRef"));
-					result = new ParseResult(wordform, crc, priority,
-											 (from analysisElem in wordformElem.Descendants("WfiAnalysis")
-											  let morphs = from morphElem in analysisElem.Descendants("Morph")
-														   select new ParseMorph(
-															m_moFormRepository.GetObject(
-																(int) morphElem.Element("MoForm").Attribute("DbRef")),
-															m_msaRepository.GetObject(
-																(int) morphElem.Element("MSI").Attribute("DbRef")))
-											  where morphs.Count() > 0
-											  select new ParseAnalysis(morphs.ToList())).ToList(),
-											 errorMessage);
+					IList<ParseAnalysis> analyses = null;
+					analyses = (from analysisElem in wordformElem.Descendants("WfiAnalysis")
+								let morphs = from morphElem in analysisElem.Descendants("Morph")
+											 let morph = CreateParseMorph(morphElem)
+											 where morph != null
+											 select morph
+								where morphs.Any()
+								select new ParseAnalysis(morphs.ToList())).ToList();
+					result = new ParseResult(wordform, crc, priority, analyses, errorMessage);
 				}
 
 				lock (m_syncRoot)
@@ -409,6 +419,65 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#endregion Public methods
 
 		#region Private methods
+
+		/// <summary>
+		/// Creates a single ParseMorph object
+		/// Handles special cases where the MoForm hvo and/or MSI hvos are
+		/// not actual MoForm or MSA objects.
+		/// </summary>
+		/// <param name="morphElem">A Morph element returned by one of the automated parsers</param>
+		/// <returns>a new ParseMorph object or null if the morpheme should be skipped</returns>
+		private ParseMorph CreateParseMorph(XElement morphElem)
+		{
+			// Normally, the hvo for MoForm is a MoForm and the hvo for MSI is an MSA
+			// There are four exceptions, though, when an irregularly inflected form is involved:
+			// 1. <MoForm DbRef="x"... and x is an hvo for a LexEntryInflType.
+			//       This is one of the null allomorphs we create when building the
+			//       input for the parser in order to still get the Word Grammar to have something in any
+			//       required slots in affix templates.  The parser filer can ignore these.
+			// 2. <MSI DbRef="y"... and y is an hvo for a LexEntryInflType.
+			//       This is one of the null allomorphs we create when building the
+			//       input for the parser in order to still get the Word Grammar to have something in any
+			//       required slots in affix templates.  The parser filer can ignore these.
+			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
+			//       The LexEntry is an irregularly inflected form for the first set of LexEntryRefs.
+			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
+			//       The LexEntry is an irregularly inflected form and the (non-zero) index indicates
+			//       which set of LexEntryRefs it is for.
+
+			var hvoForm = (int) morphElem.Element("MoForm").Attribute("DbRef");
+			var objForm = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoForm);
+			var form = objForm as IMoForm;
+
+			var msaHvo = morphElem.Element("MSI").Attribute("DbRef");
+			string sMsaHvo = msaHvo.Value;
+			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			var indexOfPeriod = IndexOfPeriodInMsaHvo(ref sMsaHvo);
+			ICmObject objMsa = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(sMsaHvo));
+			var msa = objMsa as IMoMorphSynAnalysis;
+
+			if (form != null && msa != null)
+				return new ParseMorph(form, msa);
+
+			var msaAsLexEntry = objMsa as ILexEntry;
+			if (msaAsLexEntry != null && form != null)
+			{
+				// is an irregularly inflected form
+				// get the MoStemMsa of its variant
+				if (msaAsLexEntry.EntryRefsOS.Count > 0)
+				{
+					var index = IndexOfLexEntryRef(msaHvo.Value, indexOfPeriod);
+					var lexEntryRef = msaAsLexEntry.EntryRefsOS[index];
+					var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+					var stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
+					var entryOfForm = form.Owner as ILexEntry;
+					var inflType = lexEntryRef.VariantEntryTypesRS.ElementAt(0);
+					return new ParseMorph(form, stemMsa, inflType as ILexEntryInflType);
+				}
+			}
+			// if it is anything else, we ignore it
+			return null;
+		}
 
 		/// <summary>
 		/// Updates the wordform. This will be run in the UI thread when the application is idle. If it can't be done right now,
@@ -525,7 +594,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (var mb in anal.MorphBundlesOS)
 					{
 						var current = analysis.Morphs[i++];
-						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa)
+						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType)
 						{
 							// Possibly matches condition (2), above.
 							mbMatch = true;
@@ -556,6 +625,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					newAnal.MorphBundlesOS.Add(mb);
 					mb.MorphRA = morph.Form;
 					mb.MsaRA = morph.Msa;
+					if (morph.InflType != null)
+						mb.InflTypeRA = morph.InflType;
 				}
 				matches.Add(newAnal);
 			}
@@ -632,5 +703,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#endregion Wordform Preparation methods
 
 		#endregion Private methods
+
+		public static int IndexOfLexEntryRef(string sHvo, int indexOfPeriod)
+		{
+			int index = 0;
+			if (indexOfPeriod >= 0)
+			{
+				string sIndex = sHvo.Substring(indexOfPeriod+1);
+				index = Convert.ToInt32(sIndex);
+			}
+			return index;
+		}
+
+		public static int IndexOfPeriodInMsaHvo(ref string sObjHvo)
+		{
+			// Irregulary inflected forms can a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			int indexOfPeriod = sObjHvo.IndexOf('.');
+			if (indexOfPeriod >= 0)
+			{
+				sObjHvo = sObjHvo.Substring(0, indexOfPeriod);
+			}
+			return indexOfPeriod;
+		}
 	}
 }

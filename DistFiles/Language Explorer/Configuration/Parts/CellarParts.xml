@@ -193,10 +193,10 @@
 		<part id="Text-Detail-NotebookSection" type="Detail" paramType="LiteralString">
 			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo-Notebook"/>
 		</part>
-		<part id="Text-Detail-NotebookFields" type="Detail" >
+		  <part id="Text-Detail-NotebookFields" type="Detail" >
 			<choice>
-				<where target="owner" is="RnGenericRec">
-					<obj field="Owner" layout="TextInfoFields"/>
+				<where target="AssociatedNotebookRecord" is="RnGenericRec">
+					<obj field="AssociatedNotebookRecord" layout="TextInfoFields"/>
 				</where>
 				<otherwise>
 					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Researchers" label="Researchers">

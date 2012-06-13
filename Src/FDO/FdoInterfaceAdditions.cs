@@ -27,7 +27,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
@@ -772,9 +771,13 @@ namespace SIL.FieldWorks.FDO
 		/// <returns></returns>
 		ICmPossibilityList MakeTextTagsList(string xml);
 
+		/// <summary>
+		/// Virtual list of texts. Replaces TextsOC now that Text objects are unowned.
+		/// </summary>
+		IList<IText> Texts { get; }
 
 		/// <summary>
-		/// Virtual list of texts that can be interlinearized. Combines TextsOC and Scripture
+		/// Virtual list of texts that can be interlinearized. Combines Texts and Scripture
 		/// </summary>
 		IList<IStText> InterlinearTexts { get; }
 
@@ -863,6 +866,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		void ResetHomographNumbers(ProgressBar progressBar);
 
+		/// <summary>
+		/// Allows user to convert LexEntryType to LexEntryInflType.
+		/// </summary>
+		void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+
+		/// <summary>
+		/// Allows user to convert LexEntryInflType to LexEntryType.
+		/// </summary>
+		void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
 		/// <summary>
 		/// used when dumping the lexical database for the automated Parser
 		/// </summary>
@@ -1364,6 +1376,19 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexReference> LexEntryReferences { get; }
 	}
+
+	/// <summary>
+	/// Non-model interface additions for ILexEntryType.
+	/// </summary>
+	public partial interface ILexEntryType
+	{
+		/// <summary>
+		/// Convert one LexEntryType to another LexEntryType
+		/// </summary>
+		/// <param name="lexEntryType"> </param>
+		void ConvertLexEntryType(ILexEntryType lexEntryType);
+	}
+
 
 	/// <summary>
 	/// Non-model interface additions for IMoMorphSynAnalysis.
@@ -2833,9 +2858,14 @@ namespace SIL.FieldWorks.FDO
 	public partial interface IText
 	{
 		/// <summary>
-		/// Move the text so that its owner is a (newly created) notebook record. Does nothing if it already is.
+		/// Associate the text with a (newly created) notebook record. Does nothing if it already is.
 		/// </summary>
-		void MoveToNotebook(bool makeYourOwnUow);
+		void AssociateWithNotebook(bool makeYourOwnUow);
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		IRnGenericRec AssociatedNotebookRecord { get; }
 	}
 
 	/// <summary>

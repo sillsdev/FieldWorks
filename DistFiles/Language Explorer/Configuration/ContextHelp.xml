@@ -256,7 +256,7 @@
 	<item id="AffixSlot">An inflectional affix slot which can appear in at least one inflectional affix template for this category.</item>
 	<item id="SlotName">A short name for this inflectional affix slot.</item>
 	<item id="SlotDescription">A fuller description for this inflectional affix slot.</item>
-	<item id="SlotOptional" captionformat="Choose {0}">Check the box if  this inflectional affix slot is optional in all of the templates it appears in.</item>
+	<item id="SlotOptional" captionformat="Choose {0}">Check the box if this inflectional affix slot is optional in all of the templates it appears in.</item>
 	<item id="AffixTemplates">The set of inflectional affix templates which are required in order for a word of this category to be well-formed.</item>
 	<item id="AffixTemplate">An inflectional affix template of this category.</item>
 	<item id="TemplateName">A short name for this inflectional affix template.</item>

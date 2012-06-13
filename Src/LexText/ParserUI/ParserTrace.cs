@@ -9,6 +9,7 @@ using System.Xml.Xsl;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -157,7 +158,20 @@ namespace SIL.FieldWorks.LexText.Controls
 					else
 						alloid = node.SelectSingleNode("MoForm/@DbRef");
 					int hvo = Convert.ToInt32(alloid.InnerText);
-					IMoForm form = m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(hvo);
+					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+					var form = obj as IMoForm;
+					if (form == null)
+					{
+						// This is one of the null allomorphs we create when building the
+						// input for the parser in order to still get the Word Grammar to have something in any
+						// required slots in affix templates.
+						var lexEntryInflType = obj as ILexEntryInflType;
+						if (lexEntryInflType != null)
+						{
+							ConvertLexEntryInflType(doc, node, lexEntryInflType);
+							continue;
+						}
+					}
 					string sLongName;
 					string sForm;
 					string sGloss;
@@ -173,15 +187,46 @@ namespace SIL.FieldWorks.LexText.Controls
 							msaid = node.Attributes.GetNamedItem("morphname");
 						else
 							msaid = node.SelectSingleNode("MSI/@DbRef");
-						int hvoMsa = Convert.ToInt32(msaid.InnerText);
-						IMoMorphSynAnalysis msa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(hvoMsa);
-						if (msa != null)
+						string sMsaHvo = msaid.InnerText;
+						var indexOfPeriod = ParseFiler.IndexOfPeriodInMsaHvo(ref sMsaHvo);
+						int hvoMsa = Convert.ToInt32(sMsaHvo);
+						var msaObj = m_cache.ServiceLocator.GetObject(hvoMsa);
+						if (msaObj.ClassID == LexEntryTags.kClassId)
 						{
-							sGloss = msa.GetGlossOfFirstSense();
+							var entry = msaObj as ILexEntry;
+							if (entry.EntryRefsOS.Count > 0)
+							{
+								var index = ParseFiler.IndexOfLexEntryRef(msaid.Value, indexOfPeriod);
+								var lexEntryRef = entry.EntryRefsOS[index];
+								ITsIncStrBldr sbGlossPrepend;
+								ITsIncStrBldr sbGlossAppend;
+								var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+								var glossWs = m_cache.ServiceLocator.WritingSystemManager.Get(m_cache.DefaultAnalWs);
+								FDO.DomainServices.MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
+																									glossWs,
+																									out sbGlossPrepend, out sbGlossAppend);
+								ITsIncStrBldr sbGloss = sbGlossPrepend;
+								sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
+								sbGloss.Append(sbGlossAppend.Text);
+								sGloss = sbGloss.Text;
+							}
+							else
+							{
+								sGloss = ParserUIStrings.ksUnknownGloss;
+							}
+
 						}
 						else
 						{
-							sGloss = sLongName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
+							var msa = msaObj as IMoMorphSynAnalysis;
+							if (msa != null)
+							{
+								sGloss = msa.GetGlossOfFirstSense();
+							}
+							else
+							{
+								sGloss = sLongName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
+							}
 						}
 						sCitationForm = sLongName.Substring(iLastSpace).Trim();
 						sLongName = String.Format(ParserUIStrings.ksX_Y_Z, sForm, sGloss, sCitationForm);
@@ -216,6 +261,28 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 		}
+
+		private void ConvertLexEntryInflType(XmlDocument doc, XmlNode node, ILexEntryInflType lexEntryInflType)
+		{
+			var lexEntryInflTypeNode = CreateXmlElement(doc, "lexEntryInflType", node);
+			var nullTempNode = CreateXmlElement(doc, "alloform", node);
+			nullTempNode.InnerText = "0";
+			string sNullGloss = null;
+			StringBuilder sbGloss = new StringBuilder();
+			if (string.IsNullOrEmpty(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text))
+			{
+				sbGloss.Append(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text);
+				sbGloss.Append("...");
+			}
+			sbGloss.Append(lexEntryInflType.GlossAppend.BestAnalysisAlternative.Text);
+			nullTempNode = CreateXmlElement(doc, "gloss", node);
+			nullTempNode.InnerXml = CreateEntities(sbGloss.ToString());
+			var sMsg = string.Format(ParserUIStrings.ksIrregularlyInflectedFormNullAffix, lexEntryInflType.ShortName);
+			nullTempNode = CreateXmlElement(doc, "citationForm", node);
+			nullTempNode.InnerXml = CreateEntities(sMsg);
+			CreateInflMsaForLexEntryInflType(doc, node, lexEntryInflType);
+		}
+
 		protected void CreateNotAffixAlloFeatsElement(XmlDocument doc, XmlNode node, XmlNode tempNode)
 		{
 			XmlNode props = node.SelectSingleNode("props");

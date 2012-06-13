@@ -144,6 +144,10 @@
 	  <Name>ITextDll</Name>
 	  <HintPath>..\..\..\..\Output\Debug\ITextDll.dll</HintPath>
 	</Reference>
+	<Reference Include="LexTextControls, Version=7.3.0.25937, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\LexTextControls.dll</HintPath>
+	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>

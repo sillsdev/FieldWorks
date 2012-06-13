@@ -354,7 +354,33 @@
 	</part>
   </bin>
 
-  <bin class="LexRefType">
+	<bin class="LexEntryInflType">
+		<part id="LexEntryInflType-Jt-GlossPrepend" type="JtView">
+			<string field="GlossPrepend" ws="analysis"/>
+		</part>
+		<part id="LexEntryInflType-Detail-GlossPrependAllA" type="Detail">
+			<slice field="GlossPrepend" label="Prepend to Gloss" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		</part>
+		<part id="LexEntryInflType-Jt-GlossAppend" type="JtView">
+			<string field="GlossAppend" ws="analysis"/>
+		</part>
+		<part id="LexEntryInflType-Detail-GlossAppendAllA" type="Detail">
+			<slice field="GlossAppend" label="Append to Gloss" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		</part>
+		<part id="LexEntryInflType-Detail-Slots" type="Detail">
+			<slice field="Slots" label="Slots" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongNameTSS" ws="best analorvern"/>
+				<chooserInfo text="The following slots are available" flidTextParam="5133004">
+					<chooserLink type="goto" label="Edit slots" target="TopPOS" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexEntryInflType-Detail-InflFeats" type="Detail">
+			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FeatureSystemInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+	</bin>
+
+	<bin class="LexRefType">
 	<part id="LexRefType-Detail-ReverseNameAllA" type="Detail">
 	<if field="MappingType" intmemberof="2,3,7,8,12,13">
 		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>

@@ -33,6 +33,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  29 May 2012 (7000059): Make IText objects unowned to avoid S/R Merge problems.
   25 April 2012 (7000058): No actual model change, but a data migration to fill GlossAppend fields
 	for the standard system Plural and Past variant types. See LT-7581.
   24 April 2012 (7000057): No actual model change, but a data migration to upgrade each Irregularly Inflected Form LexEntryType possibility to LexEntryInflType.
@@ -164,7 +165,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000058" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000059" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -2436,11 +2437,11 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>Any pertinent discussion relating to the hypothesis.</para>
 		  </comment>
 		</owning>
-		<owning num="33" id="Text" card="atomic" sig="Text">
+		<rel num="33" id="Text" card="atomic" sig="Text">
 		  <comment>
 			<para>A text (suitable for analysis in the Words/Texts tool) that is associated with this record. For example, the record may be a description of how it was obtained.</para>
 		  </comment>
-		</owning>
+		</rel>
 	  </props>
 	</class>
 	<class num="7" id="Reminder" abstract="false" abbr="rem" base="CmObject" depth="0">
@@ -3794,7 +3795,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		</basic>
 	  </props>
 	</class>
-	<class num="54" id="Text" abstract="false" abbr="text" base="CmMajorObject" depth="1">
+	<class num="54" id="Text" abstract="false" abbr="text" base="CmMajorObject" owner="none" depth="1">
 	  <comment>
 		<para>This Text object will probably be replaced by RnEvent or a new subclass of RnEvent (Larry Hayashi, May 6, 2004).</para>
 	  </comment>
@@ -5114,7 +5115,6 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<basic num="3" id="MainCountry" sig="MultiUnicode"/>
 		<basic num="4" id="FieldWorkLocation" sig="MultiUnicode"/>
 		<owning num="5" id="PartsOfSpeech" card="atomic" sig="CmPossibilityList"/>
-		<owning num="6" id="Texts" card="col" sig="Text"/>
 		<owning num="7" id="TranslationTags" card="atomic" sig="CmPossibilityList"/>
 		<rel num="9" id="Thesaurus" card="atomic" sig="CmPossibilityList"/>
 		<rel num="11" id="WordformLookupLists" card="col" sig="WordformLookupList"/>

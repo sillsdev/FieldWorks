@@ -120,6 +120,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Virtual list of texts. Replaces TextsOC now that Text objects are unowned.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "Text")]
+		public IList<IText> Texts
+		{
+			get
+			{
+				// Get regular texts.
+				var txtRepo = Cache.ServiceLocator.GetInstance<ITextRepository>();
+				return txtRepo.AllInstances().ToList();
+			}
+		}
+
+		/// <summary>
 		/// Virtual list of texts that can be interlinearized.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "StText")]
@@ -128,14 +142,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				// TODO: Move to some Repository
-				var stTextIds = new List<IStText>();
+				var stTextIds = (from txt in Texts where txt.ContentsOA != null select txt.ContentsOA).ToList();
 
 				// Get regular texts.
-				foreach (var txt in TextsOC)
-				{
-					if (txt.ContentsOA != null)
-						stTextIds.Add(txt.ContentsOA);
-				}
 
 				if (m_teInstalled && TranslatedScriptureOA != null)
 				{

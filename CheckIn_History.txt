@@ -5903,3 +5903,64 @@ RandyR, 12 May 2012. Checked in Flex Bridge 0.3.39.
 EberhardB, 14 May 2012. Integration Calgary/WW -> WW
 KenZ, 14 May 2012. Fixed problem from integration causing Flex to complain about
 	 interface language on every startup.
+EricP, 15 May 2012. (LT-7581) Combo box items for LexGloss line with irregularly
+	inflected form types. Doesn't actually update the real morphbundle yet.
+AnnB, 15 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW for SharonC.
+EricP, 15 May 2012. (LT-7581) check in a file missing from last changelist checkin (38092).
+KenZ, 15 May 2012. Fixed to avoid UI question on startup if registry setting is missing.
+GordonM, 15 May 2012. Fix to Dispose problem (& LT-13034).
+KenZ, 15 May 2012. Integrated fix for LT-13082 from 7.2.5 to WW - SFM import duplicating lex refs.
+RandyR, 12 May 2012. Checked in Flex Bridge 0.3.40.
+Andy Black, 16 May 2012.  UI editing part of LT-7581 "Have parser know about inflectional variant entries"
+EricP, 17 May 2012. (LT-7581) confirm WfiMorphBundle.InflType changes in FocusBox
+EricP, 18 May 2012. (LT-7581) enable FocusBox Variant of... dialog to respect LexEntryInflType choices.
+Lastufkam, 11 May 2012. Was going for LT-12877 but this really fixes a piping bug.
+AnnB, 18 May 2012. Integrated more Graphite changes from WorldPad_Maint to WW for SharonC.
+EricP, 22, 2012. LT-7581. Fixed export interlinear issue for the gloss of a variant morpheme.
+	Also staged some changes to enhance Interlinear Export to include glossAppend info.
+Andy Black, 16 May 2012.  Fix LT-13273 "Hermit Crab: lexicon for PC-PATR does not properly
+	 combine clitic "from parts of speech" into a single feature descriptor"
+KenZ, 22 May 2012. Added FB 0.3.41installer from Randy.
+DamienD, 23 May 2012. LT-13027: Crash creating -infix- Lexical Entry with attaches to specified,
+	LT-13173: FLEx complains when making a new entry in interlinear, LT-13218: crash after deleting
+	variant type from Entry and switching to another area, LT-13196: Crash adding a new sense in the
+	interlinear (affixes?)
+AlistairI, 23 May 2012. LT-13187 (and others): Prevented race conditions and deadlocks when FLEx runs FLExBridge.
+EricP, 24 May 2012. LT-7581 export interlinear glossAppend info for xml and html. Fixed a multiple ws issue.
+Andy Black, 24 May 2012. LT-13283 "Hermit Crab: phonological rules should optionally be applied to clitics"
+	Make 'Append to Gloss' field in LexEntryInflType records visible only when data is present.
+AnnB.. 24 May 2012. LT-5098 "Refine wording of "Target not found" dialog."
+EricP, 25 May 2012. LT-7581. Add glsAppend to export of interlinear to OpenOffice. Fixed a multiple ws issue.
+EricP, 25 May 2012. LT-7581.  Export interlinear glsAppend for Word docs. Fix multi ws issue.
+EricP, 26 May 2012. LT-7581. Export interlinear to Word2007 with glsAppend. Fix a multipleWs and spacing issue.
+Andy Black, 29 May 2012. LT-7581. Add glsAppend to export of interlinear to XLingPaper.
+EricP, 30 May 2012. LT-7581 Add homographNum and variantTypes style to HTML export of interlinear
+EricP, 30 May 2012. LT-7581. Add Interlin_VariantTypes style to OpenOffice export of interlinear
+EricP, 30 May 2012. LT-7581. Add small caps to Interlin Variant Types style Word and Word2007 export of interlinear
+EricP, 30 May 2012. Added a service that creates a namespace manager with all the possible prefixes defined in an XmlDocument.
+	Helpful for xpaths that use multiple prefixes.
+NaylorJ, 30 May 2012. Updated FB Installer to 0.3.42
+KenZ, 30 May 2012. Added config file to address LT-12927.
+Andy Black, 30 May 2012. LT-7581. Enable XAmple parser to handle irregularly inflected forms.
+RandyR, 30 May 2012. Updated FLEx Bridge Installer to 0.3.43 and Lift Bridge installer to 1.4.19.
+KenZ, 31 May 2012. Roled back file Andy accidentally changed that broke Tools...Utilities.
+AlistairI, 31 May 2012. Fixed deadlock problems when canceling conflict viewer then running Flexbridge to get a repository.
+EricP, 1 Jun 2012. LT-13016. Add better interlinear HTML export support for Literal, Free Translation, Note lines. Revised styles.
+	Fixed DOCTYPE line (and commented it out for the sake of tests).
+NaylorJ, 1 Jun 2012. Part of the work for LT-13212 won't build until Gordon commits the rest. If you manage to split us, sorry.
+GordonM, 1 Jun 2012. Rest of work for LT-13212.
+GordonM, 1 Jun 2012. Some bug fixes for LT-13212.
+KenZ, 1 Jun 2012. Integrated fix for LT-12987,13297 from 7.2 to WW
+Andy Black, 1 June 2012. LT-7581. Enable Hermit Crab parser to handle irregularly inflected forms.
+GordonM, 1 Jun 2012. Added an AssociatedNotebookRecord prop to IText.
+NaylorJ, 1 Jun 2012. Some additional bug fixes for LT-13212, still has a problem when modifying notebook fields from the Text info area
+RandyR, 4 June 2012. Updated FLEx Bridge installer to 0.3.44.
+NaylorJ, 5 June 2012. Fixed bug LT-13216, record views in the info pane for texts were multiplying behind the scenes and causing crashes.
+RandyR, 5 June 2012. Updated FLEx Bridge installer to 0.3.45.
+RandyR, 7 June 2012. Updated FLEx Bridge installer to 0.3.48.
+Andy Black, 9 June 2012. LT-7581. Add two utilities to convert to and from LexEntryType and LexEntryInflType.
+KenZ, 11 Jun 2012. Updated FlexBridge to 0.3.49 from Randy.
+Andy Black, 12 Jun 2012. Fix two bugs in Hermit Crab parser transform.
+RandyR, 12 June 2012. Updated FLEx Bridge installer to 0.3.50.
+EricP, 13 June 2012. LT-8276. "Import SFM to Words and Glosses" finished stage 1, sfm to flextext fragment doc.
+EberhardB, 13 June 2012. Fix missing dispose issue.

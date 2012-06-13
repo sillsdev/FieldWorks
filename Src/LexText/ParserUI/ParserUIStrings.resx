@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ks_OK" xml:space="preserve">
 	<value>&amp;OK</value>
@@ -241,5 +241,17 @@
   </data>
   <data name="ksUndoClearParserAnalyses" xml:space="preserve">
 	<value>Undo Clear Selected Word Parser Analyses</value>
+  </data>
+  <data name="ksRulesDoNotApplyOnClitics" xml:space="preserve">
+	<value>NotOnClitics</value>
+	<comment>If true, the set of phonological rules will not be applied to clitics; if false, the rules will be applied to clitics.  (This value defaults to true, so we have to use this negative sense to get the default to be 'rules do not apply to clitics' because that was how Hermit Crab worked before we made this parameter available.)</comment>
+  </data>
+  <data name="ksSlotNameSeparator" xml:space="preserve">
+	<value>, </value>
+	<comment>Separator to use between multiple slot names when an irregularly inflected form variant fills two or more inflectional affix slots</comment>
+  </data>
+  <data name="ksIrregularlyInflectedFormNullAffix" xml:space="preserve">
+	<value>Automatically generated null affix for the {0} irregularly inflected form</value>
+	<comment>Content used when showing the details of a parse in try a Word for these inflectional affix slot fillers.  {0} is the Name of the irregularly inflected form variant.</comment>
   </data>
 </root>

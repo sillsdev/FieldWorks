@@ -370,7 +370,7 @@ namespace SIL.FieldWorks
 			// If that doesn't exist, try the UI locale found in the registry.
 			if (string.IsNullOrEmpty(locale))
 				locale = (string)FwRegistryHelper.FieldWorksRegistryKey.GetValue(FwRegistryHelper.UserLocaleValueName, string.Empty);
-			// If that doesn't exist, try the current system UI locale set at program startup.
+			// If that doesn't exist, try the current system UI locale set at program startup
 			// This is typically en-US, but we want this to match en since our English localizations use en.
 			if (string.IsNullOrEmpty(locale) && Thread.CurrentThread.CurrentUICulture != null)
 			{

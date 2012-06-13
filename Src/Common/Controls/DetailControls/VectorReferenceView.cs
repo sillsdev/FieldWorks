@@ -587,7 +587,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="redoText">text to appear with the Edit/Redo menu item</param>
 		private void RemoveObjectFromEditableList(int ihvo, string undoText, string redoText)
 		{
-			int startHeight = m_rootb.Height;
+			int startHeight = 0;
+			if (m_rootb != null)
+				startHeight = m_rootb.Height;
+
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
 										() => m_fdoCache.DomainDataByFlid.Replace(
 											m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));

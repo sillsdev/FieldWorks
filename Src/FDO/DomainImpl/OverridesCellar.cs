@@ -4514,33 +4514,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class Text
 	{
 		/// <summary>
-		/// Move the text so that its owner is a (newly created) notebook record. Does nothing if it already is.
+		/// Associate the text with a (newly created) notebook record. Does nothing if it already is.
 		/// </summary>
-		public void MoveToNotebook(bool makeYourOwnUow)
+		public void AssociateWithNotebook(bool makeYourOwnUow)
 		{
-			if (!(Owner is LangProject))
+			if(IsAlreadyAssociatedWithNotebook())
 				return;
 			if (makeYourOwnUow)
 			{
 				UndoableUnitOfWorkHelper.Do(Strings.ksUndoCreateNotebookRecord, Strings.ksRedoCreateNotebookRecord,
-					Cache.ActionHandlerAccessor, MoveToNotebook);
+					Cache.ActionHandlerAccessor, AssociateWithNotebook);
 			}
 			else
-				MoveToNotebook();
+				AssociateWithNotebook();
 		}
 
-		private void MoveToNotebook()
+		private bool IsAlreadyAssociatedWithNotebook()
+		{
+			EnsureCompleteIncomingRefs();
+			return m_incomingRefs.OfType<RnGenericRec>().Any();
+		}
+
+		private void AssociateWithNotebook()
 		{
 			var rec = Cache.ServiceLocator.GetInstance<RnGenericRecFactory>().Create();
 			if (Cache.LangProject.ResearchNotebookOA == null)
 				Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
 			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(rec);
-			rec.TextOA = this;
+			rec.TextRA = this;
 			var cmPossibilityRepository = Services.GetInstance<ICmPossibilityRepository>();
 			ICmPossibility eventItem;
 			if (cmPossibilityRepository.TryGetObject(RnResearchNbkTags.kguidRecEvent, out eventItem)) // should succeed except in tests
 				rec.TypeRA = eventItem;
 		}
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "Text")]
+		public IRnGenericRec AssociatedNotebookRecord
+		{
+			get
+			{
+				EnsureCompleteIncomingRefs();
+				return ReferringObjects.OfType<RnGenericRec>().Select(
+					referringObject => referringObject as IRnGenericRec).FirstOrDefault();
+			}
+		}
+
 	}
 
 	#region ParagraphAnalysisFinder class

@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 				var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 				Text = textFactory.Create();
-				Cache.LangProject.TextsOC.Add(Text);
+				//Cache.LangProject.TextsOC.Add(Text);
 				StText = stTextFactory.Create();
 				Text.ContentsOA = StText;
 				Para0 = (StTxtPara)StText.AddNewTextPara(null);

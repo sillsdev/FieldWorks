@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IText CreateTestText()
 		{
 			var text = m_servLoc.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = m_servLoc.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			return text;

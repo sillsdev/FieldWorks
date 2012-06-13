@@ -1164,7 +1164,6 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 	int ccomp = 0;
 
 	strmOut << "Glyph IDs      ";
-	strmOut << "      - hex    ";
 	int islout;
 	for (islout = 0; islout < m_cslout; islout++)
 	{

@@ -34,6 +34,8 @@
 	</SccAuxPath>
 	<OldToolsVersion>3.5</OldToolsVersion>
 	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkProfile />
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -46,10 +48,8 @@
 	<MapFileExtensions>true</MapFileExtensions>
 	<ApplicationRevision>0</ApplicationRevision>
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -283,6 +283,7 @@
 	<Compile Include="DataMigrationTests\DataMigration7000052Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000056Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000057Tests.cs" />
+	<Compile Include="DataMigrationTests\DataMigration7000059Tests.cs" />
 	<Compile Include="DataSortingServiceTests.cs" />
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />
@@ -396,6 +397,9 @@
 	<Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
 	<Content Include="TestData\DataMigration7000057_Normal.xml" />
 	<Content Include="TestData\DataMigration7000057_SubInflTypes.xml" />
+	<Content Include="TestData\DataMigration7000059.xml">
+	  <SubType>Designer</SubType>
+	</Content>
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
 	<None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

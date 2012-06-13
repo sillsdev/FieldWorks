@@ -251,6 +251,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int MakeRealObject(ITsString tssTyped)
 			{
 				// Figure whether owning atomic or owning collection or owning sequence. Throw if none.
+				// Unless we're making an unowned IText for a Notebook Record.
 				ISilDataAccess sdaReal = m_fdoCache.DomainDataByFlid;
 				IFwMetaDataCache mdc = sdaReal.MetaDataCache;
 				CellarPropertyType typeOwning =
@@ -260,7 +261,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				switch (typeOwning)
 				{
 					default:
-						throw new Exception("ghost string property must be owning object property");
+						if (m_flidEmptyProp != RnGenericRecTags.kflidText)
+							throw new Exception("ghost string property must be owning object property");
+						break;
 					case CellarPropertyType.OwningAtomic:
 						ord = -2;
 						break;
@@ -279,18 +282,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvoStringObj = 0;
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					hvoNewObj = hvoStringObj = sdaReal.MakeNewObject(m_clidDst, m_hvoObj, m_flidEmptyProp, ord);
-					// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents of an StTxtPara,
-					// make the intermediate objects
+					// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents
+					// of an StTxtPara, make the intermediate objects
 					if (m_flidEmptyProp == RnGenericRecTags.kflidText)
 					{
-						var text = Cache.ServiceLocator.GetInstance<ITextRepository>().GetObject(hvoNewObj);
-						var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+						var servLoc = Cache.ServiceLocator;
+						var text = servLoc.GetInstance<ITextFactory>().Create();
+						var stText = servLoc.GetInstance<IStTextFactory>().Create();
 						text.ContentsOA = stText;
-						var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+						var para = servLoc.GetInstance<IStTxtParaFactory>().Create();
 						stText.ParagraphsOS.Add(para);
+						hvoNewObj = text.Hvo;
 						hvoStringObj = para.Hvo;
+						// Set the RnGenericRec's Text property to reference the new text
+						sdaReal.SetObjProp(m_hvoObj, m_flidEmptyProp, hvoNewObj);
 					}
+					else
+						hvoNewObj = hvoStringObj = sdaReal.MakeNewObject(m_clidDst, m_hvoObj, m_flidEmptyProp, ord);
+
 					// Set its property m_flidStringProp to tssTyped. If it is multilingual, choose based on ghostWs.
 					var typeString = (CellarPropertyType)(mdc.GetFieldType(m_flidStringProp) &
 						(int)CellarPropertyTypeFilter.VirtualMask);

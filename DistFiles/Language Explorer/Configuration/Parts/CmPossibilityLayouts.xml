@@ -223,8 +223,28 @@
 	<part ref="Summary" label="Variant Type" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
   </layout>
 
+	<layout class="LexEntryInflType" type="detail" name="EditVariant">
+		<part ref="NameAllA"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="ReverseAbbrAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="GlossPrependAllA" visibility="ifdata"/>
+		<part ref="GlossAppendAllA"/>
+		<part ref="InflFeats"/>
+		<part ref="Slots"/>
+		<part ref="Status"/>
+		<part ref="Discussion"/>
+		<part ref="Confidence"/>
+		<part ref="Researchers"/>
+		<part ref="Restrictions"/>
+		<part ref="Conditions" label="Subtypes" param="nested" menu="mnuDataTree-SubVariantEntryType"/>
+	</layout>
 
-  <layout class="CmAnthroItem" type="detail" name="default">
+	<layout class="LexEntryInflType" type="detail" name="nestedVariant">
+		<part ref="Summary" label="Irr. Inflected Form" param="PossibilityName"  menu="mnuDataTree-DeletePossibility"/>
+	</layout>
+
+	<layout class="CmAnthroItem" type="detail" name="default">
 	<part ref="NameAllA">
 	</part>
 	<part ref="AbbreviationAllA">

@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -96,6 +97,54 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Make feature structure based on values in treeview
 				MakeFeatureStructure(tv, featStruct);
 				TestFeatureStructureContent(featStruct);
+			}
+		}
+
+		[Test]
+		public void PopulateTreeFromFeatureSystem()
+		{
+			// Set up sample data
+			IFsFeatStruc featStruct;
+			ILangProject lp = CreateFeatureSystem(out featStruct);
+
+
+			// Set up the xml fs description
+			XmlDocument doc = new XmlDocument();
+			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.DirectoryFinder.FwSourceDirectory,
+										   Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
+			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			doc.Load(sFile);
+			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
+			// Add some complex features
+			IFsFeatureSystem msfs = lp.MsFeatureSystemOA;
+			msfs.AddFeatureFromXml(itemNeut);
+			// Now add a feature that differs only in value
+			XmlNode itemFem = doc.SelectSingleNode("//item[@id='vFem']");
+			msfs.AddFeatureFromXml(itemFem);
+			// Now add another feature to the complex one
+			XmlNode item1st = doc.SelectSingleNode("//item[@id='v1']");
+			msfs.AddFeatureFromXml(item1st);
+			// now get a simple, top-level closed feature
+			sFile = Path.Combine(sFileDir, "FeatureSystem3.xml");
+			doc.Load(sFile);
+			XmlNode itemImpfv = doc.SelectSingleNode("//item[@id='vImpfv']");
+			msfs.AddFeatureFromXml(itemImpfv);
+			XmlNode itemCont = doc.SelectSingleNode("//item[@id='vCont']");
+			msfs.AddFeatureFromXml(itemCont);
+
+			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
+			{
+				ILexEntryInflType cobj =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
+				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
+				dlg.SetDlgInfo(Cache, (Mediator)null, cobj, 0);
+
+				// load some feature system values into treeview
+				FeatureStructureTreeView tv = dlg.TreeView;
+
+				Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
+				TreeNodeCollection col = tv.Nodes[0].Nodes;
+				Assert.AreEqual(3, col.Count, "Count of first level nodes in tree view");
 			}
 		}
 

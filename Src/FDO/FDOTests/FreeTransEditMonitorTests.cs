@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void NonScriptureText()
 		{
 			IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			IStText sttext = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = sttext;
 			m_para = sttext.AddNewTextPara(null);

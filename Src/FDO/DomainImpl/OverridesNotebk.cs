@@ -48,22 +48,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (e.Flid == RnResearchNbkTags.kflidRecords)
 			{
-				var rec = e.ObjectRemoved as IRnGenericRec;
-				if (rec != null && rec.TextOA != null)
-				{
-					MoveTextToLangProject(rec);
-				}
+				//var rec = e.ObjectRemoved as IRnGenericRec;
+				//if (rec != null && rec.TextOA != null)
+				//{
+				//    MoveTextToLangProject(rec);
+				//}
 				UpdateAllRecords();
 			}
 
 			base.RemoveObjectSideEffectsInternal(e);
 		}
 
-		private void MoveTextToLangProject(IRnGenericRec rec)
-		{
-			var tex = rec.TextOA;
-			Cache.LangProject.TextsOC.Add(tex);
-		}
+		//private void MoveTextToLangProject(IRnGenericRec rec)
+		//{
+		//    var tex = rec.TextOA;
+		//    Cache.LangProject.TextsOC.Add(tex);
+		//}
 
 		internal void UpdateAllRecords()
 		{

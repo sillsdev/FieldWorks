@@ -388,6 +388,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			DataTable tblHC = new DataTable("HC");
 			tblHC.Columns.Add(ParserUIStrings.ksMaxDelReapps, typeof(int));
+			tblHC.Columns.Add(ParserUIStrings.ksRulesDoNotApplyOnClitics, typeof(bool));
 			return tblHC;
 		}
 	}

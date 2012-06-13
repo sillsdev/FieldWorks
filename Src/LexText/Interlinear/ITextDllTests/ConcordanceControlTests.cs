@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.IText
 			UndoableUnitOfWorkHelper.Do("ConcordanceControlTests - SetupTexts()",
 				"ConcordanceControlTests - SetupTexts()", m_actionHandler, () =>
 			{
-				m_text1 = Cache.LangProject.TextsOC.Add(new Text());
+				m_text1 = new Text();
 				m_text1.ContentsOA = new StText();
 				StTxtPara para0 = new StTxtPara();
 				StTxtPara para1 = new StTxtPara();

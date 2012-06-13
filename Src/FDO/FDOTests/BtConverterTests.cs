@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_wsTrans = Cache.DefaultAnalWs;
 
 			m_text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(m_text);
+			//Cache.LangProject.TextsOC.Add(m_text);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			m_text.ContentsOA = stText;
 			m_para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, ScrStyleNames.NormalParagraph);

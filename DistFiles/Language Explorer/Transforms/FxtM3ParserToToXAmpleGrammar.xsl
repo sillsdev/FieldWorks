@@ -25,6 +25,7 @@ Preamble
 	<xsl:variable name="analyses" select="$lexicon/MorphoSyntaxAnalyses"/>
 	<xsl:variable name="entries" select="$lexicon/Entries"/>
 	<xsl:variable name="LexEntries" select="$entries/LexEntry"/>
+   <xsl:variable name="lexEntryInflTypes" select="$root/LexEntryInflTypes/LexEntryInflType"/>
 
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
    <xsl:key name="FSID" match="FS" use="@Id"/><!-- this looks like a mistake, but Andy will have to fix it. -->
@@ -1179,6 +1180,11 @@ Let <xsl:value-of select="$sMSFS"/><xsl:value-of select="@dst"/> be <xsl:value-o
 			<xsl:with-param name="sTemplateName">MSFS</xsl:with-param>
 		 </xsl:call-template>
 	  </xsl:for-each>
+	  <xsl:for-each select="$lexEntryInflTypes/InflectionFeatures/FsFeatStruc">
+		 <xsl:call-template name="OutputFS">
+			<xsl:with-param name="sTemplateName">MSFS</xsl:with-param>
+		 </xsl:call-template>
+	  </xsl:for-each>
 	  <xsl:for-each select="$analyses/MoDerivAffMsa/FromMsFeatures/FsFeatStruc">
 		 <xsl:call-template name="OutputFS">
 			<xsl:with-param name="sTemplateName" select="$sFromMSFS"/>
@@ -1229,6 +1235,12 @@ Let&amp;</xsl:text>
 		 <xsl:with-param name="sList" select="$sAllFromPOSNames"/>
 		 <xsl:with-param name="bDoNewLine" select="'Y'"/>
 	  </xsl:call-template>
+	  <xsl:for-each select="$lexEntryInflTypes">
+		 <xsl:text>
+Let </xsl:text>
+		 <xsl:value-of select="$sIrregularlyInflectedForm"/><xsl:value-of select="@Id"/>
+		 <xsl:text> be []</xsl:text>
+	  </xsl:for-each>
 	  <!-- handling interfixes -->
 	  <xsl:text>
 Let Infix be [morphType:infix]

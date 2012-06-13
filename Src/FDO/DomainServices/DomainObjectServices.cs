@@ -2178,6 +2178,23 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return GetSomeSlots(cache, pos.AllAffixSlots, fIsPrefixal);
 		}
 
+		/// <summary>
+		/// Get set of all inflectional affix slots in the language project
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		public static IEnumerable<IMoInflAffixSlot> GetAllSlots(FdoCache cache)
+		{
+			var set = new SortedSet<IMoInflAffixSlot>();
+			var poses = cache.LangProject.PartsOfSpeechOA;
+			foreach (var pos in poses.PossibilitiesOS.Cast<PartOfSpeech>())
+			{
+				set.UnionWith(pos.AllAffixSlotsIncludingSubPartsOfSpeech);
+			}
+			return set;
+
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Locate CmFolder with given name or create it, if neccessary

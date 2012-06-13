@@ -355,9 +355,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					writer.WriteLine("\\g {0}", morph.gloss);
 					if (!string.IsNullOrEmpty(morph.featureDescriptors))
 					{
+						string lastFeatDesc = "";
+						string combinedCFPFeatDescs = "";
 						string[] featDescs = morph.featureDescriptors.Split(' ');
 						foreach (string featDesc in featDescs)
+						{
+							if (featDesc.StartsWith("CFP"))
+							{
+								combinedCFPFeatDescs += featDesc;
+								lastFeatDesc = featDesc;
+								continue;
+							}
+							if (lastFeatDesc.StartsWith("CFP"))
+								writer.WriteLine("\\f {0}", combinedCFPFeatDescs);
 							writer.WriteLine("\\f {0}", featDesc);
+						}
+						if (lastFeatDesc.StartsWith("CFP"))
+							writer.WriteLine("\\f {0}", combinedCFPFeatDescs);
 					}
 					writer.WriteLine();
 				}

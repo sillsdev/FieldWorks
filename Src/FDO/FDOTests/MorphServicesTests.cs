@@ -1147,6 +1147,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Currently I think we just display the gloss without any +***"
 		/// TODO: Ask Andy Black what to show in this case.
 		/// </summary>
+		[Ignore("consider deleting this test. Probably don't need to support just a gloss with this interface.")]
 		[Test]
 		public void GlossOfVariantOfEntry_MissingVariantType()
 		{

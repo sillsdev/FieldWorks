@@ -138,17 +138,17 @@ phrase
 					<!-- what is this for?   -->
 				</xsl:when>
 				<xsl:when test="@type='gls'">
-					<free>
+					<item type="gls" lang="{@lang}">
 						<xsl:apply-templates/>
-					</free>
+					</item>
 				</xsl:when>
 				<xsl:when test="@type='lit' ">
 					<!--  someday we'll have a literal translation element in XLingPaper -->
-					<free>
+					<item type="gls" lang="{@lang}">
 						<object type="tLiteralTranslation">
 							<xsl:apply-templates/>
 						</object>
-					</free>
+					</item>
 				</xsl:when>
 			</xsl:choose>
 	</xsl:template>

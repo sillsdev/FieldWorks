@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			var servLoc = Cache.ServiceLocator;
 			var txt = servLoc.GetInstance<ITextFactory>().Create();
-			Cache.LanguageProject.TextsOC.Add(txt);
+			//Cache.LanguageProject.TextsOC.Add(txt);
 			var text = servLoc.GetInstance<IStTextFactory>().Create();
 			txt.ContentsOA = text;
 			var stTxtParaFactory = servLoc.GetInstance<IStTxtParaFactory>();

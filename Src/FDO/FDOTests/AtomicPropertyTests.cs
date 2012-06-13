@@ -20,13 +20,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void MovingToAtomicOwnedObject_MarksMovedObjectModified()
 		{
-			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
-			var record = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
-			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(record);
+			var text = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			var origRecord = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(origRecord);
+			origRecord.ConclusionsOA = text;
+			var newRecord = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(newRecord);
 			m_actionHandler.EndUndoTask();
 
-			UndoableUnitOfWorkHelper.Do("undoIt", "redoIt", m_actionHandler, ()=>record.TextOA = text);
+			UndoableUnitOfWorkHelper.Do("undoIt", "redoIt", m_actionHandler, () => newRecord.ConclusionsOA = text);
 			var uowService = Cache.ServiceLocator.GetInstance<IUnitOfWorkService>();
 			HashSet<ICmObjectId> newbies = new HashSet<ICmObjectId>();
 			HashSet<ICmObjectOrSurrogate> dirtballs = new HashSet<ICmObjectOrSurrogate>();

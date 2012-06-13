@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.IText
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_text0 = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(m_text0);
+			//Cache.LangProject.TextsOC.Add(m_text0);
 			m_stText0 = stTextFactory.Create();
 			m_text0.ContentsOA = m_stText0;
 			m_para0_0 = m_stText0.AddNewTextPara(null);

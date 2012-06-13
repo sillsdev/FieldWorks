@@ -217,23 +217,8 @@ namespace SIL.FieldWorks.XWorks
 						ClearInvalidObjects(CoreTexts, 0, true);
 					}
 					break;
-				case LangProjectTags.kflidTexts:
 				case RnGenericRecTags.kflidText:
-					if (cvIns > 0)
-					{
-						// Need to add the new text(s). Have to find which ones to add.
-						var coreTextsSet = new HashSet<IStText>(CoreTexts);
-						int count = 0;
-						foreach (var newText in (from sttext in GetCoreTexts() where !coreTextsSet.Contains(sttext) select sttext))
-						{
-							count++;
-							CoreTexts.Add(newText);
-							if (m_interestingTests != null)
-								m_interestingTests.Add(newText);
-						}
-						RaiseInterestingTextsChanged(CoreTexts.Count - count, count, 0);
-					}
-					ClearInvalidObjects(CoreTexts, 0, true);
+					UpdateInterestingTexts();
 					break;
 				case ScrSectionTags.kflidHeading:
 				case ScrSectionTags.kflidContent:
@@ -249,6 +234,22 @@ namespace SIL.FieldWorks.XWorks
 					}
 					break;
 			}
+		}
+
+		public void UpdateInterestingTexts()
+		{
+			// Need to add the new text(s). Have to find which ones to add.
+			var coreTextsSet = new HashSet<IStText>(CoreTexts);
+			int count = 0;
+			foreach (var newText in (from sttext in GetCoreTexts() where !coreTextsSet.Contains(sttext) select sttext))
+			{
+				count++;
+				CoreTexts.Add(newText);
+				if (m_interestingTests != null)
+					m_interestingTests.Add(newText);
+			}
+			RaiseInterestingTextsChanged(CoreTexts.Count - count, count, 0);
+			ClearInvalidObjects(CoreTexts, 0, true);
 		}
 
 		private void RaiseInterestingTextsChanged(int insertAt, int inserted, int deleted)

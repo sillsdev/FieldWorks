@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 			AssembledStyles styles = new AssembledStyles();
 			var root = new RootBoxFdo(styles);
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var owner = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = owner;
 			IStTxtPara p1 = MakePara(owner, "Hello World");

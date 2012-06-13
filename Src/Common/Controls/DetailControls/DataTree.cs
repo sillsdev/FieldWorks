@@ -3949,14 +3949,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						return owner.Guid;
 					if (CurrentSlice.Object is IText)
 					{
-						// Text is not already owned by a notebook record. So there's nothing yet to jump to.
+						IRnGenericRec referringRecord;
+						if (NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord))
+							return referringRecord.Guid;
+
+						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
 						// If the user is really doing the jump we need to make it now.
 						// Otherwise we just need to return something non-null to indicate the jump
 						// is possible (though this is not currently used).
 						if (forEnableOnly)
 							return CurrentSlice.Object.Guid;
-						((IText) CurrentSlice.Object).MoveToNotebook(true);
-						return CurrentSlice.Object.Owner.Guid;
+						// User is really making the jump. Create a notebook record, associate it, and jump.
+						var newNotebookRec = CreateAndAssociateNotebookRecord();
+						return newNotebookRec.Guid;
 					}
 					// Try TargetId by default
 				}
@@ -3970,6 +3975,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			return cmd.TargetId;
 		}
+
+		private IRnGenericRec CreateAndAssociateNotebookRecord()
+		{
+			if (!(CurrentSlice.Object is IText))
+				throw new ArgumentException("CurrentSlice.Object ought to be a Text object.");
+
+			IText textObj = CurrentSlice.Object as IText;
+			// Create new Notebook record
+
+			((IText)CurrentSlice.Object).AssociateWithNotebook(true);
+			IRnGenericRec referringRecord;
+			NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord);
+			return referringRecord;
+		}
+
+		internal static bool NotebookRecordRefersToThisText(IText text, out IRnGenericRec referringRecord)
+		{
+			referringRecord = null;
+			if (text == null)
+				throw new ArgumentException("Don't call this unless the CurrentSlice.Object is a Text.");
+
+			referringRecord = text.AssociatedNotebookRecord;
+			return referringRecord != null;
+		}
+
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>

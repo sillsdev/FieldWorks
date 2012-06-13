@@ -302,6 +302,7 @@
 	<Compile Include="LexEntryImages.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<Compile Include="LexEntryInflTypeConverter.cs" />
 	<Compile Include="LexEntryMenuHandler.cs">
 	  <SubType>Code</SubType>
 	</Compile>

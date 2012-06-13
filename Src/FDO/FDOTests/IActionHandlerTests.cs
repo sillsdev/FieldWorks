@@ -1645,7 +1645,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			UndoableUnitOfWorkHelper.Do("Undo create text", "Redo create text", m_actionHandler, () =>
 			{
 				text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				lp.TextsOC.Add(text);
+				//lp.TextsOC.Add(text);
 				stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = stText;
 				para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -2014,7 +2014,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 				() =>
 				{
 					text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					Cache.LangProject.TextsOC.Add(text);
+					//Cache.LangProject.TextsOC.Add(text);
 					 stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
 				   var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
