@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void SetFocus()
 		{
-			KeyboardController.Methods.SetFocus(this);
+			KeyboardController.Methods.EnableInput(this);
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void KillFocus()
 		{
-			KeyboardController.Methods.KillFocus(this);
+			KeyboardController.Methods.DisableInput(this);
 		}
 
 		/// <summary>
@@ -100,9 +100,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Called when a mouse event happened.
 		/// </summary>
+		/// <returns>Always <c>false</c> - if at all we can handle only part of what's necessary.
+		/// </returns>
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
-			return KeyboardController.EventHandler.OnMouseEvent(this, xd, yd, rcSrc, rcDst, (int)me);
+			KeyboardController.EventHandler.OnMouseEvent(this, xd, yd, rcSrc, rcDst, (MouseEvent)me);
+			return false;
 		}
 
 		/// <summary>

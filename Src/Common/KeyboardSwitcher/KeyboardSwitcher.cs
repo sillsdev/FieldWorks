@@ -118,7 +118,10 @@ namespace SIL.FieldWorks.Views
 		/// </summary>
 		internal string FormatKeyboardIdentifier(IBusEngineDesc engineDesc)
 		{
-			return String.Format("{0} - {1}", engineDesc.Language, engineDesc.Name);
+			string id = engineDesc.Language;
+			// TODO: make "Other" string localizable.
+			string languageName = string.IsNullOrEmpty(id) ? "Other" : Icu.GetDisplayName(id);
+			return String.Format("{0} - {1}", languageName, engineDesc.Name);
 		}
 
 		/// <summary>number of ibus keyboards</summary>

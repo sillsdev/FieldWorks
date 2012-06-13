@@ -67,5 +67,35 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			get { return PrimaryKeyboard.Engine; }
 		}
 		#endregion
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current
+		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionWrapper"/>.
+		/// </summary>
+		public override string ToString()
+		{
+			return string.Format("{0} ({1})", PrimaryKeyboard.Name, m_SystemKeyboard.Name);
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="T:System.Object"/> is equal to the current
+		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionWrapper"/>.
+		/// </summary>
+		public override bool Equals(object obj)
+		{
+			var other = obj as KeyboardDescriptionWrapper;
+			if (other == null)
+				return false;
+			return other.m_OtherImKeyboard == m_OtherImKeyboard && other.m_SystemKeyboard == m_SystemKeyboard;
+		}
+
+		/// <summary>
+		/// Serves as a hash function for a
+		/// <see cref="T:SIL.FieldWorks.Common.Keyboarding.KeyboardDescriptionWrapper"/> object.
+		/// </summary>
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode() ^ Name.GetHashCode() ^ m_SystemKeyboard.GetHashCode() ^ base.GetHashCode();
+		}
 	}
 }

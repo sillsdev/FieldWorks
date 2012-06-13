@@ -5173,7 +5173,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode() + m_stackPartRef.Sum(node => node.GetHashCode());
+			return base.GetHashCode() +
+				m_stackPartRef.Aggregate(0, (sum, node) => (sum + node.GetHashCode()) % Int32.MaxValue);
 		}
 
 		/// <summary>

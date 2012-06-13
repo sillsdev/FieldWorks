@@ -183,7 +183,6 @@ namespace SIL.Utils
 			this.m_topLineText.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			resources.ApplyResources(this.m_topLineText, "m_topLineText");
 			this.m_topLineText.Name = "m_topLineText";
-			this.m_topLineText.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
 			//
 			// pictureBox1
 			//
@@ -230,10 +229,6 @@ namespace SIL.Utils
 
 		}
 		#endregion
-
-		private void richTextBox1_TextChanged(object sender, System.EventArgs e)
-		{
-		}
 
 		private void btnSend_Click(object sender, System.EventArgs e)
 		{
@@ -325,10 +320,6 @@ namespace SIL.Utils
 		public static void DoTrivialUsageReport(string applicationName, RegistryKey applicationKey,
 			string emailAddress, string topMessage, bool addStats, int launchNumber, Assembly assembly)
 		{
-#if __MonoCS__
-			// TODO-Linux: crashes Flex investigate
-			return;
-#else
 			int launchCount = int.Parse((string)applicationKey.GetValue("launches", "0"));
 			if (launchNumber == launchCount)
 			{
@@ -349,7 +340,8 @@ namespace SIL.Utils
 					d.EmailAddress = emailAddress;
 					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
 					StringBuilder bldr = new StringBuilder();
-					bldr.AppendFormat("<report app='{0}' version='{1}'>", applicationName, version);
+					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName,
+						version, MiscUtils.IsUnix);
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);
 					if (launchCount > 1)
 					{
@@ -368,7 +360,6 @@ namespace SIL.Utils
 					d.ShowDialog();
 				}
 			}
-#endif
 		}
 	}
 }

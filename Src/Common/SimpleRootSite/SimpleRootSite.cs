@@ -3492,7 +3492,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
 					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
 #else
-			 // TODO-Linux: possibly need to call SetKeyboardForSelection here
+				// REVIEW: do we have to compare the process the old and new window belongs to?
+				if (m_rootb != null && EditingHelper != null)
+					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
 #endif
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.

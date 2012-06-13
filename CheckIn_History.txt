@@ -5964,3 +5964,4 @@ Andy Black, 12 Jun 2012. Fix two bugs in Hermit Crab parser transform.
 RandyR, 12 June 2012. Updated FLEx Bridge installer to 0.3.50.
 EricP, 13 June 2012. LT-8276. "Import SFM to Words and Glosses" finished stage 1, sfm to flextext fragment doc.
 EberhardB, 13 June 2012. Fix missing dispose issue.
+EberhardB, 13 June 2012. Integration Calgary/WW -> WW.

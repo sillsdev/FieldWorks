@@ -140,6 +140,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
+#if __MonoCS__
+			// On Mono, the sequence of events when changing styles can cause this to be
+			// called even when switching to a character style.  See FWNX-870.
+			if (!styleInfo.IsParagraphStyle)
+				return;
+#endif
 			m_dontUpdateInheritance = true;
 
 			bool fDifferentStyle = m_StyleInfo == null ? true : (styleInfo.Name != m_StyleInfo.Name);

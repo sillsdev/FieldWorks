@@ -17,8 +17,6 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 	/// </summary>
 	public class LinuxKeyboardHelper: IKeyboardEventHandler, IKeyboardMethods
 	{
-		private bool m_fFocused;
-
 		#region IKeyboardEventHandler implementation
 		/// <summary>
 		/// Called before a property gets updated.
@@ -34,8 +32,13 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// <returns>Returns <c>true</c> if the mouse event was handled, otherwise <c>false</c>.
 		/// </returns>
 		public bool OnMouseEvent(IKeyboardCallback callback, int xd, int yd, Rectangle rcSrc,
-			Rectangle rcDst, int mouseEvent)
+			Rectangle rcDst, MouseEvent mouseEvent)
 		{
+			if (mouseEvent == MouseEvent.kmeDown)
+			{
+				SetFocus(callback);
+				return true;
+			}
 			return false;
 		}
 
@@ -52,11 +55,6 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// <remarks>Corresponding C++ method is VwTextStore::OnSelChange.</remarks>
 		public void OnSelectionChange(IKeyboardCallback callback, SelChangeType how)
 		{
-			if (!m_fFocused)
-				return;
-
-			KillFocus(callback);
-			SetFocus(callback);
 		}
 
 		/// <summary>
@@ -81,8 +79,6 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// </summary>
 		public void SetFocus(IKeyboardCallback callback)
 		{
-			m_fFocused = true;
-
 			var keyboard = callback.Keyboard;
 			keyboard.Activate();
 			callback.ActiveKeyboard = keyboard;
@@ -99,8 +95,24 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 				callback.ActiveKeyboard.Deactivate();
 				callback.ActiveKeyboard = null;
 			}
+		}
 
-			m_fFocused = false;
+		/// <summary>
+		/// Enables the input method. This gets called as part of VwRootBox::HandleActivate when
+		/// enabling a selection.
+		/// </summary>
+		/// <remarks>Corresponding C++ method is VwTextStore::SetFocus.</remarks>
+		public void EnableInput(IKeyboardCallback callback)
+		{
+		}
+
+		/// <summary>
+		/// Disables the input method. This gets called as part of VwRootBox::HandleActivate when
+		/// disabling a selection.
+		/// </summary>
+		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
+		public void DisableInput(IKeyboardCallback callback)
+		{
 		}
 
 		/// <summary>
