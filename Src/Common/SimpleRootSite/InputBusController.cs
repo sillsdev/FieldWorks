@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -54,13 +55,51 @@ namespace SIL.FieldWorks.Common.RootSites
 		[DllImport ("libX11", EntryPoint="XCloseDisplay")]
 		private static extern uint XCloseDisplay (IntPtr display);
 
-		// TODO: cache these results, to reduce invokes.
+		private class KeyCodeStore
+		{
+			public uint KeyCode { get; private set; }
+			public bool Shifted { get; private set; }
+
+			private KeyCodeStore()
+			{
+				KeyCode = 0;
+				Shifted = false;
+			}
+
+			public KeyCodeStore(uint keyCode, bool shifted)
+			{
+				KeyCode = keyCode;
+				Shifted = shifted;
+			}
+		}
+
+		private static Dictionary<KeyCodeStore, uint> m_KeyCodeStore = new Dictionary<KeyCodeStore, uint>();
+
 		static uint KeycodeToKeysym(uint keycode, bool shifted)
 		{
-			IntPtr display = XOpenDisplay(IntPtr.Zero);
-			// index of XKeycodeToKeysym, value 0 for lower case, 1 for upper case.
-			uint keysym = XKeycodeToKeysym(display, keycode, (uint)(shifted ? 1 : 0));
-			XCloseDisplay(display);
+			uint keysym = 0;
+			var key = new KeyCodeStore(keycode, shifted);
+			if (!m_KeyCodeStore.TryGetValue(key, out keysym))
+			{
+				IntPtr display = IntPtr.Zero;
+				try
+				{
+					display = XOpenDisplay(IntPtr.Zero);
+					if (display != IntPtr.Zero)
+					{
+						// index of XKeycodeToKeysym, value 0 for lower case, 1 for upper case.
+						keysym = XKeycodeToKeysym(display, keycode, (uint)(shifted ? 1 : 0));
+						m_KeyCodeStore.Add(key, keysym);
+					}
+					else
+						Console.WriteLine("KeysConverter.KeycodeToKeysym: XOpenDisplay failed!");
+				}
+				finally
+				{
+					if (display != IntPtr.Zero)
+						XCloseDisplay(display);
+				}
+			}
 			return keysym;
 		}
 

@@ -94,6 +94,7 @@
 	<Compile Include="Linux\XkbKeyboardAdaptor.cs" />
 	<Compile Include="Linux\XkbKeyboardDescription.cs" />
 	<Compile Include="Windows\WinKeyboardAdaptor.cs" />
+	<Compile Include="Interfaces\MouseEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
