@@ -213,3 +213,6 @@ RickM, 12 June 2012. LT-13311 LIFT import corrupting data with &, etc.
 NaylorJ, 12 June 2012. Fixed LT-12977 info tab should now be correct in the Concordance when a filter is active in the InterlinearText.
 NaylorJ, 12 June 2012. Fixed LT-13151. The number of times the writing system changed message is shown should be reduced now.
 GordonM, 12 June 2012. Minor refactoring to PalasoWritingSystem.
+NaylorJ, 13 June 2012. Fix to WritingSystem equals method.
+NaylorJ, 13 June 2012. The LT-13151 fix added an equals method to PalasoWritingSystem. This proved to be used in too many unpredictible places
+					   It is deemed to risky to make this change in a patch. Backing it out.

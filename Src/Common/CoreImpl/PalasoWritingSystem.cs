@@ -1350,45 +1350,6 @@ namespace SIL.CoreImpl
 		{
 			return DisplayLabel;
 		}
-
-		/// <summary>
-		/// Equality check for PalasoWritingSystems.
-		/// </summary>
-		/// <param name="otherObj"></param>
-		/// <returns></returns>
-		public override bool Equals(object otherObj)
-		{
-			if (ReferenceEquals(null, otherObj)) return false;
-			if (ReferenceEquals(this, otherObj)) return true;
-			if (otherObj.GetType() != typeof (PalasoWritingSystem)) return false;
-			return Equals((PalasoWritingSystem) otherObj);
-		}
-
-		/// <summary>
-		/// Equality check for PalasoWritingSystems.
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public bool Equals(PalasoWritingSystem other)
-		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
-			return Equals(other.RFC5646, RFC5646);
-		}
-
-		/// <summary>
-		/// Override of GetHashCode that should be safer for writing systems.
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				//Use the base hash code instead of data that might change, Writing Systems are placed in a hash table
-				//so changing the hash after that is problematic.
-				return base.GetHashCode();
-			}
-		}
 	}
 
 	/// <summary>
