@@ -1351,16 +1351,21 @@ namespace SIL.CoreImpl
 			return DisplayLabel;
 		}
 
-		public override bool Equals(object obj)
+		/// <summary>
+		/// Equality check for PalasoWritingSystems.
+		/// </summary>
+		/// <param name="otherObj"></param>
+		/// <returns></returns>
+		public override bool Equals(object otherObj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (PalasoWritingSystem)) return false;
-			return Equals((PalasoWritingSystem) obj);
+			if (ReferenceEquals(null, otherObj)) return false;
+			if (ReferenceEquals(this, otherObj)) return true;
+			if (otherObj.GetType() != typeof (PalasoWritingSystem)) return false;
+			return Equals((PalasoWritingSystem) otherObj);
 		}
 
 		/// <summary>
-		/// Equality check for
+		/// Equality check for PalasoWritingSystems.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
@@ -1371,6 +1376,10 @@ namespace SIL.CoreImpl
 			return Equals(other.IcuLocale, IcuLocale);
 		}
 
+		/// <summary>
+		/// Override of GetHashCode that should be safer for writing systems.
+		/// </summary>
+		/// <returns></returns>
 		public override int GetHashCode()
 		{
 			unchecked
