@@ -5858,7 +5858,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var segCtxt in Services.GetInstance<IPhSimpleContextSegRepository>().InstancesWithPhoneme(this))
 			{
 				segCtxt.PreRemovalSideEffects();
-				m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
+				if(segCtxt.IsValidObject)
+					m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
 			}
 		}
 	}
@@ -6829,7 +6830,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public override void PreRemovalSideEffects()
 		{
 			base.PreRemovalSideEffects();
-			if (Owner.ClassID == PhMetathesisRuleTags.kClassId)
+			if (Owner != null && Owner.ClassID == PhMetathesisRuleTags.kClassId)
 			{
 				var rule = Owner as IPhMetathesisRule;
 				var ctxtToRemove = rule.UpdateStrucChange(rule.GetStrucChangeIndex(this), IndexInOwner, false);

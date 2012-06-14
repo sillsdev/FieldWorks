@@ -5968,3 +5968,4 @@ EberhardB, 13 June 2012. Integration Calgary/WW -> WW.
 EricP, 14 Jun 2012. T-8276 Provide a way to import wordforms with their glosses. Stage 2. FlexText frag to WfiWordform import
 EberhardB, 14 June 2012. Fix unit tests on Linux.
 Andy Black, 14 June 2012. Refine message wording in variant type conversion utility.
+McCoy, 14 June 2012. Fixed LT-13315 (phoneme-deletion crash).
