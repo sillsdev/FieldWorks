@@ -8,17 +8,14 @@
 // </copyright>
 #endregion
 //-------------------------------------------------------------------------------
-using System;
 using System.IO;
-
-using SIL.FieldWorks.FDO;
-using System.Diagnostics;
-
+using SIL.FieldWorks.Common.FwUtils;
 using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
+//#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
 	/// <summary>
 	/// Test SFM export
 	/// </summary>
@@ -29,7 +26,8 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Location of simple test FXT files
 		/// </summary>
-		protected string m_testDir = Path.Combine(DirectoryFinder.FlexFolder, "Export Templates"));
+		protected string m_testDir;
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SimpleTests"/> class.
@@ -38,7 +36,15 @@ namespace SIL.FieldWorks.Common.FXT
 		public StandardFormat()
 		{
 		}
+
+		public override void Init()
+		{
+			base.Init();
+			m_testDir = Path.Combine(DirectoryFinder.FlexFolder, "Export Templates");
+		}
+
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void MDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
@@ -46,6 +52,7 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "MDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void RootBasedMDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "RootBasedMDF.xml");
@@ -53,6 +60,7 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "RootBasedMDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void TwoTimesSpeedTest()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
@@ -96,5 +104,5 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 	}
-#endif
+//#endif
 }

@@ -951,35 +951,15 @@ since I don't understand the full design of this)-->
   <xsl:apply-templates/>
 </xsl:template>
 
-
 <!-- Handle a custom field. -->
 
-<xsl:template name="ProcessCustomElement">
-  <xsl:param name="TagNumber"/>
-  <xsl:param name="TagLang"/>
-  <xsl:text>\custom</xsl:text>
-  <xsl:value-of select="$TagNumber"/>
-  <xsl:value-of select="$TagLang"/>
-  <xsl:text>&#32;</xsl:text>
-  <xsl:apply-templates/>
-  <xsl:text>&#13;&#10;</xsl:text>
+<xsl:template match="*[@userlabel]">
+	<xsl:text>\</xsl:text>
+	<xsl:value-of select="substring-after(name(),'_')"/>
+	<xsl:text>&#32;</xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>&#13;&#10;</xsl:text>
 </xsl:template>
 
-
-<!-- This is the basic default processing. -->
-
-<xsl:template match="*">
-  <xsl:choose>
-	<xsl:when test="contains(name(), '_custom')">
-	  <xsl:call-template name="ProcessCustomElement">
-		<xsl:with-param name="TagNumber" select="substring-after(name(), '_custom')"/>
-		<xsl:with-param name="TagLang" select="AStr/@ws"/>
-	  </xsl:call-template>
-	</xsl:when>
-	<xsl:otherwise>
-	  <xsl:apply-templates/>
-	</xsl:otherwise>
-  </xsl:choose>
-</xsl:template>
 
 </xsl:stylesheet>

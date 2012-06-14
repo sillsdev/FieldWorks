@@ -8,6 +8,7 @@
 \x_en one wife
 
 \lx bodzi-bodzi
+\ct comp. de
 \sn 1
 \ps_pt Adj
 \d_en indicating ephatically
@@ -24,6 +25,7 @@
 \d_en goat male
 
 \lx bokosi
+\et_en box
 \sn 1
 \ps_pt N
 \psft 5/6
@@ -40,6 +42,7 @@
 \lv dzimola
 
 \lx bondia
+\et_pt bom dia
 \sn 1
 \g_pt bom dia
 \g_en good morning
@@ -49,6 +52,7 @@
 \ps_pt N
 \psft 5/6
 \d_en baboon
+\sc genus Papio
 
 \lx bonzo
 \sn 1
@@ -64,11 +68,13 @@
 \d_en the deepest part of a river or ocean
 
 \lx botari
+\et_pt boa tarde
 \sn 1
 \g_pt boa tarde
 \g_en good afternoon
 
 \lx bote
+\et_en boat
 \sn 1
 \ps_pt N
 \psft 5/6
@@ -79,16 +85,14 @@
 \sn 1
 \ps_pt N
 \psft 7/8
+\sn 2
 \g_pt lixo
 \g_en garbage
-\sn 2
-\ps_pt N
-\psft 7/8
+\sn 3
 \g_pt animal brava
 \g_en wild beasts
 
 \lx combo
-\hm 1
 \sn 1
 \ps_pt N
 \psft 7/8
@@ -134,13 +138,14 @@
 
 \lx =mbo
 \sn 1
+\sn 2
 \d_pt additivo, "também"
 \d_en additive, "also"
 \x_seh iwombo
-\sn 2
+\sn 3
 \g_pt INTENS
 \g_en INTENS
-\sn 3
+\sn 4
 \g_pt por favor
 \g_en please
 \x_seh ndiwangisenimbo "cure-me por favor (lit também)"
@@ -167,7 +172,6 @@
 \g_en law
 
 \lx n'thambo
-\hm 1
 \sn 1
 \ps_pt N
 \psft 3/4
@@ -175,7 +179,6 @@
 \g_en necklace
 
 \lx ncombo
-\hm 2
 \sn 1
 \ps_pt N
 \psft 3/4
@@ -190,6 +193,7 @@
 \g_en oar
 
 \lx nkaliboxo
+\et_pt kalaboço
 \sn 1
 \ps_pt N
 \psft 5/6
@@ -214,20 +218,19 @@
 \sn 1
 \ps_pt N
 \psft 9/10
+\sn 2
 \g_pt canção
 \g_en song
-\sn 2
-\ps_pt N
-\psft 9/10
+\sn 3
 \g_pt hino
 \g_en hymn
 
 \lx ombola
 \sn 1
 \ps_pt V
-\d_pt salvar pessoa duma crise
 \sn 2
-\ps_pt V
+\d_pt salvar pessoa duma crise
+\sn 3
 \g_pt salvar
 \g_en save
 
@@ -244,9 +247,9 @@
 \ps_pt N
 \psft 5/6
 \d_en wild cat; African Wild Cat
+\sc Felis lybica
 
 \lx thambo
-\hm 2
 \sn 1
 \ps_pt N
 \psft 9/10

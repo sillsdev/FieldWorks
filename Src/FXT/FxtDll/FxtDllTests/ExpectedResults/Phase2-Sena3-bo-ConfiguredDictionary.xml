@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ExportedDictionary>
-<LexEntry id="hvo7692">
+<LexEntry id="hvo125701">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bodzi</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bodzi</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7694">
+			<LexSense number="1" id="hvo44840">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -24,13 +23,11 @@
 
 
 
-
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">um</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -39,7 +36,7 @@
 				</LexSense_Gloss>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo7695">
+					<LexExampleSentence id="hvo130384">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="seh">nkazi m'bodzi</Run>
@@ -47,14 +44,12 @@
 						</LexExampleSentence_Example>
 
 						<LexExampleSentence_Translations>
-							<CmTranslation id="hvo7696">
-
+							<CmTranslation id="hvo127385">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="pt">esposa uma</Run>
 									</AStr>
 								</CmTranslation_Translation>
-
 
 								<CmTranslation_Translation>
 									<AStr ws="en">
@@ -70,21 +65,45 @@
 			</LexSense>
 		</LexEntry_Senses>
 
+		<_VisibleComplexFormBackRefs>
+			<LexEntryRefLink target="hvo88805">
+				<LexEntryRef_ComplexEntryTypes><Link><Alt ws="pt" revabbr="comp." /></Link></LexEntryRef_ComplexEntryTypes>
+
+
+				<LexEntryRefLink_OwningEntry>
+					<Link target="hvo111512"><Alt ws="seh" entry="bodzi-bodzi" /></Link>
+				</LexEntryRefLink_OwningEntry>
+
+			</LexEntryRefLink>
+		</_VisibleComplexFormBackRefs>
+
+
 
 </LexEntry>
-<LexEntry id="hvo7698">
+<LexEntry id="hvo111512">
+
+
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bodzi-bodzi</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bodzi-bodzi</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_EntryRefs>
+			<LexEntryRef>
+				<LexEntryRef_ComplexEntryTypes><Link><Alt ws="pt" abbr="comp. de" /></Link></LexEntryRef_ComplexEntryTypes>
 
+
+				<LexEntryRef_ComponentLexemes>
+					<Link target="hvo125701" />
+				</LexEntryRef_ComponentLexemes>
+			</LexEntryRef>
+		</LexEntry_EntryRefs>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7700">
+			<LexSense number="1" id="hvo72644">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -96,7 +115,6 @@
 
 
 
-
 				<LexSense_Definition>
 					<AStr ws="en">
 					  <Run ws="en">indicating ephatically</Run>
@@ -104,7 +122,7 @@
 				</LexSense_Definition>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo7701">
+					<LexExampleSentence id="hvo102338">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="seh">Awene abodzi-bodzi ndio adalonga.</Run>
@@ -112,8 +130,7 @@
 						</LexExampleSentence_Example>
 
 						<LexExampleSentence_Translations>
-							<CmTranslation id="hvo7702">
-
+							<CmTranslation id="hvo33232">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="pt">Eles mesmos foram falar. (São eles mesmo que falaram.)</Run>
@@ -124,7 +141,7 @@
 						</LexExampleSentence_Translations>
 					</LexExampleSentence>
 
-					<LexExampleSentence id="hvo7703">
+					<LexExampleSentence id="hvo150587">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="seh">cinthu cibodzi-bodzi; pinthu pibodzi-bodzi; cibodzi na cibodzi</Run>
@@ -132,8 +149,7 @@
 						</LexExampleSentence_Example>
 
 						<LexExampleSentence_Translations>
-							<CmTranslation id="hvo7704">
-
+							<CmTranslation id="hvo33015">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="pt">aquele coisa mesmo; aqueles mesmos coisas; um por um</Run>
@@ -149,20 +165,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7706">
+<LexEntry id="hvo3569">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bokho</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bokho</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7712">
+			<LexSense number="1" id="hvo2100">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -171,14 +188,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
-
+					<MoMorphSynAnalysisLink_FeaturesTSS>
+						<Str>
+							<Run>5/6</Run>
+						</Str>
+					</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 				<LexSense_Definition>
@@ -186,7 +200,6 @@
 					  <Run ws="pt">cabrito masculino</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -198,20 +211,31 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo7715">
+<LexEntry id="hvo87023">
 
 
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bokosi</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bokosi</Run>
+
+		<LexEntry_Etymology>
+			<LexEtymology>
+				<LexEtymology_Form>
+					<AStr ws="en">
+					  <Run ws="en">box</Run>
 					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+				</LexEtymology_Form>
 
+			</LexEtymology>
+		</LexEntry_Etymology>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7721">
+			<LexSense number="1" id="hvo52229">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -220,14 +244,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 				<LexSense_Gloss>
@@ -235,7 +256,6 @@
 					  <Run ws="pt">caixa</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -246,7 +266,7 @@
 				<LexSense_LexSenseReferences>
 					<LexReferenceLink>
 						<LexReference_Targets>
-							<Link target="hvo10186"><Alt ws="seh" sense="kaxa" /></Link>
+							<Link target="hvo103292"><Alt ws="seh" sense="kaxa" /></Link>
 						</LexReference_Targets>
 					</LexReferenceLink>
 				</LexSense_LexSenseReferences>
@@ -255,20 +275,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7725">
+<LexEntry id="hvo111485">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">boliboli</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">boliboli</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7731">
+			<LexSense number="1" id="hvo134056">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -277,14 +298,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 				<LexSense_Gloss>
@@ -292,7 +310,6 @@
 					  <Run ws="pt">cego</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -303,7 +320,7 @@
 				<LexSense_LexSenseReferences>
 					<LexReferenceLink>
 						<LexReference_Targets>
-							<Link target="hvo9299"><Alt ws="seh" sense="dzimola" /></Link>
+							<Link target="hvo134230"><Alt ws="seh" sense="dzimola" /></Link>
 						</LexReference_Targets>
 					</LexReferenceLink>
 				</LexSense_LexSenseReferences>
@@ -312,27 +329,37 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7734">
+<LexEntry id="hvo90481">
 
 
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bondia</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bondia</Run>
+
+		<LexEntry_Etymology>
+			<LexEtymology>
+				<LexEtymology_Form>
+					<AStr ws="pt">
+					  <Run ws="pt">bom dia</Run>
 					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+				</LexEtymology_Form>
 
+			</LexEtymology>
+		</LexEntry_Etymology>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7736">
-
+			<LexSense number="1" id="hvo20425">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">bom dia</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -344,20 +371,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo7740">
+<LexEntry id="hvo44870">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bongwe</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bongwe</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7746">
+			<LexSense number="1" id="hvo141984">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -366,13 +393,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -382,24 +407,31 @@
 					</AStr>
 				</LexSense_Definition>
 
+				<LexSense_ScientificName>
+					<Str>
+					  <Run ws="en">genus Papio</Run>
+					</Str>
+				</LexSense_ScientificName>
+
 			</LexSense>
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7749">
+<LexEntry id="hvo104562">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bonzo</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bonzo</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7755">
+			<LexSense number="1" id="hvo5924">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -408,13 +440,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>1/2</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>1/2</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -423,7 +453,6 @@
 					  <Run ws="pt">nome duma clã</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -435,20 +464,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7758">
+<LexEntry id="hvo97471">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">boo</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">boo</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7764">
+			<LexSense number="1" id="hvo30216">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -457,13 +487,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -477,27 +505,37 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo7767">
+<LexEntry id="hvo13736">
 
 
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">botari</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">botari</Run>
+
+		<LexEntry_Etymology>
+			<LexEtymology>
+				<LexEtymology_Form>
+					<AStr ws="pt">
+					  <Run ws="pt">boa tarde</Run>
 					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+				</LexEtymology_Form>
 
+			</LexEtymology>
+		</LexEntry_Etymology>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7769">
-
+			<LexSense number="1" id="hvo88112">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">boa tarde</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -509,20 +547,31 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo7773">
+<LexEntry id="hvo90557">
 
 
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">bote</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">bote</Run>
+
+		<LexEntry_Etymology>
+			<LexEtymology>
+				<LexEtymology_Form>
+					<AStr ws="en">
+					  <Run ws="en">boat</Run>
 					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+				</LexEtymology_Form>
 
+			</LexEtymology>
+		</LexEntry_Etymology>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo7779">
+			<LexSense number="1" id="hvo17650">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -531,13 +580,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -546,7 +593,6 @@
 					  <Run ws="pt">barco</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -558,21 +604,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo8741">
+<LexEntry id="hvo36639">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">cirombo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-
-			<LexSense number="1" id="hvo8747">
+			<LexSense number="1" id="hvo80239">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -581,22 +627,22 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>7/8</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>7/8</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
+			</LexSense>
 
-
+			<LexSense number="2" id="hvo80239">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">lixo</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -607,31 +653,12 @@
 			</LexSense>
 
 
-			<LexSense number="2" id="hvo8749">
-
-
-						<MoMorphSynAnalysisLink_MLPartOfSpeech>
-							<AStr ws="pt">
-							  <Run ws="pt">N</Run>
-							</AStr>
-						</MoMorphSynAnalysisLink_MLPartOfSpeech>
-
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>7/8</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
-
-
-
+			<LexSense number="3" id="hvo64896">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">animal brava</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -643,23 +670,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo8887">
+<LexEntry id="hvo37869">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">combo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HomographNumber>
-			<Integer val="1" />
-		</LexEntry_HomographNumber>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo8893">
+			<LexSense number="1" id="hvo22096">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -668,13 +693,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>7/8</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>7/8</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -688,20 +711,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo10259">
+<LexEntry id="hvo127281">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">khoboka</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo10261">
+			<LexSense number="1" id="hvo93021">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -713,13 +737,11 @@
 
 
 
-
 				<LexSense_Definition>
 					<AStr ws="pt">
 					  <Run ws="pt">quebrar a mão</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -728,10 +750,10 @@
 				</LexSense_Definition>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo10262">
+					<LexExampleSentence id="hvo35227">
 					</LexExampleSentence>
 
-					<LexExampleSentence id="hvo10263">
+					<LexExampleSentence id="hvo11641">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="en">wa kukhoboka ntima</Run>
@@ -739,14 +761,12 @@
 						</LexExampleSentence_Example>
 
 						<LexExampleSentence_Translations>
-							<CmTranslation id="hvo10264">
-
+							<CmTranslation id="hvo68132">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="en">tolerante</Run>
 									</AStr>
 								</CmTranslation_Translation>
-
 
 								<CmTranslation_Translation>
 									<AStr ws="en">
@@ -755,14 +775,12 @@
 								</CmTranslation_Translation>
 
 							</CmTranslation>
-							<CmTranslation id="hvo10265">
-
+							<CmTranslation id="hvo96803">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="pt">coração quebrado</Run>
 									</AStr>
 								</CmTranslation_Translation>
-
 
 								<CmTranslation_Translation>
 									<AStr ws="en">
@@ -779,20 +797,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo10578">
+<LexEntry id="hvo91137">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">kudambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo10580">
+			<LexSense number="1" id="hvo37685">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -804,13 +822,11 @@
 
 
 
-
 				<LexSense_Definition>
 					<AStr ws="pt">
 					  <Run ws="pt">quintal de casa</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -822,20 +838,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo11735">
+<LexEntry id="hvo146939">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">m'bobo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo11741">
+			<LexSense number="1" id="hvo142485">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -844,13 +860,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -859,7 +873,6 @@
 					  <Run ws="pt">cobra tipo</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -871,20 +884,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo11744">
+<LexEntry id="hvo70564">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">m'boliboli</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo11750">
+			<LexSense number="1" id="hvo147595">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -893,13 +907,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>1/2</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>1/2</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -908,7 +920,6 @@
 					  <Run ws="pt">cego</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -920,20 +931,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo11327">
+<LexEntry id="hvo19528">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">mambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo11333">
+			<LexSense number="1" id="hvo99203">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -942,13 +954,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>1/2</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>1/2</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -957,7 +967,6 @@
 					  <Run ws="pt">rei</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -969,28 +978,29 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo6967">
+<LexEntry id="hvo3949">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_TypePrefix><AUni ws="en">=</AUni></MoForm_TypePrefix><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">mbo</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">=mbo</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
+			<LexSense number="1" id="hvo69909">
+			</LexSense>
 
-			<LexSense number="1" id="hvo6969">
-
+			<LexSense number="2" id="hvo69909">
 				<LexSense_Definition>
 					<AStr ws="pt">
 					  <Run ws="pt">additivo, "também"</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -999,7 +1009,7 @@
 				</LexSense_Definition>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo6970">
+					<LexExampleSentence id="hvo124528">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="seh">iwombo</Run>
@@ -1012,14 +1022,12 @@
 			</LexSense>
 
 
-			<LexSense number="2" id="hvo6971">
-
+			<LexSense number="3" id="hvo10247">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">INTENS</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1030,14 +1038,12 @@
 			</LexSense>
 
 
-			<LexSense number="3" id="hvo6972">
-
+			<LexSense number="4" id="hvo63627">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">por favor</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1046,7 +1052,7 @@
 				</LexSense_Gloss>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo6973">
+					<LexExampleSentence id="hvo33423">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="en">ndiwangisenimbo "cure-me por favor (lit também)"</Run>
@@ -1060,20 +1066,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo11753">
+<LexEntry id="hvo3084">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">mbondo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo11759">
+			<LexSense number="1" id="hvo52136">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1082,13 +1088,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1097,7 +1101,6 @@
 					  <Run ws="pt">joelho</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1109,20 +1112,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo12357">
+<LexEntry id="hvo99020">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">mpsimbo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo12363">
+			<LexSense number="1" id="hvo11204">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1131,13 +1135,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>9/10</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>9/10</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1146,7 +1148,6 @@
 					  <Run ws="pt">bengala</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1158,20 +1159,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo12682">
+<LexEntry id="hvo113247">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">mwambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo12688">
+			<LexSense number="1" id="hvo123132">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1180,13 +1181,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1195,7 +1194,6 @@
 					  <Run ws="pt">lei</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1207,23 +1205,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo14108">
+<LexEntry id="hvo70140">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">n'thambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HomographNumber>
-			<Integer val="1" />
-		</LexEntry_HomographNumber>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo14114">
+			<LexSense number="1" id="hvo28654">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1232,13 +1228,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1247,7 +1241,6 @@
 					  <Run ws="pt">cordão</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1259,23 +1252,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo12935">
+<LexEntry id="hvo109242">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">ncombo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HomographNumber>
-			<Integer val="2" />
-		</LexEntry_HomographNumber>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo12941">
+			<LexSense number="1" id="hvo91470">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1284,13 +1275,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1299,7 +1288,6 @@
 					  <Run ws="pt">umbigo</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1311,20 +1299,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo13221">
+<LexEntry id="hvo117896">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">ng'ombo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo13227">
+			<LexSense number="1" id="hvo58982">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1333,13 +1322,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>9/10</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>9/10</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1348,7 +1335,6 @@
 					  <Run ws="pt">remo</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1360,20 +1346,31 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo13351">
+<LexEntry id="hvo46581">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">nkaliboxo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
+
+		<LexEntry_Etymology>
+			<LexEtymology>
+				<LexEtymology_Form>
+					<AStr ws="pt">
+					  <Run ws="pt">kalaboço</Run>
+					</AStr>
+				</LexEtymology_Form>
+
+			</LexEtymology>
+		</LexEntry_Etymology>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo13357">
+			<LexSense number="1" id="hvo133108">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1382,13 +1379,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1397,7 +1392,6 @@
 					  <Run ws="pt">prisão</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1409,20 +1403,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo13719">
+<LexEntry id="hvo103503">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">nsambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo13725">
+			<LexSense number="1" id="hvo142233">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1431,13 +1426,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1446,7 +1439,6 @@
 					  <Run ws="pt">costumes</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1458,20 +1450,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo14016">
+<LexEntry id="hvo51750">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">ntambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo14022">
+			<LexSense number="1" id="hvo111015">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1480,13 +1473,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>3/4</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>3/4</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1495,7 +1486,6 @@
 					  <Run ws="pt">nuvens</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1507,21 +1497,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo14917">
+<LexEntry id="hvo81357">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">nyimbo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-
-			<LexSense number="1" id="hvo14923">
+			<LexSense number="1" id="hvo613">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1530,22 +1520,22 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>9/10</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>9/10</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
+			</LexSense>
 
-
+			<LexSense number="2" id="hvo613">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">canção</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1556,31 +1546,12 @@
 			</LexSense>
 
 
-			<LexSense number="2" id="hvo14925">
-
-
-						<MoMorphSynAnalysisLink_MLPartOfSpeech>
-							<AStr ws="pt">
-							  <Run ws="pt">N</Run>
-							</AStr>
-						</MoMorphSynAnalysisLink_MLPartOfSpeech>
-
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>9/10</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
-
-
-
+			<LexSense number="3" id="hvo78536">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">hino</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1592,21 +1563,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo15020">
+<LexEntry id="hvo39073">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">ombola</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-
-			<LexSense number="1" id="hvo15022">
+			<LexSense number="1" id="hvo836">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1618,7 +1589,9 @@
 
 
 
+			</LexSense>
 
+			<LexSense number="2" id="hvo836">
 				<LexSense_Definition>
 					<AStr ws="pt">
 					  <Run ws="pt">salvar pessoa duma crise</Run>
@@ -1628,25 +1601,12 @@
 			</LexSense>
 
 
-			<LexSense number="2" id="hvo15024">
-
-
-						<MoMorphSynAnalysisLink_MLPartOfSpeech>
-							<AStr ws="pt">
-							  <Run ws="pt">V</Run>
-							</AStr>
-						</MoMorphSynAnalysisLink_MLPartOfSpeech>
-
-
-
-
-
+			<LexSense number="3" id="hvo119519">
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">salvar</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1658,20 +1618,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo15045">
+<LexEntry id="hvo118495">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">padambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo15051">
+			<LexSense number="1" id="hvo132207">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1680,13 +1640,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>16</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>16</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1697,7 +1655,7 @@
 				</LexSense_Definition>
 
 				<LexSense_Examples>
-					<LexExampleSentence id="hvo15052">
+					<LexExampleSentence id="hvo106336">
 						<LexExampleSentence_Example>
 							<AStr ws="seh">
 							  <Run ws="seh">Kuna munthu kudambo.</Run>
@@ -1705,8 +1663,7 @@
 						</LexExampleSentence_Example>
 
 						<LexExampleSentence_Translations>
-							<CmTranslation id="hvo15053">
-
+							<CmTranslation id="hvo50653">
 								<CmTranslation_Translation>
 									<AStr ws="pt">
 									  <Run ws="pt">Está alguem fora de casa.</Run>
@@ -1722,20 +1679,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo15061">
+<LexEntry id="hvo19555">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">paka bonga</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">paka bonga</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo15067">
+			<LexSense number="1" id="hvo9973">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1744,13 +1701,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>5/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>5/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1760,27 +1715,31 @@
 					</AStr>
 				</LexSense_Definition>
 
+				<LexSense_ScientificName>
+					<Str>
+					  <Run ws="en">Felis lybica</Run>
+					</Str>
+				</LexSense_ScientificName>
+
 			</LexSense>
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo16246">
+<LexEntry id="hvo28152">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">thambo</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
-		<LexEntry_HomographNumber>
-			<Integer val="2" />
-		</LexEntry_HomographNumber>
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo16252">
+			<LexSense number="1" id="hvo2806">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1789,13 +1748,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>9/10</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>9/10</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1804,7 +1761,6 @@
 					  <Run ws="pt">ceu, firmamento</Run>
 					</AStr>
 				</LexSense_Definition>
-
 
 				<LexSense_Definition>
 					<AStr ws="en">
@@ -1816,20 +1772,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo16741">
+<LexEntry id="hvo113176">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">ubodzi</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">ubodzi</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo16747">
+			<LexSense number="1" id="hvo5628">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1838,13 +1794,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>14</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>14</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1853,7 +1807,6 @@
 					  <Run ws="pt">unidade</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1865,20 +1818,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo16751">
+<LexEntry id="hvo85320">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">ubodzi-bodzi</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">ubodzi-bodzi</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo16753">
+			<LexSense number="1" id="hvo139325">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1890,13 +1843,11 @@
 
 
 
-
 				<LexSense_Gloss>
 					<AStr ws="pt">
 					  <Run ws="pt">mesmo</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1908,20 +1859,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo16907">
+<LexEntry id="hvo115757">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">umambo</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">umambo</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo16913">
+			<LexSense number="1" id="hvo150176">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1930,13 +1881,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>14/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>14/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1950,20 +1899,21 @@
 		</LexEntry_Senses>
 
 
+
+
 </LexEntry>
-<LexEntry id="hvo16926">
+<LexEntry id="hvo24647">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
+		<LexEntry_HeadWord>
 			<AStr ws="seh">
 			  <Run ws="seh">umboni</Run>
 			</AStr>
-		</MoForm_Form></MoForm></LexEntry_HeadWord>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo16932">
+			<LexSense number="1" id="hvo22276">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -1972,13 +1922,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>14</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>14</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -1987,7 +1935,6 @@
 					  <Run ws="pt">testimonio</Run>
 					</AStr>
 				</LexSense_Gloss>
-
 
 				<LexSense_Gloss>
 					<AStr ws="en">
@@ -1999,20 +1946,20 @@
 		</LexEntry_Senses>
 
 
+
 </LexEntry>
-<LexEntry id="hvo17102">
+<LexEntry id="hvo142711">
 
 
-
-		<LexEntry_HeadWord><MoForm><MoForm_Form>
-					<AStr ws="seh">
-					  <Run ws="seh">utumbo</Run>
-					</AStr>
-				</MoForm_Form></MoForm></LexEntry_HeadWord>
+		<LexEntry_HeadWord>
+			<AStr ws="seh">
+			  <Run ws="seh">utumbo</Run>
+			</AStr>
+		</LexEntry_HeadWord>
 
 
 		<LexEntry_Senses>
-			<LexSense number="1" id="hvo17108">
+			<LexSense number="1" id="hvo48528">
 
 
 						<MoMorphSynAnalysisLink_MLPartOfSpeech>
@@ -2021,13 +1968,11 @@
 							</AStr>
 						</MoMorphSynAnalysisLink_MLPartOfSpeech>
 
-						<MoMorphSynAnalysisLink_FeaturesTSS>
-							<Str>
-							  <Run>14/6</Run>
-							</Str>
-						</MoMorphSynAnalysisLink_FeaturesTSS>
-
-
+				<MoMorphSynAnalysisLink_FeaturesTSS>
+					<Str>
+						<Run>14/6</Run>
+					</Str>
+				</MoMorphSynAnalysisLink_FeaturesTSS>
 
 
 
@@ -2037,7 +1982,6 @@
 					</AStr>
 				</LexSense_Gloss>
 
-
 				<LexSense_Gloss>
 					<AStr ws="en">
 					  <Run ws="en">intestine</Run>
@@ -2046,6 +1990,8 @@
 
 			</LexSense>
 		</LexEntry_Senses>
+
+
 
 
 </LexEntry>

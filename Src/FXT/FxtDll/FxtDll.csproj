@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -94,17 +94,13 @@
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
 	</Reference>
-	<Reference Include="FwUtils, Version=5.5.0.25508, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.2.5.17244, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <Private>True</Private>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
@@ -112,10 +108,6 @@
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
 	</Reference>
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Web" />
 	<Reference Include="System.Windows.Forms" />
 	<Reference Include="System.Xml">
 	  <Name>System.XML</Name>
@@ -141,6 +133,12 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="XUpdater.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\Common\FwUtils\FwUtils.csproj">
+	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
+	  <Name>FwUtils</Name>
+	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
