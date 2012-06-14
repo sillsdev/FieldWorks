@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Convert variants to irregularly inflected form variants.
+		///   Looks up a localized string similar to Convert variant types to irregularly inflected form variant types.
 		/// </summary>
 		internal static string ksConvertIrregularlyInflectedFormVariants {
 			get {
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Convert irregularly inflected form variants to variants.
+		///   Looks up a localized string similar to Convert irregularly inflected form variant types to variant types.
 		/// </summary>
 		internal static string ksConvertVariants {
 			get {
@@ -666,7 +666,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Redo Convert variants to irregularly inflected form variants.
+		///   Looks up a localized string similar to Redo Convert variant types to irregularly inflected form variant types.
 		/// </summary>
 		internal static string ksRedoConvertIrregularlyInflectedFormVariants {
 			get {
@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Redo Convert irregularly inflected form variants to variants.
+		///   Looks up a localized string similar to Redo Convert irregularly inflected form variant types to variant types.
 		/// </summary>
 		internal static string ksRedoConvertVariants {
 			get {
@@ -990,7 +990,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Undo Convert variants to irregularly inflected form variants.
+		///   Looks up a localized string similar to Undo Convert variant types to irregularly inflected form variant types.
 		/// </summary>
 		internal static string ksUndoConvertIrregularlyInflectedFormVariants {
 			get {
@@ -999,7 +999,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Undo Convert irregularly inflected form variants to variants.
+		///   Looks up a localized string similar to Undo Convert irregularly inflected form variant types to variant types.
 		/// </summary>
 		internal static string ksUndoConvertVariants {
 			get {
@@ -1179,7 +1179,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This utility allows you to select which variants should be converted to irregularly inflected form variants, which are a special sub-kind of variant..
+		///   Looks up a localized string similar to This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types..
 		/// </summary>
 		internal static string ksWhatIsConvertIrregularlyInflectedFormVariants {
 			get {
@@ -1188,7 +1188,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to This utility allows you to select which irregularly inflected form variants should be converted to variants (irregularly inflected form variants are a special sub-kind of variant)..
+		///   Looks up a localized string similar to This utility allows you to select which irregularly inflected form variant types should be converted to variant types (irregularly inflected form variant types are a special sub-kind of variant types)..
 		/// </summary>
 		internal static string ksWhatIsConvertVariants {
 			get {
@@ -1206,7 +1206,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Run this utility when you need to convert many of your existing variants to be irregularly inflected form variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
+		///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
 		/// </summary>
 		internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
 			get {
@@ -1215,7 +1215,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Run this utility when you need to convert many of your existing irregularly inflected form variants to be variants.  When a variant type is an irregularly inflected form variant, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
+		///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing irregularly inflected form variant types to be variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
 		/// </summary>
 		internal static string ksWhenToConvertVariants {
 			get {
