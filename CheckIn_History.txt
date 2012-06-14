@@ -5965,3 +5965,4 @@ RandyR, 12 June 2012. Updated FLEx Bridge installer to 0.3.50.
 EricP, 13 June 2012. LT-8276. "Import SFM to Words and Glosses" finished stage 1, sfm to flextext fragment doc.
 EberhardB, 13 June 2012. Fix missing dispose issue.
 EberhardB, 13 June 2012. Integration Calgary/WW -> WW.
+EricP, 14 Jun 2012. T-8276 Provide a way to import wordforms with their glosses. Stage 2. FlexText frag to WfiWordform import
