@@ -1768,37 +1768,47 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		private void UpdateHomographs(string oldHf, string newHf, IMoMorphType oldType1, IMoMorphType newType1)
 		{
-			if (oldHf == newHf && oldType1 == newType1)
-				return;
 			var repo = Services.GetInstance<ILexEntryRepository>();
-			var oldType = repo.HomographMorphType(Cache, oldType1);
 			var newType = repo.HomographMorphType(Cache, newType1);
 			// This is deliberately obtained before updating, so it usually does NOT include this.
 			// However it might in one case: where the homograph cache had not previously been built.
 			var newHomographs = repo.GetHomographs(newHf)
 				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == newType).ToList();
 			newHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
+
+			// This test used to be at the top of this method, but LT-13152 showed
+			// that we still need to do some processing if our condition is true
+			// when we merge one homograph into another of the same form:
+			if (oldHf == newHf && oldType1 == newType1)
+			{
+				// Just make sure the new homograph numbers are correct:
+				for (int i = 0; i < newHomographs.Count; i++)
+					newHomographs[i].HomographNumber = i + 1;
+				return;
+			}
+
 			// At some point AFTER we get the two lists we must fix the cache in the repository.
 			// However, if we just now built the cache, the entry is already in the right case.
-			if(!newHomographs.Remove(this))
+			if (!newHomographs.Remove(this))
 				((ILexEntryRepositoryInternal)repo).UpdateHomographCache(this, oldHf);
 			// OldHomographs should not include this, since something changed.
+			var oldType = repo.HomographMorphType(Cache, oldType1);
 			var oldHomographs = repo.GetHomographs(oldHf)
 				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == oldType).ToList();
 			oldHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
 			// Fix old homographs, if any (may not have old ones if had no previous CF or LF).
-				if (oldHomographs.Count == 1)
-				{
-					// down to one item, the survivor will not be a homograph.
-					oldHomographs[0].HomographNumber = 0;
-				}
-				else
-				{
-					// Adjust the homograph numbers.
-					for (int i = 0; i < oldHomographs.Count; i++)
-						oldHomographs[i].HomographNumber = i + 1;
-				}
+			if (oldHomographs.Count == 1)
+			{
+				// down to one item, the survivor will not be a homograph.
+				oldHomographs[0].HomographNumber = 0;
+			}
+			else
+			{
+				// Adjust the homograph numbers.
+				for (int i = 0; i < oldHomographs.Count; i++)
+					oldHomographs[i].HomographNumber = i + 1;
+			}
 			if (newHomographs.Count == 0)
 				HomographNumber = 0;
 			else
@@ -3015,11 +3025,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 			}
 
-			// This is for paranoia. Normally our homograph form is determined from our lexeme form,
-			// and if the source has a different lexeme form, we make that into an allomorph, so either
-			// way our LF should not change, and neither should our HF.
-			// However, it doesn't cost much to check, and the computation of HF can be complex in some cases,
-			// So just in case, adjust things if it somehow has changed.
+			// If the user merged one homograph into another of the same form, we
+			// need to recalculate the homograph numbers (LT-13152):
 			UpdateHomographs(homoForm);
 		}
 
