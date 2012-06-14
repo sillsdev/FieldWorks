@@ -289,8 +289,10 @@ namespace SIL.FieldWorks.FDO
 				var updatedInUseWSs = new StringBuilder();
 				foreach (var ws in writingSystemsWithNewerGlobalVersions)
 				{
-					//Build up a string containing all the in use writing systems which have been updated.
-					if (wsUser.Equals(ws) || ServiceLocator.WritingSystems.AllWritingSystems.Contains(ws))
+					var matchedProjectWs =
+						ServiceLocator.WritingSystems.AllWritingSystems.SingleOrDefault(projectWs => projectWs.Id == ws.Id);
+					//Build up a string containing all the in use writing systems which have been updated.)
+					if (wsUser.Equals(ws) || matchedProjectWs != null)
 					{
 						if (updatedInUseWSs.Length > 0)
 							updatedInUseWSs.Append(", ");
