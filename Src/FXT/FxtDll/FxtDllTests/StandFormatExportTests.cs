@@ -20,7 +20,6 @@ namespace SIL.FieldWorks.Common.FXT
 	/// Test SFM export
 	/// </summary>
 	[TestFixture]
-	[Category("ByHand")]
 	public class StandardFormat : FxtTestBase
 	{
 		/// <summary>

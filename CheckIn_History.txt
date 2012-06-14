@@ -219,3 +219,4 @@ NaylorJ, 13 June 2012. The LT-13151 fix added an equals method to PalasoWritingS
 AlistairI, 14 June 2012. LT-13152 - recalculates homograph numbers when one homograph merged into another of same form.
 NaylorJ, 14 June 2012. Fixed LT-13151 glitch, former fix relied on the fixed equals method.
 GordonM, 14 June 2012. LT-13301 made Configured SFM export work with Custom fields.
+GordonM, 14 June 2012. Forgot to activate a test.
