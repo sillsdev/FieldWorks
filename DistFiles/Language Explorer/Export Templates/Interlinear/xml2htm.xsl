@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-				xmlns="http://www.w3.org/1999/XSL/Format"
 				version="1.0">
-<!--  <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" /> -->
-  <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" />
-
+  <xsl:output method="html" version="4.0" encoding="UTF-8" omit-xml-declaration="yes" indent="yes" />
   <xsl:template match="document">
+	<!-- NOTE, this DOCTYPE causes issues for tests that use AssertThatXmlIn to catch an error and display the DOM -->
+	<!-- <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html[]&gt;</xsl:text> -->
 	<html>
 	  <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<style type="text/css">
-		 number { vertical-align: top; }
+		  number { vertical-align: top; }
 <!--         span { display: inline-block; border: 1px solid black; vertical-align: top; } -->
-		 span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
-		 table { text-align: left; }
+		  span { display: -moz-inline-box; display: inline-block; vertical-align: top; }
+		  table { text-align: left; }
+
+		  .Interlin_Words { }
+		  .Interlin_Frame_Number { }
+		  .Interlin_Frame_Word { margin: 10px 5px 10px 5px; }
+		  .Interlin_Homograph { font-size: xx-small; }
+		  .Interlin_VariantTypes { font-variant: small-caps; }
+
+		  .Interlin_Freeform { }
 		</style>
+		<title> &#160; </title>
 	  </head>
 	  <body>
 		<xsl:apply-templates/>
@@ -33,20 +40,20 @@
   </xsl:template>
 
   <xsl:template match="interlinear-text/item[@type='title']">
-	<H1>
+	<h1>
 		<xsl:apply-templates/>
-	</H1>
+  </h1>
   </xsl:template>
   <xsl:template match="interlinear-text/item[@type='title-abbreviation']"/>
   <xsl:template match="interlinear-text/item[@type='source']">
-	<H2>
+	<h2>
 		<xsl:apply-templates/>
-	</H2>
+  </h2>
   </xsl:template>
   <xsl:template match="interlinear-text/item[@type='description']">
-	<H2>
+	<h2>
 		<xsl:apply-templates/>
-	</H2>
+  </h2>
   </xsl:template>
 
   <!-- PARAGRAPH LEVEL -->
@@ -66,7 +73,7 @@
   </xsl:template>
 
   <xsl:template match="phrase">
-	<p>
+	<p class="Interlin_Words">
 	  <xsl:apply-templates/>
 	</p>
   </xsl:template>
@@ -74,7 +81,7 @@
   <xsl:template match="phrase/item">
 	<xsl:choose>
 	  <xsl:when test="@type='segnum'">
-		<span>
+		<span class="Interlin_Frame_Number">
 		  <xsl:attribute name="lang"><xsl:value-of select="@lang"/></xsl:attribute>
 		  <xsl:value-of select="."/>
 		</span>
@@ -84,8 +91,19 @@
 		<br/>
 	  </xsl:when>
 	  <xsl:when test="@type='gls'">
-		<br/>
-		<xsl:apply-templates/>
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
+	  </xsl:when>
+	  <xsl:when test="@type='lit'">
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
+	  </xsl:when>
+	  <xsl:when test="@type='note'">
+		<div class="Interlin_Freeform">
+		  <xsl:apply-templates/>
+		</div>
 	  </xsl:when>
 	</xsl:choose>
   </xsl:template>
@@ -97,7 +115,7 @@
   </xsl:template>
 
   <xsl:template match="word">
-	<span>
+	<span class="Interlin_Frame_Word">
 	  <table cellpadding="0" cellspacing="0">
 		<xsl:apply-templates/>
 	  </table>
@@ -137,6 +155,15 @@
 	</tr>
   </xsl:template>
 
+  <xsl:template match="word/item[@type='punct']">
+	<tr>
+	  <td>
+		<xsl:apply-templates/>
+		<xsl:text>&#160;</xsl:text>
+	  </td>
+	</tr>
+  </xsl:template>
+
   <!-- MORPHEME LEVEL -->
 
   <xsl:template match="morphemes">
@@ -169,13 +196,20 @@
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']">
+  </xsl:template>
+  <xsl:template match="languages">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
-	<xsl:apply-templates/>
+	<span class="Interlin_VariantTypes"><xsl:apply-templates/></span>
+  </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+	<span class="Interlin_VariantTypes"><xsl:apply-templates/></span>
   </xsl:template>
 
 
@@ -183,13 +217,26 @@
 	<tr>
 	  <td>
 		<xsl:apply-templates/>
-	   <xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
+	   <xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 		<xsl:if test="$homographNumber">
-			<sub><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
+				<sub class="Interlin_Homograph"><xsl:apply-templates select="$homographNumber" mode="hn"/></sub>
 		</xsl:if>
-		<xsl:variable name="variantTypes" select="following-sibling::item[@type='variantTypes']"/>
+		<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 		<xsl:if test="$variantTypes">
-			<xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
+		  <xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
+		</xsl:if>
+		<xsl:text>&#160;</xsl:text>
+	  </td>
+	</tr>
+  </xsl:template>
+
+  <xsl:template match="morph/item[@type='gls']">
+	<tr>
+	  <td>
+		<xsl:apply-templates/>
+		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+		<xsl:if test="$glsAppend">
+		  <xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
 		</xsl:if>
 		<xsl:text>&#160;</xsl:text>
 	  </td>
