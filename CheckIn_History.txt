@@ -224,3 +224,4 @@ AlistairI, 14 June 2012. Added a new unit test for LT-13152.
 GordonM, 15 June 2012. Made chart repair routine more robust (again)!
 AlistairI, 15 June 2012. Integrated LT-13016 fix into FW 7.2 branch.
 LastufkaM 15 Jun 2012 Browse pane goes blank when filter is released.
+AlistairI, 15 June 2012. Fixed bug in TeEditorialChecks tests where date format failed if changed on Windows OS.
