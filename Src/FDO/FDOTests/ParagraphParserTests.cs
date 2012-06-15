@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string textsDefinitionsPath = ConfigurationFilePath(textsDefinitionRelativePath);
 			textsDefn.Load(textsDefinitionsPath);
 			XmlNode text1Defn = textsDefn.SelectSingleNode("/Texts6001/Text[" + index + "]");
-			tb = new ParagraphParserTests.TextBuilder(Cache);
+			tb = new ParagraphParserTests.TextBuilder(Cache, Cache.LangProject.TextsOC);
 			return tb.BuildText(text1Defn);
 		}
 
@@ -507,12 +507,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="iSegment"></param>
 			/// <param name="iSegForm"></param>
 			/// <param name="leMain"></param>
-			/// <param name="variantType"></param>
+			/// <param name="variantTypeRevAbbr"></param>
 			/// <returns>hvo of the resulting LexEntryRef</returns>
-			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, ILexEntryType variantType)
+			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, string variantTypeRevAbbr)
 			{
-				if (variantType == null)
-					throw new ArgumentNullException("requires non-null variantType parameter.");
+				ILexEntryType variantType = null;
+				foreach (ILexEntryType let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
+				{
+					if (let.ReverseAbbr.AnalysisDefaultWritingSystem.Text == variantTypeRevAbbr)
+					{
+						variantType = let;
+						break;
+					}
+				}
+
 				// for now, just create the variant entry and the variant of target, treating the wordform as monomorphemic.
 				ITsString tssVariantLexemeForm = GetBaselineText(iSegment, iSegForm);
 				ILexEntryRef ler = leMain.CreateVariantEntryAndBackRef(variantType, tssVariantLexemeForm);
@@ -520,10 +528,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				ArrayList morphs = new ArrayList(1);
 				morphs.Add(variant.LexemeFormOA);
 				BreakIntoMorphs(iSegment, iSegForm, morphs);
-				ILexEntry mainEntry;
-				ILexSense mainSense;
-				MorphServices.GetMainEntryAndSenseStack(ler.ComponentLexemesRS.First() as IVariantComponentLexeme, out mainEntry, out mainSense);
-				SetMorphSense(iSegment, iSegForm, 0, mainSense);
 				return ler;
 			}
 
@@ -708,7 +712,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Creates a new analysis with the given MoForms belonging to the wordform currently
 			/// at the given position and inserts it into the segment's analysis in place of the wordform.
 			/// </summary>
-			virtual public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			virtual internal IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				var actualAnalysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -738,7 +742,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return actualWfiAnalysis;
 			}
 
-			virtual public IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
+			virtual internal IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
 			{
 				var analysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -838,7 +842,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return wfAlternateCase;
 			}
 
-			override public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			override internal IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				IWfiAnalysis wfiAnalysis = base.BreakIntoMorphs(iSegment, iSegForm, moForms);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfiAnalysis.Hvo);
@@ -1899,20 +1903,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected internal class TextBuilder
 		{
 			FdoCache m_cache = null;
-			//IFdoOwningCollection<FDO.IText> m_owner = null;
+			IFdoOwningCollection<FDO.IText> m_owner = null;
 			FDO.IText m_text = null;
 			XmlNode m_textDefn = null;
 
 			internal TextBuilder(TextBuilder tbToClone)
-				: this(tbToClone.m_cache)
+				: this(tbToClone.m_cache, tbToClone.m_owner)
 			{
 				m_text = tbToClone.m_text;
 				this.SelectedNode = ParagraphBuilder.Snapshot(tbToClone.SelectedNode);
 			}
 
-			internal TextBuilder(FdoCache cache)
+			internal TextBuilder(FdoCache cache, IFdoOwningCollection<FDO.IText> owner)
 			{
-				//m_owner = owner;
+				m_owner = owner;
 				m_cache = cache;
 			}
 
@@ -2008,10 +2012,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			private FDO.IText CreateText()
 			{
-				Debug.Assert(m_cache != null);
+				Debug.Assert(m_owner != null && m_cache != null);
 				FDO.IText newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				//Debug.Assert(m_owner != null);
-				//m_owner.Add(newText);
+				Debug.Assert(m_owner != null);
+				m_owner.Add(newText);
 				return newText;
 			}
 
@@ -2064,7 +2068,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			internal void DeleteText()
 			{
-				//m_owner.Remove(m_text);
+				m_owner.Remove(m_text);
 				HvoActualStText = 0;
 			}
 
@@ -2509,7 +2513,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IStText MakeText(string title)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			//Cache.LangProject.TextsOC.Add(text);
+			Cache.LangProject.TextsOC.Add(text);
 			var result = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = result;
 			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
