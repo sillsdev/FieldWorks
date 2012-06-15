@@ -256,6 +256,18 @@
 	<Compile Include="ConfigureHomographDlg.designer.cs">
 	  <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
 	</Compile>
+	<Compile Include="SfmWordsMappingDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SfmWordsMappingDlg.Designer.cs">
+	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="SfmToTextsAndWordsMappingBaseDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SfmToTextsAndWordsMappingBaseDlg.Designer.cs">
+	  <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
+	</Compile>
 	<Compile Include="DataNotebook\AnthroFieldMappingDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -400,14 +412,8 @@
 	  <DependentUpon>LexTextControls.resx</DependentUpon>
 	</Compile>
 	<Compile Include="Sfm2FlexTextWords.cs" />
-	<None Include="SfmWordsMappingDlg.cs">
-	  <SubType>Form</SubType>
-	</None>
-	<None Include="SfmWordsMappingDlg.Designer.cs">
-	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
-	</None>
-	<EmbeddedResource Include="SfmWordsMappingDlg.resx">
-	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
+	<EmbeddedResource Include="SfmToTextsAndWordsMappingBaseDlg.resx">
+	  <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<None Include="LiftSynchronizeDlg.cs" />

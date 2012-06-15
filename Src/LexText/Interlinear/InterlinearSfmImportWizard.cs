@@ -703,34 +703,12 @@ namespace SIL.FieldWorks.IText
 	}
 
 	/// <summary>
-	/// These are the destinations we currently care about in SFM interlinear import.
-	/// For each of these there should be a ksFldX that is its localizable name (see
-	/// InterlinearSfmImportWizard.GetDestinationName()).
-	/// It is public only because XmlSerializer requires everything to be.
-	/// </summary>
-	public enum InterlinDestination
-	{
-		Ignored, // pay no attention to this field (except it terminates the previous one).
-		Id, // marks start of new text (has no data)
-		Abbreviation, // maps to Text.Abbreviation (and may start new text)
-		Title, // maps to Text.Name (inherited from CmMajorObject) (and may start new text)
-		Source, // Text.Source (and may start new text)
-		Comment, // Text.Description (and may start new text)
-		ParagraphBreak, // causes us to start a new paragraph
-		Reference, // forcees segment break and sets Segment.Reference
-		Baseline, // Becomes part of the StTxtPara.Contents
-		FreeTranslation, // Segment.FreeTranslation
-		LiteralTranslation, // Segment.LiteralTranslation
-		Note // each generats a Segment.Note and is its content.
-	}
-
-	/// <summary>
 	/// Simple class to record the bits of information we want about how one marker maps onto FieldWorks.
 	/// This is serialized to form the .map file, so change with care.
 	/// It is public only because XmlSerializer requires everything to be.
 	/// </summary>
 	[Serializable]
-	public class InterlinearMapping : Sfm2FlexTextMappingBase<InterlinDestination>
+	public class InterlinearMapping : Sfm2FlexTextMappingBase
 	{
 		public InterlinearMapping()
 		{

@@ -12,6 +12,7 @@ using NUnit.Framework;
 using Sfm2Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Test.TestUtils;
 using SilEncConverters40;
 

@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="m_writer gets disposed in Convert method")]
-	internal class Sfm2FlexText : Sfm2FlexTextBase<InterlinearMapping, InterlinDestination>
+	internal class Sfm2FlexText : Sfm2FlexTextBase<InterlinearMapping>
 	{
 		// true when we have already added a "words" element to the current "phrase". Meaningless if there is not a phrase open at all.
 		private bool m_phraseHasWords;

@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAcceptEntireAnalysis" xml:space="preserve">
 	<value>Accept entire analysis (Ctrl-TAB)</value>
@@ -677,9 +677,6 @@
   <data name="ksAskSaveSettings" xml:space="preserve">
 	<value>Do you want to save your settings for future imports?</value>
   </data>
-  <data name="ksErrorAcessingEncodingConverters" xml:space="preserve">
-	<value>Error Acessing Encoding Converters</value>
-  </data>
   <data name="ksErrorReadingSettings" xml:space="preserve">
 	<value>Could not load your settings from {0}. The system reported that {1}.</value>
 	<comment>First parameter is the name of a settings file. Second is an error message.</comment>
@@ -878,5 +875,8 @@
   <data name="ksUseClearParseIsCurrentWhen" xml:space="preserve">
 	<value>Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the Change Spelling dialog in FLEx 7.0 through 7.2.2. One symptom is an incorrect Word List Concordance, where what is highlighted for an occurrence is not the right word.</value>
 	<comment>Help text for Force Rechecking Word Breaks utility dialog item.</comment>
+  </data>
+  <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
+	<value>Error Accessing Encoding Converters</value>
   </data>
 </root>

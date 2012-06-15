@@ -57,8 +57,8 @@ namespace LexTextControlsTests
 \cdt 2012-06-05T08:23:54Z
 ";
 			var mappings = new List<WordMapping>();
-			mappings.Add(new WordMapping { Marker = "lx", Destination = WordDestination.Wordform, WritingSystem = "qaa-x-kal" });
-			mappings.Add(new WordMapping { Marker = "ge", Destination = WordDestination.WordGloss, WritingSystem = "en" });
+			mappings.Add(new WordMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
+			mappings.Add(new WordMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input1", Encoding.UTF8.GetBytes(input1));
 			var converter = new Sfm2FlexTextWordsFrag();
@@ -119,8 +119,8 @@ namespace LexTextControlsTests
 \lx wordthree
 ";
 			var mappings = new List<WordMapping>();
-			mappings.Add(new WordMapping {Marker = "lx", Destination = WordDestination.Wordform, WritingSystem = "qaa-x-kal"});
-			mappings.Add(new WordMapping {Marker = "ge", Destination = WordDestination.WordGloss, WritingSystem = "en"});
+			mappings.Add(new WordMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
+			mappings.Add(new WordMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input2", Encoding.UTF8.GetBytes(input2));
 			var converter = new Sfm2FlexTextWordsFrag();
