@@ -1405,8 +1405,12 @@ To restore from this backup, install version {1} of FieldWorks.
 	<value>Migrating from LIFT version {0} to version {1}</value>
 	<comment>Progress step label for importing a Lift file: migration.</comment>
   </data>
-  <data name="kstidLoadingListInfo" xml:space="preserve">
-	<value>Loading various lists for lookup during import</value>
-	<comment>Progress step label for importing a Lift file: lists lookup.</comment>
+  <data name="kstidOtherLanguage" xml:space="preserve">
+	<value>Other</value>
+	<comment>Part of the name for ibus keyboards on Linux that don't have a specific language associated (keyboard appears as "Other - IPA Unicode 5.2")</comment>
+  </data>
+  <data name="kstidKeyboardNone" xml:space="preserve">
+	<value>None</value>
+	<comment>Name used when no keyman/ibus keyboard is selected.</comment>
   </data>
 </root>

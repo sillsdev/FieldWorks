@@ -75,6 +75,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
 	</Reference>
+	<Reference Include="FwResources">
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
 	<Reference Include="ibusdotnet">
 	  <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
 	</Reference>

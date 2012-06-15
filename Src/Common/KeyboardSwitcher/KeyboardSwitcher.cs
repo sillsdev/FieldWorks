@@ -2,9 +2,10 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using IBusDotNet;
 using System.Windows.Forms;
+using IBusDotNet;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Views
 {
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.Views
 
 					InputContext context = GlobalCachedInputContext.InputContext;
 
-					if (String.IsNullOrEmpty(value) || value == "None")
+					if (String.IsNullOrEmpty(value) || value == FwStrings.kstidKeyboardNone)
 					{
 						context.Reset();
 						GlobalCachedInputContext.KeyboardName = value;
@@ -119,8 +120,7 @@ namespace SIL.FieldWorks.Views
 		internal string FormatKeyboardIdentifier(IBusEngineDesc engineDesc)
 		{
 			string id = engineDesc.Language;
-			// TODO: make "Other" string localizable.
-			string languageName = string.IsNullOrEmpty(id) ? "Other" : Icu.GetDisplayName(id);
+			string languageName = string.IsNullOrEmpty(id) ? FwStrings.kstidOtherLanguage : Icu.GetDisplayName(id);
 			return String.Format("{0} - {1}", languageName, engineDesc.Name);
 		}
 
