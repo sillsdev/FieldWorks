@@ -1369,10 +1369,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		#endregion // Storing LIFT import residue...
 
 		#region Methods for processing LIFT header elements
-		private int FindOrCreateCustomField(string sLabel, LiftMultiText lmtDesc, int clid, out Guid possListGuid)
+		private int FindOrCreateCustomField(string sName, LiftMultiText lmtDesc, int clid, out Guid possListGuid)
 		{
 			var sClass = m_cache.MetaDataCacheAccessor.GetClassName(clid);
-			var sTag = String.Format("{0}-{1}", sClass, sLabel);
+			var sTag = String.Format("{0}-{1}", sClass, sName);
 			var flid = 0;
 			possListGuid = Guid.Empty;
 			if (m_dictCustomFlid.TryGetValue(sTag, out flid))
@@ -1416,7 +1416,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (var fd in FieldDescription.FieldDescriptors(m_cache))
 			{
-				if (fd.Custom != 0 && fd.Userlabel == sLabel && fd.Class == clid)
+				if (fd.Custom != 0 && fd.Name == sName && fd.Class == clid)
 				{
 					if (String.IsNullOrEmpty(sSpec))
 					{
@@ -1484,8 +1484,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Type = type,
 				Class = clid,
-				Name = sLabel,
-				Userlabel = sLabel,
+				Name = sName,
+				Userlabel = sName,
 				HelpString = sDesc,
 				WsSelector = wsSelector,
 				DstCls = clidDst,

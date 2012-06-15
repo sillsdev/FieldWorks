@@ -226,3 +226,4 @@ AlistairI, 15 June 2012. Integrated LT-13016 fix into FW 7.2 branch.
 LastufkaM 15 Jun 2012 Browse pane goes blank when filter is released.
 AlistairI, 15 June 2012. Fixed bug in TeEditorialChecks tests where date format failed if changed on Windows OS.
 RickM, 15 June 2012. LT-13054 Old default location Media files not restored from a FW7 backup that includes them.
+KenZ, 15 Jun 2012. Fixed LT-13202 custom fields not duplicated in LIFT import.
