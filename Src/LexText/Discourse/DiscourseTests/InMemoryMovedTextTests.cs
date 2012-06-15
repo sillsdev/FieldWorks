@@ -856,6 +856,42 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// If we load a chart that has two bad cells that need to be deleted in subsequent rows,
+		/// and the two rows in question have no other contents, we don't want the sequential row
+		/// deletions to crash the chart fixer method!
+		/// </summary>
+		[Test]
+		public void TwoBadRowsInSequenceDontCrash()
+		{
+			var strangeText = m_helper.CreateANewText();
+			var newPara = m_helper.MakeParagraphForGivenText(strangeText);
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2); // from original paragraph
+			var strangeOccurrence = m_helper.m_allOccurrences[newPara][0];
+			var strangeOccurrence2 = m_helper.m_allOccurrences[newPara][1];
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var row2 = m_helper.MakeRow(m_chart, "1c");
+			var row3 = m_helper.MakeRow(m_chart, "1d");
+			var cellPart0_0 = m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPartWrongText = m_helper.MakeWordGroup(row1, 0, strangeOccurrence, strangeOccurrence);
+			var cellPartFoolish = m_helper.MakeWordGroup(row2, 2, strangeOccurrence2, strangeOccurrence2);
+			m_helper.MakeWordGroup(row3, 1, allParaOccurrences[1], allParaOccurrences[1]);
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			// Should delete cellPartWrongText and cellPartFoolish in sequential rows that are otherwise
+			// unoccupied. This means we delete both rows and have two remaining.
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify
+			m_helper.VerifyDeletedHvos(new int[] { row1.Hvo, row2.Hvo, cellPartWrongText.Hvo, cellPartFoolish.Hvo },
+				"Second and third rows and only CellPart in both those rows ought to get deleted.");
+			m_helper.VerifyRow(0, "1a", 1);
+			m_helper.VerifyRow(1, "1b", 1);
+			AssertUsedAnalyses(allParaOccurrences, 2); // no change in ribbon
+		}
+
+		/// <summary>
 		/// If we load a ConstChartWordGroup, and it references analyses on the wrong StText,
 		/// we need to delete that WordGroup.
 		/// </summary>
@@ -896,7 +932,7 @@ namespace SIL.FieldWorks.Discourse
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
 			var cellPartFoolish = m_helper.MakeMovedTextMarker(row0, 2, cellPart1_0, false);
-			cellPartFoolish.WordGroupRA = null;
+			cellPartFoolish.WordGroupRA = null; // Actually this statement results in the part's deletion!!!
 			EndSetupTask(); // SUT has its own UOW
 
 			// SUT

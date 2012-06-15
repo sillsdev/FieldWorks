@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.Discourse
 
 		/// <summary>
 		/// Make a typical second row (we might care about the label).
-		/// Must be called after MakeFirstRow.
+		/// Must be called after MakeRow1a.
 		/// </summary>
 		/// <returns></returns>
 		internal IConstChartRow MakeSecondRow()
