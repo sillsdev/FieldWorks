@@ -101,6 +101,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private RecordClerk m_clerk;
 
+		/// <summary>
+		/// Sometimes an active clerk (eg., in a view) is repurposed (eg., in a dialog for printing).
+		/// When finished, clerk.BecomeInactive() is called, but that causes records not to be shown
+		/// in the active view. This gaurd prevents that.
+		/// </summary>
+		private bool m_haveActiveClerk = false;
+
 		#endregion Data members
 
 		#region Consruction and disposal
@@ -137,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if(components != null)
 					components.Dispose();
-				if (ExistingClerk != null)
+				if (ExistingClerk != null && !m_haveActiveClerk)
 					ExistingClerk.BecomeInactive();
 				if (m_mediator != null && !m_mediator.IsDisposed)
 					m_mediator.RemoveColleague(this);
@@ -179,7 +186,10 @@ namespace SIL.FieldWorks.XWorks
 					return m_clerk;
 				if (m_mediator == null)
 					return null; // Avoids a null reference exception, if there is no mediator at all.
+				m_haveActiveClerk = false;
 				m_clerk = RecordClerk.FindClerk(m_mediator, m_vectorName);
+				if (m_clerk != null && m_clerk.IsActiveInGui)
+					m_haveActiveClerk = true;
 				return m_clerk;
 			}
 		}
@@ -200,9 +210,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				if (m_clerk == null)
-					m_clerk = RecordClerk.FindClerk(m_mediator, m_vectorName) ?? CreateClerk(true);
-				return m_clerk;
+				return m_clerk = ExistingClerk ?? CreateClerk(true);
 			}
 			set
 			{
