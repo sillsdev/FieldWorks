@@ -83,9 +83,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-			var other = obj as KeyboardDescriptionWrapper;
-			if (other == null)
+			if (obj == null || !(obj is KeyboardDescriptionWrapper))
 				return false;
+			var other = (KeyboardDescriptionWrapper)obj;
 			return other.m_OtherImKeyboard == m_OtherImKeyboard && other.m_SystemKeyboard == m_SystemKeyboard;
 		}
 
