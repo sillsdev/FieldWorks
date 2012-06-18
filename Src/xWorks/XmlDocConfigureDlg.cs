@@ -4403,7 +4403,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// probably can't happen...
 					xn.Attributes.RemoveNamedItem(sName);
-					Debug.Assert(sName == "flowType");		// only value we intentionally delete.
+					//In LayoutTreeNode(XmlNode, StringTable, string) if the flowtype is "div" we can remove "after" and "sep" attributes, so don't assert on them.
+					Debug.Assert(sName == "flowType" || xn.Attributes["flowType"] != null && xn.Attributes["flowType"].Value == "div");		// only values we intentionally delete.
 				}
 				else if (xn.OwnerDocument != null)
 				{
