@@ -5971,3 +5971,4 @@ Andy Black, 14 June 2012. Refine message wording in variant type conversion util
 McCoy, 14 June 2012. Fixed LT-13315 (phoneme-deletion crash).
 EricP, 15 June 2012. T-8276 Provide a way to import wordforms with their glosses. Stage 3a, refactoring for mapping dialog.
 McCoy, 18 June 2012.  Fixed LT-12979 (failed assert on changing writing systems in the reversal index).  The old assert was invalid; updated to correctly handle the situation.
+RandyR, 18 June 2012. Updated FLEx Bridge installer to 0.3.51.
