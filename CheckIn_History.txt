@@ -5974,3 +5974,4 @@ McCoy, 18 June 2012.  Fixed LT-12979 (failed assert on changing writing systems 
 RandyR, 18 June 2012. Updated FLEx Bridge installer to 0.3.51.
 EberhardB, 19 June 2012. Integration Calgary/WW -> WW.
 KenZ, 19 Jun 2012. Updated Keyman IPA keyboards to latest from NRSI.
+Andy Black, 19 Jun 2012. Fix a bug in Hermit Crab parser transform.

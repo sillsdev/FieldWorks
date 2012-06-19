@@ -554,8 +554,13 @@
 				</Gloss>
 				<xsl:if test="count($headFeats) != 0">
 					<AssignedHeadFeatures>
+						<xsl:variable name="sIrregIdToUse">
+							<xsl:value-of select="$msa/@Id"/>
+							<xsl:text>_</xsl:text>
+							<xsl:value-of select="$entry/@Id"/>
+						</xsl:variable>
 						<xsl:apply-templates select="$headFeats" mode="morphosyntactic">
-							<xsl:with-param name="id" select="$msa/@Id"/>
+							<xsl:with-param name="id" select="$sIrregIdToUse"/>
 						</xsl:apply-templates>
 						<xsl:for-each select="$lexEntryRef/LexEntryInflType">
 							<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
