@@ -67,15 +67,16 @@ inline void AssertNoErrorInfo()
 
 	if(pIErrorInfo != NULL)
 	{
-		BSTR bstr;
-		hr = pIErrorInfo->GetDescription(&bstr);
+		BSTR dscr = NULL;
+		hr = pIErrorInfo->GetDescription(&dscr);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-		hr = pIErrorInfo->GetSource(&bstr);
+		::OutputDebugString(dscr);
+		::SysFreeString(dscr);
+		BSTR src = NULL;
+		hr = pIErrorInfo->GetSource(&src);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
+		::OutputDebugString(src);
+		::SysFreeString(src);
 		pIErrorInfo->Release();
 	}
 #else
@@ -110,15 +111,16 @@ inline void ClearErrorInfo()
 	Assert(SUCCEEDED(hr));
 	if(pIErrorInfo != NULL)
 	{
-		BSTR bstr;
-		hr = pIErrorInfo->GetDescription(&bstr);
+		BSTR dscr = NULL;
+		hr = pIErrorInfo->GetDescription(&dscr);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-		hr = pIErrorInfo->GetSource(&bstr);
+		::OutputDebugString(dscr);
+		::SysFreeString(dscr);
+		BSTR src = NULL;
+		hr = pIErrorInfo->GetSource(&src);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
+		::OutputDebugString(src);
+		::SysFreeString(src);
 		pIErrorInfo->Release();
 	}
 #else
