@@ -28,19 +28,19 @@ URL=
 Left=0
 Top=0
 [StartMenu]
-Path=IPA Unicode 5.0c (ver 1.1.5) KMN
+Path=IPA Unicode 5.1 (ver 1.2) KMN
 Create=1
 AddUninstallEntry=1
 [StartMenuEntries]
-IPA Unicode 5.0c (ver 1.1.5) KMN Keyboard Layout Guide="IPA Unicode 5.0c (ver 1.1.5) KMN.pdf",""
+IPA Unicode 5.1 (ver 1.2) KMN Keyboard Layout Guide="IPA Unicode 5.1 (ver 1.2) KMN.pdf",""
 Installation="welcome.htm",""
 [Info]
-name="IPA Unicode 5.0c (ver 1.1.5) KMN",""
-Version="1.1.5",""
+name="IPA Unicode 5.1 (ver 1.2) KMN",""
+Version="1.2",""
 Copyright="© SIL International",""
 WebSite="http://scripts.sil.org/UniIPAKeyboard","http://scripts.sil.org/UniIPAKeyboard"
 [Files]
-0="Keyboard IPA Unicode 5.0c (ver 1.1.2) KMN","IPAUni11.kmx",0
+0="Keyboard IPA Unicode 5.1 (ver 1.2) KMN","IPAUni12.kmx",0
 1="File welcome.htm","welcome.htm",0
 2="File sil.bmp","sil.bmp",0
-3="File IPA Unicode 5.0c (ver 1.1.5) KMN.pdf","IPA Unicode 5.0c (ver 1.1.5) KMN.pdf",0
+3="File IPA Unicode 5.1 (ver 1.2) KMN.pdf","IPA Unicode 5.1 (ver 1.2) KMN.pdf",0

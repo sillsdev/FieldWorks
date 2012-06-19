@@ -1,5 +1,5 @@
-﻿c IPAUni11.KMN
-c IPA Unicode Keyboard for Tavultesoft Keyboard Manager 5.0
+﻿c IPAUni12.KMN
+c IPA Unicode Keyboard for Tavultesoft Keyboard Manager 6.0
 c Keyboard: FF Keying for use with SIL Unicode IPA fonts
 c Author:   M. Hosken & D. Bevan
 c Date:     31-JUL-2001
@@ -47,14 +47,17 @@ c                                   renamed keyboard to match PUA deprecation po
 c LAP   1.1.3   10-SEP-2007     a fix for the problem of fast typing reordering keystrokes when using Keyman with TSF.
 c LAP   1.1.4   24-SEP-2007     previous rule was in the wrong place, moved to end.
 c LAP   1.1.5   12-FEB-2008     added CGJ and changed license
+c LAP   1.2     07-MAY-2008     updated for Unicode 5.1 (F25F>2C71, F19C>A71B, F19D>A71C, F21A>2C73
 
-NAME "IPA Unicode 5.0c (ver 1.1.5) KMN"
+NAME "IPA Unicode 5.1 (ver 1.2) KMN"
 VERSION 6.0
-c BITMAPS IPA93ON IPA93OFF
-BITMAP IPA93
+BITMAP ipa
+c BITMAP ipa.png
 HOTKEY  "^+P"
 COPYRIGHT "© 2002-2008 SIL International"
-MESSAGE "The IPA Unicode 5.0c (ver 1.1.5) KMN Unicode keyboard is distributed under the X11 free software license (http://scripts.sil.org/X11License)."
+MESSAGE "The IPA Unicode 5.1 (ver 1.2) KMN Unicode keyboard is distributed under the X11 free software license (http://scripts.sil.org/X11License)."
+c store(&author) "M. Hosken, D. Bevan"
+c store(&language) ""
 
 begin Unicode > use(Unicode)
 
@@ -85,8 +88,8 @@ c store(greatK) "AEGHLOR#!abdeghjlmnoruwz" "#>"
 				"="    U+01C3 "a"    "b"    "c"    "d"    "e"    "g" \
 				"h"    "j"    "k"    "l"    "m"    "n"    "o"    "p" \
 				"q"    "r"    "s"    "t"    "u"    "w"    "U"    "z" \
-				U+F19C c unused "fivxy"
-  store(greatU) U+1D02 U+0276 U+029B U+0267 U+1D7C U+027A U+0264 U+0281 U+F19C \
+				U+A71B c unused "fivxy"
+  store(greatU) U+1D02 U+0276 U+029B U+0267 U+1D7C U+027A U+0264 U+0281 U+A71B \
 				U+2192 U+01C1 U+0250 U+0253 U+0188 U+0257 U+025C U+0260 \
 				U+0127 U+0284 U+0199 U+026E U+0271 U+014B U+00F8 U+01A5 \
 				U+02A0 U+027E U+03C3 U+01AD U+028C U+0270 U+1D7E U+0291 \
@@ -96,11 +99,11 @@ c store(lessK)  "ELOQR?.#!acdehjlnorstuz" "#<"
   store(lessD)  "E"    "I"    "L"    "O"    "Q"    "R"    "?"    "."    "#" \
 				U+01C3 "a"    "c"    "d"    "e"    "g"    "h"    "j" \
 				"l"    "n"    "o"    "r"    "s"    "t"    "u"    "v" \
-				"w"    "y"    "z"    U+F19D "="
-  store(lessU)  U+0153 U+1D7B U+028E U+025E U+02A2 U+027B U+0295 U+007C U+F19D \
+				"w"    "y"    "z"    U+A71C "="
+  store(lessU)  U+0153 U+1D7B U+028E U+025E U+02A2 U+027B U+0295 U+007C U+A71C \
 				U+01C0 U+00E6 U+0255 U+0256 U+025B U+0261 U+0266 U+029D \
-				U+026D U+0273 U+0254 U+027D U+0282 U+0288 U+028A U+F25F \
-				U+F21A U+0265 U+0290 U+2198 U+034F
+				U+026D U+0273 U+0254 U+027D U+0282 U+0288 U+028A U+2C71 \
+				U+2C73 U+0265 U+0290 U+2198 U+034F
 
 c  store(hatK)  "?gjnwlh" "0123456789-" "m" "n=" "n>"
    store(hatD)  "0123456789" \
@@ -147,7 +150,7 @@ store(udiaU) U+0303 U+0308 U+033D U+0306 U+030A
 store(toneU) U+030F U+030C U+0300 U+0304 U+0301 U+0302 U+030B \
 			 U+1DC4 U+1DC6 U+1DC8 U+1DC9
 
-store(segmentU) U+02E9 U+02E8 U+02E7 U+02E6 U+02E5 U+F19D U+F19C U+2197 \
+store(segmentU) U+02E9 U+02E8 U+02E7 U+02E6 U+02E5 U+A71C U+A71B U+2197 \
 				U+2198 U+02D0 U+02D1 U+207F U+02DE U+02BC U+031A U+005B \
 				U+005C U+005D U+02C8 U+02CC U+035C U+0361 U+203F
 
