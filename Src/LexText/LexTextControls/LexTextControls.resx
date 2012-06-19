@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ks_AnalysisWS" xml:space="preserve">
 	<value>&amp;Analysis Writing System</value>
@@ -721,9 +721,6 @@
 	<value>Input File Contents Changed</value>
 	<comment>MessageBox caption</comment>
   </data>
-  <data name="ksErrorAcessingEncodingConverters" xml:space="preserve">
-	<value>Error Acessing Encoding Converters</value>
-  </data>
   <data name="ksImportingFrom0" xml:space="preserve">
 	<value>Importing from {0}</value>
   </data>
@@ -1244,5 +1241,20 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   </data>
   <data name="openFileDialog1_Filter" xml:space="preserve">
 	<value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
+  </data>
+  <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
+	<value>Error Accessing Encoding Converters</value>
+  </data>
+  <data name="ksFldIgnored" xml:space="preserve">
+	<value>Don't Import</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldWordform" xml:space="preserve">
+	<value>Wordform</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldWordGloss" xml:space="preserve">
+	<value>Word Gloss</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
   </data>
 </root>

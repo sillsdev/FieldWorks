@@ -584,53 +584,68 @@ namespace SIL.FieldWorks.IText
 		private static void AddWordToSegment(ISegment newSegment, Word word, ITsStrFactory strFactory)
 		{
 			//use the items under the word to determine what kind of thing to add to the segment
-			if (word.Items != null && word.Items.Length > 0)
+			var cache = newSegment.Cache;
+			IAnalysis analysis = CreateWordAnalysisStack(cache, word, strFactory);
+
+			// Add to segment
+			if (analysis != null)
 			{
-				var wsFact = newSegment.Cache.WritingSystemFactory;
-				IAnalysis analysis = null;
-				foreach (item wordItem in word.Items)
-				{
-					ITsString wordForm = null;
-					switch (wordItem.type)
-					{
-						case "txt":
-							wordForm = strFactory.MakeString(wordItem.Value,
-							GetWsEngine(wsFact, wordItem.lang).Handle);
-							analysis = WfiWordformServices.FindOrCreateWordform(newSegment.Cache, wordForm);
-							break;
-						case "punct":
-							wordForm = strFactory.MakeString(wordItem.Value,
-								GetWsEngine(wsFact, wordItem.lang).Handle);
-							analysis = WfiWordformServices.FindOrCreatePunctuationform(newSegment.Cache, wordForm);
-							break;
-					}
-				}
-				if (analysis != null)
-				{
-					UpgradeToWordGloss(word, ref analysis);
-					newSegment.AnalysesRS.Add(analysis);
-				}
-				else
-				{
-					Debug.Assert(analysis != null, "What else could this do?");
-				}
-				//Add any morphemes to the thing
-				if (word.morphemes != null && word.morphemes.morphs.Length > 0)
-				{
-					//var bundle = newSegment.Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
-					//analysis.Analysis.MorphBundlesOS.Add(bundle);
-					//foreach (var morpheme in word.morphemes)
-					//{
-					//    //create a morpheme
-					//    foreach(item item in morpheme.items)
-					//    {
-					//        //fill in morpheme's stuff
-					//    }
-					//}
-				}
+				newSegment.AnalysesRS.Add(analysis);
 			}
 		}
 
+		private static IAnalysis CreateWordAnalysisStack(FdoCache cache, Word word, ITsStrFactory strFactory)
+		{
+			if (word.Items == null || word.Items.Length <= 0) return null;
+			IAnalysis analysis = null;
+			var wsFact = cache.WritingSystemFactory;
+			foreach (var wordItem in word.Items)
+			{
+				ITsString wordForm = null;
+				switch (wordItem.type)
+				{
+					case "txt":
+						wordForm = strFactory.MakeString(wordItem.Value,
+														 GetWsEngine(wsFact, wordItem.lang).Handle);
+						analysis = WfiWordformServices.FindOrCreateWordform(cache, wordForm);
+						break;
+					case "punct":
+						wordForm = strFactory.MakeString(wordItem.Value,
+														 GetWsEngine(wsFact, wordItem.lang).Handle);
+						analysis = WfiWordformServices.FindOrCreatePunctuationform(cache, wordForm);
+						break;
+				}
+			}
+			if (analysis != null)
+			{
+				UpgradeToWordGloss(word, ref analysis);
+			}
+			else
+			{
+				Debug.Assert(analysis != null, "What else could this do?");
+			}
+			//Add any morphemes to the thing
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			{
+				//var bundle = newSegment.Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+				//analysis.Analysis.MorphBundlesOS.Add(bundle);
+				//foreach (var morpheme in word.morphemes)
+				//{
+				//    //create a morpheme
+				//    foreach(item item in morpheme.items)
+				//    {
+				//        //fill in morpheme's stuff
+				//    }
+				//}
+			}
+			return analysis;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="word"></param>
+		/// <param name="analysis">the new analysis Gloss. If multiple glosses, returns the last one created.</param>
 		private static void UpgradeToWordGloss(Word word, ref IAnalysis analysis)
 		{
 			FdoCache cache = analysis.Cache;
@@ -638,47 +653,71 @@ namespace SIL.FieldWorks.IText
 			var wsFact = cache.WritingSystemFactory;
 			if (s_importOptions.AnalysesLevel == ImportAnalysesLevel.WordGloss)
 			{
-				var wordGlossItem = word.Items.Select(i => i).Where(i => i.type == "gls").FirstOrDefault();
-				if (wordGlossItem != null)
+				// test for adding multiple glosses in the same language. If so, create separate analyses with separate glosses.
+				bool fHasMultipleGlossesInSameLanguage = false;
+				var dictMapLangToGloss = new Dictionary<string, string>();
+				foreach (var wordGlossItem in word.Items.Select(i => i).Where(i => i.type == "gls"))
 				{
-					if (!wordGlossItem.analysisStatusSpecified ||
-						wordGlossItem.analysisStatus == analysisStatusTypes.humanApproved)
+					string gloss;
+					if (!dictMapLangToGloss.TryGetValue(wordGlossItem.lang, out gloss))
 					{
-						// first make sure that an existing gloss does not already exist. (i.e. don't add duplicate glosses)
-						int wsNewGloss = GetWsEngine(wsFact, wordGlossItem.lang).Handle;
-						ITsString newGlossTss = tsStrFactory.MakeString(wordGlossItem.Value,
-																		wsNewGloss);
-						var wfiWord = analysis.Wordform;
-						bool hasGlosses = wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any());
-						IWfiGloss matchingGloss = null;
-						if (hasGlosses)
-						{
-							matchingGloss =
-								wfiWord.AnalysesOC
-									.Select(
-										wfia =>
-										wfia.MeaningsOC.Where(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss)).FirstOrDefault())
-									.FirstOrDefault();
-						}
+						dictMapLangToGloss.Add(wordGlossItem.lang, wordGlossItem.Value);
+						continue;
+					}
+					if (wordGlossItem.Value == gloss) continue;
+					fHasMultipleGlossesInSameLanguage = true;
+					break;
+				}
 
-						if (matchingGloss != null)
-							analysis = matchingGloss;
+				AnalysisTree analysisTree = null;
+				foreach (var wordGlossItem in word.Items.Select(i => i).Where(i => i.type == "gls"))
+				{
+					if (wordGlossItem == null) continue;
+					if (wordGlossItem.analysisStatusSpecified &&
+						wordGlossItem.analysisStatus != analysisStatusTypes.humanApproved) continue;
+					// first make sure that an existing gloss does not already exist. (i.e. don't add duplicate glosses)
+					int wsNewGloss = GetWsEngine(wsFact, wordGlossItem.lang).Handle;
+					ITsString newGlossTss = tsStrFactory.MakeString(wordGlossItem.Value,
+																	wsNewGloss);
+					var wfiWord = analysis.Wordform;
+					bool hasGlosses = wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any());
+					IWfiGloss matchingGloss = null;
+					if (hasGlosses)
+					{
+						matchingGloss =
+							wfiWord.AnalysesOC
+								.Select(
+									wfia =>
+									wfia.MeaningsOC.Where(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss)).FirstOrDefault())
+								.FirstOrDefault();
+					}
+
+					if (matchingGloss != null)
+						analysis = matchingGloss;
+					else
+					{
+						// TODO: merge with analysis having same morpheme breakdown (or at least the same stem)
+
+						if (analysisTree == null || dictMapLangToGloss.Count == 1 || fHasMultipleGlossesInSameLanguage)
+						{
+							// create a new WfiAnalysis to store a new gloss
+							analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(wfiWord);
+						}
 						else
 						{
-							// TODO: merge with analysis having same morpheme breakdown (or at least the same stem)
-							var analysisTree = WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(wfiWord);
-							analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-							// Make sure this analysis is marked as user-approved (green check mark)
-							cache.LangProject.DefaultUserAgent.SetEvaluation(analysisTree.WfiAnalysis, Opinions.approves);
-							// Create a morpheme form that matches the wordform.
-							var morphemeBundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
-							var wordItem = word.Items.Select(i => i).Where(i => i.type == "txt").First();
-							int wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
-							analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
-							morphemeBundle.Form.set_String(wsWord, wordItem.Value);
-
-							analysis = analysisTree.Gloss;
+							// reuse the same analysisTree for setting a gloss alternative
 						}
+						analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
+						// Make sure this analysis is marked as user-approved (green check mark)
+						cache.LangProject.DefaultUserAgent.SetEvaluation(analysisTree.WfiAnalysis, Opinions.approves);
+						// Create a morpheme form that matches the wordform.
+						var morphemeBundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+						var wordItem = word.Items.Select(i => i).Where(i => i.type == "txt").First();
+						int wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
+						analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
+						morphemeBundle.Form.set_String(wsWord, wordItem.Value);
+
+						analysis = analysisTree.Gloss;
 					}
 				}
 			}

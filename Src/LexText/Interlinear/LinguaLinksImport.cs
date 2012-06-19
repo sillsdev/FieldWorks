@@ -28,6 +28,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using ECInterfaces;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
 using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -210,6 +211,30 @@ namespace SIL.FieldWorks.IText
 			WordGloss
 		}
 
+		public void ImportWordsFrag(Func<Stream> createWordsFragDocStream, ImportAnalysesLevel analysesLevel)
+		{
+			using (var stream = createWordsFragDocStream.Invoke())
+			{
+				var serializer = new XmlSerializer(typeof(WordsFragDocument));
+				var wordsFragDoc = (WordsFragDocument)serializer.Deserialize(stream);
+				NormalizeWords(wordsFragDoc.Words);
+				ImportWordsFrag(wordsFragDoc.Words, analysesLevel);
+			}
+		}
+
+		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
+		{
+			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
+			var tsStrFactory = m_cache.ServiceLocator.GetInstance<ITsStrFactory>();
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				foreach (var word in words)
+				{
+					CreateWordAnalysisStack(m_cache, word, tsStrFactory);
+				}
+			});
+		}
+
 		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
@@ -378,7 +403,7 @@ namespace SIL.FieldWorks.IText
 		/// We want everything to be NFD, particularly so we match wordforms correctly.
 		/// </summary>
 		/// <param name="doc"></param>
-		private void Normalize(BIRDDocument doc)
+		private static void Normalize(BIRDDocument doc)
 		{
 			foreach (var text in doc.interlineartext)
 			{
@@ -394,12 +419,18 @@ namespace SIL.FieldWorks.IText
 							NormalizeItems(phrase.Items);
 							if (phrase.WordsContent == null || phrase.WordsContent.Words == null)
 								continue;
-							foreach (var word in phrase.WordsContent.Words)
-								NormalizeItems(word.Items);
+							var words = phrase.WordsContent.Words;
+							NormalizeWords(words);
 						}
 					}
 				}
 			}
+		}
+
+		private static void NormalizeWords(IEnumerable<Word> words)
+		{
+			foreach (var word in words)
+				NormalizeItems(word.Items);
 		}
 
 		private static void NormalizeItems(item[] items)

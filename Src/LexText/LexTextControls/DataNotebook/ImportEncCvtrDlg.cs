@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, String.Format(LexTextControls.ksErrorAcessingEncodingConverters, ex.Message));
+				MessageBox.Show(this, String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 				return;
 			}
 		}

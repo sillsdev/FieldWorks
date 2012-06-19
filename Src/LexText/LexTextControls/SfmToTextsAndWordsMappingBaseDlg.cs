@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Linq;
+using System.Resources;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using SIL.FieldWorks.Resources;
 using SilEncConverters40;
 using XCore;
 
-namespace SIL.FieldWorks.IText
+namespace SIL.FieldWorks.LexText.Controls
 {
-	public partial class SfmInterlinearMappingDlg : Form
+	public partial class SfmToTextsAndWordesMappingBaseDlg : Form
 	{
+		protected string m_helpTopicID;
+
 		private FdoCache m_cache;
 		private string m_orginalLabel;
 		private readonly string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
-		private InterlinearMapping m_mapping; // the object we are editing.
-		private string m_helpTopicID;
+		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		public SfmInterlinearMappingDlg()
+		public SfmToTextsAndWordesMappingBaseDlg()
 		{
 			InitializeComponent();
 			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step2";
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.IText
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
 		}
 
-		internal void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache, InterlinearMapping mapping)
+		internal void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mapping)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -69,9 +69,15 @@ namespace SIL.FieldWorks.IText
 
 		void m_destinationsListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var oldWs = m_mapping.WritingSystem;
-			if (m_writingSystemCombo.SelectedItem is IWritingSystem)
-				oldWs = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			OnDestinationListBox_SelectedIndexChanged();
+		}
+
+		protected virtual void OnDestinationListBox_SelectedIndexChanged()
+		{
+			string oldWs = GetOldWs();
+			/*
+			 * Push to sub class
+			 *
 			if (m_destinationsListBox.SelectedItem is DestinationItem &&
 				((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
 			{
@@ -84,7 +90,16 @@ namespace SIL.FieldWorks.IText
 
 			}
 			else
-				NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+			 */
+			NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+		}
+
+		protected string GetOldWs()
+		{
+			var oldWs = m_mapping.WritingSystem;
+			if (m_writingSystemCombo.SelectedItem is IWritingSystem)
+				oldWs = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			return oldWs;
 		}
 
 		class DestinationItem
@@ -97,6 +112,21 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		protected virtual string GetDestinationName(InterlinDestination destEnum)
+		{
+			/*
+			 * TODO: push to sub class
+			 * InterlinearSfmImportWizard.GetDestinationName(destEnum)
+			 */
+			return null; // override
+		}
+
+		public static string GetDestinationNameFromResource(InterlinDestination dest, ResourceManager rm)
+		{
+			var stid = "ksFld" + dest;
+			return rm.GetString(stid) ?? dest.ToString();
+		}
+
 		private void LoadDestinations()
 		{
 			m_destinationsListBox.BeginUpdate();
@@ -104,14 +134,14 @@ namespace SIL.FieldWorks.IText
 			var items = new System.Collections.Generic.List<DestinationItem>();
 			foreach (int i in Enum.GetValues(typeof(InterlinDestination)))
 			{
-				var dest = (InterlinDestination) i;
-				string name = InterlinearSfmImportWizard.GetDestinationName(dest);
+				var dest = (InterlinDestination)i;
+				string name = GetDestinationName(dest);
 				if (dest != InterlinDestination.Ignored)
-					items.Add(new DestinationItem() {Name = name, Dest = dest});
+					items.Add(new DestinationItem() { Name = name, Dest = dest });
 			}
 			// Sort most of the names, but force 'Ignored' to come first
 			items.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
-			items.Insert(0, new DestinationItem() {Name = InterlinearSfmImportWizard.GetDestinationName(InterlinDestination.Ignored), Dest = InterlinDestination.Ignored});
+			items.Insert(0, new DestinationItem() { Name = GetDestinationName(InterlinDestination.Ignored), Dest = InterlinDestination.Ignored });
 			foreach (var item in items)
 			{
 				m_destinationsListBox.Items.Add(item);
@@ -176,7 +206,7 @@ namespace SIL.FieldWorks.IText
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(String.Format(ITextStrings.ksErrorAccessingEncodingConverters, ex.Message));
+				MessageBox.Show(String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 				return;
 			}
 

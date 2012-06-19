@@ -1011,4 +1011,32 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		/// <remarks/>
 		punct,
 	}
+
+	/// <remarks>
+	/// Used to import a document that starts at the word level and below (e.g. words and glosses).
+	/// </remarks>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
+	[System.SerializableAttribute()]
+	//	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false, ElementName = "document")]
+	public class WordsFragDocument
+	{
+		private Word[] wordField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("word", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public Word[] Words
+		{
+			get
+			{
+				return this.wordField;
+			}
+			set
+			{
+				this.wordField = value;
+			}
+		}
+	}
 }
