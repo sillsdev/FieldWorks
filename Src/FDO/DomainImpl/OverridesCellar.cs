@@ -1908,6 +1908,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region VirtualOrdering Class
+	internal partial class VirtualOrdering
+	{
+		public override bool IsFieldRelevant(int flid)
+		{
+			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var flids = mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All);
+			return flids.Contains(flid);
+		}
+	}
+	#endregion
+
 	#region FsClosedFeature Class
 	/// <summary>
 	/// Summary description for FsClosedFeature

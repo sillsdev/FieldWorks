@@ -3412,7 +3412,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		bool IReferenceSource.RefersTo(ICmObject target, int flid)
 		{
-			return (this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo;
+			// Always ensure the flid is valid.
+			return ( IsFieldRelevant(flid) && ((this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo) );
 		}
 
 		#endregion
