@@ -22,21 +22,21 @@ namespace SIL.FieldWorks.Resources {
 	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
 	[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 	[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-	internal class FwStrings {
+	public class FwStrings {
 
 		private static global::System.Resources.ResourceManager resourceMan;
 
 		private static global::System.Globalization.CultureInfo resourceCulture;
 
 		[global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		internal FwStrings() {
+		public FwStrings() {
 		}
 
 		/// <summary>
 		///   Returns the cached ResourceManager instance used by this class.
 		/// </summary>
 		[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-		internal static global::System.Resources.ResourceManager ResourceManager {
+		public static global::System.Resources.ResourceManager ResourceManager {
 			get {
 				if (object.ReferenceEquals(resourceMan, null)) {
 					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.Resources.FwStrings", typeof(FwStrings).Assembly);
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Resources {
 		///   resource lookups using this strongly typed resource class.
 		/// </summary>
 		[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-		internal static global::System.Globalization.CultureInfo Culture {
+		public static global::System.Globalization.CultureInfo Culture {
 			get {
 				return resourceCulture;
 			}
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Resources {
 		///To restore from this backup, install version {1} of FieldWorks.
 		///.
 		/// </summary>
-		internal static string ksBackupFileCreatedByNewerFwVersion {
+		public static string ksBackupFileCreatedByNewerFwVersion {
 			get {
 				return ResourceManager.GetString("ksBackupFileCreatedByNewerFwVersion", resourceCulture);
 			}
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to ....
 		/// </summary>
-		internal static string ksEllipsis {
+		public static string ksEllipsis {
 			get {
 				return ResourceManager.GetString("ksEllipsis", resourceCulture);
 			}
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to File is not a valid FieldWorks backup:.
 		/// </summary>
-		internal static string ksInvalidFwBackupFile {
+		public static string ksInvalidFwBackupFile {
 			get {
 				return ResourceManager.GetString("ksInvalidFwBackupFile", resourceCulture);
 			}
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to {0}%.
 		/// </summary>
-		internal static string ksPercentage {
+		public static string ksPercentage {
 			get {
 				return ResourceManager.GetString("ksPercentage", resourceCulture);
 			}
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to restore..
 		/// </summary>
-		internal static string ksRestoreFailed {
+		public static string ksRestoreFailed {
 			get {
 				return ResourceManager.GetString("ksRestoreFailed", resourceCulture);
 			}
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Analysis.
 		/// </summary>
-		internal static string kstidAllAnal {
+		public static string kstidAllAnal {
 			get {
 				return ResourceManager.GetString("kstidAllAnal", resourceCulture);
 			}
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Analysis and Vernacular.
 		/// </summary>
-		internal static string kstidAllAnalVern {
+		public static string kstidAllAnalVern {
 			get {
 				return ResourceManager.GetString("kstidAllAnalVern", resourceCulture);
 			}
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Sound Files.
 		/// </summary>
-		internal static string kstidAllAudio {
+		public static string kstidAllAudio {
 			get {
 				return ResourceManager.GetString("kstidAllAudio", resourceCulture);
 			}
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to CC Table.
 		/// </summary>
-		internal static string kstidAllCCTable {
+		public static string kstidAllCCTable {
 			get {
 				return ResourceManager.GetString("kstidAllCCTable", resourceCulture);
 			}
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Files.
 		/// </summary>
-		internal static string kstidAllFiles {
+		public static string kstidAllFiles {
 			get {
 				return ResourceManager.GetString("kstidAllFiles", resourceCulture);
 			}
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Image Files.
 		/// </summary>
-		internal static string kstidAllImage {
+		public static string kstidAllImage {
 			get {
 				return ResourceManager.GetString("kstidAllImage", resourceCulture);
 			}
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Pronunciation.
 		/// </summary>
-		internal static string kstidAllPron {
+		public static string kstidAllPron {
 			get {
 				return ResourceManager.GetString("kstidAllPron", resourceCulture);
 			}
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Standard Format Files.
 		/// </summary>
-		internal static string kstidAllScriptureStandardFormat {
+		public static string kstidAllScriptureStandardFormat {
 			get {
 				return ResourceManager.GetString("kstidAllScriptureStandardFormat", resourceCulture);
 			}
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Database Files.
 		/// </summary>
-		internal static string kstidAllShoeboxDictionaryDatabases {
+		public static string kstidAllShoeboxDictionaryDatabases {
 			get {
 				return ResourceManager.GetString("kstidAllShoeboxDictionaryDatabases", resourceCulture);
 			}
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Vernacular.
 		/// </summary>
-		internal static string kstidAllVern {
+		public static string kstidAllVern {
 			get {
 				return ResourceManager.GetString("kstidAllVern", resourceCulture);
 			}
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All Vernacular and Analysis.
 		/// </summary>
-		internal static string kstidAllVernAnal {
+		public static string kstidAllVernAnal {
 			get {
 				return ResourceManager.GetString("kstidAllVernAnal", resourceCulture);
 			}
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Movie Files.
 		/// </summary>
-		internal static string kstidAllVideo {
+		public static string kstidAllVideo {
 			get {
 				return ResourceManager.GetString("kstidAllVideo", resourceCulture);
 			}
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to analysis.
 		/// </summary>
-		internal static string kstidAnalysis {
+		public static string kstidAnalysis {
 			get {
 				return ResourceManager.GetString("kstidAnalysis", resourceCulture);
 			}
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Anthropology Codes.
 		/// </summary>
-		internal static string kstidAnthroCodes {
+		public static string kstidAnthroCodes {
 			get {
 				return ResourceManager.GetString("kstidAnthroCodes", resourceCulture);
 			}
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to {0} - {1}.
 		/// </summary>
-		internal static string kstidAppCaptionWithProjectName {
+		public static string kstidAppCaptionWithProjectName {
 			get {
 				return ResourceManager.GetString("kstidAppCaptionWithProjectName", resourceCulture);
 			}
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Best Analysis.
 		/// </summary>
-		internal static string kstidBestAnal {
+		public static string kstidBestAnal {
 			get {
 				return ResourceManager.GetString("kstidBestAnal", resourceCulture);
 			}
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Best Analysis or Vernacular.
 		/// </summary>
-		internal static string kstidBestAnalVern {
+		public static string kstidBestAnalVern {
 			get {
 				return ResourceManager.GetString("kstidBestAnalVern", resourceCulture);
 			}
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Best Vernacular.
 		/// </summary>
-		internal static string kstidBestVern {
+		public static string kstidBestVern {
 			get {
 				return ResourceManager.GetString("kstidBestVern", resourceCulture);
 			}
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Best Vernacular or Analysis.
 		/// </summary>
-		internal static string kstidBestVernAnal {
+		public static string kstidBestVernAnal {
 			get {
 				return ResourceManager.GetString("kstidBestVernAnal", resourceCulture);
 			}
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cannot add a style with a blank name..
 		/// </summary>
-		internal static string kstidBlankStyleNameError {
+		public static string kstidBlankStyleNameError {
 			get {
 				return ResourceManager.GetString("kstidBlankStyleNameError", resourceCulture);
 			}
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cannot Modify Writing System.
 		/// </summary>
-		internal static string kstidCannotModifyWS {
+		public static string kstidCannotModifyWS {
 			get {
 				return ResourceManager.GetString("kstidCannotModifyWS", resourceCulture);
 			}
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to This redo action is not possible because it conflicts with changes made in another window..
 		/// </summary>
-		internal static string kstidCannotRedo {
+		public static string kstidCannotRedo {
 			get {
 				return ResourceManager.GetString("kstidCannotRedo", resourceCulture);
 			}
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to This undo action is not possible because it conflicts with changes made in another window..
 		/// </summary>
-		internal static string kstidCannotUndo {
+		public static string kstidCannotUndo {
 			get {
 				return ResourceManager.GetString("kstidCannotUndo", resourceCulture);
 			}
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Change spelling.
 		/// </summary>
-		internal static string kstidChangeSpellingItem {
+		public static string kstidChangeSpellingItem {
 			get {
 				return ResourceManager.GetString("kstidChangeSpellingItem", resourceCulture);
 			}
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to {0} Chooser.
 		/// </summary>
-		internal static string kstidChooserDlgTitle {
+		public static string kstidChooserDlgTitle {
 			get {
 				return ResourceManager.GetString("kstidChooserDlgTitle", resourceCulture);
 			}
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Conclusions.
 		/// </summary>
-		internal static string kstidConclusions {
+		public static string kstidConclusions {
 			get {
 				return ResourceManager.GetString("kstidConclusions", resourceCulture);
 			}
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Confidence.
 		/// </summary>
-		internal static string kstidConfidence {
+		public static string kstidConfidence {
 			get {
 				return ResourceManager.GetString("kstidConfidence", resourceCulture);
 			}
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to About to delete {0}..
 		/// </summary>
-		internal static string kstidConfirmDeleteProject {
+		public static string kstidConfirmDeleteProject {
 			get {
 				return ResourceManager.GetString("kstidConfirmDeleteProject", resourceCulture);
 			}
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to This process will take a long time. Do you want to continue?.
 		/// </summary>
-		internal static string kstidConversionTimeMsg {
+		public static string kstidConversionTimeMsg {
 			get {
 				return ResourceManager.GetString("kstidConversionTimeMsg", resourceCulture);
 			}
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Counter Evidence.
 		/// </summary>
-		internal static string kstidCounterEvidence {
+		public static string kstidCounterEvidence {
 			get {
 				return ResourceManager.GetString("kstidCounterEvidence", resourceCulture);
 			}
@@ -391,7 +391,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open {0} in FieldWorks {1}.
 		/// </summary>
-		internal static string kstidCreateShortcutLinkDescription {
+		public static string kstidCreateShortcutLinkDescription {
 			get {
 				return ResourceManager.GetString("kstidCreateShortcutLinkDescription", resourceCulture);
 			}
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Loading {0} Style Sheet.
 		/// </summary>
-		internal static string kstidCreatingStylesCaption {
+		public static string kstidCreatingStylesCaption {
 			get {
 				return ResourceManager.GetString("kstidCreatingStylesCaption", resourceCulture);
 			}
@@ -409,7 +409,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Loading: &apos;{0}&apos; ....
 		/// </summary>
-		internal static string kstidCreatingStylesStatusMsg {
+		public static string kstidCreatingStylesStatusMsg {
 			get {
 				return ResourceManager.GetString("kstidCreatingStylesStatusMsg", resourceCulture);
 			}
@@ -418,7 +418,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cross References.
 		/// </summary>
-		internal static string kstidCrossReferences {
+		public static string kstidCrossReferences {
 			get {
 				return ResourceManager.GetString("kstidCrossReferences", resourceCulture);
 			}
@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Current Scripture project.
 		/// </summary>
-		internal static string kstidCurrentScriptureProject {
+		public static string kstidCurrentScriptureProject {
 			get {
 				return ResourceManager.GetString("kstidCurrentScriptureProject", resourceCulture);
 			}
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Date Created.
 		/// </summary>
-		internal static string kstidDateCreated {
+		public static string kstidDateCreated {
 			get {
 				return ResourceManager.GetString("kstidDateCreated", resourceCulture);
 			}
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Date Modified.
 		/// </summary>
-		internal static string kstidDateModified {
+		public static string kstidDateModified {
 			get {
 				return ResourceManager.GetString("kstidDateModified", resourceCulture);
 			}
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Date of Event.
 		/// </summary>
-		internal static string kstidDateOfEvent {
+		public static string kstidDateOfEvent {
 			get {
 				return ResourceManager.GetString("kstidDateOfEvent", resourceCulture);
 			}
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Outdated Version of FieldWorks.
 		/// </summary>
-		internal static string kstiddbeOldAppTtl {
+		public static string kstiddbeOldAppTtl {
 			get {
 				return ResourceManager.GetString("kstiddbeOldAppTtl", resourceCulture);
 			}
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to This process will take a long time.{0}{0} Do you want to continue?.
 		/// </summary>
-		internal static string kstiddbeOldDbTime {
+		public static string kstiddbeOldDbTime {
 			get {
 				return ResourceManager.GetString("kstiddbeOldDbTime", resourceCulture);
 			}
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Upgrade Project.
 		/// </summary>
-		internal static string kstiddbeOldDbTtl {
+		public static string kstiddbeOldDbTtl {
 			get {
 				return ResourceManager.GetString("kstiddbeOldDbTtl", resourceCulture);
 			}
@@ -490,7 +490,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Default Analysis.
 		/// </summary>
-		internal static string kstidDefaultAnal {
+		public static string kstidDefaultAnal {
 			get {
 				return ResourceManager.GetString("kstidDefaultAnal", resourceCulture);
 			}
@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &lt;default font&gt;.
 		/// </summary>
-		internal static string kstidDefaultFont {
+		public static string kstidDefaultFont {
 			get {
 				return ResourceManager.GetString("kstidDefaultFont", resourceCulture);
 			}
@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Default Paragraph Characters.
 		/// </summary>
-		internal static string kstidDefaultParaChars {
+		public static string kstidDefaultParaChars {
 			get {
 				return ResourceManager.GetString("kstidDefaultParaChars", resourceCulture);
 			}
@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The text will get its font properties from the paragraph to which it belongs.
 		/// </summary>
-		internal static string kstidDefaultParaCharsUsage {
+		public static string kstidDefaultParaCharsUsage {
 			get {
 				return ResourceManager.GetString("kstidDefaultParaCharsUsage", resourceCulture);
 			}
@@ -526,7 +526,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Default Pronunciation.
 		/// </summary>
-		internal static string kstidDefaultPron {
+		public static string kstidDefaultPron {
 			get {
 				return ResourceManager.GetString("kstidDefaultPron", resourceCulture);
 			}
@@ -535,7 +535,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Standard Format Files.
 		/// </summary>
-		internal static string kstidDefaultStandardFormat {
+		public static string kstidDefaultStandardFormat {
 			get {
 				return ResourceManager.GetString("kstidDefaultStandardFormat", resourceCulture);
 			}
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to For help, press F1..
 		/// </summary>
-		internal static string kstidDefaultStatusText {
+		public static string kstidDefaultStatusText {
 			get {
 				return ResourceManager.GetString("kstidDefaultStatusText", resourceCulture);
 			}
@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Default Vernacular.
 		/// </summary>
-		internal static string kstidDefaultVern {
+		public static string kstidDefaultVern {
 			get {
 				return ResourceManager.GetString("kstidDefaultVern", resourceCulture);
 			}
@@ -562,7 +562,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Delete FieldWorks Project.
 		/// </summary>
-		internal static string kstidDeleteProjCaption {
+		public static string kstidDeleteProjCaption {
 			get {
 				return ResourceManager.GetString("kstidDeleteProjCaption", resourceCulture);
 			}
@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to An error occurred deleting project {0}.
 		/// </summary>
-		internal static string kstidDeleteProjError {
+		public static string kstidDeleteProjError {
 			get {
 				return ResourceManager.GetString("kstidDeleteProjError", resourceCulture);
 			}
@@ -580,7 +580,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Do you also want to delete the entire project folder for {0}, including all linked files (for example, picture, sound, or movie files)?.
 		/// </summary>
-		internal static string kstidDeleteProjFolder {
+		public static string kstidDeleteProjFolder {
 			get {
 				return ResourceManager.GetString("kstidDeleteProjFolder", resourceCulture);
 			}
@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Are you sure you want to delete the selected projects?.
 		/// </summary>
-		internal static string kstidDeleteProjWarning {
+		public static string kstidDeleteProjWarning {
 			get {
 				return ResourceManager.GetString("kstidDeleteProjWarning", resourceCulture);
 			}
@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Removing: &apos;{0}&apos; ....
 		/// </summary>
-		internal static string kstidDeletingStylesStatusMsg {
+		public static string kstidDeletingStylesStatusMsg {
 			get {
 				return ResourceManager.GetString("kstidDeletingStylesStatusMsg", resourceCulture);
 			}
@@ -607,7 +607,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Description.
 		/// </summary>
-		internal static string kstidDescription {
+		public static string kstidDescription {
 			get {
 				return ResourceManager.GetString("kstidDescription", resourceCulture);
 			}
@@ -616,7 +616,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Direct Formatting.
 		/// </summary>
-		internal static string kstidDirectFormattingToolBarText {
+		public static string kstidDirectFormattingToolBarText {
 			get {
 				return ResourceManager.GetString("kstidDirectFormattingToolBarText", resourceCulture);
 			}
@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Discussion.
 		/// </summary>
-		internal static string kstidDiscussion {
+		public static string kstidDiscussion {
 			get {
 				return ResourceManager.GetString("kstidDiscussion", resourceCulture);
 			}
@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cannot add style {0} because a style with this name already exists..
 		/// </summary>
-		internal static string kstidDuplicateStyleError {
+		public static string kstidDuplicateStyleError {
 			get {
 				return ResourceManager.GetString("kstidDuplicateStyleError", resourceCulture);
 			}
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Edit.
 		/// </summary>
-		internal static string kstidEditCategory {
+		public static string kstidEditCategory {
 			get {
 				return ResourceManager.GetString("kstidEditCategory", resourceCulture);
 			}
@@ -652,7 +652,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Copy.
 		/// </summary>
-		internal static string kstidEditCopyMenuName {
+		public static string kstidEditCopyMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditCopyMenuName", resourceCulture);
 			}
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Copy text to the clipboard..
 		/// </summary>
-		internal static string kstidEditCopyMsg {
+		public static string kstidEditCopyMsg {
 			get {
 				return ResourceManager.GetString("kstidEditCopyMsg", resourceCulture);
 			}
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Copy.
 		/// </summary>
-		internal static string kstidEditCopyToolTip {
+		public static string kstidEditCopyToolTip {
 			get {
 				return ResourceManager.GetString("kstidEditCopyToolTip", resourceCulture);
 			}
@@ -679,7 +679,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cut.
 		/// </summary>
-		internal static string kstidEditCut {
+		public static string kstidEditCut {
 			get {
 				return ResourceManager.GetString("kstidEditCut", resourceCulture);
 			}
@@ -688,7 +688,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cu&amp;t.
 		/// </summary>
-		internal static string kstidEditCutMenuName {
+		public static string kstidEditCutMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditCutMenuName", resourceCulture);
 			}
@@ -697,7 +697,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cut text and put it on the clipboard..
 		/// </summary>
-		internal static string kstidEditCutMsg {
+		public static string kstidEditCutMsg {
 			get {
 				return ResourceManager.GetString("kstidEditCutMsg", resourceCulture);
 			}
@@ -706,7 +706,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cut.
 		/// </summary>
-		internal static string kstidEditCutToolTip {
+		public static string kstidEditCutToolTip {
 			get {
 				return ResourceManager.GetString("kstidEditCutToolTip", resourceCulture);
 			}
@@ -715,7 +715,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Delete.
 		/// </summary>
-		internal static string kstidEditDelete {
+		public static string kstidEditDelete {
 			get {
 				return ResourceManager.GetString("kstidEditDelete", resourceCulture);
 			}
@@ -724,7 +724,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Delete.
 		/// </summary>
-		internal static string kstidEditDeleteMenuName {
+		public static string kstidEditDeleteMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditDeleteMenuName", resourceCulture);
 			}
@@ -733,7 +733,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Delete the selection..
 		/// </summary>
-		internal static string kstidEditDeleteMsg {
+		public static string kstidEditDeleteMsg {
 			get {
 				return ResourceManager.GetString("kstidEditDeleteMsg", resourceCulture);
 			}
@@ -742,7 +742,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Find....
 		/// </summary>
-		internal static string kstidEditFindMenuName {
+		public static string kstidEditFindMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditFindMenuName", resourceCulture);
 			}
@@ -751,7 +751,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Opens the Find dialog.
 		/// </summary>
-		internal static string kstidEditFindMsg {
+		public static string kstidEditFindMsg {
 			get {
 				return ResourceManager.GetString("kstidEditFindMsg", resourceCulture);
 			}
@@ -760,7 +760,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Ne&amp;xt Match.
 		/// </summary>
-		internal static string kstidEditFindNextMenuName {
+		public static string kstidEditFindNextMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditFindNextMenuName", resourceCulture);
 			}
@@ -769,7 +769,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Find next..
 		/// </summary>
-		internal static string kstidEditFindNextMsg {
+		public static string kstidEditFindNextMsg {
 			get {
 				return ResourceManager.GetString("kstidEditFindNextMsg", resourceCulture);
 			}
@@ -778,7 +778,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Pre&amp;vious Match.
 		/// </summary>
-		internal static string kstidEditFindPrevMenuName {
+		public static string kstidEditFindPrevMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditFindPrevMenuName", resourceCulture);
 			}
@@ -787,7 +787,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Find previous..
 		/// </summary>
-		internal static string kstidEditFindPrevMsg {
+		public static string kstidEditFindPrevMsg {
 			get {
 				return ResourceManager.GetString("kstidEditFindPrevMsg", resourceCulture);
 			}
@@ -796,7 +796,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Edit.
 		/// </summary>
-		internal static string kstidEditMenuName {
+		public static string kstidEditMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditMenuName", resourceCulture);
 			}
@@ -805,7 +805,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Paste.
 		/// </summary>
-		internal static string kstidEditPaste {
+		public static string kstidEditPaste {
 			get {
 				return ResourceManager.GetString("kstidEditPaste", resourceCulture);
 			}
@@ -814,7 +814,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Paste.
 		/// </summary>
-		internal static string kstidEditPasteMenuName {
+		public static string kstidEditPasteMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditPasteMenuName", resourceCulture);
 			}
@@ -823,7 +823,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Paste text from the clipboard..
 		/// </summary>
-		internal static string kstidEditPasteMsg {
+		public static string kstidEditPasteMsg {
 			get {
 				return ResourceManager.GetString("kstidEditPasteMsg", resourceCulture);
 			}
@@ -832,7 +832,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Paste.
 		/// </summary>
-		internal static string kstidEditPasteToolTip {
+		public static string kstidEditPasteToolTip {
 			get {
 				return ResourceManager.GetString("kstidEditPasteToolTip", resourceCulture);
 			}
@@ -841,7 +841,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Redo.
 		/// </summary>
-		internal static string kstidEditRedoMenuName {
+		public static string kstidEditRedoMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditRedoMenuName", resourceCulture);
 			}
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Redo the most recent undone change..
 		/// </summary>
-		internal static string kstidEditRedoMsg {
+		public static string kstidEditRedoMsg {
 			get {
 				return ResourceManager.GetString("kstidEditRedoMsg", resourceCulture);
 			}
@@ -859,7 +859,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Redo.
 		/// </summary>
-		internal static string kstidEditRedoToolTip {
+		public static string kstidEditRedoToolTip {
 			get {
 				return ResourceManager.GetString("kstidEditRedoToolTip", resourceCulture);
 			}
@@ -868,7 +868,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to R&amp;eplace....
 		/// </summary>
-		internal static string kstidEditReplaceMenuName {
+		public static string kstidEditReplaceMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditReplaceMenuName", resourceCulture);
 			}
@@ -877,7 +877,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Opens the replace dialog..
 		/// </summary>
-		internal static string kstidEditReplaceMsg {
+		public static string kstidEditReplaceMsg {
 			get {
 				return ResourceManager.GetString("kstidEditReplaceMsg", resourceCulture);
 			}
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Select A&amp;ll.
 		/// </summary>
-		internal static string kstidEditSelectAllMenuName {
+		public static string kstidEditSelectAllMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditSelectAllMenuName", resourceCulture);
 			}
@@ -895,7 +895,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Select all of the text..
 		/// </summary>
-		internal static string kstidEditSelectAllMsg {
+		public static string kstidEditSelectAllMsg {
 			get {
 				return ResourceManager.GetString("kstidEditSelectAllMsg", resourceCulture);
 			}
@@ -904,7 +904,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Undo.
 		/// </summary>
-		internal static string kstidEditUndoMenuName {
+		public static string kstidEditUndoMenuName {
 			get {
 				return ResourceManager.GetString("kstidEditUndoMenuName", resourceCulture);
 			}
@@ -913,7 +913,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Undoes the most recent change..
 		/// </summary>
-		internal static string kstidEditUndoMsg {
+		public static string kstidEditUndoMsg {
 			get {
 				return ResourceManager.GetString("kstidEditUndoMsg", resourceCulture);
 			}
@@ -922,7 +922,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Undo.
 		/// </summary>
-		internal static string kstidEditUndoToolTip {
+		public static string kstidEditUndoToolTip {
 			get {
 				return ResourceManager.GetString("kstidEditUndoToolTip", resourceCulture);
 			}
@@ -931,7 +931,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cannot remove encoding converter because it is currently in use by a writing system..
 		/// </summary>
-		internal static string kstidEncodingConverterInUseError {
+		public static string kstidEncodingConverterInUseError {
 			get {
 				return ResourceManager.GetString("kstidEncodingConverterInUseError", resourceCulture);
 			}
@@ -940,7 +940,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cannot Remove Encoder.
 		/// </summary>
-		internal static string kstidEncodingConverterInUseErrorCaption {
+		public static string kstidEncodingConverterInUseErrorCaption {
 			get {
 				return ResourceManager.GetString("kstidEncodingConverterInUseErrorCaption", resourceCulture);
 			}
@@ -950,7 +950,7 @@ namespace SIL.FieldWorks.Resources {
 		///   Looks up a localized string similar to The writing system could not be modified. There is a problem in your language definition. See the
 		///FieldWorks ReadMe for help in this area..
 		/// </summary>
-		internal static string kstidErrorModifyingWS {
+		public static string kstidErrorModifyingWS {
 			get {
 				return ResourceManager.GetString("kstidErrorModifyingWS", resourceCulture);
 			}
@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Exporting {0} entries from the lexicon.
 		/// </summary>
-		internal static string kstidExportingEntries {
+		public static string kstidExportingEntries {
 			get {
 				return ResourceManager.GetString("kstidExportingEntries", resourceCulture);
 			}
@@ -968,7 +968,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Export LIFT Lexicon.
 		/// </summary>
-		internal static string kstidExportLiftLexicon {
+		public static string kstidExportLiftLexicon {
 			get {
 				return ResourceManager.GetString("kstidExportLiftLexicon", resourceCulture);
 			}
@@ -977,7 +977,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to External Materials.
 		/// </summary>
-		internal static string kstidExternalMaterials {
+		public static string kstidExternalMaterials {
 			get {
 				return ResourceManager.GetString("kstidExternalMaterials", resourceCulture);
 			}
@@ -990,7 +990,7 @@ namespace SIL.FieldWorks.Resources {
 		///
 		///You should be able to restart it normally..
 		/// </summary>
-		internal static string kstidFatalError {
+		public static string kstidFatalError {
 			get {
 				return ResourceManager.GetString("kstidFatalError", resourceCulture);
 			}
@@ -999,7 +999,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to All FieldWorks backup files.
 		/// </summary>
-		internal static string kstidFieldWorksAllBackupFiles {
+		public static string kstidFieldWorksAllBackupFiles {
 			get {
 				return ResourceManager.GetString("kstidFieldWorksAllBackupFiles", resourceCulture);
 			}
@@ -1008,7 +1008,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Backup files.
 		/// </summary>
-		internal static string kstidFieldWorksBackupFiles {
+		public static string kstidFieldWorksBackupFiles {
 			get {
 				return ResourceManager.GetString("kstidFieldWorksBackupFiles", resourceCulture);
 			}
@@ -1017,7 +1017,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to FieldWorks Project Files.
 		/// </summary>
-		internal static string kstidFieldWorksProjectFiles {
+		public static string kstidFieldWorksProjectFiles {
 			get {
 				return ResourceManager.GetString("kstidFieldWorksProjectFiles", resourceCulture);
 			}
@@ -1026,7 +1026,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Translated Lists Files.
 		/// </summary>
-		internal static string kstidFieldWorksTranslatedLists {
+		public static string kstidFieldWorksTranslatedLists {
 			get {
 				return ResourceManager.GetString("kstidFieldWorksTranslatedLists", resourceCulture);
 			}
@@ -1035,7 +1035,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Backup and Restore....
 		/// </summary>
-		internal static string kstidFileBackupRestoreMenuName {
+		public static string kstidFileBackupRestoreMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileBackupRestoreMenuName", resourceCulture);
 			}
@@ -1044,7 +1044,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Backup or restore a FieldWorks project..
 		/// </summary>
-		internal static string kstidFileBackupRestoreMsg {
+		public static string kstidFileBackupRestoreMsg {
 			get {
 				return ResourceManager.GetString("kstidFileBackupRestoreMsg", resourceCulture);
 			}
@@ -1053,7 +1053,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Close.
 		/// </summary>
-		internal static string kstidFileCloseMenuName {
+		public static string kstidFileCloseMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileCloseMenuName", resourceCulture);
 			}
@@ -1062,7 +1062,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Close this window.
 		/// </summary>
-		internal static string kstidFileCloseMsg {
+		public static string kstidFileCloseMsg {
 			get {
 				return ResourceManager.GetString("kstidFileCloseMsg", resourceCulture);
 			}
@@ -1071,7 +1071,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Delete....
 		/// </summary>
-		internal static string kstidFileDeleteMenuName {
+		public static string kstidFileDeleteMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileDeleteMenuName", resourceCulture);
 			}
@@ -1080,7 +1080,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Delete a FieldWorks project..
 		/// </summary>
-		internal static string kstidFileDeleteMsg {
+		public static string kstidFileDeleteMsg {
 			get {
 				return ResourceManager.GetString("kstidFileDeleteMsg", resourceCulture);
 			}
@@ -1089,7 +1089,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to E&amp;xit.
 		/// </summary>
-		internal static string kstidFileExitMenuName {
+		public static string kstidFileExitMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileExitMenuName", resourceCulture);
 			}
@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Exits this application..
 		/// </summary>
-		internal static string kstidFileExitMsg {
+		public static string kstidFileExitMsg {
 			get {
 				return ResourceManager.GetString("kstidFileExitMsg", resourceCulture);
 			}
@@ -1107,7 +1107,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Line {0}.
 		/// </summary>
-		internal static string kstidFileLineRef {
+		public static string kstidFileLineRef {
 			get {
 				return ResourceManager.GetString("kstidFileLineRef", resourceCulture);
 			}
@@ -1116,7 +1116,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;File.
 		/// </summary>
-		internal static string kstidFileMenuName {
+		public static string kstidFileMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileMenuName", resourceCulture);
 			}
@@ -1125,7 +1125,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Open.
 		/// </summary>
-		internal static string kstidFileOpenMenuName {
+		public static string kstidFileOpenMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileOpenMenuName", resourceCulture);
 			}
@@ -1134,7 +1134,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open Project.
 		/// </summary>
-		internal static string kstidFileOpenToolTip {
+		public static string kstidFileOpenToolTip {
 			get {
 				return ResourceManager.GetString("kstidFileOpenToolTip", resourceCulture);
 			}
@@ -1143,7 +1143,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page Set&amp;up....
 		/// </summary>
-		internal static string kstidFilePageSetupMenuName {
+		public static string kstidFilePageSetupMenuName {
 			get {
 				return ResourceManager.GetString("kstidFilePageSetupMenuName", resourceCulture);
 			}
@@ -1152,7 +1152,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page Setup for Printing..
 		/// </summary>
-		internal static string kstidFilePageSetupMsg {
+		public static string kstidFilePageSetupMsg {
 			get {
 				return ResourceManager.GetString("kstidFilePageSetupMsg", resourceCulture);
 			}
@@ -1161,7 +1161,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Print....
 		/// </summary>
-		internal static string kstidFilePrintMenuName {
+		public static string kstidFilePrintMenuName {
 			get {
 				return ResourceManager.GetString("kstidFilePrintMenuName", resourceCulture);
 			}
@@ -1170,7 +1170,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Prints current view..
 		/// </summary>
-		internal static string kstidFilePrintMsg {
+		public static string kstidFilePrintMsg {
 			get {
 				return ResourceManager.GetString("kstidFilePrintMsg", resourceCulture);
 			}
@@ -1179,7 +1179,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Print.
 		/// </summary>
-		internal static string kstidFilePrintToolTip {
+		public static string kstidFilePrintToolTip {
 			get {
 				return ResourceManager.GetString("kstidFilePrintToolTip", resourceCulture);
 			}
@@ -1188,7 +1188,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Field&amp;Works Project Properties....
 		/// </summary>
-		internal static string kstidFileProjectPropertiesMenuName {
+		public static string kstidFileProjectPropertiesMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileProjectPropertiesMenuName", resourceCulture);
 			}
@@ -1197,7 +1197,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Modify properties of a FieldWorks project..
 		/// </summary>
-		internal static string kstidFileProjectPropertiesMsg {
+		public static string kstidFileProjectPropertiesMsg {
 			get {
 				return ResourceManager.GetString("kstidFileProjectPropertiesMsg", resourceCulture);
 			}
@@ -1206,7 +1206,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Project &amp;Management.
 		/// </summary>
-		internal static string kstidFileProjMgmtMenuName {
+		public static string kstidFileProjMgmtMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileProjMgmtMenuName", resourceCulture);
 			}
@@ -1215,7 +1215,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Save.
 		/// </summary>
-		internal static string kstidFileSaveMenuName {
+		public static string kstidFileSaveMenuName {
 			get {
 				return ResourceManager.GetString("kstidFileSaveMenuName", resourceCulture);
 			}
@@ -1224,7 +1224,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Saves changes..
 		/// </summary>
-		internal static string kstidFileSaveMsg {
+		public static string kstidFileSaveMsg {
 			get {
 				return ResourceManager.GetString("kstidFileSaveMsg", resourceCulture);
 			}
@@ -1233,7 +1233,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Save.
 		/// </summary>
-		internal static string kstidFileSaveToolTip {
+		public static string kstidFileSaveToolTip {
 			get {
 				return ResourceManager.GetString("kstidFileSaveToolTip", resourceCulture);
 			}
@@ -1242,7 +1242,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Filtered.
 		/// </summary>
-		internal static string kstidFilterStatusMsg {
+		public static string kstidFilterStatusMsg {
 			get {
 				return ResourceManager.GetString("kstidFilterStatusMsg", resourceCulture);
 			}
@@ -1251,7 +1251,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Fixing relation links between imported entries.
 		/// </summary>
-		internal static string kstidFixingRelationLinks {
+		public static string kstidFixingRelationLinks {
 			get {
 				return ResourceManager.GetString("kstidFixingRelationLinks", resourceCulture);
 			}
@@ -1278,7 +1278,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Background Color.
 		/// </summary>
-		internal static string kstidFormatBackgroundColorToolTip {
+		public static string kstidFormatBackgroundColorToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBackgroundColorToolTip", resourceCulture);
 			}
@@ -1287,7 +1287,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Bold.
 		/// </summary>
-		internal static string kstidFormatBoldToolTip {
+		public static string kstidFormatBoldToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBoldToolTip", resourceCulture);
 			}
@@ -1296,7 +1296,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Bottom Border.
 		/// </summary>
-		internal static string kstidFormatBordersBottomToolTip {
+		public static string kstidFormatBordersBottomToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersBottomToolTip", resourceCulture);
 			}
@@ -1305,7 +1305,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Left Border.
 		/// </summary>
-		internal static string kstidFormatBordersLeftToolTip {
+		public static string kstidFormatBordersLeftToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersLeftToolTip", resourceCulture);
 			}
@@ -1314,7 +1314,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to No Borders.
 		/// </summary>
-		internal static string kstidFormatBordersNoneToolTip {
+		public static string kstidFormatBordersNoneToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersNoneToolTip", resourceCulture);
 			}
@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Right Border.
 		/// </summary>
-		internal static string kstidFormatBordersRightToolTip {
+		public static string kstidFormatBordersRightToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersRightToolTip", resourceCulture);
 			}
@@ -1332,7 +1332,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Borders all Around.
 		/// </summary>
-		internal static string kstidFormatBordersSurroundToolTip {
+		public static string kstidFormatBordersSurroundToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersSurroundToolTip", resourceCulture);
 			}
@@ -1341,7 +1341,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Borders.
 		/// </summary>
-		internal static string kstidFormatBordersToolTip {
+		public static string kstidFormatBordersToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersToolTip", resourceCulture);
 			}
@@ -1350,7 +1350,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Top Border.
 		/// </summary>
-		internal static string kstidFormatBordersTopToolTip {
+		public static string kstidFormatBordersTopToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBordersTopToolTip", resourceCulture);
 			}
@@ -1359,7 +1359,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Bullets.
 		/// </summary>
-		internal static string kstidFormatBulletedListItemToolTip {
+		public static string kstidFormatBulletedListItemToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatBulletedListItemToolTip", resourceCulture);
 			}
@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Format.
 		/// </summary>
-		internal static string kstidFormatCategory {
+		public static string kstidFormatCategory {
 			get {
 				return ResourceManager.GetString("kstidFormatCategory", resourceCulture);
 			}
@@ -1377,7 +1377,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Center.
 		/// </summary>
-		internal static string kstidFormatCenterToolTip {
+		public static string kstidFormatCenterToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatCenterToolTip", resourceCulture);
 			}
@@ -1386,7 +1386,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Character Style.
 		/// </summary>
-		internal static string kstidFormatCharStyleToolTip {
+		public static string kstidFormatCharStyleToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatCharStyleToolTip", resourceCulture);
 			}
@@ -1395,7 +1395,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Decrease Indent.
 		/// </summary>
-		internal static string kstidFormatDecreaseIndentToolTip {
+		public static string kstidFormatDecreaseIndentToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatDecreaseIndentToolTip", resourceCulture);
 			}
@@ -1404,7 +1404,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Font Color.
 		/// </summary>
-		internal static string kstidFormatFontColorToolTip {
+		public static string kstidFormatFontColorToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatFontColorToolTip", resourceCulture);
 			}
@@ -1413,7 +1413,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Increase Indent.
 		/// </summary>
-		internal static string kstidFormatIncreaseIndentToolTip {
+		public static string kstidFormatIncreaseIndentToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatIncreaseIndentToolTip", resourceCulture);
 			}
@@ -1422,7 +1422,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Italic.
 		/// </summary>
-		internal static string kstidFormatItalicToolTip {
+		public static string kstidFormatItalicToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatItalicToolTip", resourceCulture);
 			}
@@ -1431,7 +1431,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Align Left.
 		/// </summary>
-		internal static string kstidFormatLeftAlignToolTip {
+		public static string kstidFormatLeftAlignToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatLeftAlignToolTip", resourceCulture);
 			}
@@ -1440,7 +1440,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to F&amp;ormat.
 		/// </summary>
-		internal static string kstidFormatMenuName {
+		public static string kstidFormatMenuName {
 			get {
 				return ResourceManager.GetString("kstidFormatMenuName", resourceCulture);
 			}
@@ -1449,7 +1449,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Numbering.
 		/// </summary>
-		internal static string kstidFormatNumberedListItemToolTip {
+		public static string kstidFormatNumberedListItemToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatNumberedListItemToolTip", resourceCulture);
 			}
@@ -1458,7 +1458,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Paragraph Style.
 		/// </summary>
-		internal static string kstidFormatParaStyleToolTip {
+		public static string kstidFormatParaStyleToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatParaStyleToolTip", resourceCulture);
 			}
@@ -1467,7 +1467,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Align Right.
 		/// </summary>
-		internal static string kstidFormatRightAlignToolTip {
+		public static string kstidFormatRightAlignToolTip {
 			get {
 				return ResourceManager.GetString("kstidFormatRightAlignToolTip", resourceCulture);
 			}
@@ -1476,7 +1476,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Style....
 		/// </summary>
-		internal static string kstidFormatStyleMenuName {
+		public static string kstidFormatStyleMenuName {
 			get {
 				return ResourceManager.GetString("kstidFormatStyleMenuName", resourceCulture);
 			}
@@ -1485,7 +1485,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open a dialog to add, delete, or change styles..
 		/// </summary>
-		internal static string kstidFormatStyleMsg {
+		public static string kstidFormatStyleMsg {
 			get {
 				return ResourceManager.GetString("kstidFormatStyleMsg", resourceCulture);
 			}
@@ -1494,7 +1494,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Format.
 		/// </summary>
-		internal static string kstidFormatToolBarText {
+		public static string kstidFormatToolBarText {
 			get {
 				return ResourceManager.GetString("kstidFormatToolBarText", resourceCulture);
 			}
@@ -1503,7 +1503,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Full Page.
 		/// </summary>
-		internal static string kstidFullPage {
+		public static string kstidFullPage {
 			get {
 				return ResourceManager.GetString("kstidFullPage", resourceCulture);
 			}
@@ -1512,7 +1512,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Further Questions.
 		/// </summary>
-		internal static string kstidFurtherQuestions {
+		public static string kstidFurtherQuestions {
 			get {
 				return ResourceManager.GetString("kstidFurtherQuestions", resourceCulture);
 			}
@@ -1527,7 +1527,7 @@ namespace SIL.FieldWorks.Resources {
 		///
 		///------Generated error details follow------
 		///
-		///An internal error has been detected in program {1}, Version: {2}
+		///An public error has been detected in program {1}, Version: {2}
 		///Details follow:
 		///
 		///A programming error ({3}) has been detected in module {4}, {5}.
@@ -1537,7 +1537,7 @@ namespace SIL.FieldWorks.Resources {
 		///{6}
 		///.
 		/// </summary>
-		internal static string kstidGotException {
+		public static string kstidGotException {
 			get {
 				return ResourceManager.GetString("kstidGotException", resourceCulture);
 			}
@@ -1546,7 +1546,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The gutter is too big for the publication page to fit on the selected paper size..
 		/// </summary>
-		internal static string kstidGutterTooBig {
+		public static string kstidGutterTooBig {
 			get {
 				return ResourceManager.GetString("kstidGutterTooBig", resourceCulture);
 			}
@@ -1555,7 +1555,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Hard Line Break.
 		/// </summary>
-		internal static string kstidHardLineBreak {
+		public static string kstidHardLineBreak {
 			get {
 				return ResourceManager.GetString("kstidHardLineBreak", resourceCulture);
 			}
@@ -1564,7 +1564,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Help.
 		/// </summary>
-		internal static string kstidHelpMenuName {
+		public static string kstidHelpMenuName {
 			get {
 				return ResourceManager.GetString("kstidHelpMenuName", resourceCulture);
 			}
@@ -1573,7 +1573,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Help.
 		/// </summary>
-		internal static string kstidHelpToolTip {
+		public static string kstidHelpToolTip {
 			get {
 				return ResourceManager.GetString("kstidHelpToolTip", resourceCulture);
 			}
@@ -1582,7 +1582,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The settings for the inside and outside margins and gutter are too large for the page width..
 		/// </summary>
-		internal static string kstidHorizontalMarginsAndGutterTooBig {
+		public static string kstidHorizontalMarginsAndGutterTooBig {
 			get {
 				return ResourceManager.GetString("kstidHorizontalMarginsAndGutterTooBig", resourceCulture);
 			}
@@ -1591,7 +1591,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The settings for the inside and outside margins are too large for the page width..
 		/// </summary>
-		internal static string kstidHorizontalMarginsTooBig {
+		public static string kstidHorizontalMarginsTooBig {
 			get {
 				return ResourceManager.GetString("kstidHorizontalMarginsTooBig", resourceCulture);
 			}
@@ -1600,7 +1600,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to HTM Files.
 		/// </summary>
-		internal static string kstidHTM {
+		public static string kstidHTM {
 			get {
 				return ResourceManager.GetString("kstidHTM", resourceCulture);
 			}
@@ -1609,7 +1609,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to HTML Files.
 		/// </summary>
-		internal static string kstidHTML {
+		public static string kstidHTML {
 			get {
 				return ResourceManager.GetString("kstidHTML", resourceCulture);
 			}
@@ -1618,7 +1618,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Hypothesis.
 		/// </summary>
-		internal static string kstidHypothesis {
+		public static string kstidHypothesis {
 			get {
 				return ResourceManager.GetString("kstidHypothesis", resourceCulture);
 			}
@@ -1627,7 +1627,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Import LIFT Lexicon.
 		/// </summary>
-		internal static string kstidImportLiftlexicon {
+		public static string kstidImportLiftlexicon {
 			get {
 				return ResourceManager.GetString("kstidImportLiftlexicon", resourceCulture);
 			}
@@ -1636,7 +1636,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Import Mapping Files.
 		/// </summary>
-		internal static string kstidImportMapping {
+		public static string kstidImportMapping {
 			get {
 				return ResourceManager.GetString("kstidImportMapping", resourceCulture);
 			}
@@ -1645,7 +1645,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Style {0} could not be added because an incompatible style with the same name already exists..
 		/// </summary>
-		internal static string kstidIncompatibleStyleExists {
+		public static string kstidIncompatibleStyleExists {
 			get {
 				return ResourceManager.GetString("kstidIncompatibleStyleExists", resourceCulture);
 			}
@@ -1654,7 +1654,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Initializing Window....
 		/// </summary>
-		internal static string kstidInitWindow {
+		public static string kstidInitWindow {
 			get {
 				return ResourceManager.GetString("kstidInitWindow", resourceCulture);
 			}
@@ -1663,7 +1663,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to Insert Movie File.
 		/// </summary>
-		internal static string kstidInsertMovieFileError {
+		public static string kstidInsertMovieFileError {
 			get {
 				return ResourceManager.GetString("kstidInsertMovieFileError", resourceCulture);
 			}
@@ -1672,7 +1672,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to Insert Picture.
 		/// </summary>
-		internal static string kstidInsertPictureError {
+		public static string kstidInsertPictureError {
 			get {
 				return ResourceManager.GetString("kstidInsertPictureError", resourceCulture);
 			}
@@ -1681,7 +1681,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to Insert Sound File.
 		/// </summary>
-		internal static string kstidInsertSoundFileError {
+		public static string kstidInsertSoundFileError {
 			get {
 				return ResourceManager.GetString("kstidInsertSoundFileError", resourceCulture);
 			}
@@ -1699,7 +1699,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to FieldWorks software is not installed correctly. Please insert your FieldWorks CD or re-run the Installer and repair your installation..
 		/// </summary>
-		internal static string kstidInvalidInstallation {
+		public static string kstidInvalidInstallation {
 			get {
 				return ResourceManager.GetString("kstidInvalidInstallation", resourceCulture);
 			}
@@ -1708,7 +1708,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Pathway is not installed correctly. Please re-run the Pathway installer and repair your installation..
 		/// </summary>
-		internal static string kstidInvalidPathwayInstallation {
+		public static string kstidInvalidPathwayInstallation {
 			get {
 				return ResourceManager.GetString("kstidInvalidPathwayInstallation", resourceCulture);
 			}
@@ -1717,16 +1717,25 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Invalid keyboard.
 		/// </summary>
-		internal static string kstidInvalKybd {
+		public static string kstidInvalKybd {
 			get {
 				return ResourceManager.GetString("kstidInvalKybd", resourceCulture);
 			}
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to None.
+		/// </summary>
+		public static string kstidKeyboardNone {
+			get {
+				return ResourceManager.GetString("kstidKeyboardNone", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to LIFT files.
 		/// </summary>
-		internal static string kstidLIFT {
+		public static string kstidLIFT {
 			get {
 				return ResourceManager.GetString("kstidLIFT", resourceCulture);
 			}
@@ -1735,7 +1744,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Migrating from LIFT version {0} to version {1}.
 		/// </summary>
-		internal static string kstidLiftVersionMigration {
+		public static string kstidLiftVersionMigration {
 			get {
 				return ResourceManager.GetString("kstidLiftVersionMigration", resourceCulture);
 			}
@@ -1744,7 +1753,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Loading various lists for lookup during import.
 		/// </summary>
-		internal static string kstidLoadingListInfo {
+		public static string kstidLoadingListInfo {
 			get {
 				return ResourceManager.GetString("kstidLoadingListInfo", resourceCulture);
 			}
@@ -1753,7 +1762,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Locations.
 		/// </summary>
-		internal static string kstidLocations {
+		public static string kstidLocations {
 			get {
 				return ResourceManager.GetString("kstidLocations", resourceCulture);
 			}
@@ -1762,7 +1771,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The margins are bigger than the publication page size..
 		/// </summary>
-		internal static string kstidMarginsTooBig {
+		public static string kstidMarginsTooBig {
 			get {
 				return ResourceManager.GetString("kstidMarginsTooBig", resourceCulture);
 			}
@@ -1771,7 +1780,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Error.
 		/// </summary>
-		internal static string kstidMiscError {
+		public static string kstidMiscError {
 			get {
 				return ResourceManager.GetString("kstidMiscError", resourceCulture);
 			}
@@ -1780,7 +1789,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Error: {0}.
 		/// </summary>
-		internal static string kstidMiscErrorWithMessage {
+		public static string kstidMiscErrorWithMessage {
 			get {
 				return ResourceManager.GetString("kstidMiscErrorWithMessage", resourceCulture);
 			}
@@ -1789,7 +1798,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;More Windows....
 		/// </summary>
-		internal static string kstidMoreWindows {
+		public static string kstidMoreWindows {
 			get {
 				return ResourceManager.GetString("kstidMoreWindows", resourceCulture);
 			}
@@ -1798,7 +1807,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to An error has occurred while creating a new project..
 		/// </summary>
-		internal static string kstidNewProjError {
+		public static string kstidNewProjError {
 			get {
 				return ResourceManager.GetString("kstidNewProjError", resourceCulture);
 			}
@@ -1807,7 +1816,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;New Window.
 		/// </summary>
-		internal static string kstidNewWindowMenuName {
+		public static string kstidNewWindowMenuName {
 			get {
 				return ResourceManager.GetString("kstidNewWindowMenuName", resourceCulture);
 			}
@@ -1816,7 +1825,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Opens another identical second window containing the same data..
 		/// </summary>
-		internal static string kstidNewWindowMsg {
+		public static string kstidNewWindowMsg {
 			get {
 				return ResourceManager.GetString("kstidNewWindowMsg", resourceCulture);
 			}
@@ -1825,7 +1834,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to No Filter.
 		/// </summary>
-		internal static string kstidNoFilterButtonText {
+		public static string kstidNoFilterButtonText {
 			get {
 				return ResourceManager.GetString("kstidNoFilterButtonText", resourceCulture);
 			}
@@ -1834,7 +1843,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to No Filter.
 		/// </summary>
-		internal static string kstidNoFilterItemName {
+		public static string kstidNoFilterItemName {
 			get {
 				return ResourceManager.GetString("kstidNoFilterItemName", resourceCulture);
 			}
@@ -1843,7 +1852,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Not Base.
 		/// </summary>
-		internal static string kstidNotBaseCharErrorMsg {
+		public static string kstidNotBaseCharErrorMsg {
 			get {
 				return ResourceManager.GetString("kstidNotBaseCharErrorMsg", resourceCulture);
 			}
@@ -1852,7 +1861,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to FieldWorks project has no current {0} writing systems..
 		/// </summary>
-		internal static string kstidNoWritingSystems {
+		public static string kstidNoWritingSystems {
 			get {
 				return ResourceManager.GetString("kstidNoWritingSystems", resourceCulture);
 			}
@@ -1861,7 +1870,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Outdated Version of FieldWorks.
 		/// </summary>
-		internal static string kstidOldAppWarningCaption {
+		public static string kstidOldAppWarningCaption {
 			get {
 				return ResourceManager.GetString("kstidOldAppWarningCaption", resourceCulture);
 			}
@@ -1870,7 +1879,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Upgrade Project.
 		/// </summary>
-		internal static string kstidOldDbVersionCaption {
+		public static string kstidOldDbVersionCaption {
 			get {
 				return ResourceManager.GetString("kstidOldDbVersionCaption", resourceCulture);
 			}
@@ -1879,7 +1888,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to Update {0} on {1} from version {2} to {3}.{4}You need to update the database on the local machine..
 		/// </summary>
-		internal static string kstidOldDbVersionRemoteMsg {
+		public static string kstidOldDbVersionRemoteMsg {
 			get {
 				return ResourceManager.GetString("kstidOldDbVersionRemoteMsg", resourceCulture);
 			}
@@ -1888,7 +1897,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The {0} database needs to be updated from version {1} to version {2}.{3}{3}Performing this update could take a while. Do you want to continue with the Update?.
 		/// </summary>
-		internal static string kstidOldDbVersionUpdateMsg {
+		public static string kstidOldDbVersionUpdateMsg {
 			get {
 				return ResourceManager.GetString("kstidOldDbVersionUpdateMsg", resourceCulture);
 			}
@@ -1897,7 +1906,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to OpenOffice/LibreOffice Files.
 		/// </summary>
-		internal static string kstidOpenOffice {
+		public static string kstidOpenOffice {
 			get {
 				return ResourceManager.GetString("kstidOpenOffice", resourceCulture);
 			}
@@ -1906,7 +1915,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to An error has occurred while opening project {0}: {1}.
 		/// </summary>
-		internal static string kstidOpenProjError {
+		public static string kstidOpenProjError {
 			get {
 				return ResourceManager.GetString("kstidOpenProjError", resourceCulture);
 			}
@@ -1915,16 +1924,25 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open Translated Lists File.
 		/// </summary>
-		internal static string kstidOpenTranslatedLists {
+		public static string kstidOpenTranslatedLists {
 			get {
 				return ResourceManager.GetString("kstidOpenTranslatedLists", resourceCulture);
 			}
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Other.
+		/// </summary>
+		public static string kstidOtherLanguage {
+			get {
+				return ResourceManager.GetString("kstidOtherLanguage", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Out of memory..
 		/// </summary>
-		internal static string kstidOutOfMemory {
+		public static string kstidOutOfMemory {
 			get {
 				return ResourceManager.GetString("kstidOutOfMemory", resourceCulture);
 			}
@@ -1942,7 +1960,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open XML for Editing Scripture (OXES) Files.
 		/// </summary>
-		internal static string kstidOXES {
+		public static string kstidOXES {
 			get {
 				return ResourceManager.GetString("kstidOXES", resourceCulture);
 			}
@@ -1951,7 +1969,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Open XML for Exchanging Scripture Annotations (OXESA) Files.
 		/// </summary>
-		internal static string kstidOXESA {
+		public static string kstidOXESA {
 			get {
 				return ResourceManager.GetString("kstidOXESA", resourceCulture);
 			}
@@ -1960,7 +1978,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page Setup - {0}.
 		/// </summary>
-		internal static string kstidPageSetupWithViewName {
+		public static string kstidPageSetupWithViewName {
 			get {
 				return ResourceManager.GetString("kstidPageSetupWithViewName", resourceCulture);
 			}
@@ -1969,7 +1987,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page Width.
 		/// </summary>
-		internal static string kstidPageWidth {
+		public static string kstidPageWidth {
 			get {
 				return ResourceManager.GetString("kstidPageWidth", resourceCulture);
 			}
@@ -1978,7 +1996,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to A4.
 		/// </summary>
-		internal static string kstidPaperSizeA4 {
+		public static string kstidPaperSizeA4 {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeA4", resourceCulture);
 			}
@@ -1987,7 +2005,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to A5.
 		/// </summary>
-		internal static string kstidPaperSizeA5 {
+		public static string kstidPaperSizeA5 {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeA5", resourceCulture);
 			}
@@ -1996,7 +2014,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Custom.
 		/// </summary>
-		internal static string kstidPaperSizeCustom {
+		public static string kstidPaperSizeCustom {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeCustom", resourceCulture);
 			}
@@ -2005,7 +2023,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Legal (8.5 x 13).
 		/// </summary>
-		internal static string kstidPaperSizeLegalPhil {
+		public static string kstidPaperSizeLegalPhil {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeLegalPhil", resourceCulture);
 			}
@@ -2014,7 +2032,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Legal (8.5 x 14).
 		/// </summary>
-		internal static string kstidPaperSizeLegalStd {
+		public static string kstidPaperSizeLegalStd {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeLegalStd", resourceCulture);
 			}
@@ -2023,7 +2041,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Letter.
 		/// </summary>
-		internal static string kstidPaperSizeLetter {
+		public static string kstidPaperSizeLetter {
 			get {
 				return ResourceManager.GetString("kstidPaperSizeLetter", resourceCulture);
 			}
@@ -2032,7 +2050,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Paratext Language Files.
 		/// </summary>
-		internal static string kstidParatextLanguageFiles {
+		public static string kstidParatextLanguageFiles {
 			get {
 				return ResourceManager.GetString("kstidParatextLanguageFiles", resourceCulture);
 			}
@@ -2041,7 +2059,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Participants.
 		/// </summary>
-		internal static string kstidParticipants {
+		public static string kstidParticipants {
 			get {
 				return ResourceManager.GetString("kstidParticipants", resourceCulture);
 			}
@@ -2051,7 +2069,7 @@ namespace SIL.FieldWorks.Resources {
 		///   Looks up a localized string similar to Sorry, for now strings containing pictures can be pasted
 		///only in multiple-paragraph fields..
 		/// </summary>
-		internal static string kstidPastePicMultiParaFld {
+		public static string kstidPastePicMultiParaFld {
 			get {
 				return ResourceManager.GetString("kstidPastePicMultiParaFld", resourceCulture);
 			}
@@ -2060,7 +2078,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Portable Document Files.
 		/// </summary>
-		internal static string kstidPDF {
+		public static string kstidPDF {
 			get {
 				return ResourceManager.GetString("kstidPDF", resourceCulture);
 			}
@@ -2069,7 +2087,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Personal Notes.
 		/// </summary>
-		internal static string kstidPersonalNotes {
+		public static string kstidPersonalNotes {
 			get {
 				return ResourceManager.GetString("kstidPersonalNotes", resourceCulture);
 			}
@@ -2078,7 +2096,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to PhraseTags.
 		/// </summary>
-		internal static string kstidPhraseTags {
+		public static string kstidPhraseTags {
 			get {
 				return ResourceManager.GetString("kstidPhraseTags", resourceCulture);
 			}
@@ -2088,7 +2106,7 @@ namespace SIL.FieldWorks.Resources {
 		///   Looks up a localized string similar to Sorry, for now strings containing pictures can be pasted
 		///only in multiple-paragraph fields like &apos;Description&apos;.
 		/// </summary>
-		internal static string kstidPicsMultiPara {
+		public static string kstidPicsMultiPara {
 			get {
 				return ResourceManager.GetString("kstidPicsMultiPara", resourceCulture);
 			}
@@ -2099,7 +2117,7 @@ namespace SIL.FieldWorks.Resources {
 		///A message with instructions on how to send it to the developers has been copied to the clipboard.
 		///Paste the contents of the clipboard into a new email message or text file..
 		/// </summary>
-		internal static string kstidProgError {
+		public static string kstidProgError {
 			get {
 				return ResourceManager.GetString("kstidProgError", resourceCulture);
 			}
@@ -2108,7 +2126,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to {0} - {1}.
 		/// </summary>
-		internal static string kstidProjectNameWithRemoteServer {
+		public static string kstidProjectNameWithRemoteServer {
 			get {
 				return ResourceManager.GetString("kstidProjectNameWithRemoteServer", resourceCulture);
 			}
@@ -2117,7 +2135,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The publication page size is bigger than the paper size..
 		/// </summary>
-		internal static string kstidPubPageTooBig {
+		public static string kstidPubPageTooBig {
 			get {
 				return ResourceManager.GetString("kstidPubPageTooBig", resourceCulture);
 			}
@@ -2126,7 +2144,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to  .
 		/// </summary>
-		internal static string kstidPunctCheckWhitespaceChar {
+		public static string kstidPunctCheckWhitespaceChar {
 			get {
 				return ResourceManager.GetString("kstidPunctCheckWhitespaceChar", resourceCulture);
 			}
@@ -2135,7 +2153,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Redo 1 Action.
 		/// </summary>
-		internal static string kstidRedo1Action {
+		public static string kstidRedo1Action {
 			get {
 				return ResourceManager.GetString("kstidRedo1Action", resourceCulture);
 			}
@@ -2144,7 +2162,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Redo failed..
 		/// </summary>
-		internal static string kstidRedoFailed {
+		public static string kstidRedoFailed {
 			get {
 				return ResourceManager.GetString("kstidRedoFailed", resourceCulture);
 			}
@@ -2153,7 +2171,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Of the {0} redo actions attempted, only the first {1} succeeded..
 		/// </summary>
-		internal static string kstidRedoFailureReport {
+		public static string kstidRedoFailureReport {
 			get {
 				return ResourceManager.GetString("kstidRedoFailureReport", resourceCulture);
 			}
@@ -2162,7 +2180,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Redo {0}.
 		/// </summary>
-		internal static string kstidRedoFrame {
+		public static string kstidRedoFrame {
 			get {
 				return ResourceManager.GetString("kstidRedoFrame", resourceCulture);
 			}
@@ -2171,7 +2189,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Redo {0} Actions.
 		/// </summary>
-		internal static string kstidRedoMultipleActions {
+		public static string kstidRedoMultipleActions {
 			get {
 				return ResourceManager.GetString("kstidRedoMultipleActions", resourceCulture);
 			}
@@ -2180,7 +2198,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Reminders.
 		/// </summary>
-		internal static string kstidReminders {
+		public static string kstidReminders {
 			get {
 				return ResourceManager.GetString("kstidReminders", resourceCulture);
 			}
@@ -2189,7 +2207,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Remove Character Style.
 		/// </summary>
-		internal static string kstidRemoveCharacterStyleToolTip {
+		public static string kstidRemoveCharacterStyleToolTip {
 			get {
 				return ResourceManager.GetString("kstidRemoveCharacterStyleToolTip", resourceCulture);
 			}
@@ -2198,7 +2216,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Remove the character style formatting from the current selection..
 		/// </summary>
-		internal static string kstidRemoveCharStyleMsg {
+		public static string kstidRemoveCharStyleMsg {
 			get {
 				return ResourceManager.GetString("kstidRemoveCharStyleMsg", resourceCulture);
 			}
@@ -2207,7 +2225,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Reset &amp;Paragraph Style.
 		/// </summary>
-		internal static string kstidRemoveParaStyleMenuName {
+		public static string kstidRemoveParaStyleMenuName {
 			get {
 				return ResourceManager.GetString("kstidRemoveParaStyleMenuName", resourceCulture);
 			}
@@ -2216,7 +2234,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Reset the style of the current paragraph to the default paragraph style..
 		/// </summary>
-		internal static string kstidRemoveParaStyleMsg {
+		public static string kstidRemoveParaStyleMsg {
 			get {
 				return ResourceManager.GetString("kstidRemoveParaStyleMsg", resourceCulture);
 			}
@@ -2225,7 +2243,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Replacing or removing uses of former styles....
 		/// </summary>
-		internal static string kstidReplacingStylesStatusMsg {
+		public static string kstidReplacingStylesStatusMsg {
 			get {
 				return ResourceManager.GetString("kstidReplacingStylesStatusMsg", resourceCulture);
 			}
@@ -2234,7 +2252,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Researchers.
 		/// </summary>
-		internal static string kstidResearchers {
+		public static string kstidResearchers {
 			get {
 				return ResourceManager.GetString("kstidResearchers", resourceCulture);
 			}
@@ -2243,7 +2261,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to ResearchPlan.
 		/// </summary>
-		internal static string kstidResearchPlan {
+		public static string kstidResearchPlan {
 			get {
 				return ResourceManager.GetString("kstidResearchPlan", resourceCulture);
 			}
@@ -2252,7 +2270,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Reset Paragraph Style.
 		/// </summary>
-		internal static string kstidResetParagraphStyleToolTip {
+		public static string kstidResetParagraphStyleToolTip {
 			get {
 				return ResourceManager.GetString("kstidResetParagraphStyleToolTip", resourceCulture);
 			}
@@ -2261,7 +2279,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Restrictions.
 		/// </summary>
-		internal static string kstidRestrictions {
+		public static string kstidRestrictions {
 			get {
 				return ResourceManager.GetString("kstidRestrictions", resourceCulture);
 			}
@@ -2270,7 +2288,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Rich Text Format Files.
 		/// </summary>
-		internal static string kstidRichTextFormat {
+		public static string kstidRichTextFormat {
 			get {
 				return ResourceManager.GetString("kstidRichTextFormat", resourceCulture);
 			}
@@ -2288,7 +2306,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Footnote.
 		/// </summary>
-		internal static string kstidScriptureFootnote {
+		public static string kstidScriptureFootnote {
 			get {
 				return ResourceManager.GetString("kstidScriptureFootnote", resourceCulture);
 			}
@@ -2297,7 +2315,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Introduction.
 		/// </summary>
-		internal static string kstidScriptureIntro {
+		public static string kstidScriptureIntro {
 			get {
 				return ResourceManager.GetString("kstidScriptureIntro", resourceCulture);
 			}
@@ -2306,7 +2324,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Introduction({0}).
 		/// </summary>
-		internal static string kstidScriptureSectionIntroduction {
+		public static string kstidScriptureSectionIntroduction {
 			get {
 				return ResourceManager.GetString("kstidScriptureSectionIntroduction", resourceCulture);
 			}
@@ -2315,7 +2333,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Title.
 		/// </summary>
-		internal static string kstidScriptureTitle {
+		public static string kstidScriptureTitle {
 			get {
 				return ResourceManager.GetString("kstidScriptureTitle", resourceCulture);
 			}
@@ -2324,7 +2342,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to {0} (Heading).
 		/// </summary>
-		internal static string kstidSectionHeading {
+		public static string kstidSectionHeading {
 			get {
 				return ResourceManager.GetString("kstidSectionHeading", resourceCulture);
 			}
@@ -2333,7 +2351,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to See Also.
 		/// </summary>
-		internal static string kstidSeeAlso {
+		public static string kstidSeeAlso {
 			get {
 				return ResourceManager.GetString("kstidSeeAlso", resourceCulture);
 			}
@@ -2342,7 +2360,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Anthropology Database Files.
 		/// </summary>
-		internal static string kstidShoeboxAnthropologyDatabase {
+		public static string kstidShoeboxAnthropologyDatabase {
 			get {
 				return ResourceManager.GetString("kstidShoeboxAnthropologyDatabase", resourceCulture);
 			}
@@ -2351,7 +2369,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Shoebox Project Files.
 		/// </summary>
-		internal static string kstidShoeboxProjectFiles {
+		public static string kstidShoeboxProjectFiles {
 			get {
 				return ResourceManager.GetString("kstidShoeboxProjectFiles", resourceCulture);
 			}
@@ -2360,7 +2378,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Closing {0}.
 		/// </summary>
-		internal static string kstidShutdownCaption {
+		public static string kstidShutdownCaption {
 			get {
 				return ResourceManager.GetString("kstidShutdownCaption", resourceCulture);
 			}
@@ -2369,7 +2387,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Saving all changes....
 		/// </summary>
-		internal static string kstidShutdownSaveMessage {
+		public static string kstidShutdownSaveMessage {
 			get {
 				return ResourceManager.GetString("kstidShutdownSaveMessage", resourceCulture);
 			}
@@ -2378,7 +2396,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Sources.
 		/// </summary>
-		internal static string kstidSources {
+		public static string kstidSources {
 			get {
 				return ResourceManager.GetString("kstidSources", resourceCulture);
 			}
@@ -2387,7 +2405,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Standard.
 		/// </summary>
-		internal static string kstidStandardCategory {
+		public static string kstidStandardCategory {
 			get {
 				return ResourceManager.GetString("kstidStandardCategory", resourceCulture);
 			}
@@ -2396,7 +2414,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Standard.
 		/// </summary>
-		internal static string kstidStandardToolBarText {
+		public static string kstidStandardToolBarText {
 			get {
 				return ResourceManager.GetString("kstidStandardToolBarText", resourceCulture);
 			}
@@ -2405,7 +2423,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Status.
 		/// </summary>
-		internal static string kstidStatus {
+		public static string kstidStatus {
 			get {
 				return ResourceManager.GetString("kstidStatus", resourceCulture);
 			}
@@ -2415,7 +2433,7 @@ namespace SIL.FieldWorks.Resources {
 		///   Looks up a localized string similar to Sorry, your selection has been lost, due to the complications of renaming your styles.
 		///Please reapply your style change.
 		/// </summary>
-		internal static string kstidStyleChangeError {
+		public static string kstidStyleChangeError {
 			get {
 				return ResourceManager.GetString("kstidStyleChangeError", resourceCulture);
 			}
@@ -2424,7 +2442,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to (Inherited from {0}).
 		/// </summary>
-		internal static string kstidStyleWsOverideInheritedFromMsg {
+		public static string kstidStyleWsOverideInheritedFromMsg {
 			get {
 				return ResourceManager.GetString("kstidStyleWsOverideInheritedFromMsg", resourceCulture);
 			}
@@ -2433,7 +2451,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Subrecords.
 		/// </summary>
-		internal static string kstidSubRecords {
+		public static string kstidSubRecords {
 			get {
 				return ResourceManager.GetString("kstidSubRecords", resourceCulture);
 			}
@@ -2442,7 +2460,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Superseded By.
 		/// </summary>
-		internal static string kstidSupersededBy {
+		public static string kstidSupersededBy {
 			get {
 				return ResourceManager.GetString("kstidSupersededBy", resourceCulture);
 			}
@@ -2451,7 +2469,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Not_set.
 		/// </summary>
-		internal static string kstidSupportEmail {
+		public static string kstidSupportEmail {
 			get {
 				return ResourceManager.GetString("kstidSupportEmail", resourceCulture);
 			}
@@ -2460,7 +2478,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Supporting Evidence.
 		/// </summary>
-		internal static string kstidSupportingEvidence {
+		public static string kstidSupportingEvidence {
 			get {
 				return ResourceManager.GetString("kstidSupportingEvidence", resourceCulture);
 			}
@@ -2469,7 +2487,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Compiled TECkit Files.
 		/// </summary>
-		internal static string kstidTECkitCompiled {
+		public static string kstidTECkitCompiled {
 			get {
 				return ResourceManager.GetString("kstidTECkitCompiled", resourceCulture);
 			}
@@ -2478,7 +2496,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to TECkit Mapping Files.
 		/// </summary>
-		internal static string kstidTECkitMapping {
+		public static string kstidTECkitMapping {
 			get {
 				return ResourceManager.GetString("kstidTECkitMapping", resourceCulture);
 			}
@@ -2487,7 +2505,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Text Files.
 		/// </summary>
-		internal static string kstidText {
+		public static string kstidText {
 			get {
 				return ResourceManager.GetString("kstidText", resourceCulture);
 			}
@@ -2496,7 +2514,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Time of Event.
 		/// </summary>
-		internal static string kstidTimeOfEvent {
+		public static string kstidTimeOfEvent {
 			get {
 				return ResourceManager.GetString("kstidTimeOfEvent", resourceCulture);
 			}
@@ -2505,7 +2523,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Title.
 		/// </summary>
-		internal static string kstidTitle {
+		public static string kstidTitle {
 			get {
 				return ResourceManager.GetString("kstidTitle", resourceCulture);
 			}
@@ -2514,7 +2532,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Toolbox Language Files.
 		/// </summary>
-		internal static string kstidToolboxLanguageFiles {
+		public static string kstidToolboxLanguageFiles {
 			get {
 				return ResourceManager.GetString("kstidToolboxLanguageFiles", resourceCulture);
 			}
@@ -2523,7 +2541,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Tools.
 		/// </summary>
-		internal static string kstidToolsMenuName {
+		public static string kstidToolsMenuName {
 			get {
 				return ResourceManager.GetString("kstidToolsMenuName", resourceCulture);
 			}
@@ -2532,7 +2550,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Training available.
 		/// </summary>
-		internal static string kstidTrainingAvailable {
+		public static string kstidTrainingAvailable {
 			get {
 				return ResourceManager.GetString("kstidTrainingAvailable", resourceCulture);
 			}
@@ -2542,7 +2560,7 @@ namespace SIL.FieldWorks.Resources {
 		///   Looks up a localized string similar to The string being pasted has been truncated from {0} to {1} characters
 		///so as not to exceed the maximum field length of {2} characters..
 		/// </summary>
-		internal static string kstidTruncatingPaste {
+		public static string kstidTruncatingPaste {
 			get {
 				return ResourceManager.GetString("kstidTruncatingPaste", resourceCulture);
 			}
@@ -2551,7 +2569,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Record Type.
 		/// </summary>
-		internal static string kstidType {
+		public static string kstidType {
 			get {
 				return ResourceManager.GetString("kstidType", resourceCulture);
 			}
@@ -2560,7 +2578,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to FieldWorks does not recognize &apos;{0}&apos; as a valid user interface language ID. English will be used instead..
 		/// </summary>
-		internal static string kstidUILangNotFound {
+		public static string kstidUILangNotFound {
 			get {
 				return ResourceManager.GetString("kstidUILangNotFound", resourceCulture);
 			}
@@ -2569,7 +2587,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Unable to find any DLL files containing editorial checks in folder {0}..
 		/// </summary>
-		internal static string kstidUnableToFindEditorialChecks {
+		public static string kstidUnableToFindEditorialChecks {
 			get {
 				return ResourceManager.GetString("kstidUnableToFindEditorialChecks", resourceCulture);
 			}
@@ -2578,7 +2596,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to That character is undefined and cannot be added..
 		/// </summary>
-		internal static string kstidUndefinedCharacterMsg {
+		public static string kstidUndefinedCharacterMsg {
 			get {
 				return ResourceManager.GetString("kstidUndefinedCharacterMsg", resourceCulture);
 			}
@@ -2587,7 +2605,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The following characters are not defined. Therefore, they will not be added to the valid characters list..
 		/// </summary>
-		internal static string kstidUndefinedCharactersMsg {
+		public static string kstidUndefinedCharactersMsg {
 			get {
 				return ResourceManager.GetString("kstidUndefinedCharactersMsg", resourceCulture);
 			}
@@ -2596,7 +2614,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Undo 1 Action.
 		/// </summary>
-		internal static string kstidUndo1Action {
+		public static string kstidUndo1Action {
 			get {
 				return ResourceManager.GetString("kstidUndo1Action", resourceCulture);
 			}
@@ -2605,7 +2623,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Apply Style.
 		/// </summary>
-		internal static string kstidUndoApplyStyle {
+		public static string kstidUndoApplyStyle {
 			get {
 				return ResourceManager.GetString("kstidUndoApplyStyle", resourceCulture);
 			}
@@ -2614,7 +2632,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Delete.
 		/// </summary>
-		internal static string kstidUndoDelete {
+		public static string kstidUndoDelete {
 			get {
 				return ResourceManager.GetString("kstidUndoDelete", resourceCulture);
 			}
@@ -2623,7 +2641,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Undo failed..
 		/// </summary>
-		internal static string kstidUndoFailed {
+		public static string kstidUndoFailed {
 			get {
 				return ResourceManager.GetString("kstidUndoFailed", resourceCulture);
 			}
@@ -2632,7 +2650,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Of the {0} undo actions attempted, only the first {1} succeeded..
 		/// </summary>
-		internal static string kstidUndoFailureReport {
+		public static string kstidUndoFailureReport {
 			get {
 				return ResourceManager.GetString("kstidUndoFailureReport", resourceCulture);
 			}
@@ -2641,7 +2659,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Undo {0}.
 		/// </summary>
-		internal static string kstidUndoFrame {
+		public static string kstidUndoFrame {
 			get {
 				return ResourceManager.GetString("kstidUndoFrame", resourceCulture);
 			}
@@ -2650,7 +2668,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Undo {0} Actions.
 		/// </summary>
-		internal static string kstidUndoMultipleActions {
+		public static string kstidUndoMultipleActions {
 			get {
 				return ResourceManager.GetString("kstidUndoMultipleActions", resourceCulture);
 			}
@@ -2659,7 +2677,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page Setup Changes.
 		/// </summary>
-		internal static string kstidUndoPageSetupChanges {
+		public static string kstidUndoPageSetupChanges {
 			get {
 				return ResourceManager.GetString("kstidUndoPageSetupChanges", resourceCulture);
 			}
@@ -2668,7 +2686,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Cancel.
 		/// </summary>
-		internal static string kstidUndoRedoCancel {
+		public static string kstidUndoRedoCancel {
 			get {
 				return ResourceManager.GetString("kstidUndoRedoCancel", resourceCulture);
 			}
@@ -2677,7 +2695,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Insert Related Word.
 		/// </summary>
-		internal static string kstidUndoRedoInsertRelatedWord {
+		public static string kstidUndoRedoInsertRelatedWord {
 			get {
 				return ResourceManager.GetString("kstidUndoRedoInsertRelatedWord", resourceCulture);
 			}
@@ -2686,7 +2704,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Replace.
 		/// </summary>
-		internal static string kstidUndoReplace {
+		public static string kstidUndoReplace {
 			get {
 				return ResourceManager.GetString("kstidUndoReplace", resourceCulture);
 			}
@@ -2695,7 +2713,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Replace All.
 		/// </summary>
-		internal static string kstidUndoReplaceAll {
+		public static string kstidUndoReplaceAll {
 			get {
 				return ResourceManager.GetString("kstidUndoReplaceAll", resourceCulture);
 			}
@@ -2704,7 +2722,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Style Changes.
 		/// </summary>
-		internal static string kstidUndoStyleChanges {
+		public static string kstidUndoStyleChanges {
 			get {
 				return ResourceManager.GetString("kstidUndoStyleChanges", resourceCulture);
 			}
@@ -2713,7 +2731,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Typing &quot;{0}&quot;.
 		/// </summary>
-		internal static string kstidUndoTyping {
+		public static string kstidUndoTyping {
 			get {
 				return ResourceManager.GetString("kstidUndoTyping", resourceCulture);
 			}
@@ -2722,7 +2740,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Writing System: {0}.
 		/// </summary>
-		internal static string kstidUndoWritingSystemChanges {
+		public static string kstidUndoWritingSystemChanges {
 			get {
 				return ResourceManager.GetString("kstidUndoWritingSystemChanges", resourceCulture);
 			}
@@ -2731,7 +2749,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Stop.
 		/// </summary>
-		internal static string kstidUpdatePageBreakButtonText {
+		public static string kstidUpdatePageBreakButtonText {
 			get {
 				return ResourceManager.GetString("kstidUpdatePageBreakButtonText", resourceCulture);
 			}
@@ -2740,7 +2758,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Page {0} of about {1}.
 		/// </summary>
-		internal static string kstidUpdatePageBreakPageCount {
+		public static string kstidUpdatePageBreakPageCount {
 			get {
 				return ResourceManager.GetString("kstidUpdatePageBreakPageCount", resourceCulture);
 			}
@@ -2749,7 +2767,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Calculating page breaks....
 		/// </summary>
-		internal static string kstidUpdatePageBreakWindowCaption {
+		public static string kstidUpdatePageBreakWindowCaption {
 			get {
 				return ResourceManager.GetString("kstidUpdatePageBreakWindowCaption", resourceCulture);
 			}
@@ -2758,7 +2776,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Updating: &apos;{0}&apos; ....
 		/// </summary>
-		internal static string kstidUpdatingStylesStatusMsg {
+		public static string kstidUpdatingStylesStatusMsg {
 			get {
 				return ResourceManager.GetString("kstidUpdatingStylesStatusMsg", resourceCulture);
 			}
@@ -2767,7 +2785,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;User Properties....
 		/// </summary>
-		internal static string kstidUserPropertiesMenuName {
+		public static string kstidUserPropertiesMenuName {
 			get {
 				return ResourceManager.GetString("kstidUserPropertiesMenuName", resourceCulture);
 			}
@@ -2776,7 +2794,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Modify users and access levels..
 		/// </summary>
-		internal static string kstidUserPropertiesMsg {
+		public static string kstidUserPropertiesMsg {
 			get {
 				return ResourceManager.GetString("kstidUserPropertiesMsg", resourceCulture);
 			}
@@ -2785,7 +2803,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to _User.
 		/// </summary>
-		internal static string kstidUserStyleSuffix {
+		public static string kstidUserStyleSuffix {
 			get {
 				return ResourceManager.GetString("kstidUserStyleSuffix", resourceCulture);
 			}
@@ -2794,7 +2812,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to vernacular.
 		/// </summary>
-		internal static string kstidVernacular {
+		public static string kstidVernacular {
 			get {
 				return ResourceManager.GetString("kstidVernacular", resourceCulture);
 			}
@@ -2803,7 +2821,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Version History.
 		/// </summary>
-		internal static string kstidVersionHistory {
+		public static string kstidVersionHistory {
 			get {
 				return ResourceManager.GetString("kstidVersionHistory", resourceCulture);
 			}
@@ -2812,7 +2830,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The settings for the top and bottom margins and gutter are too large for the page height..
 		/// </summary>
-		internal static string kstidVerticalMarginsAndGutterTooBig {
+		public static string kstidVerticalMarginsAndGutterTooBig {
 			get {
 				return ResourceManager.GetString("kstidVerticalMarginsAndGutterTooBig", resourceCulture);
 			}
@@ -2821,7 +2839,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to The settings for the top and bottom margins are too large for the page height..
 		/// </summary>
-		internal static string kstidVerticalMarginsTooBig {
+		public static string kstidVerticalMarginsTooBig {
 			get {
 				return ResourceManager.GetString("kstidVerticalMarginsTooBig", resourceCulture);
 			}
@@ -2830,7 +2848,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to View.
 		/// </summary>
-		internal static string kstidViewCategory {
+		public static string kstidViewCategory {
 			get {
 				return ResourceManager.GetString("kstidViewCategory", resourceCulture);
 			}
@@ -2839,7 +2857,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Configure....
 		/// </summary>
-		internal static string kstidViewConfigure {
+		public static string kstidViewConfigure {
 			get {
 				return ResourceManager.GetString("kstidViewConfigure", resourceCulture);
 			}
@@ -2848,7 +2866,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;View.
 		/// </summary>
-		internal static string kstidViewMenuName {
+		public static string kstidViewMenuName {
 			get {
 				return ResourceManager.GetString("kstidViewMenuName", resourceCulture);
 			}
@@ -2857,7 +2875,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Remove &amp;Character Style.
 		/// </summary>
-		internal static string kstidViewRemoveCharStyleMenuName {
+		public static string kstidViewRemoveCharStyleMenuName {
 			get {
 				return ResourceManager.GetString("kstidViewRemoveCharStyleMenuName", resourceCulture);
 			}
@@ -2866,7 +2884,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Side Bar.
 		/// </summary>
-		internal static string kstidViewSideBarMenuName {
+		public static string kstidViewSideBarMenuName {
 			get {
 				return ResourceManager.GetString("kstidViewSideBarMenuName", resourceCulture);
 			}
@@ -2875,7 +2893,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Show or hide the Side bar..
 		/// </summary>
-		internal static string kstidViewSideBarMsg {
+		public static string kstidViewSideBarMsg {
 			get {
 				return ResourceManager.GetString("kstidViewSideBarMsg", resourceCulture);
 			}
@@ -2884,7 +2902,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to St&amp;atus Bar.
 		/// </summary>
-		internal static string kstidViewStatusBarMenuName {
+		public static string kstidViewStatusBarMenuName {
 			get {
 				return ResourceManager.GetString("kstidViewStatusBarMenuName", resourceCulture);
 			}
@@ -2893,7 +2911,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Show or hide the Status bar..
 		/// </summary>
-		internal static string kstidViewStatusBarMsg {
+		public static string kstidViewStatusBarMsg {
 			get {
 				return ResourceManager.GetString("kstidViewStatusBarMsg", resourceCulture);
 			}
@@ -2902,7 +2920,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Toolbars.
 		/// </summary>
-		internal static string kstidViewToolBarsMenuName {
+		public static string kstidViewToolBarsMenuName {
 			get {
 				return ResourceManager.GetString("kstidViewToolBarsMenuName", resourceCulture);
 			}
@@ -2911,7 +2929,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Warning.
 		/// </summary>
-		internal static string kstidWarning {
+		public static string kstidWarning {
 			get {
 				return ResourceManager.GetString("kstidWarning", resourceCulture);
 			}
@@ -2920,7 +2938,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Weather.
 		/// </summary>
-		internal static string kstidWeather {
+		public static string kstidWeather {
 			get {
 				return ResourceManager.GetString("kstidWeather", resourceCulture);
 			}
@@ -2929,7 +2947,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Cascade.
 		/// </summary>
-		internal static string kstidWindowCascadeMenuName {
+		public static string kstidWindowCascadeMenuName {
 			get {
 				return ResourceManager.GetString("kstidWindowCascadeMenuName", resourceCulture);
 			}
@@ -2938,7 +2956,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Arranges open windows to be cascade from top left to bottom right..
 		/// </summary>
-		internal static string kstidWindowCascadeMsg {
+		public static string kstidWindowCascadeMsg {
 			get {
 				return ResourceManager.GetString("kstidWindowCascadeMsg", resourceCulture);
 			}
@@ -2947,7 +2965,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Click on the window you want to switch to..
 		/// </summary>
-		internal static string kstidWindowListHelp {
+		public static string kstidWindowListHelp {
 			get {
 				return ResourceManager.GetString("kstidWindowListHelp", resourceCulture);
 			}
@@ -2956,7 +2974,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Window.
 		/// </summary>
-		internal static string kstidWindowMenuName {
+		public static string kstidWindowMenuName {
 			get {
 				return ResourceManager.GetString("kstidWindowMenuName", resourceCulture);
 			}
@@ -2965,7 +2983,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Tile Side-&amp;By-Side.
 		/// </summary>
-		internal static string kstidWindowTileSideBySideMenuName {
+		public static string kstidWindowTileSideBySideMenuName {
 			get {
 				return ResourceManager.GetString("kstidWindowTileSideBySideMenuName", resourceCulture);
 			}
@@ -2974,7 +2992,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Arranges open windows to be of equal widths, displayed side-by-side.
 		/// </summary>
-		internal static string kstidWindowTileSideBySideMsg {
+		public static string kstidWindowTileSideBySideMsg {
 			get {
 				return ResourceManager.GetString("kstidWindowTileSideBySideMsg", resourceCulture);
 			}
@@ -2983,7 +3001,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Tile.
 		/// </summary>
-		internal static string kstidWindowTileStackedMenuName {
+		public static string kstidWindowTileStackedMenuName {
 			get {
 				return ResourceManager.GetString("kstidWindowTileStackedMenuName", resourceCulture);
 			}
@@ -2992,7 +3010,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Arranges open windows to be equal heights, displayed one on top of the other.
 		/// </summary>
-		internal static string kstidWindowTileStackedMsg {
+		public static string kstidWindowTileStackedMsg {
 			get {
 				return ResourceManager.GetString("kstidWindowTileStackedMsg", resourceCulture);
 			}
@@ -3001,7 +3019,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Fi&amp;nish.
 		/// </summary>
-		internal static string kstidWizFinishButtonText {
+		public static string kstidWizFinishButtonText {
 			get {
 				return ResourceManager.GetString("kstidWizFinishButtonText", resourceCulture);
 			}
@@ -3010,7 +3028,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to &amp;Next &gt;.
 		/// </summary>
-		internal static string kstidWizForwardButtonText {
+		public static string kstidWizForwardButtonText {
 			get {
 				return ResourceManager.GetString("kstidWizForwardButtonText", resourceCulture);
 			}
@@ -3019,7 +3037,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Step {0} of {1}.
 		/// </summary>
-		internal static string kstidWizStepLabel {
+		public static string kstidWizStepLabel {
 			get {
 				return ResourceManager.GetString("kstidWizStepLabel", resourceCulture);
 			}
@@ -3028,7 +3046,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Writing System.
 		/// </summary>
-		internal static string kstidWritingSystemItemName {
+		public static string kstidWritingSystemItemName {
 			get {
 				return ResourceManager.GetString("kstidWritingSystemItemName", resourceCulture);
 			}
@@ -3037,7 +3055,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Current Writing System.
 		/// </summary>
-		internal static string kstidWSTooltip {
+		public static string kstidWSTooltip {
 			get {
 				return ResourceManager.GetString("kstidWSTooltip", resourceCulture);
 			}
@@ -3046,7 +3064,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to XHTML Files.
 		/// </summary>
-		internal static string kstidXHTML {
+		public static string kstidXHTML {
 			get {
 				return ResourceManager.GetString("kstidXHTML", resourceCulture);
 			}
@@ -3055,7 +3073,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to XML Files.
 		/// </summary>
-		internal static string kstidXML {
+		public static string kstidXML {
 			get {
 				return ResourceManager.GetString("kstidXML", resourceCulture);
 			}
@@ -3064,7 +3082,7 @@ namespace SIL.FieldWorks.Resources {
 		/// <summary>
 		///   Looks up a localized string similar to Zoom.
 		/// </summary>
-		internal static string kstidZoomToolTip {
+		public static string kstidZoomToolTip {
 			get {
 				return ResourceManager.GetString("kstidZoomToolTip", resourceCulture);
 			}

@@ -428,7 +428,7 @@
 		<call target="rebuild-compmap" cascade="true" if="${platform::is-unix()}"/>
 	</target>
 	<!-- -->
-	<target name="KeyboardSwitcher" description="KeyboardSwitcher" depends="COMInterfaces,BasicUtils">
+	<target name="KeyboardSwitcher" description="KeyboardSwitcher" depends="COMInterfaces,BasicUtils,FwResources">
 			<call target="KeyboardSwitcher-nodep" cascade="false"/>
 	</target>
 	<target name="KeyboardSwitcher-nodep">
