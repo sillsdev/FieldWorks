@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// and checks the resulting transform against the hand edited sfm.
 		///
 		/// The expected results may need to be updated whenever the ConfiguredSfm.xsl is modified.
+		/// And they HAVE been updated to include a couple of Custom fields in the bodzi-bodzi entry.
 		/// </summary>
 		[Test]
 		public void ConfiguredDictionary_FsFeatStruc_LT5655()

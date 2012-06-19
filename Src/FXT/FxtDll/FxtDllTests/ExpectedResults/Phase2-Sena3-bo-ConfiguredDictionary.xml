@@ -164,7 +164,23 @@
 			</LexSense>
 		</LexEntry_Senses>
 
+		<LexEntry_Plural userlabel="Plural">
+			<Str>
+				<Run ws="seh">abodzi-bodzi</Run>
+			</Str>
+		</LexEntry_Plural>
 
+		<LexEntry_Gordon.Custom userlabel="Gordon Custom">
+			<AStr ws="pt">
+				<Run ws="pt">mesmo mesmo</Run>
+			</AStr>
+		</LexEntry_Gordon.Custom>
+
+		<LexEntry_Gordon.Custom userlabel="Gordon Custom">
+			<AStr ws="en">
+				<Run ws="en">soonish</Run>
+			</AStr>
+		</LexEntry_Gordon.Custom>
 
 
 </LexEntry>

@@ -956,8 +956,21 @@ since I don't understand the full design of this)-->
 <xsl:template match="*[@userlabel]">
 	<xsl:text>\</xsl:text>
 	<xsl:value-of select="substring-after(name(),'_')"/>
-	<xsl:text>&#32;</xsl:text>
-	<xsl:apply-templates/>
+	<xsl:choose>
+		<xsl:when test="AStr">
+			<xsl:text>_</xsl:text>
+			<xsl:value-of select="AStr/@ws"/>
+			<xsl:text>&#32;</xsl:text>
+			<xsl:value-of select="AStr/Run"/>
+		</xsl:when>
+		<xsl:when test="Str">
+			<xsl:text>&#32;</xsl:text>
+			<xsl:apply-templates/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:apply-templates/>
+		</xsl:otherwise>
+	</xsl:choose>
 	<xsl:text>&#13;&#10;</xsl:text>
 </xsl:template>
 

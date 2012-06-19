@@ -228,3 +228,4 @@ AlistairI, 15 June 2012. Fixed bug in TeEditorialChecks tests where date format 
 RickM, 15 June 2012. LT-13054 Old default location Media files not restored from a FW7 backup that includes them.
 KenZ, 15 Jun 2012. Fixed LT-13202 custom fields not duplicated in LIFT import.
 GordonM, 18 Jun 2012. LT-13217, something of a hack, but it works.
+GordonM, 19 Jun 2012. Fix to reopened LT-13301.
