@@ -5976,3 +5976,4 @@ EberhardB, 19 June 2012. Integration Calgary/WW -> WW.
 KenZ, 19 Jun 2012. Updated Keyman IPA keyboards to latest from NRSI.
 Andy Black, 19 Jun 2012. Fix a bug in Hermit Crab parser transform.
 McCoy, 19 June 2012.  Fixed LT-12881 (crash on "find example sentence" after reordering complex forms).
+NaylorJ, 19 June 2012. Updated FLEx Bridge installer to 0.3.52
