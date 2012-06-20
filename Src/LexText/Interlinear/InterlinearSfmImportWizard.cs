@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_mappingsList.SelectedIndices.Count == 0)
 				return;
-			using (var dlg = new SfmInterlinearMappingDlg())
+			using (var dlg = new SfmToTextsAndWordsMappingDlg())
 			{
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];

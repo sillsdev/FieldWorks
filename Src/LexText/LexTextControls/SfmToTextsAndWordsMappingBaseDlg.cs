@@ -13,7 +13,7 @@ using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public partial class SfmToTextsAndWordesMappingBaseDlg : Form
+	public partial class SfmToTextsAndWordsMappingDlg : Form
 	{
 		protected string m_helpTopicID;
 
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		public SfmToTextsAndWordesMappingBaseDlg()
+		public SfmToTextsAndWordsMappingDlg()
 		{
 			InitializeComponent();
 			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step2";
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
 		}
 
-		internal void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mapping)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mapping)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -75,9 +75,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected virtual void OnDestinationListBox_SelectedIndexChanged()
 		{
 			string oldWs = GetOldWs();
-			/*
-			 * Push to sub class
-			 *
 			if (m_destinationsListBox.SelectedItem is DestinationItem &&
 				((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
 			{
@@ -90,8 +87,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			}
 			else
-			 */
-			NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+			{
+				NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+			}
 		}
 
 		protected string GetOldWs()
@@ -114,11 +112,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected virtual string GetDestinationName(InterlinDestination destEnum)
 		{
-			/*
-			 * TODO: push to sub class
-			 * InterlinearSfmImportWizard.GetDestinationName(destEnum)
-			 */
-			return null; // override
+			return GetDestinationNameFromResource(destEnum, LexTextControls.ResourceManager);
 		}
 
 		public static string GetDestinationNameFromResource(InterlinDestination dest, ResourceManager rm)

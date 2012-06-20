@@ -256,12 +256,6 @@
 	<Compile Include="ConfigureHomographDlg.designer.cs">
 	  <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
 	</Compile>
-	<Compile Include="SfmWordsMappingDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="SfmWordsMappingDlg.Designer.cs">
-	  <DependentUpon>SfmWordsMappingDlg.cs</DependentUpon>
-	</Compile>
 	<Compile Include="SfmToTextsAndWordsMappingBaseDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
