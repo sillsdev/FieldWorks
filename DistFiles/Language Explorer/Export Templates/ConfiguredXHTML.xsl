@@ -138,6 +138,10 @@ display/printout!
 		</div>
 	</xsl:template>
 
+  <xsl:template match="Paragraph[@style='Bulleted List']">
+	<span class="bulletpara"><xsl:apply-templates/></span>
+  </xsl:template>
+
   <xsl:template match="Paragraph">
 	<xsl:apply-templates/>
   </xsl:template>
@@ -952,6 +956,9 @@ display/printout!
 	<xsl:copy>
 	  <xsl:copy-of select="@title"/>
 	  <xsl:choose>
+		<xsl:when test="ReversalIndexEntry_ReversalForm/AStr/Run">
+		  <xsl:call-template name="SetAnalAttrs"><xsl:with-param name="Class" select="@class"/><xsl:with-param name="Lang" select="ReversalIndexEntry_ReversalForm//AStr[1]/@ws"/></xsl:call-template>
+		</xsl:when>
 		<xsl:when test="LexEntry_LexemeForm/MoForm/MoForm_Form/AStr/Run">
 		  <xsl:call-template name="SetVernAttrs"><xsl:with-param name="Class" select="@class"/><xsl:with-param name="Lang" select="LexEntry_LexemeForm/MoForm/MoForm_Form/AStr[1]/@ws"/></xsl:call-template>
 		</xsl:when>

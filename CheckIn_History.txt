@@ -231,3 +231,4 @@ GordonM, 18 Jun 2012. LT-13217, something of a hack, but it works.
 GordonM, 19 Jun 2012. Fix to reopened LT-13301.
 NaylorJ, 19 Jun 2012. New Palaso dlls which should contain the required fixes for LT-13294 and LT-13298
 NaylorJ, 19 Jun 2012. New icu.net dll so that the new Palaso dlls don't whine.
+NaylorJ, 20 Jun 2012. Fixed many problems with the ReversalIndex xhtml export. LT-13256.

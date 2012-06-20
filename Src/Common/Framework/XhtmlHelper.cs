@@ -843,6 +843,11 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssSensePara();
 				m_dictClassData.Remove("sensepara");
 			}
+			if (m_dictClassData.ContainsKey("bulletpara"))
+			{
+				WriteCssBulletPara();
+				m_dictClassData.Remove("bulletpara");
+			}
 			if (m_dictClassData.ContainsKey("xsensenumber"))
 			{
 				WriteCssXSenseNumber();
@@ -926,6 +931,18 @@ namespace SIL.FieldWorks.Common.Framework
 				ProcessDictionaryCssStyle(sClass);
 			}
 			WriteNumberStyles();
+		}
+
+		private void WriteCssBulletPara()
+		{
+			m_writer.WriteLine(".bulletpara {");
+			m_writer.WriteLine("    display: block;");
+			m_writer.WriteLine("}");
+
+			m_writer.WriteLine(".bulletpara:before {");
+			m_writer.WriteLine("    content: counter(sense, disc) \" \";");
+			m_writer.WriteLine("    counter-increment: div;");
+			m_writer.WriteLine("}");
 		}
 
 		private void WriteCssLetHead()
