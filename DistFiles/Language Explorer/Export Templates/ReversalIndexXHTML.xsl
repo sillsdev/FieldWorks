@@ -78,15 +78,6 @@ display/printout!
 	</xsl:if><xsl:text>&#13;&#10;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="span[@class='headref']/LiteralString">
-	<xsl:if test="Str/Run">
-	  <xsl:call-template name="ProcessString"></xsl:call-template>
-	</xsl:if>
-	<xsl:if test="AStr/Run">
-	  <xsl:call-template name="ProcessMultiString"></xsl:call-template>
-	</xsl:if><xsl:text>&#13;&#10;</xsl:text>
-  </xsl:template>
-
   <!-- ***************************************** -->
   <!-- * This is the basic default processing. * -->
   <!-- ***************************************** -->
