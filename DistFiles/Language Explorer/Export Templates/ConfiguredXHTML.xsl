@@ -449,13 +449,28 @@ display/printout!
 	</xsl:if>
   </xsl:template>
 
-  <xsl:template match="LiteralString">
-	<xsl:if test="Str/Run/@fontsize and Str/Run/@editable='not'">
-	  <span><xsl:attribute name="class">xlanguagetag</xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
-		<xsl:value-of select="Str/Run"/>
-	  </span>
-	</xsl:if>
-  </xsl:template>
+	<!--
+	<xsl:template match="span[@class='senses-sub']/LexEntry_Senses/LiteralString">
+		<xsl:if test="Str/Run/@bold='on'">
+			<span class="xsensenumber-sub"><xsl:value-of select="Str/Run"/></span>
+		</xsl:if>
+	</xsl:template>
+	-->
+	<xsl:template match="LiteralString">
+	  <xsl:choose>
+		<xsl:when test="Str/Run/@fontsize and Str/Run/@editable='not'">
+		  <span><xsl:attribute name="class">xlanguagetag</xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
+			<xsl:value-of select="Str/Run"/>
+		  </span>
+		</xsl:when>
+		<xsl:when test="Str/Run">
+		  <xsl:call-template name="ProcessString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AStr/Run">
+		  <xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		</xsl:when>
+	  </xsl:choose>
+	</xsl:template>
 
 
   <xsl:template match="LexEtymology_Form">
