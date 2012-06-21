@@ -1283,8 +1283,8 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				sBaseClass = sClass;
 			}
-			string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
-			string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
+			//string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
+			//string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
 			string sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
 			string sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
@@ -1404,12 +1404,12 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine("}");
 			if (!fShowAsIndentedPara)
 			{
-				if (!String.IsNullOrEmpty(sBefore))
-					m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
-									   sClass, EscapeCharsForCss(sBefore));
-				if (!String.IsNullOrEmpty(sAfter))
-					m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
-									   sClass, EscapeCharsForCss(sAfter));
+				//if (!String.IsNullOrEmpty(sBefore))
+				//    m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
+				//                       sClass, EscapeCharsForCss(sBefore));
+				//if (!String.IsNullOrEmpty(sAfter))
+				//    m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
+				//                       sClass, EscapeCharsForCss(sAfter));
 				if (!String.IsNullOrEmpty(sSep))
 				{
 					switch (sClass)
