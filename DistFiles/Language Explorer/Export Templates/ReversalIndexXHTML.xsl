@@ -86,6 +86,11 @@ display/printout!
 	<xsl:apply-templates/>
 </xsl:template>
 
+<!-- This template will avoid the anchor links being put in -->
+<xsl:template match="_ReferringSenses//LexSenseLink">
+	<xsl:apply-templates/>
+</xsl:template>
+
   <xsl:template match="*">
 	<xsl:copy>
 	  <xsl:copy-of select="@*"/>

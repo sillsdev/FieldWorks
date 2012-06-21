@@ -235,3 +235,4 @@ NaylorJ, 20 Jun 2012. Fixed many problems with the ReversalIndex xhtml export. L
 NaylorJ, 20 Jun 2012. Update the ReversalIndexXHTML export to prepare for changes coming in the ConfigureXHTML. LT-13256.
 GordonM, 20 Jun 2012. A step towards LT-13008.
 NaylorJ, 21 Jun 2012. More steps toward LT-13256, and LT-13008.
+NaylorJ, 21 Jun 2012. Removed the links from the ReversalIndexXHTML (for now)
