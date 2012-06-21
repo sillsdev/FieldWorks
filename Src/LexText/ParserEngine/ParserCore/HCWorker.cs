@@ -65,11 +65,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			private readonly IEnumerable<PcPatrMorph> m_morphs;
 			private bool m_fSuccess;
 			private readonly string m_id;
+			private readonly FdoCache m_cache;
 
-			public WordGrammarTrace(string id, IEnumerable<PcPatrMorph> morphs)
+			public WordGrammarTrace(string id, IEnumerable<PcPatrMorph> morphs, FdoCache cache)
 			{
 				m_id = id;
 				m_morphs = morphs;
+				m_cache = cache;
 			}
 			/// <summary>
 			/// Get/set success status of word grammar attempt
@@ -123,12 +125,37 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 					writer.WriteStartElement("alloform");
 					writer.WriteValue(morph.form);
-					writer.WriteEndElement(); // Form
+					writer.WriteEndElement(); // alloform
 					//writer.WriteStartElement("Msa");
 					//writer.WriteEndElement(); // Msa
-					writer.WriteStartElement("Gloss");
+					int hvoForm = Convert.ToInt32(morph.formId);
+					var obj = m_cache.ServiceLocator.GetObject(hvoForm);
+					var stemAllo = obj as IMoStemAllomorph;
+					if (stemAllo != null)
+					{
+						var stemName = stemAllo.StemNameRA;
+						if (stemName != null)
+						{
+							writer.WriteStartElement("stemName");
+							writer.WriteStartAttribute("id");
+							writer.WriteValue(stemName.Hvo);
+							writer.WriteEndAttribute();
+							writer.WriteValue(stemName.Name.BestAnalysisAlternative.Text);
+							writer.WriteEndElement(); // stemName
+						}
+					}
+					writer.WriteStartElement("gloss");
 					writer.WriteValue(morph.gloss);
-					writer.WriteEndElement(); // Gloss
+					writer.WriteEndElement(); // gloss
+					writer.WriteStartElement("citationForm");
+					var form = obj as IMoForm;
+					if (form != null)
+					{
+						var entry = form.Owner as ILexEntry;
+						if (entry != null)
+							writer.WriteValue(entry.HeadWord.Text);
+					}
+					writer.WriteEndElement(); // citationForm
 					writer.WriteEndElement(); // Morphs
 				}
 				writer.WriteEndElement();
@@ -141,13 +168,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			readonly bool m_fDotrace;
 			readonly PatrParser m_patr;
 			readonly string m_patrlexPath;
+			readonly FdoCache m_cache;
 
-			public FwXmlOutput(XmlWriter writer, bool fDotrace, PatrParser patr, string patrlexPath)
+			public FwXmlOutput(XmlWriter writer, bool fDotrace, PatrParser patr, string patrlexPath, FdoCache cache)
 				: base(writer)
 			{
 				m_fDotrace = fDotrace;
 				m_patr = patr;
 				m_patrlexPath = patrlexPath;
+				m_cache = cache;
 			}
 
 			public override void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
@@ -166,7 +195,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						IEnumerable<PcPatrMorph> morphs = GetMorphs(ws);
 						if (wordGrammarTraces != null)
 						{
-							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs);
+							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs, m_cache);
 							wordGrammarTraces.Add(wordGrammarTrace);
 						}
 
@@ -514,7 +543,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteAttributeString("DbRef", Convert.ToString(hvoWordform));
 			writer.WriteAttributeString("Form", form);
 			var output = new FwXmlOutput(writer, fDotrace, m_patr,
-				Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"));
+				Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
 			output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true);
 			writer.WriteEndElement();
 			writer.Close();
