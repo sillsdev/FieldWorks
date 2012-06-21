@@ -853,6 +853,11 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
 			}
+			if (m_dictClassData.ContainsKey("xsensenumber-sub"))
+			{
+				WriteCssXSenseNumberSub();
+				m_dictClassData.Remove("xsensenumber-sub");
+			}
 			if (m_dictClassData.ContainsKey("sensenumberref"))
 			{
 				WriteCssSenseNumberRef();
@@ -1144,16 +1149,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".xsensenumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber");
-			// This is the info we originally had to set xhomographnumber explicitly.
-			//m_writer.WriteLine("    font-weight: bold;");
-			//BaseStyleInfo bsi;
-			//if (m_styleTable.TryGetValue("Dictionary-Normal", out bsi))
-			//{
-			//    ExportStyleInfo esi = bsi as ExportStyleInfo;
-			//    WriteFontAttr(m_cache.DefaultAnalWs, "font-family", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "color", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
-			//}
+			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssXSenseNumberSub()
+		{
+			m_writer.WriteLine(".xsensenumber-sub {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber-sub");
 			m_writer.WriteLine("}");
 		}
 

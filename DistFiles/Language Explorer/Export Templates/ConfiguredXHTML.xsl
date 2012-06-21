@@ -717,11 +717,11 @@ display/printout!
 	</xsl:choose>
   </xsl:template>
 
-	<xsl:template match="ItemNumber">
-		<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
-		<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
+  <xsl:template match="ItemNumber">
+	<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
+	<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
 	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
-		</xsl:if>
+	</xsl:if>
   </xsl:template>
 
 	<!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
