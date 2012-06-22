@@ -5983,3 +5983,4 @@ AnnB. 21 Jun 2012.  Fix LT-13344 - Hook up Help buttons to fields in Variant Typ
 EricP, 22 Jun 2012. LT-8276 Provide a way to import wordforms with their glosses.
 	Stage 4. Inherit Words Sfm Import Wizard from Interlinear Import Wizard (hide from UI for now).
 Andy Black, 22 Jun 2012. Fix bug in LT-13002 "Grammar Sketch export to XLingPaper format includes type attributes on section elements. These should be removed on export. " which caused the XML output to fail.
+McCoy, 22 June 2012.  Fixed LT-11645 (crash when moving to Notebook tab after deleting a text).
