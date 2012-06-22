@@ -50,7 +50,7 @@ display/printout!
 	<xsl:if test="parent::div[@class='letData']">
 	  <div class="entry"><xsl:apply-templates/></div><xsl:text>&#13;&#10;</xsl:text>
 	</xsl:if>
-	<xsl:if test="parent::ReversalIndexEntry_Subentries">
+	<xsl:if test="ancestor::ReversalIndexEntry_Subentries">
 	  <div class="subentry"><xsl:apply-templates/></div><xsl:text>&#13;&#10;</xsl:text>
 	</xsl:if>
   </xsl:template>
