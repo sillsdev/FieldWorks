@@ -239,3 +239,4 @@ NaylorJ, 21 Jun 2012. Removed the links from the ReversalIndexXHTML (for now)
 GordonM, 21 Jun 2012. Finished LT-13008.
 NaylorJ, 21 Jun 2012. Fixed LT-13298, also updated the Palaso* dlls with corrected version numbers.
 NaylorJ, 21 Jun 2012. Well, maybe these are the correct Palaso version numbers.
+KenZ, 22 Jun 2012. Fixed LT-10727, importing variants of subentries from SFM.
