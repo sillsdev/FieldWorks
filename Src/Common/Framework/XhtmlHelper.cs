@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -1534,10 +1535,10 @@ namespace SIL.FieldWorks.Common.Framework
 				}
 				if (!WriteFontAttr(ws, "font-style", esi, sCss, true) && ws != -1)
 					WriteFontAttr(-1, "font-style", esi, sCss, true);
-				//if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
-				//    WriteFontAttr(-1, "color", esi, sCss, true);
-				//if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
-				//    WriteFontAttr(-1, "background-color", esi, sCss, true);
+				if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
+					WriteFontAttr(-1, "color", esi, sCss, true);
+				if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
+					WriteFontAttr(-1, "background-color", esi, sCss, true);
 				if (!WriteFontAttr(ws, "vertical-align", esi, sCss, true) && ws != -1)
 				{
 					if (!WriteFontAttr(-1, "vertical-align", esi, sCss, true))
@@ -1616,24 +1617,40 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 					fInherited = fi.m_italic.IsInherited;
 					break;
-				//case "color":
-				//    if (fi.m_fontColor.ValueIsSet)
-				//    {
-				//        m_writer.WriteLine("    color: rgb({0},{1},{2});{3}",
-				//            fi.m_fontColor.Value.R, fi.m_fontColor.Value.G, fi.m_fontColor.Value.B, sInheritance);
-				//        return true;
-				//    }
-				//    fInherited = fi.m_fontColor.IsInherited;
-				//    break;
-				//case "background-color":
-				//    if (fi.m_backColor.ValueIsSet)
-				//    {
-				//        m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}",
-				//            fi.m_backColor.Value.R, fi.m_backColor.Value.G, fi.m_backColor.Value.B, sInheritance);
-				//        return true;
-				//    }
-				//    fInherited = fi.m_backColor.IsInherited;
-				//    break;
+				case "color":
+					if (fi.m_fontColor.ValueIsSet)
+					{
+						//Black as a font color is a default setting, we will ignore it (LT-10891)
+						//however, if it is explicitly set we need to include it.
+						if (fi.m_fontColor.Value != Color.Black || fi.m_fontColor.IsExplicit)
+						{
+							m_writer.WriteLine("    color: rgb({0},{1},{2});{3}",
+											   fi.m_fontColor.Value.R,
+											   fi.m_fontColor.Value.G,
+											   fi.m_fontColor.Value.B,
+											   sInheritance);
+						}
+						return true;
+					}
+					fInherited = fi.m_fontColor.IsInherited;
+					break;
+				case "background-color":
+					if (fi.m_backColor.ValueIsSet)
+					{
+						//White as a background color is a default setting, we will ignore it (LT-10891)
+						//however, if it is explicitly set we need to include it.
+						if (fi.m_backColor.Value != Color.White || fi.m_fontColor.IsExplicit)
+						{
+							m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}",
+											   fi.m_backColor.Value.R,
+											   fi.m_backColor.Value.G,
+											   fi.m_backColor.Value.B,
+											   sInheritance);
+						}
+					return true;
+					}
+					fInherited = fi.m_backColor.IsInherited;
+					break;
 				case "vertical-align":
 					if (fi.m_superSub.ValueIsSet)
 					{

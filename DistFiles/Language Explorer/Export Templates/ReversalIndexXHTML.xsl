@@ -38,7 +38,7 @@ display/printout!
 
   <!-- eliminate unneeded levels in the original markup -->
 
-  <xsl:template match="ReversalIndexEntry_Hvo|ReversalIndexEntry_ReversalForm">
+  <xsl:template match="ReversalIndexEntry_Hvo">
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs">

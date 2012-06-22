@@ -1116,6 +1116,7 @@ display/printout!
 		<xsl:when test="not(@ws=../@ws) or not(@namedStyle=../@namedStyle)">
 		  <span>
 			<xsl:if test="@namedStyle"><xsl:attribute name="class"><xsl:value-of select="translate(@namedStyle,' ','_')"/></xsl:attribute></xsl:if>
+			<xsl:attribute name="xml:space">preserve</xsl:attribute>
 			<xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute>
 			<xsl:value-of select="."/>
 		  </span>
@@ -1152,6 +1153,7 @@ display/printout!
 	  <span>
 		<xsl:if test="@namedStyle"><xsl:attribute name="class"><xsl:value-of select="translate(@namedStyle,' ','_')"/></xsl:attribute></xsl:if>
 		<xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute>
+		<xsl:attribute name="xml:space">preserve</xsl:attribute>
 		<xsl:value-of select="."/>
 	  </span>
 	</xsl:for-each>
