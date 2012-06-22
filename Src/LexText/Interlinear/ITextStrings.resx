@@ -879,4 +879,10 @@
   <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
 	<value>Error Accessing Encoding Converters</value>
   </data>
+  <data name="ksInterlinearTexts" xml:space="preserve">
+	<value>interlinear texts</value>
+  </data>
+  <data name="ksWordsAndGlosses" xml:space="preserve">
+	<value>words and glosses</value>
+  </data>
 </root>

@@ -75,6 +75,11 @@
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
 			</parameters>
 		</command>
+	<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
+	  <parameters>
+		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
+	  </parameters>
+	</command>
 		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
@@ -424,7 +429,8 @@
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
 				<item command="CmdImportInterlinearSfm"/>
-				<item command="CmdImportInterlinearData"/>
+		<!-- <item command="CmdImportWordsAndGlossesSfm"/> -->
+		<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
 				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>

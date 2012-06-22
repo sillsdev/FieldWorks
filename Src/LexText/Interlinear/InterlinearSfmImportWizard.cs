@@ -47,6 +47,12 @@ namespace SIL.FieldWorks.IText
 			tabSteps.KeyUp += OnKeyUp;
 			LexImportWizard.EnsureWindows1252ConverterExists();
 		}
+
+		protected virtual void SetDialogTitle()
+		{
+			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
+		}
+
 		public void Init(FdoCache cache, Mediator mediator)
 		{
 			m_cache = cache;
@@ -57,6 +63,7 @@ namespace SIL.FieldWorks.IText
 			//if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
 			//    settingsPath = GetDefaultInputSettingsPath();
 			//m_loadSettingsFileBox.Text = settingsPath;
+			SetDialogTitle();
 		}
 
 		private void m_browseInputFilesButton_Click(object sender, EventArgs e)
@@ -291,8 +298,9 @@ namespace SIL.FieldWorks.IText
 						mapping = new InterlinearMapping(mapping);
 						if (string.IsNullOrEmpty(mapping.WritingSystem))
 						{
-							var ws = mapping.Destination == InterlinDestination.Baseline ? m_cache.DefaultVernWs : m_cache.DefaultAnalWs;
-							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+							var ws = GetDefaultWs(mapping);
+							if (ws != 0)
+								mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 						}
 						else if (mapping.WritingSystem == "{vern}")
 							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
@@ -330,7 +338,7 @@ namespace SIL.FieldWorks.IText
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
 					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
-					if(mapping.Destination == InterlinDestination.Baseline)
+					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{
 						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
 						{
@@ -388,6 +396,25 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			base.OnNextButton();
+		}
+
+		protected int GetDefaultWs(InterlinearMapping mapping)
+		{
+			int ws;
+			switch (mapping.Destination)
+			{
+				default:
+					ws = m_cache.DefaultAnalWs;
+					break;
+				case InterlinDestination.Ignored:
+					ws = 0;
+					break;
+				case InterlinDestination.Baseline:
+				case InterlinDestination.Wordform:
+					ws = m_cache.DefaultVernWs;
+					break;
+			}
+			return ws;
 		}
 
 		/// <summary>
@@ -450,7 +477,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Return true if all is well to proceed with the import. Otherwise display a message box and return false.
-		private bool ValidateReadyToImport()
+		protected virtual bool ValidateReadyToImport()
 		{
 			bool gotBaseline = false;
 			foreach (var mapping in m_mappings)
@@ -540,7 +567,7 @@ namespace SIL.FieldWorks.IText
 				if (!File.Exists(path))
 					continue; // report?
 				var input = new ByteReader(path);
-				var converter = new Sfm2FlexText();
+				var converter = GetSfmConverter();
 				var stage1 = converter.Convert(input, m_mappings, m_cache.WritingSystemFactory);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
@@ -559,6 +586,11 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return null;
+		}
+
+		protected virtual Sfm2FlexTextBase<InterlinearMapping> GetSfmConverter()
+		{
+			return new Sfm2FlexText();
 		}
 
 		private void SaveSettings()
@@ -622,7 +654,8 @@ namespace SIL.FieldWorks.IText
 			}
 			catch (InvalidOperationException ex)
 			{
-				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message);
+				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message + ". " +
+					(ex.InnerException != null ? ex.InnerException.Message : ""));
 				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
@@ -636,8 +669,16 @@ namespace SIL.FieldWorks.IText
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;
 			sTransformDir = sRootDir + String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar);
-			path = Path.Combine(sTransformDir, "InterlinearSfmImport.map");
+			path = Path.Combine(sTransformDir, SfmImportSettingsFileName);
 			return path;
+		}
+
+		protected virtual string SfmImportSettingsFileName
+		{
+			get
+			{
+				return "InterlinearSfmImport.map";
+			}
 		}
 
 		internal static string GetDestinationName(InterlinDestination dest)
@@ -654,14 +695,26 @@ namespace SIL.FieldWorks.IText
 			{
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
+				var destinationsFilter = GetDestinationsFilter();
 				dlg.SetupDlg(m_helpTopicProvider, (IApp)m_mediator.PropertyTable.GetValue("App"), m_cache,
-					mapping);
+					mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
 				item.SubItems[2].Text = GetDestinationName(mapping.Destination);
 				item.SubItems[3].Text = mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : "";
 				item.SubItems[4].Text = mapping.Converter;
 			}
+		}
+
+		/// <summary>
+		/// Provides the InterlinearDestinations that should be available in Modify Mapping dlg
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IEnumerable<InterlinDestination> GetDestinationsFilter()
+		{
+			return new[] {InterlinDestination.Abbreviation, InterlinDestination.Baseline, InterlinDestination.Comment,
+						  InterlinDestination.FreeTranslation,InterlinDestination.Id, InterlinDestination.Ignored, InterlinDestination.LiteralTranslation,
+						  InterlinDestination.Note, InterlinDestination.ParagraphBreak, InterlinDestination.Reference, InterlinDestination.Source, InterlinDestination.Title };
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
@@ -699,23 +752,6 @@ namespace SIL.FieldWorks.IText
 		{
 			m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
 
-		}
-	}
-
-	/// <summary>
-	/// Simple class to record the bits of information we want about how one marker maps onto FieldWorks.
-	/// This is serialized to form the .map file, so change with care.
-	/// It is public only because XmlSerializer requires everything to be.
-	/// </summary>
-	[Serializable]
-	public class InterlinearMapping : Sfm2FlexTextMappingBase
-	{
-		public InterlinearMapping()
-		{
-		}
-		public InterlinearMapping(InterlinearMapping copyFrom)
-			: base(copyFrom)
-		{
 		}
 	}
 }

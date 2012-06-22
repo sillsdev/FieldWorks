@@ -325,6 +325,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					fEnabled = area == "lexicon";
 					break;
 				case "CmdImportInterlinearSfm":
+				case "CmdImportWordsAndGlossesSfm":
 				case "CmdImportInterlinearData":
 					if (mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance" || mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance")
 

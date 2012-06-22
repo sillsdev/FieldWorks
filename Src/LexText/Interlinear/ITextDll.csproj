@@ -257,6 +257,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<EmbeddedResource Include="WordsSfmImportWizard.resx">
+	  <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
+	</EmbeddedResource>
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
@@ -440,6 +443,12 @@
 	</Compile>
 	<Compile Include="WordBreakGuesser.cs">
 	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WordsSfmImportWizard.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="WordsSfmImportWizard.Designer.cs">
+	  <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
 	</Compile>
 	<Compile Include="WsListManager.cs">
 	  <SubType>Code</SubType>
