@@ -915,8 +915,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
 				XmlNode xn;
-				if (m_dictClassData[sClass].Count > 0 &&
-					!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+				if (!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
 				{
 					// We probably need to put this out anyway if it's an actual FW style name.
 					string sStyle = null;

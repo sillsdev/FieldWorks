@@ -6,38 +6,7 @@
   <!--* This stylesheet works on the output produced by FLEX specifically for XHTML export. *-->
   <!--***************************************************************************************-->
 
-  <!-- strip out the writing system information, since only the stylesheet needs it. -->
-
-  <xsl:template match="WritingSystemInfo"/>
-
-  <!-- Strip all white space and leave it up to the stylesheet text elements below to put in appropriate spacing. -->
-
-  <xsl:strip-space elements="*"/>
-  <xsl:preserve-space elements="Run"/><!-- but these spaces are significant! -->
-
-  <!-- insert a comment explaining why there's so little whitespace in the xhtml output. -->
-
-  <xsl:template match="/html">
-	<xsl:copy>
-	  <xsl:copy-of select="@*"/><xsl:text>&#13;&#10;</xsl:text>
-	  <xsl:comment>
-There are no spaces or newlines between &lt;span&gt; elements in this file because
-whitespace is significant.  We don't want extraneous spaces appearing in the
-display/printout!
-	  </xsl:comment><xsl:text>&#13;&#10;</xsl:text>
-	  <xsl:apply-templates/>
-	</xsl:copy>
-  </xsl:template>
-
-  <!-- insert the XHTML DOCTYPE declaration before the root element -->
-
-  <xsl:template match="/">
-	<xsl:text disable-output-escaping="yes">&#13;&#10;&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;&#13;&#10;</xsl:text>
-	<xsl:apply-templates/>
-  </xsl:template>
-
   <!-- eliminate unneeded levels in the original markup -->
-
   <xsl:template match="ReversalIndexEntry_Hvo">
 	<xsl:apply-templates/>
   </xsl:template>
