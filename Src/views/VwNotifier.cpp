@@ -874,6 +874,9 @@ Cleanup:
 		// changes, and don't bother doing it as a way of showing this change.
 		int hvoOuter = pnoteNextOuter->Object();
 		int tag = pnoteNextOuter->Tags()[m_ipropParent];
+		// We can get a -1 here as in the FM Bangla project with its original settings files.
+		if (tag == -1)
+			return S_OK;
 		int index = ObjectIndex();
 		int chvo;
 		HRESULT hr;
