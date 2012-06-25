@@ -2868,9 +2868,17 @@ namespace SIL.FieldWorks.Discourse
 								irow--;
 							continue; // Skip to next.
 						}
-						var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
-						if (occurrences.Count > 0)
-							continue;
+						try
+						{
+							var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
+							if (occurrences.Count > 0)
+								continue;
+						}
+						catch (NullReferenceException)
+						{
+							// This is a real problem, but not for the chart. There may be a WfiAnalysis or
+							// WfiGloss with no owner!
+						}
 						// CCWordGroup is now empty, take it out of row!
 						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
 							ref fReported, ref ipart, ref citems))

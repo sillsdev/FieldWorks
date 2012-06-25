@@ -242,3 +242,4 @@ NaylorJ, 21 Jun 2012. Well, maybe these are the correct Palaso version numbers.
 KenZ, 22 Jun 2012. Fixed LT-10727, importing variants of subentries from SFM.
 NaylorJ, 22 Jun 2012. Fixed a problem with Reversal subentries.
 NaylorJ, 22 Jun 2012. Color settings should now be output in the xhtml, also insert xml:space=preserve on spans which could be whitespace only.
+GordonM, 25 Jun 2012. Another minor safety net in chart repair routine.
