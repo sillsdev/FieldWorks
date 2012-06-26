@@ -10,18 +10,31 @@
   <xsl:template match="ReversalIndexEntry_Hvo">
 	<xsl:apply-templates/>
   </xsl:template>
+
+  <!-- override the div subentries from the ConfiguredXHTML so that sub entries of the reversals aren't eaten -->
+  <xsl:template match="div[@class='subentries']">
+	<xsl:copy>
+	  <xsl:copy-of select="@*"/>
+		<xsl:if test="not(@class='letter')"><xsl:text>&#13;&#10;</xsl:text></xsl:if>
+	  <xsl:apply-templates/>
+	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
+  </xsl:template>
+
   <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs">
 	<xsl:apply-templates/>
   </xsl:template>
 
   <!-- change ReversalIndexEntry into div with the proper class attribute value -->
   <xsl:template match="ReversalIndexEntry">
-	<xsl:if test="parent::div[@class='letData']">
-	  <div class="entry"><xsl:apply-templates/></div><xsl:text>&#13;&#10;</xsl:text>
-	</xsl:if>
-	<xsl:if test="ancestor::ReversalIndexEntry_Subentries">
-	  <div class="subentry"><xsl:apply-templates/></div><xsl:text>&#13;&#10;</xsl:text>
-	</xsl:if>
+	<xsl:choose>
+		<xsl:when test="parent::div[@class='letData']">
+		  <div class="entry"><xsl:apply-templates/></div>
+		</xsl:when>
+		<xsl:when test="ancestor::ReversalIndexEntry_Subentries">
+		  <div class="subentry"><xsl:apply-templates/></div>
+		</xsl:when>
+		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
+	</xsl:choose>
   </xsl:template>
 
   <!-- ****************************************** -->
@@ -56,7 +69,7 @@
 </xsl:template>
 
 <!-- This template will avoid the anchor links being put in -->
-<xsl:template match="_ReferringSenses//LexSenseLink">
+<xsl:template match="_ReferringSenses//LexSenseLink|ReversalIndexEntry_ReferringSenses//LexSenseLink">
 	<xsl:apply-templates/>
 </xsl:template>
 
