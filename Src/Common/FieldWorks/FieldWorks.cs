@@ -1445,10 +1445,8 @@ namespace SIL.FieldWorks
 			}
 			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
 			{
-				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-					return null;
-
-				return new ProjectId(dlg.Project, dlg.Server);
+				dlg.ShowDialog(dialogOwner);
+				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
 			}
 		}
 

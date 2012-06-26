@@ -545,7 +545,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			Project = projectName;
 			Server = null;
-			DialogResult = String.IsNullOrEmpty(Project) ? DialogResult.Cancel : DialogResult.OK;
+			if (String.IsNullOrEmpty(Project))
+				return; // Don't close the Open project dialog yet (LT-13187)
+			// Apparently setting the DialogResult to something other than 'None' is what tells
+			// the model dialog that it can close.
+			DialogResult =  DialogResult.OK;
 			OkButtonClick(null, null);
 		}
 
