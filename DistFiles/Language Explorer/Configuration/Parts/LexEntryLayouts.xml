@@ -436,7 +436,7 @@
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootSubEntry" css="crossrefs-sub" lexreltype="entry"/>
 		<!-- the next part is not wanted according to LT-9566 -->
 		<!--part ref="RootSubMainEntryConfig" label="Primary Entry References" visibility="ifdata" before="" after=" " sep=", " css="primaryrefs-sub"/-->
-		<part ref="SensesConfig" label="Senses" sep=" " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRootSub" css="senses-sub" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="SensesConfig" label="Senses" sep=" " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRootSub" css="senses-sub" cssNumber="xsensenumber-sub" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
 		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>

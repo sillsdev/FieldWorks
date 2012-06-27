@@ -16,7 +16,7 @@
 						<parameters id="ITextContent" PaneBarGroupId="PaneBar-ITextContent" collapse="180000">
 							<control>
 								<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMaster"/>
-								<parameters id="ITextContent" area="textsWords" clerk="interlinearTexts" treeBarAvailability="NotAllowed"/>
+								<parameters id="ITextContent" area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed"/>
 							</control>
 						</parameters>
 					</control>

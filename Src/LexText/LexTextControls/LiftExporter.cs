@@ -1213,13 +1213,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (!m_mdc.IsCustom(flid))
 					continue;
-				var labelName = m_mdc.GetFieldLabel(flid);
+				// LT-13202. Need to use fieldName since that matches custom data.
 				var fieldName = m_mdc.GetFieldName(flid);
-				if (String.IsNullOrEmpty(labelName))
-					labelName = fieldName;
 				var sHelp = m_mdc.GetFieldHelp(flid);
 				var sSpec = GetCustomFieldDefinition(className, flid);
-				w.WriteLine("<field tag=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(labelName));
+				w.WriteLine("<field tag=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
 				w.WriteLine("<form lang=\"en\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sHelp));
 				w.WriteLine("<form lang=\"qaa-x-spec\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sSpec));
 				w.WriteLine("</field>");

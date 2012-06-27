@@ -32,7 +32,7 @@ display/printout!
   <!-- insert the XHTML DOCTYPE declaration before the root element -->
 
   <xsl:template match="/">
-	<xsl:text disable-output-escaping="yes">&#13;&#10;&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;&#13;&#10;</xsl:text>
+	<xsl:text disable-output-escaping="yes">&#13;&#10;&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;&#13;&#10;</xsl:text>
 	<xsl:apply-templates/>
   </xsl:template>
 

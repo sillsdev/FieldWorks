@@ -195,13 +195,14 @@ namespace SIL.FieldWorks.IText
 				set
 				{
 					CheckDisposed();
-					multipleAnalysisColor = value;
-					if (m_sandbox.m_rootb != null)
+					if(multipleAnalysisColor != value)
 					{
-						SelectionHelper helper = SelectionHelper.Create(m_sandbox);
-						m_sandbox.m_rootb.Reconstruct(); //catestrophic redraw seems to be required to get colors to refresh
-						if(helper != null)
-							helper.RestoreSelectionAndScrollPos(); //retain the selection if possible
+						multipleAnalysisColor = value;
+						if (m_sandbox.m_rootb != null)
+						{
+							//refresh the m_sandbox so that the background color will change.
+							m_sandbox.Refresh();
+						}
 					}
 				}
 			}

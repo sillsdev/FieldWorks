@@ -31,6 +31,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class AnalysisOccurrence
 	{
 		/// <summary>
+		/// character for the zero width space
+		/// </summary>
+		public const char KchZws = '\u200B';
+
+		/// <summary>
+		/// string for the zero width space
+		/// </summary>
+		public const string KstrZws = "\u200B";
+
+		/// <summary>
 		/// The segment in which the occurrence is found.
 		/// </summary>
 		public ISegment Segment { get; private set; }
@@ -225,7 +235,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary> What it says. </summary>
 		public bool CanMakePhraseWithNextWord()
 		{
-			if (!this.HasWordform)
+			if (!HasWordform)
 				return false;
 			var nextOccurrence = NextAnalysisOccurrence();
 			return (nextOccurrence != null && nextOccurrence.Segment == Segment && nextOccurrence.HasWordform
@@ -273,7 +283,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					wordform.Form.set_String(ws, combined);
 				}
 			}
-			Segment.AnalysesRS.Replace(Index, 2, new ICmObject[] {wordform});
+			//We need to replace the next analysis and the current one, or possibly the next 2 if there is a
+			//zero width space.
+			Segment.AnalysesRS.Replace(Index, 1 + next.Index - Index, new ICmObject[] {wordform});
 			// We may be able to make guesses of this phrase elsewhere.
 			// Review JohnT: this is needed to make a 6.0 test pass, but it's a bit strange: in principle,
 			// this new phrase could be discovered and guessed anywhere, not just in this paragraph.

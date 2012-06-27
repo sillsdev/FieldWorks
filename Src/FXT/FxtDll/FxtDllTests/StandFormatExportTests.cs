@@ -8,28 +8,25 @@
 // </copyright>
 #endregion
 //-------------------------------------------------------------------------------
-using System;
 using System.IO;
-
-using SIL.FieldWorks.FDO;
-using System.Diagnostics;
-
+using SIL.FieldWorks.Common.FwUtils;
 using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
+//#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
 	/// <summary>
 	/// Test SFM export
 	/// </summary>
 	[TestFixture]
-	[Category("ByHand")]
 	public class StandardFormat : FxtTestBase
 	{
 		/// <summary>
 		/// Location of simple test FXT files
 		/// </summary>
-		protected string m_testDir = Path.Combine(DirectoryFinder.FlexFolder, "Export Templates"));
+		protected string m_testDir;
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SimpleTests"/> class.
@@ -38,7 +35,15 @@ namespace SIL.FieldWorks.Common.FXT
 		public StandardFormat()
 		{
 		}
+
+		public override void Init()
+		{
+			base.Init();
+			m_testDir = Path.Combine(DirectoryFinder.FlexFolder, "Export Templates");
+		}
+
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void MDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
@@ -46,6 +51,7 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "MDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void RootBasedMDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "RootBasedMDF.xml");
@@ -53,6 +59,7 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "RootBasedMDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
+		[Ignore("TestLangProj export tests need upgrading.")]
 		public void TwoTimesSpeedTest()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
@@ -74,6 +81,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// and checks the resulting transform against the hand edited sfm.
 		///
 		/// The expected results may need to be updated whenever the ConfiguredSfm.xsl is modified.
+		/// And they HAVE been updated to include a couple of Custom fields in the bodzi-bodzi entry.
 		/// </summary>
 		[Test]
 		public void ConfiguredDictionary_FsFeatStruc_LT5655()
@@ -96,5 +104,5 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 	}
-#endif
+//#endif
 }

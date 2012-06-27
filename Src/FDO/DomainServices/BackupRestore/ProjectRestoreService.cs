@@ -348,9 +348,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			}
 			var filesContainedInLinkdFilesFolder = GetAllFilesUnderFolderInZipFileAndDateTimes(linkedFilesPathInZip);
 
-			// When restoring media, check to see if the path to the LinkedFiles exists on computer.
-			if (Directory.Exists(proposedDestinationLinkedFilesPath))
+
+			//If the proposed location is not in the default location under the project, then ask the user if they want
+			//to restore the files to the default location instead. Otherwise just go ahead and restore the files.
+			var defaultLinkedFilesPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+			if (proposedDestinationLinkedFilesPath.Equals(defaultLinkedFilesPath))
 			{
+				if (!Directory.Exists(defaultLinkedFilesPath))
+					Directory.CreateDirectory(proposedDestinationLinkedFilesPath);
+				Debug.Assert(!Directory.Exists(defaultLinkedFilesPath));
 				ExternalLinksDirectoryExits(linkedFilesPathInZip, proposedDestinationLinkedFilesPath, filesContainedInLinkdFilesFolder);
 			}
 			else
@@ -376,12 +382,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 								{
 									Directory.CreateDirectory(proposedDestinationLinkedFilesPath);
 								}
-								catch(Exception error)
+								catch (Exception error)
 								{
 									CouldNotRestoreLinkedFilesToOriginalLocation(linkedFilesPathInZip, filesContainedInLinkdFilesFolder);
 									return;
 								}
-						}
+							}
 							UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
 																	   linkedFilesPathInZip);
 					}
@@ -558,18 +564,18 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					//Code to use for restoring files with new file structure.
 					if (fileList.ContainsKey(entry.Name))
 					{
-						//need to do the following
-						//1) If the directory for the file being restored does not exist yet then create it.
-						//2) If the path stored in the zip file does not match that of where the file is going then
-						//change it to the correct new location
-						//3) Once we know the folder exits then we can restore the file.
 						var fileName = Path.GetFileName(entry.Name);
-						var filePath = Path.GetDirectoryName(entry.Name);
-						var strbldrDestinationPath = new StringBuilder(filePath);
-						strbldrDestinationPath.Replace(DirectoryFinder.GetPathWithoutRoot(linkedFilesPathPersisted), destinationLinkedFilesPath);
-						Directory.CreateDirectory(strbldrDestinationPath.ToString());
-						//then restore the file to the temp directory and copy it to the final location
-						UnzipFileToRestoreFolder(zipIn, fileName, entry.Size, strbldrDestinationPath.ToString(), entry.DateTime);
+						Debug.Assert(!String.IsNullOrEmpty(fileName));
+
+						//Contruct the path where the file will be unzipped too.
+						var zipFileLinkFilesPath = DirectoryFinder.GetZipfileFormatedPath(linkedFilesPathPersisted);
+						var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
+						var pathForFileSubFolders = filenameWithSubFolders.Substring(0, filenameWithSubFolders.Length - fileName.Length);
+						var destFolderZipFileFormat = DirectoryFinder.GetZipfileFormatedPath(destinationLinkedFilesPath);
+						string pathRoot = Path.GetPathRoot(destinationLinkedFilesPath);
+						Debug.Assert(!String.IsNullOrEmpty(pathRoot));
+						var pathforfileunzip = Path.Combine(pathRoot, Path.Combine(destFolderZipFileFormat, pathForFileSubFolders));
+						UnzipFileToRestoreFolder(zipIn, fileName, entry.Size, pathforfileunzip, entry.DateTime);
 					}
 				}
 			}

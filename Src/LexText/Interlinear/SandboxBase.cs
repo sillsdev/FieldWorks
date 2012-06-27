@@ -545,7 +545,7 @@ namespace SIL.FieldWorks.IText
 
 		static protected int NoGuessColor
 		{
-			get { return (int)CmObjectUi.RGB(Color.LightGray); }
+			get { return (int)CmObjectUi.RGB(DefaultBackColor); }
 		}
 
 

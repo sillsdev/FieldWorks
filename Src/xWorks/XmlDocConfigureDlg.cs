@@ -1120,7 +1120,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// The "layout" in a part node can actually refer directly to another part, so check
 				// for that possibility.
-				var subPart = m_parts.GetElement("part", new[] { rgsClasses[0] + "-Jt-" + sLayout });
+				var subPart = m_parts.GetElement("part", new[] { rgsClasses[0] + "-Jt-" + sLayout }) ??
+							  m_parts.GetElement("part", new[] { className + "-Jt-" + sLayout });
 				if (subPart == null && !sLayout.EndsWith("-en"))
 				{
 					// Complain if we can't find either a layout or a part, and the name isn't tagged
@@ -1638,6 +1639,18 @@ namespace SIL.FieldWorks.XWorks
 					m_cache.ProjectId.ProjectFolder);
 				Inventory layouts = Inventory.GetInventory("layouts", null);
 				Inventory parts = Inventory.GetInventory("parts", null);
+				//preserve layouts which are marked as copies
+				var layoutTypes = m_layouts.GetLayoutTypes();
+				var layoutCopies = m_layouts.GetElements("//layout[contains(@name, '#')]");
+				foreach (var type in layoutTypes)
+				{
+					layouts.AddLayoutTypeToInventory(type);
+				}
+				foreach (var layoutCopy in layoutCopies)
+				{
+					var copy = layoutCopy as XmlNode;
+					layouts.AddNodeToInventory(copy);
+				}
 				m_layouts = layouts;
 				m_parts = parts;
 				// recreate the layout trees.
@@ -3332,6 +3345,10 @@ namespace SIL.FieldWorks.XWorks
 				Debug.Assert(m_layouts.DatabaseName == null);
 				m_layouts.DeleteUserOverrides(m_cache.ProjectId.Name);
 				m_parts.DeleteUserOverrides(m_cache.ProjectId.Name);
+				//Make sure to retain any data from user override files that were not deleted i.e. copies of dictionary views
+				m_layouts.LoadUserOverrides(LayoutCache.LayoutVersionNumber, m_cache.ProjectId.Name);
+				m_parts.LoadUserOverrides(LayoutCache.LayoutVersionNumber, m_cache.ProjectId.Name);
+
 				Inventory.SetInventory("layouts", m_cache.ProjectId.Name, m_layouts);
 				Inventory.SetInventory("parts", m_cache.ProjectId.Name, m_parts);
 				Inventory.RemoveInventory("layouts", null);
@@ -4832,6 +4849,13 @@ namespace SIL.FieldWorks.XWorks
 		private void CopyConfiguration(XmlNode xnBaseConfig, string code, string label)
 		{
 			var xnNewConfig = xnBaseConfig.CloneNode(true);
+			//set the version number on the layoutType node to indicate user configured
+// ReSharper disable PossibleNullReferenceException
+// With any xml node that can possibly be copied here we have an owner and attributes
+			var versionAtt = xnNewConfig.OwnerDocument.CreateAttribute("version");
+			versionAtt.Value = LayoutCache.LayoutVersionNumber.ToString();
+			xnNewConfig.Attributes.Append(versionAtt);
+// ReSharper restore PossibleNullReferenceException
 			Debug.Assert(xnNewConfig.Attributes != null);
 			var xaLabel = xnNewConfig.Attributes["label"];
 			xaLabel.Value = label;

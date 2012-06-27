@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -17,8 +14,6 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	class ShowSpaceDecorator : DomainDataByFlidDecoratorBase
 	{
-		public const char KchZws = '\u200B';
-		public const string KstrZws = "\u200B" ;
 		public static readonly int KzwsBackColor = (int)ColorUtil.ConvertColorToBGR(Color.LightGray);
 		public ShowSpaceDecorator(ISilDataAccessManaged sda) : base(sda)
 		{}
@@ -33,7 +28,7 @@ namespace SIL.FieldWorks.IText
 			var text = result.Text;
 			if (text == null)
 				return result;
-			int index = text.IndexOf(KchZws);
+			int index = text.IndexOf(AnalysisOccurrence.KchZws);
 			if (index < 0)
 				return result;
 
@@ -43,7 +38,7 @@ namespace SIL.FieldWorks.IText
 				bldr.Replace(index, index + 1, " ", null);
 				bldr.SetIntPropValues(index, index + 1, (int) FwTextPropType.ktptBackColor, (int) FwTextPropVar.ktpvDefault,
 					KzwsBackColor);
-				index = text.IndexOf(KchZws, index + 1);
+				index = text.IndexOf(AnalysisOccurrence.KchZws, index + 1);
 			}
 			return bldr.GetString();
 		}
@@ -62,7 +57,7 @@ namespace SIL.FieldWorks.IText
 			{
 				int nVar;
 				if (bldr.get_PropertiesAt(index).GetIntPropValues((int) FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
-					bldr.Replace(index, index + 1, KstrZws, null);
+					bldr.Replace(index, index + 1, AnalysisOccurrence.KstrZws, null);
 				index = text.IndexOf(' ', index + 1);
 			}
 			for (int irun = bldr.RunCount - 1; irun >= 0;  irun--)

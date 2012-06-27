@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public const int kEnvStringRep = -5002;			// TsString
 		public const int kErrorMessage = -5003;			// unicode
 
-		public const int kDummyClass = -2;
+		public const int kDummyClass = -2;				// used to create a new environment
 
 		//Fake Ids.
 		public const int kDummyPhoneEnvID = -1;
@@ -388,25 +388,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// not have alternatives. Ws would be the WS of an alternative,
 			// if there were any.
 			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj,
-				out tag, out ws);
+				out tag, out ws); // start of string info
 
 			int ichEnd;
 			int hvoObjEnd;
 			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd,
-				out tag, out ws);
+				out tag, out ws); // end of string info
 
 			if (hvoObjEnd != hvoObj)
-			{
+			{	// owner of the end of the string in not the same as at the beginning - is this possible?
 				CheckHeight();
 				return;
 			}
 			if (m_hvoOldSelection < 0 &&
 				(hvoObj != m_hvoOldSelection || (tssOldSel != null && tssOldSel.Length > 0)))
-			{
+			{	// the new selection is owned by a different object (left the selection) or the old one is not empty
 				// Try to validate previously selected string rep.
 				ITsString tssOld = m_sda.get_StringProp(m_hvoOldSelection, kEnvStringRep);
 				if (tssOld == null || tssOld.Length == 0)
-				{
+				{	// deleted or erased
 					// Remove it from the dummy cache, since its length is 0.
 					int limit = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 					for (int i = 0; i < limit; ++i)
@@ -419,40 +419,49 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						}
 					}
 				}
-				else if (hvoObj != m_hvoOldSelection) // Validate previously selected string rep.
-				{
+				else if (hvoObj != m_hvoOldSelection)
+				{	// Left the selection, so validate previously selected string rep.
 					ValidateStringRep(m_hvoOldSelection);
 				}
 			}
 			if (hvoObj != kDummyPhoneEnvID)
-			{
+			{   // this is a "real" env, not the place holder for the next one
+				// normal editing of the current env exits here
 				m_hvoOldSelection = hvoObj;
 				CheckHeight();
 				return;
 			}
-			if (tss.Length == 0)
+			// if this is NOT the first pass for the original PropChanged
+			// and the ts string is empty (tss.Text == null) then quit
+			if (m_rootb.IsPropChangedInProgress && tss.Length == 0)
 			{
 				CheckHeight();
 				return;
 			}
-			// Create a new object, and recreate a new empty object. Make this part of the Undo
-			// Task with the character we typed.
-			//m_sda.GetActionHandler().ContinueUndoTask();
+
+			// This point is only passed when the empty env pattern becomes "real"
+			// or when this is the original PropChanged pass and the string is null.
+			// This happens when
+			//  1) a characher is typed in the empty env. (was empty but not now)
+			//  2) a non-empty env is left by right-arrowing or clicking passed the separator bar.
+			// Before this, the empty env is a placeholder for the next env.
+			// After it is made real by giving it an hvo for the sda and selection mechanisms,
+			// it must not pass this point again.
+
+			// Create a new object, and recreate a new empty object.
 			int count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 			int hvoNew = InsertNewEnv(count - 1);
-			m_sda.SetString(hvoNew, kEnvStringRep, tss);
-			m_sda.SetString(kDummyPhoneEnvID, kEnvStringRep, DummyString);
-			//m_sda.EndUndoTask();
-			// Refresh
+			m_sda.SetString(hvoNew, kEnvStringRep, tss); // set the last env to the pattern
+			m_sda.SetString(kDummyPhoneEnvID, kEnvStringRep, DummyString); // set a new empty env
+			// Refresh to create a new view box for the DummyString? (doesn't seem to work)
 			m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count - 1, 2, 1);
-			// Reset selection.
+			// Set selection after the just added character or on the right side of the separator bar.
 			SelLevInfo[] rgvsli = new SelLevInfo[1];
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].tag = kMainObjEnvironments;
 			rgvsli[0].ihvo = count - 1;
 			m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, 0, ichAnchor, ichEnd, ws,
-				fAssocPrev, -1, null, true);
-
+									  fAssocPrev, -1, null, true);
 			m_hvoOldSelection = hvoNew;
 			CheckHeight();
 		}

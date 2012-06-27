@@ -114,17 +114,13 @@
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
 	</Reference>
-	<Reference Include="FwUtils, Version=5.5.0.25508, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.2.5.17244, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <Private>True</Private>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
@@ -161,6 +157,10 @@
 	<Compile Include="XUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\..\Common\FwUtils\FwUtils.csproj">
+	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
+	  <Name>FwUtils</Name>
+	</ProjectReference>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>

@@ -654,7 +654,7 @@ DoEntry
 	  <xsl:for-each select="$parentNode/Subentry">
 		<xsl:call-template name="DoVariantsNew">
 		<xsl:with-param name="parentNode" select="."/>
-		<xsl:with-param name="GUID" select="$GUID"/>
+		<xsl:with-param name="GUID" select="./@guid"/>
 		</xsl:call-template>
 	  </xsl:for-each>
 	</xsl:if>

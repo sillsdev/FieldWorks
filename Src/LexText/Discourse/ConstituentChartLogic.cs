@@ -2806,8 +2806,9 @@ namespace SIL.FieldWorks.Discourse
 			{
 				var fReported = false;
 				// Clobber any deleted words, etc.
-				var crows = m_chart.RowsOS.Count;
-				for (var irow = 0; irow < crows; irow++) // not foreach here, as we may delete some as we go
+				// GJM 2012.06.15 -- having too many problems with number of rows changing, so now we will check
+				// row count each time through instead of maintaining a count that can get messed up.
+				for (var irow = 0; irow < m_chart.RowsOS.Count; irow++) // not foreach here, as we may delete some as we go
 				{
 					var curRow = m_chart.RowsOS[irow];
 					var citems = curRow.CellsOS.Count;
@@ -2842,34 +2843,48 @@ namespace SIL.FieldWorks.Discourse
 						if (curPart is IConstChartClauseMarker)
 						{
 							if (!((IConstChartClauseMarker)curPart).HasValidRefs)
-								ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							{
+								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+							}
 							continue;
 						}
 						if (curPart is IConstChartMovedTextMarker)
 						{
 							if (!((IConstChartMovedTextMarker)curPart).HasValidRef)
-								ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							{
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+							}
 							continue;
 						}
 						// Do some further checking because it's a ConstChartWordGroup.
 						var curWordGroup = curPart as IConstChartWordGroup;
 						if (!curWordGroup.IsValidRef || !WordGroupTextMatchesChartText(curWordGroup))
 						{
-							// This is an invalid cell part. We need to delete this cell part.
-							ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								ref fReported, ref ipart, ref citems))
+								irow--;
 							continue; // Skip to next.
 						}
-						var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
-						if (occurrences.Count > 0)
-							continue;
+						try
+						{
+							var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
+							if (occurrences.Count > 0)
+								continue;
+						}
+						catch (NullReferenceException)
+						{
+							// This is a real problem, but not for the chart. There may be a WfiAnalysis or
+							// WfiGloss with no owner!
+						}
 						// CCWordGroup is now empty, take it out of row!
-						ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup, ref fReported, ref ipart, ref citems);
+						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
+							ref fReported, ref ipart, ref citems))
+							irow--;
 					} // cellPart loop
-					if (curRow.Hvo > 0)
-						continue;
-					// row is now empty and has disappeared automatically, update counts
-					irow--;
-					crows--;
 				} // row loop
 				if (fReported)
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
@@ -2887,7 +2902,18 @@ namespace SIL.FieldWorks.Discourse
 			return wgText.Hvo == Chart.BasedOnRA.Hvo; // But Chart IS set now!
 		}
 
-		private void ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
+		/// <summary>
+		/// Reports warning about chart messup (if it hasn't already been reported),
+		/// deletes bad cell part, restarts cell loop. If this returns false, then
+		/// the row index needs to be decremented (before the auto loop increment).
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="part"></param>
+		/// <param name="fReported"></param>
+		/// <param name="index"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		private bool ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
 			IConstituentChartCellPart part, ref bool fReported, ref int index, ref int count)
 		{
 			//Debug.Assert(false, "About to delete cell part. Why!?");
@@ -2902,6 +2928,7 @@ namespace SIL.FieldWorks.Discourse
 			index = -1; // after auto-increment in for loop, starts over at beginning.
 			// if we just removed the last cell in the row, the row will be deleted too!
 			count = row.IsValidObject ? row.CellsOS.Count : 0;
+			return row.IsValidObject; // if row gets deleted, returns false.
 		}
 
 		/// <summary>

@@ -20,8 +20,8 @@ using System.Xml.Xsl;
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
@@ -38,10 +38,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Location of XML result control files
 		/// </summary>
-		protected string m_sExpectedResultsPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
-															Path.Combine("FXT",
-															Path.Combine("FxtDll",
-															Path.Combine("FxtDllTests", "ExpectedResults"))));
+		protected string m_sExpectedResultsPath;
 
 		/// <summary>
 		/// any filters that we want, for example, to only output items which satisfy their constraint.
@@ -77,11 +74,22 @@ namespace SIL.FieldWorks.Common.FXT
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UnitTest"/> class.
+		/// Initializes a new instance of the <see cref="FxtTestBase"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public FxtTestBase()
 		{
+		}
+
+		[TestFixtureSetUp]
+		public virtual void Init()
+		{
+			RegistryHelper.CompanyName = "SIL";
+			RegistryHelper.ProductName = "FieldWorks";
+			m_sExpectedResultsPath = Path.Combine(DirectoryFinder.FwSourceDirectory,
+															Path.Combine("FXT",
+															Path.Combine("FxtDll",
+															Path.Combine("FxtDllTests", "ExpectedResults"))));
 		}
 
 		protected void DoDump (string databaseName, string label, string fxtPath, string answerPath)

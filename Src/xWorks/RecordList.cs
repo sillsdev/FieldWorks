@@ -3779,7 +3779,7 @@ namespace SIL.FieldWorks.XWorks
 			// This particular cache cannot reliably be used again, since items may be created or deleted
 			// while the program is running. In case a crash occurs, we don't want to reload an obsolete
 			// list the next time we start up.
-			File.Delete(pathname);
+			FileUtils.Delete(pathname);
 			if (items == null)
 				return false; // could not restore, bad file or deleted objects or...
 			if (versionStamp != null)

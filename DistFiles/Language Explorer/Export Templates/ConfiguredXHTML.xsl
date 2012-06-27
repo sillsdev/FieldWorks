@@ -32,7 +32,7 @@ display/printout!
   <!-- insert the XHTML DOCTYPE declaration before the root element -->
 
   <xsl:template match="/">
-	<xsl:text disable-output-escaping="yes">&#13;&#10;&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;&#13;&#10;</xsl:text>
+	<xsl:text disable-output-escaping="yes">&#13;&#10;&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;&#13;&#10;</xsl:text>
 	<xsl:apply-templates/>
   </xsl:template>
 
@@ -137,6 +137,10 @@ display/printout!
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
+
+  <xsl:template match="Paragraph[@style='Bulleted List']">
+	<span class="bulletpara"><xsl:apply-templates/></span>
+  </xsl:template>
 
   <xsl:template match="Paragraph">
 	<xsl:apply-templates/>
@@ -445,13 +449,28 @@ display/printout!
 	</xsl:if>
   </xsl:template>
 
-  <xsl:template match="LiteralString">
-	<xsl:if test="Str/Run/@fontsize and Str/Run/@editable='not'">
-	  <span><xsl:attribute name="class">xlanguagetag</xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
-		<xsl:value-of select="Str/Run"/>
-	  </span>
-	</xsl:if>
-  </xsl:template>
+	<!--
+	<xsl:template match="span[@class='senses-sub']/LexEntry_Senses/LiteralString">
+		<xsl:if test="Str/Run/@bold='on'">
+			<span class="xsensenumber-sub"><xsl:value-of select="Str/Run"/></span>
+		</xsl:if>
+	</xsl:template>
+	-->
+	<xsl:template match="LiteralString">
+	  <xsl:choose>
+		<xsl:when test="Str/Run/@fontsize and Str/Run/@editable='not'">
+		  <span><xsl:attribute name="class">xlanguagetag</xsl:attribute><xsl:attribute name="lang"><xsl:value-of select="Str/Run/@ws"/></xsl:attribute>
+			<xsl:value-of select="Str/Run"/>
+		  </span>
+		</xsl:when>
+		<xsl:when test="Str/Run">
+		  <xsl:call-template name="ProcessString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AStr/Run">
+		  <xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		</xsl:when>
+	  </xsl:choose>
+	</xsl:template>
 
 
   <xsl:template match="LexEtymology_Form">
@@ -698,11 +717,11 @@ display/printout!
 	</xsl:choose>
   </xsl:template>
 
-	<xsl:template match="ItemNumber">
-		<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
-		<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
+  <xsl:template match="ItemNumber">
+	<!-- We've already dealt with sense number ItemNumber elements preceding a LexSense where a Paragraph style is invoked, so exlcude those here: -->
+	<xsl:if test="not(@class='xsensenumber' and following-sibling::LexSense and ../../Paragraph)">
 	  <span><xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute><xsl:value-of select="Str/Run"/></span>
-		</xsl:if>
+	</xsl:if>
   </xsl:template>
 
 	<!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
@@ -952,6 +971,9 @@ display/printout!
 	<xsl:copy>
 	  <xsl:copy-of select="@title"/>
 	  <xsl:choose>
+		<xsl:when test="ReversalIndexEntry_ReversalForm/AStr/Run">
+		  <xsl:call-template name="SetAnalAttrs"><xsl:with-param name="Class" select="@class"/><xsl:with-param name="Lang" select="ReversalIndexEntry_ReversalForm//AStr[1]/@ws"/></xsl:call-template>
+		</xsl:when>
 		<xsl:when test="LexEntry_LexemeForm/MoForm/MoForm_Form/AStr/Run">
 		  <xsl:call-template name="SetVernAttrs"><xsl:with-param name="Class" select="@class"/><xsl:with-param name="Lang" select="LexEntry_LexemeForm/MoForm/MoForm_Form/AStr[1]/@ws"/></xsl:call-template>
 		</xsl:when>
@@ -1094,6 +1116,7 @@ display/printout!
 		<xsl:when test="not(@ws=../@ws) or not(@namedStyle=../@namedStyle)">
 		  <span>
 			<xsl:if test="@namedStyle"><xsl:attribute name="class"><xsl:value-of select="translate(@namedStyle,' ','_')"/></xsl:attribute></xsl:if>
+			<xsl:attribute name="xml:space">preserve</xsl:attribute>
 			<xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute>
 			<xsl:value-of select="."/>
 		  </span>
@@ -1130,6 +1153,7 @@ display/printout!
 	  <span>
 		<xsl:if test="@namedStyle"><xsl:attribute name="class"><xsl:value-of select="translate(@namedStyle,' ','_')"/></xsl:attribute></xsl:if>
 		<xsl:attribute name="lang"><xsl:value-of select="@ws"/></xsl:attribute>
+		<xsl:attribute name="xml:space">preserve</xsl:attribute>
 		<xsl:value-of select="."/>
 	  </span>
 	</xsl:for-each>
