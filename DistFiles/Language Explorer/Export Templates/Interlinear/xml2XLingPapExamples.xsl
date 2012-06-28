@@ -67,7 +67,8 @@ Main template
 				</xsl:for-each>
 			</languages>
 			<types>
-				<type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub"
+				<xsl:call-template name="CommonTypes"/>
+				<!--<type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub"
 					xsl-foSpecial="baseline-shift='sub'"/>
 				<type id="tVariantTypes" >
 					<xsl:variable name="analysisLanguage" select="//language[not(@vernacular='true')][1]"/>
@@ -76,7 +77,7 @@ Main template
 							<xsl:value-of select="$analysisLanguage/@font"/>
 						</xsl:attribute>
 					</xsl:if>
-				</type>
+				</type>-->
 			</types>
 		</lingPaper>
 	</xsl:template>
@@ -129,7 +130,26 @@ phrase
 		</example>
 	</xsl:template>
 	<xsl:include href="xml2XLingPapCommon.xsl"/>
-</xsl:stylesheet>
+	<xsl:template match="item[parent::phrase]">
+		<xsl:choose>
+			<xsl:when test="@type='txt'">
+				<!-- what is this for?   -->
+			</xsl:when>
+			<xsl:when test="@type='gls'">
+				<item type="gls" lang="{@lang}">
+					<xsl:apply-templates/>
+				</item>
+			</xsl:when>
+			<xsl:when test="@type='lit' ">
+				<!--  someday we'll have a literal translation element in XLingPaper -->
+				<item type="gls" lang="{@lang}">
+					<object type="tLiteralTranslation">
+						<xsl:apply-templates/>
+					</object>
+				</item>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template></xsl:stylesheet>
 <!--
 ================================================================
 Revision History
