@@ -5990,3 +5990,4 @@ GordonM, 26 Jun 2012. LT-13187 Cancelling FLExBridge ObtainProject doesn't close
 KenZ, 26 Jun 2012. Integrated FW7.2.5 to WW.
 NaylorJ, 27 Jun 2012. Possible fix to LT-13348, have not yet tested adequately, but committing so that others can verify.
 RandyR, 27 June 2012. Updated FLEx Bridge installer to 0.3.54.
+KenZ, 28 Jun 2012. Fixed LT-13312 migration when expected entry types are not present.

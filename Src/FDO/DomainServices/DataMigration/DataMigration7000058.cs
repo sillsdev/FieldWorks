@@ -25,12 +25,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			DataMigrationServices.CheckVersionNumber(domainObjectDtoRepository, 7000057);
 			{
-				var dtoVariantPluralType = domainObjectDtoRepository.GetDTO(LexEntryTypeTags.kguidLexTypPluralVar.ToString());
-				AddGlossAppendIfEmpty(domainObjectDtoRepository, dtoVariantPluralType, ".pl");
-			}
-			{
-				var dtoVariantPastType = domainObjectDtoRepository.GetDTO(LexEntryTypeTags.kguidLexTypPastVar.ToString());
-				AddGlossAppendIfEmpty(domainObjectDtoRepository, dtoVariantPastType, ".pst");
+				// LT-13312 Note some projects may not have these guids.
+				DomainObjectDTO dtoVariantType;
+				if (domainObjectDtoRepository.TryGetValue(LexEntryTypeTags.kguidLexTypPluralVar.ToString(), out dtoVariantType))
+					AddGlossAppendIfEmpty(domainObjectDtoRepository, dtoVariantType, ".pl");
+				if (domainObjectDtoRepository.TryGetValue(LexEntryTypeTags.kguidLexTypPastVar.ToString(), out dtoVariantType))
+					AddGlossAppendIfEmpty(domainObjectDtoRepository, dtoVariantType, ".pst");
 			}
 			DataMigrationServices.IncrementVersionNumber(domainObjectDtoRepository);
 		}
