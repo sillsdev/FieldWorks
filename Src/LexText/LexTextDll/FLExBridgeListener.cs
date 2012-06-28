@@ -158,15 +158,16 @@ namespace SIL.FieldWorks.XWorks.LexText
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var manager = app.FwManager;
-				//var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
-				var appArgs = new FwAppArgs(fullProjectFileName); // this should be all that's necessary
-
-				var newApp = manager.ReopenProject(Cache.ProjectId.Name, appArgs);
+				var appArgs = new FwAppArgs(fullProjectFileName);
+				var newAppWindow = (FwXWindow)manager.ReopenProject(Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+				//clear out any sort cache files (or whatever else might mess us up) and then refresh
+				newAppWindow.ClearInvalidatedStoredData();
+				newAppWindow.RefreshDisplay();
 
 				if (conflictOccurred)
 				{
-					((FwXWindow) newApp.ActiveMainWindow).Mediator.SendMessage("ShowConflictReport", null);
-					//OnShowConflictReport(null); no good, we've been disposed.
+					//send a message for the reopened instance to display the conflict report, we have been disposed by now
+					newAppWindow.Mediator.SendMessage("ShowConflictReport", null);
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app

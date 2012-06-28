@@ -5988,3 +5988,4 @@ RandyR, 22 June 2012. Updated FLEx Bridge installer to 0.3.53 & Lift Bridge inst
 McCoy, 25 June 2012.  Edited column dialog box for some improvements per LT-5410.  The dialog will now choose a different WS by default on adding a duplicate column, and will warn the user immediately if a duplicate is (unavoidably) created.
 GordonM, 26 Jun 2012. LT-13187 Cancelling FLExBridge ObtainProject doesn't close File-Open dialog.
 KenZ, 26 Jun 2012. Integrated FW7.2.5 to WW.
+NaylorJ, 27 Jun 2012. Possible fix to LT-13348, have not yet tested adequately, but committing so that others can verify.

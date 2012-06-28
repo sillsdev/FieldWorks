@@ -426,6 +426,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void ClearInvalidatedStoredData()
+		{
+			DiscardProperties();
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Construct a new form
