@@ -5992,3 +5992,4 @@ NaylorJ, 27 Jun 2012. Possible fix to LT-13348, have not yet tested adequately, 
 RandyR, 27 June 2012. Updated FLEx Bridge installer to 0.3.54.
 KenZ, 28 Jun 2012. Fixed LT-13312 migration when expected entry types are not present.
 Andy Black, 28 Jun 2012.  Fixed LT-13393 "Interlinear Export option, "XLingPaper as examples, morpheme-aligned" does not include the free translation line"
+McCoy, 29 June 2012.  Fixed LT-13162 (crash when right-click on empty field).

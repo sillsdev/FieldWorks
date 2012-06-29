@@ -149,6 +149,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		protected override bool HandleRightClickOnObject(int hvo)
+		{
+			if(hvo != khvoFake)
+			{
+				return base.HandleRightClickOnObject(hvo);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		private bool DeleteItem()
 		{
 			if (m_prevSelectedHvo == 0)
