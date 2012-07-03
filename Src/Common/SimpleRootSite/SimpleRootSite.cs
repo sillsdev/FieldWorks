@@ -2666,17 +2666,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// process just because the selection is already visible.</param>
 		/// <remarks>
 		/// Note: subclasses for which scrolling is disabled should override.
-		/// If <paramref name="vwsel"/> is null, make the current selection visible.
+		/// If the selection is invalid, return false.
 		/// </remarks>
 		/// <returns>True if the selection was made visible, false if it did nothing</returns>
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace,
 			bool fWantBothEnds, bool fForcePrepareToDraw)
 		{
-			// TODO: LT-2268,2508 - Why is this selection going bad...?
+			// TODO: LT-2268,2508 - Why is this selection going bad...?  Also LT-13374 in the case vwsel == null.
 			// The if will handle the crash, but there is still the problem
 			// of the selections getting invalid.
-			if (!vwsel.IsValid)
+			if (vwsel == null || !vwsel.IsValid)
 				return false; // can't work with an invalid selection
 
 			if (fWantOneLineSpace && ClientHeight < LineHeight * 3)
