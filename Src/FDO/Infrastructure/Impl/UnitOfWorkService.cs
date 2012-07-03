@@ -7,10 +7,6 @@
 // GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-//
-// File: FdoMediator.cs
-// Responsibility: FW Team
-// --------------------------------------------------------------------------------------------
 using System;
 using System.Linq;
 using System.Collections.Generic;

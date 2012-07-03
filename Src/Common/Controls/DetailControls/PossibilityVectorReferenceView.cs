@@ -7,15 +7,7 @@
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-//
-// File: VectorReferenceView.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
-//
-// <remarks>
-// borrowed and hacked from PhoneEnvReferenceView
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -191,7 +183,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		private class SdaDecorator : DomainDataByFlidDecoratorBase
+		internal class SdaDecorator : DomainDataByFlidDecoratorBase
 		{
 			private readonly Dictionary<int, ITsString> m_strings;
 
@@ -285,8 +277,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					vwenv.CloseParagraph();
 					break;
 				case VectorReferenceView.kfragTargetObj:
-					// Display one object from the vector.
-					vwenv.AddStringProp(PossibilityVectorReferenceView.kflidFake, this);
+					if (vwenv.DataAccess is PossibilityVectorReferenceView.SdaDecorator)
+					{
+						var decorator = vwenv.DataAccess as PossibilityVectorReferenceView.SdaDecorator;
+						var stringProp = decorator.get_StringProp(vwenv.CurrentObject(),
+												 PossibilityVectorReferenceView.kflidFake);
+						if(stringProp != null)
+						{
+							 // Display one object from the vector.
+							vwenv.AddStringProp(PossibilityVectorReferenceView.kflidFake, this);
+						}
+					}
+					else
+					{
+						// Display one object from the vector.
+						vwenv.AddStringProp(PossibilityVectorReferenceView.kflidFake, this);
+					}
 					break;
 				default:
 					throw new ArgumentException(
