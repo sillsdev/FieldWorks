@@ -5996,3 +5996,4 @@ McCoy, 29 June 2012.  Fixed LT-13162 (crash when right-click on empty field).
 McCoy, 3 July 2012.  Partial fix for LT-13361 (crash on merging senses with semantic domains).  The crash will no longer occur, but the merged semantic domains do not display until the screen is refreshed.
 McCoy, 3 July 2012.  Fixed LT-13374 (crash on hiding all but one columns in Notebook and switching between "browse" and "record edit").
 RandyR, 3 July 2012. Updated FLEx Bridge installer to 0.3.58.
+GordonM, 4 Jul 2012. Fix LT-13274 so View-Conflict Report does the right thing with a db4o file.

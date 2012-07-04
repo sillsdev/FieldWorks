@@ -81,6 +81,16 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnShowConflictReport(object commandObject)
 		{
+			if (IsDb4oProject)
+			{
+				var dlg = new Db4oSendReceiveDialog();
+				if (dlg.ShowDialog() == DialogResult.Abort)
+				{
+					// User clicked on link
+					_mediator.SendMessage("FileProjectSharingLocation", null);
+				}
+				return true;
+			}
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
