@@ -88,8 +88,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ChooseLangProjectDialog()
 		{
 			InitializeComponent();
-			//hide the FLExBridge related link if unavailable
+			//hide the FLExBridge related link and image if unavailable
 			m_linkOpenBridgeProject.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
+			pictureBox1.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -572,7 +573,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_btnAddHost.Enabled = !String.IsNullOrEmpty(m_txtAddHost.Text);
 		}
-		#endregion
 
+		private void ChooseLangProjectDialog_Load(object sender, EventArgs e)
+		{
+			// If the FLExBridge image is not displayed, collapse its panel.
+			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
+		}
+		#endregion
 	}
 }
