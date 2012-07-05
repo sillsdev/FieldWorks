@@ -5999,3 +5999,4 @@ RandyR, 3 July 2012. Updated FLEx Bridge installer to 0.3.58.
 GordonM, 4 Jul 2012. Fix LT-13274 so View-Conflict Report does the right thing with a db4o file.0
 NaylorJ, 5 Jul 2012. Fixed LT-13040, Any MSA references in the LexEntry which are not in any sense will be dropped by the fixup.
 McCoy, 5 July 2012.  Fixed LT-13249; the icon for FLExBridge will now move with its link on resize, and will only be displayed when FLExBridge is installed.
+RandyR, 5 July 2012. Updated FLEx Bridge installer to 0.3.59.
