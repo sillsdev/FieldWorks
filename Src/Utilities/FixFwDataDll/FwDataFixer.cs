@@ -60,6 +60,7 @@ namespace SIL.FieldWorks.FixData
 			// The following fixers will be run on each rt element during FixErrorsAndSave()
 			// N.B.: Order is important here!!!!!!!
 			m_rtLevelFixers.Add(new OriginalFixer());
+			m_rtLevelFixers.Add(new GrammaticalSenseFixer());
 			m_rtLevelFixers.Add(new SequenceFixer());
 			using (XmlReader xrdr = XmlReader.Create(m_filename))
 			{
@@ -262,6 +263,111 @@ namespace SIL.FieldWorks.FixData
 						FixGenericDate("DateOfBirth", rt, className, guid, errorLogger);
 						FixGenericDate("DateOfDeath", rt, className, guid, errorLogger);
 						break;
+				}
+				return true;
+			}
+		}
+
+		/// <summary>
+		/// Fix up any entries that are found to contain MSA references which none of the senses have. Those references
+		/// are simply removed.
+		/// </summary>
+		private class GrammaticalSenseFixer : RtFixer
+		{
+			private Dictionary<string, HashSet<string>> senseToMSA = new Dictionary<string, HashSet<string>>();
+			private Dictionary<string, HashSet<string>> entryToMSA = new Dictionary<string, HashSet<string>>();
+			private Dictionary<string, HashSet<string>> entryToSense = new Dictionary<string, HashSet<string>>();
+
+			internal override void InspectElement(XElement rt)
+			{
+				base.InspectElement(rt);
+				var elementGuids = new HashSet<string>();
+				var senseGuids = new HashSet<string>();
+				string rtClass = rt.Attribute("class").Value;
+				string rtGuid = rt.Attribute("guid").Value;
+
+				switch (rtClass)
+				{
+					case "LexEntry":
+						if (!entryToSense.ContainsKey(rtGuid))
+						{
+							var senses = rt.Element("Senses");
+							foreach(var sense in senses.Descendants("objsur"))
+							{
+								if(sense.Name.LocalName == "objsur")
+								{
+									senseGuids.Add(sense.Attribute("guid").Value);
+								}
+							}
+							entryToSense.Add(rtGuid, senseGuids);
+						}
+						break;
+					case "LexSense":
+						if(!senseToMSA.ContainsKey(rtGuid))
+						{
+							senseToMSA.Add(rtGuid, elementGuids);
+							AddElementGuids(rt, "MorphoSyntaxAnalysis", elementGuids);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+
+			private static void AddElementGuids(XElement rt, string elementName, HashSet<string> elementGuids)
+			{
+				var analyses = rt.Element(elementName);
+				if (analyses == null)
+					return;
+				foreach (var xElement in analyses.Descendants("objsur"))
+				{
+					elementGuids.Add(xElement.Attribute("guid").Value);
+				}
+			}
+
+			internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+			{
+				base.FinalFixerInitialization(owners, guids);
+				//Go through the maps and find out if any references to MSAs ought to be dropped by the entry
+				var finalEntryToMSA = new Dictionary<string, HashSet<string>>();
+				foreach (var entry in entryToSense)
+				{
+					var actualMSAs = new HashSet<string>();
+					finalEntryToMSA.Add(entry.Key, actualMSAs);
+					foreach (var senseGuid in entry.Value)
+					{
+						actualMSAs.UnionWith(senseToMSA[senseGuid]);
+					}
+				}
+				entryToMSA = finalEntryToMSA;
+			}
+
+			//Go through the list of MSA references in the file and remove those which do not occur in any sense
+			//Why? Because the Chorus merge will flag a conflict for the users but end up placing both references
+			//in the entry. This incorrectly causes parts of speech to be referenced in the Entry which no sense uses.
+			internal override bool FixElement(XElement rt, ErrorLogger logger)
+			{
+				var guid = rt.Attribute("guid");
+				if(guid == null)
+					return true;
+				if(rt.Attribute("class").Value == "LexEntry")
+				{
+					var MSAs = rt.Element("MorphoSyntaxAnalyses");
+					var rejects = new List<XNode>();
+					if(MSAs != null)
+					{
+						foreach (var item in MSAs.Descendants("objsur"))
+						{
+							if (!entryToMSA[guid.Value].Contains(item.Attribute("guid").Value))
+							{
+								rejects.Add(item);
+							}
+						}
+						foreach (var reject in rejects)
+						{
+							reject.Remove();
+						}
+					}
 				}
 				return true;
 			}

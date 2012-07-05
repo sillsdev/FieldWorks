@@ -37,6 +37,9 @@ namespace FixFwDataDllTests
 			File.Copy(basePath + "SequenceFixer/Test.fwdata", basePath + "SequenceFixer/BasicFixup.fwdata", true);
 			File.SetAttributes(basePath + "SequenceFixer/BasicFixup.fwdata", FileAttributes.Normal);
 
+			File.Copy(basePath + "EntryWithExtraMSA/Test.fwdata", basePath + "EntryWithExtraMSA/BasicFixup.fwdata", true);
+			File.SetAttributes(basePath + "EntryWithExtraMSA/BasicFixup.fwdata", FileAttributes.Normal);
+
 			File.Copy(basePath + "TagAndCellRefs/Test.fwdata", basePath + "TagAndCellRefs/BasicFixup.fwdata", true);
 			File.SetAttributes(basePath + "TagAndCellRefs/BasicFixup.fwdata", FileAttributes.Normal);
 		}
@@ -192,6 +195,25 @@ namespace FixFwDataDllTests
 			Assert.AreEqual("Removing owner of empty sequence (guid='" + sequenceContextGuid +
 				"' class='PhSequenceContext') from its owner (guid='" + segmentRuleRhsGuid + "').", errors[2],
 				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+		}
+
+		[Test]
+		public void TestEntryWithExtraMSA()
+		{
+
+			Assert.DoesNotThrow(() =>
+			{
+				var data = new FwDataFixer(basePath + "EntryWithExtraMSA/BasicFixup.fwdata", new DummyProgressDlg(),
+										   LogErrors);
+
+				// SUT
+				data.FixErrorsAndSave();
+			}, "Exception running the data fixer on the entry with extra MSA test data.");
+			// check that the clause marker was there originally
+			AssertThatXmlIn.File(basePath + "EntryWithExtraMSA/BasicFixup.bak").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
+			AssertThatXmlIn.File(basePath + "EntryWithExtraMSA/BasicFixup.fwdata").HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
 		}
 
 		[Test]
