@@ -244,6 +244,6 @@ NaylorJ, 22 Jun 2012. Fixed a problem with Reversal subentries.
 NaylorJ, 22 Jun 2012. Color settings should now be output in the xhtml, also insert xml:space=preserve on spans which could be whitespace only.
 GordonM, 25 Jun 2012. Another minor safety net in chart repair routine.
 KenZ, 25 Jun 2012. Fixed crash from FM Bangla project with original settings.
-NaylorJ, 25 Jun 2012. Updated XHTML DTD to 1.1, xml:space is valid on span tags in 1.1, and we are doing that now. Also change the XHTML Helper to try and
-					  include styles which were applied to runs rather than configured from the dialog.
+NaylorJ, 25 Jun 2012. Updated XHTML DTD to 1.1, xml:space is valid on span tags in 1.1, and we are doing that now. Also change the XHTML Helper to try and  include styles which were applied to runs rather than configured from the dialog.
 NaylorJ, 25 Jun 2012. Fixed a problem with ReversalIndexes not exporting subentries correctly.
+----------------- FW7.2.6 -------------------------------------------------------------------------------
