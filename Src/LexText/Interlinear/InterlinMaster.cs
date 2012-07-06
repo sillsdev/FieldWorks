@@ -1278,6 +1278,7 @@ namespace SIL.FieldWorks.IText
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new XCore.Property("InterlinearTab",
 					InterlinearTab.ToString()));
+				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				m_mediator.SendMessage("AddContextToHistory", link, false);
 			}
 		}
