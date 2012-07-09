@@ -6002,3 +6002,4 @@ McCoy, 5 July 2012.  Fixed LT-13249; the icon for FLExBridge will now move with 
 RandyR, 5 July 2012. Updated FLEx Bridge installer to 0.3.59.
 GordonM, 6 July 2012. Fixed LT-13360 so status bar shows latest record count correctly.
 NaylorJ, 9 July 2012. Fixed LT-13320. The Fixup utility will no longer remove valid generic dates. Also when launched frome FLEx will write the logfile as in the past.
+McCoy, 9 July 2012.  Fixed LT-13375 (CTRL+A was not functioning in the Texts & Words tab).

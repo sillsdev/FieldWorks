@@ -1887,7 +1887,7 @@ namespace XCore
 		/// <summary>
 		/// Mediator message handling Priority
 		/// </summary>
-		public int Priority
+		public virtual int Priority
 		{
 			get { return (int)ColleaguePriority.Medium; }
 		}
