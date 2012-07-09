@@ -416,22 +416,9 @@ namespace SIL.FieldWorks.FixData
 				GenDate someDate;
 				if (GenDate.TryParse(genDateStr, out someDate))
 					continue; // all is well, valid GenDate
-				xeGenDate.Remove();
+				genDateAttr.Value = "0"; //'Remove' the date if we could not load or parse it
 				errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
 					string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
-				// possible enhancement: take it apart like this and see whether swapping month and day makes it valid.
-				//var ad = true;
-				//if (genDateStr.StartsWith("-"))
-				//{
-				//    ad = false;
-				//    genDateStr = genDateStr.Substring(1);
-				//}
-				//genDateStr = genDateStr.PadLeft(9, '0');
-				//var year = Convert.ToInt32(genDateStr.Substring(0, 4));
-				//var month = Convert.ToInt32(genDateStr.Substring(4, 2));
-				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
-				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
-				//return new GenDate(precision, month, day, year, ad);
 			}
 		}
 

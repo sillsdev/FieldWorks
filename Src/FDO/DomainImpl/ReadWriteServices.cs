@@ -145,23 +145,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			var genDateStr = reader.Attribute("val").Value;
-			if (!string.IsNullOrEmpty(genDateStr) && Convert.ToInt32(genDateStr) != 0)
-			{
-				var ad = true;
-				if (genDateStr.StartsWith("-"))
-				{
-					ad = false;
-					genDateStr = genDateStr.Substring(1);
-				}
-				genDateStr = genDateStr.PadLeft(9, '0');
-				var year = Convert.ToInt32(genDateStr.Substring(0, 4));
-				var month = Convert.ToInt32(genDateStr.Substring(4, 2));
-				var day = Convert.ToInt32(genDateStr.Substring(6, 2));
-				var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
-				return new GenDate(precision, month, day, year, ad);
-			}
-
-			return new GenDate();
+			return GenDate.LoadFromString(genDateStr);
 		}
 
 		/// <summary>

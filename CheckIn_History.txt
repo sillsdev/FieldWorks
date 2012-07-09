@@ -6001,3 +6001,4 @@ NaylorJ, 5 Jul 2012. Fixed LT-13040, Any MSA references in the LexEntry which ar
 McCoy, 5 July 2012.  Fixed LT-13249; the icon for FLExBridge will now move with its link on resize, and will only be displayed when FLExBridge is installed.
 RandyR, 5 July 2012. Updated FLEx Bridge installer to 0.3.59.
 GordonM, 6 July 2012. Fixed LT-13360 so status bar shows latest record count correctly.
+NaylorJ, 9 July 2012. Fixed LT-13320. The Fixup utility will no longer remove valid generic dates. Also when launched frome FLEx will write the logfile as in the past.

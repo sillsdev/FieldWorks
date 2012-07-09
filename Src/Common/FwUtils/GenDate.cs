@@ -367,6 +367,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static bool TryParse(string date, out GenDate gen)
 		{
+			try
+			{
+				gen = LoadFromString(date);
+				return true;
+			}
+			catch (Exception)
+			{
+				//Ok, reading the date accordingto our standard format failed, fall into historic backup case.
+			}
 			PrecisionType precision = PrecisionType.Exact;
 			bool fAD = true;
 
@@ -614,6 +623,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool operator <=(GenDate g1, GenDate g2)
 		{
 			return g1.CompareTo(g2) <= 0;
+		}
+
+		/// <summary>
+		/// Loads a standard GenDate integer from the string.
+		/// </summary>
+		/// <param name="genDateStr"></param>
+		/// <returns></returns>
+		public static GenDate LoadFromString(string genDateStr)
+		{
+			if (!string.IsNullOrEmpty(genDateStr) && Convert.ToInt32(genDateStr) != 0)
+			{
+				var ad = true;
+				if (genDateStr.StartsWith("-"))
+				{
+					ad = false;
+					genDateStr = genDateStr.Substring(1);
+				}
+				genDateStr = genDateStr.PadLeft(9, '0');
+				var year = Convert.ToInt32(genDateStr.Substring(0, 4));
+				var month = Convert.ToInt32(genDateStr.Substring(4, 2));
+				var day = Convert.ToInt32(genDateStr.Substring(6, 2));
+				var precision = (PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
+				return new GenDate(precision, month, day, year, ad);
+			}
+
+			return new GenDate();
 		}
 	}
 }
