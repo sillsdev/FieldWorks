@@ -1955,7 +1955,7 @@
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Status" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Status_fld_(Variant_Types).htm</value>
   </data>
-  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Subtypes" xml:space="preserve">
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Subitems" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Subtypes_fld_(Variant_Types).htm</value>
   </data>
   <data name="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract" xml:space="preserve">
@@ -2921,7 +2921,19 @@
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Status" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Status_fld_(Variant_Types).htm</value>
   </data>
-  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Subtypes" xml:space="preserve">
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Subitems" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Subtypes_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpToolsConvertVariants" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Convert_variants_utility.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-GlossAppend" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Append_to_Gloss.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-InflFeats" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Inflection_Features.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Slots" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Slots.htm</value>
   </data>
 </root>

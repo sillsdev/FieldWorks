@@ -6005,3 +6005,4 @@ NaylorJ, 9 July 2012. Fixed LT-13320. The Fixup utility will no longer remove va
 McCoy, 9 July 2012.  Fixed LT-13375 (CTRL+A was not functioning in the Texts & Words tab).
 Andy Black, 9 July 2012.  Fixed LT-10578 "For Try a Word, if the gloss is null for a morpheme, the MSA info is shown in the gloss line"
 RandyR, 9 July 2012. Updated FLEx Bridge installer to 0.3.60.
+GordonM, 10 Jul 2012. LT-13339 Hooked up help topics for Variant Types list and Utilities dialog.

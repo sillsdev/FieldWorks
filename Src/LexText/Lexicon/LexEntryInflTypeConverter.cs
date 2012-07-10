@@ -23,6 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected FdoCache m_cache;
 		protected int m_flid;
 		protected ICmObject m_obj;
+		protected const string s_helpTopic = "khtpToolsConvertVariants";
 
 		/// <summary>
 		/// Override method to return the Label property.
@@ -134,6 +135,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				chooser.Cache = m_cache;
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
+				chooser.SetHelpTopic(s_helpTopic);
 				var tv = chooser.TreeView;
 				DisableNodes(tv.Nodes, targetClassId);
 				m_dlg.Visible = false; // no reason to show the utility dialog, too
