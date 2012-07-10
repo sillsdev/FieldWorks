@@ -436,9 +436,9 @@
 				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
 			</menu>
 			<item command="CmdExport"/>
+			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
 			<item command="CmdLiftBridge" />
 			<item command="CmdFLExBridge" />
-			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
 			<!--item command="CmdSynch"/-->
 			<!-- needs more work to implement. -->
 			<item label="-" translate="do not translate"/>
