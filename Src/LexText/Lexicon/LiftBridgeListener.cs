@@ -183,6 +183,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				progressDialog.Minimum = 0;
 				progressDialog.Maximum = _cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count;
 				progressDialog.Position = 0;
+				progressDialog.AllowCancel = false;
 
 				var exporter = new LiftExporter(_cache);
 				exporter.UpdateProgress += OnDumperUpdateProgress;

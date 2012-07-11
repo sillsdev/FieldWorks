@@ -6008,3 +6008,4 @@ RandyR, 9 July 2012. Updated FLEx Bridge installer to 0.3.60.
 GordonM, 10 Jul 2012. LT-13339 Hooked up help topics for Variant Types list and Utilities dialog.
 GordonM, 10 Jul 2012. LT-13384 Fixed order of Export and Send/Receive on File-Menu.
 RandyR, 11 July 2012. Updated FLEx Bridge installer to 0.3.61.
+RickM, 11 July 2012. LT-13395 Cancel button is not working in the ExportLIFTLexicon window while using SR LIFT option
