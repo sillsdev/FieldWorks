@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.IText
 					AddSegmentItemData(cache, wsFactory, phrase, newSegment, tsStrFactory, ref textInFile, ref phraseText);
 
 					bool lastWasWord = false;
-					if (phrase.WordsContent != null)
+					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
 						foreach (var word in phrase.WordsContent.Words)
 						{
@@ -532,15 +532,18 @@ namespace SIL.FieldWorks.IText
 						if (item.type == "txt")
 							EnsureVernacularLanguage(interlinText, item.lang);
 					}
-					foreach (var word in phrase.WordsContent.Words)
+					if(phrase.WordsContent.Words != null)
 					{
-						foreach (var item in word.Items)
+						foreach (var word in phrase.WordsContent.Words)
 						{
-							if (item.type == "txt")
-								EnsureVernacularLanguage(interlinText, item.lang);
+							foreach (var item in word.Items)
+							{
+								if (item.type == "txt")
+									EnsureVernacularLanguage(interlinText, item.lang);
+							}
+							// We could dig into the morphemes, but any client generating morphemes probably
+							// does things right, and anyway we don't import that yet.
 						}
-						// We could dig into the morphemes, but any client generating morphemes probably
-						// does things right, and anyway we don't import that yet.
 					}
 				}
 			}
