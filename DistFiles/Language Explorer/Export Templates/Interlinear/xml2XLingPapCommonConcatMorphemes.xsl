@@ -183,11 +183,21 @@ OutputMorphs
 	  <xsl:param name="bAddHyphen"/>
 	  <xsl:param name="bIsGloss" select="'N'"/>
 	  <xsl:for-each select="morph">
-		 <xsl:if test="$bAddHyphen='Y' and position()!=1">
-			<xsl:if test="preceding-sibling::morph[1]/@guid!=$sProclitic and @guid!=$sEnclitic">
-			   <!-- proclitics and enclitics already have an equal sign, so do not add a hyphen -->
-			   <xsl:value-of select="$sHyphen"/>
-			</xsl:if>
+		 <xsl:if test="position()!=1">
+			<xsl:choose>
+			   <xsl:when test="$bAddHyphen='Y'">
+				  <xsl:if test="preceding-sibling::morph[1]/@guid!=$sProclitic and @guid!=$sEnclitic">
+					 <!-- proclitics and enclitics already have an equal sign, so do not add a hyphen -->
+					 <xsl:value-of select="$sHyphen"/>
+				  </xsl:if>
+			   </xsl:when>
+			   <xsl:when test="@guid=$sStem or @guid=$sRoot or @guid=$sBoundStem or @guid=$sBoundRoot ">
+				  <xsl:variable name="previousMorphType" select="preceding-sibling::*[1]/@guid"/>
+				  <xsl:if test="$previousMorphType=$sStem or $previousMorphType=$sRoot or $previousMorphType=$sBoundStem or $previousMorphType=$sBoundRoot">
+					 <xsl:value-of select="$sHyphen"/>
+				  </xsl:if>
+			   </xsl:when>
+			</xsl:choose>
 		 </xsl:if>
 		 <xsl:choose>
 			<xsl:when test="$bIsGloss='Y' and @guid!=$sBoundRoot and @guid!=$sBoundStem and @guid!=$sRoot and @guid!=$sStem and @guid!=$sPhrase and @guid!=$sDiscontiguousPhrase">
