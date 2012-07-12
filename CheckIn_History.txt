@@ -6010,3 +6010,4 @@ GordonM, 10 Jul 2012. LT-13384 Fixed order of Export and Send/Receive on File-Me
 RandyR, 11 July 2012. Updated FLEx Bridge installer to 0.3.61.
 RickM, 11 July 2012. LT-13395 Cancel button is not working in the ExportLIFTLexicon window while using SR LIFT option
 Andy Black, 12 July 2012.  LT-13444 "Interlinear Export options of XLingPaper, align words does not handle compounds correctly"
+NaylorJ, 12 July 2012. LT-13040 Fixed a crash in the fixer for entries that had no senses.

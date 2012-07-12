@@ -292,14 +292,17 @@ namespace SIL.FieldWorks.FixData
 						if (!entryToSense.ContainsKey(rtGuid))
 						{
 							var senses = rt.Element("Senses");
-							foreach(var sense in senses.Descendants("objsur"))
+							if (senses != null)
 							{
-								if(sense.Name.LocalName == "objsur")
+								foreach (var sense in senses.Descendants("objsur"))
 								{
-									senseGuids.Add(sense.Attribute("guid").Value);
+									if (sense.Name.LocalName == "objsur")
+									{
+										senseGuids.Add(sense.Attribute("guid").Value);
+									}
 								}
+								entryToSense.Add(rtGuid, senseGuids);
 							}
-							entryToSense.Add(rtGuid, senseGuids);
 						}
 						break;
 					case "LexSense":
