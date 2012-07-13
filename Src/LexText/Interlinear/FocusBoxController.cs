@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.IText
 
 		public void UpdateLineChoices(InterlinLineChoices choices)
 		{
-			m_sandbox.UpdateLineChoices(choices);
+			// Under certain circumstances this can get called when sandbox is null (LT-11468)
+			if (m_sandbox != null)
+				m_sandbox.UpdateLineChoices(choices);
 		}
 
 		public FocusBoxController(Mediator mediator, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)

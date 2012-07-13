@@ -247,3 +247,4 @@ KenZ, 25 Jun 2012. Fixed crash from FM Bangla project with original settings.
 NaylorJ, 25 Jun 2012. Updated XHTML DTD to 1.1, xml:space is valid on span tags in 1.1, and we are doing that now. Also change the XHTML Helper to try and  include styles which were applied to runs rather than configured from the dialog.
 NaylorJ, 25 Jun 2012. Fixed a problem with ReversalIndexes not exporting subentries correctly.
 ----------------- FW7.2.6 -------------------------------------------------------------------------------
+GordonM, 13 Jul 2012. Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
