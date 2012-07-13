@@ -248,3 +248,4 @@ NaylorJ, 25 Jun 2012. Updated XHTML DTD to 1.1, xml:space is valid on span tags 
 NaylorJ, 25 Jun 2012. Fixed a problem with ReversalIndexes not exporting subentries correctly.
 ----------------- FW7.2.6 -------------------------------------------------------------------------------
 GordonM, 13 Jul 2012. Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
+GordonM, 13 Jul 2012. Fixed LT-10987 so replacing a lexical relation w/itself doesn't crash.

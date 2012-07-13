@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Reflection;
 using System.Diagnostics;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
@@ -75,6 +69,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				else
 				{
+					if (lr == newRef)
+					{
+						// Silly user tried to replace a relation with itself, don't do anything! [LT-10987]
+						return;
+					}
 					// There's a new relationship objToLink needs to join.
 					if (lr.TargetsRS.Count == 2)
 					{
