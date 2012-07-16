@@ -1104,6 +1104,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// The Segments that reference an occurrence of this analysis (including meanings) in a text.
+		/// Note: the very first call to this for a given language project can be quite slow.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "Segment")]
+		public IEnumerable<ISegment> OccurrencesInTexts
+		{
+			get
+			{
+				var result = new HashSet<ISegment>();
+				foreach (var seg in Wordform.OccurrencesInTexts)
+					foreach (var anal in seg.AnalysesRS)
+					{
+						if (anal == this)
+							result.Add(seg as ISegment);
+						else
+						{
+							foreach (var gloss in MeaningsOC)
+								if (anal == gloss)
+									result.Add(seg as ISegment);
+						}
+					}
+				return result;
+			}
+		}
+
+		/// <summary>
 		/// This expresses the part of IsComplete that does not depend on having occurrences.
 		/// An analysis is fully formed if it
 		///     - has a human opinion

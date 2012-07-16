@@ -355,6 +355,9 @@
 		<part id="LexEntry-Jt-NumberOfSensesForEntry" type="jtview">
 			<int field="NumberOfSensesForEntry"/>
 		</part>
+		<part id="LexEntry-Jt-EntryAnalysesCount" type="jtview">
+			<int field="EntryAnalysesCount"/>
+		</part>
 
 		<!-- auto-generated custom field parts -->
 		<!-- Entry custom field parts -->
