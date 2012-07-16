@@ -6012,3 +6012,4 @@ RickM, 11 July 2012. LT-13395 Cancel button is not working in the ExportLIFTLexi
 Andy Black, 12 July 2012.  LT-13444 "Interlinear Export options of XLingPaper, align words does not handle compounds correctly"
 NaylorJ, 12 July 2012. LT-13040 Fixed a crash in the fixer for entries that had no senses.
 NaylorJ, 12 July 2012. Fix a crash in ELAN related flextext import, a file without any words element shouldn't crash.
+Andy Black, 16 July 2012.  For XLingPaper word-aligned interlinear export, remove extraneous object element.

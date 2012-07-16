@@ -224,9 +224,12 @@ OutputMorphs
 			<xsl:otherwise>
 			   <xsl:value-of select="normalize-space(item[@type=$sType])"/>
 			   <xsl:if test="$sType='gls'">
-				  <object type="tGrammaticalGloss">
-					 <xsl:value-of select="normalize-space(item[@type='glsAppend'])"/>
-				  </object>
+				  <xsl:variable name="sGlossAppend" select="normalize-space(item[@type='glsAppend'])"/>
+				  <xsl:if test="string-length($sGlossAppend) &gt; 0">
+					 <object type="tGrammaticalGloss">
+						<xsl:value-of select="$sGlossAppend"/>
+					 </object>
+				  </xsl:if>
 			   </xsl:if>
 			</xsl:otherwise>
 		 </xsl:choose>
