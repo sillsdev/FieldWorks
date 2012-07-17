@@ -250,3 +250,4 @@ NaylorJ, 25 Jun 2012. Fixed a problem with ReversalIndexes not exporting subentr
 GordonM, 13 Jul 2012. Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
 GordonM, 13 Jul 2012. Fixed LT-10987 so replacing a lexical relation w/itself doesn't crash.
 KenZ, 16 Jul 2012. LT-13450 Added entry/sense analysis counts as minimal solution.
+GordonM, 17 Jul 2012. LT-13391 crash after deleting a reversal entry in bulk copy.

@@ -938,7 +938,9 @@ namespace SIL.FieldWorks.XWorks
 			// contains multiple rows referring to the same object. In that case
 			// we want to try to JumpToRecord of the same index, since jumping to the hvo
 			// jumps to the first instance of that object (LT-4691).
-			if (e.Index >= 0)
+			// Through deletion of Reversal Index entry it was possible to arrive here with
+			// no sorted objects. (LT-13391)
+			if (e.Index >= 0 && m_list.SortedObjects.Count > 0)
 			{
 				int ourHvo = m_list.SortItemAt(e.Index).RootObjectHvo;
 				// if for some reason the index doesn't match the hvo, we'll jump to the Hvo.
