@@ -6015,3 +6015,4 @@ NaylorJ, 12 July 2012. Fix a crash in ELAN related flextext import, a file witho
 Andy Black, 16 July 2012.  For XLingPaper word-aligned interlinear export, remove extraneous object element.
 RandyR, 16 July 2012. Updated FLEx Bridge installer to 0.3.64.
 KenZ, 17 Jul 2012. Integrated Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
+RandyR, 17 July 2012. Updated FLEx Bridge installer to 0.3.65.
