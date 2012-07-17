@@ -16,6 +16,7 @@ Last reviewed:
 #else
 #include <COM.h>
 #include <Hacks.h>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <assert.h>
