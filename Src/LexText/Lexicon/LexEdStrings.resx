@@ -494,4 +494,22 @@ Delete the existing relationship before trying to add this one again.</value>
 	<value>Problem merging remote changes</value>
 	<comment>Dialog caption</comment>
   </data>
+  <data name="ksDeleteEntriesSenses" xml:space="preserve">
+	<value>Delete Entries and Senses that are not used in interlinear</value>
+  </data>
+  <data name="ksDeleteEntriesSensesDoes" xml:space="preserve">
+	<value>After a confirmation warning, this will delete all entries and senses that are not referenced in the current set of filtered interlinear texts.</value>
+  </data>
+  <data name="ksDeleteEntriesSensesWhen" xml:space="preserve">
+	<value>Use this when you want to have a lexicon that is limited to entries and senses that are used in one or more flitered interlinear texts.</value>
+  </data>
+  <data name="ksDeleteEntriesSensesWarning" xml:space="preserve">
+	<value>Always back up your project before using this. This will delete all of your entries and senses if you have not done any interlinearization, and can delete a large number if you have done minimal interlinearization. It cannot be undone. It will warn you about the number of entries that will be deleted and give you a chance to stop without deletions.</value>
+  </data>
+  <data name="ksDeleteEntrySenseConfirmText" xml:space="preserve">
+	<value>You are about to delete {0} lexical entries. Do you want to continue?</value>
+  </data>
+  <data name="ksDeleteEntrySenseConfirmTitle" xml:space="preserve">
+	<value>Delete Entries Confirmation</value>
+  </data>
 </root>

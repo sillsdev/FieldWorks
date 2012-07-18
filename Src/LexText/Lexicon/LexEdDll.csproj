@@ -263,6 +263,9 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="AssemblyInfo.cs" />
+	<Compile Include="DeleteEntriesSensesWithoutInterlinearization.cs" >
+	  <SubType>Code</SubType>
+	</Compile>
 	<Compile Include="GhostLexRefSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
