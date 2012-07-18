@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.IText
@@ -49,6 +51,17 @@ namespace SIL.FieldWorks.IText
 		{
 			return new Sfm2FlexTextWordsFrag();
 		}
+
+		protected override void DoStage2Conversion(byte[] stage1, IThreadedProgress dlg)
+		{
+		   var stage2Converter = new LinguaLinksImport(m_cache, null, null);
+			// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
+			// TODO: we could do progress based on number of words to import.
+			dlg.Position += 50;
+			stage2Converter.ImportWordsFrag(() => new MemoryStream(stage1), LinguaLinksImport.ImportAnalysesLevel.WordGloss);
+		}
+
+
 
 
 	}

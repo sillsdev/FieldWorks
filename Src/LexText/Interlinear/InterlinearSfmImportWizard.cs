@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
-		private FdoCache m_cache;
+		protected FdoCache m_cache;
 		private Mediator m_mediator;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
@@ -543,6 +543,7 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
+			m_mediator.SendMessage("MasterRefresh", ActiveForm);
 			if (m_firstNewText != null)
 			{
 				// try to select it.
@@ -567,25 +568,30 @@ namespace SIL.FieldWorks.IText
 				if (!File.Exists(path))
 					continue; // report?
 				var input = new ByteReader(path);
-				var converter = GetSfmConverter();
-				var stage1 = converter.Convert(input, m_mappings, m_cache.WritingSystemFactory);
+				var converterStage1 = GetSfmConverter();
+				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.WritingSystemFactory);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
 					continue;
-				using (var stage2Input = new MemoryStream(stage1))
-				{
-					var stage2Converter = new LinguaLinksImport(m_cache, null, null);
-					// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
-					// Allocate 5 progress units to the ImportInterlinear, in case it can do better resolution.
-					// Enhance JohnT: we could divide the progress up based on the lengths of the files,
-					// and possibly converter.Convert could move the bar along based on how far through the file it is.
-					// ImportInterlinear could do something similar. However, procesing a single file is so quick
-					// that this very crude approximation is good enough.
-					dlg.Position += 50;
-					stage2Converter.ImportInterlinear(dlg, stage2Input, 50, ref m_firstNewText);
-				}
+				DoStage2Conversion(stage1, dlg);
 			}
 			return null;
+		}
+
+		protected virtual void DoStage2Conversion(byte[] stage1, IThreadedProgress dlg)
+		{
+			using (var stage2Input = new MemoryStream(stage1))
+			{
+				var stage2Converter = new LinguaLinksImport(m_cache, null, null);
+				// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
+				// Allocate 5 progress units to the ImportInterlinear, in case it can do better resolution.
+				// Enhance JohnT: we could divide the progress up based on the lengths of the files,
+				// and possibly converter.Convert could move the bar along based on how far through the file it is.
+				// ImportInterlinear could do something similar. However, procesing a single file is so quick
+				// that this very crude approximation is good enough.
+				dlg.Position += 50;
+				stage2Converter.ImportInterlinear(dlg, stage2Input, 50, ref m_firstNewText);
+			}
 		}
 
 		protected virtual Sfm2FlexTextBase<InterlinearMapping> GetSfmConverter()

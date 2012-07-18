@@ -618,6 +618,8 @@ namespace SIL.FieldWorks.IText
 						analysis = WfiWordformServices.FindOrCreatePunctuationform(cache, wordForm);
 						break;
 				}
+				if (wordForm != null)
+					break;
 			}
 			if (analysis != null)
 			{
@@ -687,12 +689,12 @@ namespace SIL.FieldWorks.IText
 					IWfiGloss matchingGloss = null;
 					if (hasGlosses)
 					{
-						matchingGloss =
-							wfiWord.AnalysesOC
-								.Select(
-									wfia =>
-									wfia.MeaningsOC.Where(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss)).FirstOrDefault())
-								.FirstOrDefault();
+						foreach (var wfa in wfiWord.AnalysesOC)
+						{
+							matchingGloss = wfa.MeaningsOC.FirstOrDefault(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss));
+							if (matchingGloss != null)
+								break;
+						}
 					}
 
 					if (matchingGloss != null)

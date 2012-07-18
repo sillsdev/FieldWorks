@@ -33,7 +33,7 @@
 			// label2
 			//
 			this.label2.Text = "Using this tool, you can import words and their glosses from lexical entries that" +
-				" have been marked up with standard format markers..";
+				" have been marked up with standard format markers.";
 			//
 			// WordsSfmImportWizard
 			//

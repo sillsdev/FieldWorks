@@ -6017,3 +6017,5 @@ RandyR, 16 July 2012. Updated FLEx Bridge installer to 0.3.64.
 KenZ, 17 Jul 2012. Integrated Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
 RandyR, 17 July 2012. Updated FLEx Bridge installer to 0.3.65.
 McCoy, 17 July, 2012.  Fixed an unreported crash in the Notebook section.
+EricP, 18 July, 2012. LT-8276 Provide a way to import wordforms with their glosses: guard against duplicates upon repeated imports.
+	Also now ignore writing system selection if user modfieds mapping destination to "Don't import".

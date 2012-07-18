@@ -207,9 +207,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_okButton_Click(object sender, EventArgs e)
 		{
-			m_mapping.WritingSystem = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			var dest = ((DestinationItem) m_destinationsListBox.SelectedItem).Dest;
+			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
 			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? "" : m_converterCombo.Text;
-			m_mapping.Destination = ((DestinationItem)m_destinationsListBox.SelectedItem).Dest;
+			m_mapping.Destination = dest;
 		}
 
 		private void m_helpButton_Click(object sender, EventArgs e)

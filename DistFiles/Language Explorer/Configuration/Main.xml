@@ -429,7 +429,7 @@
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
 				<item command="CmdImportInterlinearSfm"/>
-		<!-- <item command="CmdImportWordsAndGlossesSfm"/> -->
+		<item command="CmdImportWordsAndGlossesSfm"/>
 		<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
