@@ -84,6 +84,7 @@
 		<part ref="BibliographyPub" label="Bibliography" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="sense-bibliography"/>
 		<part ref="DiscourseNotePub" label="Discourse Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="discourse-note"/>
 		<part ref="PhonologyNotePub" label="Phonology Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="phonology-note"/>
+		<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false"/>
 		<part ref="SemanticsNotePub" label="Semantics Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="semantics-note"/>
 		<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="sociolinguistics-note"/>
 		<part ref="GeneralNotePub" label="General Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="general-note"/>
@@ -137,6 +138,7 @@
 		<part ref="BibliographyPub" label="Bibliography" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="subsense-bibliography"/>
 		<part ref="DiscourseNotePub" label="Discourse Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="discourse-note-sub"/>
 		<part ref="PhonologyNotePub" label="Phonology Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="phonology-note-sub"/>
+		<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false"/>
 		<part ref="SemanticsNotePub" label="Semantics Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="semantics-note-sub"/>
 		<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="sociolinguistics-note-sub"/>
 		<part ref="GeneralNotePub" label="General Note" before=" " after="" visibility="never" ws="reversal" wsType="reversal" sep=" " showLabels="false" css="general-note-sub"/>

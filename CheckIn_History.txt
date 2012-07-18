@@ -253,3 +253,5 @@ KenZ, 16 Jul 2012. LT-13450 Added entry/sense analysis counts as minimal solutio
 GordonM, 17 Jul 2012. LT-13391 crash after deleting a reversal entry in bulk copy.
 KenZ, 18 Jul 2012. LT-13450 utility to delete entries/senses unused by interlinear filtered texts
 McCoy, 18 July, 2012.  Integrated changelist item 38320 into 7.2 to fix LT-13192 ("Select All" not working as expected).
+RickM, 18 July, 2012. LT-13396 "Grammar note" isn't appeared in Configure reversal index view dialog box but its appear in
+	configure dictionary view.
