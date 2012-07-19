@@ -255,3 +255,4 @@ KenZ, 18 Jul 2012. LT-13450 utility to delete entries/senses unused by interline
 McCoy, 18 July, 2012.  Integrated changelist item 38320 into 7.2 to fix LT-13192 ("Select All" not working as expected).
 RickM, 18 July, 2012. LT-13396 "Grammar note" isn't appeared in Configure reversal index view dialog box but its appear in
 	configure dictionary view.
+GordonM, 19 Jul 2012. LT-12995 fixed wrong morph type on allomorph.

@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{AF96B972-89DF-4914-B88C-70A4E7742160}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -246,12 +246,6 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-	  <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
-	  <Name>FwCoreDlgs</Name>
-	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
