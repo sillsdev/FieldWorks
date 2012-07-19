@@ -982,10 +982,69 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			foreach (LayoutTreeNode ltnSub in ltn.Nodes)
 			{
-				if (ltnSub.Configuration == node)
+				if (NodesMatch(ltnSub.Configuration, node))
 					return ltnSub;
 			}
 			return FindMatchingNode(ltn.Parent as LayoutTreeNode, node);
+		}
+
+		private static bool NodesMatch(XmlNode first, XmlNode second)
+		{
+			if (first.Name != second.Name)
+				return false;
+			if((first.Attributes == null) && (second.Attributes != null))
+				return false;
+			if(first.Attributes == null)
+			{
+				return ChildNodesMatch(first.ChildNodes, second.ChildNodes);
+			}
+			if(first.Attributes.Count != second.Attributes.Count)
+			{
+				return false;
+			}
+
+			var firstAtSet = new SortedList<string, string>();
+			var secondAtSet = new SortedList<string, string>();
+			for (int i = 0; i < first.Attributes.Count; ++i)
+			{
+				firstAtSet.Add(first.Attributes[i].Name, first.Attributes[i].Value);
+				secondAtSet.Add(second.Attributes[i].Name, second.Attributes[i].Value);
+			}
+			var firstIter = firstAtSet.GetEnumerator();
+			var secondIter = secondAtSet.GetEnumerator();
+			for(;firstIter.MoveNext() && secondIter.MoveNext();)
+			{
+				if(!firstIter.Current.Equals(secondIter.Current))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// This method should sort the node lists and call NodesMatch with each pair.
+		/// </summary>
+		/// <param name="firstNodeList"></param>
+		/// <param name="secondNodeList"></param>
+		/// <returns></returns>
+		private static bool ChildNodesMatch(XmlNodeList firstNodeList, XmlNodeList secondNodeList)
+		{
+			if (firstNodeList.Count != secondNodeList.Count)
+				return false;
+			var firstAtSet = new SortedList<string, XmlNode>();
+			var secondAtSet = new SortedList<string, XmlNode>();
+			for (int i = 0; i < firstNodeList.Count; ++i)
+			{
+				firstAtSet.Add(firstNodeList[i].Name, firstNodeList[i]);
+				secondAtSet.Add(secondNodeList[i].Name, secondNodeList[i]);
+			}
+			var firstIter = firstAtSet.GetEnumerator();
+			var secondIter = secondAtSet.GetEnumerator();
+			for (; firstIter.MoveNext() && secondIter.MoveNext(); )
+			{
+				if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
+					return false;
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -4366,11 +4425,17 @@ namespace SIL.FieldWorks.XWorks
 								}
 								else if (ltn.HiddenNodeLayout == xnDirtyLayout)
 								{
-									xnLayout.AppendChild(ltn.HiddenNode.CloneNode(true));
+									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
+													  BuildXPathFromAttributes(ltn.HiddenNode.Attributes) + "]";
+									if (xnLayout.SelectSingleNode(xpathString) == null)
+										xnLayout.AppendChild(ltn.HiddenNode.CloneNode(true));
 								}
 								else if (ltn.HiddenChildLayout == xnDirtyLayout)
 								{
-									xnLayout.AppendChild(ltn.HiddenChild.CloneNode(true));
+									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
+													  BuildXPathFromAttributes(ltn.HiddenChild.Attributes) + "]";
+									if (xnLayout.SelectSingleNode(xpathString) == null)
+										xnLayout.AppendChild(ltn.HiddenChild.CloneNode(true));
 								}
 								else
 								{
@@ -4412,6 +4477,25 @@ namespace SIL.FieldWorks.XWorks
 				if (Level > 0 && fDirty)
 					StoreUpdatedValuesInConfiguration();
 				return fDirty || HasMoved || IsNew;
+			}
+
+			private static string BuildXPathFromAttributes(XmlAttributeCollection attributes)
+			{
+				if (attributes == null)
+					return "";
+				string xpath = null;
+				foreach(XmlAttribute attr in attributes)
+				{
+					if(String.IsNullOrEmpty(xpath))
+					{
+						xpath = "@" + attr.Name + "='" + attr.Value + "'";
+					}
+					else
+					{
+						xpath += " and @" + attr.Name + "='" + attr.Value + "'";
+					}
+				}
+				return xpath;
 			}
 
 			internal bool IsNew { get; set; }
