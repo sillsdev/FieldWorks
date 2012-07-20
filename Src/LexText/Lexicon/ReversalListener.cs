@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void SetReversalIndexHvo(int reversalIndexHvo)
 		{
 			m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", false);
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", true);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private void SetReversalIndexHvo(int reversalIndexHvo)
 		{
 			m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", false);
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", true);
 		}
 
 		abstract protected ICmObject NewOwningObject(IReversalIndex ri);
