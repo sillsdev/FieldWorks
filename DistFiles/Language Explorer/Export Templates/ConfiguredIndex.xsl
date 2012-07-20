@@ -14,7 +14,7 @@
 <xsl:template match="ExportedDictionary">
 	<!-- Write Mara cluster header -->
 	<xsl:text>&#13;&#10;</xsl:text>
-	<xsl:text disable-output-escaping="yes">&lt;?xml-stylesheet type="text/xsl" href="C:\Program Files\SIL\FieldWorks\Language Explorer\Export Templates\IndexCards.xslt"?&gt;</xsl:text><xsl:text>&#13;&#10;</xsl:text>
+	<xsl:text disable-output-escaping="yes">&lt;?xml-stylesheet type="text/xsl" href="IndexCards.xslt"?&gt;</xsl:text><xsl:text>&#13;&#10;</xsl:text>
 	<xsl:comment>Card display of FW configured view</xsl:comment><xsl:text>&#13;&#10;</xsl:text>
 	<flex-configured-lexicon><xsl:text>&#13;&#10;</xsl:text>
 	<xsl:apply-templates/>
@@ -45,6 +45,8 @@
 	<xsl:text>&#13;&#10;</xsl:text>
 </xsl:template>
 
+<!-- skip entries without children -->
+<xsl:template match="LexEntry[not(child::node())]"/>
 
 <!-- already handled above, so ignore contents. -->
 
@@ -65,6 +67,50 @@
 	</xsl:for-each>
 </xsl:template>
 
+
+<!-- Mara/Mbeya Cluster Projects use the "XXX Plural Form" custom field name -->
+<xsl:template match="LexEntry_XXX.Plural.Form">
+  <xsl:text>&#32;&#32;</xsl:text>
+  <pluralForm>
+	<xsl:attribute name="name">
+	  <xsl:value-of select="Str/Run"/>
+	</xsl:attribute>
+	<xsl:attribute name="ws">
+	  <xsl:value-of select="Str/Run/@ws"/>
+	</xsl:attribute>
+  </pluralForm>
+  <xsl:text>&#13;&#10;</xsl:text>
+</xsl:template>
+
+<!-- Sena 3 uses "Plural" custom field -->
+<xsl:template match="LexEntry_Plural">
+  <xsl:text>&#32;&#32;</xsl:text>
+  <pluralForm>
+	<xsl:attribute name="name">
+	  <xsl:value-of select="Str/Run"/>
+	</xsl:attribute>
+	<xsl:attribute name="ws">
+	  <xsl:value-of select="Str/Run/@ws"/>
+	</xsl:attribute>
+  </pluralForm>
+  <xsl:text>&#13;&#10;</xsl:text>
+</xsl:template>
+
+
+<xsl:template match="LexEntry_Pronunciations">
+  <xsl:for-each select="LexPronunciation/LexPronunciation_CVPattern">
+	<xsl:text>&#32;&#32;</xsl:text>
+	<cvPattern>
+	  <xsl:attribute name="name">
+		<xsl:value-of select="Str/Run"/>
+	  </xsl:attribute>
+	  <xsl:attribute name="ws">
+		<xsl:value-of select="Str/Run/@ws"/>
+	  </xsl:attribute>
+	</cvPattern>
+	<xsl:text>&#13;&#10;</xsl:text>
+  </xsl:for-each>
+</xsl:template>
 
 <!-- Output the alternate forms and morphtypes (not part of standard MDF). -->
 
@@ -756,7 +802,7 @@
 	<xsl:text>&#13;&#10;</xsl:text>
 </xsl:template>
 
-<xsl:template match="LexEntry_Pronunciations"/>
+  <!-- <xsl:template match="LexEntry_Pronunciations"/> -->
 
 <xsl:template match="LexEntry_Etymology">
 	<xsl:text>&#32;&#32;</xsl:text>
