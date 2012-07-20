@@ -1592,13 +1592,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			FdoCache cache = m_list.Cache;
-			if ((!m_suppressSaveOnChangeRecord) && cache != null && !FwXWindow.InUndoRedo)
+			if (m_suppressSaveOnChangeRecord || Cache == null || FwXWindow.InUndoRedo)
+				return;
+			using (new WaitCursor(Form.ActiveForm))
 			{
-				using (new WaitCursor(Form.ActiveForm))
-				{
-					cache.DomainDataByFlid.GetActionHandler().Commit();
-				}
+				// Commit() was too drastic here, resulting in Undo/Redo stack being cleared.
+				// (See LT-13397)
+				var actionHandler = Cache.ActionHandlerAccessor;
+				if (actionHandler.CurrentDepth > 0)
+					actionHandler.EndOuterUndoTask();
 			}
 		}
 
