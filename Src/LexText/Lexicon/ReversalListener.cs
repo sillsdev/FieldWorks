@@ -421,7 +421,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (m_cache == null)
 					m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				IReversalIndex ri = (IReversalIndex)m_cache.ServiceLocator.GetObject(id);
+				IReversalIndex ri = m_cache.ServiceLocator.GetObject(id) as IReversalIndex;
+				if (ri == null)
+				{
+					return;
+				}
 				ICmObject newOwningObj = NewOwningObject(ri);
 				if (newOwningObj != OwningObject)
 				{
@@ -448,6 +452,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case "ReversalIndexHvo":
 					ChangeOwningObjectIfPossible();
 					break;
+				case "ToolForAreaNamed_lexicon" :
+					int rootIndex = GetRootIndex(m_list.CurrentIndex);
+					JumpToIndex(rootIndex);
+					break;
 				case "ActiveClerk":
 					RecordClerk activeClerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk");
 					if (activeClerk == this)
@@ -456,6 +464,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						base.OnPropertyChanged(name);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Returns the index of the root object whose descendent is the object at lastValidIndex.
+		/// </summary>
+		/// <param name="lastValidIndex"></param>
+		/// <returns></returns>
+		private int GetRootIndex(int lastValidIndex)
+		{
+			int parentIndex = m_list.IndexOfParentOf(m_list.SortItemAt(lastValidIndex).KeyObject, Cache);
+
+			if (parentIndex == -1)
+			{
+				return lastValidIndex;
+			}
+
+			return GetRootIndex(parentIndex);
 		}
 
 		/// <summary>
@@ -649,8 +674,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SetReversalIndexHvo(int reversalIndexHvo)
 		{
-			m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", true);
+			if (m_cache.ServiceLocator.GetObject(reversalIndexHvo) is IReversalIndex)
+			{
+				m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
+				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", true);
+			}
 		}
 
 		abstract protected ICmObject NewOwningObject(IReversalIndex ri);

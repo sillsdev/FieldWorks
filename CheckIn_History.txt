@@ -259,3 +259,4 @@ GordonM, 19 Jul 2012. LT-12995 fixed wrong morph type on allomorph.
 NaylorJ, 19 Jul 2012. LT-12835 Fixed problem where custom field displays were multiplying in reversal index configuration and possibly other places.
 GordonM, 20 Jul 2012. LT-13397 fixed Undo/Redo problem in Reversal Index promote/move (and probably several elsewhere).
 RickM, 20 Jul 2012. LT-13427 State of reversal index isn't saved and comes up weird
+McCoy, 23 July, 2012.  Fixed LT-13398 (subentries shown as main entry when switching views in Reversal Indexes).
