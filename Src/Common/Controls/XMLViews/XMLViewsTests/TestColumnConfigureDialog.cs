@@ -61,6 +61,7 @@ namespace XMLViewsTests
 
 			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_mediator,
 				m_mediator.StringTbl);
+			window.FinishInitialization();
 
 			return window;
 		}
