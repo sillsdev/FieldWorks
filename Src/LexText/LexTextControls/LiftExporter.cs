@@ -1984,8 +1984,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sPeopleOA);
 			foreach (var person in m_cache.LangProject.PeopleOA.ReallyReallyAllPossibilities.OfType<ICmPerson>())
 			{
-				if (!person.IsResearcher)
-					continue;
+				// LT-13480 We need all the people written out, especially if custom lists might refer to them!
+				// if (!person.IsResearcher)
+				//    continue;
 				var liftId = person.Name.BestAnalysisVernacularAlternative.Text;
 				string liftIdParent = null;
 				if (person.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
