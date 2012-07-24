@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<template format="xml" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl;ConfiguredIndex.xsl">
-	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="Index Cards XML" defaultExtension="xml" filter="xml files (*.xml)|*.xml|All files (*.*)|*.*">
-Export to a Simple XML form following the configuration of the dictionary view, and any current filters and sorts.  The resulting XML file can be viewed in Internet Explorer.
+<template format="htm" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl;ConfiguredIndex.xsl;IndexCards.xslt">
+	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="Index Cards HTML" defaultExtension="htm" filter="htm files (*.htm)|*.htm;*.html|All files (*.*)|*.*">
+	  Export to index cards in an HTML format following the configuration of the dictionary view (including the order of fields), and any current filters and sorts.
+	  Although the resulting HTML file can be viewed in any web browser, Internet Explorer is recommended to print exactly 8 cards per page with the following Page Setup:
+	  Page Size A4, Portrait, Headers and Footers all set to Empty, Margins all set to .25 inches (.6 cm).
+	  The following Entry/Sense fields have some CSS stylesheet support: Headword, Lexeme Form, Citation Form, CV Pattern (Pronunciation), Gloss (Sense), Name/Abbr(Lists).
+	  For custom fields, only Entry custom fields originally named "Plural" or "XXX Plural Form" have special stylesheet support.
+	  All other field text will show without a style.
 	</FxtDocumentDescription>
 </template>

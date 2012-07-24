@@ -11,7 +11,7 @@
 	<!-- if you do not want any special formatting of custom fields >
 	<then set it to some big number (more than the number of custom fields) -->
 
-	<!-- Note that we expect A4 paper and .3in or 1cm margins-->
+	<!-- Note that we expect A4 paper and .25in or 0.6cm margins. Seems to Print best in Internet Explorer. -->
 
    <!-- Key field formatting-->
 	  <xsl:variable name="headword-fmt" select="'bigbold-left'"/>
@@ -20,6 +20,8 @@
 	  <xsl:variable name="gloss-fmt" select="'Cregular-left'"/>
 	  <xsl:variable name="name-fmt" select="'Cregular-left'"/> <!-- currently all names are handled the same-->
 	  <xsl:variable name="abbr-fmt" select="'Cregular-left'"/>  <!-- currently all abbreviations are handled the same-->
+	  <xsl:variable name="pluralForm-fmt" select="'Cbigbold-left'"/>
+	  <xsl:variable name="cvPattern-fmt" select="'Csmall-right'"/>
 
 	<!-- Custom Field Formatting -->
 
@@ -59,12 +61,12 @@
 									  .bigbold-left {text-align: left; font-family: 'arial'; font-size: 24px; width=100%;}
 									  .regular-left {text-align: left; font-family: 'arial'; font-size: 12px; width=100%;}
 									  .small-left {text-align: left; font-family: 'arial'; font-size: 10px; width=100%;}
-									  .Cbigbold-right {margin-bottom:1em; text-align: right; font-family: 'arial'; font-size: 24px; width=100%;}
-									  .Cregular-right {margin-bottom:1em; text-align: right; font-family: 'arial'; font-size: 12px; width=100%;}
-									  .Csmall-right {margin-bottom:1em; text-align: right; font-family: 'arial'; font-size: 10px; width=100%;}
-									  .Cbigbold-left {margin-bottom: 1em; text-align: left; font-family: 'arial'; font-size: 24px; width=100%;}
-									  .Cregular-left {margin-bottom:1em; text-align: left; font-family: 'arial'; font-size: 12px; width=100%;}
-									  .Csmall-left {margin-bottom:1em; text-align: left; font-family: 'arial'; font-size: 10px; width=100%;}
+									  .Cbigbold-right { /* margin-bottom:1em; */ text-align: right; font-family: 'arial'; font-size: 24px; width=100%;}
+									  .Cregular-right { /* margin-bottom:1em; */ text-align: right; font-family: 'arial'; font-size: 12px; width=100%;}
+									  .Csmall-right   { /* margin-bottom:1em; */ text-align: right; font-family: 'arial'; font-size: 10px; width=100%;}
+									  .Cbigbold-left  { /* margin-bottom:.5em; */ text-align: left; font-family: 'arial'; font-size: 24px; width=100%;}
+									  .Cregular-left  { margin-top:1em; text-align: left; font-family: 'arial'; font-size: 12px; width=100%;}
+									  .Csmall-left    { /* margin-top:1em; */ text-align: left; font-family: 'arial'; font-size: 10px; width=100%;}
 					  td {width: 50%; height: 266px; vertical-align: top; padding-right: 20px; padding-left: 20px;}
 				  p {margin:0; font-size: 12px; font-family: 'times new roman'; width=100%}
 		</style>
@@ -106,7 +108,27 @@
 	</td>
 	</xsl:template>
 
-	<xsl:template match="lexeme">
+   <xsl:template match="pluralForm">
+	 <xsl:call-template name="debugoutput">
+	   <xsl:with-param name="temp-name" select="name(.)"/>
+	 </xsl:call-template>
+	 <p class="{$pluralForm-fmt}">
+	   <xsl:text> </xsl:text>
+	   <xsl:value-of select="@name"/>
+	 </p>
+   </xsl:template>
+
+   <xsl:template match="cvPattern">
+	 <xsl:call-template name="debugoutput">
+	   <xsl:with-param name="temp-name" select="name(.)"/>
+	 </xsl:call-template>
+	 <p class="{$cvPattern-fmt}">
+	   <xsl:text> </xsl:text>
+	   <xsl:value-of select="@name"/>
+	 </p>
+   </xsl:template>
+
+   <xsl:template match="lexeme">
 			<xsl:call-template name="debugoutput">
 				<xsl:with-param name="temp-name" select="name(.)"/>
 			 </xsl:call-template>

@@ -263,3 +263,4 @@ McCoy, 23 July, 2012.  Fixed LT-13398 (subentries shown as main entry when switc
 GordonM, 23 Jul 2012. Fixed LT-12271 so Configure Columns in reversals doesn't allow Form to be in wrong ws.
 RickM, 23 Jul 2012. LT-13448 Ghost Reversal Entries
 GordonM, 24 Jul 2012. Small fix to ReversalListener to forestall crash on empty reversal index.
+KenZ, 24 Jul 2012. Integrated index card fix for LT-13470 to 7.2.6.
