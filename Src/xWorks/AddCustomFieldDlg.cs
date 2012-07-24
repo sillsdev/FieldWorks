@@ -990,7 +990,25 @@ namespace SIL.FieldWorks.XWorks
 			if (m_fdwCurrentField != null && m_fdwCurrentField.IsNew &&
 				m_listComboBox.SelectedItem != null)
 			{
-				m_fdwCurrentField.Fd.ListRootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
+				var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
+				ICmPossibilityList list;
+				try
+				{
+					list = m_cache.ServiceLocator.GetObject(rootId) as ICmPossibilityList;
+				}
+				catch (KeyNotFoundException)
+				{
+					// Shouldn't happen, but... just being safe.
+					// OTOH, what ought to happen if the list doesn't exist?!
+					// Delete the offender!
+					m_listComboBox.Items.Remove(m_listComboBox.SelectedItem);
+					return;
+				}
+				if (list != null)
+				{
+					m_fdwCurrentField.Fd.ListRootId = rootId;
+					m_fdwCurrentField.Fd.DstCls = list.ItemClsid;
+				}
 			}
 		}
 
