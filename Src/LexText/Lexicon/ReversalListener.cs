@@ -439,6 +439,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		/// <summary>
+		/// Resets the sorter so that it will use the writing system of the reversal index.
+		/// </summary>
+		/// <param name="ri"></param>
 		private void ResetListSorter(IReversalIndex ri)
 		{
 			var sorter = Sorter as GenRecordSorter;
