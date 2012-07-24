@@ -262,3 +262,4 @@ RickM, 20 Jul 2012. LT-13427 State of reversal index isn't saved and comes up we
 McCoy, 23 July, 2012.  Fixed LT-13398 (subentries shown as main entry when switching views in Reversal Indexes).
 GordonM, 23 Jul 2012. Fixed LT-12271 so Configure Columns in reversals doesn't allow Form to be in wrong ws.
 RickM, 23 Jul 2012. LT-13448 Ghost Reversal Entries
+GordonM, 24 Jul 2012. Small fix to ReversalListener to forestall crash on empty reversal index.

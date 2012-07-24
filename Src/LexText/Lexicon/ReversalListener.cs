@@ -6,7 +6,6 @@ using System.Xml;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
@@ -473,14 +472,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		private int GetRootIndex(int lastValidIndex)
 		{
-			int parentIndex = m_list.IndexOfParentOf(m_list.SortItemAt(lastValidIndex).KeyObject, Cache);
-
-			if (parentIndex == -1)
-			{
+			var item = m_list.SortItemAt(lastValidIndex);
+			if (item == null)
 				return lastValidIndex;
-			}
+			var parentIndex = m_list.IndexOfParentOf(item.KeyObject, Cache);
 
-			return GetRootIndex(parentIndex);
+			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
 
 		/// <summary>
