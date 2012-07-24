@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
@@ -425,6 +426,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					return;
 				}
+				ResetListSorter(ri);
+
 				ICmObject newOwningObj = NewOwningObject(ri);
 				if (newOwningObj != OwningObject)
 				{
@@ -432,6 +435,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 					m_mediator.SendMessage("ClerkOwningObjChanged", this);
+				}
+			}
+		}
+
+		private void ResetListSorter(IReversalIndex ri)
+		{
+			var sorter = Sorter as GenRecordSorter;
+			if(sorter != null)
+			{
+				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
+				if(stringFinderComparer != null)
+				{
+					var writingSystem = (IWritingSystem) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+					var comparer = new StringFinderCompare(stringFinderComparer.Finder, new WritingSystemComparer(writingSystem));
+					sorter.Comparer = comparer;
 				}
 			}
 		}
@@ -454,6 +472,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case "ToolForAreaNamed_lexicon" :
 					int rootIndex = GetRootIndex(m_list.CurrentIndex);
 					JumpToIndex(rootIndex);
+					base.OnPropertyChanged(name);
 					break;
 				case "ActiveClerk":
 					RecordClerk activeClerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk");

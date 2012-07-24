@@ -266,3 +266,4 @@ GordonM, 24 Jul 2012. Small fix to ReversalListener to forestall crash on empty 
 KenZ, 24 Jul 2012. Integrated index card fix for LT-13470 to 7.2.6.
 GordonM, 24 Jul 2012. Fixed LT-13477 so Custom List refs are assigned the correct destination class.
 GordonM, 24 Jul 2012. and LT-13480 so non-Researcher people get exported to lift-ranges.
+NaylorJ, 24 Jul 2012. Possible fix for LT-13428, needs more testing, doesn't deal with all Reversal issues.
