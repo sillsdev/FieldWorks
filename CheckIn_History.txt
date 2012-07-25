@@ -6020,3 +6020,4 @@ McCoy, 17 July, 2012.  Fixed an unreported crash in the Notebook section.
 EricP, 18 July, 2012. LT-8276 Provide a way to import wordforms with their glosses: guard against duplicates upon repeated imports.
 	Also now ignore writing system selection if user modfieds mapping destination to "Don't import".
 EricP, 20 July, 2012. Fix Export to Configured Dictionary Index Cards (LT-13470, LT-12103).
+RandyR, 24 July 2012. Updated FLEx Bridge installer to 0.3.66.
