@@ -1157,6 +1157,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					dlg.ShowDialog();
 				}
+				this.ActivateUI(true);
 			}
 			return true;	// handled
 		}
