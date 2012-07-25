@@ -268,3 +268,4 @@ GordonM, 24 Jul 2012. Fixed LT-13477 so Custom List refs are assigned the correc
 GordonM, 24 Jul 2012. and LT-13480 so non-Researcher people get exported to lift-ranges.
 NaylorJ, 24 Jul 2012. Possible fix for LT-13428, needs more testing, doesn't deal with all Reversal issues.
 McCoy, 25 July, 2012.  Fixed LT-13400 (refresh after Pathway export makes "Reversal Indexes" pane blank).
+GordonM, 25 Jul 2012. LT-13478 LIFT import now creates the right subclass of possibility for imported list objects.
