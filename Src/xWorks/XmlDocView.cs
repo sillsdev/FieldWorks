@@ -330,6 +330,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void SetInfoBarText()
 		{
+			const string formatPlaceHolder = "{0}";
 			if (m_informationBar == null)
 				return;
 
@@ -345,6 +346,13 @@ namespace SIL.FieldWorks.XWorks
 			if (titleId != null)
 			{
 				titleStr = StringTbl.GetString(titleId, "AlternativeTitles");
+				if (titleStr.Contains(formatPlaceHolder) && Clerk.OwningObject != null &&
+					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+				{
+					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
+					// which reversal index was being shown.
+					titleStr = string.Format(titleStr, Clerk.OwningObject.ShortName);
+				}
 			}
 			else if (Clerk.OwningObject != null)
 			{
@@ -370,21 +378,12 @@ namespace SIL.FieldWorks.XWorks
 				if (titleStr == null || titleStr == string.Empty)
 					return;
 			}
-			switch (context)
+			if (context == "Dict")
 			{
-				case "Dict":
-					m_currentPublication = GetSelectedPublication();
-					m_currentConfigView = GetSelectedConfigView();
-					titleStr = MakePublicationTitlePart(titleStr);
-					SetConfigViewTitle();
-					break;
-				case "Reversal":
-					m_currentPublication = GetSafeWsName();
-					titleStr = String.Format(xWorksStrings.ksXReversalIndex, m_currentPublication, titleStr);
-					break;
-				default:
-					// Some other type like Notebook; drop through.
-					break;
+				m_currentPublication = GetSelectedPublication();
+				m_currentConfigView = GetSelectedConfigView();
+				titleStr = MakePublicationTitlePart(titleStr);
+				SetConfigViewTitle();
 			}
 
 			// If we have a format attribute, format the title accordingly.
