@@ -271,3 +271,4 @@ McCoy, 25 July, 2012.  Fixed LT-13400 (refresh after Pathway export makes "Rever
 GordonM, 25 Jul 2012. LT-13478 LIFT import now creates the right subclass of possibility for imported list objects.
 GordonM, 25 Jul 2012. Finished LT-10691 so Bulk Edit reversal entries title bar shows which index is being edited.
 GordonM, 25 Jul 2012. Better solution for LT-10691. Doesn't mess with strings file.
+McCoy, 26 July, 2012.  Fixed LT-12040 (duplicate columns should select new writing system automatically).

@@ -509,10 +509,29 @@ namespace SIL.FieldWorks.IText
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			if (optionsList.SelectedItem == null)
+			if (optionsList.SelectedItem == null || !(optionsList.SelectedItem is LineOption))
 				return;
 			int flid = (optionsList.SelectedItem as LineOption).Flid;
-			int index = m_choices.Add(flid);
+
+			int ws = 0;
+			if (m_choices.IndexOf(flid) != -1) // i.e., if m_choices contains flid.
+			{
+				InterlinLineSpec existingSpec = m_choices[m_choices.IndexOf(flid)];
+				int prevWs = existingSpec.WritingSystem;
+
+				foreach (WsComboItem item in WsComboItems(existingSpec.ComboContent))
+				{
+					int newWs = getWsFromId(item.Id);
+
+					if (newWs != prevWs && m_choices.IndexOf(flid, newWs, true) == -1)
+					{
+						ws = newWs;
+						break;
+					}
+				}
+			}
+
+			int index = m_choices.Add(flid, ws);
 			InitCurrentList(index);
 
 		}
