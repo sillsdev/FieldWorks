@@ -130,13 +130,13 @@
 	<string id="LexExampleSentence-Plural" txt="Examples"/>
 	<string id="CmTranslation-Plural" txt="Translations"/>
 	<string id="MoForm-Plural" txt="Allomorphs"/>
-	<string id="ReversalIndexEntry-Plural" txt="{0} Reversal Entries"/><!-- placeholder will contain the name of the reversal language -->
+	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
 	<string id="ReversalIndex-Plural" txt="Reversals"/>
 	<string id="LexSense-Classified" txt="Classified Senses"/>
 	<string id="AllEntryRefs" txt="Complex or Variant Entry References"/>
 	<string id="LexEntryRef-Plural" txt="Complex or Variant Entry References"/>
 <!-- Lexicon Reversal -->
-	<string id="ReversalIndexEntry-DocList" txt="{0} Reversal Index"/><!-- placeholder will contain the name of the reversal language -->
+	<string id="ReversalIndexEntry-DocList" txt="Reversal Index"/>
 <!-- Text Area -->
 	<string id="Text-Plural" txt="Texts"/>
 <!-- Words Area -->

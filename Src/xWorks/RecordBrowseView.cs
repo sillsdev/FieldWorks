@@ -409,7 +409,6 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void SetInfoBarText()
 		{
-			const string formatPlaceHolder = "{0}";
 			if (m_informationBar == null)
 				return;
 
@@ -422,12 +421,14 @@ namespace SIL.FieldWorks.XWorks
 				XmlViewsUtils.TryFindString(StringTbl, "AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
-				if (titleStr.Contains(formatPlaceHolder) && Clerk.OwningObject != null &&
+				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
 					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
-					// which reversal index was being shown.
-					titleStr = string.Format(titleStr, Clerk.OwningObject.ShortName);
+					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
+					// above is removed then the Word List Concordance shows the word being concorded in the
+					// right pane title bar.
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName, titleStr);
 				}
 			}
 			else if (Clerk.OwningObject != null)
