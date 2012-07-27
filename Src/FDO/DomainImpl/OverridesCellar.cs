@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -1095,7 +1096,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (!wsHashTable.TryGetValue(possibilityKey, out poss))
 					{
 						// Category is missing, so create a new one.
-						possibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+						possibility = CreatePossibilityOrAppropriateSubclass();
 						possibilityList.Add(possibility);
 						possibility.Abbreviation.set_String(ws, strName);
 						possibility.Name.set_String(ws, strName);
@@ -1116,6 +1117,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			throw new InvalidProgramException(
 				"Unable to create a dictionary for the writing system in the annotation category hash table");
+		}
+
+		private ICmPossibility CreatePossibilityOrAppropriateSubclass()
+		{
+			var destinationClassId = ItemClsid;
+			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
+			var newObjHvo = sda.MakeNewObject(destinationClassId, Hvo,
+				CmPossibilityListTags.kflidPossibilities, sda.get_VecSize(Hvo, CmPossibilityListTags.kflidPossibilities));
+			return m_cache.ServiceLocator.GetObject(newObjHvo) as ICmPossibility;
 		}
 
 		/// ------------------------------------------------------------------------------------

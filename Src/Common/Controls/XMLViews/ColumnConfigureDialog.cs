@@ -20,20 +20,20 @@ namespace SIL.FieldWorks.Common.Controls
 	public class ColumnConfigureDialog : Form, IFWDisposable
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ColumnHeader FieldColumn;
-		private System.Windows.Forms.ColumnHeader InfoColumn;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Button addButton;
-		private System.Windows.Forms.Button removeButton;
-		internal System.Windows.Forms.Button moveUpButton;
-		internal System.Windows.Forms.Button moveDownButton;
+		private Label label1;
+		private Label label2;
+		private ColumnHeader FieldColumn;
+		private ColumnHeader InfoColumn;
+		private Button okButton;
+		private Button cancelButton;
+		private Button helpButton;
+		private Button addButton;
+		private Button removeButton;
+		internal Button moveUpButton;
+		internal Button moveDownButton;
 		private FwOverrideComboBox wsCombo;
-		private System.Windows.Forms.Label label3;
-		internal System.Windows.Forms.ListView currentList;
+		private Label label3;
+		internal ListView currentList;
 
 		List<XmlNode> m_possibleColumns;
 		List<XmlNode> m_currentColumns;
@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.Controls
 		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
 		private int m_hvoRootObj = 0;
 
-		private System.Windows.Forms.ListView optionsList;
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private ListView optionsList;
+		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
 		private PictureBox blkEditIcon;
@@ -119,6 +119,16 @@ namespace SIL.FieldWorks.Common.Controls
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetShowHelp(this, true);
 			}
+
+			// Call FinishInitialization to do setup that might depend on previously setting
+			// the root object (which is done by the caller after exiting the constructor.
+		}
+
+		/// <summary>
+		/// Do dialog initialization that might depend on previously setting the root object.
+		/// </summary>
+		public void FinishInitialization()
+		{
 			InitCurrentList();
 
 			InitChoicesList();
@@ -615,13 +625,23 @@ namespace SIL.FieldWorks.Common.Controls
 				case "reversal":
 					{
 						// Get the language for this reversal index.
-						var sWsName = GetDefaultReversalWsName();
+						string sWsName = null;
+						if (m_hvoRootObj > 0)
+						{
+							var servLoc = m_cache.ServiceLocator;
+							var ri = servLoc.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
+							//var ws = servLoc.WritingSystemManager.Get(ri.WritingSystem);
+							//sWsName = ws.DisplayLabel;
+							sWsName = ri.ShortName;
+						}
+						if (String.IsNullOrEmpty(sWsName))
+							sWsName = GetDefaultReversalWsName();
 						if (!String.IsNullOrEmpty(sWsName))
 							result = sWsName;
 					}
 					break;
-				case "reversal index": // ??? is this case used?
-					break;
+				//case "reversal index": // ??? is this case used? Nope.
+				//    break;
 				case "analysis vernacular":
 					result = XMLViewsStrings.ksDefaultAnal;
 					break;

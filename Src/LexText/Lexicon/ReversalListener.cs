@@ -6,9 +6,9 @@ using System.Xml;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
@@ -181,15 +181,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			// Set up for the reversal index combo box or dropdown menu.
-			int firstId = 0;
+			Guid firstGuid = Guid.Empty;
 			List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
 			if (reversalIds.Count > 0)
-				firstId = reversalIds[0].Hvo;
+				firstGuid = reversalIds[0].Guid;
 			else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
-				firstId = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToHvoArray()[0];
-			if (firstId > 0)
+				firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
+			if (firstGuid != Guid.Empty)
 			{
-				SetReversalIndexHvo(firstId);
+				SetReversalIndexGuid(firstGuid);
 			}
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
@@ -208,10 +208,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 
-		private void SetReversalIndexHvo(int reversalIndexHvo)
+		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", false);
+			m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString());
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			//IReversalIndex riOwner = this.IReversalIndex;
 			foreach (IReversalIndex ri in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
-				display.List.Add(ri.ShortName, ri.Hvo.ToString(), null, null);
+				display.List.Add(ri.ShortName, ri.Guid.ToString(), null, null);
 			}
 			display.List.Sort();
 			return true; // We handled this, no need to ask anyone else.
@@ -336,22 +336,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			int id = CreateNewReversalIndex(false);
-			if (id > 0)
-				SetReversalIndexHvo(id);
+			Guid newGuid = CreateNewReversalIndex(false);
+			if (newGuid != Guid.Empty)
+			{
+				SetReversalIndexGuid(newGuid);
+			}
 			return true;
 		}
 
-		private int CreateNewReversalIndex(bool allowCancel)
+		private Guid CreateNewReversalIndex(bool allowCancel)
 		{
-			//if (m_cache == null)
-			//    m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			//if (m_cache == null)
-			//    return 0;
-			//if (m_cache.LanguageProject == null)
-			//    return 0;
-			//if (m_cache.LanguageProject.LexDbOA == null)
-			//    return 0;
 			using (var dlg = new CreateReversalIndexDlg())
 			{
 				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
@@ -360,10 +354,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (dlg.PossibilityCount > 0)
 				{
 					if (dlg.ShowDialog() == DialogResult.OK)
-						return dlg.NewReversalIndexHvo;
+					{
+						int hvo = dlg.NewReversalIndexHvo;
+						return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).Guid;
+					}
 				}
 			}
-			return 0;
+			return Guid.Empty;
 		}
 
 		#endregion Reversal Index Combo
@@ -410,18 +407,34 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void ChangeOwningObjectIfPossible()
 		{
-			string stringHvo = m_mediator.PropertyTable.GetStringProperty("ReversalIndexHvo", "????");
-			if (stringHvo != "????")
-				ChangeOwningObject(Convert.ToInt32(stringHvo));
+			string stringGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+			if (stringGuid != null)
+			{
+				try
+				{
+					Guid newGuid = new Guid(stringGuid);
+					ChangeOwningObject(newGuid);
+				}
+				catch
+				{
+					// Can't change an owner if we have a bad guid.
+				}
+			}
 		}
 
-		private void ChangeOwningObject(int id)
+		private void ChangeOwningObject(Guid newGuid)
 		{
-			if (id > 0)
+			if (newGuid != Guid.Empty )
 			{
 				if (m_cache == null)
 					m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				IReversalIndex ri = (IReversalIndex)m_cache.ServiceLocator.GetObject(id);
+				IReversalIndex ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+				if (ri == null)
+				{
+					return;
+				}
+				ResetListSorter(ri);
+
 				ICmObject newOwningObj = NewOwningObject(ri);
 				if (newOwningObj != OwningObject)
 				{
@@ -429,6 +442,25 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 					m_mediator.SendMessage("ClerkOwningObjChanged", this);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Resets the sorter so that it will use the writing system of the reversal index.
+		/// </summary>
+		/// <param name="ri"></param>
+		private void ResetListSorter(IReversalIndex ri)
+		{
+			var sorter = Sorter as GenRecordSorter;
+			if(sorter != null)
+			{
+				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
+				if(stringFinderComparer != null)
+				{
+					var writingSystem = (IWritingSystem) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+					var comparer = new StringFinderCompare(stringFinderComparer.Finder, new WritingSystemComparer(writingSystem));
+					sorter.Comparer = comparer;
 				}
 			}
 		}
@@ -445,8 +477,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				default:
 					base.OnPropertyChanged(name);
 					break;
-				case "ReversalIndexHvo":
+				case "ReversalIndexGuid":
 					ChangeOwningObjectIfPossible();
+					break;
+				case "ToolForAreaNamed_lexicon" :
+					int rootIndex = GetRootIndex(m_list.CurrentIndex);
+					JumpToIndex(rootIndex);
+					base.OnPropertyChanged(name);
 					break;
 				case "ActiveClerk":
 					RecordClerk activeClerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk");
@@ -456,6 +493,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						base.OnPropertyChanged(name);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Returns the index of the root object whose descendent is the object at lastValidIndex.
+		/// </summary>
+		/// <param name="lastValidIndex"></param>
+		/// <returns></returns>
+		private int GetRootIndex(int lastValidIndex)
+		{
+			var item = m_list.SortItemAt(lastValidIndex);
+			if (item == null)
+				return lastValidIndex;
+			var parentIndex = m_list.IndexOfParentOf(item.KeyObject, Cache);
+
+			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
 
 		/// <summary>
@@ -492,26 +544,26 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			int id = CreateNewReversalIndex();
-			if (id > 0)
+			Guid newGuid = CreateNewReversalIndex();
+			if (newGuid != Guid.Empty)
 			{
-				ChangeOwningObject(id);
-				string sHvo = m_mediator.PropertyTable.GetStringProperty("ReversalIndexHvo", null);
-				if (sHvo == null || sHvo != id.ToString())
-					SetReversalIndexHvo(id);
+				ChangeOwningObject(newGuid);
+				string sGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+				if (sGuid == null || !sGuid.Equals(newGuid.ToString()))
+					SetReversalIndexGuid(newGuid);
 			}
 		}
 
-		private int CreateNewReversalIndex()
+		private Guid CreateNewReversalIndex()
 		{
 			if (m_cache == null)
 				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			if (m_cache == null)
-				return 0;
+				return Guid.Empty;
 			if (m_cache.LanguageProject == null)
-				return 0;
+				return Guid.Empty;
 			if (m_cache.LanguageProject.LexDbOA == null)
-				return 0;
+				return Guid.Empty;
 			using (CreateReversalIndexDlg dlg = new CreateReversalIndexDlg())
 			{
 				dlg.Init(m_cache);
@@ -519,10 +571,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (dlg.PossibilityCount > 0)
 				{
 					if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
-						return dlg.NewReversalIndexHvo;
+					{
+						int hvo = dlg.NewReversalIndexHvo;
+						return m_cache.ServiceLocator.GetObject(hvo).Guid;
+					}
 				}
 			}
-			return 0;
+			return Guid.Empty;
 		}
 
 		/// <summary>
@@ -558,17 +613,23 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			string sHvo = m_mediator.PropertyTable.GetStringProperty("ReversalIndexHvo", null);
-			if (sHvo == null)
+			string sGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+			if (sGuid == null)
 				return;
-			int hvo = Convert.ToInt32(sHvo);
-			if (hvo <= 0)
-				return;
+			Guid oldGuid;
+			try
+			{
+				oldGuid = new Guid(sGuid);
+			}
+			catch
+			{
+				return; // Can't delete an index if we have a bad guid.
+			}
 			if (m_cache == null)
 				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			if (m_cache == null)
 				return;
-			IReversalIndex ri = (IReversalIndex)m_cache.ServiceLocator.GetObject(hvo);
+			IReversalIndex ri = (IReversalIndex)m_cache.ServiceLocator.GetObject(oldGuid);
 			DeleteReversalIndex(ri);
 		}
 
@@ -605,7 +666,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
 						int cobjNew;
 						var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
-						SetReversalIndexHvo(idxNew.Hvo);
+						SetReversalIndexGuid(idxNew.Guid);
 					});
 				ChangeOwningObjectIfPossible();
 			}
@@ -647,10 +708,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return newIdx;
 		}
 
-		private void SetReversalIndexHvo(int reversalIndexHvo)
+		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", reversalIndexHvo.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexHvo", false);
+			if (m_cache.ServiceLocator.GetObject(ReversalIndexGuid) is IReversalIndex)
+			{
+				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString());
+				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			}
 		}
 
 		abstract protected ICmObject NewOwningObject(IReversalIndex ri);

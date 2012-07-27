@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{AF96B972-89DF-4914-B88C-70A4E7742160}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -267,6 +267,9 @@
 	<Content Include="InterlinearExporterTests.xml" />
 	<Content Include="TextEditingTestsTexts.xml" />
 	<Content Include="toolConfigurationForITextDllTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

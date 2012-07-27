@@ -17,18 +17,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-
-using System.Xml.Linq;
-using System.Xml.XPath;
-
 using Palaso.Lift;
 using Palaso.Lift.Parsing;
 using Palaso.WritingSystems;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

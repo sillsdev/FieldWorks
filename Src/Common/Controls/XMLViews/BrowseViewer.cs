@@ -2497,6 +2497,7 @@ namespace SIL.FieldWorks.Common.Controls
 				new List<XmlNode>(ColumnSpecs), m_mediator, stringTbl))
 			{
 				dlg.RootObjectHvo = RootObjectHvo;
+				dlg.FinishInitialization();
 
 				if (m_bulkEditBar != null)
 					// If we have a Bulk Edit bar, we should show the helpful icons

@@ -73,6 +73,9 @@
 		<part id="LexSense-Jt-OwningEntry" type="jtview">
 			<obj class="LexSense" field="OwningEntry"/>
 		</part>
+		<part id="LexSense-Jt-SenseAnalysesCount" type="jtview">
+			<int field="SenseAnalysesCount"/>
+		</part>
 		<part id="LexSense-Jt-DomainsAbbrAndName" type="jtview">
 	  <span>
 		<properties>

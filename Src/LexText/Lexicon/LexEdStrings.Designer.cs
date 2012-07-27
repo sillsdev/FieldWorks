@@ -369,6 +369,60 @@ namespace SIL.FieldWorks.XWorks.LexEd {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Delete Entries and Senses that are not used in interlinear.
+		/// </summary>
+		internal static string ksDeleteEntriesSenses {
+			get {
+				return ResourceManager.GetString("ksDeleteEntriesSenses", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to After a confirmation warning, this will delete all entries and senses that are not referenced in the current set of filtered interlinear texts..
+		/// </summary>
+		internal static string ksDeleteEntriesSensesDoes {
+			get {
+				return ResourceManager.GetString("ksDeleteEntriesSensesDoes", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Always back up your project before using this. This will delete all of your entries and senses if you have not done any interlinearization, and can delete a large number if you have done minimal interlinearization. It cannot be undone. It will warn you about the number of entries that will be deleted and give you a chance to stop without deletions..
+		/// </summary>
+		internal static string ksDeleteEntriesSensesWarning {
+			get {
+				return ResourceManager.GetString("ksDeleteEntriesSensesWarning", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Use this when you want to have a lexicon that is limited to entries and senses that are used in one or more flitered interlinear texts..
+		/// </summary>
+		internal static string ksDeleteEntriesSensesWhen {
+			get {
+				return ResourceManager.GetString("ksDeleteEntriesSensesWhen", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to You are about to delete {0} lexical entries. Do you want to continue?.
+		/// </summary>
+		internal static string ksDeleteEntrySenseConfirmText {
+			get {
+				return ResourceManager.GetString("ksDeleteEntrySenseConfirmText", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Delete Entries Confirmation.
+		/// </summary>
+		internal static string ksDeleteEntrySenseConfirmTitle {
+			get {
+				return ResourceManager.GetString("ksDeleteEntrySenseConfirmTitle", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Note: this will remove this entire {0} reference set tree..
 		/// </summary>
 		internal static string ksDeleteLexTree {

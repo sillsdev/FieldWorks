@@ -422,10 +422,18 @@ namespace SIL.FieldWorks.XWorks
 				XmlViewsUtils.TryFindString(StringTbl, "AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
+				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
+					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+				{
+					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
+					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
+					// above is removed then the Word List Concordance shows the word being concorded in the
+					// right pane title bar.
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName, titleStr);
+				}
 			}
 			else if (Clerk.OwningObject != null)
 			{
-
 				if (XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
 					"ShowOwnerShortname"))
 				{

@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 		public const int kflidSegment = 899930; // segment from occurrence.
 		public const int kflidConcOccurrences = 899931; // occurrences in Concordance view, supposedly of LangProject.
 		public const int kflidAnalysis = 899932; // from fake concordance object to Analysis.
-		internal const int kflidWaOccurrences = 899933; // occurrences of a WfiAnalysis
+		public const int kflidWaOccurrences = 899933; // occurrences of a WfiAnalysis
 		internal const int kflidWgOccurrences = 899934; // occurrences of a WfiGloss.
 		internal const int kflidTextTitle = 899935; // of a FakeOccurrence
 		internal const int kflidTextGenres = 899936; // of a FakeOccurrence

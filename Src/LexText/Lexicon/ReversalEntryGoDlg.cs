@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
-				cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().AllInstances().Cast<ICmObject>(), SearchType.Prefix,
+				ReversalIndex.AllEntries.Cast<ICmObject>(), SearchType.Prefix,
 				GetReversalEntrySearchFields, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 		}
 

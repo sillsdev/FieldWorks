@@ -192,4 +192,9 @@
 	<value> The writing system {0} specifies an invalid spelling dictionary ({1}). Valid spelling dictionary IDs must only contain ASCII alphanumeric characters or underline. Spell checking will not work for this writing system until you correct this in the Writing System Properties dialog.</value>
 	<comment>Error message. {0} might be a code like "fr" and {1} a bad ID, typically a short string like "frn[".</comment>
   </data>
+  <data name="ksPtCommunicationProblem" xml:space="preserve">
+	<value>The project you are opening will not communicate with Paratext
+because a project with the same name is already open.
+If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart Flex.</value>
+  </data>
 </root>

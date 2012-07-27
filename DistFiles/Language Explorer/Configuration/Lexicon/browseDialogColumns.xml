@@ -171,6 +171,8 @@
 	<!-- removed as per LT-9899
 	<column layout="InflectionClassForEntry" label="Inflection Classes (Entry)" visibility="dialog"/>
 	-->
+	<column layout="EntryAnalysesCount" label="Number of Text Analyses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
+	<column layout="SenseAnalysesCount" label="Number of Text Analyses (Sense)" multipara="true" sortType="integer" blankPossible="false" visibility="dialog"/>
 
 	<!-- custom fields (generated) -->
 	<!-- LexEntry customs -->

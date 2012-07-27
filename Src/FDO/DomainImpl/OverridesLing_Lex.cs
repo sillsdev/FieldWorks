@@ -3107,6 +3107,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var entryRef in EntryRefsOS)
 				uowService.RegisterVirtualAsModified(entryRef, "MorphoSyntaxAnalyses", entryRef.MorphoSyntaxAnalyses.Cast<ICmObject>());
 		}
+
+		/// <summary>
+		/// Return the number of analyses in interlinear text for this entry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.Integer)]
+		public int EntryAnalysesCount
+		{
+			get
+			{
+				int count = 0;
+				List<IMoForm> forms = new List<IMoForm>();
+				if (LexemeFormOA != null)
+					forms.Add(LexemeFormOA);
+				foreach (IMoForm mfo in AlternateFormsOS)
+					forms.Add(mfo);
+				foreach (IMoForm mfo in forms)
+				{
+					foreach (ICmObject cmo in mfo.ReferringObjects)
+						if (cmo is IWfiMorphBundle)
+							count += (cmo.Owner as WfiAnalysis).OccurrencesInTexts.Count<ISegment>();
+				}
+				return count;
+			}
+		}
 	}
 
 	internal partial class PartOfSpeech
@@ -5114,6 +5138,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return false;
 			//return base.MergeStringProp(flid, cpt, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue);
+		}
+
+		/// <summary>
+		/// Return the number of analyses in interlinear text for this sense.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.Integer)]
+		public int SenseAnalysesCount
+		{
+			get
+			{
+				int count = 0;
+				var anals = new List<IWfiAnalysis>();
+				foreach (ICmObject cmo in ReferringObjects)
+					if (cmo is IWfiMorphBundle)
+						count += (cmo.Owner as WfiAnalysis).OccurrencesInTexts.Count<ISegment>();
+				return count;
+			}
 		}
 	}
 

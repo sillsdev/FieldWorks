@@ -7,7 +7,7 @@
 				<parameters id="ReversalEntriesEdit" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural">
+						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true"/>
 							<columns>
 								<column label="Form" width="34%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">

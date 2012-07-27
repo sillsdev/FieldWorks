@@ -5,6 +5,7 @@
 	<utility assemblyPath="FixFwDataDll.dll" class="SIL.FieldWorks.FixData.ErrorFixer"/>
 	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.DuplicateWordformFixer"/>
 	<utility assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ParseIsCurrentFixer"/>
+	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.DeleteEntriesSensesWithoutInterlinearization"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryInflTypeConverter"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryTypeConverter"/>
 </utilityCatalog>
