@@ -278,10 +278,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
 			BaseInit(cache, mediator, recordListNode);
 			m_flid = CmPossibilityListTags.kflidPossibilities;
-			int rih = AllReversalEntriesRecordList.GetReversalIndexHvo(mediator);
-			if (rih > 0)
+			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator);
+			if (riGuid != Guid.Empty)
 			{
-				IReversalIndex ri = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(rih);
+				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 				m_owningObject = ri.PartsOfSpeechOA;
 				m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
 			}

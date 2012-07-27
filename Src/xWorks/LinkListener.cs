@@ -465,9 +465,9 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
-						int rih = int.Parse((string)m_mediator.PropertyTable.GetValue("ReversalIndexHvo"));
-						if (rih != obj.Owner.Hvo)
-							m_mediator.PropertyTable.SetProperty("ReversalIndexHvo", obj.Owner.Hvo.ToString());
+						string sGuid = (string)m_mediator.PropertyTable.GetValue("ReversalIndexGuid");
+						if (!sGuid.Equals(obj.Owner.Guid.ToString()))
+							m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString());
 					}
 					// Allow this to happen after the processing of the tool change above by using the Broadcast
 					// method on the mediator, the SendMessage would process it before the above msg and it would

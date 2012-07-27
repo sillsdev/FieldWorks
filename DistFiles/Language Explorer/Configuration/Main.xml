@@ -713,7 +713,7 @@ WANTPORT -->
 			<item label="Sorted By Length" boolProperty="SortedByLength"/>
 		</menu>
 		<menu id="PaneBar-ReversalIndicesMenu">
-			<menu id="ReversalIndexPaneMenu" label="_Reversal Indexes" list="ReversalIndexList" behavior="singlePropertyAtomicValue" property="ReversalIndexHvo" icon="MenuWidget"/>
+			<menu id="ReversalIndexPaneMenu" label="_Reversal Indexes" list="ReversalIndexList" behavior="singlePropertyAtomicValue" property="ReversalIndexGuid" icon="MenuWidget"/>
 		</menu>
 		<menu id="mnuEnvReferenceChoices">
 			<item command="CmdJumpToEnvironmentList"/>
