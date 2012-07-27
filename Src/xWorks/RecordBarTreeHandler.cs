@@ -290,6 +290,12 @@ namespace SIL.FieldWorks.XWorks
 		void MoveItem(int distance)
 		{
 			int hvoMove = ClickObject;
+
+			if (hvoMove == 0)
+			{
+				return;
+			}
+
 			var column = m_possRepo.GetObject(hvoMove);
 			if (column.CheckAndReportProtectedChartColumn())
 				return;
