@@ -275,3 +275,5 @@ McCoy, 26 July, 2012.  Fixed LT-12040 (duplicate columns should select new writi
 McCoy, 26 July, 2012.  Fixed LT-13024 (Crash in style dialog when right-click on blank space).
 GordonM, 26 Jul 2012. Fixed LT-13469 so Paratext-using user is informed of pipe communication problem.
 KenZ, 26 Jul 2012. Fixed LT-13487 Crash when switching to Reversal Entries.
+----------------- FW7.2.6 -------------------------------------------------------------------------------
+KenZ, 30 Jul 2012. Finished fixing LT-13469. It now displays the error message as specified.

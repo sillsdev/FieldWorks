@@ -141,21 +141,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <summary>
-		/// Gets the default Registry key for where Paratext stores its directories.
-		/// </summary>
-		public static RegistryKey ParatextProgramFilesKey
-		{
-			get
-			{
-				using (RegistryKey softwareKey = Registry.LocalMachine.OpenSubKey("Software"))
-				{
-					Debug.Assert(softwareKey != null);
-					return softwareKey.OpenSubKey("ScrChecks");
-				}
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines the installation or absence of the Paratext program by checking for the
@@ -169,14 +154,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static bool Paratext7orLaterInstalled()
 		{
-			for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
+			using (RegistryKey ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
 			{
-				object dummy;
-				if (RegistryHelper.RegEntryExists(ParatextProgramFilesKey, "1.0",
-					"Program_Files_Directory_Ptw" + i, out dummy))
-					return true;
+				if (ParatextKey == null)
+					return false;
+				for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
+				{
+					object dummy;
+					if (RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw" + i))
+						return true;
+				}
+				return false;
 			}
-			return false;
 		}
 	}
 }
