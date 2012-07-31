@@ -6027,3 +6027,4 @@ GordonM, 27 Jul 2012. Fixed LT-8191 so Matched Diacritics checkbox defaults to c
 KenZ, 30 Jul 2012. Integrated final LT-13469 fix from 7.2 to WW.
 GordonM, 31 Jul 2012. Fix failing Match Diacritics tests.
 GordonM, 31 Jul 2012. LT-13478 Fix to LIFT Import so CmPerson list is merged correctly.
+GordonM, 31 Jul 2012. LT-7406 Esc/Enter keys now work in Apply Styles dialog.
