@@ -187,6 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		IPhEnvironmentFactory m_factPhEnvironment;
 		ILexReferenceFactory m_factLexReference;
 		ILexEntryRefFactory m_factLexEntryRef;
+		ICmPersonFactory m_factCmPerson;
 
 		IFsComplexFeatureFactory m_factFsComplexFeature;
 		IFsOpenFeatureFactory m_factFsOpenFeature;

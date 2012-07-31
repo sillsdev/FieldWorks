@@ -1301,4 +1301,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
 	<value>Title (of text)</value>
 	<comment>name for SFM import field; name matches enumeration member name</comment>
   </data>
+  <data name="ksPeopleAdded" xml:space="preserve">
+	<value>The following People were added to the language project:</value>
+  </data>
 </root>

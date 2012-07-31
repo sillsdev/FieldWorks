@@ -88,6 +88,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Internal interface for use by merging code to create a copy of a CmPerson that exists in another project.
+	/// </summary>
+	public partial interface ICmPersonFactory
+	{
+		/// <summary>
+		/// Create a new ICmPerson instance with the given guid and owner.
+		/// It will be added to the end of the Possibilities list.
+		/// </summary>
+		ICmPerson Create(Guid guid, ICmPossibilityList owner);
+	}
+
+	/// <summary>
 	/// Methods added for importing objects with known/fixed guids.
 	/// </summary>
 	public partial interface ICmPossibilityFactory

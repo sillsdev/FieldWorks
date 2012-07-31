@@ -1122,10 +1122,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ICmPossibility CreatePossibilityOrAppropriateSubclass()
 		{
 			var destinationClassId = ItemClsid;
-			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
-			var newObjHvo = sda.MakeNewObject(destinationClassId, Hvo,
-				CmPossibilityListTags.kflidPossibilities, sda.get_VecSize(Hvo, CmPossibilityListTags.kflidPossibilities));
-			return m_cache.ServiceLocator.GetObject(newObjHvo) as ICmPossibility;
+			if (destinationClassId < CmPossibilityTags.kClassId)
+				destinationClassId = CmPossibilityTags.kClassId; // Default to CmPossibility
+			var factType = GetServicesFromFWClass.GetFactoryTypeFromFWClassID(Cache.MetaDataCache as IFwMetaDataCacheManaged, destinationClassId);
+			var factory = Cache.ServiceLocator.GetInstance(factType);
+			return ReflectionHelper.GetResult(factory, "Create", null) as ICmPossibility;
 		}
 
 		/// ------------------------------------------------------------------------------------

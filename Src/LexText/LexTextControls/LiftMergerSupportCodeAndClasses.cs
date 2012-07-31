@@ -1700,6 +1700,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		private void ProcessPerson(string id, string guidAttr, string parent,
+			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
+			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list)
+		{
+			var person = FindExistingPossibility(id, guidAttr, label, abbrev, dict, list);
+			if (person == null)
+			{
+				ICmObject possParent = null;
+				if (!String.IsNullOrEmpty(parent) && dict.ContainsKey(parent))
+					possParent = dict[parent];
+				else
+					possParent = list;
+				person = CreateNewCmPerson(guidAttr, possParent);
+				SetNewPossibilityAttributes(id, description, label, abbrev, person);
+				dict[id] = person;
+				rgNew.Add(person);
+			}
+		}
+
 		private void SetNewPossibilityAttributes(string id, LiftMultiText description, LiftMultiText label,
 			LiftMultiText abbrev, ICmPossibility poss)
 		{
@@ -3715,6 +3734,35 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_factLexEntryRef == null)
 				m_factLexEntryRef = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>();
 			return m_factLexEntryRef.Create();
+		}
+
+		internal ICmPerson CreateNewCmPerson()
+		{
+			if (m_factCmPerson == null)
+				m_factCmPerson = m_cache.ServiceLocator.GetInstance<ICmPersonFactory>();
+			return m_factCmPerson.Create();
+		}
+
+		internal ICmPerson CreateNewCmPerson(string guidAttr, ICmObject owner)
+		{
+			if (!(owner is ICmPossibilityList))
+				throw new ArgumentException("Person should be in the People list", "owner");
+			if (m_factCmPerson == null)
+				m_factCmPerson = m_cache.ServiceLocator.GetInstance<ICmPersonFactory>();
+			if (!String.IsNullOrEmpty(guidAttr))
+			{
+				Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
+				return m_factCmPerson.Create(guid, owner as ICmPossibilityList);
+			}
+			else
+			{
+				ICmPerson csd = m_factCmPerson.Create();
+				if (owner is ICmPossibility)
+					(owner as ICmPossibility).SubPossibilitiesOS.Add(csd);
+				else
+					(owner as ICmPossibilityList).PossibilitiesOS.Add(csd);
+				return csd;
+			}
 		}
 
 		private int GetWsFromStr(string sWs)

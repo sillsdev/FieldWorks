@@ -943,6 +943,29 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region CmPersonFactory class
+	internal partial class CmPersonFactory
+	{
+		/// <summary>
+		/// Create a new ICmPossibility instance with the given guid and owner.
+		/// It will be added to the end of the Possibilities list.
+		/// </summary>
+		ICmPerson ICmPersonFactory.Create(Guid guid, ICmPossibilityList owner)
+		{
+			if (owner == null)
+				throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("CmPossibilityList", "Possibilities", false);
+
+			var retval = new CmPerson(m_cache, hvo, guid);
+			owner.PossibilitiesOS.Add(retval);
+			return retval;
+		}
+	}
+
+	#endregion
+
 	#region CmPossibilityFactory class
 	/// <summary>
 	/// Add ICmPossibilityFactoryInternal impl.  Also add methods added to ICmPossibilityFactory.
