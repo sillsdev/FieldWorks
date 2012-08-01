@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly List<ICmPossibility> m_rgnewStatus = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewUsageType = new List<ICmPossibility>();
 		readonly List<ICmLocation> m_rgnewLocation = new List<ICmLocation>();
+		readonly List<ICmPossibility> m_rgnewPerson = new List<ICmPossibility>();
 		readonly List<IPhEnvironment> m_rgnewEnvirons = new List<IPhEnvironment>();
 		readonly List<ICmPossibility> m_rgnewLexRefTypes = new List<ICmPossibility>();
 		readonly List<IMoInflClass> m_rgnewInflClasses = new List<IMoInflClass>();
@@ -66,6 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly Dictionary<string, ICmPossibility> m_dictStatus = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictUsageType = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictLocation = new Dictionary<string, ICmPossibility>();
+		readonly Dictionary<string, ICmPossibility> m_dictPerson = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, List<IPhEnvironment>> m_dictEnvirons = new Dictionary<string, List<IPhEnvironment>>();
 		readonly Dictionary<string, ICmPossibility> m_dictLexRefTypes = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictRevLexRefTypes = new Dictionary<string, ICmPossibility>();
@@ -400,6 +402,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_rgnewLocation.Add(loc);
 			return loc;
 		}
+
 		#endregion // Methods to find or create list items
 
 		//===========================================================================
@@ -444,6 +447,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewPossibilities(writer, LexTextControls.ksAnthropologyCodesAdded, m_rgnewAnthroCode);
 				ListNewPossibilities(writer, LexTextControls.ksDomainTypesAdded, m_rgnewDomainType);
 				ListNewPossibilities(writer, LexTextControls.ksSenseTypesAdded, m_rgnewSenseType);
+				ListNewPossibilities(writer, LexTextControls.ksPeopleAdded, m_rgnewPerson);
 				ListNewPossibilities(writer, LexTextControls.ksStatusValuesAdded, m_rgnewStatus);
 				ListNewPossibilities(writer, LexTextControls.ksUsageTypesAdded, m_rgnewUsageType);
 				ListNewEnvironments(writer, LexTextControls.ksEnvironmentsAdded, m_rgnewEnvirons);
@@ -1197,6 +1201,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					//xxx============================================xxx
 					//xxx============================================xxx
 				case RangeNames.sPeopleOA:
+					ProcessPerson(id, guidAttr, parent, newDesc, newLabel, newAbbrev, m_dictPerson, m_rgnewPerson, m_cache.LangProject.PeopleOA);
 					break;
 					//xxx============================================xxx
 

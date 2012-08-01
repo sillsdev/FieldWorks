@@ -1992,6 +1992,15 @@ namespace SIL.FieldWorks.LexText.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to The following People were added to the language project:.
+		/// </summary>
+		internal static string ksPeopleAdded {
+			get {
+				return ResourceManager.GetString("ksPeopleAdded", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Phase 1 Error.
 		/// </summary>
 		internal static string ksPhase1Error {

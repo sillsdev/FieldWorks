@@ -1239,4 +1239,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksAddedItem" xml:space="preserve">
 	<value>Added Item</value>
   </data>
+  <data name="ksPeopleAdded" xml:space="preserve">
+	<value>The following People were added to the language project:</value>
+  </data>
 </root>
