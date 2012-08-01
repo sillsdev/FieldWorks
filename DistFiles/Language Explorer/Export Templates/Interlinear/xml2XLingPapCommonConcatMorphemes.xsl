@@ -193,7 +193,7 @@ OutputMorphs
 			   </xsl:when>
 			   <xsl:when test="@guid=$sStem or @guid=$sRoot or @guid=$sBoundStem or @guid=$sBoundRoot ">
 				  <xsl:variable name="previousMorphType" select="preceding-sibling::*[1]/@guid"/>
-				  <xsl:if test="$previousMorphType=$sStem or $previousMorphType=$sRoot or $previousMorphType=$sBoundStem or $previousMorphType=$sBoundRoot">
+				  <xsl:if test="$previousMorphType=$sStem or $previousMorphType=$sRoot or $previousMorphType=$sBoundStem or $previousMorphType=$sBoundRoot or $previousMorphType=$sEnclitic or $previousMorphType=$sSuffixingInterfix or $previousMorphType=$sSuffix">
 					 <xsl:value-of select="$sHyphen"/>
 				  </xsl:if>
 			   </xsl:when>
