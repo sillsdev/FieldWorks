@@ -173,9 +173,7 @@ phrase
 					 <!-- what is this for?   -->
 				  </xsl:when>
 				  <xsl:when test="@type='gls'">
-					 <free xml:lang="{@lang}">
-						<xsl:apply-templates/>
-					 </free>
+					 <xsl:call-template name="OutputFreeWithAnyNotes"/>
 				  </xsl:when>
 				  <xsl:when test="@type='lit' ">
 					 <!--  someday we'll have a literal translation element in XLingPaper -->

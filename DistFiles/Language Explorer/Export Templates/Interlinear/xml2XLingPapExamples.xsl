@@ -140,6 +140,11 @@ phrase
 					<xsl:apply-templates/>
 				</item>
 			</xsl:when>
+			<xsl:when test="@type='note'">
+				<item type="note" lang="{@lang}">
+					<xsl:apply-templates/>
+				</item>
+			</xsl:when>
 			<xsl:when test="@type='lit' ">
 				<!--  someday we'll have a literal translation element in XLingPaper -->
 				<item type="gls" lang="{@lang}">

@@ -8,6 +8,27 @@ Elements to ignore or are handled elsewhere
 -->
    <xsl:template match=" item"/>
    <!--
+	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	  OutputFreeWithAnyNotes
+	  Output a free element and include any notes it might have
+	  Parameters: none
+	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   -->
+   <xsl:template name="OutputFreeWithAnyNotes">
+	  <free lang="{@lang}">
+		 <xsl:apply-templates/>
+		 <xsl:if test="preceding-sibling::item[@type='note'] or following-sibling::item[@type='note']">
+			<xsl:for-each select="preceding-sibling::item[@type='note'] | following-sibling::item[@type='note']">
+			   <endnote id="n{generate-id()}">
+				  <p>
+					 <xsl:apply-templates/>
+				  </p>
+			   </endnote>
+			</xsl:for-each>
+		 </xsl:if>
+	  </free>
+   </xsl:template>
+   <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 OutputLineOfWrdElementsFromMorphs
 	Output a sequence of <wrd/> elements based on <morph/> elements
