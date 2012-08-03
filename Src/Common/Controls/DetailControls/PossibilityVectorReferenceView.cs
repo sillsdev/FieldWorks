@@ -59,19 +59,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					int hvo = m_sda.get_VecItem(m_rootObj.Hvo, m_rootFlid, i);
 					Debug.Assert(hvo != 0);
-					// Use reflection to get a prebuilt name if we can.  Otherwise
-					// settle for piecing together a string.
-					Debug.Assert(m_fdoCache != null);
-					var obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					Debug.Assert(obj != null);
-
-					ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, obj, m_displayNameProperty, m_displayWs);
-					ITsString tss = label.AsTss;
-					if (tss != null)
-					{
-						m_sda.Strings[hvo] = tss;
-						ws = tss.get_WritingSystem(0);
-					}
+					ws = m_sda.GetLabelFor(hvo).get_WritingSystem(0);
 				}
 
 				if (ws == 0)
@@ -220,24 +208,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				get { return m_strings; }
 			}
 
+			public ITsString GetLabelFor(int hvo)
+			{
+				ITsString value;
+				if (m_strings.TryGetValue(hvo, out value))
+					return value;
+				Debug.Assert(Cache != null);
+				var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+				Debug.Assert(obj != null);
+
+				ObjectLabel label = ObjectLabel.CreateObjectLabel(Cache, obj, DisplayNameProperty, DisplayWs);
+				ITsString tss = label.AsTss;
+				if (tss == null)
+					tss = Cache.TsStrFactory.EmptyString(Cache.DefaultUserWs);
+				Strings[hvo] = tss;
+				return tss; // never return null!
+			}
+
 			public override ITsString get_StringProp(int hvo, int tag)
 			{
 				if (tag == kflidFake)
-				{
-					ITsString value;
-					if (m_strings.TryGetValue(hvo, out value))
-						return value;
-					Debug.Assert(Cache != null);
-					var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					Debug.Assert(obj != null);
-
-					ObjectLabel label = ObjectLabel.CreateObjectLabel(Cache, obj, DisplayNameProperty, DisplayWs);
-					ITsString tss = label.AsTss;
-					if (tss == null)
-						tss = Cache.TsStrFactory.EmptyString(Cache.DefaultUserWs);
-					Strings[hvo] = tss;
-					return tss; // never return null!
-				}
+					return GetLabelFor(hvo);
 				return base.get_StringProp(hvo, tag);
 			}
 
