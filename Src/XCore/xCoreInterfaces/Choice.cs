@@ -225,6 +225,14 @@ namespace XCore
 			}
 		}
 
+		/// <summary>
+		/// Get the message that will be sent to some object to implement the command.
+		/// </summary>
+		public string Message
+		{
+			get { return CommandObject.Message; }
+		}
+
 
 		public override Keys Shortcut
 		{

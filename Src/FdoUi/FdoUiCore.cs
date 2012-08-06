@@ -744,6 +744,85 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Handle a right click by popping up the implied context menu.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
+		/// <param name="adjustMenu"></param>
+		/// <returns></returns>
+		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
+		{
+			CheckDisposed();
+
+			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
+		}
+
+		/// <summary>
+		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
+		/// This method is typically used as the menuAdjuster argument in calling HandleRightClick.
+		/// It's important that it marks the same menu item as selected by HandlCtrlClick.
+		/// </summary>
+		/// <param name="group"></param>
+		public static void MarkCtrlClickItem(ContextMenuStrip menu)
+		{
+			foreach (var item in menu.Items)
+			{
+				var item1 = item as ToolStripItem;
+				if (item1 == null || !(item1.Tag is CommandChoice) || !item1.Enabled)
+					continue;
+				var command = (CommandChoice) item1.Tag;
+				if (command.Message != "JumpToTool")
+					continue;
+
+				item1.Text += FdoUiStrings.ksCtrlClick;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Handle a control-click by invoking the first active JumpToTool menu item.
+		/// Note that the item selected here should be the same one that is selected by Mark
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <returns></returns>
+		public bool HandleCtrlClick(Mediator mediator, Control hostControl)
+		{
+			Mediator = mediator;
+			XWindow window = (XWindow)mediator.PropertyTable.GetValue("window");
+			m_hostControl = hostControl;
+			var group = window.GetChoiceGroupForMenu(ContextMenuId);
+			// temporarily the CmObjectUi must function as a colleague that can implement commands.
+			mediator.AddTemporaryColleague(this);
+			group.PopulateNow();
+			try
+			{
+				foreach (var item in group)
+				{
+					if (!IsCtrlClickItem(item))
+						continue;
+					((CommandChoice)item).OnClick(this, new EventArgs());
+					return true;
+				}
+			}
+			finally
+			{
+				this.Dispose();
+			}
+			return false;
+		}
+
+		private static bool IsCtrlClickItem(object item)
+		{
+			var command = item as CommandChoice;
+			if (command == null || command.Message != "JumpToTool")
+				return false;
+			var displayProps = command.GetDisplayProperties();
+			return (displayProps.Visible && displayProps.Enabled);
+		}
+
+		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
 		/// <param name="mediator"></param>
@@ -752,6 +831,19 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sMenuId"></param>
 		/// <returns></returns>
 		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
+		{
+			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
+		}
+
+		/// <summary>
+		/// Handle the right click by popping up an explicit context menu id.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
+		/// <param name="sMenuId"></param>
+		/// <returns></returns>
+		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
@@ -779,7 +871,7 @@ namespace SIL.FieldWorks.FdoUi
 			window.ShowContextMenu(sMenuId,
 				new Point(Cursor.Position.X, Cursor.Position.Y),
 				new TemporaryColleagueParameter(m_mediator, this, shouldDisposeThisWhenClosed),
-				null);
+				null, adjustMenu);
 			// Using the sequencer here now causes problems with slices that allow
 			// keyboard activity (cf. PhoneEnvReferenceView).
 			// If a safe blocking mechanism can be found for the context menu, we can restore the original behavior
@@ -2206,11 +2298,13 @@ namespace SIL.FieldWorks.FdoUi
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
+			bool result;
 
 			if (m_targetUi != null)
-				return m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
+				result = m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
 			else
-				return base.OnDisplayJumpToTool(commandObject, ref display);
+				result = base.OnDisplayJumpToTool(commandObject, ref display);
+			return result;
 		}
 
 		/// <summary>

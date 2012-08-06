@@ -263,7 +263,7 @@ namespace XCore
 			SendMessage(c.Handle, WM_CHANGEUISTATE, UISF_HIDEACCEL << 16 | UIS_CLEAR, 0);
 		}
 
-		/// <summary>
+				/// <summary>
 		///
 		/// </summary>
 		/// <param name="group"></param>
@@ -273,6 +273,20 @@ namespace XCore
 		public void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer)
+		{
+			ShowContextMenu(group, location, temporaryColleagueParam, sequencer, null);
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="group"></param>
+		/// <param name="location"></param>
+		/// <param name="temporaryColleagueParam"></param>
+		/// <param name="sequencer"></param>
+		public void ShowContextMenu(ChoiceGroup group, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
 		{
 			// Store optional parameter values.
 			m_TemporaryColleagueParameter = temporaryColleagueParam; // Nulls are just fine.
@@ -333,6 +347,8 @@ namespace XCore
 				contextMenu.Items.Add(menuItem);
 			}
 			MakeAcceleratorsVisible(contextMenu);
+			if (adjustMenu != null)
+				adjustMenu(contextMenu);
 			contextMenu.Show(location);
 		}
 

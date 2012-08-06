@@ -311,7 +311,7 @@
 	<value>Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences.</value>
   </data>
   <data name="ksShowInReversalIndex" xml:space="preserve">
-	<value>Show in Reversal Index</value>
+	<value>Show in Reversal Index (Ctrl-Click)</value>
   </data>
   <data name="ksConvertFormLoseCaption" xml:space="preserve">
 	<value>Warning!</value>

@@ -2818,7 +2818,7 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					//Debug.WriteLine("hvoReal=" + hvoReal.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-					return rightClickUiObj.HandleRightClick(Mediator, this, true);
+					return rightClickUiObj.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{
@@ -4161,37 +4161,8 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					ITsString tss;
-					int ichAnchorDum;
-					int hvoRightClickObject = 0;
-					sel.TextSelInfo(false, out tss, out ichAnchorDum, out fAssocPrev,
-						out hvoRightClickObject, out tagRightClickTextProp, out ws);
-					switch (tagRightClickTextProp)
-					{
-						case ktagSbMorphPrefix:
-						case ktagSbMorphPostfix:
-							m_hvoRightClickMorph = hvoRightClickObject;
-							// Pretend we clicked on the morph form.  (See LT-7590.)
-							hvoRightClickObject = Caches.DataAccess.get_ObjectProp(hvoRightClickObject, ktagSbMorphForm);
-							break;
-						case ktagSbNamedObjName:
-							if (sel.CLevels(false) < 2)
-								break;
-							int hvoOuterObj, tagOuter, ihvoOuter, cpropPreviousOuter;
-							IVwPropertyStore vpsDummy;
-							sel.PropInfo(false, 1, out hvoOuterObj, out tagOuter, out ihvoOuter, out cpropPreviousOuter, out vpsDummy);
-							if (tagOuter == ktagSbMorphGloss || tagOuter == ktagSbMorphPos || tagOuter == ktagSbMorphForm
-								|| tagOuter == ktagSbMorphEntry)
-							{
-								m_hvoRightClickMorph = hvoOuterObj;
-							}
-							break;
-						default:
-							m_hvoRightClickMorph = 0;
-							break;
-					}
-
-					int hvoReal = m_caches.RealHvo(hvoRightClickObject);
+					int hvoReal;
+					tagRightClickTextProp = GetInfoForJumpToTool(sel, out hvoReal);
 					if (hvoReal != 0)
 					{
 						//IxCoreColleague spellingColleague = null;
@@ -4218,6 +4189,67 @@ namespace SIL.FieldWorks.IText
 			}
 			//			}
 			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+		}
+
+		/// <summary>
+		/// Given a selection (typically from a click), determine the object that should be the target for jumping to,
+		/// and return the property that was clicked (which in the case of a right-click may generate a spelling menu instead).
+		/// </summary>
+		/// <param name="sel"></param>
+		/// <param name="hvoReal"></param>
+		/// <returns></returns>
+		private int GetInfoForJumpToTool(IVwSelection sel, out int hvoReal)
+		{
+			int ws;
+			int tagRightClickTextProp;
+			bool fAssocPrev;
+			ITsString tss;
+			int ichAnchorDum;
+			int hvoRightClickObject = 0;
+			sel.TextSelInfo(false, out tss, out ichAnchorDum, out fAssocPrev,
+				out hvoRightClickObject, out tagRightClickTextProp, out ws);
+			switch (tagRightClickTextProp)
+			{
+				case ktagSbMorphPrefix:
+				case ktagSbMorphPostfix:
+					m_hvoRightClickMorph = hvoRightClickObject;
+					// Pretend we clicked on the morph form.  (See LT-7590.)
+					hvoRightClickObject = Caches.DataAccess.get_ObjectProp(hvoRightClickObject, ktagSbMorphForm);
+					break;
+				case ktagSbNamedObjName:
+					if (sel.CLevels(false) < 2)
+						break;
+					int hvoOuterObj, tagOuter, ihvoOuter, cpropPreviousOuter;
+					IVwPropertyStore vpsDummy;
+					sel.PropInfo(false, 1, out hvoOuterObj, out tagOuter, out ihvoOuter, out cpropPreviousOuter, out vpsDummy);
+					if (tagOuter == ktagSbMorphGloss || tagOuter == ktagSbMorphPos || tagOuter == ktagSbMorphForm
+						|| tagOuter == ktagSbMorphEntry)
+					{
+						m_hvoRightClickMorph = hvoOuterObj;
+					}
+					break;
+				default:
+					m_hvoRightClickMorph = 0;
+					break;
+			}
+
+			hvoReal = m_caches.RealHvo(hvoRightClickObject);
+			return tagRightClickTextProp;
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+			if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				// Control-click: take the first jump-to-tool command from the right-click menu for this location.
+				// Create a selection where we right clicked
+				IVwSelection sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
+				int hvoTarget;
+				GetInfoForJumpToTool(sel, out hvoTarget);
+				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
+				targetUiObj.HandleCtrlClick(Mediator, this);
+			}
 		}
 
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)

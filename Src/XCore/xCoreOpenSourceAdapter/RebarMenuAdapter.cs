@@ -256,6 +256,11 @@ namespace XCore
 			}
 		}
 
+		public void ShowContextMenu(ChoiceGroup @group, Point location, TemporaryColleagueParameter temporaryColleagueParam, MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected CommandBarItem MakeMenu (CommandBar parent, ChoiceGroup group)
 		{
 			string label = group.Label.Replace("_", "&");

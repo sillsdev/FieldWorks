@@ -260,6 +260,11 @@ namespace XCore
 			}
 		}
 
+		public string Message
+		{
+			get { return m_messageString; }
+		}
+
 		public bool OneAtATime { get { CheckDisposed(); return m_oneAtATime; } }
 
 		/// <summary>

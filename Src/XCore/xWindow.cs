@@ -968,10 +968,24 @@ namespace XCore
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer)
 		{
+			ShowContextMenu(menuId, location, temporaryColleagueParam, sequencer, null);
+		}
+
+		/// <summary>
+		/// Get a context menu for the specified menu id, and in addition.
+		/// </summary>
+		/// <param name="menuId"></param>
+		/// <param name="group"></param>
+		/// <param name="actModal">don't return until the popup is closed</param>
+		/// <returns></returns>
+		public void ShowContextMenu(string menuId, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
+		{
 			CheckDisposed();
 
 			ChoiceGroup group = GetChoiceGroupForMenu(menuId);
-			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer);
+			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
 		}
 
 		/// <summary>

@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Diagnostics;
+using System.Windows.Forms;
 using System.Xml;
 
 using SIL.FieldWorks.FDO;
@@ -102,6 +103,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return HandleRightClickOnObject(tsi.Hvo(false));
 		}
 
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+			if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				// Control-click: take the first jump-to-tool command from the right-click menu for this location.
+				// Create a selection where we right clicked
+				IVwSelection sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
+				TextSelInfo tsi = new TextSelInfo(sel);
+				int hvoTarget = tsi.Hvo(false);
+				// May be (for example) dummy ID used for type-ahead object in reference vector list.
+				if (hvoTarget == 0 || !Cache.ServiceLocator.IsValidObjectId(hvoTarget))
+					return;
+				using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvoTarget))
+				{
+					ui.HandleCtrlClick(Mediator, this);
+				}
+			}
+		}
+
+		private ReferenceBaseUi GetCmObjectUiForRightClickMenu(int hvoTarget)
+		{
+			return ReferenceBaseUi.MakeUi(Cache, m_rootObj, m_rootFlid, hvoTarget);
+		}
+
 		protected virtual bool HandleRightClickOnObject(int hvo)
 		{
 #if TESTMS
@@ -114,7 +140,7 @@ Debug.WriteLine("ReferenceViewBase.HandleRightClickOnObject: hvo is 0, so return
 #endif
 				return false;
 			}
-			using (ReferenceBaseUi ui = ReferenceBaseUi.MakeUi(Cache, m_rootObj, m_rootFlid, hvo))
+			using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvo))
 			{
 #if TESTMS
 Debug.WriteLine("Created ReferenceBaseUi");
@@ -125,7 +151,7 @@ Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.
 #if TESTMS
 Debug.WriteLine("ui.HandleRightClick: and returning true.");
 #endif
-					return ui.HandleRightClick(Mediator, this, true);
+					return ui.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 #if TESTMS
 Debug.WriteLine("No ui: returning false");

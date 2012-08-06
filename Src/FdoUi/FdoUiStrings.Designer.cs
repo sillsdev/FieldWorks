@@ -106,6 +106,15 @@ namespace SIL.FieldWorks.FdoUi {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to  (Ctrl-Click).
+		/// </summary>
+		internal static string ksCtrlClick {
+			get {
+				return ResourceManager.GetString("ksCtrlClick", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to A deleted object.
 		/// </summary>
 		internal static string ksDeletedObject {

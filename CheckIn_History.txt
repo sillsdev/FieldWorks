@@ -6031,3 +6031,4 @@ GordonM, 31 Jul 2012. LT-7406 Esc/Enter keys now work in Apply Styles dialog.
 RandyR, 1 August 2012. Updated FLEx Bridge installer to 0.3.67.
 Andy Black, 2 August 2012. Added note field to XLingPaper interlinear exports.
 JohnT, 3 Aug 2012. LT-13361: Merging a sense with e.g. semantic domains into another sense - temporary display problem
+JohnT, 6 Aug 2012. LT-2186: Ctrl+Left Click to perform jumps
