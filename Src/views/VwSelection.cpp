@@ -6315,9 +6315,16 @@ protected:
 			{
 				VwTableCellBox * ptcboxCurr =
 					dynamic_cast<VwTableCellBox *>(pvpboxCurr->Container());
-				if (ptcboxCurr && ptcboxPrev->Container() == ptcboxCurr->Container())
+				if (ptcboxCurr == ptcboxPrev)
 				{
-					// Two cells in the same row: separate with tab.
+					// Two different paragraphs in the same cell. We want to use newline if the WHOLE selection
+					// is in that cell, otherwise, vertical bar
+					if (m_pvwsel->m_pvpbox->Container() != ptcboxCurr || (m_pvpboxLast != NULL && m_pvpboxLast->Container() != ptcboxCurr))
+						stubsSep = L"|";
+				}
+				else if (ptcboxCurr && ptcboxPrev->Container() == ptcboxCurr->Container())
+				{
+					// Two (different) cells in the same row: separate with tab.
 					stubsSep = L"\t";
 				}
 			}
