@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					string form = aUniElt.Value;
 					var newFormAltElt = XElement.Parse(String.Format("<AStr ws=\"{0}\"/>", ws));
 					formElt.Add(newFormAltElt);
-					var newRunElt = XElement.Parse(String.Format("<Run ws=\"{0}\">{1}</Run>", ws, form));
+					var newRunElt = XElement.Parse(String.Format("<Run ws=\"{0}\">{1}</Run>", ws, XmlUtils.MakeSafeXml(form)));
 					newFormAltElt.Add(newRunElt);
 				}
 				DataMigrationServices.UpdateDTO(domainObjectDtoRepository, wmb, wmbElt.ToString());

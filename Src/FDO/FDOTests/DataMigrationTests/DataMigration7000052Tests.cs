@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			const string sGuid_moAffixAllomorph = "f2f9a52f-b07e-4a09-9259-5f6333445eb9";
 			sb.AppendFormat("<rt class=\"MoAffixAllomorph\" guid=\"{0}\">", sGuid_moAffixAllomorph);
 			sb.Append("<Form>");
-			sb.AppendFormat("<AUni ws=\"wsMorph0\">{0}</AUni>", "morphForm0");
+			sb.AppendFormat("<AUni ws=\"wsMorph0\">{0}</AUni>", "morphForm&amp;0");
 			sb.AppendFormat("<AUni ws=\"wsMorph1\">{0}</AUni>", "morphForm1");
 			sb.Append("</Form>");
 			sb.Append("</rt>");
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			sb.AppendFormat("<rt class=\"WfiMorphBundle\" guid=\"{0}\">", sGuid_wmbNoForm);
 			sb.Append("<Form>");
 			sb.Append("<AStr ws=\"wsMorphPrexisting\">");
-			sb.AppendFormat("<Run ws=\"wsMorphPrexisting\">{0}</Run>", "morphFormPrexisting");
+			sb.AppendFormat("<Run ws=\"wsMorphPrexisting\">{0}</Run>", "morphFormPrexisting&amp;0");
 			sb.Append("</AStr>");
 			sb.Append("</Form>");
 			sb.Append("<Morph>");
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				// get form
 				Assert.IsNotNull(eltFormTest);
 				var eltRunTest = eltFormTest.Element("AStr").Element("Run");
-				Assert.AreEqual("morphForm0", eltRunTest.Value);
+				Assert.AreEqual("morphForm&0", eltRunTest.Value);
 
 				// now check that ws of the new Form matches the Morph Form ws.
 				var eltWsTest = eltFormTest.Element("AStr").Attribute("ws");

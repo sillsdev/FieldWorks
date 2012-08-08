@@ -6035,3 +6035,4 @@ JohnT, 6 Aug 2012. LT-2186: Ctrl+Left Click to perform jumps
 JohnT, 7 Aug 2012. Improved Views copy-to-clipboard for multiple paragraphs in table cells. Aimed at
 		LT-5615: Pasting a browse selection should have consistent tab formatting, but that may already have been fixed.
 JohnT, 8 Aug 2012. LT-9076, Automatic Update spelling dictionary for Send/Receive.
+	Later: LT-13208: Migration error restoring into version 7.3
