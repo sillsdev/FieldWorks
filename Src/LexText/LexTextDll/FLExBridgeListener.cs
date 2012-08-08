@@ -125,6 +125,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true; // We dealt with it.
 		}
 
+		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
+		private bool IsVernacularSpellingEnabled(Mediator mediator)
+		{
+			return mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+		}
+
 		/// <summary>
 		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
 		/// via the OnFLExBridge message
@@ -170,6 +176,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				var manager = app.FwManager;
 				var appArgs = new FwAppArgs(fullProjectFileName);
 				var newAppWindow = (FwXWindow)manager.ReopenProject(Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+				if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
+					WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 				//clear out any sort cache files (or whatever else might mess us up) and then refresh
 				newAppWindow.ClearInvalidatedStoredData();
 				newAppWindow.RefreshDisplay();
