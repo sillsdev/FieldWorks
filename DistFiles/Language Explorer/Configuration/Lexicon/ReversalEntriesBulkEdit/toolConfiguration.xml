@@ -10,6 +10,7 @@
 						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true"/>
 							<columns>
+								<!-- If you add a new column and it is has a multi-lingual string you will need to review AreSortersCompatible in ReversalListener -->
 								<column label="Form" width="34%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">
 									<span>
 										<properties>
@@ -42,6 +43,7 @@
 										</obj>
 									</span>
 								</column>
+								<!-- If you add a new column and it is has a multi-lingual string you will need to review AreSortersCompatible in ReversalListener -->
 							</columns>
 						</parameters>
 					</control>

@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
@@ -120,9 +124,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Dispose managed resources here.
 				if (m_mediator != null)
 				{
-					// Not sure why this is retrieved from the mediator and not used,
-					// so commenting out for now.
-					// FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 					m_mediator.RemoveColleague(this);
 				}
 			}
@@ -393,15 +394,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public abstract class ReversalClerk : RecordClerk
 	{
-		FdoCache m_cache = null;
-
 		public override void Init(Mediator mediator, XmlNode viewConfiguration)
 		{
 			CheckDisposed();
 
 			base.Init(mediator, viewConfiguration);
-			if (mediator != null)
-				m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			ChangeOwningObjectIfPossible();
 		}
 
@@ -426,9 +423,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (newGuid != Guid.Empty )
 			{
-				if (m_cache == null)
-					m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				IReversalIndex ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+				var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 				if (ri == null)
 				{
 					return;
@@ -447,22 +442,90 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Resets the sorter so that it will use the writing system of the reversal index.
+		/// Resets the sorter so that it will use the writing system of the given reversal index.
 		/// </summary>
 		/// <param name="ri"></param>
 		private void ResetListSorter(IReversalIndex ri)
 		{
 			var sorter = Sorter as GenRecordSorter;
+			var writingSystem = (IWritingSystem)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 			if(sorter != null)
 			{
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
 				if(stringFinderComparer != null)
 				{
-					var writingSystem = (IWritingSystem) Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
 					var comparer = new StringFinderCompare(stringFinderComparer.Finder, new WritingSystemComparer(writingSystem));
 					sorter.Comparer = comparer;
 				}
 			}
+			else if(Sorter == null)
+			{
+				var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache}; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
+				m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache,
+																									  BrowseViewFormCol,
+																									  fakevc,
+																									  (IApp)m_mediator.PropertyTable.GetValue("App")),
+																		   new WritingSystemComparer(writingSystem)));
+			}
+		}
+
+		/// <summary>
+		/// returns the XmlNode which configures the FormColumn in the BrowseView associated with BulkEdit of ReversalEntries
+		/// </summary>
+		protected XmlNode BrowseViewFormCol
+		{
+			get
+			{
+				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FWCodeDirectory,
+																			   DirectoryFinder.ksFlexFolderName),
+																  @"Configuration"),
+													 @"Lexicon"),
+										@"ReversalEntriesBulkEdit");
+				var doc = new XmlDocument();
+				doc.Load(Path.Combine(path, @"toolConfiguration.xml"));
+				var columnNode = doc.SelectSingleNode(@"//column[@label='Form']");
+				return columnNode;
+			}
+		}
+
+		/// <summary>
+		/// The reversal should not be checking the writing system when testing for sorter compatibility since
+		/// that writing system is changed in the Clerk through events and the bulkedit and browse view share the same clerk.
+		/// </summary>
+		/// <param name="first"></param>
+		/// <param name="second"></param>
+		/// <remarks>This method is only valid because there are no multi-lingual columns in the reversal views</remarks>
+		/// <returns></returns>
+		public override bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			if (first == null || second == null)
+				return false;
+
+			var secondSorter = second as GenRecordSorter;
+			var firstSorter = first as GenRecordSorter;
+			if (secondSorter == null || firstSorter == null)
+				return first.CompatibleSorter(second);
+
+			var sfcThis = firstSorter.Comparer as StringFinderCompare;
+			var sfcOther = secondSorter.Comparer as StringFinderCompare;
+			if (sfcThis == null || sfcOther == null)
+				return false;
+			if (!sfcThis.Finder.SameFinder(sfcOther.Finder))
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// The stored sorter files keep messing us up here, so let's just ignore them since information about how things
+		/// should be sorted could change in other views with regards to reversal indexes.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="clerkConfiguration"></param>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		protected override bool TryRestoreSorter(Mediator mediator, XmlNode clerkConfiguration, FdoCache cache)
+		{
+			return false;
 		}
 
 		/// <summary>
@@ -472,6 +535,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
+			var window = m_mediator.PropertyTable.GetValue("window");
+			if (window is FwXWindow)
+			{
+				(window as FwXWindow).ClearInvalidatedStoredData();
+			}
 			switch(name)
 			{
 				default:
@@ -520,16 +588,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			if (m_cache == null)
-				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (m_cache == null)
+			if (Cache == null)
 			{
 				display.Enabled = false;
 			}
 			else
 			{
-				int cRevIdx = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
-				int cWs = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Count();
+				int cRevIdx = Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
+				int cWs = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Count();
 				display.Enabled = cRevIdx < cWs;
 			}
 			display.Visible = true;
@@ -556,24 +622,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private Guid CreateNewReversalIndex()
 		{
-			if (m_cache == null)
-				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (m_cache == null)
+			if (Cache == null)
 				return Guid.Empty;
-			if (m_cache.LanguageProject == null)
+			if (Cache.LanguageProject == null)
 				return Guid.Empty;
-			if (m_cache.LanguageProject.LexDbOA == null)
+			if (Cache.LanguageProject.LexDbOA == null)
 				return Guid.Empty;
 			using (CreateReversalIndexDlg dlg = new CreateReversalIndexDlg())
 			{
-				dlg.Init(m_cache);
+				dlg.Init(Cache);
 				// Don't bother if all languages already have a reversal index!
 				if (dlg.PossibilityCount > 0)
 				{
 					if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 					{
 						int hvo = dlg.NewReversalIndexHvo;
-						return m_cache.ServiceLocator.GetObject(hvo).Guid;
+						return Cache.ServiceLocator.GetObject(hvo).Guid;
 					}
 				}
 			}
@@ -590,15 +654,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			if (m_cache == null)
-				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (m_cache == null)
+			if (Cache == null)
 			{
 				display.Enabled = false;
 			}
 			else
 			{
-				int cRevIdx = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
+				int cRevIdx = Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;
 				display.Enabled = cRevIdx > 0;
 			}
 			display.Visible = true;
@@ -625,11 +687,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				return; // Can't delete an index if we have a bad guid.
 			}
-			if (m_cache == null)
-				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (m_cache == null)
+			if (Cache == null)
 				return;
-			IReversalIndex ri = (IReversalIndex)m_cache.ServiceLocator.GetObject(oldGuid);
+			IReversalIndex ri = (IReversalIndex)Cache.ServiceLocator.GetObject(oldGuid);
 			DeleteReversalIndex(ri);
 		}
 
@@ -643,7 +703,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				using (var dlg = new ConfirmDeleteObjectDlg(m_mediator.HelpTopicProvider))
 				{
 					var ui = new CmObjectUi(ri);
-					dlg.SetDlgInfo(ui, m_cache, m_mediator);
+					dlg.SetDlgInfo(ui, Cache, m_mediator);
 					dlg.TopMessage = LexEdStrings.ksDeletingThisRevIndex;
 					dlg.BottomQuestion = LexEdStrings.ksReallyWantToDeleteRevIndex;
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
@@ -660,12 +720,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_list.ListModificationInProgress = true;	// can't reload deleted list! (LT-5353)
 				// We're about to do a MasterRefresh which clobbers the Undo stack,
 				// so we might as well make this UOW not undoable
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 					() =>
 					{
-						m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
+						Cache.DomainDataByFlid.DeleteObj(ri.Hvo);
 						int cobjNew;
-						var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
+						var idxNew = ReversalIndexAfterDeletion(Cache, out cobjNew);
 						SetReversalIndexGuid(idxNew.Guid);
 					});
 				ChangeOwningObjectIfPossible();
@@ -710,7 +770,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			if (m_cache.ServiceLocator.GetObject(ReversalIndexGuid) is IReversalIndex)
+			if (Cache.ServiceLocator.GetObject(ReversalIndexGuid) is IReversalIndex)
 			{
 				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString());
 				m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);

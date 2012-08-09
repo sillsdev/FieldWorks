@@ -98,6 +98,7 @@ namespace SIL.FieldWorks.XWorks
 					m_browseViewer.ListModificationInProgressChanged -= m_browseViewer_ListModificationInProgressChanged;
 					m_browseViewer.SelectionDrawingFailure -= OnBrowseSelectionDrawingFailed;
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
+					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
 				}
 				if (components != null)
 					components.Dispose();
@@ -288,6 +289,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache, m_mediator,
 				Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
 			SetStyleSheet();
@@ -606,7 +608,6 @@ namespace SIL.FieldWorks.XWorks
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-
 			InitBase(mediator, configurationParameters);
 			m_browseViewer.Init(mediator, configurationParameters);
 			m_fullyInitialized = true;
