@@ -6037,3 +6037,4 @@ JohnT, 7 Aug 2012. Improved Views copy-to-clipboard for multiple paragraphs in t
 JohnT, 8 Aug 2012. LT-9076, Automatic Update spelling dictionary for Send/Receive.
 	Later: LT-13208: Migration error restoring into version 7.3
 NaylorJ, 9 Aug 2012. LT-13428 Fix to some more Reversal sorting issues. Should be the last fix for now.
+NaylorJ, 9 Aug 2012. LT-13434 Fix the crash on Select All in Analyzy tabs.
