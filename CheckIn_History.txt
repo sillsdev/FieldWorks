@@ -6038,3 +6038,4 @@ JohnT, 8 Aug 2012. LT-9076, Automatic Update spelling dictionary for Send/Receiv
 	Later: LT-13208: Migration error restoring into version 7.3
 NaylorJ, 9 Aug 2012. LT-13428 Fix to some more Reversal sorting issues. Should be the last fix for now.
 NaylorJ, 9 Aug 2012. LT-13434 Fix the crash on Select All in Analyzy tabs.
+JohnT, 10 Aug 2012. LT-13251, Offer to delete media and picture files when deleting the last link to them

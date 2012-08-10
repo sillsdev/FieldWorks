@@ -2,9 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -1009,12 +1011,76 @@ namespace SIL.FieldWorks.FdoUi
 			return false; // didn't delete it.
 		}
 
+		/// <summary>
+		/// Do any cleanup that involves interacting with the user, after the user has confirmed that our object should be
+		/// deleted.
+		/// </summary>
+		protected virtual void DoRelatedCleanupForDeleteObject()
+		{
+			// For media and pictures: should we delete the file also?
+			// arguably this should be on a subclass, but it's easier to share behavior for both here.
+			ICmFile file = null;
+			if (m_obj is ICmPicture)
+			{
+				file = ((ICmPicture) m_obj).PictureFileRA;
+			}
+			else if (m_obj is ICmMedia)
+			{
+				file = ((ICmMedia) m_obj).MediaFileRA;
+			}
+			ConsiderDeletingRelatedFile(file, m_mediator);
+		}
+
+		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator)
+		{
+			if (file == null)
+				return;
+			var refs = file.ReferringObjects;
+			if (refs.Count > 1)
+				return; // exactly one if only this CmPicture uses it.
+			var path = file.InternalPath;
+			if (Path.IsPathRooted(path))
+				return; // don't delete external file
+			string msg = String.Format(FdoUiStrings.ksDeleteFileAlso, path);
+			if (MessageBox.Show(Form.ActiveForm, msg, FdoUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Question)
+				!= DialogResult.Yes)
+			{
+				return;
+			}
+			if (mediator != null)
+			{
+				var app = mediator.PropertyTable.GetValue("App") as FwApp;
+				if (app != null)
+					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
+			}
+			string fileToDelete = file.AbsoluteInternalPath;
+			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+			// with an exception indicating that something is using the file, despite the code above that
+			// tries to make our picture cache let go of it.
+			// However, waiting until idle seems to solve the problem.
+			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+				{
+					try
+					{
+						File.Delete(fileToDelete);
+					}
+					catch (IOException)
+					{
+						// If we can't actually delete the file for some reason, don't bother the user complaining.
+					}
+					return true; // task is complete, don't try again.
+				});
+			file.Delete();
+		}
+
 		protected virtual void ReallyDeleteUnderlyingObject()
 		{
 			Logger.WriteEvent("Deleting '" + this.Object.ShortName + "'...");
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FdoUiStrings.ksUndoDelete, FdoUiStrings.ksRedoDelete,
 				m_cache.ActionHandlerAccessor, () =>
 				{
+					DoRelatedCleanupForDeleteObject();
 					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
 				});
 			Logger.WriteEvent("Done Deleting.");

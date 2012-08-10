@@ -284,4 +284,11 @@ Without these, we cannot find related entries.</value>
 	<value> (Ctrl-Click)</value>
 	<comment>String (typcially with leading space) that gets appended to one item in certain right-click menus to indicate the one that will be activated by ctrl-click.</comment>
   </data>
+  <data name="ksDeleteFileAlso" xml:space="preserve">
+	<value>The FieldWorks internal copy of this file ({0}) is not used elsewhere in the project. Would you like to delete it also? (This cannot be undone!)</value>
+	<comment>Used in deleting pictures, sounds,...</comment>
+  </data>
+  <data name="ksDeleteFileCaption" xml:space="preserve">
+	<value>Delete File?</value>
+  </data>
 </root>

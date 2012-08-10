@@ -101,15 +101,34 @@ namespace SIL.FieldWorks.Common.Framework
 				{
 					foreach (var kvp in m_previousPictures)
 					{
-						if (kvp.Value is IDisposable)
-							((IDisposable) kvp.Value).Dispose(); // typically Linux
-						else if (kvp.Value != null && Marshal.IsComObject(kvp.Value))
-							Marshal.ReleaseComObject(kvp.Value); // typically Windows
+						var picture = kvp.Value;
+						ReleasePicture(picture);
 					}
 					m_previousPictures.Clear();
 					m_previousPictures = null;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Release any data that might prevent deleting the specified picture file
+		/// </summary>
+		/// <param name="key"></param>
+		public void ReleasePicture(string key)
+		{
+			IPicture val;
+			if (m_previousPictures == null || !m_previousPictures.TryGetValue(key, out val))
+				return;
+			ReleasePicture(val);
+			m_previousPictures.Remove(key);
+		}
+
+		private void ReleasePicture(IPicture picture)
+		{
+			if (picture is IDisposable)
+				((IDisposable) picture).Dispose(); // typically Linux
+			else if (picture != null && Marshal.IsComObject(picture))
+				Marshal.ReleaseComObject(picture); // typically Windows
 		}
 	}
 }
