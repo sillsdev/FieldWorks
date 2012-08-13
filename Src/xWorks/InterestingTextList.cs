@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 using XCore;
 
@@ -253,10 +254,16 @@ namespace SIL.FieldWorks.XWorks
 								UpdatePropertyTable();
 					}
 					break;
+				default:
+					if (tag == Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts)
+					{
+						UpdateInterestingTexts();
+					}
+					break;
 			}
 		}
 
-		public void UpdateInterestingTexts()
+		private void UpdateInterestingTexts()
 		{
 			// Need to add the new text(s). Have to find which ones to add.
 			var coreTextsSet = new HashSet<IStText>(CoreTexts);

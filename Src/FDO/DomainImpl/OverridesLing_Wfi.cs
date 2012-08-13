@@ -1697,5 +1697,53 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 																												 oldGuids.ToArray(),
 																												 newGuids.ToArray());
 		}
+
+		/// <summary>
+		/// This registers LangProjTexts for undo/redo propchanges during creation
+		/// so InterestingTexts.PropChanged gets called to add the text to the record list.
+		/// </summary>
+		/// <param name="uow"></param>
+		internal override void RegisterVirtualsModifiedForObjectCreation(IUnitOfWorkService uow)
+		{
+			base.RegisterVirtualsModifiedForObjectCreation(uow);
+			var cache = Cache; // need to make the Func use this local variable, because on Undo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts,
+				() => cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances(),
+				new[] { this }, new IText[0]);
+		}
+
+		/// <summary>
+		/// This needs to be here to call RegisterVirtualsModifiedForObjectCreation()
+		/// </summary>
+		protected override void SetDefaultValuesAfterInit()
+		{
+			base.SetDefaultValuesAfterInit();
+			RegisterVirtualsModifiedForObjectCreation(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
+		}
+
+		/// <summary>
+		/// This needs to be here to call RegisterVirtualsModifiedForObjectDeletion().
+		/// </summary>
+		protected override void OnBeforeObjectDeleted()
+		{
+			RegisterVirtualsModifiedForObjectDeletion(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
+			base.OnBeforeObjectDeleted();
+		}
+
+		/// <summary>
+		/// This registers LangProjTexts for undo/redo propchanges during deletion
+		/// so InterestingTexts.PropChanged gets called to remove the text from the record list.
+		/// </summary>
+		/// <param name="uow"></param>
+		internal override void RegisterVirtualsModifiedForObjectDeletion(IUnitOfWorkService uow)
+		{
+			var cache = Cache; // need to make the Func use this local variable, because on Redo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts,
+				() => cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances(),
+				new IText[0], new[] { this });
+			base.RegisterVirtualsModifiedForObjectDeletion(uow);
+		}
 	}
 }

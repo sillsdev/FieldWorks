@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (stText == null)
 				return false;
-			return IsScriptureTextFlid(stText.OwningFlid);
+			return stText.IsValidObject && IsScriptureTextFlid(stText.OwningFlid);
 		}
 
 		/// ------------------------------------------------------------------------------------

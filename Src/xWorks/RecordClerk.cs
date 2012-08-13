@@ -1422,7 +1422,7 @@ namespace SIL.FieldWorks.XWorks
 			get { return Id != "reversalEntries" && (!Editable || !IsPrimaryClerk || !m_shouldHandleDeletion); }
 		}
 
-		public virtual bool OnDeleteRecord(object commandObject)
+		public bool OnDeleteRecord(object commandObject)
 		{
 			CheckDisposed();
 
