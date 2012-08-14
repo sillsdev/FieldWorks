@@ -610,6 +610,63 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// Tests MoveCellBack() moving into and through a MovedText marker to make sure the result
+		/// has the right columns and order of cell parts in the row.
+		/// Exposed by LT-13543.
+		/// </summary>
+		[Test]
+		public void MoveCellBackPastMarkerDoesntMessupColumns()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var ilastCol = m_logic.AllMyColumns.Length - 1;
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			var cellPart1_1 = m_helper.MakeMovedTextMarker(row1, 2, cellPart1_0, true);
+			var cellPartMoving = m_helper.MakeWordGroup(row1, 3, allParaOccurrences[2], allParaOccurrences[3]);
+			EndSetupTask();
+
+			// SUT
+			m_logic.MoveCellBack(MakeLocObj(row1, 3));
+			m_logic.MoveCellBack(MakeLocObj(row1, 2)); // move back through and past MovedTextMarker
+
+			// Verify
+			// Same WordGroups and marker should still be there
+			VerifyRowContents(1, new IConstituentChartCellPart[] { cellPart1_0, cellPartMoving, cellPart1_1 });
+			VerifyMovedText(1, 2, m_logic.AllMyColumns[2], cellPart1_0, true);
+			VerifyWordGroup(1, 1, m_logic.AllMyColumns[1], new List<AnalysisOccurrence>() {allParaOccurrences[2], allParaOccurrences[3]});
+		}
+
+		/// <summary>
+		/// Tests MoveCellForward() moving into and through a MovedText marker to make sure the result
+		/// has the right columns and order of cell parts in the row.
+		/// </summary>
+		[Test]
+		public void MoveCellForwardPastMarkerDoesntMessupColumns()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var ilastCol = m_logic.AllMyColumns.Length - 1;
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			var cellPartMoving = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
+			var cellPart1_1 = m_helper.MakeMovedTextMarker(row1, 2, cellPart1_0, true);
+			EndSetupTask();
+
+			// SUT
+			m_logic.MoveCellForward(MakeLocObj(row1, 1));
+			m_logic.MoveCellForward(MakeLocObj(row1, 2)); // move forward through and past MovedTextMarker
+
+			// Verify
+			// Same WordGroups and marker should still be there
+			VerifyRowContents(1, new IConstituentChartCellPart[] { cellPart1_0, cellPart1_1, cellPartMoving });
+			VerifyMovedText(1, 1, m_logic.AllMyColumns[2], cellPart1_0, true);
+			VerifyWordGroup(1, 2, m_logic.AllMyColumns[3], new List<AnalysisOccurrence>() { allParaOccurrences[2], allParaOccurrences[3] });
+		}
+
+		/// <summary>
 		/// Tests moving a WordGroup into a preposed marker's cell (but preposed for something else).
 		/// </summary>
 		[Test]

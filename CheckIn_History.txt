@@ -6043,3 +6043,4 @@ LastufkaM 13 Aug 2012. LT-13441 Add a new text, get undo crash.
 LastufkaM 13 Aug 2012. LT-13446 Crash trying to receive 2 S/R Projects at once
 EricP, 14 Aug 2012. Fix LT-13505 FlexText Import of texts with multiple Writing Systems gets them all mixed up
 GordonM, 14 Aug 2012. Added code guards for bad data crash in chart (LT-13541).
+	later....... Added tests and fix for LT-13543 crash moving chart words past marker.
