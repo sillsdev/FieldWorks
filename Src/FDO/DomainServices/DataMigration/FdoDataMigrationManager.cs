@@ -107,6 +107,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			m_individualMigrations.Add(7000057, new DataMigration7000057());
 			m_individualMigrations.Add(7000058, new DataMigration7000058());
 			m_individualMigrations.Add(7000059, new DataMigration7000059());
+			m_individualMigrations.Add(7000060, new DataMigration7000060());
 			//m_individualMigrations.Add(7000008, m_bumpNumberOnlyMigration);
 			//m_individualMigrations.Add(..., new WhateverDataMigration());
 			//m_individualMigrations.Add(n, new SomethingElseDataMigration());

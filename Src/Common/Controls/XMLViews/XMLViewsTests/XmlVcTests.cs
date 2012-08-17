@@ -95,7 +95,7 @@ namespace XMLViewsTests
 			keyAttrs["layout"] = new[] { "class", "type", "name", "choiceGuid" };
 			keyAttrs["group"] = new[] { "label" };
 			keyAttrs["part"] = new[] { "ref" };
-			var layoutInventory = new Inventory("*Layouts.xml", "/LayoutInventory/*", keyAttrs, "test", "nowhere");
+			var layoutInventory = new Inventory("*.fwlayout", "/LayoutInventory/*", keyAttrs, "test", "nowhere");
 			layoutInventory.LoadElements(Resources.Layouts_xml, 1);
 
 			keyAttrs = new Dictionary<string, string[]>();

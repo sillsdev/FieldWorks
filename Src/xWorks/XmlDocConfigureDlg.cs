@@ -5058,7 +5058,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var label = XmlUtils.GetManditoryAttributeValue(xnConfig, "label");
 			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.FirstChild, "class");
-			var name = String.Format("{0}_{1}_Layouts.xml", label, className);
+			var name = String.Format("{0}_{1}.fwlayout", label, className);
 			return Path.Combine(configDir, name);
 		}
 

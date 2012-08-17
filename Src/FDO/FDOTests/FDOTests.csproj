@@ -284,6 +284,7 @@
 	<Compile Include="DataMigrationTests\DataMigration7000056Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000057Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000059Tests.cs" />
+	<Compile Include="DataMigrationTests\DataMigration7000060Tests.cs" />
 	<Compile Include="DataSortingServiceTests.cs" />
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />

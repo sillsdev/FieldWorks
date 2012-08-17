@@ -122,7 +122,7 @@ namespace XMLViewsTests
 
 			// Currently there are no specialized layout files that match.
 			m_layoutInventory = new Inventory(new string[] { partDirectory },
-				"*Layouts.xml", "/LayoutInventory/*", keyAttrs, "TestManyOneBrowse", "ProjectPath");
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "TestManyOneBrowse", "ProjectPath");
 
 			keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["part"] = new string[] { "id" };
