@@ -250,9 +250,7 @@
 	</layout>
 
   <layout class="FsFeatStruc" type="jtview" name="PhonFeats">
-	<span>
-	  <string field="LongNameTSS"/>
-	</span>
+	  <part ref="Long" label="Features"/>
   </layout>
 
   <layout class="FsFeatStrucType" type="detail" name="Edit">

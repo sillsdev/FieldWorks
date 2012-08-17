@@ -6045,3 +6045,4 @@ EricP, 14 Aug 2012. Fix LT-13505 FlexText Import of texts with multiple Writing 
 GordonM, 14 Aug 2012. Added code guards for bad data crash in chart (LT-13541).
 	later....... Added tests and fix for LT-13543 crash moving chart words past marker.
 JohnT, 17 Aug 2012. Data migration 7000060 renames *Layout.xml to *.fwlayout. Many files renamed.
+	later: cleaned up a weird morphology layout, to avoid a special case in layout merging
