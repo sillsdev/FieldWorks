@@ -4598,9 +4598,9 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.RemoveMissingMarker(m_dstCell);
 
 			// Get markers and WordGroups from destination
-			int indexDest; // This will keep track of where we are in rowDst.AppliesTo
+			int indexDest; // This will keep track of where we are in rowDst.CellsOS
 			m_cellPartsDest = m_logic.CellPartsInCell(m_dstCell, out indexDest);
-			// indexDest is now the index in the destination row's AppliesTo of the first WordGroup in the destination cell.
+			// indexDest is now the index in the destination row's CellsOS of the first WordGroup in the destination cell.
 			m_wordGroupsDest = ConstituentChartLogic.CollectCellWordGroups(m_cellPartsDest);
 
 			// Here is where we need to check to see if the destination cell contains any movedText markers
@@ -4615,11 +4615,19 @@ namespace SIL.FieldWorks.Discourse
 				// The destination is completely empty. Just move the m_wordGroupsSrc.
 				if (HvoSrcRow == HvoDstRow)
 				{
-					// This is where we worry about reordering SrcRow.Cells if other wordforms exist between
+					// This is where we worry about reordering SrcRow.CellsOS if other items (tags?) exist between
 					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
-					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && m_forward)
+					// Moving forward past a chart Tag.
+					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && m_forward && m_wordGroupsSrc[0].Hvo == m_cellPartsSrc[0].Hvo)
 					{
 						MoveWordGroupsToEndOfCell(indexDest); // in preparation to moving data to next cell
+					}
+					// This is where we worry about reordering SrcRow.CellsOS if other items (MovedTextMrkr?) exist between
+					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
+					// Moving back past a MovedTextMarker.
+					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && !m_forward && m_wordGroupsSrc[0].Hvo != m_cellPartsSrc[0].Hvo)
+					{
+						MoveWordGroupsToBeginningOfCell(indexDest); // in preparation to moving data to previous cell
 					}
 					m_logic.ChangeColumn(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex],
 							SrcRow);
@@ -4701,9 +4709,22 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void MoveWordGroupsToEndOfCell(int iDest)
 		{
-			Debug.Assert(iDest > 0, "Bad destination index.");
 			var istart = m_wordGroupsSrc[0].IndexInOwner;
+			Debug.Assert(0 < iDest && iDest >= istart, "Bad destination index.");
 			// Does MoveTo work when the src and dest sequences are the same? Yes.
+			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
+		}
+
+		/// <summary>
+		/// Moves the WordGroups to the beginning of the source cell in preparation to move them to the previous cell.
+		/// Solves confusion in row.Cells
+		/// Situation: moving back in same row, nothing in destination cell.
+		/// </summary>
+		private void MoveWordGroupsToBeginningOfCell(int iDest)
+		{
+			var istart = m_wordGroupsSrc[0].IndexInOwner;
+			Debug.Assert(-1 < iDest && iDest <= istart, "Bad destination index.");
+			// Does MoveTo work when going backwards? Yes.
 			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
 		}
 
