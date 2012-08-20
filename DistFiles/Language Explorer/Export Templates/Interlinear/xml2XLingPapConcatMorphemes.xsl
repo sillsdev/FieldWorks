@@ -3,29 +3,29 @@
 	<xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 	<!-- This stylesheet transforms an interlinear text as output by FieldWorks into a form which conforms to the XLingPap DTD and can then be edited with the XMLmind XML Editor usingthe XLingPap configuration.  -->
 	<!--
-================================================================
-FieldWorks Language Explorer interlinear XML to XLingPap mapper for Stage 1.
-  Input:    XML output of FLEx interlinear, where result concatenates morphemes within a word
-  Output: XLingPap XML
+		================================================================
+		FieldWorks Language Explorer interlinear XML to XLingPap mapper for Stage 1.
+		Input:    XML output of FLEx interlinear, where result concatenates morphemes within a word
+		Output: XLingPap XML
 
-================================================================
-Revision History is at the end of this file.
+		================================================================
+		Revision History is at the end of this file.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Preamble
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		Preamble
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:key name="Language" match="language" use="@lang"/>
 	<xsl:param name="sHyphen" select="'-'"/>
 	<!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Main template
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		Main template
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:template match="document">
-	   <!-- output dtd path -->
-	   <xsl:text disable-output-escaping="yes">&#xa;&#x3c;!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd"&#x3e;&#xa;</xsl:text>
-	   <lingPaper>
+		<!-- output dtd path -->
+		<xsl:text disable-output-escaping="yes">&#xa;&#x3c;!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd"&#x3e;&#xa;</xsl:text>
+		<lingPaper>
 			<frontMatter>
 				<title>
 					<xsl:choose>
@@ -57,8 +57,12 @@ Main template
 					<secTitle>Interlinear text</secTitle>
 					<interlinear-text>
 						<textInfo>
-						   <textTitle><xsl:value-of select="//interlinear-text/item[@type='title']"/></textTitle>
-						   <shortTitle><xsl:value-of select="//interlinear-text/item[@type='title-abbreviation']"/></shortTitle>
+							<textTitle>
+								<xsl:value-of select="//interlinear-text/item[@type='title']"/>
+							</textTitle>
+							<shortTitle>
+								<xsl:value-of select="//interlinear-text/item[@type='title-abbreviation']"/>
+							</shortTitle>
 						</textInfo>
 						<xsl:apply-templates/>
 					</interlinear-text>
@@ -82,15 +86,15 @@ Main template
 				<xsl:call-template name="CommonTypes"/>
 				<type id="tGrammaticalGloss" font-variant="small-caps"/>
 				<type id="tWordPos"/>
-			   <type id="tLiteralTranslation"/>
+				<type id="tLiteralTranslation"/>
 			</types>
 		</lingPaper>
 	</xsl:template>
 	<!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-phrase
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		phrase
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:template match="phrase">
 		<xsl:variable name="sLevel">
 			<xsl:if test="item[@type='segnum']">
@@ -106,103 +110,8 @@ phrase
 			</xsl:for-each>
 		</xsl:variable>
 		<interlinear text="T-{$sThisTextId}-{$sLevel}" textref="T-{$sThisTextId}-{$sLevel}">
-			<lineGroup>
-				<xsl:if test="words/word/item[@type='txt']">
-					<!-- word -->
-					<line>
-						<!-- word -->
-						<xsl:for-each select="words/word[item[@type='txt']]">
-							<wrd>
-								<langData lang="{item/@lang}">
-									<!-- prepend any initial punctuation -->
-									<xsl:for-each
-										select="preceding-sibling::word[1][item/@type='punct']">
-										<xsl:choose>
-											<xsl:when test="count(preceding-sibling::word)=0">
-												<!-- it's the first word item -->
-												<xsl:value-of select="normalize-space(item)"/>
-											</xsl:when>
-											<xsl:when
-												test="preceding-sibling::word[1][item/@type='punct']">
-												<!-- there are other punct items before it; assume only the last one is preceding punct -->
-												<xsl:value-of select="normalize-space(item)"/>
-											</xsl:when>
-											<xsl:when
-												test="contains(item,'(') or contains(item,'[') or contains(item,'{')">
-												<!-- there are other preceding word items; look for preceding punctuation N.B. may well need to look for characters, too -->
-												<xsl:value-of select="normalize-space(item)"/>
-											</xsl:when>
-										</xsl:choose>
-									</xsl:for-each>
-									<!-- output the word -->
-									<xsl:value-of select="normalize-space(item)"/>
-									<!-- append any following punctuation -->
-									<xsl:for-each
-										select="following-sibling::word[1]/item[@type='punct']">
-										<xsl:if
-											test="not(contains(.,'(') or contains(.,'[') or contains(.,'{'))">
-											<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
-											<xsl:value-of select="normalize-space(.)"/>
-										</xsl:if>
-									</xsl:for-each>
-								</langData>
-							</wrd>
-						</xsl:for-each>
-					</line>
-				</xsl:if>
-				<!-- morphemes -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-					<xsl:with-param name="sType" select="'txt'"/>
-				</xsl:call-template>
-				<!-- Lex Entries -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-					<xsl:with-param name="sType" select="'cf'"/>
-				</xsl:call-template>
-				<!-- Gloss -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-					<xsl:with-param name="sType" select="'gls'"/>
-					<xsl:with-param name="bAddHyphen" select="'Y'"/>
-				</xsl:call-template>
-				<!-- msa -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-					<xsl:with-param name="sType" select="'msa'"/>
-					<xsl:with-param name="bAddHyphen" select="'Y'"/>
-				</xsl:call-template>
-				<!-- word gloss -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromWord">
-					<xsl:with-param name="sType" select="'gls'"/>
-				</xsl:call-template>
-				<!-- word cat -->
-				<xsl:call-template name="OutputLineOfWrdElementsFromWord">
-					<xsl:with-param name="sType" select="'pos'"/>
-				</xsl:call-template>
-			</lineGroup>
-			<xsl:for-each select="item">
-				<xsl:choose>
-					<xsl:when test="@type='txt'">
-						<!-- what is this for?   -->
-					</xsl:when>
-					<xsl:when test="@type='gls'">
-						<xsl:call-template name="OutputFreeWithAnyNotes"/>
-					</xsl:when>
-				   <xsl:when test="@type='lit' ">
-					  <!--  someday we'll have a literal translation element in XLingPaper -->
-					  <free>
-						 <object type="tLiteralTranslation">
-						 <xsl:apply-templates/>
-						 </object>
-					  </free>
-				   </xsl:when>
-				</xsl:choose>
-			</xsl:for-each>
+			<xsl:call-template name="OutputInterlinearContent"/>
 		</interlinear>
 	</xsl:template>
 	<xsl:include href="xml2XLingPapCommonConcatMorphemes.xsl"/>
 </xsl:stylesheet>
-<!--
-================================================================
-Revision History
-- - - - - - - - - - - - - - - - - - -
-28-Jul-2006  Andy Black  Initial Draft
-================================================================
--->

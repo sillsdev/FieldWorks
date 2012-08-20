@@ -69,7 +69,7 @@ Main template
 			</xsl:for-each>
 		 </languages>
 		 <types>
-			 <xsl:call-template name="CommonTypes"/>
+			<xsl:call-template name="CommonTypes"/>
 			<type id="tGrammaticalGloss" font-variant="small-caps"/>
 			<type id="tWordPos"/>
 			<type id="tLiteralTranslation"/>
@@ -83,9 +83,9 @@ phrase
 -->
    <xsl:template match="phrase">
 	  <xsl:variable name="sLevel">
-		<xsl:if test="item[@type='segnum']">
+		 <xsl:if test="item[@type='segnum']">
 			<xsl:value-of select="item[@type='segnum']"/>
-		</xsl:if>
+		 </xsl:if>
 	  </xsl:variable>
 	  <p>
 		 <xsl:text>paragraph </xsl:text>
@@ -93,107 +93,9 @@ phrase
 	  </p>
 	  <example num="x{$sLevel}">
 		 <interlinear>
-			<lineGroup>
-			   <xsl:if test="words/word/item[@type='txt']">
-				  <!-- word -->
-				  <line>
-					 <!-- word -->
-					 <xsl:for-each select="words/word[item[@type='txt']]">
-						<wrd>
-						   <langData lang="{item/@lang}">
-							  <!-- prepend any initial punctuation -->
-							  <xsl:for-each select="preceding-sibling::word[1][item/@type='punct']">
-								 <xsl:choose>
-									<xsl:when test="count(preceding-sibling::word)=0">
-									   <!-- it's the first word item -->
-									   <xsl:value-of select="normalize-space(item)"/>
-									</xsl:when>
-									<xsl:when test="preceding-sibling::word[1][item/@type='punct']">
-									   <!-- there are other punct items before it; assume only the last one is preceding punct -->
-									   <xsl:value-of select="normalize-space(item)"/>
-									</xsl:when>
-									<xsl:when test="contains(item,'(') or contains(item,'[') or contains(item,'{')">
-									   <!-- there are other preceding word items; look for preceding punctuation N.B. may well need to look for characters, too -->
-									   <xsl:value-of select="normalize-space(item)"/>
-									</xsl:when>
-								 </xsl:choose>
-							  </xsl:for-each>
-							  <!-- output the word -->
-							  <xsl:value-of select="normalize-space(item)"/>
-							  <!-- append any following punctuation -->
-							  <xsl:for-each select="following-sibling::word[1]/item[@type='punct']">
-								 <xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{'))">
-									<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
-									<xsl:value-of select="normalize-space(.)"/>
-								 </xsl:if>
-							  </xsl:for-each>
-						   </langData>
-						</wrd>
-					 </xsl:for-each>
-				  </line>
-			   </xsl:if>
-			   <!-- morphemes -->
-			   <xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-				  <xsl:with-param name="sType" select="'txt'"/>
-			   </xsl:call-template>
-			   <!-- Lex Entries -->
-			   <xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-				  <xsl:with-param name="sType" select="'cf'"/>
-			   </xsl:call-template>
-			   <!-- Gloss -->
-			   <!--  want to get all gloss languages; loop on them -->
-			   <xsl:for-each select="words/word[1]/morphemes/morph[1]/item[@type='gls']">
-				  <xsl:variable name="iPos" select="position()"/>
-				  <!--  then adjust the context  back to the phrase level -->
-				  <xsl:for-each select="../../../../..">
-			   <xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-				  <xsl:with-param name="sType" select="'gls'"/>
-				  <xsl:with-param name="bAddHyphen" select="'Y'"/>
-				  <xsl:with-param name="iPos" select="$iPos"/>
-			   </xsl:call-template>
-				  </xsl:for-each>
-			   </xsl:for-each>
-			   <!-- msa -->
-			   <xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-				  <xsl:with-param name="sType" select="'msa'"/>
-				  <xsl:with-param name="bAddHyphen" select="'Y'"/>
-			   </xsl:call-template>
-			   <!-- word gloss -->
-			   <xsl:call-template name="OutputLineOfWrdElementsFromWord">
-				  <xsl:with-param name="sType" select="'gls'"/>
-			   </xsl:call-template>
-			   <!-- word cat -->
-			   <xsl:call-template name="OutputLineOfWrdElementsFromWord">
-				  <xsl:with-param name="sType" select="'pos'"/>
-			   </xsl:call-template>
-			</lineGroup>
-			<xsl:for-each select="item">
-			   <xsl:choose>
-				  <xsl:when test="@type='txt'">
-					 <!-- what is this for?   -->
-				  </xsl:when>
-				  <xsl:when test="@type='gls'">
-					 <xsl:call-template name="OutputFreeWithAnyNotes"/>
-				  </xsl:when>
-				  <xsl:when test="@type='lit' ">
-					 <!--  someday we'll have a literal translation element in XLingPaper -->
-					 <free>
-						<object type="tLiteralTranslation">
-						   <xsl:apply-templates/>
-						</object>
-					 </free>
-				  </xsl:when>
-			   </xsl:choose>
-			</xsl:for-each>
+			<xsl:call-template name="OutputInterlinearContent"/>
 		 </interlinear>
 	  </example>
    </xsl:template>
    <xsl:include href="xml2XLingPapCommonConcatMorphemes.xsl"/>
 </xsl:stylesheet>
-<!--
-================================================================
-Revision History
-- - - - - - - - - - - - - - - - - - -
-28-Jul-2006  Andy Black  Initial Draft
-================================================================
--->
