@@ -276,5 +276,6 @@ McCoy, 26 July, 2012.  Fixed LT-13024 (Crash in style dialog when right-click on
 GordonM, 26 Jul 2012. Fixed LT-13469 so Paratext-using user is informed of pipe communication problem.
 KenZ, 26 Jul 2012. Fixed LT-13487 Crash when switching to Reversal Entries.
 KenZ, 30 Jul 2012. Finished fixing LT-13469. It now displays the error message as specified.
-1 Aug 2012. Integrated LT-13478 fix from WW to 7.2
+KenZ, 1 Aug 2012. Integrated LT-13478 fix from WW to 7.2
 ----------------- FW7.2.7 -------------------------------------------------------------------------------
+KenZ, 20 Aug 2012. Fixed LT-13558, failure to import non-Roman SFM file.
