@@ -1556,7 +1556,10 @@ namespace SIL.FieldWorks.Discourse
 			if (myAbnormalRows.Count == 0)
 				return;
 			var clsMrkrTargets = new Set<IConstChartRow>();
-			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr => mrkr.Owner.Owner.Hvo == m_chart.Hvo);
+			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr =>
+				mrkr.Owner != null &&
+				mrkr.Owner.Owner != null &&
+				mrkr.Owner.Owner.Hvo == m_chart.Hvo);
 			foreach (var clsMrkr in myClsMrkrs)
 				clsMrkrTargets.AddRange(clsMrkr.DependentClausesRS);
 			foreach (var row in myAbnormalRows.Where(row => !clsMrkrTargets.Contains(row)))
