@@ -2299,6 +2299,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			{
 				if (!Char.IsDigit(sForm[idx]))
 					break;
+				// We do not handle non-Roman homograph numbers, so until then, only accept ASCII digits.
+				// Otherwise we would need to use .Parse with a proper locale to parse the character.
+				if (sForm[idx] < '0' || sForm[idx] > '9')
+					break;
 				sHomograph = sForm.Substring(idx) + sHomograph;
 				sForm = sForm.Substring(0, idx);
 				m_nHomograph = Int32.Parse(sHomograph);

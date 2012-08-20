@@ -6048,3 +6048,4 @@ JohnT, 17 Aug 2012. Data migration 7000060 renames *Layout.xml to *.fwlayout. Ma
 	later: cleaned up a weird morphology layout, to avoid a special case in layout merging
 RandyR, 18 August 2012. Updated FLEx Bridge installer to 0.3.70.
 KenZ, 20 Aug 2012. Updated data files with last 2 migrations.
+KenZ, 20 Aug 2012. Integrated fix for LT-13558 from 7.2.7 to WW.
