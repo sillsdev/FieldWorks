@@ -6050,3 +6050,4 @@ RandyR, 18 August 2012. Updated FLEx Bridge installer to 0.3.70.
 KenZ, 20 Aug 2012. Updated data files with last 2 migrations.
 KenZ, 20 Aug 2012. Integrated fix for LT-13558 from 7.2.7 to WW.
 Andy Black, 20 Aug 2012.  Fix XLingPaper align word interlinear export.
+RandyR, 20 August 2012. Updated FLEx Bridge installer to 0.3.71.
