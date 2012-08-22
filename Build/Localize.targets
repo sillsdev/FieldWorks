@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <!-- Localize all resx files -->
+  <Target Name="localize" DependsOnTargets="copyLocalizedLists;processLanguages"/>
+
+
+  <!-- Copy LocalizedList-*.xml files from Localizations to distfiles -->
+  <ItemGroup>
+	<LocalizedListFiles Include="$(fwroot)/Localizations/LocalizedLists-*.xml"/>
+  </ItemGroup>
+  <Target Name="copyLocalizedLists">
+	<Copy SourceFiles="@(LocalizedListFiles)" DestinationFolder="$(fwroot)/DistFiles/Templates"/>
+  </Target>
+
+  <!-- Main target for processing all .po files -->
+  <Target Name="processLanguages">
+<!--
+	<tstamp/>
+	<exec program="${fwroot}/Bin/ProcessLanguagesBld.exe"
+	  commandline='${config} ${fwroot} ${dir.fwoutput}'
+	  failonerror="true" verbose="${verbose}"/>
+	<tstamp/>
+-->
+  </Target>
+
+</Project>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="SetAssemblyVersion" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
+
+  <Import Project="GlobalInclude.properties"/>
+  <Import Project="SetupInclude.targets"/>
+
+  <!-- ********************************************************************************** -->
+  <!-- Add all projects below -->
+
+  <Target Name="all" DependsOnTargets="mkall"/>
+
+  <!-- ********************************************************************************** -->
+  <!-- Add individual project targets below this point. -->
+
+  <ItemGroup>
+	<IcuDataFiles Include="$(MSBuildProjectDirectory)/../DistFiles/Icu40/*.*"/>
+	<IcuDataFiles Include="$(MSBuildProjectDirectory)/../DistFiles/Icu40/data/**/*.*"/>
+	<IcuDataFiles Include="$(MSBuildProjectDirectory)/../DistFiles/Icu40/icudt40l/**/*.*"/>
+	<IcuDataFiles Include="$(MSBuildProjectDirectory)/../DistFiles/languages/*.xml"/>
+  </ItemGroup>
+
+  <!-- Unzip icu.zip file -->
+  <Target Name="IcuData">
+	<Delete Files="$(IcuDataFiles)" TreatErrorsAsWarnings="true"/>
+	<Unzip ZipFilename="$(fwrt)/DistFiles/Icu40.zip" ToDir="$(fwrt)/DistFiles/Icu40"/>
+	<!-- Not really ICU, but we need to clean out global ws store at same time to prevent
+	 differing versions of ldml files from breaking builds on other branches.
+	 This has different values on XP and Vista/7:
+	 Windows XP: c:/Documents and Settings/All Users/Application Data
+	 Windows 7: C:/ProgramData/
+	 Linux: $HOME/.local/share
+	 and it can also appear under SIL (when running the app) and NUnit.org (unit tests)
+	-->
+<!--
+	<delete verbose="false" failonerror="false">
+	  <fileset>
+	<include name="${environment::get-folder-path('CommonApplicationData')}/SIL/WritingSystemStore/*.ldml"/>
+	<include name="${environment::get-folder-path('CommonApplicationData')}/NUnit.org/WritingSystemStore/*.ldml"/>
+	<include name="${environment::get-folder-path('LocalApplicationData')}/SIL/WritingSystemStore/*.ldml" if="${platform::is-unix()}"/>
+	<include name="${environment::get-folder-path('LocalApplicationData')}/NUnit.org/WritingSystemStore/*.ldml" if="${platform::is-unix()}"/>
+	  </fileset>
+	</delete>
+-->
+  </Target>
+
+  <Import Project="Fieldworks.targets"/>
+  <Import Project="mkall.targets"/>
+  <Import Project="Localize.targets"/>
+
+</Project>

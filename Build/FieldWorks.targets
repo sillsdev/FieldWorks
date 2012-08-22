@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="RunNUnit" AssemblyFile="FwBuildTasks.dll"/>
+
+	<Target Name="CacheLight" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\CacheLight\CacheLight.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="CacheLightTests" DependsOnTargets="BasicUtils;BasicUtilsTests;CacheLight;COMInterfaces;COMInterfacesTests;CoreImpl;FwUtils;SilUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\CacheLight\CacheLightTests\CacheLightTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="CacheLightTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="COMInterfaces" DependsOnTargets="BasicUtils;Ethnologue;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Common\COMInterfaces\COMInterfaces.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="COMInterfacesTests" DependsOnTargets="SilUtils;BasicUtils;Ethnologue;COMInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\COMInterfaces\COMInterfacesTests\COMInterfacesTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="COMInterfacesTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Design">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\Design\Design.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DetailControls" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FdoUi;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;LexTextControls;MessageBoxExLib;PhonEnvValidator;RootSite;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\DetailControls\DetailControls.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DetailControlsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;DetailControls;FDO;FDOTests;FwUtils;RootSite;SimpleRootSite;TestUtils;xCore;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\DetailControls\DetailControlsTests\DetailControlsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="DetailControlsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwControls" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;Ethnologue;FDO;FwResources;FwUtils;ScrUtilsInterfaces;SilUtils;xCore;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\FwControls\FwControls.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwControlsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FwControls;FwUtils;SilUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\FwControls\FwControlsTests\FwControlsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FwControlsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ProgressBarTest" DependsOnTargets="FwControls;xCore">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\FwControls\PredictiveProgressBarTestApp\ProgressBarTest.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MenuExtender" DependsOnTargets="BasicUtils;SilUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\MenuExtender\MenuExtender.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MenuExtenderTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;MenuExtender;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\MenuExtender\MenuExtenderTests\MenuExtenderTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="MenuExtenderTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ScrControls" DependsOnTargets="BasicUtils;COMInterfaces;FDO;Framework;FwControls;FwResources;FwUtils;Reporting;RootSite;ScriptureUtils;ScrUtilsInterfaces;TeScrInitializer;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\ScrControls\ScrControls.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ScrControlsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FDOTests;FwControls;ProjectUnpacker;ScrControls;ScriptureUtils;ScrUtilsInterfaces;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\ScrControls\ScrControlsTests\ScrControlsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ScrControlsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="SplitGridView" DependsOnTargets="BasicUtils;COMInterfaces;FDO;Framework;FwControls;FwUtils;RootSite;SimpleRootSite;xCore;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\SplitGridView\SplitGridView.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SplitGridViewTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;Framework;FwControls;RootSite;SimpleRootSite;SplitGridView;xCoreInterfaces;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\SplitGridView\SplitGridViewTests\SplitGridViewTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="SplitGridViewTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Widgets" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwResources;Reporting;FwUtils;RootSite;SilUtils;SimpleRootSite;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\Widgets\Widgets.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DemoWidgets" DependsOnTargets="COMInterfaces;FwResources;RootSite;Widgets">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\Widgets\DemoWidgets\DemoWidgets.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="WidgetsTests" DependsOnTargets="BasicUtils;CacheLight;COMInterfaces;COMInterfacesTests;CoreImpl;RootSite;RootSiteTests;SimpleRootSite;SimpleRootSiteTests;TestUtils;Widgets;xCoreInterfaces;FDO">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\Widgets\WidgetsTests\WidgetsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="WidgetsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="XMLViews" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Filters;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\XMLViews\XMLViews.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XMLViewsTests" DependsOnTargets="BasicUtils;CacheLight;CacheLightTests;COMInterfaces;COMInterfacesTests;CoreImpl;Filters;FwUtils;FwUtilsTests;RootSite;SimpleRootSite;TestUtils;xCore;XMLUtils;XMLViews;FDO;FDOTests;xCoreInterfaces;BasicUtilsTests">
+		<MSBuild Projects="C:\WW\Src\Common\Controls\XMLViews\XMLViewsTests\XMLViewsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="XMLViewsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="CoreImpl" DependsOnTargets="BasicUtils;COMInterfaces;Ethnologue;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Common\CoreImpl\CoreImpl.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="CoreImplTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;Ethnologue;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Common\CoreImpl\CoreImplTests\CoreImplTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="CoreImplTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FieldWorks" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FdoUi;FwControls;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;SilUtils;SimpleRootSite;xCoreInterfaces;XMLUtils;xWorks;Framework">
+		<MSBuild Projects="C:\WW\Src\Common\FieldWorks\FieldWorks.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FieldWorksTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;FDO;FieldWorks;FwUtils;SilUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\FieldWorks\FieldWorksTests\FieldWorksTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FieldWorksTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Filters" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwUtils;SilUtils;xCore;xCoreInterfaces;XMLUtils;ManagedLgIcuCollator">
+		<MSBuild Projects="C:\WW\Src\Common\Filters\Filters.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FiltersTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Filters;TestUtils;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Filters\FiltersTests\FiltersTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FiltersTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Framework" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;SilUtils;SimpleRootSite;UIAdapterInterfaces;Widgets;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Framework\Framework.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FrameworkTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwUtils;RootSite;SilUtils;SimpleRootSite;TestUtils;UIAdapterInterfaces;xCoreInterfaces;BasicUtilsTests;FwCoreDlgControls;FwResources">
+		<MSBuild Projects="C:\WW\Src\Common\Framework\FrameworkTests\FrameworkTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FrameworkTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwPrintLayoutComponents" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;RootSite;SimpleRootSite;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\FwPrintLayoutComponents\FwPrintLayoutComponents.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwPrintLayoutComponentsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwCoreDlgControls;FwPrintLayoutComponents;FwResources;FwUtils;RootSite;SilUtils;SimpleRootSite;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\FwPrintLayoutComponents\FwPrintLayoutComponentsTests\FwPrintLayoutComponentsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FwPrintLayoutComponentsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwRemoteDatabaseConnectorService" DependsOnTargets="BasicUtils;COMInterfaces;FDO">
+		<MSBuild Projects="C:\WW\Src\Common\FwRemoteDatabaseConnectorService\FwRemoteDatabaseConnectorService.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwUtils" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FwResources;SilUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\FwUtils\FwUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwUtilsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FwUtils;SilUtils;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FwUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Keyboarding" DependsOnTargets="COMInterfaces;KeyboardSwitcher;CoreImpl">
+		<MSBuild Projects="C:\WW\Src\Common\Keyboarding\Keyboarding.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="KeyboardingTests" DependsOnTargets="Keyboarding;TestUtils;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\Common\Keyboarding\KeyboardingTests\KeyboardingTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="KeyboardingTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="KeyboardSwitcher" DependsOnTargets="BasicUtils;COMInterfaces;FwResources">
+		<MSBuild Projects="C:\WW\Src\Common\KeyboardSwitcher\KeyboardSwitcher.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="KeyboardSwitcherTests" DependsOnTargets="KeyboardSwitcher;SilUtils;SimpleRootSite">
+		<MSBuild Projects="C:\WW\Src\Common\KeyboardSwitcher\KeyboardSwitcherTests\KeyboardSwitcherTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="KeyboardSwitcherTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="PrintLayout" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwPrintLayoutComponents;FwResources;FwUtils;RootSite;SilUtils;SimpleRootSite;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\PrintLayout\PrintLayout.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="PrintLayoutTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwPrintLayoutComponents;FwUtils;PrintLayout;RootSite;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\PrintLayout\PrintLayoutTests\PrintLayoutTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="PrintLayoutTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="RootSite" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwControls;FwResources;FwUtils;SilUtils;SimpleRootSite;UIAdapterInterfaces;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\RootSite\RootSite.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="RootSiteTests" DependsOnTargets="BasicUtils;CacheLight;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwUtils;RootSite;SilUtils;SimpleRootSite;TestUtils;xCoreInterfaces;SimpleRootSiteTests">
+		<MSBuild Projects="C:\WW\Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="RootSiteTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ScriptureUtils" DependsOnTargets="BasicUtils;COMInterfaces;FwResources;FwUtils;ScrUtilsInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\ScriptureUtils\ScriptureUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ScriptureUtilsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;ProjectUnpacker;ScriptureUtils;ScrUtilsInterfaces;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\ScriptureUtils\ScriptureUtilsTests\ScriptureUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ScriptureUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ScrUtilsInterfaces" DependsOnTargets="COMInterfaces;FwResources">
+		<MSBuild Projects="C:\WW\Src\Common\ScrUtilsInterfaces\ScrUtilsInterfaces.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SimpleRootSite" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;Reporting;SilUtils;xCoreInterfaces;ManagedVwDrawRootBuffered;KeyboardSwitcher;Keyboarding">
+		<MSBuild Projects="C:\WW\Src\Common\SimpleRootSite\SimpleRootSite.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SimpleRootSiteTests" DependsOnTargets="BasicUtils;BasicUtilsTests;CacheLight;CacheLightTests;COMInterfaces;COMInterfacesTests;FwUtils;SilUtils;CoreImpl;SimpleRootSite;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\SimpleRootSite\SimpleRootSiteTests\SimpleRootSiteTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="SimpleRootSiteTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="UIAdapterInterfaces" DependsOnTargets="BasicUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Common\UIAdapterInterfaces\UIAdapterInterfaces.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ZipUtils">
+		<MSBuild Projects="C:\WW\Src\Common\ZipUtils\ZipUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ZipUtilsTests" DependsOnTargets="COMInterfaces;COMInterfacesTests;ZipUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\Common\ZipUtils\ZipUtilsTests\ZipUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ZipUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FDO" DependsOnTargets="BasicUtils;CoreImpl;FwResources;FwUtils;Reporting;ScrUtilsInterfaces;COMInterfaces;PhonEnvValidator;SilUtils;xCoreInterfaces;ZipUtils;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\FDO\FDO.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FDOTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FwResources;FwUtils;FwUtilsTests;PhonEnvValidator;ProjectUnpacker;ScrUtilsInterfaces;SilUtils;TestUtils;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\FDO\FDOTests\FDOTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FDOTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FDOBrowser" DependsOnTargets="CoreImpl;DetailControls;FDO;FwControls;FwResources;FwUtils;SilUtils;BasicUtils;COMInterfaces;Widgets;xCoreInterfaces;XMLViews">
+		<MSBuild Projects="C:\WW\Src\FDOBrowser\FDOBrowser.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FdoUi" DependsOnTargets="COMInterfaces;FDO;Framework;FwControls;FwResources;FwUtils;LexTextControls;Reporting;RootSite;SilUtils;SimpleRootSite;BasicUtils;CoreImpl;Filters;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews">
+		<MSBuild Projects="C:\WW\Src\FdoUi\FdoUi.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FdoUiTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FDOTests;FdoUi;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\FdoUi\FdoUiTests\FdoUiTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FdoUiTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwCoreDlgs" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;Ethnologue;FDO;Filters;FwControls;FwCoreDlgControls;FwResources;FwUtils;Keyboarding;Reporting;RootSite;SilUtils;SimpleRootSite;Widgets;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\FwCoreDlgs\FwCoreDlgs.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwCoreDlgControls" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwControls;FwResources;FwUtils;RootSite;SilUtils;SimpleRootSite;xCoreInterfaces;Keyboarding">
+		<MSBuild Projects="C:\WW\Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControls.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FwCoreDlgControlsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwControls;FwResources;FwUtils;SilUtils;FwCoreDlgControls;RootSite;SimpleRootSite;TestUtils;Keyboarding">
+		<MSBuild Projects="C:\WW\Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControlsTests\FwCoreDlgControlsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FwCoreDlgControlsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwCoreDlgsTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;FwUtilsTests;RootSite;RootSiteTests;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TestUtils;Widgets;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\FwCoreDlgs\FwCoreDlgsTests\FwCoreDlgsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FwCoreDlgsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FwResources" DependsOnTargets="BasicUtils">
+		<MSBuild Projects="C:\WW\Src\FwResources\FwResources.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FxtDll" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;SilUtils;XMLUtils;FwUtils">
+		<MSBuild Projects="C:\WW\Src\FXT\FxtDll\FxtDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FxtDllTests" DependsOnTargets="BasicUtils;COMInterfacesTests;FDO;FDOTests;FwUtils;FxtDll;SilUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FxtDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FxtExe" DependsOnTargets="BasicUtils;COMInterfaces;FDO">
+		<MSBuild Projects="C:\WW\Src\FXT\FxtExe\FxtExe.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="Discourse" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwResources;FwUtils;ITextDll;RootSite;SilUtils;SimpleRootSite;xCore;xCoreInterfaces;XMLUtils;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Discourse\Discourse.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DiscourseTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;Discourse;FDO;FDOTests;Framework;ITextDll;RootSite;SilUtils;SimpleRootSite;TestUtils;xCoreInterfaces;XMLUtils;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Discourse\DiscourseTests\DiscourseTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="DiscourseTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FlexDePlugin" DependsOnTargets="BasicUtils;FDO;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;SilUtils;xCore;xCoreInterfaces;XMLUtils;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\FlexDePlugin\FlexDePlugin.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FlexDePluginTests" DependsOnTargets="BasicUtils;COMInterfaces;FlexDePlugin;FwCoreDlgs;FwUtils;RootSite;SilUtils;xCoreInterfaces;XMLUtils;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\FlexDePlugin\FlexDePluginTests\FlexDePluginTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FlexDePluginTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ITextDll" DependsOnTargets="COMInterfaces;DetailControls;FDO;FdoUi;Filters;Framework;FwControls;FwCoreDlgs;FwResources;FxtDll;LexTextControls;ParserCore;Reporting;RootSite;Sfm2Xml;SimpleRootSite;BasicUtils;CoreImpl;FwCoreDlgControls;FwUtils;MessageBoxExLib;SilUtils;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Interlinear\ITextDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ITextDllTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwUtils;ITextDll;LexTextControls;RootSite;Sfm2Xml;SilUtils;SimpleRootSite;TestUtils;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;xWorks;xWorksTests">
+		<MSBuild Projects="C:\WW\Src\LexText\Interlinear\ITextDllTests\ITextDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ITextDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="LexEdDll" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;DetailControls;FDO;FdoUi;Filters;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;FxtDll;LexTextControls;MessageBoxExLib;MGA;MorphologyEditorDll;ParserCore;PhonEnvValidator;RootSite;Sfm2Xml;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Lexicon\LexEdDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="LexTextControls" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Filters;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;FxtDll;MessageBoxExLib;MGA;ParserCore;Reporting;RootSite;Sfm2Xml;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;SilUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\LexTextControls\LexTextControls.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="LexTextControlsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwResources;FwUtils;FwUtilsTests;FxtDll;LexTextControls;Sfm2Xml;SilUtils;TestUtils;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\LexTextControls\LexTextControlsTests\LexTextControlsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="LexTextControlsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="LexTextDll" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;ITextDll;SimpleRootSite;FwUtils;xCore;FDO;Framework;FwControls;FwCoreDlgs;LexTextControls;MessageBoxExLib;Reporting;RootSite;xCoreInterfaces;XMLUtils;XMLViews;xWorks;FixFwDataDll">
+		<MSBuild Projects="C:\WW\Src\LexText\LexTextDll\LexTextDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="LexTextDllTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FDOTests;Framework;FwControls;FwUtils;RootSite;LexTextDll;SilUtils;TestUtils;xCoreInterfaces;XMLUtils;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\LexTextDll\LexTextDllTests\LexTextDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="LexTextDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="LexTextExe" DependsOnTargets="BasicUtils;FieldWorks;FwUtils;LexTextDll;ParserUI;COMInterfaces;Framework;FwControls;RootSite;xCore;xCoreInterfaces;xCoreOpenSourceAdapter;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\LexTextExe\LexTextExe.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MorphologyEditorDll" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;DetailControls;FDO;FdoUi;Filters;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;ITextDll;LexTextControls;MessageBoxExLib;MGA;ParserCore;PhonEnvValidator;RootSite;Sfm2Xml;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Morphology\MorphologyEditorDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MGA" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwUtils;RootSite;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\Morphology\MGA\MGA.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MGATests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FwUtils;MGA;TestUtils;XMLUtils;FDOTests">
+		<MSBuild Projects="C:\WW\Src\LexText\Morphology\MGA\MGATests\MGATests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="MGATests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="MorphologyEditorDllTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwControls;ITextDll;MorphologyEditorDll;SilUtils;TestUtils;xCoreInterfaces;XMLViews;xWorks">
+		<MSBuild Projects="C:\WW\Src\LexText\Morphology\MorphologyEditorDllTests\MorphologyEditorDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="MorphologyEditorDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ParserCore" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FwUtils;SilUtils;XAmpleManagedWrapper;XMLUtils;PatrParserWrapper">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\ParserCore.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ParserCoreTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;FwUtils;ParserCore;TestUtils;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\ParserCoreTests\ParserCoreTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ParserCoreTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="PatrParserWrapper">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\PatrParserWrapper\PatrParserWrapper.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="PatrParserWrapperTests" DependsOnTargets="PatrParserWrapper">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\PatrParserWrapper\PatrParserWrapperTests\PatrParserWrapperTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="PatrParserWrapperTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="XAmpleManagedWrapper">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapper.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XAmpleManagedWrapperTests" DependsOnTargets="COMInterfaces;COMInterfacesTests;XAmpleManagedWrapper;TestUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapperTests\XAmpleManagedWrapperTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="XAmpleManagedWrapperTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ParserWatcher" DependsOnTargets="BasicUtils;COMInterfaces;FDO;ParserCore">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserEngine\ParserWatcher\ParserWatcher.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ParserUI" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FdoUi;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;ITextDll;ParserCore;Reporting;RootSite;SilUtils;SimpleRootSite;Widgets;xCore;xCoreInterfaces;XMLUtils;xWorks;SilUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserUI\ParserUI.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ParserUITests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FwUtils;ParserUI;TestUtils;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\ParserUI\ParserUITests\ParserUITests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ParserUITests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="PhonEnvValidator">
+		<MSBuild Projects="C:\WW\Src\LexText\PhonEnvValidator\PhonEnvValidator.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="PhonEnvValidatorTests" DependsOnTargets="COMInterfaces;COMInterfacesTests;PhonEnvValidator;TestUtils">
+		<MSBuild Projects="C:\WW\Src\LexText\PhonEnvValidator\PhonEnvValidatorTests\PhonEnvValidatorTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="PhonEnvValidatorTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="LinuxSmokeTest" DependsOnTargets="SilUtils;COMInterfaces;FieldWorks;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\LinuxSmokeTest\LinuxSmokeTest.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="LinuxSmokeTestTests" DependsOnTargets="FwUtils;SilUtils;LinuxSmokeTest">
+		<MSBuild Projects="C:\WW\Src\LinuxSmokeTest\LinuxSmokeTestTests\LinuxSmokeTestTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="LinuxSmokeTestTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ManagedLgIcuCollator" DependsOnTargets="COMInterfaces;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\ManagedLgIcuCollator\ManagedLgIcuCollator.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ManagedLgIcuCollatorTests" DependsOnTargets="COMInterfaces;BasicUtils;ManagedLgIcuCollator">
+		<MSBuild Projects="C:\WW\Src\ManagedLgIcuCollator\ManagedLgIcuCollatorTests\ManagedLgIcuCollatorTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ManagedLgIcuCollatorTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="ManagedVwDrawRootBuffered" DependsOnTargets="BasicUtils;COMInterfaces;SilUtils">
+		<MSBuild Projects="C:\WW\Src\ManagedVwDrawRootBuffered\ManagedVwDrawRootBuffered.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ManagedVwWindow" DependsOnTargets="BasicUtils;COMInterfaces;SilUtils">
+		<MSBuild Projects="C:\WW\Src\ManagedVwWindow\ManagedVwWindow.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ManagedVwWindowTests" DependsOnTargets="ManagedVwWindow;SilUtils;COMInterfaces;COMInterfacesTests;BasicUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\ManagedVwWindow\ManagedVwWindowTests\ManagedVwWindowTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="ManagedVwWindowTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="MigrateSqlDbs" DependsOnTargets="BasicUtils;FDO;FwControls;FwResources;FwUtils;SilUtils">
+		<MSBuild Projects="C:\WW\Src\MigrateSqlDbs\MigrateSqlDbs.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="P4Helper">
+		<MSBuild Projects="C:\WW\Src\P4Helper\P4Helper.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ProjectUnpacker" DependsOnTargets="BasicUtils">
+		<MSBuild Projects="C:\WW\Src\ProjectUnpacker\ProjectUnpacker.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SharpViews" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;SilUtils;xCoreInterfaces;SimpleRootSite">
+		<MSBuild Projects="C:\WW\Src\SharpViews\SharpViews\SharpViews.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SharpViewsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FDOTests;SilUtils;TestUtils;SharpViews">
+		<MSBuild Projects="C:\WW\Src\SharpViews\SharpViewsTests\SharpViewsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="SharpViewsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="DiffView" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;ITextDll;PrintLayout;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeEditing;TeResources;TeViewConstructors;UIAdapterInterfaces;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\DiffView\DiffView.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="DiffViewTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;DiffView;FDO;FDOTests;Framework;FwControls;FwUtils;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeEditing;TeRegistrySettings;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\DiffView\DiffViewTests\DiffViewTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="DiffViewTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="NotesView" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Filters;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwPrintLayoutComponents;FwResources;FwUtils;Reporting;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeEditing;TeImportExport;TeRegistrySettings;TeResources;TeScrInitializer;TeStylesXml;TeViewConstructors;UIAdapterInterfaces;Widgets;xCoreInterfaces;XMLUtils;TeDialogs">
+		<MSBuild Projects="C:\WW\Src\TE\NotesView\NotesView.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="NotesViewTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;NotesView;RootSite;ScriptureUtils;ScrUtilsInterfaces;SimpleRootSite;TeEditing;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\NotesView\NotesViewTests\NotesViewTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="NotesViewTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="OxesIO" DependsOnTargets="BasicUtils">
+		<MSBuild Projects="C:\WW\Src\TE\OxesIO\OxesIO.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="OxesIOTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;OxesIO;SilUtils;TestUtils">
+		<MSBuild Projects="C:\WW\Src\TE\OxesIO\OxesIOTests\OxesIOTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="OxesIOTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeDialogs" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;DiffView;FDO;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeRegistrySettings;TeResources;UIAdapterInterfaces;Widgets;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeDialogs\TeDialogs.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeDialogsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;DiffView;FwCoreDlgs;FwUtils;ScrControls;SilUtils;FDO;FDOTests;Framework;FwControls;RootSite;ScriptureUtils;ScrUtilsInterfaces;SimpleRootSite;TeDialogs;TeRegistrySettings;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeDialogs\TeDialogsTests\TeDialogsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeDialogsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeEditing" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeRegistrySettings;TeResources;TeViewConstructors;UIAdapterInterfaces;Widgets;xCoreInterfaces;ITextDll">
+		<MSBuild Projects="C:\WW\Src\TE\TeEditing\TeEditing.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeEditingTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwCoreDlgs;FwUtils;PrintLayout;RootSite;RootSiteTests;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeEditing;TeRegistrySettings;TestUtils;TeViewConstructors;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeEditing\TeEditingTests\TeEditingTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeEditingTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeEditorialChecks" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwCoreDlgs;FwResources;FwUtils;Reporting;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeEditing;TeRegistrySettings;TeResources;UIAdapterInterfaces;Widgets;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeEditorialChecks\TeEditorialChecks.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeEditorialChecksTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;TeEditorialChecks;TestUtils;UIAdapterInterfaces;Widgets;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeEditorialChecks\TeEditorialChecksTests\TeEditorialChecksTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeEditorialChecksTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeImportExport" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;DiffView;FDO;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;ITextDll;OxesIO;Reporting;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeDialogs;TeEditing;TeEditorialChecks;TeRegistrySettings;TeResources;Widgets;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\TE\TeImportExport\TeImportExport.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeImportExportTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;DiffView;FDO;FDOTests;Framework;FwControls;FwCoreDlgControls;FwResources;FwUtils;FwUtilsTests;OxesIO;ProjectUnpacker;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;TeDialogs;TeEditing;TeEditingTests;TeEditorialChecks;TeImportExport;TeRegistrySettings;TeResources;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeImportExport\TeImportExportTests\TeImportExportTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeImportExportTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeKeyTerms" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FdoUi;Framework;FwControls;FwResources;FwUtils;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeEditing;TeEditorialChecks;TeImportExport;TeRegistrySettings;TeResources;TeViewConstructors;UIAdapterInterfaces;Widgets;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\TE\TeKeyTerms\TeKeyTerms.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeKeyTermsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeEditorialChecks;TeKeyTerms;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeKeyTerms\TeKeyTermsTests\TeKeyTermsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeKeyTermsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TePrintLayout" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwPrintLayoutComponents;FwResources;FwUtils;ITextDll;PrintLayout;RootSite;ScriptureUtils;ScrUtilsInterfaces;SimpleRootSite;TeEditing;TeRegistrySettings;TeResources;TeScrInitializer;TeViewConstructors;UIAdapterInterfaces;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TePrintLayout\TePrintLayout.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TePrintLayoutTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwPrintLayoutComponents;FwPrintLayoutComponentsTests;FwUtils;PrintLayout;PrintLayoutTests;RootSite;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeEditing;TePrintLayout;TeRegistrySettings;TestUtils;TeViewConstructors;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TePrintLayout\TePrintLayoutTests\TePrintLayoutTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TePrintLayoutTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TePrintLayoutComponents" DependsOnTargets="BasicUtils;COMInterfaces;FDO;Framework;FwCoreDlgControls;FwCoreDlgs;FwPrintLayoutComponents;FwUtils;PrintLayout;RootSite;TeRegistrySettings;TeResources;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TePrintLayoutComponents\TePrintLayoutComponents.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TePrintLayoutComponentsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FDO;FDOTests;Framework;FwControls;FwCoreDlgControls;FwPrintLayoutComponents;FwResources;FwUtils;PrintLayout;RootSite;SilUtils;SimpleRootSite;TePrintLayoutComponents;TeRegistrySettings;TeResources;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TePrintLayoutComponents\TePrintLayoutComponentsTests\TePrintLayoutComponentsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TePrintLayoutComponentsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeRegistrySettings" DependsOnTargets="BasicUtils;CoreImpl;FwCoreDlgs;FwResources;FwUtils;Reporting;SilUtils;TeResources">
+		<MSBuild Projects="C:\WW\Src\TE\TeRegistrySettings\TeRegistrySettings.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeResources" DependsOnTargets="FwResources">
+		<MSBuild Projects="C:\WW\Src\TE\TeResources\TeResources.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeScrInitializer" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;Framework;FwControls;FwCoreDlgs;FwPrintLayoutComponents;FwResources;FwUtils;Reporting;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeResources;TeStylesXml;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeScrInitializer\TeScrInitializer.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeScrInitializerTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwPrintLayoutComponents;FwUtils;RootSite;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeScrInitializer;TestUtils;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeScrInitializer\TeScrInitializerTests\TeScrInitializerTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeScrInitializerTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeStylesXml" DependsOnTargets="BasicUtils;COMInterfaces;FDO;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwResources;FwUtils;RootSite;ScrUtilsInterfaces;TeResources;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeStylesXml\TeStylesXml.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeStylesXmlTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwCoreDlgs;FwUtils;RootSite;ScrUtilsInterfaces;TestUtils;TeStylesXml;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeStylesXml\TeStylesXmlTests\TeStylesXmlTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeStylesXmlTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeViewConstructors" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FDO;FdoUi;Framework;FwControls;FwResources;PrintLayout;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TeRegistrySettings;TeResources;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeViewConstructors\TeViewConstructors.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeViewConstructorsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwUtils;RootSite;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SimpleRootSiteTests;TeRegistrySettings;TestUtils;TeViewConstructors;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TE\TeViewConstructors\TeViewConstructorsTests\TeViewConstructorsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeViewConstructorsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeDll" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;DiffView;FDO;FdoUi;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwPrintLayoutComponents;FwResources;FwUtils;OxesIO;PrintLayout;Reporting;RootSite;ScrControls;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeDialogs;TeEditing;TeEditorialChecks;TeImportExport;TeKeyTerms;TePrintLayout;TePrintLayoutComponents;TeRegistrySettings;TeResources;TeScrInitializer;TeStylesXml;TeViewConstructors;UIAdapterInterfaces;xCore;xCoreInterfaces;XMLUtils;NotesView">
+		<MSBuild Projects="C:\WW\Src\TeDll\TeDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TeDllTests" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;FDO;FDOTests;Framework;FwControls;FwCoreDlgControls;FwCoreDlgs;FwCoreDlgsTests;FwPrintLayoutComponents;FwResources;FwUtils;ProjectUnpacker;RootSite;RootSiteTests;ScriptureUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;SplitGridView;TeDll;TeEditing;TeEditingTests;TeEditorialChecks;TeImportExport;TeKeyTerms;TeRegistrySettings;TeResources;TestUtils;TeViewConstructors;UIAdapterInterfaces;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TeDll\TeDllTests\TeDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TeDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="TeExe" DependsOnTargets="FieldWorks;FwUtils;BasicUtils;COMInterfaces;Framework;FwControls;RootSite;TeDll;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\TeExe\TeExe.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TestUtils" DependsOnTargets="BasicUtils;BasicUtilsTests;COMInterfaces;COMInterfacesTests;CoreImpl;SilUtils">
+		<MSBuild Projects="C:\WW\Src\TestUtils\TestUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TestUtilsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;CoreImpl;TestUtils">
+		<MSBuild Projects="C:\WW\Src\TestUtils\TestUtilsTests\TestUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="TestUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="UnicodeCharEditor" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;FwControls;FwCoreDlgs;FwResources;FwUtils;Reporting;SilUtils;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\UnicodeCharEditor\UnicodeCharEditor.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="UnicodeCharEditorTests" DependsOnTargets="SilUtils;COMInterfaces;FwUtils;UnicodeCharEditor;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="UnicodeCharEditorTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="BasicUtils" DependsOnTargets="SilUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\BasicUtils\BasicUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="BasicUtilsTests" DependsOnTargets="BasicUtils;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\BasicUtils\BasicUtilsTests\BasicUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="BasicUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FixFwData" DependsOnTargets="FixFwDataDll;FwUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\FixFwData\FixFwData.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FixFwDataDll" DependsOnTargets="BasicUtils;FwControls;FwCoreDlgs;FwResources;FwUtils;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\FixFwDataDll\FixFwDataDll.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="FixFwDataDllTests" DependsOnTargets="BasicUtils;COMInterfacesTests;FwUtils;FDO;FDOTests;TestUtils;FixFwDataDll">
+		<MSBuild Projects="C:\WW\Src\Utilities\FixFwDataDll\FixFwDataDllTests\FixFwDataDllTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="FixFwDataDllTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="FixUp" DependsOnTargets="COMInterfaces;FDO">
+		<MSBuild Projects="C:\WW\Src\Utilities\FixUp\FixUp\FixUp.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MessageBoxExLib" DependsOnTargets="BasicUtils;SilUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\MessageBoxExLib\MessageBoxExLib.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="MessageBoxExLibTests" DependsOnTargets="BasicUtils;MessageBoxExLib">
+		<MSBuild Projects="C:\WW\Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\MessageBoxExLibTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="MessageBoxExLibTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="RemoteReport">
+		<MSBuild Projects="C:\WW\Src\Utilities\RemoteReport\RemoteReport.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="Reporting" DependsOnTargets="BasicUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\Reporting\Reporting.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="RunAddConverter" DependsOnTargets="BasicUtils;COMInterfaces;Framework;FwControls;FwCoreDlgs;RootSite;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\Utilities\RunAddConverter\RunAddConverter.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SfmStats" DependsOnTargets="Sfm2Xml">
+		<MSBuild Projects="C:\WW\Src\Utilities\SfmStats\SfmStats.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="Sfm2Xml">
+		<MSBuild Projects="C:\WW\Src\Utilities\SfmToXml\Sfm2Xml.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="ConvertSFM" DependsOnTargets="Sfm2Xml">
+		<MSBuild Projects="C:\WW\Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XSLTTester" DependsOnTargets="Sfm2Xml;XMLUtils;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\SfmToXml\XSLTTester\XSLTTester.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="TestManager" DependsOnTargets="FwUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\TestManager\TestManager.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XMLUtils" DependsOnTargets="BasicUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\XMLUtils\XMLUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XMLUtilsTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;TestUtils;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="XMLUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="VwGraphicsReplayer" DependsOnTargets="COMInterfaces;BasicUtils">
+		<MSBuild Projects="C:\WW\Src\views\lib\VwGraphicsReplayer\VwGraphicsReplayer.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="xCore" DependsOnTargets="BasicUtils;FwUtils;MessageBoxExLib;Reporting;SilUtils;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\XCore\xCore.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="CommandBar">
+		<MSBuild Projects="C:\WW\Src\XCore\ControlLibrary\CommandBarLibrary\CommandBar.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SidebarLibrary">
+		<MSBuild Projects="C:\WW\Src\XCore\ControlLibrary\SidebarLibrary\SidebarLibrary.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SilSidePane" DependsOnTargets="BasicUtils;COMInterfaces;CoreImpl;RootSite;SilUtils;SilUtils;xCore;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\XCore\SilSidePane\SilSidePane.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SilSidePaneTestApp" DependsOnTargets="SilSidePane">
+		<MSBuild Projects="C:\WW\Src\XCore\SilSidePane\SilSidePaneTestApp\SilSidePaneTestApp.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SilSidePaneTests" DependsOnTargets="SilSidePane">
+		<MSBuild Projects="C:\WW\Src\XCore\SilSidePane\SilSidePaneTests\SilSidePaneTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="SilSidePaneTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="UIAdaptersSilSidePane" DependsOnTargets="BasicUtils;SilSidePane;UIAdapterInterfaces;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\XCore\SilSidePaneAdapter\UIAdaptersSilSidePane.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XCoreAdapterSilSidePane" DependsOnTargets="BasicUtils;COMInterfaces;Reporting;SilSidePane;SilUtils;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\XCore\XCoreAdapterSilSidePane\XCoreAdapterSilSidePane.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="xCoreInterfaces" DependsOnTargets="SilUtils;BasicUtils;XMLUtils;Reporting">
+		<MSBuild Projects="C:\WW\Src\XCore\xCoreInterfaces\xCoreInterfaces.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="xCoreInterfacesTests" DependsOnTargets="COMInterfaces;COMInterfacesTests;SilUtils;BasicUtils;xCoreInterfaces;TestUtils">
+		<MSBuild Projects="C:\WW\Src\XCore\xCoreInterfaces\xCoreInterfacesTests\xCoreInterfacesTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="xCoreInterfacesTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="xCoreOpenSourceAdapter" DependsOnTargets="BasicUtils;CommandBar;SidebarLibrary;xCoreInterfaces;XMLUtils">
+		<MSBuild Projects="C:\WW\Src\XCore\xCoreOpenSourceAdapter\xCoreOpenSourceAdapter.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="XCoreSample" DependsOnTargets="BasicUtils;xCore;xCoreInterfaces">
+		<MSBuild Projects="C:\WW\Src\XCore\XCoreSample\XCoreSample.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="xCoreTests" DependsOnTargets="BasicUtils;COMInterfaces;COMInterfacesTests;FwUtils;TestUtils;xCore;xCoreInterfaces;XMLUtils;XMLUtilsTests">
+		<MSBuild Projects="C:\WW\Src\XCore\xCoreTests\xCoreTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="xCoreTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="xWorks" DependsOnTargets="COMInterfaces;DetailControls;FDO;FdoUi;Filters;Framework;FwControls;FwCoreDlgs;FwUtils;FxtDll;LexTextControls;MessageBoxExLib;Reporting;RootSite;SimpleRootSite;xCore;BasicUtils;CoreImpl;Widgets;FwResources;ScriptureUtils;FwCoreDlgControls;ScrUtilsInterfaces;SilUtils;xCoreInterfaces;XMLUtils;XMLViews">
+		<MSBuild Projects="C:\WW\Src\xWorks\xWorks.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="xWorksTests" DependsOnTargets="COMInterfaces;DetailControls;FDO;Framework;FwControls;FwCoreDlgs;FwUtilsTests;RootSite;BasicUtils;COMInterfacesTests;CoreImpl;FDOTests;Filters;FwUtils;ScrUtilsInterfaces;SilUtils;SimpleRootSite;TestManager;TestUtils;Widgets;xCore;xCoreInterfaces;XMLUtils;XMLViews;xWorks">
+		<MSBuild Projects="C:\WW\Src\xWorks\xWorksTests\xWorksTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="xWorksTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="SilUtils">
+		<MSBuild Projects="C:\WW\Lib\src\SilUtils\SilUtils.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="SilUtilsTests" DependsOnTargets="SilUtils">
+		<MSBuild Projects="C:\WW\Lib\src\SilUtils\SilUtilsTests\SilUtilsTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="SilUtilsTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Ethnologue">
+		<MSBuild Projects="C:\WW\Lib\src\Ethnologue\Ethnologue.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+	</Target>
+
+	<Target Name="EthnologueTests" DependsOnTargets="Ethnologue">
+		<MSBuild Projects="C:\WW\Lib\src\Ethnologue\EthnologueTests\EthnologueTests.csproj" Targets="$(msbuild-target)" Properties="$(msbuild-props)"/>
+		<RunNUnit Targets="EthnologueTests" Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="everything" DependsOnTargets="CacheLight;CacheLightTests;COMInterfaces;COMInterfacesTests;Design;DetailControls;DetailControlsTests;FwControls;FwControlsTests;ProgressBarTest;MenuExtender;MenuExtenderTests;ScrControls;ScrControlsTests;SplitGridView;SplitGridViewTests;Widgets;DemoWidgets;WidgetsTests;XMLViews;XMLViewsTests;CoreImpl;CoreImplTests;FieldWorks;FieldWorksTests;Filters;FiltersTests;Framework;FrameworkTests;FwPrintLayoutComponents;FwPrintLayoutComponentsTests;FwRemoteDatabaseConnectorService;FwUtils;FwUtilsTests;Keyboarding;KeyboardingTests;KeyboardSwitcher;KeyboardSwitcherTests;PrintLayout;PrintLayoutTests;RootSite;RootSiteTests;ScriptureUtils;ScriptureUtilsTests;ScrUtilsInterfaces;SimpleRootSite;SimpleRootSiteTests;UIAdapterInterfaces;ZipUtils;ZipUtilsTests;FDO;FDOTests;FDOBrowser;FdoUi;FdoUiTests;FwCoreDlgs;FwCoreDlgControls;FwCoreDlgControlsTests;FwCoreDlgsTests;FwResources;FxtDll;FxtDllTests;FxtExe;Discourse;DiscourseTests;FlexDePlugin;FlexDePluginTests;ITextDll;ITextDllTests;LexEdDll;LexTextControls;LexTextControlsTests;LexTextDll;LexTextDllTests;LexTextExe;MorphologyEditorDll;MGA;MGATests;MorphologyEditorDllTests;ParserCore;ParserCoreTests;PatrParserWrapper;PatrParserWrapperTests;XAmpleManagedWrapper;XAmpleManagedWrapperTests;ParserWatcher;ParserUI;ParserUITests;PhonEnvValidator;PhonEnvValidatorTests;LinuxSmokeTest;LinuxSmokeTestTests;ManagedLgIcuCollator;ManagedLgIcuCollatorTests;ManagedVwDrawRootBuffered;ManagedVwWindow;ManagedVwWindowTests;MigrateSqlDbs;P4Helper;ProjectUnpacker;SharpViews;SharpViewsTests;DiffView;DiffViewTests;NotesView;NotesViewTests;OxesIO;OxesIOTests;TeDialogs;TeDialogsTests;TeEditing;TeEditingTests;TeEditorialChecks;TeEditorialChecksTests;TeImportExport;TeImportExportTests;TeKeyTerms;TeKeyTermsTests;TePrintLayout;TePrintLayoutTests;TePrintLayoutComponents;TePrintLayoutComponentsTests;TeRegistrySettings;TeResources;TeScrInitializer;TeScrInitializerTests;TeStylesXml;TeStylesXmlTests;TeViewConstructors;TeViewConstructorsTests;TeDll;TeDllTests;TeExe;TestUtils;TestUtilsTests;UnicodeCharEditor;UnicodeCharEditorTests;BasicUtils;BasicUtilsTests;FixFwData;FixFwDataDll;FixFwDataDllTests;FixUp;MessageBoxExLib;MessageBoxExLibTests;RemoteReport;Reporting;RunAddConverter;SfmStats;Sfm2Xml;ConvertSFM;XSLTTester;TestManager;XMLUtils;XMLUtilsTests;VwGraphicsReplayer;xCore;CommandBar;SidebarLibrary;SilSidePane;SilSidePaneTestApp;SilSidePaneTests;UIAdaptersSilSidePane;XCoreAdapterSilSidePane;xCoreInterfaces;xCoreInterfacesTests;xCoreOpenSourceAdapter;XCoreSample;xCoreTests;xWorks;xWorksTests;SilUtils;SilUtilsTests;Ethnologue;EthnologueTests"/>
+
+</Project>
