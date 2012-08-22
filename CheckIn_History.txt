@@ -6053,3 +6053,4 @@ Andy Black, 20 Aug 2012.  Fix XLingPaper align word interlinear export.
 RandyR, 20 August 2012. Updated FLEx Bridge installer to 0.3.71.
 RandyR, 21 August 2012. Get rid of some bogus data in the two Sena projects.
 RandyR, 21 August 2012. Updated FLEx Bridge installer to 0.3.72.
+RickM, 22 August 2012. LT-13509 Identical entries homograph numbering inconsistency

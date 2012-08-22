@@ -62,6 +62,7 @@ namespace SIL.FieldWorks.FixData
 			m_rtLevelFixers.Add(new OriginalFixer());
 			m_rtLevelFixers.Add(new GrammaticalSenseFixer());
 			m_rtLevelFixers.Add(new SequenceFixer());
+			m_rtLevelFixers.Add(new HomographFixer());
 			using (XmlReader xrdr = XmlReader.Create(m_filename))
 			{
 				xrdr.MoveToContent();
