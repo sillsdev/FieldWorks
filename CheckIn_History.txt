@@ -6058,3 +6058,4 @@ JohnT, 22 Aug 2012. Brought SilUtilsTests project up to VS2010/.NET4, removed sp
 RickM, 23 Aug 2012 LT-13509 Identical entries homograph numbering inconsistency.  Revert using HomographFixer until tests are corrected.
 RickM, 23 Aug 2012 LT-13509 Identical entries homograph numbering inconsistency.  Test for null value so now tests pass.
 KenZ, 23 Aug 2012. Removed Extensions directory no longer being used.
+RickM, 23 Aug 2012. LT-13509 Identical entries homograph numbering inconsistency.  Added unit test for this.

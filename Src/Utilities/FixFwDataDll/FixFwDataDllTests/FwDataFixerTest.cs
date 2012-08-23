@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -16,6 +17,22 @@ namespace FixFwDataDllTests
 		private void LogErrors(string guid, string date, string message)
 		{
 			errors.Add(message);
+		}
+
+		private static XmlDocument GetResult(string filePath)
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(filePath);
+			Console.WriteLine(File.ReadAllText(filePath));
+			return doc;
+		}
+
+		internal XmlNodeList VerifyEntryExists(XmlDocument xmlDoc, string xPath)
+		{
+			XmlNodeList selectedEntries = xmlDoc.SelectNodes(xPath);
+			Assert.IsNotNull(selectedEntries);
+			Assert.AreEqual(1, selectedEntries.Count, String.Format("An entry with the following criteria should exist:{0}", xPath));
+			return selectedEntries;
 		}
 
 		private string basePath;
@@ -52,6 +69,10 @@ namespace FixFwDataDllTests
 			testPath = Path.Combine(basePath, "GenericDates");
 			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
 			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
+
+			testPath = Path.Combine(basePath, "HomographFixer");
+			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
+			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
 		}
 
 		[TestFixtureTearDown]
@@ -82,6 +103,10 @@ namespace FixFwDataDllTests
 			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
 
 			testPath = Path.Combine(basePath, "GenericDates");
+			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
+			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
+
+			testPath = Path.Combine(basePath, "HomographFixer");
 			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
 			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
 		}
@@ -311,6 +336,59 @@ namespace FixFwDataDllTests
 
 			AssertThatXmlIn.File(fileLoc).HasSpecifiedNumberOfMatchesForXpath("//rt[@class='RnGenericRec']/DateOfEvent", 3);
 			AssertThatXmlIn.File(fileLoc).HasAtLeastOneMatchForXpath("//rt[@class='RnGenericRec']/DateOfEvent[@val='0']");
+		}
+
+		/// <summary>
+		/// LT-13509 Identical entries homograph numbering inconsistency.
+		/// </summary>
+		[Test]
+		public void TestForHomographNumberInconsistency()
+		{
+			// Setup
+			var testPath = Path.Combine(basePath, "HomographFixer");
+			// LexEntries needing homograph number set to 1 or 2
+			const string lexEntry_dinding1Guid = "a39f2112-b82c-46ba-9f69-6b46e45efff4";
+			const string lexEntry_dinding2Guid = "b35e8d52-e74d-47b4-b300-82e8c45cdfb7";
+
+			Assert.DoesNotThrow(() =>
+			{
+				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
+										   LogErrors);
+
+				// SUT
+				data.FixErrorsAndSave();
+			}, "Exception running the data fixer on the sequence test data.");
+
+			// Verification
+			// check the LexEntries are there.
+			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding1Guid + "\"]", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding2Guid + "\"]", 1, false);
+
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']", 1, false);
+
+			var xmlDoc = GetResult(testFile);
+			var entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']");
+			XmlNode entry = entries[0];
+			var homographEl = entry.SelectSingleNode("HomographNumber");
+			Assert.IsNotNull(homographEl);
+			var homographAttribute = homographEl.Attributes[0];
+			Assert.IsTrue(homographAttribute.Name.ToString().Equals("val"));
+			var homographVal1 = homographAttribute.Value;
+
+			entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + lexEntry_dinding2Guid + "']");
+			entry = entries[0];
+			homographEl = entry.SelectSingleNode("HomographNumber");
+			Assert.IsNotNull(homographEl);
+			homographAttribute = homographEl.Attributes[0];
+			Assert.IsTrue(homographAttribute.Name.ToString().Equals("val"));
+
+			var homographVal2 = homographAttribute.Value;
+
+			Assert.That((homographVal1 == "1" && homographVal2 == "2") || (homographVal1 == "2" && homographVal2 == "1"),"The homograph numbers were both zero for these LexEntries and should now be 1 and 2");
 		}
 	}
 }
