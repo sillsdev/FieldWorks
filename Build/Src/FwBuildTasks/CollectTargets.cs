@@ -1,20 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
-namespace GenerateFwTargets
+namespace FwBuildTasks
 {
-	class GenerateTargets
+	public class GenerateFwTargets : Task
+	{
+		public override bool Execute()
+		{
+			var gen = new FwBuildTasks.CollectTargets();
+			gen.Generate();
+			return true;
+		}
+	}
+
+	/// <summary>
+	/// Collect projects from the FieldWorks repository tree, and generate a targets file
+	/// for MSBuild (Mono xbuild).
+	/// </summary>
+	public class CollectTargets
 	{
 		string m_fwroot;
 		Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
 		Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
 
-		public GenerateTargets(string root)
+		public CollectTargets()
 		{
-			m_fwroot = root;
+			// Get the parent directory of the running program.  We assume that
+			// this is the root of the FieldWorks repository tree.
+			var x = Assembly.GetExecutingAssembly().CodeBase;
+			string x1;
+			if (x.StartsWith("file:///"))
+				x1 = x.Substring(7);
+			else
+				x1 = x;
+			// Handle Windows style absolute paths.
+			Regex r = new Regex("^/[A-Z]:");
+			if (r.IsMatch(x1))
+				x1 = x1.Substring(1);
+			var fwrt = Path.GetDirectoryName(x1);
+			m_fwroot = Path.GetDirectoryName(fwrt);
 		}
 
 		/// <summary>
@@ -104,11 +136,11 @@ namespace GenerateFwTargets
 		private void WriteTargetFiles()
 		{
 			// Write all the targets and their dependencies.
-			using (var writer = new StreamWriter(Path.Combine(m_fwroot, "Build/Fieldworks.targets")))
+			using (var writer = new StreamWriter(Path.Combine(m_fwroot, "Build/FieldWorks.targets")))
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 				writer.WriteLine("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" ToolsVersion=\"4.0\">");
-				writer.WriteLine("\t<UsingTask TaskName=\"RunNUnit\" AssemblyFile=\"FwBuildTasks.dll\"/>");
+				writer.WriteLine("\t<UsingTask TaskName=\"NUnit\" AssemblyFile=\"FwBuildTasks.dll\"/>");
 				writer.WriteLine();
 				foreach (var project in m_mapProjFile.Keys)
 				{
@@ -128,14 +160,24 @@ namespace GenerateFwTargets
 					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					writer.WriteLine(">");
-					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\" Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\"/>",
-						m_mapProjFile[project]);
+					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
+					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\"/>");
 					if (project.EndsWith("Tests"))
-						writer.WriteLine("\t\t<RunNUnit Targets=\"{0}\" Condition=\"'$(action)'=='test'\"/>", project);
+					{
+						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
+						writer.WriteLine("\t\t       Assemblies=\"$(dir-outputBase)/{0}.dll\"", project);
+						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
+						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
+						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
+						writer.WriteLine("\t\t       ErrorOutputFile=\"$(dir-outputBase)/{0}.dll-nunit-errors.xml\"", project);
+						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
+						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
+						writer.WriteLine("\t\t       ContinueOnError=\"false\" />");
+					}
 					writer.WriteLine("\t</Target>");
 					writer.WriteLine();
 				}
-				writer.Write("\t<Target Name=\"everything\" DependsOnTargets=\"");
+				writer.Write("\t<Target Name=\"allCsharp\" DependsOnTargets=\"");
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
@@ -151,6 +193,7 @@ namespace GenerateFwTargets
 				writer.Flush();
 				writer.Close();
 			}
+			Console.WriteLine("Created {0}", Path.Combine(m_fwroot, "Build/FieldWorks.targets"));
 		}
 	}
 }

@@ -7,6 +7,7 @@
   <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>
@@ -15,6 +16,13 @@
   <!-- Add all projects below -->
 
   <Target Name="all" DependsOnTargets="mkall"/>
+
+  <!-- do nothing target that merely recreates the FieldWorks.targets file -->
+  <Target Name="refreshTargets" />
+
+  <Target Name="allCsharp">
+	<Message Text="Try building again, the FieldWorks.targets file should now exist."/>
+  </Target>
 
   <!-- ********************************************************************************** -->
   <!-- Add individual project targets below this point. -->
@@ -50,7 +58,7 @@
 -->
   </Target>
 
-  <Import Project="Fieldworks.targets"/>
+  <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
   <Import Project="Localize.targets"/>
 

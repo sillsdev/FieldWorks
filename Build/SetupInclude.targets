@@ -7,6 +7,9 @@
 	  <Output TaskParameter="Value" PropertyName="fwrt"/>
 	</ParentDirectory>
 
+	<!-- refresh the FieldWorks.targets file that gets loaded -->
+	<GenerateFwTargets/>
+
 	<CpuArchitecture>
 	  <Output TaskParameter="Value" PropertyName="arch"/>
 	</CpuArchitecture>
@@ -36,8 +39,6 @@
 	<CreateProperty Value="$(dir-outputBase)">
 	  <Output TaskParameter="Value" PropertyName="dir-buildOutputInterop"/>
 	</CreateProperty>
-
-	<Message Text="TESTING 1: dir-outputBase='$(dir-outputBase)'; action='$(action)'; test-build='$(test-build)'; fwrt='$(fwrt)'"/>
 
 	<PathCombine BasePath="$(dir-fwoutput)" SubPath="Lib">
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlib"/>
@@ -191,6 +192,16 @@
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
 
+	<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x86_64'">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>
 	<Exec Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -s $(dir-fwoutput) $(fwrt)/Output"/>
@@ -266,18 +277,30 @@
 	</Choose>
 
 	<Choose>
-	  <When Condition="'$(action)'=='test' Or '$(action)'=='buildtest' Or '$(action)'=='clean'">
-	<PropertyGroup>
-	  <test-build>true</test-build>
-	</PropertyGroup>
-	  </When>
-	  <Otherwise>
-	<PropertyGroup>
-	  <test-build>false</test-build>
-	</PropertyGroup>
-	  </Otherwise>
+		<When Condition="'$(action)'=='test' Or '$(action)'=='buildtest' Or '$(action)'=='clean'">
+			<PropertyGroup>
+				<test-build>true</test-build>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<test-build>false</test-build>
+			</PropertyGroup>
+		</Otherwise>
 	</Choose>
 
+	<Choose>
+		<When Condition="'$(OS)'=='Windows_NT'">
+			<PropertyGroup>
+				<useNUnit-x86>true</useNUnit-x86>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<useNUnit-x86>false</useNUnit-x86>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
   <PropertyGroup>
 	<nant-onfailure>endreportfailure</nant-onfailure>
 	<nant-onsuccess>endreportsuccess</nant-onsuccess>

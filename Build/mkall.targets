@@ -2,12 +2,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <!-- Make all of FieldWorks. -->
-  <Target Name="mkall" DependsOnTargets="initLinux">
+  <Target Name="mkall" DependsOnTargets="initLinux;allCsharp">
 	<Message Text="Finished mkall Target."/>
   </Target>
 
   <!-- call preparatory Linux targets -->
-  <Target Name="initLinux" Condition="'$(OS)' =='Unix'" DependsOnTargets="initFwRoot">
+  <Target Name="initLinux" Condition="'$(OS)' =='Unix'">
 	<Message Text="Finished initLinux Target."/>
   </Target>
 

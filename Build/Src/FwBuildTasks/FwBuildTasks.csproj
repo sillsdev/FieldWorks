@@ -36,23 +36,18 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\</OutputPath>
+	<OutputPath>..\..\..\Build</OutputPath>
 	<DefineConstants>DEBUG;</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<PlatformTarget>x86</PlatformTarget>
 	<Externalconsole>true</Externalconsole>
-	<CustomCommands>
-	  <CustomCommands>
-		<Command type="AfterBuild" command="cp ${TargetFile} ${ProjectDir}/../.." />
-	  </CustomCommands>
-	</CustomCommands>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<DebugType>none</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\</OutputPath>
+	<OutputPath>..\..\..\Build</OutputPath>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<PlatformTarget>x86</PlatformTarget>
@@ -66,10 +61,11 @@
 	<Reference Include="ICSharpCode.SharpZipLib" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Main.cs" />
 	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="UnzipTask.cs" />
-	<Compile Include="RunNUnitTask.cs" />
+	<Compile Include="NUnit.cs" />
+	<Compile Include="Misc.cs" />
+	<Compile Include="CollectTargets.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

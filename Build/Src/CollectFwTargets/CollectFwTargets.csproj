@@ -8,7 +8,7 @@
 	<ProjectGuid>{0E5507F1-DB81-4853-8513-00D697AAAE1C}</ProjectGuid>
 	<OutputType>Exe</OutputType>
 	<RootNamespace>GenerateFwTargets</RootNamespace>
-	<AssemblyName>GenerateFwTargets</AssemblyName>
+	<AssemblyName>CollectFwTargets</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
@@ -35,7 +35,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\</OutputPath>
+	<OutputPath>..\..\..\Build</OutputPath>
 	<DefineConstants>DEBUG;</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -46,7 +46,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 	<DebugType>none</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..</OutputPath>
+	<OutputPath>..\..\..\Build</OutputPath>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<PlatformTarget>x86</PlatformTarget>
@@ -57,7 +57,6 @@
 	<Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="GenerateTargets.cs" />
 	<Compile Include="Main.cs" />
 	<Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,4 +78,10 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+	<ProjectReference Include="..\FwBuildTasks\FwBuildTasks.csproj">
+	  <Project>{60C33D1A-AE12-4A67-BDFA-D2B3ED8C5FB7}</Project>
+	  <Name>FwBuildTasks</Name>
+	</ProjectReference>
+  </ItemGroup>
 </Project>
