@@ -13,7 +13,7 @@
 	<!-- -->
 	<target name="allTe"
 		description="Translation Editor"
-		depends="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,RBRExtensions,
+		depends="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,
 			TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
 	<!-- -->
 	<!-- ********************************************************************************** -->

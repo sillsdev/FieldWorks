@@ -9,7 +9,7 @@
 	<!-- Sample apps are: xCoreSample,ANAAnalysis,ParserWatcher,FxtExe.
 	The other targets are real apps. -->
 	<target name="WordWorks" description="Build all of the WordWorks projects."
-		depends="LexTextExe,xCoreSample,ParserWatcher,FxtExe,RBRExtensions"/>
+		depends="LexTextExe,xCoreSample,ParserWatcher,FxtExe"/>
 	<!-- -->
 	<target name="remakeww" description="Completely rebuilds WordWorks.">
 		<property name="remakeSfx" value="ww"/>
@@ -198,6 +198,5 @@
 	<include buildfile="${fwroot}/Bld/LexText.build.xml"/>
 	<include buildfile="${fwroot}/Bld/WordWorks_xCore.build.xml"/>
 	<include buildfile="${fwroot}/Bld/WordWorks_FXT.build.xml"/>
-	<include buildfile="${fwroot}/Bld/RBRPersonal.build.xml"/>
 	<!-- -->
 </project>
