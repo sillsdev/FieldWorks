@@ -77,6 +77,8 @@ namespace SIL.FieldWorks.FixData
 				if (rtMorphType == null)
 					continue;
 				var rtObjsur = rtMorphType.Element("objsur");
+				if (rtObjsur == null)
+					continue;
 				var guid = rtObjsur.Attribute("guid").Value;
 
 				var key = rtFormText + guid;
