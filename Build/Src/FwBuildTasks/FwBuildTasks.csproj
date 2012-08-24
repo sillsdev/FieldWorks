@@ -31,6 +31,10 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -55,6 +59,9 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="IDLImporter">
+	  <HintPath>..\..\..\Bin\IDLImporter.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="Microsoft.Build.Framework" />
 	<Reference Include="Microsoft.Build.Utilities.v3.5" />
@@ -64,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AssemblyInfo.cs" />
+	<Compile Include="IdlImp.cs" />
 	<Compile Include="UnzipTask.cs" />
 	<Compile Include="NUnit.cs" />
 	<Compile Include="Misc.cs" />

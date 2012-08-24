@@ -66,7 +66,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
@@ -86,7 +86,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	</Reference>
@@ -102,7 +102,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=7.2.5.25133, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="SilUtils, Version=7.3.0.15611, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
@@ -157,6 +160,9 @@
 	<None Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</None>
+	<None Include="BuildInclude.targets">
+	  <SubType>Designer</SubType>
+	</None>
 	<None Include="buildinclude.xml" />
 	<Compile Include="ManagedPictureFactory.cs" />
   </ItemGroup>
@@ -198,6 +204,7 @@
 	</EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
 	</PreBuildEvent>
