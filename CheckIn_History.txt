@@ -6061,3 +6061,4 @@ KenZ, 23 Aug 2012. Removed Extensions directory no longer being used.
 RickM, 23 Aug 2012. LT-13509 Identical entries homograph numbering inconsistency.  Added unit test for this.
 JohnT, 23 Aug 2012. Convert SilSidePaneTests buildInclude.xml (for nant) to BuildInclude.targets (for MSBuild).
 JohnT, 24 Aug 2012. Patch up a couple of things to possibly fix running SilSidePantTests in release build.
+RickM, 24 2012. Fixed FwBuildTasks.csproj so that the reference to ICSharpCode.SharpZipLib actually points to where we have it.
