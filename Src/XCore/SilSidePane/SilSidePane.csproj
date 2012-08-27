@@ -51,7 +51,7 @@
 	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -61,7 +61,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+</PropertyGroup>
   <ItemGroup>
 	<Compile Include="Banner.cs">
 	  <SubType>Component</SubType>
@@ -98,10 +98,19 @@
 	  <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
 	<EmbeddedResource Include="SilSidePane.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
 	</EmbeddedResource>
+	<None Include="Properties\Settings.settings">
+	  <Generator>SettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+	</None>
 	<None Include="Resources\Arrow_Down.ico" />
 	<None Include="Resources\Arrow_Up.ico" />
 	<None Include="Resources\DefaultIcon.ico" />
@@ -112,7 +121,17 @@
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <DependentUpon>Resources.resx</DependentUpon>
 	</Compile>
+	<Compile Include="Properties\Resources1.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
 	<Compile Include="Properties\Settings.Designer.cs">
+	  <DependentUpon>Settings.settings</DependentUpon>
+	</Compile>
+	<Compile Include="Properties\Settings1.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
 	  <DependentUpon>Settings.settings</DependentUpon>
 	</Compile>
 	<Compile Include="SidePane.cs">
@@ -153,6 +172,9 @@
 	<Reference Include="RootSite, Version=6.9.0.26956, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=6.9.5.21586, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="SilUtils, Version=6.9.5.21586, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
