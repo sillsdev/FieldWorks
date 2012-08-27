@@ -6066,3 +6066,4 @@ JohnT, 24 Aug 2012. Implemented for COMInterfaces a BuildInclude.targets to do i
 	what buildInclude.xml does for Nant. Created IdlImp custom build task. Note: IdlImporter.dll requires IdlImporter.xml to
 	be in the same folder. It is part of the implementation of FwBuildTasks, though also in bin.
 GordonM, 27 Aug 2012. Part 1 of LT-13190 so New LangProj dialog complains of non-Ascii characters.
+KenZ, 27 Aug 2012. Fixed broken SilSidePaneTests.
