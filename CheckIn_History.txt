@@ -6065,3 +6065,4 @@ RickM, 24 2012. Fixed FwBuildTasks.csproj so that the reference to ICSharpCode.S
 JohnT, 24 Aug 2012. Implemented for COMInterfaces a BuildInclude.targets to do inside VS and elsewhere MSBuild/XBuild are used
 	what buildInclude.xml does for Nant. Created IdlImp custom build task. Note: IdlImporter.dll requires IdlImporter.xml to
 	be in the same folder. It is part of the implementation of FwBuildTasks, though also in bin.
+GordonM, 27 Aug 2012. Part 1 of LT-13190 so New LangProj dialog complains of non-Ascii characters.
