@@ -6071,3 +6071,4 @@ KenZ, 28 Aug 2012. Removed 209,000 lines being written to console taking 5 minut
 RickM, 28 Aug 2012 Remove Project ProgressBarTest.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
 RickM, 28 Aug 2012 Remove Project MenuExtender.csproj and MenuExtenderTests.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
 GordonM, 28 Aug 2012. Part 2 (rest) of LT-13190 so Send/Receive complains of non-Ascii characters.
+RickM, 28 Aug 2012 Remove Project DemoWidgets.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
