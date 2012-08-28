@@ -6075,3 +6075,4 @@ RickM, 28 Aug 2012 Remove Project DemoWidgets.csproj since it is never used. Put
 RickM, 28 Aug 2012 changed project file so it builds with MSBuild.  missing app.config file.
 GordonM, 28 Aug 2012. Close the logic hole that allowed a duplicate project name.
 RickM, 28 Aug 2012 changed MSBuild project file. Reference to nunit.framework now points to Output/Debug
+RickM, 28 Aug 2012 FDOBrowser.csproj   remove app.config reference; fix reference to FDO

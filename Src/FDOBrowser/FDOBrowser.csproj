@@ -76,7 +76,10 @@
 	  <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="FDO, Version=7.0.4.26378, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FDO, Version=7.3.0.20675, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
 	<Reference Include="FwControls, Version=7.0.1.24430, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
@@ -163,7 +166,6 @@
 	</Compile>
 	<Compile Include="Program.cs" />
 	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
-	<None Include="app.config" />
 	<None Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="ClassPropertySelector.resx">
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>
