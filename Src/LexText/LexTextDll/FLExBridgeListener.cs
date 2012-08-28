@@ -164,6 +164,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 					return true;
 				// Rename Project
 				projectFolder = RevisedProjectFolder(Cache.ProjectId.ProjectFolder, revisedProjName);
+				if (CheckForExistingFileName(projectFolder, revisedProjName))
+					return true;
+
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				if (app.FwManager.RenameProject(revisedProjName, app))
 				{
@@ -217,6 +220,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			return MessageBox.Show(string.Format(LexTextStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexTextStrings.ksWarning,
 					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
+		private bool CheckForExistingFileName(string projectFolder, string revisedFileName)
+		{
+			if(File.Exists(Path.Combine(projectFolder, revisedFileName + ".fwdata")))
+			{
+				MessageBox.Show(
+					LexTextStrings.ksExistingProjectName, LexTextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return true;
+			}
+			return false;
 		}
 
 		private string RevisedProjectFolder(string oldProjectFolder, string revisedProjName)

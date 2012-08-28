@@ -248,4 +248,7 @@ Click 'Cancel' to cancel Send/Receive.</value>
 	<value>Warning</value>
 	<comment>used for dialog caption when project name has non-Ascii characters</comment>
   </data>
+  <data name="ksExistingProjectName" xml:space="preserve">
+	<value>That project already exists. You'll need to choose a different name in Project Properties.</value>
+  </data>
 </root>

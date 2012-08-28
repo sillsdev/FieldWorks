@@ -242,6 +242,15 @@ namespace SIL.FieldWorks.XWorks.LexText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to That project already exists. You&apos;ll need to choose a different name in Project Properties..
+		/// </summary>
+		public static string ksExistingProjectName {
+			get {
+				return ResourceManager.GetString("ksExistingProjectName", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Information.
 		/// </summary>
 		public static string ksInformation {
