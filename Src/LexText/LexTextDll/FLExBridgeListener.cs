@@ -151,13 +151,38 @@ namespace SIL.FieldWorks.XWorks.LexText
 				}
 				return true;
 			}
+			ProjectLockingService.UnlockCurrentProject(Cache);
+			string fullProjectFileName;
+			string projectFolder;
+			// Enhance GJM: When Hg is upgraded to work with non-Ascii filenames, this section can be removed.
+			if (Unicode.CheckForNonAsciiCharacters(Cache.ProjectId.Name))
+			{
+				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
+				if (revisedProjName == string.Empty)
+					return true; // The whole pre-existing project name is non-Ascii characters!
+				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
+					return true;
+				// Rename Project
+				projectFolder = RevisedProjectFolder(Cache.ProjectId.ProjectFolder, revisedProjName);
+				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				if (app.FwManager.RenameProject(revisedProjName, app))
+				{
+					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
+					// Try a more indirect approach...
+					fullProjectFileName = Path.Combine(projectFolder, revisedProjName + ".fwdata");
+					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
+					// to hopefully come back here after resetting things
+				}
+				return true;
+			}
 			//Unlock project
 			string url;
-			ProjectLockingService.UnlockCurrentProject(Cache);
-			var projectFolder = Cache.ProjectId.ProjectFolder;
+			//ProjectLockingService.UnlockCurrentProject(Cache);
+			projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
+			fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, Environment.UserName,
 								FLExBridgeHelper.SendReceive, out dataChanged, out dummy);
@@ -173,14 +198,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				fixer.FixErrorsAndSave();
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
-				var manager = app.FwManager;
-				var appArgs = new FwAppArgs(fullProjectFileName);
-				var newAppWindow = (FwXWindow)manager.ReopenProject(Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-				if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
-					WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
-				//clear out any sort cache files (or whatever else might mess us up) and then refresh
-				newAppWindow.ClearInvalidatedStoredData();
-				newAppWindow.RefreshDisplay();
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 
 				if (conflictOccurred)
 				{
@@ -193,6 +211,31 @@ namespace SIL.FieldWorks.XWorks.LexText
 				ProjectLockingService.LockCurrentProject(Cache);
 			}
 			return true;
+		}
+
+		private DialogResult DisplayNonAsciiWarning(string revisedProjName)
+		{
+			return MessageBox.Show(string.Format(LexTextStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexTextStrings.ksWarning,
+					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
+		private string RevisedProjectFolder(string oldProjectFolder, string revisedProjName)
+		{
+			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
+		}
+
+		private FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
+		{
+			var manager = app.FwManager;
+			var appArgs = new FwAppArgs(fullProjectFileName);
+			var newAppWindow =
+				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+			if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
+				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
+			//clear out any sort cache files (or whatever else might mess us up) and then refresh
+			newAppWindow.ClearInvalidatedStoredData();
+			newAppWindow.RefreshDisplay();
+			return newAppWindow;
 		}
 
 		protected virtual bool IsDb4oProject

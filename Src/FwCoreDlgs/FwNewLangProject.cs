@@ -550,13 +550,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private string RemoveNonAsciiCharsFromProjectName()
 		{
-			var inputString = ProjectName;
-			return Regex.Replace(inputString, @"[^\u0000-\u007F]", "", RegexOptions.CultureInvariant);
+			return Unicode.RemoveNonAsciiCharsFromString(ProjectName);
 		}
 
 		private bool CheckForNonAsciiProjectName()
 		{
-			return Regex.IsMatch(ProjectName, @"[^\u0000-\u007F]");
+			return Unicode.CheckForNonAsciiCharacters(ProjectName);
 		}
 
 		/// ------------------------------------------------------------------------------------
