@@ -42,7 +42,7 @@
 	<ConsolePause>false</ConsolePause>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>none</DebugType>
 	<Optimize>false</Optimize>
@@ -52,8 +52,12 @@
 	<ConsolePause>false</ConsolePause>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
+	<Reference Include="nunit.framework, Version=2.6.0.12124, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\nunit.framework.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="KeyboardSwitcher, Version=6.1.1.20900, Culture=neutral, PublicKeyToken=null">
 	  <SpecificVersion>False</SpecificVersion>
@@ -61,10 +65,6 @@
 	</Reference>
 	<Reference Include="ibusdotnet">
 	  <HintPath>..\..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Bin\NUnit\bin\framework\nunit.framework.dll</HintPath>
 	</Reference>
 	<Reference Include="System.Core" />
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
