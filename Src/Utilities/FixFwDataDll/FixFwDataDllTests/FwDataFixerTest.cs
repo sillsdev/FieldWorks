@@ -23,7 +23,8 @@ namespace FixFwDataDllTests
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(filePath);
-			Console.WriteLine(File.ReadAllText(filePath));
+			//Don't write this to the console. It's currently 209,000 lines that takes about 5 minutes to write.
+			//Console.WriteLine(File.ReadAllText(filePath));
 			return doc;
 		}
 
