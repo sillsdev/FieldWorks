@@ -75,15 +75,18 @@
 		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
 	</Target>
 
-	<Target Name="BeforeBuild">
-		<!-- generate C# files used in FDO -->
+	<Target Name="GenerateModel"  Inputs="MasterFieldWorksModel.xml" Outputs="@(GeneratedFiles)">
 		<FdoGenerate XmlFile="MasterFieldWorksModel.xml"
 					OutputDir="."
 					OutputFile="DomainImpl/FDOGenerated.cs"
 					TemplateFile="FDOGenerate/main.vm.cs"/>
-		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="@(ServiceLocatorSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="@(LinuxFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
+	</Target>
+
+	<Target Name="BeforeBuild" DependsOnTargets="GenerateModel">
+		<!-- generate C# files used in FDO -->
+		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(ServiceLocatorSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(LinuxFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 	</Target>
 </Project>

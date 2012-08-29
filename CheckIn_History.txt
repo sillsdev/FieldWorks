@@ -6079,3 +6079,4 @@ RickM, 28 Aug 2012 FDOBrowser.csproj   remove app.config reference; fix referenc
 JohnT, 29 Aug 2012. Implement MSBuild process for FDO, replacing buildInclude.xml and parts of the GenerateFilesFromModel nant task.
 	Implement FdoGenerate as a new MsBuild custom task.
 RickM, 28 Aug 2012 FxtExe had old call to FdoCache.Create() so would not compile. This was corrected along with some .csproj corrections.
+JohnT, 29 Aug 2012. Tweak FDO MSBuild process to work incrementally and not fail if Nant left read-only files around.
