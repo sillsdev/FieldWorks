@@ -240,6 +240,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="Application\ApplicationServices\AppStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
@@ -570,14 +573,13 @@
 	<Compile Include="FdoExceptions.cs" />
 	<Compile Include="DomainImpl\fdoStrings.cs" />
 	<Compile Include="DomainImpl\fdoVectors.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
 	<Compile Include="Strings.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>Strings.resx</DependentUpon>
 	</Compile>
 	<Compile Include="UserProfiles.cs" />
-	<None Include="AssemblyInfo.cs" />
+	<Compile Include="AssemblyInfo.cs" />
 	<None Include="buildinclude.xml" />
 	<EmbeddedResource Include="Application\ApplicationServices\AppStrings.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
