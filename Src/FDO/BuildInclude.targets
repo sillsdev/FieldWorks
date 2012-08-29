@@ -81,10 +81,9 @@
 					OutputDir="."
 					OutputFile="DomainImpl/FDOGenerated.cs"
 					TemplateFile="FDOGenerate/main.vm.cs"/>
-		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)"/>
-		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)"/>
-		<Copy SourceFiles="@(ServiceLocatorSource)" DestinationFolder="$(OutDir)"/>
-		<Copy SourceFiles="@(LinuxFilesSource)" DestinationFolder="$(OutDir)"/>
-
+		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="@(ServiceLocatorSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="@(LinuxFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
 	</Target>
 </Project>
