@@ -2,8 +2,12 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml;
-
+using FDOBrowser;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
@@ -12,16 +16,15 @@ namespace SIL.FieldWorks.Common.FXT
 	/// </summary>
 	public class main
 	{
-
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
 		static void Main(string[] arguments)
 		{
-			/// <summary>
-			/// any filters that we want, for example, to only output items which satisfy their constraint.
-			/// </summary>
+			// <summary>
+			// any filters that we want, for example, to only output items which satisfy their constraint.
+			// </summary>
 			IFilterStrategy[] filters=null;
 
 			if (arguments.Length < 3)
@@ -47,15 +50,38 @@ namespace SIL.FieldWorks.Common.FXT
 			try
 			{
 				Console.WriteLine("Initializing cache...");
-				Dictionary<string, string> cacheOptions = new Dictionary<string, string>();
-				cacheOptions.Add("db", arguments[0]);
-				cache = FdoCache.Create(cacheOptions);
+				var bepType = GetBEPTypeFromFileExtension(fxtPath);
+				var isMemoryBEP = bepType == FDOBackendProviderType.kMemoryOnly;
+				var threadHelper = new ThreadHelper();
+				var consoleProj = new ConsoleProgress();
+
+				if (isMemoryBEP)
+					cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", threadHelper);
+				else
+				{
+					using (var progressDlg = new ProgressDialogWithTask(consoleProj))
+					{
+						cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fxtPath), "en", progressDlg);
+					}
+				}
 			}
 			catch (Exception error)
 			{
 				Console.WriteLine(error.Message);
 				return;
 			}
+			//try
+			//{
+			//    Console.WriteLine("Initializing cache...");
+			//    Dictionary<string, string> cacheOptions = new Dictionary<string, string>();
+			//    cacheOptions.Add("db", arguments[0]);
+			//    cache = FdoCache.Create(cacheOptions);
+			//}
+			//catch (Exception error)
+			//{
+			//    Console.WriteLine(error.Message);
+			//    return;
+			//}
 
 			Console.WriteLine("Beginning output...");
 			DateTime dtstart = DateTime.Now;
@@ -73,7 +99,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			try
 			{
-				d.Go(cache.LangProject as CmObject, fxtPath, File.CreateText(outputPath), filters);
+				d.Go(cache.LangProject as ICmObject, fxtPath, File.CreateText(outputPath), filters);
 
 				//clean up, add the <?xml tag, etc. Won't be necessary if/when we make the dumper use an xmlwriter instead of a textwriter
 				//was introducing changes such as single quote to double quote				XmlDocument doc=new XmlDocument();
@@ -101,6 +127,25 @@ namespace SIL.FieldWorks.Common.FXT
 				cache.Dispose();
 
 			System.Diagnostics.Debug.WriteLine("Finished: " + tsTimeSpan.TotalSeconds.ToString() + " Seconds");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the BEP type from the specified file path.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static FDOBackendProviderType GetBEPTypeFromFileExtension(string pathname)
+		{
+			switch (Path.GetExtension(pathname).ToLower())
+			{
+				default:
+					return FDOBackendProviderType.kMemoryOnly;
+				case FwFileExtensions.ksFwDataXmlFileExtension:
+					return FDOBackendProviderType.kXML;
+				case FwFileExtensions.ksFwDataDb4oFileExtension:
+					return FDOBackendProviderType.kDb4oClientServer;
+
+			}
 		}
 	}
 }

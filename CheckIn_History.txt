@@ -6078,3 +6078,4 @@ RickM, 28 Aug 2012 changed MSBuild project file. Reference to nunit.framework no
 RickM, 28 Aug 2012 FDOBrowser.csproj   remove app.config reference; fix reference to FDO
 JohnT, 29 Aug 2012. Implement MSBuild process for FDO, replacing buildInclude.xml and parts of the GenerateFilesFromModel nant task.
 	Implement FdoGenerate as a new MsBuild custom task.
+RickM, 28 Aug 2012 FxtExe had old call to FdoCache.Create() so would not compile. This was corrected along with some .csproj corrections.

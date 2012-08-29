@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.3.0.14420, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -113,6 +113,10 @@
 	<Reference Include="FDO">
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=7.3.0.19222, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -157,10 +161,6 @@
 	<Compile Include="XUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\..\Common\FwUtils\FwUtils.csproj">
-	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
-	  <Name>FwUtils</Name>
-	</ProjectReference>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
