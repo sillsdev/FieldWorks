@@ -422,6 +422,9 @@
 	<Compile Include="DomainServices\WritingSystemServices.cs" />
 	<Compile Include="ExtraPropChangedAction.cs" />
 	<Compile Include="FdoFactoryInterfaceAdditions.cs" />
+	<None Include="BuildInclude.targets">
+	  <SubType>Designer</SubType>
+	</None>
 	<None Include="FDOGenerate\FDOBackendProvider.vm.cs" />
 	<None Include="FDOGenerate\datamembers_atomic.vm.cs" />
 	<None Include="FDOGenerate\datamembers_rel.vm.cs" />
@@ -671,6 +674,7 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
 	</PreBuildEvent>

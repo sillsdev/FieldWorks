@@ -6076,3 +6076,5 @@ RickM, 28 Aug 2012 changed project file so it builds with MSBuild.  missing app.
 GordonM, 28 Aug 2012. Close the logic hole that allowed a duplicate project name.
 RickM, 28 Aug 2012 changed MSBuild project file. Reference to nunit.framework now points to Output/Debug
 RickM, 28 Aug 2012 FDOBrowser.csproj   remove app.config reference; fix reference to FDO
+JohnT, 29 Aug 2012. Implement MSBuild process for FDO, replacing buildInclude.xml and parts of the GenerateFilesFromModel nant task.
+	Implement FdoGenerate as a new MsBuild custom task.

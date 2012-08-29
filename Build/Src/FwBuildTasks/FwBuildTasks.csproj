@@ -62,15 +62,30 @@
 	<Reference Include="IDLImporter">
 	  <HintPath>..\..\..\Bin\IDLImporter.dll</HintPath>
 	</Reference>
+	<Reference Include="NVelocity">
+	  <HintPath>..\..\..\Bin\nant\bin\extensions\common\neutral\FwTasks\NVelocity.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="Microsoft.Build.Framework" />
 	<Reference Include="Microsoft.Build.Utilities.v3.5" />
 	<Reference Include="ICSharpCode.SharpZipLib">
 	  <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
 	</Reference>
+	<Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AssemblyInfo.cs" />
+	<Compile Include="FdoGenerate\Base.cs" />
+	<Compile Include="FdoGenerate\CellarModule.cs" />
+	<Compile Include="FdoGenerate\Class.cs" />
+	<Compile Include="FdoGenerate\DummyClass.cs" />
+	<Compile Include="FdoGenerate\FdoGenerateImpl.cs" />
+	<Compile Include="FdoGenerate\FdoGenerate.cs" />
+	<Compile Include="FdoGenerate\IClass.cs" />
+	<Compile Include="FdoGenerate\Model.cs" />
+	<Compile Include="FdoGenerate\Property.cs" />
+	<Compile Include="FdoGenerate\RelationalProperty.cs" />
+	<Compile Include="FdoGenerate\TypeInfo.cs" />
 	<Compile Include="IdlImp.cs" />
 	<Compile Include="UnzipTask.cs" />
 	<Compile Include="NUnit.cs" />
@@ -94,5 +109,6 @@
 	  <Install>true</Install>
 	</BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
