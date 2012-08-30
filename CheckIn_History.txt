@@ -6082,3 +6082,4 @@ RickM, 28 Aug 2012 FxtExe had old call to FdoCache.Create() so would not compile
 JohnT, 29 Aug 2012. Tweak FDO MSBuild process to work incrementally and not fail if Nant left read-only files around.
 RickM, 29 Aug 2012 FlexDePluginTest would not compile because SilUtils reference needed to be fixed.
 GordonM, 30 Aug 2012. Fix FwUtils for MSBuild.
+	later: Make xCoreTests work w/MSBuild.

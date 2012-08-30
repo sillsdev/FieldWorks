@@ -74,7 +74,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -98,7 +98,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	  <Name>Accessibility</Name>
@@ -186,6 +186,9 @@
 	<Compile Include="XWindowTestsBase.cs">
 	  <SubType>Code</SubType>
 	</Compile>
+	<Content Include="BuildInclude.targets">
+	  <SubType>Designer</SubType>
+	</Content>
 	<None Include="InventoryBaseTestFiles\Base1Layouts.xml" />
 	<None Include="InventoryBaseTestFiles\Base2Layouts.xml" />
 	<None Include="InventoryLaterTestFiles\Override1Layouts.xml" />
@@ -216,6 +219,7 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
 	</PreBuildEvent>
