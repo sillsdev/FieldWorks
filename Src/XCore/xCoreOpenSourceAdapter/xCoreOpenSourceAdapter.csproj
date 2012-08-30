@@ -139,16 +139,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="CommandBarAdaptor.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="ContextHelper.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="PaneBar.cs">

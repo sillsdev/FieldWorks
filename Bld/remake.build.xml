@@ -149,7 +149,6 @@
 			<fileset basedir="${fwroot}/Src/">
 				<include name="**/obj"/>
 				<include name="**/bin"/>
-				<include name="**/GeneratedAssemblyInfo.cs"/>
 				<include name="**/Collection.cpp"/>
 				<include name="**/asserts.log"/>
 				<include name="Common/*.*"/>

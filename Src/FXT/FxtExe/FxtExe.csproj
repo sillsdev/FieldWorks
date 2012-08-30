@@ -129,10 +129,12 @@
   </ItemGroup>
   <ItemGroup>
 	<Content Include="App.ico" />
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	</Compile>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="main.cs">
 	  <SubType>Code</SubType>
 	</Compile>

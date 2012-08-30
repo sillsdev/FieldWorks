@@ -95,7 +95,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -151,9 +151,9 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="CaseSensitiveListBoxTests.cs" />
 	<Compile Include="DummyDerivedForm.cs">
 	  <SubType>Form</SubType>
@@ -165,9 +165,6 @@
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="FwSplitContainerTests.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="PersistenceTest.cs">
 	  <SubType>Code</SubType>
 	</Compile>

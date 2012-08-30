@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
 
-  <Target Name="Setup">
+	<!-- Generate CommonAssemblyInfo.cs from CommonAssemblyInfoTemplate.cs-->
+	<ItemGroup>
+		<VersionTemplate Include="../src/CommonAssemblyInfoTemplate.cs"/>
+		<VersionSymbols Include="../src/MasterVersionInfo.txt"/>
+		<VersionOutput Include="../src/CommonAssemblyInfo.cs"/>
+		<VersionInputs Include="@(VersionSymbols)"/>
+		<VersionInputs Include="@(VersionTemplate)"/>
+	</ItemGroup>
+	<Target Name="GenerateVersionFiles" Inputs="@(VersionInputs)" Outputs="@(VersionOutput)">
+		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)"/>
+		<!-- Enhance JohnT: eventually should also generate buildinc.h for the C++ world-->
+	</Target>
+
+  <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
 	<!-- set fwrt to the proper value before we do anything else. -->
 	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
 	  <Output TaskParameter="Value" PropertyName="fwrt"/>

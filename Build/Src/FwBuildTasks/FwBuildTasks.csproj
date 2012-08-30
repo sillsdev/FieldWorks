@@ -88,6 +88,7 @@
 	<Compile Include="FdoGenerate\TypeInfo.cs" />
 	<Compile Include="IdlImp.cs" />
 	<Compile Include="Make.cs" />
+	<Compile Include="Substitute.cs" />
 	<Compile Include="UnzipTask.cs" />
 	<Compile Include="NUnit.cs" />
 	<Compile Include="Misc.cs" />

@@ -75,14 +75,16 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="DropDownContainer.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="LabelButton.cs">
 	  <SubType>Component</SubType>
 	</Compile>
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>

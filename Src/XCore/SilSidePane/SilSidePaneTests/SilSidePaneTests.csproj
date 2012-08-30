@@ -103,9 +103,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="SidePaneTests.cs" />
 	<Compile Include="TabTests.cs" />
 	<Compile Include="ItemTests.cs" />

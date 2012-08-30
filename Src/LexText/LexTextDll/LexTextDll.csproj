@@ -194,6 +194,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AreaListener.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -226,8 +229,7 @@
 	<Compile Include="TransductionSample.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="AssemblyInfo.cs" />
 	<EmbeddedResource Include="Db4oSendReceiveDialog.resx">
 	  <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
 	</EmbeddedResource>

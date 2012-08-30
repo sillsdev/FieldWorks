@@ -176,8 +176,16 @@
 		<property name="dir.srcProj" value="${fwroot}/Src/Utilities/Reporting"/>
 		<call target="vsconvert-convert"/>
 	</target>
-	<!-- -->
-	<target name="BasicUtils" description="Build BasicUtils project." depends="SilUtils">
+	<target name="GenerateVersionFiles" description="Create CommonAssemblyInfo.cs for C# projects">
+		<if test="${not file::up-to-date(path::combine(fwroot, 'Src/CommonAssemblyInfoTemplate.cs'), path::combine(fwroot, 'Src/CommonAssemblyInfo.cs'))}">
+			<versionex output="${fwroot}/Src/CommonAssemblyInfo.cs">
+				<sources>
+					<include name="${fwroot}/Src/CommonAssemblyInfoTemplate.cs"/>
+				</sources>
+			</versionex>
+		</if>
+	</target>
+	<target name="BasicUtils" description="Build BasicUtils project." depends="SilUtils,GenerateVersionFiles">
 		<call target="BasicUtils-nodep" cascade="false"/>
 	</target>
 	<target name="BasicUtils-nodep">

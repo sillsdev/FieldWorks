@@ -229,9 +229,6 @@
 	<Compile Include="FilterBookDialogTests.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="ImportedBooksTests.cs" />
 	<Compile Include="ScripturePropertiesTests.cs">
 	</Compile>
@@ -239,9 +236,9 @@
 	  <SubType>Form</SubType>
 	</Compile>
 	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

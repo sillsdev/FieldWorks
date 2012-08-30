@@ -61,7 +61,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -95,10 +95,9 @@
   <ItemGroup>
 	<Compile Include="FwCOMTestBase.cs" />
 	<Compile Include="MarshalExTests.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
 	<Compile Include="VwGraphicsTests.cs" />
 	<None Include="App.config" />
-	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="ArrayPtrTests.cs" />
 	<Compile Include="IcuWrappersTests.cs" />
 	<Compile Include="ManagedPictureFactoryTests.cs" />

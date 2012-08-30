@@ -260,9 +260,12 @@
 	<EmbeddedResource Include="WordsSfmImportWizard.resx">
 	  <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
 	</EmbeddedResource>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="BIRDInterlinearImporter.cs" />
 	<Compile Include="ChooseAnalysisHander.cs">
 	  <SubType>Code</SubType>
@@ -307,9 +310,6 @@
 	</Compile>
 	<None Include="ClassDiagram1.cd" />
 	<None Include="FreeTransEditMonitor.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="ImageHolder.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>

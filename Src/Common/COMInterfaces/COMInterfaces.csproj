@@ -115,6 +115,9 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="ArrayPtr.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -128,9 +131,6 @@
 	<Compile Include="INormalizationCharacterFactory.cs" />
 	<Compile Include="IBidiCharacterFactory.cs" />
 	<Compile Include="FwKernel.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="IcuWrappers.cs">
@@ -157,9 +157,9 @@
 	<Compile Include="Views.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<None Include="BuildInclude.targets">
 	  <SubType>Designer</SubType>
 	</None>

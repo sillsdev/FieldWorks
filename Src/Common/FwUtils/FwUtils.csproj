@@ -166,7 +166,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs" />
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="CaseFunctions.cs" />
 	<Compile Include="ConsoleProgress.cs" />
 	<Compile Include="FLExBridgeHelper.cs" />
@@ -186,9 +189,6 @@
 	</Compile>
 	<Compile Include="FwVersionInfoProvider.cs" />
 	<Compile Include="GenDate.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="InstallationException.cs" />
 	<Compile Include="IProgress.cs" />
 	<Compile Include="IProjectSpecificSettingsKeyProvider.cs" />

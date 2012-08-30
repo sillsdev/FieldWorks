@@ -6083,3 +6083,6 @@ JohnT, 29 Aug 2012. Tweak FDO MSBuild process to work incrementally and not fail
 RickM, 29 Aug 2012 FlexDePluginTest would not compile because SilUtils reference needed to be fixed.
 GordonM, 30 Aug 2012. Fix FwUtils for MSBuild.
 	later: Make xCoreTests work w/MSBuild.
+JohnT, 30 Aug 2012. Removed all use of GeneratedAssemblyInfo.cs in core (still a few in localize code).
+	New Src/CommonAssemblyInfo should be added as a LINK to all projects. Simplified AssemblyInfo.cs files
+	are now Compiled.

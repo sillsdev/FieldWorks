@@ -263,8 +263,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="DeleteEntriesSensesWithoutInterlinearization.cs" >
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs" />
+	<Compile Include="DeleteEntriesSensesWithoutInterlinearization.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="GhostLexRefSlice.cs">
@@ -287,9 +290,6 @@
 	</Compile>
 	<Compile Include="FindExampleSentenceDlg.Designer.cs">
 	  <DependentUpon>FindExampleSentenceDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="HomographResetter.cs">
 	  <SubType>Code</SubType>

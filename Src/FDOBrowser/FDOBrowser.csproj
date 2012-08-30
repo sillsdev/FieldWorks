@@ -135,6 +135,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="BrowserProjectId.cs" />
 	<Compile Include="CustomFields.cs" />
 	<Compile Include="Db4oToXml.cs" />
@@ -165,8 +168,7 @@
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Program.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="ClassPropertySelector.resx">
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>
 	  <SubType>Designer</SubType>

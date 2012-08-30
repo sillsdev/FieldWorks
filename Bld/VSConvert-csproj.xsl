@@ -134,7 +134,7 @@
 					<include name="${{filename.srcProject}}"/>
 					<include name="${{fwroot}}/Bld/VSConvert-csproj.xsl"/>
 					<include name="${{dir.nantbuild}}/${{project_name}}.build"/>
-					<include name="GeneratedAssemblyInfo.cs"/>
+					<include name="${{fwroot}}/Src/CommonAssemblyInfoTemplate.cs"/>
 					<patternset refid="Compile"/>
 					<patternset refid="Resource"/>
 					<patternset refid="Reference"/>

@@ -122,13 +122,15 @@
   <ItemGroup>
 	<Content Include="App.ico" />
 	<None Include="app.config" />
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="Form1.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs" />
 	<EmbeddedResource Include="Form1.resx">
 	  <DependentUpon>Form1.cs</DependentUpon>
 	  <SubType>Designer</SubType>
