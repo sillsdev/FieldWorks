@@ -203,10 +203,21 @@
 	</CreateProperty>
 
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -s $(dir-fwoutput) $(fwrt)/Output"/>
 
-	<Message Text="msbuild-target='$(msbuild-target)'; config='$(config)'; test-build='$(test-build)'"/>
+	<!-- extra directory (and symbolic links) needed for Linux -->
+	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
+	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
+	</MakeDir>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/Debug"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/debug"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
+
+	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
 
   </Target>
 
@@ -216,8 +227,8 @@
 	<debug Condition="'$(debug)'==''">true</debug>
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<config Condition="'$(config)'==''">Debug</config>
-	<!-- action is one of the following: build buildtest test clean register unregister -->
-	<action Condition="'$(action)'==''">buildtest</action>
+	<!-- action is one of the following: build test clean register unregister -->
+	<action Condition="'$(action)'==''">build</action>
 	<!-- target is one of the targets in the build system. -->
 	<target Condition="'$(target)'==''">all</target>
 	<build-type Condition="'$(build-type)'==''">d</build-type> <!-- for C++ .bat files: b (bounds), d (for debug), r (for release), p (profile) -->
@@ -254,17 +265,17 @@
   </PropertyGroup>
 
 	<Choose>
-		<When Condition=" '$(action)'=='build' ">
+		<When Condition="'$(action)'=='build'">
 			<PropertyGroup>
 		  <msbuild-target>Build</msbuild-target>
 			</PropertyGroup>
 		</When>
-		<When Condition=" '$(action)'=='clean' ">
+		<When Condition="'$(action)'=='clean'">
 			<PropertyGroup>
 		  <msbuild-target>Clean</msbuild-target>
 			</PropertyGroup>
 		</When>
-		<When Condition=" '$(action)'=='rebuild' ">
+		<When Condition="'$(action)'=='rebuild'">
 			<PropertyGroup>
 		  <msbuild-target>Rebuild</msbuild-target>
 			</PropertyGroup>
@@ -272,19 +283,6 @@
 		<Otherwise>
 			<PropertyGroup>
 		  <msbuild-target>Build</msbuild-target>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
-
-	<Choose>
-		<When Condition="'$(action)'=='test' Or '$(action)'=='buildtest' Or '$(action)'=='clean'">
-			<PropertyGroup>
-				<test-build>true</test-build>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<test-build>false</test-build>
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
@@ -301,6 +299,7 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
+
   <PropertyGroup>
 	<nant-onfailure>endreportfailure</nant-onfailure>
 	<nant-onsuccess>endreportsuccess</nant-onsuccess>

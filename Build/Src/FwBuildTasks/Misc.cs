@@ -93,4 +93,22 @@ namespace FwBuildTasks
 		[Output]
 		public string Value { get; set; }
 	}
+
+	/// <summary>
+	/// Set an environment variable for the current process.
+	/// </summary>
+	public class SetEnvVar : Task
+	{
+		[Required]
+		public string Variable { get; set; }
+
+		[Required]
+		public string Value { get; set; }
+
+		public override bool Execute()
+		{
+			Environment.SetEnvironmentVariable(Variable, Value);
+			return true;
+		}
+	}
 }

@@ -46,7 +46,9 @@ namespace FwBuildTasks
 			if (r.IsMatch(x1))
 				x1 = x1.Substring(1);
 			var fwrt = Path.GetDirectoryName(x1);
-			m_fwroot = Path.GetDirectoryName(fwrt);
+			while (!Directory.Exists(Path.Combine(fwrt, "Build")) || !Directory.Exists(Path.Combine(fwrt, "Src")))
+				fwrt = Path.GetDirectoryName(fwrt);
+			m_fwroot = fwrt;
 		}
 
 		/// <summary>
@@ -57,11 +59,13 @@ namespace FwBuildTasks
 		{
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
-			// These two projects from Lib appear to have been built through nant regularly.
+			// These projects from Lib appear to have been built through nant regularly.
 			var infoSilUtil = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SilUtils"));
 			CollectInfo(infoSilUtil);
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
+			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			CollectInfo(infoScr);
 			WriteTargetFiles();
 		}
 
@@ -135,18 +139,18 @@ namespace FwBuildTasks
 		/// </summary>
 		private void WriteTargetFiles()
 		{
-			// Write all the targets and their dependencies.
+			// Write all the C# targets and their dependencies.
+
 			using (var writer = new StreamWriter(Path.Combine(m_fwroot, "Build/FieldWorks.targets")))
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 				writer.WriteLine("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" ToolsVersion=\"4.0\">");
-				writer.WriteLine("\t<UsingTask TaskName=\"NUnit\" AssemblyFile=\"FwBuildTasks.dll\"/>");
 				writer.WriteLine();
 				foreach (var project in m_mapProjFile.Keys)
 				{
 					writer.Write("\t<Target Name=\"{0}\"", project);
-					StringBuilder bldr = new StringBuilder();
-					List<string> dependencies = m_mapProjDepends[project];
+					var bldr = new StringBuilder();
+					var dependencies = m_mapProjDepends[project];
 					foreach (var dep in dependencies)
 					{
 						if (m_mapProjFile.ContainsKey(dep))
@@ -157,11 +161,18 @@ namespace FwBuildTasks
 								bldr.AppendFormat(";{0}", dep);
 						}
 					}
+					if (project == "COMInterfaces")
+					{
+						if (bldr.Length == 0)
+							bldr.Append("allCpp");
+						else
+							bldr.Append(";allCpp");
+					}
 					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\"/>");
+					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"3.5\"/>");
 					if (project.EndsWith("Tests"))
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
@@ -181,6 +192,20 @@ namespace FwBuildTasks
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
+					if (first)
+						writer.Write(project);
+					else
+						writer.Write(";{0}", project);
+					first = false;
+				}
+				writer.WriteLine("\"/>");
+				writer.WriteLine();
+				writer.Write("\t<Target Name=\"allCsharpNoTests\" DependsOnTargets=\"");
+				first = true;
+				foreach (var project in m_mapProjFile.Keys)
+				{
+					if (project.EndsWith("Tests"))
+						continue;
 					if (first)
 						writer.Write(project);
 					else

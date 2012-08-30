@@ -6,9 +6,139 @@
 	<Message Text="Finished mkall Target."/>
   </Target>
 
-  <!-- call preparatory Linux targets -->
-  <Target Name="initLinux" Condition="'$(OS)' =='Unix'">
-	<Message Text="Finished initLinux Target."/>
+
+  <!--Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;GrEngine;FwKernel;testFwKernel;Language;testLanguage;Views;testViews"/-->
+  <!-- add targets as they actually build -->
+  <Target Name="allCpp" DependsOnTargets=""/>
+
+  <Target Name="DebugProcs">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/DebugProcs/DebugProcs.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/DebugProcs"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/DebugProcs/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/DebugProcs"/>
+  </Target>
+
+  <Target Name="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Generic/GenericLib.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Generic"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Generic/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Generic"/>
+  </Target>
+
+  <Target Name="testGenericLib" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Generic/Test/testGenericLib.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Generic/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Generic/Test/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Generic/Test"/>
+  </Target>
+
+  <Target Name="GrEngine" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Graphite/GrEngine/GrEngine.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Graphite/GrEngine"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Graphite/GrEngine/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Graphite/GrEngine"/>
+  </Target>
+
+  <Target Name="FwKernel" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Kernel/FwKernel.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Kernel"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Kernel/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Kernel"/>
+  </Target>
+
+  <Target Name="testFwKernel" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Kernel/Test/testFwKernel.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Kernel/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Kernel/Test/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Kernel/Test"/>
+  </Target>
+
+  <Target Name="Language" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Language/Language.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Language"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Language/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Language"/>
+  </Target>
+
+  <Target Name="testLanguage" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Language/Test/testLanguage.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Language/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/Language/Test/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/Language/Test"/>
+  </Target>
+
+  <Target Name="Views" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/views/Views.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/views"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/views/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/views"/>
+  </Target>
+
+  <Target Name="testViews" DependsOnTargets="GenericLib">
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/views/Test/testViews.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/views/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="/home/steve/gp/Calgary/FW70/Src/views/Test/Makefile"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="/home/steve/gp/Calgary/FW70/Src/views/Test"/>
   </Target>
 
 </Project>

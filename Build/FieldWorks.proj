@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="SetAssemblyVersion" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>
@@ -58,6 +60,7 @@
 -->
   </Target>
 
+  <Import Project="Linux.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
   <Import Project="Localize.targets"/>
