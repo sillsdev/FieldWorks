@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <!-- call preparatory Linux targets -->
+  <Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate">
+	<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt" DestinationFolder="$(dir-outputBase)"/>
+  </Target>
+
+  <Target Name="unitpp" Condition="'$(OS)'=='Unix'" DependsOnTargets="setenvLinux">
+	<Exec Command="/bin/echo later PATH=$PATH"/>
+	<Exec Command="/bin/echo later LD_LIBRARY_PATH=$LD_LIBRARY_PATH"/>
+	<Exec Command="/bin/echo later MONO_PATH=$MONO_PATH"/>
+	<Exec Command="/bin/echo later MONO_REGISTRY_PATH=$MONO_REGISTRY_PATH"/>
+	<Exec Command="/bin/echo later COMPONENTS_MAP_PATH=$COMPONENTS_MAP_PATH"/>
+	<Exec Command="/bin/echo later BUILD_TYPE=$BUILD_TYPE"/>
+	<Exec Command="/bin/echo later BUILD_CONFIG=$BUILD_CONFIG"/>
+	<Make Makefile="$(fwrt)/Makefile" Target="Unit++-package" Configuration="$(config)" BuildRoot="$(fwrt)" WorkingDirectory="$(fwrt)"/>
+  </Target>
+
+  <Target Name="setenvLinux" Condition="'$(OS)'=='Unix'">
+	<Exec Command="/bin/echo original PATH=$PATH"/>
+	<Exec Command="/bin/echo original LD_LIBRARY_PATH=$LD_LIBRARY_PATH"/>
+	<Exec Command="/bin/echo original MONO_PATH=$MONO_PATH"/>
+	<Exec Command="/bin/echo original MONO_REGISTRY_PATH=$MONO_REGISTRY_PATH"/>
+	<Exec Command="/bin/echo original COMPONENTS_MAP_PATH=$COMPONENTS_MAP_PATH"/>
+	<Exec Command="/bin/echo original BUILD_TYPE=$BUILD_TYPE"/>
+	<Exec Command="/bin/echo original BUILD_CONFIG=$BUILD_CONFIG"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(fwrt)/Lib/src/icu/source/build$(arch)/bin:$(PATH)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(icu_lib);$(fwrt)/Lib/src/icu/source/build$(arch)/bin;$(PATH)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs;$(com_dir)/build$(arch)/lib;$(icu_lib);$(dir-outputBase);$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles);$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry)"/>
+	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)"/>
+	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
+	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config)" />
+  </Target>
+
+  <Target Name="tlbs-copy">
+	<MakeDir Directories="$(dir-fwoutputCommon)"/>
+	<CreateItem Include="$(fwrt)/Lib/linux/Common/**/*.*">
+	  <Output TaskParameter="Include" ItemName="LinuxCommonFiles"/>
+	</CreateItem>
+	<Copy SourceFiles="@(LinuxCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)"/>
+  </Target>
+
+  <!-- Copy (or delete copied) TECKit files -->
+  <Target Name="teckit">
+	<CreateProperty Value="x86" Condition="'$(arch)'!='x86_64'">
+	  <Output TaskParameter="Value" PropertyName="teckit-ext"/>
+	</CreateProperty>
+	<CreateProperty Value="x86_64" Condition="'$(arch)'=='x86_64'">
+	  <Output TaskParameter="Value" PropertyName="teckit-ext"/>
+	</CreateProperty>
+	<CreateItem Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so">
+	  <Output TaskParameter="Include" ItemName="CopyTECkitFiles"/>
+	</CreateItem>
+	<Copy SourceFiles="@(TECkitFiles)" DestinationFolder="$(dir-outputBase)" Condition="'$(action)'!='clean'"/>
+	<CreateItem Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so">
+	  <Output TaskParameter="Include" ItemName="DeleteTECkitFiles"/>
+	</CreateItem>
+	<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
+  </Target>
+
+  <Target Name="iculibs" DependsOnTarget="setenvLinux"> <!-- Condition="!Exists('$(icu_lib)')">-->
+	<Message Text="Building iculibs"/>
+	<!-- unzip icu file -->
+	<!-- NOTE: we can't use the Unzip task since we have to adjust the line endings,
+	 especially for Makefiles and shell scripts (option -a). -->
+	<Exec Command="unzip -qq -a -u Icu40src.zip -d .." WorkingDirectory="$(fwrt)/Lib/src/icu"/>
+	<!-- build icu -->
+	<Message Text="Starting build of icu"/>
+	<CreateProperty Value='--prefix=%24(cd ../.. &amp;&amp; pwd)/install$(arch)'>
+	  <Output TaskParameter="Value" PropertyName="prefix"/>
+	</CreateProperty>
+	<Exec Command="sh -c 'cd source &amp;&amp; mkdir -p build$(arch) &amp;&amp; cd build$(arch) &amp;&amp; ../configure $(prefix) &amp;&amp; make &amp;&amp; make install'" WorkingDirectory="$(fwrt)/Lib/src/icu"/>
+  </Target>
+  <Target Name="linuxLibs" DependsOnTargets="iculibs;setenvLinux">
+	<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)"/>
+  </Target>
+
+  <!--
+	  On Linux we can't generate TLBs, so we do that on Windows and check them in.
+	  But this means that whenever the *.idh files change we have to regenerate these
+	  files. This task checks that they are up-to-date and fails the build early on
+	  if they are outdated. We have to use unix line endings so that we get the same
+	  checksum on both Windows and Linux.
+  -->
+  <Target Name="checkTLBsUpToDate">
+	<Message Text="TODO: checkTLBsUpToDate"/>
+  </Target>
+
+</Project>
