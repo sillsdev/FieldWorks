@@ -404,11 +404,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					int ws = mdc.GetFieldWs(flid);
 					switch (ws)
 					{

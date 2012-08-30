@@ -18,17 +18,13 @@ MultiString=14
 // Warning! Do NOT use kcptUnicode for language data (either vernacular or analysis).
 // It is NOT parallel to kcptMultiUnicode; that has a WS specified for each alternative,
 // but kcptUnicode has NO WS information. Support for kcptUnicode being used as strings is
-// spotty but should not be counted on. Use kcptString for short language strings and
-// kcptBigString for long ones. There is NO good way to represent a monolingual string
+// spotty but should not be counted on. Use kcptString for short language strings.
+// There is NO good way to represent a monolingual string
 // that is forced to have only one writing system along its length; if we need that, let's
 // add it, but please don't abuse kcptUnicode. (JohnT)
 
 Unicode=15
 MultiUnicode=16
-BigString=17
-MultiBigString=18
-BigUnicode=19
-MultiBigUnicode=20  /* not currently implemented in Flex */
 
 MinObj=23
 OwningAtom=23

@@ -39,14 +39,6 @@ namespace SIL.CoreImpl
 		/// <summary/>
 		MultiUnicode = 16,
 		/// <summary/>
-		BigString = 17,
-		/// <summary/>
-		MultiBigString = 18,
-		/// <summary/>
-		BigUnicode = 19,
-		/// <summary/>
-		MultiBigUnicode = 20,
-		/// <summary/>
 		MinObj = 23,
 		/// <summary/>
 		OwningAtom = 23,

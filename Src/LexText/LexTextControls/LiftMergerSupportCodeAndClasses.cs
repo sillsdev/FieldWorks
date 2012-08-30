@@ -1456,12 +1456,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case CellarPropertyType.String:
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigString:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 					if (wsSelector == 0)
 						wsSelector = WritingSystemServices.kwsAnalVerns;		// we need a WsSelector value!
 					clidDst = -1;
@@ -1519,22 +1515,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool CheckForCompatibleTypes(CellarPropertyType type, FieldDescription fd)
 		{
 			if (fd.Type == type)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiString && type == CellarPropertyType.MultiBigString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigString && type == CellarPropertyType.MultiString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiUnicode && type == CellarPropertyType.MultiBigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigUnicode && type == CellarPropertyType.MultiUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.String && type == CellarPropertyType.BigString)
-				return true;
-			if (fd.Type == CellarPropertyType.BigString && type == CellarPropertyType.String)
-				return true;
-			if (fd.Type == CellarPropertyType.Unicode && type == CellarPropertyType.BigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.BigUnicode && type == CellarPropertyType.Unicode)
 				return true;
 			if (fd.Type == CellarPropertyType.Binary && type == CellarPropertyType.Image)
 				return true;

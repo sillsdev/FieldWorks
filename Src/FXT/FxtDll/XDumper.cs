@@ -703,17 +703,13 @@ namespace SIL.FieldWorks.Common.FXT
 			switch ((CellarPropertyType)m_mdc.GetFieldType(flid))
 			{
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 					return currentObject.Cache.DomainDataByFlid.get_UnicodeProp(hvo, flid);
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					return currentObject.Cache.DomainDataByFlid.get_StringProp(hvo, flid).Text;
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					return currentObject.Cache.DomainDataByFlid.get_MultiStringAlt(hvo, flid,
 						GetSingleWritingSystemDescriptor(node)).Text;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					return currentObject.Cache.DomainDataByFlid.get_MultiStringAlt(hvo, flid,
 						GetSingleWritingSystemDescriptor(node)).Text;
 				default:
@@ -930,8 +926,6 @@ namespace SIL.FieldWorks.Common.FXT
 						cpt != CellarPropertyType.Unicode &&
 						cpt != CellarPropertyType.String) ||
 						(sType == "mlstring" &&
-						cpt != CellarPropertyType.MultiBigString &&
-						cpt != CellarPropertyType.MultiBigUnicode &&
 						cpt != CellarPropertyType.MultiString &&
 						cpt != CellarPropertyType.MultiUnicode))
 					{
@@ -1003,10 +997,6 @@ namespace SIL.FieldWorks.Common.FXT
 					case 14: sType = "MultiString"; break;
 					case 15: sType = "Unicode"; break;
 					case 16: sType = "MultiUnicode"; break;
-					case 17: sType = "BigString"; break;
-					case 18: sType = "MultiBigString"; break;
-					case 19: sType = "BigUnicode"; break;
-					case 20: sType = "MultiBigUnicode"; break;
 					case 23: sType = "OwningAtom"; break;
 					case 24: sType = "ReferenceAtom"; break;
 					case 25: sType = "OwningCollection"; break;
@@ -1263,9 +1253,7 @@ namespace SIL.FieldWorks.Common.FXT
 			switch (cpt)
 			{
 			case CellarPropertyType.MultiUnicode:
-			case CellarPropertyType.MultiBigUnicode:
 			case CellarPropertyType.MultiString:
-			case CellarPropertyType.MultiBigString:
 				break;
 			default:
 				return; // not a valid type.
@@ -1288,11 +1276,9 @@ namespace SIL.FieldWorks.Common.FXT
 			switch (cpt)
 			{
 			case CellarPropertyType.Unicode:
-			case CellarPropertyType.BigUnicode:
 				s = m_cache.DomainDataByFlid.get_UnicodeProp(currentObject.Hvo, flid);
 				break;
 			case CellarPropertyType.String:
-			case CellarPropertyType.BigString:
 				ITsString tss = m_cache.DomainDataByFlid.get_StringProp(currentObject.Hvo, flid);
 				if (tss != null)
 					s = tss.Text;
@@ -3117,12 +3103,9 @@ namespace SIL.FieldWorks.Common.FXT
 					switch (type)
 					{
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							return m_cache.DomainDataByFlid.get_StringProp(target.Hvo, flid);
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 							return m_cache.DomainDataByFlid.get_MultiStringProp(target.Hvo, flid);
 					}
 				}

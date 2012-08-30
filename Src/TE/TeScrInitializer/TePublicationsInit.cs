@@ -267,8 +267,7 @@ namespace SIL.FieldWorks.TE
 				m_scr.PublicationsOC.Add(pub);
 
 				pub.Name = pubName;
-				// This seems wrong. We don't know why the Publication.Description is a BigString,
-				// but for now we'll build a TsString to populate it.
+				// We'll build a TsString to populate it.
 				ITsStrFactory strFactory = TsStrFactoryClass.Create();
 				pub.Description =
 					strFactory.MakeString(GetString(attributes, "Description"),
@@ -436,8 +435,7 @@ namespace SIL.FieldWorks.TE
 				string description = GetString(attributes, "Description");
 				if (description != null)
 				{
-					// This seems wrong. We don't know why the PubHFSet.Description
-					// is a BigString, but for now we'll build a TsString to populate it.
+					// We'll build a TsString to populate it.
 					hfSet.Description =
 						m_scr.Cache.TsStrFactory.MakeString(description, m_defUserWs);
 				}

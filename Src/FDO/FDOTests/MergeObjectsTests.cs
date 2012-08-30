@@ -329,9 +329,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the MergeObject method for String and BigString values.
+		/// Tests the MergeObject method for Stringvalues.
 		/// </summary>
-		/// <remarks>CellarPropertyType.String and CellarPropertyType.BigString.
+		/// <remarks>CellarPropertyType.String.
 		/// (JohnT) We should use real TsStrings here, with non-uniform values,
 		/// to check all information is preserved.</remarks>
 		/// ------------------------------------------------------------------------------------
@@ -421,9 +421,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the MergeObject method for MultiString and MultiBigString values.
+		/// Tests the MergeObject method for MultiString values.
 		/// </summary>
-		/// <remarks>CellarPropertyType.MultiString and CellarPropertyType.MultiBigString.
+		/// <remarks>CellarPropertyType.MultiString.
 		/// JohnT: should test with non-uniform property strings.</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -535,9 +535,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the MergeObject method for Unicode and BigUnicode values.
+		/// Tests the MergeObject method for Unicode values.
 		/// </summary>
-		/// <remarks>CellarPropertyType.Unicode and CellarPropertyType.BigUnicode</remarks>
+		/// <remarks>CellarPropertyType.Unicode</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void MergeUnicode()
@@ -692,9 +692,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the MergeObject method for MultiUnicode and MultiBigUnicode values.
+		/// Tests the MergeObject method for MultiUnicode values.
 		/// </summary>
-		/// <remarks>CellarPropertyType.MultiUnicode and CellarPropertyType.MultiBigUnicode</remarks>
+		/// <remarks>CellarPropertyType.MultiUnicode</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void MergeMultiUnicode()

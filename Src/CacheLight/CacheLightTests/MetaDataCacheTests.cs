@@ -524,20 +524,11 @@ namespace SIL.FieldWorks.CacheLightTests
 			Assert.AreEqual(CellarPropertyType.Binary, (CellarPropertyType)m_metaDataCache.GetFieldType(15002),
 				"Wrong field data type for Binary data.");
 
-			Assert.AreEqual(CellarPropertyType.BigString, (CellarPropertyType)m_metaDataCache.GetFieldType(15068),
-				"Wrong field data type for BigString data.");
-
 			Assert.AreEqual(CellarPropertyType.String, (CellarPropertyType)m_metaDataCache.GetFieldType(97008),
 				"Wrong field data type for String data.");
 
-			Assert.AreEqual(CellarPropertyType.MultiBigString, (CellarPropertyType)m_metaDataCache.GetFieldType(97020),
-				"Wrong field data type for MultiBigString data.");
-
 			Assert.AreEqual(CellarPropertyType.MultiString, (CellarPropertyType)m_metaDataCache.GetFieldType(97021),
 				"Wrong field data type for MultiString data.");
-
-			Assert.AreEqual(CellarPropertyType.BigUnicode, (CellarPropertyType)m_metaDataCache.GetFieldType(97031),
-				"Wrong field data type for BigUnicode data.");
 
 			Assert.AreEqual(CellarPropertyType.Unicode, (CellarPropertyType)m_metaDataCache.GetFieldType(1001),
 				"Wrong field data type for Unicode data.");

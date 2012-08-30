@@ -3465,9 +3465,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			CellarPropertyType cpt = (CellarPropertyType)mdc.GetFieldType(tag);
 			// These four types can store embedded formatting.
 			return cpt == CellarPropertyType.String ||
-				cpt == CellarPropertyType.BigString ||
-				cpt == CellarPropertyType.MultiString ||
-				cpt == CellarPropertyType.MultiBigString;
+				cpt == CellarPropertyType.MultiString;
 		}
 
 		/// <summary>

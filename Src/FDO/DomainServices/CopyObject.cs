@@ -504,23 +504,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				// String Properties follow
 
-				case (int)CellarPropertyType.BigString: // Fall through
 				case (int)CellarPropertyType.String:
 					// Copy string value
 					// Review: Please check these next three!
 					m_sda.SetString(hvoNew, thisFlid, m_sda.get_StringProp(hvoSrc, thisFlid));
 					break;
-				case (int)CellarPropertyType.BigUnicode: // Fall through
 				case (int)CellarPropertyType.Unicode:
 					// Copy Unicode string
 					m_sda.set_UnicodeProp(hvoNew, thisFlid, m_sda.get_UnicodeProp(hvoSrc, thisFlid));
 					break;
 				case (int)CellarPropertyType.MultiString: // Fall through
-				case (int)CellarPropertyType.MultiBigString:
 				case (int)CellarPropertyType.MultiUnicode:
-				case (int)CellarPropertyType.MultiBigUnicode:
-					// Copy MultiBigUnicode value
-					// Review: Docs say this method is 'not widely implemented'! Is that a problem here?
 					ITsMultiString sMulti = m_sda.get_MultiStringProp(hvoSrc, thisFlid);
 					for (int i = 0; i < sMulti.StringCount; i++)
 					{

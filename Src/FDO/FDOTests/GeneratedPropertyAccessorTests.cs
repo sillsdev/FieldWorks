@@ -37,9 +37,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.GeneratedModelTests
 	/// CellarPropertyType.GenDate:
 	/// CellarPropertyType.Binary:
 	/// CellarPropertyType.Unicode: (string)
-	/// CellarPropertyType.BigUnicode: (string)
 	/// CellarPropertyType.String: (ITsString)
-	/// CellarPropertyType.BigString: (ITsString)
 	/// CellarPropertyType.Numeric: (Not used in model.)
 	/// CellarPropertyType.Float: (Not used in model.)
 	/// CellarPropertyType.Image: (Not used in model.)
@@ -177,8 +175,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.GeneratedModelTests
 		}
 
 		/// <summary>
-		/// Test the get/set accessors for normal unicode properties
-		/// (kcptUnicode or kcptBigUnicode).
+		/// Test the get/set accessors for normal unicode properties (kcptUnicode).
 		/// </summary>
 		[Test]
 		public void kcptUnicodeTests()
@@ -193,8 +190,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.GeneratedModelTests
 		}
 
 		/// <summary>
-		/// Test the get/set accessors for normal ITsString properties
-		/// (kcptString or kcptBigString).
+		/// Test the get/set accessors for normal ITsString properties (kcptString).
 		/// </summary>
 		[Test]
 		public void kcptStringTests()

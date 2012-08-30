@@ -35,7 +35,7 @@
 
 	<class num="22" mod="Lex" id="LexEtymology" abbr="ety" abstract="false" base="CmObject" depth="1" >
 		<props>
-			<basic num="1" id="Comment" sig="MultiBigString" />
+			<basic num="1" id="Comment" sig="MultiString" />
 		</props>
 	</class>
 

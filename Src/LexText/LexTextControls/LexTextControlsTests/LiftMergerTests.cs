@@ -1476,8 +1476,6 @@ namespace LexTextControlsTests
 						}
 						Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
 					break;
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
 					break;
 				case CellarPropertyType.ReferenceAtomic:

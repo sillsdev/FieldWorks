@@ -698,14 +698,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				sbHelp.Append("</Usage>");
 			}
 			sbHelp.Append("<Settings>Set the Language Descriptor to the language of this field.</Settings>");
-			if (fd.Type == CellarPropertyType.MultiUnicode || fd.Type == CellarPropertyType.MultiBigUnicode)
+			if (fd.Type == CellarPropertyType.MultiUnicode)
 			{
 				sbHelp.Append("<Mapping>No</Mapping>");
 				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
 				sbHelp.Append("<List>No</List>");
 				sbHelp.Append("<Multilingual>No</Multilingual>");
 			}
-			else if (fd.Type == CellarPropertyType.String || fd.Type == CellarPropertyType.BigString)
+			else if (fd.Type == CellarPropertyType.String)
 			{
 				sbHelp.Append("<Mapping>Yes</Mapping>");
 				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
@@ -4167,9 +4167,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Sfm2Xml.LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
 		{
 			string sig = "";
-			if (fd.Type == CellarPropertyType.MultiUnicode || fd.Type == CellarPropertyType.MultiBigUnicode)
+			if (fd.Type == CellarPropertyType.MultiUnicode)
 				sig = "MultiUnicode";
-			else if (fd.Type == CellarPropertyType.String || fd.Type == CellarPropertyType.BigString)
+			else if (fd.Type == CellarPropertyType.String)
 				sig = "string";
 			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
 				sig = "text";

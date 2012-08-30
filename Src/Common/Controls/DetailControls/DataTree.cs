@@ -2624,23 +2624,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						Debug.Assert(type == CellarPropertyType.Unicode);
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 						label = Cache.DomainDataByFlid.get_MultiStringAlt(owner.Hvo,
 							flidSubfield,
 							Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Text;
 						break;
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						label = Cache.DomainDataByFlid.get_MultiStringAlt(owner.Hvo,
 							flidSubfield,
 							Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Text;
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						label = Cache.DomainDataByFlid.get_StringProp(owner.Hvo, flidSubfield).Text;
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						label = Cache.DomainDataByFlid.get_UnicodeProp(owner.Hvo, flidSubfield);
 						break;
 					}
@@ -2709,8 +2705,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							// interpret their ws parameter. Don't see how to avoid it, though, without creating the slices even if not needed.
 						case CellarPropertyType.MultiString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigString:
-						case CellarPropertyType.MultiBigUnicode:
 							string ws = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
 							switch (ws)
 							{
@@ -2757,12 +2751,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							}
 							break;
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							if (realSda.get_StringProp(obj.Hvo, flid).Length == 0)
 								return NodeTestResult.kntrNothing;
 							break;
 						case CellarPropertyType.Unicode:
-						case CellarPropertyType.BigUnicode:
 							string val = realSda.get_UnicodeProp(obj.Hvo, flid);
 							if (string.IsNullOrEmpty(val))
 								return NodeTestResult.kntrNothing;

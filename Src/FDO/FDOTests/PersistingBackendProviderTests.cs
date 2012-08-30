@@ -48,19 +48,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	/// CellarPropertyType.Guid: Done
 	/// CellarPropertyType.GenDate: Done
 	/// CellarPropertyType.Binary: Done
-	///
 	/// CellarPropertyType.Unicode: Done
-	/// CellarPropertyType.BigUnicode: Done
-	///
 	/// CellarPropertyType.String: Done
-	/// CellarPropertyType.BigString: Done
-	///
 	/// CellarPropertyType.MultiString: Done
-	/// CellarPropertyType.MultiBigString: Done
-	///
 	/// CellarPropertyType.MultiUnicode: Done
-	/// CellarPropertyType.MultiBigUnicode: Done
-	///
 	/// CellarPropertyType.Numeric: (Not used in model.)
 	/// CellarPropertyType.Float: (Not used in model.)
 	/// CellarPropertyType.Image: (Not used in model.)
@@ -187,10 +178,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var acctGuid = acct.Guid;
 			var byteArrayValue = new byte[] { 1, 2, 3 };
 			acct.Sid = byteArrayValue;
-			// CellarPropertyType.Unicode & CellarPropertyType.BigUnicode:
+			// CellarPropertyType.Unicode:
 			const string newEthCode = "ZPI";
 			lp.EthnologueCode = newEthCode;
-			// CellarPropertyType.String & CellarPropertyType.BigString:
+			// CellarPropertyType.String:
 			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var irOriginalValue = Cache.TsStrFactory.MakeString("<import & residue>",
 																Cache.WritingSystemFactory.UserWs);
@@ -217,9 +208,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// all use the same mechanism (on MultiAccessor) to read/write
 			// the data.
 			// CellarPropertyType.MultiString:
-			// CellarPropertyType.MultiBigString:
 			// CellarPropertyType.MultiUnicode:
-			// CellarPropertyType.MultiBigUnicode:
 			var tsf = Cache.TsStrFactory;
 			var englishWsHvo = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var nameEnValue = tsf.MakeString("Stateful FDO Test Project", englishWsHvo);

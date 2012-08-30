@@ -557,16 +557,13 @@ namespace SIL.FieldWorks.XWorks
 					case CellarPropertyType.GenDate:
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						tss = sda.get_StringProp(record.Hvo, flid);
 						if (tss != null && tss.Text != null)
 							ExportString(writer, tss, fieldName);
 						fHandled = true;
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						ITsMultiString tms = sda.get_MultiStringProp(record.Hvo, flid);
 						int cch = 0;
 						for (int i = 0; i < tms.StringCount; ++i)
@@ -586,8 +583,7 @@ namespace SIL.FieldWorks.XWorks
 								tss = tms.GetStringFromIndex(i, out ws);
 								if (tss != null && tss.Length > 0)
 								{
-									if (cpt == CellarPropertyType.MultiString ||
-										cpt == CellarPropertyType.MultiBigString)
+									if (cpt == CellarPropertyType.MultiString)
 									{
 										writer.WriteLine(TsStringUtils.GetXmlRep(tss,
 											m_cache.WritingSystemFactory, ws, true));
@@ -605,7 +601,6 @@ namespace SIL.FieldWorks.XWorks
 						fHandled = true;
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						break;
 					case CellarPropertyType.ReferenceAtomic:
 					case CellarPropertyType.ReferenceCollection:

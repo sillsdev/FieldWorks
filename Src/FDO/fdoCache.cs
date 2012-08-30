@@ -1231,15 +1231,11 @@ namespace SIL.FieldWorks.FDO
 			switch (itype)
 			{
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 					return DomainDataByFlid.get_UnicodeProp(hvo, flid);
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					return DomainDataByFlid.get_StringProp(hvo, flid).Text;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					{
 						var wsid = WritingSystemServices.GetWritingSystem(this, frag, null, hvo, flid, 0).Handle;
 						return wsid == 0 ? string.Empty : DomainDataByFlid.get_MultiStringAlt(hvo, flid, wsid).Text;

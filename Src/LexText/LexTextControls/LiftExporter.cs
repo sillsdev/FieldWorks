@@ -321,8 +321,6 @@ namespace SIL.FieldWorks.LexText.Controls
 							w.WriteLine("</field>");
 						}
 						break;
-					case CellarPropertyType.MultiBigString:
-					case CellarPropertyType.MultiBigUnicode:
 					case CellarPropertyType.MultiString:
 						break;
 					case CellarPropertyType.ReferenceAtomic:

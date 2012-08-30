@@ -146,11 +146,11 @@ namespace SIL.FieldWorks.TE
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Disabled due to mono bug: https://bugzilla.novell.com/show_bug.cgi?id=517855")]
 		public void IsValidTSS_TooLong()
 		{
-			StringBuilder bigString = new StringBuilder();
+			StringBuilder str = new StringBuilder();
 			for (int i = 0; i < 600; i++)
-				bigString.Append('A');
+				str.Append('A');
 			ITsStrBldr tsb = TsStrBldrClass.Create();
-			tsb.Replace(0, 0, bigString.ToString(), StyleUtils.CharStyleTextProps("Emphasis", Cache.DefaultVernWs));
+			tsb.Replace(0, 0, str.ToString(), StyleUtils.CharStyleTextProps("Emphasis", Cache.DefaultVernWs));
 			Assert.IsFalse(ReflectionHelper.GetBoolResult(m_ktVwWrapper, "IsValidTSS", tsb.GetString()));
 		}
 

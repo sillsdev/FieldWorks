@@ -22,17 +22,9 @@
 ## No "set" property is needed; one "gets" the accessor and then can use that to set
 ## individual string alternates
 #if ($prop.Signature == "MultiString")
-#if ($prop.IsBig)
-#set( $cmd = "MultiBigString" )
-#else
 #set( $cmd = "MultiString" )
-#end
-#else
-#if ($prop.IsBig)
-#set( $cmd = "MultiBigUnicode" )
 #else
 #set( $cmd = "MultiUnicode" )
-#end
 #end
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -94,11 +86,7 @@ $propNotes
 #if( $prop.IsHandGenerated)
 		private ITsString $prop.NiuginianPropName$generated
 #else
-#if( $prop.IsBig)
-		[ModelProperty(CellarPropertyType.BigString, $prop.Number, "$prop.CSharpType")]
-#else
 		[ModelProperty(CellarPropertyType.String, $prop.Number, "$prop.CSharpType")]
-#end
 		public ITsString $prop.NiuginianPropName
 #end
 		{
@@ -235,11 +223,7 @@ $propNotes
 #if( $prop.IsHandGenerated)
 		private $prop.CSharpType $prop.NiuginianPropName$generated
 #else
-#if( $prop.IsBig)
-		[ModelProperty(CellarPropertyType.BigUnicode, $prop.Number, "$prop.CSharpType")]
-#else
 		[ModelProperty(CellarPropertyType.Unicode, $prop.Number, "$prop.CSharpType")]
-#end
 		public $prop.CSharpType $prop.NiuginianPropName
 #end
 		{

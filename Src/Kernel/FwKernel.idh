@@ -461,7 +461,7 @@ DeclareInterface(FwMetaDataCache, Unknown, EDBB1DED-7065-4b56-A262-746453835451)
 		[out, retval] int * piWs);
 
 	// Gets the type of the field.  This value indicates if the field is a primitive data type
-	// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+	// or a MultiStr/MultiTxt value or describes the relationship
 	// between two classes (i.e. owning/reference and atomic/collection/sequence).  These
 	// numeric values are defined in the @b{~FWROOT\src\cellar\lib\CmTypes.h} file.
 	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"

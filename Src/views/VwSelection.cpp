@@ -1753,7 +1753,6 @@ bool OkToApplyPropsToField(ISilDataAccess * psda, PropTag tagEdit)
 	{
 		// These three field types don't support storing style information, so don't make changes to them.
 	case kcptMultiUnicode:
-	case kcptMultiBigUnicode:
 	case kcptUnicode:
 		return false;
 	}
