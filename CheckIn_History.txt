@@ -6086,3 +6086,4 @@ GordonM, 30 Aug 2012. Fix FwUtils for MSBuild.
 JohnT, 30 Aug 2012. Removed all use of GeneratedAssemblyInfo.cs in core (still a few in localize code).
 	New Src/CommonAssemblyInfo should be added as a LINK to all projects. Simplified AssemblyInfo.cs files
 	are now Compiled.
+GordonM, 30 Aug 2012. Fix XCoreSample to work w/MSBuild.
