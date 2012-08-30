@@ -6080,3 +6080,4 @@ JohnT, 29 Aug 2012. Implement MSBuild process for FDO, replacing buildInclude.xm
 	Implement FdoGenerate as a new MsBuild custom task.
 RickM, 28 Aug 2012 FxtExe had old call to FdoCache.Create() so would not compile. This was corrected along with some .csproj corrections.
 JohnT, 29 Aug 2012. Tweak FDO MSBuild process to work incrementally and not fail if Nant left read-only files around.
+RickM, 29 Aug 2012 FlexDePluginTest would not compile because SilUtils reference needed to be fixed.
