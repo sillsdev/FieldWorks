@@ -195,6 +195,6 @@
   <data name="ksPtCommunicationProblem" xml:space="preserve">
 	<value>The project you are opening will not communicate with Paratext
 because a project with the same name is already open.
-If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart Flex.</value>
+If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart FLEx.</value>
   </data>
 </root>
