@@ -3,6 +3,7 @@
 
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="FdoGenerate" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>

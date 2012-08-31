@@ -75,6 +75,12 @@ namespace FwBuildTasks.FdoGenerate
 		/// ------------------------------------------------------------------------------------
 		public string BackendTemplateFiles { get; set; }
 
+		/// <summary>
+		/// Gets or sets the working directory.
+		/// </summary>
+		/// <value>The working directory.</value>
+		public string WorkingDirectory { get; set; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes the task.
@@ -82,7 +88,12 @@ namespace FwBuildTasks.FdoGenerate
 		/// ------------------------------------------------------------------------------------
 		public override bool Execute()
 		{
-			string oldDir = Directory.GetCurrentDirectory();
+			string origDir = Directory.GetCurrentDirectory();
+			string oldDir;
+			if (!String.IsNullOrEmpty(WorkingDirectory))
+				oldDir = WorkingDirectory;
+			else
+				oldDir = origDir;
 			try
 			{
 				var doc = new XmlDocument();
@@ -105,7 +116,7 @@ namespace FwBuildTasks.FdoGenerate
 				try
 				{
 					Log.LogMessage(MessageImportance.Low, "Loading hand generated classes from \"HandGenerated.xml\".");
-					config.Load(Path.Combine(oldDir, Path.Combine("FdoGenerate", "HandGenerated.xml")));
+					config.Load(Path.Combine(oldDir, Path.Combine("FDOGenerate", "HandGenerated.xml")));
 					foreach (XmlElement node in config.GetElementsByTagName("Class"))
 					{
 						var props = new List<string>();
@@ -133,7 +144,7 @@ namespace FwBuildTasks.FdoGenerate
 				{
 					Log.LogMessage(MessageImportance.Low,
 						"Loading hand generated classes from \"IntPropTypeOverrides.xml\".");
-					config.Load(Path.Combine(oldDir, Path.Combine("FdoGenerate", "IntPropTypeOverrides.xml")));
+					config.Load(Path.Combine(oldDir, Path.Combine("FDOGenerate", "IntPropTypeOverrides.xml")));
 					foreach (XmlElement node in config.GetElementsByTagName("Class"))
 					{
 						// Dictionary<PropertyName, PropertyType>
@@ -217,7 +228,7 @@ namespace FwBuildTasks.FdoGenerate
 			}
 			finally
 			{
-				Directory.SetCurrentDirectory(oldDir);
+				Directory.SetCurrentDirectory(origDir);
 			}
 			return true;
 		}

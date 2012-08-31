@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define TEMPFIX
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -95,6 +96,11 @@ namespace FwBuildTasks
 			var project = Path.GetFileNameWithoutExtension(filename);
 			if (project == "ICSharpCode.SharpZLib")
 				return;		// Skip this project -- it should be under Lib, not Src!
+#if TEMPFIX
+			// These projects are obsolete, but still exist in the Linux branches.
+			if (project == "ProgressBarTest" || project == "MenuExtender" || project == "MenuExtenderTests")
+				return;
+#endif
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
 			{
 				Console.WriteLine("Project '{0}' has already been found elsewhere!", project);
@@ -160,13 +166,6 @@ namespace FwBuildTasks
 							else
 								bldr.AppendFormat(";{0}", dep);
 						}
-					}
-					if (project == "COMInterfaces")
-					{
-						if (bldr.Length == 0)
-							bldr.Append("allCpp");
-						else
-							bldr.Append(";allCpp");
 					}
 					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());

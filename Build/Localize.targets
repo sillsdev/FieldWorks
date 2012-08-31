@@ -7,10 +7,10 @@
 
   <!-- Copy LocalizedList-*.xml files from Localizations to distfiles -->
   <ItemGroup>
-	<LocalizedListFiles Include="$(fwroot)/Localizations/LocalizedLists-*.xml"/>
+	<LocalizedListFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
   </ItemGroup>
   <Target Name="copyLocalizedLists">
-	<Copy SourceFiles="@(LocalizedListFiles)" DestinationFolder="$(fwroot)/DistFiles/Templates"/>
+	<Copy SourceFiles="@(LocalizedListFiles)" DestinationFolder="$(fwroot)/DistFiles/Templates" SkipUnchangedFiles="true"/>
   </Target>
 
   <!-- Main target for processing all .po files -->

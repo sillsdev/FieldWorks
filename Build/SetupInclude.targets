@@ -216,18 +216,29 @@
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
 
+	<!-- Set some environment variables needed by make (or nmake) -->
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(fwrt)/Lib/src/icu/install$(arch)/bin:$(PATH)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
+	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config)" />
+
+	<!-- Create the output directories if they don't already exist -->
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>
 
 	<!-- extra directory (and symbolic links) needed for Linux -->
 	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
 	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
 	</MakeDir>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config)') And '$(OS)'=='Unix'"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config)"/>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config-lower)"/>
 	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/Debug"/>
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
 	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/debug"/>
 	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
 
@@ -236,6 +247,7 @@
   </Target>
 
   <PropertyGroup>
+	<fwrt>$(MSBuildProjectDirectory)/..</fwrt>
 	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
 	<fwversion Condition="'$(fwversion)'==''">7</fwversion>
 	<debug Condition="'$(debug)'==''">true</debug>
@@ -278,49 +290,100 @@
 	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
   </PropertyGroup>
 
-	<Choose>
-		<When Condition="'$(action)'=='build'">
-			<PropertyGroup>
-		  <msbuild-target>Build</msbuild-target>
-			</PropertyGroup>
-		</When>
-		<When Condition="'$(action)'=='clean'">
-			<PropertyGroup>
-		  <msbuild-target>Clean</msbuild-target>
-			</PropertyGroup>
-		</When>
-		<When Condition="'$(action)'=='rebuild'">
-			<PropertyGroup>
-		  <msbuild-target>Rebuild</msbuild-target>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-		  <msbuild-target>Build</msbuild-target>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
+  <Choose>
+	<When Condition="'$(action)'=='build'">
+	  <PropertyGroup>
+		<msbuild-target>Build</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='clean'">
+	  <PropertyGroup>
+		<msbuild-target>Clean</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='rebuild'">
+	  <PropertyGroup>
+		<msbuild-target>Rebuild</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<msbuild-target>Build</msbuild-target>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
 
-	<Choose>
-		<When Condition="'$(OS)'=='Windows_NT'">
-			<PropertyGroup>
-				<useNUnit-x86>true</useNUnit-x86>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<useNUnit-x86>false</useNUnit-x86>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
+  <Choose>
+	<When Condition="'$(action)'=='build'">
+	  <PropertyGroup>
+		<make-target>all</make-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='clean'">
+	  <PropertyGroup>
+		<make-target>clean</make-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='rebuild'">
+	  <PropertyGroup>
+		<make-target>clean all</make-target>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<make-target>all</make-target>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <Choose>
+	<When Condition="'$(config)'=='Debug'">
+	  <PropertyGroup>
+		<config-lower>debug</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Release'">
+	  <PropertyGroup>
+		<config-lower>release</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Bounds'">
+	  <PropertyGroup>
+		<config-lower>bounds</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Profile'">
+	  <PropertyGroup>
+		<config-lower>profile</config-lower>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<config-lower>debug</config-lower>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <Choose>
+	<When Condition="'$(OS)'=='Windows_NT'">
+	  <PropertyGroup>
+		<useNUnit-x86>true</useNUnit-x86>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<useNUnit-x86>false</useNUnit-x86>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
 
   <PropertyGroup>
 	<nant-onfailure>endreportfailure</nant-onfailure>
 	<nant-onsuccess>endreportsuccess</nant-onsuccess>
 	<passbyref>fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run</passbyref>
 	<!--
-	Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
-	Otherwise, it should be 'false'.
+	  Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
+	  Otherwise, it should be 'false'.
 	-->
 	<showTargetsRunInReport>false</showTargetsRunInReport>
 	<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>

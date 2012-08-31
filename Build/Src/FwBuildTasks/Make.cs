@@ -82,7 +82,9 @@ namespace FwBuildTasks
 
 		private void CheckToolPath()
 		{
-		   string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
+			string path = Environment.GetEnvironmentVariable("PATH");
+			//Console.WriteLine("DEBUG Make Task: PATH='{0}'", path);
+			string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
 			if (!String.IsNullOrEmpty(makePath) && File.Exists(Path.Combine(makePath, ToolName)))
 			{
 				ToolPath = makePath;
@@ -94,8 +96,7 @@ namespace FwBuildTasks
 				if (File.Exists(Path.Combine(ToolPath, ToolName)))
 					return;
 			}
-			string path = Environment.GetEnvironmentVariable("PATH");
-			string[] splitPath = path.Split(new[] {Path.DirectorySeparatorChar});
+			string[] splitPath = path.Split(new char[] {Path.PathSeparator});
 			foreach (var dir in splitPath)
 			{
 				if (File.Exists(Path.Combine(dir, ToolName)))
@@ -123,7 +124,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("-C", Path.GetDirectoryName(Makefile));
-				if (string.IsNullOrEmpty(Target))
+				if (String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch("all");
 				else
 					bldr.AppendSwitch(Target);
@@ -135,9 +136,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("/f ", Makefile);
-				if (string.IsNullOrEmpty(Target))
-					bldr.AppendSwitch("all");
-				else
+				if (!String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch(Target);
 			}
 			return bldr.ToString();
@@ -148,7 +147,7 @@ namespace FwBuildTasks
 		/// </summary>
 		protected override string GetWorkingDirectory()
 		{
-			return string.IsNullOrEmpty(WorkingDirectory) ? base.GetWorkingDirectory() : WorkingDirectory;
+			return String.IsNullOrEmpty(WorkingDirectory) ? base.GetWorkingDirectory() : WorkingDirectory;
 		}
 		#endregion
 	}
