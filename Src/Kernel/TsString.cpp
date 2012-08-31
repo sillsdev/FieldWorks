@@ -912,7 +912,7 @@ template<class TxtBuf> STDMETHODIMP TsStrBase<TxtBuf>::get_PropertiesAt(int ich,
 		ThrowHr(WarnHr(E_INVALIDARG));
 	AssertObj(this);
 
-	*ppttp = PropsRun(BaseClass::IrunAt(ich));
+	*ppttp = this->PropsRun(BaseClass::IrunAt(ich));
 	AddRefObj(*ppttp);
 
 	END_COM_METHOD(g_fact, IID_ITsString);

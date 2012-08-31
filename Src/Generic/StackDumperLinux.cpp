@@ -13,6 +13,7 @@
 //:>********************************************************************************************
 #include "main.h"
 // any other headers (not precompiled)
+#include <unistd.h>
 #include <execinfo.h>
 #include <dlfcn.h>
 
@@ -168,4 +169,11 @@ StrUni ConvertException(DWORD dwExcept)
 	stuHrMsg.Format("hr=0x%08x", dwExcept);
 	return stuHrMsg;
 }
+
+void ThrowHrEx(HRESULT hr, int hHelpId)
+{
+	// TODO-Linux: port
+	ThrowHr(hr, "Not implemented yet", hHelpId);
+}
+
 #endif
