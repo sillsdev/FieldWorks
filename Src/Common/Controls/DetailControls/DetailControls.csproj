@@ -196,7 +196,9 @@
 	<Compile Include="AtomicReferenceSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="AtomicReferenceView.cs" />
+	<Compile Include="AtomicReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="AtomicRefTypeAheadSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -264,7 +266,9 @@
 	<Compile Include="MorphTypeAtomicReferenceSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="MorphTypeChooser.cs" />
+	<Compile Include="MorphTypeChooser.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="MSAReferenceComboBoxSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -283,7 +287,9 @@
 	<Compile Include="PhoneEnvReferenceSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="PhoneEnvReferenceView.cs" />
+	<Compile Include="PhoneEnvReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="PictureSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -293,7 +299,9 @@
 	<Compile Include="PossibilityAtomicReferenceSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="PossibilityAtomicReferenceView.cs" />
+	<Compile Include="PossibilityAtomicReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="PossibilityAutoComplete.cs" />
 	<Compile Include="PossibilityReferenceVectorSlice.cs">
 	  <SubType>UserControl</SubType>
@@ -301,7 +309,9 @@
 	<Compile Include="PossibilityVectorReferenceLauncher.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="PossibilityVectorReferenceView.cs" />
+	<Compile Include="PossibilityVectorReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="ReferenceComboBoxSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -314,11 +324,15 @@
 	<Compile Include="ReferenceVectorSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="ReferenceViewBase.cs" />
+	<Compile Include="ReferenceViewBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="SimpleComparer.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="SimpleListChooser.cs" />
+	<Compile Include="SimpleListChooser.cs">
+	  <SubType>Form</SubType>
+	</Compile>
 	<Compile Include="Slice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -357,13 +371,16 @@
 	<Compile Include="VectorReferenceLauncher.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<Compile Include="VectorReferenceView.cs" />
+	<Compile Include="VectorReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
 	<Compile Include="ViewPropertySlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="ViewSlice.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
+	<None Include="BuildInclude.targets" />
 	<None Include="buildinclude.xml" />
 	<EmbeddedResource Include="AtomicReferenceLauncher.resx">
 	  <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
@@ -463,6 +480,7 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
 	</PreBuildEvent>
