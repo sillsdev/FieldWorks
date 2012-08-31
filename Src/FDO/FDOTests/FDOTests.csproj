@@ -388,6 +388,9 @@
 	<Compile Include="FdoInvertSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
+	<None Include="BuildInclude.targets">
+	  <SubType>Designer</SubType>
+	</None>
 	<None Include="buildinclude.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -537,4 +540,5 @@
 	<PostBuildEvent>
 	</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>
