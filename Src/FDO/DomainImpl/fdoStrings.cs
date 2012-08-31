@@ -370,6 +370,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="alternative"></param>
 		protected virtual void ToXml(XmlWriter writer, ILgWritingSystemFactory wsf, int ws, ITsString alternative)
 		{
+			if (string.IsNullOrEmpty(alternative.Text))
+				return; // Skip writing TsStrings with no content.
+
 			writer.WriteRaw(TsStringUtils.GetXmlRep(alternative, wsf, ws));
 		}
 
@@ -896,14 +899,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="alternative"></param>
 		protected override void ToXml(XmlWriter writer, ILgWritingSystemFactory wsf, int ws, ITsString alternative)
 		{
+			var text = alternative.Text;
+			if (string.IsNullOrEmpty(text))
+				return; // Skip writing TsStrings with no content.
+
 			writer.WriteStartElement("AUni");
 			writer.WriteAttributeString("ws", m_object.Services.WritingSystemManager.Get(ws).Id);
-			var text = alternative.Text;
-			if (!String.IsNullOrEmpty(text))
-			{
-				text = Icu.Normalize(text, Icu.UNormalizationMode.UNORM_NFC);
-				writer.WriteString(text);
-			}
+			text = Icu.Normalize(text, Icu.UNormalizationMode.UNORM_NFC);
+			writer.WriteString(text);
 			writer.WriteEndElement();
 		}
 

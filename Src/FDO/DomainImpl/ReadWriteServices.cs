@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -169,7 +170,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (string.IsNullOrEmpty(elementName)) throw new ArgumentNullException("elementName");
 
-			if (multiProperty == null || multiProperty.StringCount <= 0) return;
+			if (multiProperty == null || multiProperty.StringCount == 0 || multiProperty.Values.All(alt => string.IsNullOrEmpty(alt.Text)))
+				return;
 
 			writer.WriteStartElement(elementName); // Open prop. element.
 			multiProperty.ToXMLString(writer);
@@ -319,7 +321,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (cache == null) throw new ArgumentNullException("cache");
 			if (string.IsNullOrEmpty(elementName)) throw new ArgumentNullException("elementName");
 
-			if (propertyData == null) return;
+			if (propertyData == null || string.IsNullOrEmpty(propertyData.Text))
+				return;
 
 			writer.WriteStartElement(elementName); // Open prop. element.
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;

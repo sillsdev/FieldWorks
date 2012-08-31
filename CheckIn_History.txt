@@ -6087,6 +6087,7 @@ JohnT, 30 Aug 2012. Removed all use of GeneratedAssemblyInfo.cs in core (still a
 	New Src/CommonAssemblyInfo should be added as a LINK to all projects. Simplified AssemblyInfo.cs files
 	are now Compiled.
 GordonM, 30 Aug 2012. Fix XCoreSample to work w/MSBuild.
-RandyR, 30 Aug 2012, Remove 'big' from model.
+RandyR, 30 Aug 2012. Remove 'big' from model.
 JohnT, 31 Aug 2012. DetailControls MSBuild support.
 GordonM, 31 Aug 2012. EncCnvtrs (Lib) MSBuild support. (But this project doesn't seem to build as is.)
+RandyR, 31 Aug 2012. Don't persistent empty TsStrings.
