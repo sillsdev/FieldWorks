@@ -1455,7 +1455,7 @@ namespace SIL.FieldWorks.CacheLight
 						result = m_basicITsStringCache[key];
 						break;
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiString:.
+					case CellarPropertyType.MultiString:
 						result = get_MultiStringProp(hvo, tag);
 						break;
 					case CellarPropertyType.Unicode:
