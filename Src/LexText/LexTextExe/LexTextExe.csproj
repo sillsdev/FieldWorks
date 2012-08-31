@@ -173,7 +173,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="app.config" />
 	<Compile Include="..\..\CommonAssemblyInfo.cs">
 	  <Link>CommonAssemblyInfo.cs</Link>
 	</Compile>

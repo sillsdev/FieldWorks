@@ -6092,3 +6092,4 @@ JohnT, 31 Aug 2012. DetailControls MSBuild support.
 GordonM, 31 Aug 2012. EncCnvtrs (Lib) MSBuild support. (But this project doesn't seem to build as is.)
 RandyR, 31 Aug 2012. Don't persistent empty TsStrings.
 KenZ, 31 Aug 2012. Get correct registry key so FieldWorks products will run.
+RickM, 31 Aug 2012 A couple corrections were made in  Build/Linux.targets and LexTextExe.csproj  so that MSBuild will run on the command line.

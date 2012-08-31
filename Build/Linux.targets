@@ -63,7 +63,7 @@
 	<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
   </Target>
 
-  <Target Name="iculibs" DependsOnTarget="setenvLinux"> <!-- Condition="!Exists('$(icu_lib)')">-->
+  <Target Name="iculibs" DependsOnTargets="setenvLinux"> <!-- Condition="!Exists('$(icu_lib)')">-->
 	<Message Text="Building iculibs"/>
 	<!-- unzip icu file -->
 	<!-- NOTE: we can't use the Unzip task since we have to adjust the line endings,
