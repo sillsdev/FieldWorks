@@ -72,12 +72,12 @@
 		<call target="vsconvert-convert"/>
 		<!-- "Microsoft Visual Studio 8/SDK/v2.0/Bin/sgen.exe" produces xCoreInterfaces.XmlSerializers.dll during build time.
 			Typically it would get built at run time after causing "new XmlSerializer(CustomSerializableType)"
-			to throw an exception during initialization. -->
-		<if test="${not platform::is-unix()}"><!-- TODO-Linux: Does this affect us on Linux? -->
+				to throw an exception during initialization.
+			<if test="${not platform::is-unix()}">
 			<exec program="${framework::get-sdk-directory(framework::get-target-framework())}/sgen.exe"
 				  commandline="/a:${dir.outputBase}/xCoreInterfaces.dll /force" workingdir="${dir.outputBase}"
 				  failonerror="false"/>
-		</if>
+		</if> -->
 	</target>
 	<!-- -->
 	<target name="xCore" description="Build C# xCore project."
