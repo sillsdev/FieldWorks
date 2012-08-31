@@ -247,6 +247,7 @@
 	  <Link>EC_40.mm.wxs</Link>
 	</None>
 	<None Include="app.manifest" />
+	<Content Include="BuildInclude.targets" />
 	<None Include="ECPlugins.xsd">
 	  <SubType>Designer</SubType>
 	</None>
@@ -260,6 +261,7 @@
 	<Folder Include="lib\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
 	</PreBuildEvent>

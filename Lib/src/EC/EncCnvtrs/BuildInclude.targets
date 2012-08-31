@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<Common>../../../../Output/Common</Common>
+	</PropertyGroup>
+	<ItemGroup>
+		<EncCnvtrFile Include="EncCnvtrs.tlb" />
+	</ItemGroup>
+	<ItemGroup>
+		<EncCnvtrFileSource Include="@(EncCnvtrFile -> '$(OutDir)/%(Identity)')" />
+	</ItemGroup>
+	<Target Name="BeforeClean">
+		<!-- whatever commands we need to run before cleaning up the build-->
+		<Message Importance="high" Text="Delete: %(WriteKeyFilesSource.FullPath)" />
+		<Delete Files="@(EncCnvtrFile -> '$(Common)/%(Identity)')" ContinueOnError="true" />
+	</Target>
+	<Target Name="AfterBuild">
+		<!-- whatever commands we need to run after the rest of the build-->
+		<Message Importance="high" Text="Copying %(EncCnvtrFileSource.FullPath) to $(Common)" />
+		<Copy SourceFiles="@(EncCnvtrFileSource)" DestinationFolder="$(Common)" OverwriteReadOnlyFiles="true"
+			  SkipUnchangedFiles="true" ContinueOnError="true" />
+	</Target>
+</Project>
