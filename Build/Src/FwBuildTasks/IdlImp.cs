@@ -93,7 +93,7 @@ namespace FwBuildTasks
 		[Required]
 		public ITaskItem[] Sources { get; set; }
 
-		StringCollection GetFilesFrom(ITaskItem[] source)
+		internal static StringCollection GetFilesFrom(ITaskItem[] source)
 		{
 			var result = new StringCollection();
 			if (source == null)

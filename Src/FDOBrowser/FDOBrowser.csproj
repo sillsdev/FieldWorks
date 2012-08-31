@@ -198,6 +198,7 @@
 	  <DependentUpon>Resources.resx</DependentUpon>
 	  <DesignTime>True</DesignTime>
 	</Compile>
+	<None Include="BuildInclude.targets" />
 	<None Include="Properties\Settings.settings">
 	  <Generator>SettingsSingleFileGenerator</Generator>
 	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -248,11 +249,6 @@
 	<None Include="Properties\Show_CmObject_Properties.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="BuildInclude.targets" />
+  <!-- To modify your build process, change BuildInclude.targets -->
 </Project>
