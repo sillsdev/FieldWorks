@@ -6096,3 +6096,4 @@ RickM, 31 Aug 2012 A couple corrections were made in  Build/Linux.targets and Le
 GordonM, 31 Aug 2012. Removed obsolete creation of xCoreInterfaces.XmlSerializers.dll from xCoreInterfaces.
 JohnT, 31 Aug 2012. Handle RegFree task in MSBuild for FieldWorks.exe and FDOBrowser.exe.
 EberhardB, 3 Sep 2012. Integration Calgary/WW --> WW.
+KenZ, 3 Sep 2012. Reduced size of FixFwDataDll test data by about 36Mb.

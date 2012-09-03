@@ -1,118 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <languageproject version="7000059">
-	<rt class="LexSense" guid="155c0e55-2428-49a1-8957-57df676886cd" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
-	<MorphoSyntaxAnalysis>
-	<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="r" />
-	</MorphoSyntaxAnalysis>
-	</rt>
-	<rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
-	<PartOfSpeech>
-	<objsur guid="90184c54-0a8c-4670-be5d-a70a32b0cd27" t="r" />
-	</PartOfSpeech>
-	</rt>
-	<rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
-	<DateCreated val="2012-4-12 19:29:46.266" />
-	<DateModified val="2012-7-3 15:55:24.8" />
-	<DoNotUseForParsing val="False" />
-	<HomographNumber val="0" />
-	<LexemeForm>
-	<objsur guid="74a4bea3-7c17-482c-ad9b-56de3bb15aca" t="o" />
-	</LexemeForm>
-	<MorphoSyntaxAnalyses>
-	<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
-	<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
-	</MorphoSyntaxAnalyses>
-	<Senses>
-	<objsur guid="155c0e55-2428-49a1-8957-57df676886cd" t="o" />
-	</Senses>
-	</rt>
-	<rt class="MoStemMsa" guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
-	<PartOfSpeech>
-	<objsur guid="3851c3c3-5200-4bd2-a297-f54c04293985" t="r" />
-	</PartOfSpeech>
-	</rt>
-	<rt class="MoStemAllomorph" guid="74a4bea3-7c17-482c-ad9b-56de3bb15aca" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
-	<Form>
-	<AUni ws="fr">ab</AUni>
-	</Form>
-	<IsAbstract val="False" />
-	<MorphType>
-	<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
-	</MorphType>
-	</rt>
-	<rt class="MoMorphType" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" ownerguid="d7f713d8-e8cf-11d3-9764-00c04f186933">
-	<Abbreviation>
-	<AUni ws="en">ubd stem</AUni>
-	</Abbreviation>
-	<Description>
-	<AStr ws="en">
-	<Run ws="en">"A stem is the root or roots of a word, together with any derivational affixes, to which inflectional affixes are added." (LinguaLinks Library). A stem "may consist solely of a single root morpheme (i.e. a 'simple' stem as in </Run>
-	<Run namedStyle="Emphasized Text" ws="en">man</Run>
-	<Run ws="en">), or of two root morphemes (e.g. a 'compound' stem, as in </Run>
-	<Run namedStyle="Emphasized Text" ws="en">blackbird</Run>
-	<Run ws="en">), or of a root morpheme plus a derivational affix (i.e. a 'complex' stem, as in </Run>
-	<Run namedStyle="Emphasized Text" ws="en">manly</Run>
-	<Run ws="en">, </Run>
-	<Run namedStyle="Emphasized Text" ws="en">unmanly</Run>
-	<Run ws="en">, </Run>
-	<Run namedStyle="Emphasized Text" ws="en">manliness</Run>
-	<Run ws="en">). All have in common the notion that it is to the stem that inflectional affixes are attached." (Crystal, 1997:362)</Run>
-	</AStr>
-	</Description>
-	<IsProtected val="true" />
-	<Name>
-	<AUni ws="en">stem</AUni>
-	</Name>
-	</rt>
-	<rt class="PartOfSpeech" guid="3851c3c3-5200-4bd2-a297-f54c04293985" ownerguid="7c0fb10f-c30e-468b-a610-b3d4db059990">
-	<Abbreviation>
-	<AUni ws="en">adv</AUni>
-	</Abbreviation>
-	<BackColor val="-1073741824" />
-	<CatalogSourceId>
-	<Uni>Adverb</Uni>
-	</CatalogSourceId>
-	<DateCreated val="2012-4-12 19:29:3.246" />
-	<DateModified val="2012-4-12 19:29:3.246" />
-	<Description>
-	<AStr ws="en">
-	<Run ws="en">An adverb, narrowly defined, is a part of speech whose members modify verbs for such categories as time, manner, place, or direction. An adverb, broadly defined, is a part of speech whose members modify any constituent class of words other than nouns, such as verbs, adjectives, adverbs, phrases, clauses, or sentences. Under this definition, the possible type of modification depends on the class of the constituent being modified.</Run>
-	</AStr>
-	</Description>
-	<ForeColor val="6303632" />
-	<Hidden val="False" />
-	<IsProtected val="False" />
-	<Name>
-	<AUni ws="en">Adverb</AUni>
-	</Name>
-	<SortSpec val="0" />
-	<UnderColor val="-1073741824" />
-	<UnderStyle val="1" />
-	</rt>
-	<rt class="CmPossibilityList" guid="7c0fb10f-c30e-468b-a610-b3d4db059990" ownerguid="a9be974e-b148-4ea6-95cd-a54f2ff77637">
-	<Abbreviation>
-	<AUni ws="en">Pos</AUni>
-	</Abbreviation>
-	<DateCreated val="2012-4-12 19:29:3.236" />
-	<DateModified val="2012-4-12 19:29:3.236" />
-	<Depth val="127" />
-	<DisplayOption val="0" />
-	<IsClosed val="False" />
-	<IsSorted val="True" />
-	<IsVernacular val="False" />
-	<ItemClsid val="5049" />
-	<ListVersion val="00000000-0000-0000-0000-000000000000" />
-	<Name>
-	<AUni ws="en">Parts Of Speech</AUni>
-	</Name>
-	<Possibilities>
-	<objsur guid="3851c3c3-5200-4bd2-a297-f54c04293985" t="o" />
-	<objsur guid="90184c54-0a8c-4670-be5d-a70a32b0cd27" t="o" />
-	</Possibilities>
-	<PreventChoiceAboveLevel val="0" />
-	<PreventDuplicates val="False" />
-	<PreventNodeChoices val="False" />
-	<UseExtendedFields val="True" />
-	<WsSelector val="-3" />
-	</rt>
+
+<rt class="LexSense" guid="155c0e55-2428-49a1-8957-57df676886cd" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+<MorphoSyntaxAnalysis>
+<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="r" />
+</MorphoSyntaxAnalysis>
+</rt>
+
+<rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+</rt>
+
+<rt class="MoStemMsa" guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+</rt>
+
+<rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
+<MorphoSyntaxAnalyses>
+<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
+<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur guid="155c0e55-2428-49a1-8957-57df676886cd" t="o" />
+</Senses>
+</rt>
+
 </languageproject>
