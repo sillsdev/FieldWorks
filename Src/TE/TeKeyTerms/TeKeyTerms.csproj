@@ -65,7 +65,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
@@ -86,7 +86,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -215,9 +215,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="Properties\Resources.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
@@ -231,9 +234,6 @@
 	</Compile>
 	<Compile Include="XmlKeyWord.cs" />
 	<Compile Include="XmlTerm.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="KeyTermRef.cs" />
 	<Compile Include="KeyTermRenderingsControl.cs">
 	  <SubType>UserControl</SubType>

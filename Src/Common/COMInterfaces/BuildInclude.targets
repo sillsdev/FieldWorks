@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="IdlImp" AssemblyFile="..\..\..\Build\FwBuildTasks.dll"/>
+	<ItemGroup>
+		<UsingNamespaces Include="SIL.Utils"/>
+		<UsingNamespaces Include="SIL.Utils.ComTypes"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<KernelSources Include="$(OutDir)/../Common/FwKernelTlb.idl"/>
+	</ItemGroup>
+	<ItemGroup>
+		<KernelIdhFiles Include="../../Kernel/FwKernel.idh"/>
+		<KernelIdhFiles Include="../../Kernel/TextServ.idh"/>
+		<KernelIdhFiles Include="../../Language/Language.idh"/>
+		<KernelIdhFiles Include="../../Language/Render.idh"/>
+	</ItemGroup>
+	<ItemGroup>
+		<KernelInputs Include="@(KernelIdhFiles)" />
+		<KernelInputs Include="@(KernelSources)" />
+	</ItemGroup>
+	<Target Name="FwKernelCs" Inputs="@(KernelInputs)" Outputs="FwKernel.cs">
+		<IdlImp Output="FwKernel.cs"
+				Namespace="SIL.FieldWorks.Common.COMInterfaces"
+				Sources="@(KernelSources)"
+				UsingNamespaces="@(UsingNamespaces)"
+				IdhFiles="@(KernelIdhFiles)">
+		</IdlImp>
+	</Target>
+
+	<ItemGroup>
+		<ViewsSources Include="$(OutDir)/../Common/ViewsTlb.idl"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsIdhFiles Include="../../views/Views.idh"/>
+		<ViewsIdhFiles Include="../../CommonCOMDlgs/CmnFwDlgs.idh"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.iip" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsInputs Include="@(ViewsIdhFiles)" />
+		<ViewsInputs Include="@(ViewsSources)" />
+	</ItemGroup>
+	<Target Name="ViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs">
+		<IdlImp Output="Views.cs"
+				Namespace="SIL.FieldWorks.Common.COMInterfaces"
+				Sources="@(ViewsSources)"
+				UsingNamespaces="@(UsingNamespaces)"
+				IdhFiles="@(ViewsIdhFiles)"
+				ReferenceFiles="@(ViewsRefs)">
+		</IdlImp>
+	</Target>
+
+	<Target Name="AfterClean">
+		<Delete Files="FwKernel.cs;Views.cs;$(OutDir)/../Common/FwKernelTlb.iip;$(OutDir)/../Common/ViewsTlb.iip" ContinueOnError="true"/>
+	</Target>
+	<Target Name="BeforeBuild" DependsOnTargets="FwKernelCs;ViewsCs">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+</Project>

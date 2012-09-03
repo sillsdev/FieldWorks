@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Serialization;
 using Sfm2Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SilEncConverters40;
@@ -40,12 +41,13 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// This is serialized to form the .map file, so change with care.
 	/// It is public only because XmlSerializer requires everything to be.
 	/// </summary>
-	public class WordMapping : Sfm2FlexTextMappingBase
+	[Serializable]
+	public class InterlinearMapping : Sfm2FlexTextMappingBase
 	{
-		public WordMapping()
+		public InterlinearMapping()
 		{
 		}
-		public WordMapping(WordMapping copyFrom)
+		public InterlinearMapping(InterlinearMapping copyFrom)
 			: base(copyFrom)
 		{
 		}
@@ -55,14 +57,14 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// This converts Sfm to a subset of the FlexText xml standard that only deals with Words, their Glosses and their Morphology.
 	/// This frag is special case (non-conforming) in that it can have multiple glosses in the same writing system.
 	/// </summary>
-	public class Sfm2FlexTextWordsFrag : Sfm2FlexTextBase<WordMapping>
+	public class Sfm2FlexTextWordsFrag : Sfm2FlexTextBase<InterlinearMapping>
 	{
 		HashSet<Tuple<InterlinDestination, string>> m_txtItemsAddedToWord = new HashSet<Tuple<InterlinDestination, string>>();
 
 		public Sfm2FlexTextWordsFrag()
 			: base(new List<string>(new[] { "document", "word" }))
 		{}
-		protected override void WriteToDocElement(byte[] data, WordMapping mapping)
+		protected override void WriteToDocElement(byte[] data, InterlinearMapping mapping)
 		{
 
 			switch (mapping.Destination)
@@ -113,7 +115,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public InterlinDestination Destination;
 		public string WritingSystem;
 		public string Converter;
-		[NonSerialized]
+		[XmlIgnore]
 		public string Count;
 	}
 

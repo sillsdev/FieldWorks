@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="System">
 	  <Name>System</Name>
@@ -116,9 +116,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="CommandBar.cs">
 	  <SubType>Component</SubType>
 	</Compile>
@@ -159,9 +159,6 @@
 	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="CommandBarStyle.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="NativeMethods.cs">

@@ -898,6 +898,15 @@ namespace SIL.FieldWorks.IText {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to interlinear texts.
+		/// </summary>
+		internal static string ksInterlinearTexts {
+			get {
+				return ResourceManager.GetString("ksInterlinearTexts", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Interlinear XML parsing problem (phase 1): {0}..
 		/// </summary>
 		internal static string ksInterlinImportErrorPhase1 {
@@ -2109,6 +2118,15 @@ namespace SIL.FieldWorks.IText {
 		internal static string ksWordGloss {
 			get {
 				return ResourceManager.GetString("ksWordGloss", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to words and glosses.
+		/// </summary>
+		internal static string ksWordsAndGlosses {
+			get {
+				return ResourceManager.GetString("ksWordsAndGlosses", resourceCulture);
 			}
 		}
 

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
+
+	<!-- Generate CommonAssemblyInfo.cs from CommonAssemblyInfoTemplate.cs-->
+	<ItemGroup>
+		<VersionTemplate Include="../src/CommonAssemblyInfoTemplate.cs"/>
+		<VersionSymbols Include="../src/MasterVersionInfo.txt"/>
+		<VersionOutput Include="../src/CommonAssemblyInfo.cs"/>
+		<VersionInputs Include="@(VersionSymbols)"/>
+		<VersionInputs Include="@(VersionTemplate)"/>
+	</ItemGroup>
+	<Target Name="GenerateVersionFiles" Inputs="@(VersionInputs)" Outputs="@(VersionOutput)">
+		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)"/>
+		<!-- Enhance JohnT: eventually should also generate buildinc.h for the C++ world-->
+	</Target>
+
+  <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
+	<!-- set fwrt to the proper value before we do anything else. -->
+	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
+	  <Output TaskParameter="Value" PropertyName="fwrt"/>
+	</ParentDirectory>
+
+	<!-- refresh the FieldWorks.targets file that gets loaded -->
+	<GenerateFwTargets/>
+
+	<CpuArchitecture>
+	  <Output TaskParameter="Value" PropertyName="arch"/>
+	</CpuArchitecture>
+
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/Obj_$(arch)">
+	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
+	</CreateProperty>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
+	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
+	</CreateProperty>
+
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/Output_$(arch)">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
+	</CreateProperty>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
+	</CreateProperty>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="$(config)">
+	  <Output TaskParameter="Value" PropertyName="dir-outputBase"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="Common">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputCommon"/>
+	</PathCombine>
+
+	<CreateProperty Value="$(dir-outputBase)">
+	  <Output TaskParameter="Value" PropertyName="dir-buildOutputInterop"/>
+	</CreateProperty>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="Lib">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlib"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwoutputlib)" SubPath="$(config)">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibBase"/>
+	</PathCombine>
+
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(dir-fwoutputlib)/linux">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform"/>
+	</CreateProperty>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-fwoutputlib)\windows">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform"/>
+	</CreateProperty>
+
+	<PathCombine BasePath="$(dir-fwoutputlibPlatform)" SubPath="$(config)">
+	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatformBase"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="install">
+	  <Output TaskParameter="Value" PropertyName="dir-fwinstall"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(fwrt)" SubPath="DistFiles">
+	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Projects">
+	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu40">
+	  <Output TaskParameter="Value" PropertyName="dir-icu"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-icu)" SubPath="icudt40l">
+	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(fwrt)" SubPath="buildarchive">
+	  <Output TaskParameter="Value" PropertyName="dir-buildarchive"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(fwrt)" SubPath="Bld/VSConvert.build.xml">
+	  <Output TaskParameter="Value" PropertyName="VSConvertBuildFile"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwobj)" SubPath="NAntBuild">
+	  <Output TaskParameter="Value" PropertyName="dir-nantbuild"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(fwrt)" SubPath="Bld/GlobalInclude.xml">
+	  <Output TaskParameter="Value" PropertyName="XmlInclude"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="XMI">
+	  <Output TaskParameter="Value" PropertyName="dir-xmiOutput"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="SampleData">
+	  <Output TaskParameter="Value" PropertyName="dir-SampleData"/>
+	</PathCombine>
+
+	<ComputerName>
+	  <Output TaskParameter="Value" PropertyName="computername"/>
+	</ComputerName>
+
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="false">
+	  <Output TaskParameter="Value" PropertyName="haveTEAdapterLibrary"/>
+	</CreateProperty>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="Exists('$(dir-fwdistfiles)\TeUIAdapters.dll')">
+	  <Output TaskParameter="Value" PropertyName="haveTEAdapterLibrary"/>
+	</CreateProperty>
+
+	<PathCombine BasePath="$(dir-fwoutput)" SubPath="WWData">
+	  <Output TaskParameter="Value" PropertyName="dir-wwoutput"/>
+	</PathCombine>
+
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-SampleData)">
+	  <Output TaskParameter="Value" PropertyName="dir-safecopy"/>
+	</CreateProperty>
+
+	<!-- needed by the next property -->
+	<ParentDirectory CurrentDirectory="$(fwrt)">
+	  <Output TaskParameter="Value" PropertyName="fwrt-parent"/>
+	</ParentDirectory>
+
+	<!-- where to find the COM library on Linux -->
+	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(fwrt-parent)" SubPath="COM">
+	  <Output TaskParameter="Value" PropertyName="com_dir"/>
+	</PathCombine>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+	  <Output TaskParameter="Value" PropertyName="com_dir"/>
+	</CreateProperty>
+
+	<!-- where to find the COM library on Linux -->
+	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(com_dir)" SubPath="build$(arch)/src/.libs">
+	  <Output TaskParameter="Value" PropertyName="com_lib"/>
+	</PathCombine>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+	  <Output TaskParameter="Value" PropertyName="com_lib"/>
+	</CreateProperty>
+
+	<!-- where to find the ICU library on Linux -->
+	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(fwrt)" SubPath="Lib/src/icu/install$(arch)/lib">
+	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
+	</PathCombine>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
+	</CreateProperty>
+
+<!--<if test="${not property::exists('dir.nunitreport')}">-->
+<!--	<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>-->
+<!--</if>-->
+	<CreateProperty Value="Not Applicable!">
+	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
+	</CreateProperty>
+
+	<!-- Copy updated definitions file for Gendarme -->
+<!--	<copy todir="${environment::get-folder-path('LocalApplicationData')}/Gendarme"-->
+<!--		file="${fwrt}/Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/definitions-2.9.zip"/>-->
+<!---->
+<!--	<if test="${not platform::is-unix()}">-->
+		<!-- replace c:\fw\DistFiles in the current path with the right fwrt directory -->
+		<!-- We have to use the original value from the registry, so that we get the path that
+		was not modified in a batch file that calls this build, and it also doesn't include
+		the user part of the path -->
+<!--		<readregistry property="environment-path" key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment\Path"-->
+<!--			hive="LocalMachine"/>-->
+<!--		<regex pattern="(?'start'.*;|^)(?'fwpath'.*)\\[Dd][Ii][Ss][Tt][Ff][Ii][Ll][Ee][Ss](?'end'.*)" -->
+<!--			input="${environment-path}" failonerror="false"/>-->
+<!--		<if test="${not property::exists('fwpath')}">-->
+<!--			<property name="start" value="${environment-path};"/>-->
+<!--			<property name="end" value=""/>-->
+<!--		</if>-->
+<!--		<property name="newpath" value="${start}${fwrt}\DistFiles${end}"/>-->
+<!--		<setenv name="Path" value="${newpath}" global="true" -->
+<!--				unless="${environment-path == newpath}"/>-->
+<!--	</if>-->
+	<!-- Add path for right version of Visual Studio if environment variable VSVERSION is set.
+	The path can be set in the include file pathinclude.(VSVERSION).xml -->
+<!--	<if test="${property::exists('sys.env.VSVERSION')}">-->
+<!--		<include buildfile="${fwrt}/Bld/pathinclude.${sys.env.VSVERSION}.xml"/>-->
+<!--	</if>-->
+	<!-- Determine if we are in the same Perforce branch or if we have changed branches -->
+<!--	<property name="samebranch" -->
+<!--		value="${property::get-value('fwrt') == property::get-value('fwpath')}"-->
+<!--		if="${property::exists('fwpath')}"/>-->
+	<CreateProperty Value="Configuration=$(config)">
+	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
+	</CreateProperty>
+
+	<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x86_64'">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+
+	<!-- Set some environment variables needed by make (or nmake) -->
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(fwrt)/Lib/src/icu/install$(arch)/bin:$(PATH)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
+	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config)" />
+
+	<!-- Create the output directories if they don't already exist -->
+	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>
+
+	<!-- extra directory (and symbolic links) needed for Linux -->
+	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
+	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
+	</MakeDir>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config)') And '$(OS)'=='Unix'"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config)"/>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config-lower)"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
+	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
+
+	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
+
+  </Target>
+
+  <PropertyGroup>
+	<fwrt>$(MSBuildProjectDirectory)/..</fwrt>
+	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
+	<fwversion Condition="'$(fwversion)'==''">7</fwversion>
+	<debug Condition="'$(debug)'==''">true</debug>
+	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
+	<config Condition="'$(config)'==''">Debug</config>
+	<!-- action is one of the following: build test clean register unregister -->
+	<action Condition="'$(action)'==''">build</action>
+	<!-- target is one of the targets in the build system. -->
+	<target Condition="'$(target)'==''">all</target>
+	<build-type Condition="'$(build-type)'==''">d</build-type> <!-- for C++ .bat files: b (bounds), d (for debug), r (for release), p (profile) -->
+	<build-action Condition="'$(build-action)'==''">i</build-action> <!-- for C++ .bat files: e (for erase), c (for clean), i (for incremental), ec (for erase complete), cc (for clean complete) -->
+	<bld-debug Condition="'$(bld-debug)'==''">true</bld-debug>
+	<bld-bounds Condition="'$(bld-bounds)'==''">false</bld-bounds>
+	<bld-release Condition="'$(bld-release)'==''">false</bld-release>
+	<platform Condition="'$(platform)'=='' And '$(OS)'!='Windows_NT'">UNIX</platform>
+	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
+	<UseVsPath Condition="'$(UseVsPath)'==''"></UseVsPath>
+	<forcetests Condition="'$(forcetests)'==''">false</forcetests>
+	<showTargetsRunInReport Condition="'$(showTargetsRunInReport)'==''">false</showTargetsRunInReport>
+	<clean Condition="'$(clean)'==''">false</clean>
+	<deleteOutput Condition="'$(deleteOutput)'==''">true</deleteOutput>
+	<nobuild Condition="'$(nobuild)'==''">false</nobuild>
+	<registerCom Condition="'$(registerCom)'==''">false</registerCom>
+	<cpp-extra-params Condition="'$(cpp-extra-params)'==''"></cpp-extra-params>
+	<output-is-lib Condition="'$(output-is-lib)'==''">false</output-is-lib>
+	<verbose Condition="'$(verbose)'==''">false</verbose>
+	<cl-compiler Condition="'$(cl-compiler)'==''">cl</cl-compiler>
+	<link-linker Condition="'$(link-linker)'==''">link</link-linker>
+	<cl-xtraopts Condition="'$(cl-xtraopts)'==''"></cl-xtraopts>
+	<link-xtraopts Condition="'$(link-xtraopts)'==''"></link-xtraopts>
+	<doLelaDBs Condition="'$(doLelaDBs)'==''">true</doLelaDBs>
+	<doTest Condition="'$(doTest)'==''">true</doTest>
+	<remake-failonerror Condition="'$(remake-failonerror)'==''">true</remake-failonerror>
+	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
+	<build4ux Condition="'$(build4ux)'==''"></build4ux>
+	<!-- Gendarme rule set. See Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/fw-gendarme-rules.xml -->
+	<!-- for possible values. -->
+	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
+	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
+	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
+  </PropertyGroup>
+
+  <Choose>
+	<When Condition="'$(action)'=='build'">
+	  <PropertyGroup>
+		<msbuild-target>Build</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='clean'">
+	  <PropertyGroup>
+		<msbuild-target>Clean</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='rebuild'">
+	  <PropertyGroup>
+		<msbuild-target>Rebuild</msbuild-target>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<msbuild-target>Build</msbuild-target>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <Choose>
+	<When Condition="'$(action)'=='build'">
+	  <PropertyGroup>
+		<make-target>all</make-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='clean'">
+	  <PropertyGroup>
+		<make-target>clean</make-target>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(action)'=='rebuild'">
+	  <PropertyGroup>
+		<make-target>clean all</make-target>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<make-target>all</make-target>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <Choose>
+	<When Condition="'$(config)'=='Debug'">
+	  <PropertyGroup>
+		<config-lower>debug</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Release'">
+	  <PropertyGroup>
+		<config-lower>release</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Bounds'">
+	  <PropertyGroup>
+		<config-lower>bounds</config-lower>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(config)'=='Profile'">
+	  <PropertyGroup>
+		<config-lower>profile</config-lower>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<config-lower>debug</config-lower>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <Choose>
+	<When Condition="'$(OS)'=='Windows_NT'">
+	  <PropertyGroup>
+		<useNUnit-x86>true</useNUnit-x86>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<useNUnit-x86>false</useNUnit-x86>
+	  </PropertyGroup>
+	</Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+	<nant-onfailure>endreportfailure</nant-onfailure>
+	<nant-onsuccess>endreportsuccess</nant-onsuccess>
+	<passbyref>fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run</passbyref>
+	<!--
+	  Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
+	  Otherwise, it should be 'false'.
+	-->
+	<showTargetsRunInReport>false</showTargetsRunInReport>
+	<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
+  </PropertyGroup>
+
+</Project>

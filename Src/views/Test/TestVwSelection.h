@@ -88,6 +88,94 @@ namespace TestViews
 		}
 	};
 
+	class DummyTableVc : public DummyBaseVc
+	{
+		ITsStrFactoryPtr m_qtsf;
+		void AddString(IVwEnv* pvwenv, OLECHAR * pszText)
+		{
+			OLECHAR * pszFt = OleStringLiteral(pszText);
+			ITsStringPtr qtss;
+			m_qtsf->MakeStringRgch(pszFt, wcslen(pszFt), g_wsEng, &qtss);
+			pvwenv->AddString(qtss);
+		}
+		void AddCell(IVwEnv* pvwenv, OLECHAR * pszText)
+		{
+			pvwenv->OpenTableCell(1,1);
+			AddString(pvwenv, pszText);
+			pvwenv->CloseTableCell();
+		}
+	public:
+
+		DummyTableVc()
+		{
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
+		}
+
+		STDMETHOD(Display)(IVwEnv* pvwenv, HVO hvo, int frag)
+		{
+			switch(frag)
+			{
+				// Make a phony table document.
+				// It has two rows of three cells.
+				// The top middle cell has three paragraphs.
+				// Hello		this		world
+				//			    is
+				//				the
+				// Where		will		we
+				//							select?
+			case 1: // the root; display a table with some literal text.
+				VwLength vlTable; // we use this to specify that the table takes 100% of the width.
+				vlTable.nVal = 10000;
+				vlTable.unit = kunPercent100;
+
+				VwLength vlColumn;
+				vlColumn.nVal = 3300; // about 1/3 of width each
+				vlColumn.unit = kunPercent100;
+				pvwenv->OpenTable(3, // Three columns.
+						vlTable, // Table uses 100% of available width.
+						0, // Border thickness.
+						kvaLeft, // Default alignment.
+						kvfpVoid, // No border.
+						kvrlNone,
+						0, //No space between cells.
+						0, //No padding inside cells.
+						false); // multi-column select
+					pvwenv->MakeColumns(1, vlColumn);
+					pvwenv->OpenTableBody();
+					pvwenv->OpenTableRow();
+					{
+						AddCell(pvwenv, L"Hello");
+						pvwenv->OpenTableCell(1,1);
+						{
+							AddString(pvwenv, L"this");
+							AddString(pvwenv, L"is");
+							AddString(pvwenv, L"the");
+						}
+						pvwenv->CloseTableCell();
+						AddCell(pvwenv, L"world");
+					}
+					pvwenv->CloseTableRow();
+
+					pvwenv->OpenTableRow();
+					{
+						AddCell(pvwenv, L"Where");
+						AddCell(pvwenv, L"will");
+						pvwenv->OpenTableCell(1,1);
+						{
+							AddString(pvwenv, L"we");
+							AddString(pvwenv, L"select?");
+						}
+						pvwenv->CloseTableCell();
+					}
+					pvwenv->CloseTableRow();
+					pvwenv->CloseTable();
+
+				break;
+			}
+			return S_OK;
+		}
+	};
+
 	// Simplified display of an StText: just show the paragraph contents.
 	class SimpleStTextVc : public DummyBaseVc
 	{
@@ -2620,6 +2708,89 @@ namespace TestViews
 				L"yalo\tla" nwln
 				L"mat\tmy" nwln
 				L"my.mat\t" nwln),
+				sbstr.Chars());
+		}
+
+		void testCopyTableToClipboard()
+		{
+			// Make a phony table.
+			// It has two rows of three cells.
+			// The top middle cell has three paragraphs.
+			// Hello		this		world
+			//			    is
+			//				the
+			// Where		will		we
+			//							select?
+			ITsStringPtr qtss;
+			StrUni stuPara;
+			m_qvc.Attach(NewObj DummyTableVc());
+			m_qrootb->SetRootObject(khvoBook, m_qvc, 1, NULL);
+			CheckHr(m_qrootb->Layout(m_qvg32, 1000));
+
+			// Select within a single item.
+			VwTableBox * ptboxTable = dynamic_cast<VwTableBox *>(m_qrootb->FirstBox());
+			VwTableRowBox * prboxRow1 = dynamic_cast<VwTableRowBox *>(ptboxTable->FirstBox());
+			VwTableCellBox * pcboxCell11 = dynamic_cast<VwTableCellBox *>(prboxRow1->FirstBox());
+			VwTableCellBox * pcboxCell12 = dynamic_cast<VwTableCellBox *>(pcboxCell11->Next());
+			VwParagraphBox * pvpbox111 = dynamic_cast<VwParagraphBox *>(pcboxCell11->FirstBox());
+			VwParagraphBox * pvpbox121 = dynamic_cast<VwParagraphBox *>(pcboxCell12->FirstBox());
+			VwTextSelectionPtr qsel111_1; // row 1 cell 1 para 1 offset 1 (after 'H' in 'Hell)
+			qsel111_1.Attach(NewObj VwTextSelection(pvpbox111, 1, 1, false, NULL));
+			VwTextSelectionPtr qsel121_2; // row 1 cell 2 para 1 offset 2 (after 'th' in 'this')
+			qsel121_2.Attach(NewObj VwTextSelection(pvpbox121, 2, 2, false, NULL));
+			IVwSelectionPtr qselRange;
+			m_qrootb->MakeRangeSelection(qsel111_1, qsel121_2, true, &qselRange);
+			StrUni sep(L" ");
+			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
+			SmartBstr sbstr;
+			qtss->get_Text(&sbstr);
+			AssertEqual("wrong string for cell1 to cell2 line 1",
+				OleStringLiteral(L"ello\tth"),
+				sbstr.Chars());
+
+			// If the selection is entirely within a cell, paragraph breaks are converted normally into newlines.
+			VwParagraphBox * pvpbox122 = dynamic_cast<VwParagraphBox *>(pvpbox121->Next());
+			VwParagraphBox * pvpbox123 = dynamic_cast<VwParagraphBox *>(pvpbox122->Next());
+			VwTextSelectionPtr qsel123_1; // row 1 cell 2 para 3 offset 1 (after 't' in 'the')
+			qsel123_1.Attach(NewObj VwTextSelection(pvpbox123, 1, 1, false, NULL));
+			m_qrootb->MakeRangeSelection(qsel121_2, qsel123_1, true, &qselRange);
+			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
+			qtss->get_Text(&sbstr);
+			AssertEqual("wrong string for cell2 line1 to cell2 line 3",
+				OleStringLiteral(L"is" nwln L"is" nwln L"t"),
+				sbstr.Chars());
+
+			// If it spans multi-line cells, use | instead of newline within a cell
+			m_qrootb->MakeRangeSelection(qsel111_1, qsel123_1, true, &qselRange);
+			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
+			qtss->get_Text(&sbstr);
+			AssertEqual("wrong string for cell1 line1 to cell2 line 3",
+				OleStringLiteral(L"ello\tthis|is|t"),
+				sbstr.Chars());
+
+			// Now try one starting in the cell and ending beyond
+			VwTableCellBox * pcboxCell13 = dynamic_cast<VwTableCellBox *>(pcboxCell12->Next());
+			VwParagraphBox * pvpbox131 = dynamic_cast<VwParagraphBox *>(pcboxCell13->FirstBox());
+			VwTextSelectionPtr qsel131_5; // row 1 cell 3 para 1 offset 5 (after 'world')
+			qsel131_5.Attach(NewObj VwTextSelection(pvpbox131, 5, 5, false, NULL));
+			m_qrootb->MakeRangeSelection(qsel121_2, qsel131_5, true, &qselRange);
+			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
+			qtss->get_Text(&sbstr);
+			AssertEqual("wrong string for cell2 line1 to cell3 line 1",
+				OleStringLiteral(L"is|is|the\tworld"),
+				sbstr.Chars());
+
+			// and a multi-row version
+			VwTableRowBox * prboxRow2 = dynamic_cast<VwTableRowBox *>(prboxRow1->Next());
+			VwTableCellBox * pcboxCell23 = dynamic_cast<VwTableCellBox *>(prboxRow2->FirstBox()->Next()->Next());
+			VwParagraphBox * pvpbox232 = dynamic_cast<VwParagraphBox *>(pcboxCell23->FirstBox()->Next());
+			VwTextSelectionPtr qsel232_4; // row 2 cell 3 para 2 offset 4 (after 'sele' in 'select?')
+			qsel232_4.Attach(NewObj VwTextSelection(pvpbox232, 4, 4, false, NULL));
+			m_qrootb->MakeRangeSelection(qsel111_1, qsel232_4, true, &qselRange);
+			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
+			qtss->get_Text(&sbstr);
+			AssertEqual("wrong string for cell1 line1 to cell3 line 3",
+				OleStringLiteral(L"ello\tthis|is|the\tworld" nwln L"Where\twill\twe|sele"),
 				sbstr.Chars());
 		}
 

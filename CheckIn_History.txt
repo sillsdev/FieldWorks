@@ -5972,3 +5972,126 @@ McCoy, 14 June 2012. Fixed LT-13315 (phoneme-deletion crash).
 EricP, 15 June 2012. T-8276 Provide a way to import wordforms with their glosses. Stage 3a, refactoring for mapping dialog.
 McCoy, 18 June 2012.  Fixed LT-12979 (failed assert on changing writing systems in the reversal index).  The old assert was invalid; updated to correctly handle the situation.
 RandyR, 18 June 2012. Updated FLEx Bridge installer to 0.3.51.
+EberhardB, 19 June 2012. Integration Calgary/WW -> WW.
+KenZ, 19 Jun 2012. Updated Keyman IPA keyboards to latest from NRSI.
+Andy Black, 19 Jun 2012. Fix a bug in Hermit Crab parser transform.
+McCoy, 19 June 2012.  Fixed LT-12881 (crash on "find example sentence" after reordering complex forms).
+NaylorJ, 19 June 2012. Updated FLEx Bridge installer to 0.3.52
+EricP, 20 Jun 2012. LT-8276 Provide a way to import wordforms with their glosses. Stage 3a. Move mapping dialog to LexTextControls.
+Andy Black, 20 Jun 2012. Fix LT-13385 "Hermit Crab: Word grammar debugger is missing stem name info"
+AnnB. 21 Jun 2012.  Fix LT-13344 - Hook up Help buttons to fields in Variant Type list
+EricP, 22 Jun 2012. LT-8276 Provide a way to import wordforms with their glosses.
+	Stage 4. Inherit Words Sfm Import Wizard from Interlinear Import Wizard (hide from UI for now).
+Andy Black, 22 Jun 2012. Fix bug in LT-13002 "Grammar Sketch export to XLingPaper format includes type attributes on section elements. These should be removed on export. " which caused the XML output to fail.
+McCoy, 22 June 2012.  Fixed LT-11645 (crash when moving to Notebook tab after deleting a text).situation.
+RandyR, 22 June 2012. Updated FLEx Bridge installer to 0.3.53 & Lift Bridge installer to 1.4.24.
+McCoy, 25 June 2012.  Edited column dialog box for some improvements per LT-5410.  The dialog will now choose a different WS by default on adding a duplicate column, and will warn the user immediately if a duplicate is (unavoidably) created.
+GordonM, 26 Jun 2012. LT-13187 Cancelling FLExBridge ObtainProject doesn't close File-Open dialog.
+KenZ, 26 Jun 2012. Integrated FW7.2.5 to WW.
+NaylorJ, 27 Jun 2012. Possible fix to LT-13348, have not yet tested adequately, but committing so that others can verify.
+RandyR, 27 June 2012. Updated FLEx Bridge installer to 0.3.54.
+KenZ, 28 Jun 2012. Fixed LT-13312 migration when expected entry types are not present.
+Andy Black, 28 Jun 2012.  Fixed LT-13393 "Interlinear Export option, "XLingPaper as examples, morpheme-aligned" does not include the free translation line"
+McCoy, 29 June 2012.  Fixed LT-13162 (crash when right-click on empty field).
+McCoy, 3 July 2012.  Partial fix for LT-13361 (crash on merging senses with semantic domains).  The crash will no longer occur, but the merged semantic domains do not display until the screen is refreshed.
+McCoy, 3 July 2012.  Fixed LT-13374 (crash on hiding all but one columns in Notebook and switching between "browse" and "record edit").
+RandyR, 3 July 2012. Updated FLEx Bridge installer to 0.3.58.
+GordonM, 4 Jul 2012. Fix LT-13274 so View-Conflict Report does the right thing with a db4o file.0
+NaylorJ, 5 Jul 2012. Fixed LT-13040, Any MSA references in the LexEntry which are not in any sense will be dropped by the fixup.
+McCoy, 5 July 2012.  Fixed LT-13249; the icon for FLExBridge will now move with its link on resize, and will only be displayed when FLExBridge is installed.
+RandyR, 5 July 2012. Updated FLEx Bridge installer to 0.3.59.
+GordonM, 6 July 2012. Fixed LT-13360 so status bar shows latest record count correctly.
+NaylorJ, 9 July 2012. Fixed LT-13320. The Fixup utility will no longer remove valid generic dates. Also when launched frome FLEx will write the logfile as in the past.
+McCoy, 9 July 2012.  Fixed LT-13375 (CTRL+A was not functioning in the Texts & Words tab).
+Andy Black, 9 July 2012.  Fixed LT-10578 "For Try a Word, if the gloss is null for a morpheme, the MSA info is shown in the gloss line"
+RandyR, 9 July 2012. Updated FLEx Bridge installer to 0.3.60.
+GordonM, 10 Jul 2012. LT-13339 Hooked up help topics for Variant Types list and Utilities dialog.
+GordonM, 10 Jul 2012. LT-13384 Fixed order of Export and Send/Receive on File-Menu.
+RandyR, 11 July 2012. Updated FLEx Bridge installer to 0.3.61.
+RickM, 11 July 2012. LT-13395 Cancel button is not working in the ExportLIFTLexicon window while using SR LIFT option
+Andy Black, 12 July 2012.  LT-13444 "Interlinear Export options of XLingPaper, align words does not handle compounds correctly"
+NaylorJ, 12 July 2012. LT-13040 Fixed a crash in the fixer for entries that had no senses.
+NaylorJ, 12 July 2012. Fix a crash in ELAN related flextext import, a file without any words element shouldn't crash.
+Andy Black, 16 July 2012.  For XLingPaper word-aligned interlinear export, remove extraneous object element.
+RandyR, 16 July 2012. Updated FLEx Bridge installer to 0.3.64.
+KenZ, 17 Jul 2012. Integrated Fixed LT-11468 so configuring interlinear with no active sandbox doesn't crash.
+RandyR, 17 July 2012. Updated FLEx Bridge installer to 0.3.65.
+McCoy, 17 July, 2012.  Fixed an unreported crash in the Notebook section.
+EricP, 18 July, 2012. LT-8276 Provide a way to import wordforms with their glosses: guard against duplicates upon repeated imports.
+	Also now ignore writing system selection if user modfieds mapping destination to "Don't import".
+EricP, 20 July, 2012. Fix Export to Configured Dictionary Index Cards (LT-13470, LT-12103).
+RandyR, 24 July 2012. Updated FLEx Bridge installer to 0.3.66.
+McCoy, 27 July, 2012.  Fixed LT-10367 (crash when using 'move up/down' in Lists->positions with no items present).
+KenZ, 27 Jul 2012. Integrated 7.2.6 changes to WW.
+GordonM, 27 Jul 2012. Fixed LT-8191 so Matched Diacritics checkbox defaults to checked. Also some cleanup.
+KenZ, 30 Jul 2012. Integrated final LT-13469 fix from 7.2 to WW.
+GordonM, 31 Jul 2012. Fix failing Match Diacritics tests.
+GordonM, 31 Jul 2012. LT-13478 Fix to LIFT Import so CmPerson list is merged correctly.
+GordonM, 31 Jul 2012. LT-7406 Esc/Enter keys now work in Apply Styles dialog.
+RandyR, 1 August 2012. Updated FLEx Bridge installer to 0.3.67.
+Andy Black, 2 August 2012. Added note field to XLingPaper interlinear exports.
+JohnT, 3 Aug 2012. LT-13361: Merging a sense with e.g. semantic domains into another sense - temporary display problem
+JohnT, 6 Aug 2012. LT-2186: Ctrl+Left Click to perform jumps
+JohnT, 7 Aug 2012. Improved Views copy-to-clipboard for multiple paragraphs in table cells. Aimed at
+		LT-5615: Pasting a browse selection should have consistent tab formatting, but that may already have been fixed.
+JohnT, 8 Aug 2012. LT-9076, Automatic Update spelling dictionary for Send/Receive.
+	Later: LT-13208: Migration error restoring into version 7.3
+NaylorJ, 9 Aug 2012. LT-13428 Fix to some more Reversal sorting issues. Should be the last fix for now.
+NaylorJ, 9 Aug 2012. LT-13434 Fix the crash on Select All in Analyzy tabs.
+JohnT, 10 Aug 2012. LT-13251, Offer to delete media and picture files when deleting the last link to them
+LastufkaM 13 Aug 2012. LT-13441 Add a new text, get undo crash.
+LastufkaM 13 Aug 2012. LT-13446 Crash trying to receive 2 S/R Projects at once
+EricP, 14 Aug 2012. Fix LT-13505 FlexText Import of texts with multiple Writing Systems gets them all mixed up
+GordonM, 14 Aug 2012. Added code guards for bad data crash in chart (LT-13541).
+	later....... Added tests and fix for LT-13543 crash moving chart words past marker.
+JohnT, 17 Aug 2012. Data migration 7000060 renames *Layout.xml to *.fwlayout. Many files renamed.
+	later: cleaned up a weird morphology layout, to avoid a special case in layout merging
+RandyR, 18 August 2012. Updated FLEx Bridge installer to 0.3.70.
+KenZ, 20 Aug 2012. Updated data files with last 2 migrations.
+KenZ, 20 Aug 2012. Integrated fix for LT-13558 from 7.2.7 to WW.
+Andy Black, 20 Aug 2012.  Fix XLingPaper align word interlinear export.
+RandyR, 20 August 2012. Updated FLEx Bridge installer to 0.3.71.
+RandyR, 21 August 2012. Get rid of some bogus data in the two Sena projects.
+RandyR, 21 August 2012. Updated FLEx Bridge installer to 0.3.72.
+RickM, 22 August 2012. LT-13509 Identical entries homograph numbering inconsistency
+JohnT, 22 Aug 2012. Brought SilUtilsTests project up to VS2010/.NET4, removed spurious reference.
+RickM, 23 Aug 2012 LT-13509 Identical entries homograph numbering inconsistency.  Revert using HomographFixer until tests are corrected.
+RickM, 23 Aug 2012 LT-13509 Identical entries homograph numbering inconsistency.  Test for null value so now tests pass.
+KenZ, 23 Aug 2012. Removed Extensions directory no longer being used.
+RickM, 23 Aug 2012. LT-13509 Identical entries homograph numbering inconsistency.  Added unit test for this.
+JohnT, 23 Aug 2012. Convert SilSidePaneTests buildInclude.xml (for nant) to BuildInclude.targets (for MSBuild).
+JohnT, 24 Aug 2012. Patch up a couple of things to possibly fix running SilSidePantTests in release build.
+RickM, 24 2012. Fixed FwBuildTasks.csproj so that the reference to ICSharpCode.SharpZipLib actually points to where we have it.
+JohnT, 24 Aug 2012. Implemented for COMInterfaces a BuildInclude.targets to do inside VS and elsewhere MSBuild/XBuild are used
+	what buildInclude.xml does for Nant. Created IdlImp custom build task. Note: IdlImporter.dll requires IdlImporter.xml to
+	be in the same folder. It is part of the implementation of FwBuildTasks, though also in bin.
+GordonM, 27 Aug 2012. Part 1 of LT-13190 so New LangProj dialog complains of non-Ascii characters.
+KenZ, 27 Aug 2012. Fixed broken SilSidePaneTests.
+KenZ, 28 Aug 2012. Removed 209,000 lines being written to console taking 5 minutes during FixFwDataDll tests.
+RickM, 28 Aug 2012 Remove Project ProgressBarTest.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
+RickM, 28 Aug 2012 Remove Project MenuExtender.csproj and MenuExtenderTests.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
+GordonM, 28 Aug 2012. Part 2 (rest) of LT-13190 so Send/Receive complains of non-Ascii characters.
+RickM, 28 Aug 2012 Remove Project DemoWidgets.csproj since it is never used. Put in C:\FwWW\DeprecatedCode as zip file.
+RickM, 28 Aug 2012 changed project file so it builds with MSBuild.  missing app.config file.
+GordonM, 28 Aug 2012. Close the logic hole that allowed a duplicate project name.
+RickM, 28 Aug 2012 changed MSBuild project file. Reference to nunit.framework now points to Output/Debug
+RickM, 28 Aug 2012 FDOBrowser.csproj   remove app.config reference; fix reference to FDO
+JohnT, 29 Aug 2012. Implement MSBuild process for FDO, replacing buildInclude.xml and parts of the GenerateFilesFromModel nant task.
+	Implement FdoGenerate as a new MsBuild custom task.
+RickM, 28 Aug 2012 FxtExe had old call to FdoCache.Create() so would not compile. This was corrected along with some .csproj corrections.
+JohnT, 29 Aug 2012. Tweak FDO MSBuild process to work incrementally and not fail if Nant left read-only files around.
+RickM, 29 Aug 2012 FlexDePluginTest would not compile because SilUtils reference needed to be fixed.
+GordonM, 30 Aug 2012. Fix FwUtils for MSBuild.
+	later: Make xCoreTests work w/MSBuild.
+JohnT, 30 Aug 2012. Removed all use of GeneratedAssemblyInfo.cs in core (still a few in localize code).
+	New Src/CommonAssemblyInfo should be added as a LINK to all projects. Simplified AssemblyInfo.cs files
+	are now Compiled.
+GordonM, 30 Aug 2012. Fix XCoreSample to work w/MSBuild.
+RandyR, 30 Aug 2012. Remove 'big' from model.
+JohnT, 31 Aug 2012. DetailControls MSBuild support.
+GordonM, 31 Aug 2012. EncCnvtrs (Lib) MSBuild support. (But this project doesn't seem to build as is.)
+RandyR, 31 Aug 2012. Don't persistent empty TsStrings.
+KenZ, 31 Aug 2012. Get correct registry key so FieldWorks products will run.
+RickM, 31 Aug 2012 A couple corrections were made in  Build/Linux.targets and LexTextExe.csproj  so that MSBuild will run on the command line.
+GordonM, 31 Aug 2012. Removed obsolete creation of xCoreInterfaces.XmlSerializers.dll from xCoreInterfaces.
+JohnT, 31 Aug 2012. Handle RegFree task in MSBuild for FieldWorks.exe and FDOBrowser.exe.

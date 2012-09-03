@@ -1192,8 +1192,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 							int itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
-							if ((itype == (int)CellarPropertyType.Unicode) ||
-								(itype == (int)CellarPropertyType.BigUnicode))
+							if (itype == (int)CellarPropertyType.Unicode)
 							{
 								int wsForUnicode = GetWritingSystemForObject(frag,
 									hvo,
@@ -1201,8 +1200,7 @@ namespace SIL.FieldWorks.Common.Controls
 									m_wsReversal == 0 ? m_cache.DefaultUserWs : m_wsReversal);
 								vwenv.AddUnicodeProp(flid, wsForUnicode, this);
 							}
-							else if ((itype == (int)CellarPropertyType.String) ||
-								(itype == (int)CellarPropertyType.BigString))
+							else if (itype == (int)CellarPropertyType.String)
 							{
 								MarkSource(vwenv, caller);
 								vwenv.AddStringProp(flid, this);
@@ -2120,9 +2118,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 							int itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
-							if ((itype == (int)CellarPropertyType.MultiBigString) ||
-								(itype == (int)CellarPropertyType.MultiBigUnicode) ||
-								(itype == (int)CellarPropertyType.MultiString) ||
+							if ((itype == (int)CellarPropertyType.MultiString) ||
 								(itype == (int)CellarPropertyType.MultiUnicode))
 							{
 								if (s_cwsMulti > 1)
@@ -2766,8 +2762,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			int flid = GetFlid(frag, hvoTarget);
 			CellarPropertyType itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
-			if ((itype == CellarPropertyType.Unicode) ||
-				(itype == CellarPropertyType.BigUnicode))
+			if (itype == CellarPropertyType.Unicode)
 			{
 				int fragId = GetId(new DisplayUnicodeCommand(
 					flid,
@@ -2776,8 +2771,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_displayCommandToId);
 				vwenv.AddObj(hvoTarget, this, fragId);
 			}
-			else if ((itype == CellarPropertyType.String) ||
-				(itype == CellarPropertyType.BigString))
+			else if (itype == CellarPropertyType.String)
 			{
 				int fragId = GetId(new DisplayStringCommand(flid), m_idToDisplayCommand, m_displayCommandToId);
 				vwenv.AddObj(hvoTarget, this, fragId);

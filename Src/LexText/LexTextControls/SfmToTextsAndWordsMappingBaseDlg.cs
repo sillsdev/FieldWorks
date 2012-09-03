@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public partial class SfmToTextsAndWordesMappingBaseDlg : Form
+	public partial class SfmToTextsAndWordsMappingDlg : Form
 	{
 		protected string m_helpTopicID;
 
@@ -21,10 +22,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string m_orginalLabel;
 		private readonly string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
 		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
+		private IEnumerable<InterlinDestination> m_destinationsToDisplay; // applied filter for Destinations
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		public SfmToTextsAndWordesMappingBaseDlg()
+		public SfmToTextsAndWordsMappingDlg()
 		{
 			InitializeComponent();
 			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step2";
@@ -38,15 +40,16 @@ namespace SIL.FieldWorks.LexText.Controls
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
 		}
 
-		internal void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mapping)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_cache = cache;
-			m_mapping = mapping;
+			m_mapping = mappingToModify;
+			m_destinationsToDisplay = destinationsToDisplay;
 			SuspendLayout();
 			// Update the label to show what marker we are modifying
-			m_destinationLabel.Text = String.Format(m_orginalLabel, mapping.Marker);
+			m_destinationLabel.Text = String.Format(m_orginalLabel, mappingToModify.Marker);
 			// Replace the Add button with a specialized add writing system button
 			var loc = m_addWritingSystemButton.Location;
 			var tabIndex = m_addWritingSystemButton.TabIndex;
@@ -62,7 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			addWritingSystemButton.Initialize(m_cache, helpTopicProvider, app, null, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			addWritingSystemButton.WritingSystemAdded += SfmInterlinearMappingDlg_WritingSystemAdded;
 			m_destinationsListBox.SelectedIndexChanged += new EventHandler(m_destinationsListBox_SelectedIndexChanged);
-			LoadConverters(mapping.Converter);
+			LoadConverters(mappingToModify.Converter);
 			LoadDestinations();
 			ResumeLayout();
 		}
@@ -75,9 +78,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected virtual void OnDestinationListBox_SelectedIndexChanged()
 		{
 			string oldWs = GetOldWs();
-			/*
-			 * Push to sub class
-			 *
 			if (m_destinationsListBox.SelectedItem is DestinationItem &&
 				((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
 			{
@@ -90,8 +90,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			}
 			else
-			 */
-			NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+			{
+				NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+			}
 		}
 
 		protected string GetOldWs()
@@ -114,11 +115,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected virtual string GetDestinationName(InterlinDestination destEnum)
 		{
-			/*
-			 * TODO: push to sub class
-			 * InterlinearSfmImportWizard.GetDestinationName(destEnum)
-			 */
-			return null; // override
+			return GetDestinationNameFromResource(destEnum, LexTextControls.ResourceManager);
 		}
 
 		public static string GetDestinationNameFromResource(InterlinDestination dest, ResourceManager rm)
@@ -131,14 +128,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_destinationsListBox.BeginUpdate();
 			m_destinationsListBox.Items.Clear();
-			var items = new System.Collections.Generic.List<DestinationItem>();
-			foreach (int i in Enum.GetValues(typeof(InterlinDestination)))
-			{
-				var dest = (InterlinDestination)i;
-				string name = GetDestinationName(dest);
-				if (dest != InterlinDestination.Ignored)
-					items.Add(new DestinationItem() { Name = name, Dest = dest });
-			}
+			var items = (from dest in m_destinationsToDisplay
+						 let name = GetDestinationName(dest)
+						 where dest != InterlinDestination.Ignored
+						 select new DestinationItem() {Name = name, Dest = dest}).ToList();
 			// Sort most of the names, but force 'Ignored' to come first
 			items.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
 			items.Insert(0, new DestinationItem() { Name = GetDestinationName(InterlinDestination.Ignored), Dest = InterlinDestination.Ignored });
@@ -214,9 +207,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_okButton_Click(object sender, EventArgs e)
 		{
-			m_mapping.WritingSystem = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			var dest = ((DestinationItem) m_destinationsListBox.SelectedItem).Dest;
+			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
 			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? "" : m_converterCombo.Text;
-			m_mapping.Destination = ((DestinationItem)m_destinationsListBox.SelectedItem).Dest;
+			m_mapping.Destination = dest;
 		}
 
 		private void m_helpButton_Click(object sender, EventArgs e)

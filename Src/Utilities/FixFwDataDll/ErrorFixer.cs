@@ -115,7 +115,10 @@ namespace SIL.FieldWorks.FixData
 								{
 									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 									if (fixes.Length > 0)
+									{
 										MessageBox.Show(fixes, Strings.ksErrorsFoundOrFixed);
+										File.WriteAllText(pathname.Replace(Resources.FwFileExtensions.ksFwDataXmlFileExtension, "fixes"), fixes);
+									}
 								}
 							}
 						}

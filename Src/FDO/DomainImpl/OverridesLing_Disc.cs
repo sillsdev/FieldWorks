@@ -18,6 +18,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -377,6 +378,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
+				if (Owner == null)
+				{
+					Debug.Fail("Why are we getting Clause Markers with no ownerguid?");
+					return false;
+				}
 				var crows = DependentClausesRS.Count;
 				if (crows == 0)
 					return false;
@@ -422,11 +428,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		///<summary>
 		/// Returns true if WordGroup property contains a valid reference
-		/// (i.e. is not null)
+		/// (i.e. is not null). Also checks for no owner (owner is required)
 		///</summary>
 		public bool HasValidRef
 		{
-			get { return WordGroupRA != null; }
+			get { return WordGroupRA != null && Owner != null; }
 		}
 
 		#endregion

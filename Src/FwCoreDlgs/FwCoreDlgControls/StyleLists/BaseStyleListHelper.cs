@@ -635,9 +635,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					m_currParaStyleName;
 
 				Debug.Assert(SelectedStyle != null);
-				if (SelectedStyle == null)
-					return;
 			}
+
+			if (SelectedStyle == null)
+				return;
 
 			if (StyleChosen != null && m_ignoreChosenDelegate == false)
 				StyleChosen(m_prevStyle, SelectedStyle);

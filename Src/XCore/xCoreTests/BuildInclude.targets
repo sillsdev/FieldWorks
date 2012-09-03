@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<ItemGroup>
+		<TestFiles Include="basicTest.xml" />
+		<TestFiles Include="includeTest.xml" />
+		<TestFiles Include="listitems.bmp" />
+	</ItemGroup>
+	<Target Name="AfterClean">
+		<Message Importance="high" Text="Deleting %(TestFiles.Identity) from $(OutDir)." />
+		<Delete Files="@(TestFiles -> '$(OutDir)/%(Identity)')" ContinueOnError="true" />
+	</Target>
+	<Target Name="BeforeBuild">
+		<!-- whatever commands we need to run before the rest of the build-->
+		<Message Importance="high" Text="Copying %(TestFiles.FullPath) to $(OutDir)." />
+		<Copy SourceFiles="@(TestFiles)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+	</Target>
+</Project>

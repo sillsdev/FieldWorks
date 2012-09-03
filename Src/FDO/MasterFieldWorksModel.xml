@@ -33,6 +33,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  29 Aug 2012 (no model update): Remove 'big' attribute from system.
+  16 Aug 2012 (7000060): Change configuration layout files from X_Layouts.xml to X.fwlayout. No model change, just need to run migration.
   29 May 2012 (7000059): Make IText objects unowned to avoid S/R Merge problems.
   25 April 2012 (7000058): No actual model change, but a data migration to fill GlossAppend fields
 	for the standard system Plural and Past variant types. See LT-7581.
@@ -165,7 +167,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000059" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000060" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -174,14 +176,14 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  <props>
 		<basic num="2" id="DateCreated" sig="Time"/>
 		<basic num="4" id="DateModified" sig="Time"/>
-		<basic num="5" id="Description" sig="MultiString" big="true"/>
+		<basic num="5" id="Description" sig="MultiString"/>
 	  </props>
 	</class>
 	<class num="2" id="CmFolder" abstract="false" abbr="fold" base="CmObject" depth="0">
 	  <props>
 		<basic num="1" id="Name" sig="MultiUnicode"/>
 		<owning num="3" id="SubFolders" card="col" sig="CmFolder"/>
-		<basic num="5" id="Description" sig="MultiString" big="true"/>
+		<basic num="5" id="Description" sig="MultiString"/>
 		<owning num="6" id="Files" card="col" sig="CmFile"/>
 	  </props>
 	</class>
@@ -190,7 +192,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>Used for all manner of notes.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Content" sig="MultiString" big="true"/>
+		<basic num="1" id="Content" sig="MultiString"/>
 	  </props>
 	</class>
 	<class num="4" id="FsComplexFeature" abstract="false" abbr="comf" base="FsFeatDefn" depth="1">
@@ -203,7 +205,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<basic num="1" id="Name" sig="MultiUnicode"/>
 		<basic num="2" id="DateCreated" sig="Time"/>
 		<basic num="3" id="DateModified" sig="Time"/>
-		<basic num="4" id="Description" sig="MultiString" big="true"/>
+		<basic num="4" id="Description" sig="MultiString"/>
 		<owning num="5" id="Publications" card="col" sig="Publication">
 		  <comment>
 			<para>A collection of all of the publication layouts available for output from the translated scripture database.</para>
@@ -223,8 +225,8 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  </comment>
 	  <props>
 		<basic num="1" id="BeginOffset" sig="Integer" internalSetter="true"/>
-		<basic num="2" id="FreeTranslation" sig="MultiString" big="true"/>
-		<basic num="3" id="LiteralTranslation" sig="MultiString" big="true"/>
+		<basic num="2" id="FreeTranslation" sig="MultiString"/>
+		<basic num="3" id="LiteralTranslation" sig="MultiString"/>
 		<owning num="4" id="Notes" sig="Note" card="seq"/>
 		<rel num="5" id="Analyses" sig="IAnalysis" card="seq"/>
 		<basic num="6" id="Reference" sig="String">
@@ -277,7 +279,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  <props>
 		<basic num="1" id="Name" sig="MultiUnicode"/>
 		<basic num="2" id="Abbreviation" sig="MultiUnicode"/>
-		<basic num="3" id="Description" sig="MultiString" big="true"/>
+		<basic num="3" id="Description" sig="MultiString"/>
 		<owning num="4" id="SubPossibilities" card="seq" sig="CmPossibility"/>
 		<basic num="6" id="SortSpec" sig="Integer"/>
 		<rel num="7" id="Restrictions" card="col" sig="CmPossibility">
@@ -475,9 +477,9 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>John Thomson's original intent was to use it for the kind of paragraph that has something hanging out in the left margin that isn't predictable (as a bullet or number is) from the stylesheet. The classic example would be a list of terms, with the term sticking out to the left. Since we don't yet have tabs implemented, we could set things up to allow the main body of the paragraph to be aligned, and the label out in the margin. </para>
 		  </comment>
 		</basic>
-		<basic num="2" id="Contents" sig="String" big="true">
+		<basic num="2" id="Contents" sig="String">
 		  <comment>
-			<para>The string of text found within a paragraph. The signature here is bigString which allows for embedded formatting and language encodings. </para>
+			<para>The string of text found within a paragraph. The signature here is string which allows for embedded formatting and language encodings. </para>
 		  </comment>
 		</basic>
 		<basic num="3" id="ParseIsCurrent" sig="Boolean">
@@ -576,7 +578,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		</basic>
 		<basic num="13" id="Function" sig="Integer">
 		  <comment>
-			<para>Tthe functional context for a style within a given structural context (presently only defined for section ‘body’ structures). To be enumerated as follows:</para>
+			<para>The functional context for a style within a given structural context (presently only defined for section ‘body’ structures). To be enumerated as follows:</para>
 			<para>   stusProse - indicating prose within a section body structure </para>
 			<para>   stusLine - indicating poetry within a section body structure </para>
 			<para>   stusList - indicating a list within a section body structure </para>
@@ -682,7 +684,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>May 23, 2001. This is to be used for cross references between objects. In its current state, it will be used ONLY for bidirectional (cf. unidirectional or cross-reference sets of greater than 2) cross-references. Although there is a comment attribute on this object, it will not be used in version 1 of the Research Notebook.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Comment" sig="MultiString" big="true">
+		<basic num="1" id="Comment" sig="MultiString">
 		  <comment>
 			<para>To be used after version 1 for indicating the reason for a cross-reference. It is quite likely that a pointer to a list of types of cross-references will also be included in the future.</para>
 		  </comment>
@@ -694,9 +696,9 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>Used for handling various types of translations of a paragraph. For Scripture this includes a back translation. For vernacular texts, this includes free and literal translations.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Translation" sig="MultiString" big="true">
+		<basic num="1" id="Translation" sig="MultiString">
 		  <comment>
-			<para>The signature is multiBigString allowing us to have translations in multiple languages (e.g. ENG, FRN, SPN). </para>
+			<para>The signature is multiString allowing us to have translations in multiple languages (e.g. ENG, FRN, SPN). </para>
 		  </comment>
 		</basic>
 		<rel num="2" id="Type" card="atomic" sig="CmPossibility">
@@ -727,16 +729,16 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>Question: Can an annotation point to two or more objects from different projects? At this point it cannot cross databases because we would need an attribute for the database itself.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="CompDetails" sig="Unicode" big="true">
+		<basic num="1" id="CompDetails" sig="Unicode">
 		  <comment>
 			<para>Data stored and used by specialized computer agents (e.g. computational parsers) in the FieldWorks system. Most likely will be stored in XML format. </para>
 		  </comment>
 		</basic>
-		<basic num="2" id="Comment" sig="MultiString" big="true">
+		<basic num="2" id="Comment" sig="MultiString">
 		  <comment>
-			<para>Not sure what the signature here should be yet. multiBigString, multiUnicode, StText?</para>
+			<para>Not sure what the signature here should be yet. multiUnicode, StText?</para>
 			<para>&lt;p&gt;</para>
-			<para>Probably, in most cases, only BigString will be needed. </para>
+			<para>Probably, in most cases, only string will be needed. </para>
 		  </comment>
 		</basic>
 		<rel num="3" id="AnnotationType" card="atomic" sig="CmAnnotationDefn">
@@ -961,7 +963,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	<class num="42" id="Publication" abstract="false" abbr="cmpb" base="CmObject" depth="0">
 	  <props>
 		<basic num="1" id="Name" sig="Unicode"/>
-		<basic num="2" id="Description" sig="String" big="true"/>
+		<basic num="2" id="Description" sig="String"/>
 		<basic num="3" id="PageHeight" sig="Integer">
 		  <comment>
 			<para>The height of the trimmed page in the final publication, in millipoints. This includes the top and bottom margins and the printable height of the text area.</para>
@@ -1097,7 +1099,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  </comment>
 	  <props>
 		<basic num="1" id="Name" sig="Unicode"/>
-		<basic num="2" id="Description" sig="String" big="true"/>
+		<basic num="2" id="Description" sig="String"/>
 		<basic num="3" id="MarginTop" sig="Integer">
 		  <comment>
 			<para>Height of top margin from top of page</para>
@@ -1147,7 +1149,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  </comment>
 	  <props>
 		<basic num="1" id="Name" sig="Unicode"/>
-		<basic num="2" id="Description" sig="String" big="true"/>
+		<basic num="2" id="Description" sig="String"/>
 		<owning num="3" id="DefaultHeader" card="atomic" sig="PubHeader">
 		  <comment>
 			<para>The contents of the default header for pages of a publication division (odd pages use the default header).</para>
@@ -1205,7 +1207,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	<class num="47" id="CmFile" abstract="false" abbr="cmfl" base="CmObject" depth="0">
 	  <props>
 		<basic num="1" id="Name" sig="MultiUnicode"/>
-		<basic num="2" id="Description" sig="MultiString" big="true"/>
+		<basic num="2" id="Description" sig="MultiString"/>
 		<basic num="3" id="OriginalPath" sig="Unicode"/>
 		<basic num="4" id="InternalPath" sig="Unicode"/>
 		<basic num="5" id="Copyright" sig="MultiString">
@@ -1223,7 +1225,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>The caption in a string/publication/etc.</para>
 		  </comment>
 		</basic>
-		<basic num="4" id="Description" sig="MultiString" big="true">
+		<basic num="4" id="Description" sig="MultiString">
 		  <comment>
 			<para>Illustration description. This material does not show up on the printed page. This can include special publishing notes, etc.</para>
 		  </comment>
@@ -2279,7 +2281,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	<class num="4" id="RnGenericRec" abstract="false" abbr="genr" base="CmObject" depth="0">
 	  <comment>
 		<para>This is a class that encapsulates basic, shared behavior for Event (observation etc.) and Analysis records</para>
-		<para>Rdnamed from RnGenericRecord for the Firebird Port.</para>
+		<para>Renamed from RnGenericRecord for the Firebird Port.</para>
 	  </comment>
 	  <props>
 		<basic num="1" id="Title" sig="String">
@@ -2449,7 +2451,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>This class provides a means for the user to indicate areas where he wants to do further research. He can then look at a list of all of the Reminders within a notebook, and order his research to address these topics. Eventually, we will probably expand this class to include an indication of priority, and perhaps other fields. But this begins to cross the line into the Project Management software we wish to design and develop, so at this point we are going to keep it relatively simple.</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Description" sig="String" big="true">
+		<basic num="1" id="Description" sig="String">
 		  <comment>
 			<para>The nature of the reminder, e.g., a question to get answered, or a note about some work that should be done. </para>
 		  </comment>
@@ -2605,12 +2607,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>We may need more than one pronunciation per entry. For example either/neither have two different pronunciations. Some people may want to order these based on frequency of use, so it is a sequence instead of a collection.</para>
 		  </comment>
 		</owning>
-		<basic num="32" id="ImportResidue" sig="String" big="true">
+		<basic num="32" id="ImportResidue" sig="String">
 		  <comment>
 			<para> A place where we can store standard format markers that are not processed in any other way.</para>
 		  </comment>
 		</basic>
-		<basic num="33" id="LiftResidue" sig="Unicode" big="true">
+		<basic num="33" id="LiftResidue" sig="Unicode">
 		  <comment>
 			<para>Stores XML data that's not part of our model.</para>
 		  </comment>
@@ -2629,7 +2631,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	</class>
 	<class num="3" id="ConstChartRow" abbr="ccr" abstract="false" base="CmObject" depth="0">
 	  <props>
-		<basic num="1" id="Notes" sig="String" big="true"/>
+		<basic num="1" id="Notes" sig="String"/>
 		<basic num="2" id="ClauseType" sig="Integer">
 		  <notes>
 			<para>This is an enum with these values: Normal, Dependent, Song, Speech</para>
@@ -2640,7 +2642,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<basic num="5" id="StartDependentClauseGroup" sig="Boolean"/>
 		<basic num="6" id="EndDependentClauseGroup" sig="Boolean"/>
 		<owning num="7" id="Cells" sig="ConstituentChartCellPart" card="seq"/>
-		<basic num="8" id="Label" sig="String" big="true"/>
+		<basic num="8" id="Label" sig="String"/>
 	  </props>
 	</class>
 	<class num="4" id="LexExampleSentence" abstract="false" abbr="exsn" base="CmObject" depth="0">
@@ -2655,7 +2657,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		</basic>
 		<basic num="2" id="Reference" sig="String"/>
 		<owning num="3" id="Translations" card="col" sig="CmTranslation"/>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="4" id="LiftResidue" sig="Unicode"/>
 		<rel num="5" id="DoNotPublishIn" card="col" sig="CmPossibility">
 		  <comment>
 			<para>This property lists publications in which this example should not appear.</para>
@@ -2831,7 +2833,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This provides a place to store tone patterns of the pronunciation form. It defaults to the top analysis writing system, but being a string, it can be forced to some other writing system. Tone may be marked as HL, 12, etc.</para>
 		  </comment>
 		</basic>
-		<basic num="7" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="7" id="LiftResidue" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="16" id="LexSense" abstract="false" abbr="sens" base="CmObject" depth="0">
@@ -2853,26 +2855,26 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<rel num="12" id="SenseType" card="atomic" sig="CmPossibility"/>
 		<rel num="13" id="ThesaurusItems" card="col" sig="CmPossibility"/>
 		<rel num="14" id="UsageTypes" card="col" sig="CmPossibility"/>
-		<basic num="15" id="AnthroNote" sig="MultiString" big="true"/>
+		<basic num="15" id="AnthroNote" sig="MultiString"/>
 		<basic num="16" id="Bibliography" sig="MultiString"/>
-		<basic num="17" id="DiscourseNote" sig="MultiString" big="true"/>
-		<basic num="18" id="EncyclopedicInfo" sig="MultiString" big="true"/>
-		<basic num="19" id="GeneralNote" sig="MultiString" big="true"/>
-		<basic num="20" id="GrammarNote" sig="MultiString" big="true"/>
-		<basic num="21" id="PhonologyNote" sig="MultiString" big="true"/>
+		<basic num="17" id="DiscourseNote" sig="MultiString"/>
+		<basic num="18" id="EncyclopedicInfo" sig="MultiString"/>
+		<basic num="19" id="GeneralNote" sig="MultiString"/>
+		<basic num="20" id="GrammarNote" sig="MultiString"/>
+		<basic num="21" id="PhonologyNote" sig="MultiString"/>
 		<basic num="22" id="Restrictions" sig="MultiUnicode"/>
-		<basic num="23" id="SemanticsNote" sig="MultiString" big="true"/>
-		<basic num="24" id="SocioLinguisticsNote" sig="MultiString" big="true"/>
+		<basic num="23" id="SemanticsNote" sig="MultiString"/>
+		<basic num="24" id="SocioLinguisticsNote" sig="MultiString"/>
 		<basic num="25" id="Source" sig="String"/>
 		<rel num="26" id="Status" card="atomic" sig="CmPossibility"/>
 		<rel num="27" id="SemanticDomains" card="col" sig="CmSemanticDomain"/>
 		<owning num="29" id="Pictures" card="seq" sig="CmPicture"/>
-		<basic num="30" id="ImportResidue" sig="String" big="true">
+		<basic num="30" id="ImportResidue" sig="String">
 		  <comment>
 			<para> A place where we can store standard format markers that are not processed in any other way.</para>
 		  </comment>
 		</basic>
-		<basic num="31" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="31" id="LiftResidue" sig="Unicode"/>
 		<rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility">
 		  <comment>
 			<para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
@@ -3223,7 +3225,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This is used to indicate a lexeme form is an abstract form (e.g.,-[C][V]^2, or iN) and should not be used for parsing.</para>
 		  </comment>
 		</basic>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="4" id="LiftResidue" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="36" id="MoInflAffixSlot" abstract="false" abbr="aslt" base="CmObject" depth="0">
@@ -3513,7 +3515,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>When the user selects gloss items from the language-specific gloss system to form a composite gloss, this analysis is stored in the MSA as a gloss bundle (which an attribute on MSA that stores a set of references to all the selected gloss items). The language-specific feature structure for an MSA is automatically generated by computing the unification of all the feature structure fragments in the gloss bundle.</para>
 		  </comment>
 		</rel>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="4" id="LiftResidue" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="42" id="MoMorphType" abstract="false" abbr="mot" base="CmPossibility" depth="1">
@@ -3882,9 +3884,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<owning num="2" id="Analyses" card="col" sig="WfiAnalysis"/>
 		<basic num="3" id="SpellingStatus" sig="Integer" min="0" max="2">
 		  <comment>
-			<para>The current status of a wordform (e.g. undecided, correct, incorrect). </para>
-			<para>This will be used to display and allow the changing of a word's status in the</para>
-			<para>concordance view of the translation editor.</para>
+			<para>The current status of a wordform (e.g. undecided, correct, incorrect). This will be used to display and allow the changing of a word's status in the concordance view of the translation editor.</para>
 		  </comment>
 		</basic>
 		<basic num="4" id="Checksum" sig="Integer">
@@ -3964,7 +3964,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	  <comment>
 		<para>This is an abstract class, which subsumes various kinds of trace structures.</para>
 		<para>The assumption is that a derivation is a sequence of stratum applications (MoStratumApps), and that each stratum application is a sequence of derivational affix applications (MoDerivationalAffixes, possibly an inflectional template application (MoInflTemplateApp), and (when they are implemented) a sequence of phonological rule applications (MoPhonolRuleApps), in that order. (The ordering assumption would need to be modified to allow for cyclic phonological rule application.)</para>
-		<para> Renamed from MoDerivationTrace for the Firebird Port.</para>
+		<para>Renamed from MoDerivationTrace for the Firebird Port.</para>
 	  </comment>
 	  <props>
 		<basic num="1" id="OutputForm" sig="MultiUnicode">
@@ -4649,11 +4649,11 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<para>History of the entry</para>
 	  </comment>
 	  <props>
-		<basic num="1" id="Comment" sig="MultiString" big="true"/>
+		<basic num="1" id="Comment" sig="MultiString"/>
 		<basic num="2" id="Form" sig="MultiUnicode"/>
 		<basic num="3" id="Gloss" sig="MultiUnicode"/>
 		<basic num="4" id="Source" sig="Unicode"/>
-		<basic num="5" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="5" id="LiftResidue" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="116" id="ChkRef" abstract="false" abbr="chkr" base="CmObject" depth="0">
@@ -4756,7 +4756,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This allows the user to add a name to the set.</para>
 		  </comment>
 		</basic>
-		<basic num="4" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="4" id="LiftResidue" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="121" id="ChkSense" abstract="false" abbr="chks" base="CmObject" depth="0">
@@ -4915,7 +4915,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This field is available for summary information to show with the variant info being displayed from the main entry. It may be in more than one language and might support formatting and embedded languages. Chuck Grimes feels this is important and it is not simply the gloss of the variant entry. This field would contain the MDF \ve, \vn, and \vr information, which may be the name of a dialect and/or any pertinent comment, such as usage restrictions, simple gloss, or inflection. In MDF the contents of \ve is displayed after the variant in parentheses. Since the \ve field is imported from the major entry, and the \ve may differ for the same \va used in different entries, by storing the information with the LexEntryRef we do not lose anything. If we imported it into the SummaryDefinition of the minor entry, we would have to concatenate the various \ve fields and would lose the distinction of which reference they came from. However, my searches so far have not uncovered any place two different main entries refer to the same variant entry, If this does not happen, we could probably ignore this and just use the SummaryDefinition of the minor entry. When displaying the variant entry in a main entry, this summary could be printed following the variant headword. When displaying a subentry in a main entry in the stem-based format, this summary would be displayed following the subentry headword. Would we ever need a different summary for two different LexEntryRefs owned by the same entry? If not, we could do without this property.</para>
 		  </comment>
 		</basic>
-		<basic num="7" id="LiftResidue" sig="Unicode" big="true"/>
+		<basic num="7" id="LiftResidue" sig="Unicode"/>
 		<basic num="8" id="RefType" sig="Integer" max="127">
 		  <comment>
 			<para>This property is needed in the UI to know whether the current LexEntryRef should show up as a variant or a complex form. We currently use VariantTypes and ComplexFormTypes to determine this, but there are occasions when both of these are missing but we still need to show something in the UI. This integer will be used as an enum with 0 for variants and 1 for complex forms. We may later need to specify inflected forms and perhaps combinations of these.</para>
@@ -5071,7 +5071,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	<class num="133" id="LexEntryInflType" abstract="false" abbr="leit" base="LexEntryType" depth="1">
 	  <comment>
 		<para>Just as our the model allows a user to tag multiple irregularly inflected forms as all being of the same kind (e.g. perfective or (nominal) plural),</para>
-		<para>this subclass will do the same, but will capture more generalizations:  rather than the user having to add a custom sense/gloss for each form, merely by saying that this form is of this (new) type,</para>
+		<para>this subclass will do the same, but will capture more generalizations: rather than the user having to add a custom sense/gloss for each form, merely by saying that this form is of this (new) type,</para>
 		<para>the user gets not only the consistent gloss string attached (e.g. -perf or +pl), s/he also gets the actual inflectional features of that item and can have the automated parser still parse inflected words containing these irregularly inflected forms.</para>
 		<para>To try and say it a different way, every irregularly inflected form which is tagged as being, say, perfective, will get a consistent gloss, a consistent set of inflection features, and allow the automated parsers to correctly parse them (assuming the user has correctly filled in the information!).</para>
 	  </comment>
@@ -5088,7 +5088,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		</basic>
 		<owning num="3" id="InflFeats" card="atomic" sig="FsFeatStruc">
 		  <comment>
-			<para>These are the inflectional features of the inflection type.  For example, if the type is perfective, then this will be [aspect:perfective].</para>
+			<para>These are the inflectional features of the inflection type. For example, if the type is perfective, then this will be [aspect:perfective].</para>
 			<para>If it is (nominal) plural, then this will be [noun_agreement:[number:plural]]. </para>
 			<para>These features are added to the inflected form (in the word grammar, this is with the rule corresponding to the inflectional template).</para>
 		  </comment>
@@ -5096,7 +5096,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 		<rel num="4" id="Slots" card="col" sig="MoInflAffixSlot">
 		  <comment>
 			<para>This indicates any slot(s) in inflectional templates which would normally be filled by an inflectional affix bearing the same inflectional feature(s) as those in InflFeats.</para>
-			<para>That is, regularly inflected forms will usually have an inflectional affix filling some slot.  These irregularly inflected forms will not have that inflectional affix (this is why they are irregular)</para>
+			<para>That is, regularly inflected forms will usually have an inflectional affix filling some slot. These irregularly inflected forms will not have that inflectional affix (this is why they are irregular)</para>
 			<para>but the automated parsers will still need to know which slot(s) should be considered filled.</para>
 			<para>For example, if the type is perfective and regularly inflected verbs have a perfective prefix in the aspect slot (which happens to be the second slot before the stem), the user would indicate that second, aspect slot here</para>
 		  </comment>

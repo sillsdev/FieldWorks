@@ -1499,6 +1499,7 @@ namespace SIL.FieldWorks.Discourse
 			var ihvoNewCol = GetIndexOfColumn(hvoColContainingCellPart);
 			if (ihvoNewCol < m_iLastColForWhichCellExists || ihvoNewCol >= m_chart.AllColumns.Length)
 			{
+				//Debug.Fail(string.Format("Cell part : {0} Chart AllColumns length is: {1} ihvoNewCol is: {2}", cellPart.Guid, m_chart.AllColumns.Length, ihvoNewCol));
 				// pathological case...cell part is out of order or its column has been deleted.
 				// Maybe the user re-ordered the columns??
 				// Anyway, we'll let it go into the current cell.

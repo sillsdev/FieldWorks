@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	</Reference>
@@ -145,6 +145,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AdapterBase.cs">
 	  <SubType>Code</SubType>
 	</Compile>

@@ -141,6 +141,17 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// Override to work with fake flid.
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <param name="tag"></param>
+		/// <returns></returns>
+		public override int get_VecSize(int hvo, int tag)
+		{
+			return tag == ktagTagMe ? -1 : base.get_VecSize(hvo, tag);
+		}
+
+		/// <summary>
 		/// Override to support fake integer properties.
 		/// </summary>
 		/// <param name="hvo"></param>

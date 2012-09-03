@@ -173,11 +173,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="app.config" />
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
 	</Compile>
+	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="LexText.cs">
 	  <SubType>Code</SubType>
 	</Compile>

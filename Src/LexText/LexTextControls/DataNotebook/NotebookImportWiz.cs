@@ -1517,18 +1517,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							break;
 					}
 					return SfFieldType.Invalid;
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					return SfFieldType.String;
 				case CellarPropertyType.GenDate:
 				case CellarPropertyType.Time:
 					return SfFieldType.DateTime;
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.Binary:
 				case CellarPropertyType.Image:
 				case CellarPropertyType.Boolean:
@@ -2169,11 +2165,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							clidDest = m_mdc.GetDstClsId(sfm.m_flid);
 							Debug.Assert(clidDest == RnGenericRecTags.kClassId);
 							break;
-						case CellarPropertyType.MultiBigString:
-						case CellarPropertyType.MultiBigUnicode:
 						case CellarPropertyType.MultiString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.BigString:
 						case CellarPropertyType.String:
 							foreach (XmlNode xn in xnMarker.SelectNodes("./StringWrtSys"))
 							{
@@ -2181,7 +2174,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							}
 							break;
 						// The following types do not occur in RnGenericRec fields.
-						case CellarPropertyType.BigUnicode:
 						case CellarPropertyType.Binary:
 						case CellarPropertyType.Boolean:
 						case CellarPropertyType.Float:
@@ -2617,11 +2609,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								}
 								break;
 							case CellarPropertyType.MultiString:
-							case CellarPropertyType.MultiBigString:
 							case CellarPropertyType.MultiUnicode:
-							case CellarPropertyType.MultiBigUnicode:
 							case CellarPropertyType.String:
-							case CellarPropertyType.BigString:
 								SetStringValue(rec, rsf, field, cpt);
 								break;
 							case CellarPropertyType.GenDate:
@@ -2631,7 +2620,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								SetDateTimeValue(rec, rsf, field);
 								break;
 							case CellarPropertyType.Unicode:
-							case CellarPropertyType.BigUnicode:
 							case CellarPropertyType.Binary:
 							case CellarPropertyType.Image:
 							case CellarPropertyType.Boolean:
@@ -3226,13 +3214,10 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					switch (cpt)
 					{
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 							m_cache.DomainDataByFlid.SetMultiStringAlt(rec.Hvo, rsf.m_flid, rsf.m_sto.m_ws.Handle, tss);
 							break;
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							m_cache.DomainDataByFlid.SetString(rec.Hvo, rsf.m_flid, tss);
 							break;
 					}

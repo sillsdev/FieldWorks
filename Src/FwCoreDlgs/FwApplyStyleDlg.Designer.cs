@@ -94,8 +94,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lstStyles.FormattingEnabled = true;
 			this.m_lstStyles.Name = "m_lstStyles";
 			this.m_lstStyles.Sorted = true;
-			this.m_lstStyles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lstStyles_MouseUp);
 			this.m_lstStyles.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_lstStyles_MouseDown);
+			this.m_lstStyles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lstStyles_MouseUp);
 			//
 			// m_btnOk
 			//
@@ -148,8 +148,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// FwApplyStyleDlg
 			//
+			this.AcceptButton = this.m_btnOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.m_btnCancel;
 			this.Controls.Add(this.m_pnlMasterGrid);
 			this.Controls.Add(this.m_btnOk);
 			this.Controls.Add(this.m_btnCancel);

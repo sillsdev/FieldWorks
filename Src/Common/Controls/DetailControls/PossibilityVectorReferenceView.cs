@@ -7,15 +7,7 @@
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-//
-// File: VectorReferenceView.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
-//
-// <remarks>
-// borrowed and hacked from PhoneEnvReferenceView
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -60,23 +52,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				ILgWritingSystemFactory wsf = m_fdoCache.WritingSystemFactory;
 				int count = m_sda.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				// This loop is mostly redundant now that the decorator will generate labels itself as needed.
+				// It still serves the purpose of figuring out the WS that should be used for the 'fake' item where the user
+				// is typing to select.
 				for (int i = 0; i < count; ++i)
 				{
 					int hvo = m_sda.get_VecItem(m_rootObj.Hvo, m_rootFlid, i);
 					Debug.Assert(hvo != 0);
-					// Use reflection to get a prebuilt name if we can.  Otherwise
-					// settle for piecing together a string.
-					Debug.Assert(m_fdoCache != null);
-					var obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					Debug.Assert(obj != null);
-
-					ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, obj, m_displayNameProperty, m_displayWs);
-					ITsString tss = label.AsTss;
-					if (tss != null)
-					{
-						m_sda.Strings[hvo] = tss;
-						ws = tss.get_WritingSystem(0);
-					}
+					ws = m_sda.GetLabelFor(hvo).get_WritingSystem(0);
 				}
 
 				if (ws == 0)
@@ -109,7 +92,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override ISilDataAccess GetDataAccess()
 		{
-			m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid);
+			if (m_sda == null)
+			{
+				m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid, m_fdoCache, m_displayNameProperty, m_displayWs);
+				m_sda.Empty = m_fdoCache.TsStrFactory.EmptyString(m_fdoCache.DefaultAnalWs);
+			}
 			return m_sda;
 		}
 
@@ -149,6 +136,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		protected override bool HandleRightClickOnObject(int hvo)
+		{
+			if(hvo != khvoFake)
+			{
+				return base.HandleRightClickOnObject(hvo);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		private bool DeleteItem()
 		{
 			if (m_prevSelectedHvo == 0)
@@ -179,15 +178,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		private class SdaDecorator : DomainDataByFlidDecoratorBase
+		/// <summary>
+		/// This class maintains a cache allowing possibility item display names to be looked up rather than computed after the
+		/// first time they are used.
+		/// </summary>
+		internal class SdaDecorator : DomainDataByFlidDecoratorBase
 		{
+			private FdoCache Cache { get; set; }
+			private string DisplayNameProperty { get; set; }
+			private string DisplayWs { get; set; }
 			private readonly Dictionary<int, ITsString> m_strings;
+			/// <summary>
+			/// The empty string displayed (hopefully temporarily) for any object we don't have a fake string for.
+			/// </summary>
+			public ITsString Empty;
 
-			public SdaDecorator(ISilDataAccessManaged domainDataByFlid)
+			public SdaDecorator(ISilDataAccessManaged domainDataByFlid, FdoCache cache, string displayNameProperty, string displayWs)
 				: base(domainDataByFlid)
 			{
 				SetOverrideMdc(new MdcDecorator((IFwMetaDataCacheManaged) domainDataByFlid.MetaDataCache));
 				m_strings = new Dictionary<int, ITsString>();
+				Cache = cache;
+				DisplayNameProperty = displayNameProperty;
+				DisplayWs = displayWs;
 			}
 
 			public IDictionary<int, ITsString> Strings
@@ -195,15 +208,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				get { return m_strings; }
 			}
 
+			public ITsString GetLabelFor(int hvo)
+			{
+				ITsString value;
+				if (m_strings.TryGetValue(hvo, out value))
+					return value;
+				Debug.Assert(Cache != null);
+				var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+				Debug.Assert(obj != null);
+
+				ObjectLabel label = ObjectLabel.CreateObjectLabel(Cache, obj, DisplayNameProperty, DisplayWs);
+				ITsString tss = label.AsTss;
+				if (tss == null)
+					tss = Cache.TsStrFactory.EmptyString(Cache.DefaultUserWs);
+				Strings[hvo] = tss;
+				return tss; // never return null!
+			}
+
 			public override ITsString get_StringProp(int hvo, int tag)
 			{
 				if (tag == kflidFake)
-				{
-					ITsString value;
-					if (m_strings.TryGetValue(hvo, out value))
-						return value;
-					return null;
-				}
+					return GetLabelFor(hvo);
 				return base.get_StringProp(hvo, tag);
 			}
 
@@ -273,7 +298,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					vwenv.CloseParagraph();
 					break;
 				case VectorReferenceView.kfragTargetObj:
-					// Display one object from the vector.
+					// Display one object by displaying the fake string property of that object which our special
+					// private decorator stores for it.
 					vwenv.AddStringProp(PossibilityVectorReferenceView.kflidFake, this);
 					break;
 				default:

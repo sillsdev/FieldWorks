@@ -268,8 +268,9 @@ Do you want to proceed?</value>
 	<value>Duplicate column found</value>
   </data>
   <data name="ksDuplicateColumnMsg" xml:space="preserve">
-	<value>You have configured the "{0}" field to be displayed in two or more columns with the same writing system.
-Change the writing system of one of those columns or remove the duplicated column.</value>
+	<value>You have configured the following fields to be displayed in two or more columns with the same writing system:
+	"{0}"
+Change the writing system of one of these columns or remove the duplicated column.</value>
   </data>
   <data name="ksEditNaturalClasses" xml:space="preserve">
 	<value>Edit the Natural Classes</value>

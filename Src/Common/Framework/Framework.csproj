@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	  <Name>Accessibility</Name>
@@ -215,9 +215,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="HelpTopicProviderBase.cs" />
 	<Compile Include="ExternalSettingsAccessorBase.cs" />
 	<Compile Include="FrameworkStrings.Designer.cs">
@@ -239,9 +242,6 @@
 	</Compile>
 	<Compile Include="FwRootSite.cs">
 	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="IFieldWorksManager.cs" />
 	<Compile Include="IFwMainWnd.cs" />

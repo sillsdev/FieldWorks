@@ -10,10 +10,11 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.OxesIO</RootNamespace>
 	<AssemblyName>OxesIO</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..</SccLocalPath>
+	<SccAuxPath>
+	</SccAuxPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
 	<OldToolsVersion>3.5</OldToolsVersion>
@@ -50,7 +51,7 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -61,7 +62,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.0.25993, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -77,6 +78,9 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="Migrator.cs" />
 	<Compile Include="OxesIOStrings.Designer.cs">
 	  <AutoGen>True</AutoGen>
@@ -84,8 +88,7 @@
 	  <DependentUpon>OxesIOStrings.resx</DependentUpon>
 	</Compile>
 	<Compile Include="Validator.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="oxes.rng" />

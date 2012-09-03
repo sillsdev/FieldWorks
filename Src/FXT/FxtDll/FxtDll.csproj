@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.3.0.14420, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -114,7 +114,7 @@
 	  <Name>FDO</Name>
 	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
 	</Reference>
-	<Reference Include="FwUtils, Version=5.5.0.25508, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="FwUtils, Version=7.3.0.19222, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
 	</Reference>
@@ -122,9 +122,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.2.5.17244, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <Private>True</Private>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
@@ -144,10 +144,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	</Compile>
 	<Compile Include="ChangedDataItem.cs" />
 	<Compile Include="FilterStrategy.cs">
 	  <SubType>Code</SubType>

@@ -65,7 +65,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -86,7 +86,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="System" />
 	<Reference Include="System.Data" />
@@ -96,8 +96,10 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="..\..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="Collections\CollectionWithEvents.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -341,8 +343,5 @@
 	<PostBuildEvent>
 	</PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-	<Folder Include="Menu\" />
-	<Folder Include="CommandBar\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

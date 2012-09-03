@@ -3386,6 +3386,17 @@ namespace SIL.FieldWorks.XWorks
 			return GetFlidOfVectorFromName(propertyName, owner, cache, mediator, out owningObject, ref fontName, ref typeSize);
 		}
 
+		/// <summary>
+		/// Return the Flid for the model property that this vector represents.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="owner"></param>
+		/// <param name="cache"></param>
+		/// <param name="mediator"></param>
+		/// <param name="owningObject"></param>
+		/// <param name="fontName"></param>
+		/// <param name="typeSize"></param>
+		/// <returns></returns>
 		internal int GetFlidOfVectorFromName(string name, string owner, FdoCache cache, Mediator mediator, out ICmObject owningObject, ref string fontName, ref int typeSize)
 		{
 			var defAnalWsFontName = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
@@ -3466,9 +3477,8 @@ namespace SIL.FieldWorks.XWorks
 					realFlid = StTextTags.kflidParagraphs;
 					break;
 				case "Texts":
-					Debug.Fail("Texts are no longer owned. We shouldn't be here!");
-					//owningObject = cache.LanguageProject;
-					//realFlid = LangProjectTags.kflidTexts;
+					owningObject = cache.LanguageProject;
+					realFlid = cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
 					break;
 				case "MsFeatureSystem":
 					owningObject = cache.LanguageProject;
@@ -3779,7 +3789,7 @@ namespace SIL.FieldWorks.XWorks
 			// This particular cache cannot reliably be used again, since items may be created or deleted
 			// while the program is running. In case a crash occurs, we don't want to reload an obsolete
 			// list the next time we start up.
-			File.Delete(pathname);
+			FileUtils.Delete(pathname);
 			if (items == null)
 				return false; // could not restore, bad file or deleted objects or...
 			if (versionStamp != null)

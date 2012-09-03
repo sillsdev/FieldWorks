@@ -4454,9 +4454,7 @@ namespace SIL.FieldWorks.Common.Controls
 			switch ((CellarPropertyType)(mdc.GetFieldType(flid) & (int)CellarPropertyTypeFilter.VirtualMask))
 			{
 			case CellarPropertyType.MultiString:
-			case CellarPropertyType.MultiBigString:
 			case CellarPropertyType.MultiUnicode:
-			case CellarPropertyType.MultiBigUnicode:
 				return true;
 			default:
 				return false;
@@ -6968,8 +6966,7 @@ namespace SIL.FieldWorks.Common.Controls
 			try
 			{
 				var fieldType = m_sda.MetaDataCache.GetFieldType(flid);
-				m_fFieldAllowsMultipleRuns = fieldType == (int)CellarPropertyType.MultiString ||
-											 fieldType == (int)CellarPropertyType.MultiBigString;
+				m_fFieldAllowsMultipleRuns = fieldType == (int)CellarPropertyType.MultiString;
 			}
 			catch (KeyNotFoundException)
 			{

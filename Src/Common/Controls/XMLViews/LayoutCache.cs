@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Layout Version Number (last updated by JohnT, 29 Feb 2012, to fix LT-11564).
 		/// </summary>
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
-		public const int LayoutVersionNumber = 19;
+		public static readonly int LayoutVersionNumber = 19;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -98,9 +98,8 @@ namespace SIL.FieldWorks.Common.Controls
 			keyAttrs["group"] = new[] {"label"};
 			keyAttrs["part"] = new[] {"ref"};
 
-
 			var layoutInventory = new Inventory(new[] {partDirectory},
-				"*Layouts.xml", "/LayoutInventory/*", keyAttrs, app.ApplicationName, projectPath);
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, app.ApplicationName, projectPath);
 
 			layoutInventory.Merger = new LayoutMerger();
 			// Holding shift key means don't use extant preference file, no matter what.

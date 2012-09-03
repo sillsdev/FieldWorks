@@ -1011,7 +1011,15 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetAnalysisFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="gloss"/>
+						<xsl:variable name="sGloss" select="gloss"/>
+						<xsl:choose>
+							<xsl:when test="string-length($sGloss) &gt; 0">
+								<xsl:value-of select="$sGloss"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>&#xa0;</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
 					</td>
 				</tr>
 				<tr>

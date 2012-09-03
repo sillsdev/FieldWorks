@@ -50,7 +50,7 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -61,7 +61,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.3.0.17734, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -99,6 +99,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AssembledStyles.cs" />
 	<Compile Include="BlockBox.cs" />
 	<Compile Include="Box.cs" />
@@ -180,8 +183,7 @@
 	<Compile Include="TextSource.cs" />
 	<Compile Include="Triple.cs" />
 	<None Include="ClassDiagram1.cd" />
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="Hookups\TssHookup.cs" />
 	<Compile Include="Utilities\DragDropKeyStates.cs" />
 	<Compile Include="Utilities\ModifiedMonitoredList.cs" />

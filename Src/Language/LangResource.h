@@ -278,12 +278,8 @@ Description:
 #define kstidXmlInfoMsg201  2001
 #define kstidXmlInfoMsg202  2002
 #define kstidXmlInfoMsg203  2003
-#define kstidXmlInfoMsg204  2004
-#define kstidXmlInfoMsg205  2005
 #define kstidXmlInfoMsg206  2006
 #define kstidXmlInfoMsg207  2007
-#define kstidXmlInfoMsg208  2008
-#define kstidXmlInfoMsg209  2009
 #define kstidXmlInfoMsg210  2010
 #define kstidXmlInfoMsg211  2011
 #define kstidXmlInfoMsg212  2012

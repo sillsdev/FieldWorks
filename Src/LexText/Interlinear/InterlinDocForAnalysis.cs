@@ -1659,12 +1659,12 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 				int flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
-				//If the flid is -2 then we have likely encountered a case where the selection has landed at the boundary between our (possibly empty)
+				//If the flid is -2 and it is an insertion point then we may have encountered a case where the selection has landed at the boundary between our (possibly empty)
 				//translation field and a literal string containing our magic Bidi marker character that helps keep things in the right order.
 				//Sometimes AssocPrev gets set so that we read the (non-existent) flid of the literal string and miss the fact that on the other side
 				//of the insertion point is the field we're looking for. The following code will attempt to make a selection that associates in
 				//the other direction to see if the flid we want is on the other side. [LT-10568]
-				if (flid == -2)
+				if (flid == -2 && !sel.IsRange && sel.SelType == VwSelType.kstText)
 				{
 					helper.AssocPrev = !helper.AssocPrev;
 					var newSel = helper.MakeRangeSelection(this.RootBox, false);

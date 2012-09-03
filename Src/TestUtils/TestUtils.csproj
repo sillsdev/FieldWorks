@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -142,9 +142,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="AssertEx.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -155,9 +155,6 @@
 	<Compile Include="Guard.cs" />
 	<Compile Include="XmlHelper.cs" />
 	<Compile Include="DummyFileMaker.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="InMemoryRegistryGroup.cs" />

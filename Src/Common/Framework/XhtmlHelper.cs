@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -843,10 +844,20 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssSensePara();
 				m_dictClassData.Remove("sensepara");
 			}
+			if (m_dictClassData.ContainsKey("bulletpara"))
+			{
+				WriteCssBulletPara();
+				m_dictClassData.Remove("bulletpara");
+			}
 			if (m_dictClassData.ContainsKey("xsensenumber"))
 			{
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
+			}
+			if (m_dictClassData.ContainsKey("xsensenumber-sub"))
+			{
+				WriteCssXSenseNumberSub();
+				m_dictClassData.Remove("xsensenumber-sub");
 			}
 			if (m_dictClassData.ContainsKey("sensenumberref"))
 			{
@@ -904,8 +915,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
 				XmlNode xn;
-				if (m_dictClassData[sClass].Count > 0 &&
-					!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+				if (!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
 				{
 					// We probably need to put this out anyway if it's an actual FW style name.
 					string sStyle = null;
@@ -926,6 +936,18 @@ namespace SIL.FieldWorks.Common.Framework
 				ProcessDictionaryCssStyle(sClass);
 			}
 			WriteNumberStyles();
+		}
+
+		private void WriteCssBulletPara()
+		{
+			m_writer.WriteLine(".bulletpara {");
+			m_writer.WriteLine("    display: block;");
+			m_writer.WriteLine("}");
+
+			m_writer.WriteLine(".bulletpara:before {");
+			m_writer.WriteLine("    content: counter(sense, disc) \" \";");
+			m_writer.WriteLine("    counter-increment: div;");
+			m_writer.WriteLine("}");
 		}
 
 		private void WriteCssLetHead()
@@ -1127,16 +1149,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".xsensenumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber");
-			// This is the info we originally had to set xhomographnumber explicitly.
-			//m_writer.WriteLine("    font-weight: bold;");
-			//BaseStyleInfo bsi;
-			//if (m_styleTable.TryGetValue("Dictionary-Normal", out bsi))
-			//{
-			//    ExportStyleInfo esi = bsi as ExportStyleInfo;
-			//    WriteFontAttr(m_cache.DefaultAnalWs, "font-family", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "color", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
-			//}
+			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssXSenseNumberSub()
+		{
+			m_writer.WriteLine(".xsensenumber-sub {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber-sub");
 			m_writer.WriteLine("}");
 		}
 
@@ -1266,8 +1285,8 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				sBaseClass = sClass;
 			}
-			string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
-			string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
+			//string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
+			//string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
 			string sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
 			string sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
@@ -1387,12 +1406,12 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine("}");
 			if (!fShowAsIndentedPara)
 			{
-				if (!String.IsNullOrEmpty(sBefore))
-					m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
-									   sClass, EscapeCharsForCss(sBefore));
-				if (!String.IsNullOrEmpty(sAfter))
-					m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
-									   sClass, EscapeCharsForCss(sAfter));
+				//if (!String.IsNullOrEmpty(sBefore))
+				//    m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
+				//                       sClass, EscapeCharsForCss(sBefore));
+				//if (!String.IsNullOrEmpty(sAfter))
+				//    m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
+				//                       sClass, EscapeCharsForCss(sAfter));
 				if (!String.IsNullOrEmpty(sSep))
 				{
 					switch (sClass)
@@ -1515,10 +1534,10 @@ namespace SIL.FieldWorks.Common.Framework
 				}
 				if (!WriteFontAttr(ws, "font-style", esi, sCss, true) && ws != -1)
 					WriteFontAttr(-1, "font-style", esi, sCss, true);
-				//if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
-				//    WriteFontAttr(-1, "color", esi, sCss, true);
-				//if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
-				//    WriteFontAttr(-1, "background-color", esi, sCss, true);
+				if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
+					WriteFontAttr(-1, "color", esi, sCss, true);
+				if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
+					WriteFontAttr(-1, "background-color", esi, sCss, true);
 				if (!WriteFontAttr(ws, "vertical-align", esi, sCss, true) && ws != -1)
 				{
 					if (!WriteFontAttr(-1, "vertical-align", esi, sCss, true))
@@ -1597,24 +1616,40 @@ namespace SIL.FieldWorks.Common.Framework
 					}
 					fInherited = fi.m_italic.IsInherited;
 					break;
-				//case "color":
-				//    if (fi.m_fontColor.ValueIsSet)
-				//    {
-				//        m_writer.WriteLine("    color: rgb({0},{1},{2});{3}",
-				//            fi.m_fontColor.Value.R, fi.m_fontColor.Value.G, fi.m_fontColor.Value.B, sInheritance);
-				//        return true;
-				//    }
-				//    fInherited = fi.m_fontColor.IsInherited;
-				//    break;
-				//case "background-color":
-				//    if (fi.m_backColor.ValueIsSet)
-				//    {
-				//        m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}",
-				//            fi.m_backColor.Value.R, fi.m_backColor.Value.G, fi.m_backColor.Value.B, sInheritance);
-				//        return true;
-				//    }
-				//    fInherited = fi.m_backColor.IsInherited;
-				//    break;
+				case "color":
+					if (fi.m_fontColor.ValueIsSet)
+					{
+						//Black as a font color is a default setting, we will ignore it (LT-10891)
+						//however, if it is explicitly set we need to include it.
+						if (fi.m_fontColor.Value != Color.Black || fi.m_fontColor.IsExplicit)
+						{
+							m_writer.WriteLine("    color: rgb({0},{1},{2});{3}",
+											   fi.m_fontColor.Value.R,
+											   fi.m_fontColor.Value.G,
+											   fi.m_fontColor.Value.B,
+											   sInheritance);
+						}
+						return true;
+					}
+					fInherited = fi.m_fontColor.IsInherited;
+					break;
+				case "background-color":
+					if (fi.m_backColor.ValueIsSet)
+					{
+						//White as a background color is a default setting, we will ignore it (LT-10891)
+						//however, if it is explicitly set we need to include it.
+						if (fi.m_backColor.Value != Color.White || fi.m_fontColor.IsExplicit)
+						{
+							m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}",
+											   fi.m_backColor.Value.R,
+											   fi.m_backColor.Value.G,
+											   fi.m_backColor.Value.B,
+											   sInheritance);
+						}
+					return true;
+					}
+					fInherited = fi.m_backColor.IsInherited;
+					break;
 				case "vertical-align":
 					if (fi.m_superSub.ValueIsSet)
 					{

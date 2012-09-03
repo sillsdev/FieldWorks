@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <!-- Make all of FieldWorks. -->
+  <Target Name="mkall" DependsOnTargets="allCpp;allCsharp">
+	<Message Text="Finished mkall Target."/>
+  </Target>
+
+
+  <!-- add targets as they actually build -->
+  <!--Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine"/-->
+  <Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib"/>
+
+  <Target Name="DebugProcs" DependsOnTargets="initLinux">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/DebugProcs/DebugProcs.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/DebugProcs/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
+  </Target>
+
+  <Target Name="GenericLib" DependsOnTargets="initLinux;DebugProcs">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Generic/GenericLib.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Generic"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Generic/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Generic"/>
+  </Target>
+
+  <Target Name="testGenericLib" DependsOnTargets="GenericLib">
+	<CreateProperty Value="check" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Generic/Test/testGenericLib.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Generic/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Generic/Test/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Generic/Test"/>
+  </Target>
+
+  <Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Graphite/GrEngine/GrEngine.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+  </Target>
+
+  <Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Message Text="FwKernel make-target='$(make-target)'"/>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Kernel/FwKernel.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Kernel"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Kernel/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Kernel"/>
+  </Target>
+
+  <Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
+	<CreateProperty Value="check" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Kernel/Test/testFwKernel.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Kernel/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Kernel/Test"/>
+  </Target>
+
+  <Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Message Text="AppCore make-target='$(make-target)'"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/AppCore/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/AppCore"/>
+  </Target>
+
+  <Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Language/Language.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Language"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Language/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Language"/>
+  </Target>
+
+  <Target Name="testLanguage" DependsOnTargets="GenericLib;Language">
+	<CreateProperty Value="check" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/Language/Test/testLanguage.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Language/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/Language/Test/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/Language/Test"/>
+  </Target>
+
+  <Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants"><!-- mktlbs -->
+	<CreateProperty Value="all" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/views/Views.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/views"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/views/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/views"/>
+  </Target>
+
+  <Target Name="testViews" DependsOnTargets="GenericLib;Views">
+	<CreateProperty Value="check" Condition="'$(action)'=='test'">
+	  <Output TaskParameter="Value" PropertyName="make-target"/>
+	</CreateProperty>
+	<Make Condition="'$(OS)'=='Windows_NT'"
+	  Makefile="$(fwrt)/Src/views/Test/testViews.mak"
+	  Configuration="$(config)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/views/Test"/>
+	<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+	  Makefile="$(fwrt)/Src/views/Test/Makefile"
+	  Configuration="$(config)" Target="$(make-target)"
+	  BuildRoot="$(fwrt)"
+	  WorkingDirectory="$(fwrt)/Src/views/Test"/>
+  </Target>
+
+  <ItemGroup>
+	<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
+	<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
+  </ItemGroup>
+
+  <Target Name="GenerateCellarConstants" Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
+	<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
+		 OutputDir="$(dir-fwoutputCommon)"
+		 OutputFile="CellarConstants.h"
+		 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
+		 WorkingDirectory="$(fwrt)/Src/FDO"/>
+  </Target>
+
+</Project>

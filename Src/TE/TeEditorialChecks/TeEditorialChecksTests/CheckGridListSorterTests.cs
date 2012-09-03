@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using SIL.Utils;
@@ -252,10 +253,10 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Assert.AreEqual(dummyEnum.Three, ((DummyListItem)m_list[2]).EnumProp);
 			Assert.AreEqual(dummyEnum.One, ((DummyListItem)m_list[3]).EnumProp);
 
-			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy"));
+			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -286,10 +287,10 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Assert.AreEqual(dummyEnum.Two, ((DummyListItem)m_list[2]).EnumProp);
 			Assert.AreEqual(dummyEnum.Three, ((DummyListItem)m_list[3]).EnumProp);
 
-			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy"));
+			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -321,10 +322,10 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 			Assert.AreEqual(dummyEnum.Three, ((DummyListItem)m_list[2]).EnumProp);
 			Assert.AreEqual(dummyEnum.One, ((DummyListItem)m_list[3]).EnumProp);
 
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy"));
-			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy"));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[0]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/24/2008", ((DummyListItem)m_list[1]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/23/2008", ((DummyListItem)m_list[2]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+			Assert.AreEqual("01/21/2008", ((DummyListItem)m_list[3]).DateProp.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
 		}
 	}
 }

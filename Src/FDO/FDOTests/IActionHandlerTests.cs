@@ -270,8 +270,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test undo/redo for normal unicode properties
-		/// (kcptUnicode or kcptBigUnicode).
+		/// Test undo/redo for normal unicode properties (kcptUnicode).
 		/// </summary>
 		[Test]
 		public void kcptUnicodeTests()
@@ -600,8 +599,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test undo/redo for normal ITsString properties
-		/// (kcptString or kcptBigString).
+		/// Test undo/redo for normal ITsString properties (kcptString).
 		/// </summary>
 		[Test]
 		public void kcptStringTests()

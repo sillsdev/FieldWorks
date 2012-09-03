@@ -2,9 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -744,6 +746,85 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Handle a right click by popping up the implied context menu.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
+		/// <param name="adjustMenu"></param>
+		/// <returns></returns>
+		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
+		{
+			CheckDisposed();
+
+			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
+		}
+
+		/// <summary>
+		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
+		/// This method is typically used as the menuAdjuster argument in calling HandleRightClick.
+		/// It's important that it marks the same menu item as selected by HandlCtrlClick.
+		/// </summary>
+		/// <param name="group"></param>
+		public static void MarkCtrlClickItem(ContextMenuStrip menu)
+		{
+			foreach (var item in menu.Items)
+			{
+				var item1 = item as ToolStripItem;
+				if (item1 == null || !(item1.Tag is CommandChoice) || !item1.Enabled)
+					continue;
+				var command = (CommandChoice) item1.Tag;
+				if (command.Message != "JumpToTool")
+					continue;
+
+				item1.Text += FdoUiStrings.ksCtrlClick;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Handle a control-click by invoking the first active JumpToTool menu item.
+		/// Note that the item selected here should be the same one that is selected by Mark
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <returns></returns>
+		public bool HandleCtrlClick(Mediator mediator, Control hostControl)
+		{
+			Mediator = mediator;
+			XWindow window = (XWindow)mediator.PropertyTable.GetValue("window");
+			m_hostControl = hostControl;
+			var group = window.GetChoiceGroupForMenu(ContextMenuId);
+			// temporarily the CmObjectUi must function as a colleague that can implement commands.
+			mediator.AddTemporaryColleague(this);
+			group.PopulateNow();
+			try
+			{
+				foreach (var item in group)
+				{
+					if (!IsCtrlClickItem(item))
+						continue;
+					((CommandChoice)item).OnClick(this, new EventArgs());
+					return true;
+				}
+			}
+			finally
+			{
+				this.Dispose();
+			}
+			return false;
+		}
+
+		private static bool IsCtrlClickItem(object item)
+		{
+			var command = item as CommandChoice;
+			if (command == null || command.Message != "JumpToTool")
+				return false;
+			var displayProps = command.GetDisplayProperties();
+			return (displayProps.Visible && displayProps.Enabled);
+		}
+
+		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
 		/// <param name="mediator"></param>
@@ -752,6 +833,19 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sMenuId"></param>
 		/// <returns></returns>
 		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
+		{
+			return HandleRightClick(mediator, hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
+		}
+
+		/// <summary>
+		/// Handle the right click by popping up an explicit context menu id.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="hostControl"></param>
+		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
+		/// <param name="sMenuId"></param>
+		/// <returns></returns>
+		public bool HandleRightClick(Mediator mediator, Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
@@ -779,7 +873,7 @@ namespace SIL.FieldWorks.FdoUi
 			window.ShowContextMenu(sMenuId,
 				new Point(Cursor.Position.X, Cursor.Position.Y),
 				new TemporaryColleagueParameter(m_mediator, this, shouldDisposeThisWhenClosed),
-				null);
+				null, adjustMenu);
 			// Using the sequencer here now causes problems with slices that allow
 			// keyboard activity (cf. PhoneEnvReferenceView).
 			// If a safe blocking mechanism can be found for the context menu, we can restore the original behavior
@@ -917,12 +1011,76 @@ namespace SIL.FieldWorks.FdoUi
 			return false; // didn't delete it.
 		}
 
+		/// <summary>
+		/// Do any cleanup that involves interacting with the user, after the user has confirmed that our object should be
+		/// deleted.
+		/// </summary>
+		protected virtual void DoRelatedCleanupForDeleteObject()
+		{
+			// For media and pictures: should we delete the file also?
+			// arguably this should be on a subclass, but it's easier to share behavior for both here.
+			ICmFile file = null;
+			if (m_obj is ICmPicture)
+			{
+				file = ((ICmPicture) m_obj).PictureFileRA;
+			}
+			else if (m_obj is ICmMedia)
+			{
+				file = ((ICmMedia) m_obj).MediaFileRA;
+			}
+			ConsiderDeletingRelatedFile(file, m_mediator);
+		}
+
+		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator)
+		{
+			if (file == null)
+				return;
+			var refs = file.ReferringObjects;
+			if (refs.Count > 1)
+				return; // exactly one if only this CmPicture uses it.
+			var path = file.InternalPath;
+			if (Path.IsPathRooted(path))
+				return; // don't delete external file
+			string msg = String.Format(FdoUiStrings.ksDeleteFileAlso, path);
+			if (MessageBox.Show(Form.ActiveForm, msg, FdoUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Question)
+				!= DialogResult.Yes)
+			{
+				return;
+			}
+			if (mediator != null)
+			{
+				var app = mediator.PropertyTable.GetValue("App") as FwApp;
+				if (app != null)
+					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
+			}
+			string fileToDelete = file.AbsoluteInternalPath;
+			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+			// with an exception indicating that something is using the file, despite the code above that
+			// tries to make our picture cache let go of it.
+			// However, waiting until idle seems to solve the problem.
+			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+				{
+					try
+					{
+						File.Delete(fileToDelete);
+					}
+					catch (IOException)
+					{
+						// If we can't actually delete the file for some reason, don't bother the user complaining.
+					}
+					return true; // task is complete, don't try again.
+				});
+			file.Delete();
+		}
+
 		protected virtual void ReallyDeleteUnderlyingObject()
 		{
 			Logger.WriteEvent("Deleting '" + this.Object.ShortName + "'...");
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FdoUiStrings.ksUndoDelete, FdoUiStrings.ksRedoDelete,
 				m_cache.ActionHandlerAccessor, () =>
 				{
+					DoRelatedCleanupForDeleteObject();
 					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
 				});
 			Logger.WriteEvent("Done Deleting.");
@@ -2206,11 +2364,13 @@ namespace SIL.FieldWorks.FdoUi
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
+			bool result;
 
 			if (m_targetUi != null)
-				return m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
+				result = m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
 			else
-				return base.OnDisplayJumpToTool(commandObject, ref display);
+				result = base.OnDisplayJumpToTool(commandObject, ref display);
+			return result;
 		}
 
 		/// <summary>

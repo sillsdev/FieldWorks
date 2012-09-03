@@ -142,6 +142,17 @@ namespace SIL.FieldWorks.Common.FwUtils {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to The project you are opening will not communicate with Paratext
+		///because a project with the same name is already open.
+		///If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart Flex..
+		/// </summary>
+		internal static string ksPtCommunicationProblem {
+			get {
+				return ResourceManager.GetString("ksPtCommunicationProblem", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to You do not have permission to change the setting &quot;{0}&quot;. Administrator privileges are required to make changes affecting all users of this computer..
 		/// </summary>
 		internal static string ksRegChangeFailed {

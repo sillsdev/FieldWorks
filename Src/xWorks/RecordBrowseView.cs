@@ -98,6 +98,7 @@ namespace SIL.FieldWorks.XWorks
 					m_browseViewer.ListModificationInProgressChanged -= m_browseViewer_ListModificationInProgressChanged;
 					m_browseViewer.SelectionDrawingFailure -= OnBrowseSelectionDrawingFailed;
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
+					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
 				}
 				if (components != null)
 					components.Dispose();
@@ -288,6 +289,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache, m_mediator,
 				Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
 			SetStyleSheet();
@@ -422,10 +424,18 @@ namespace SIL.FieldWorks.XWorks
 				XmlViewsUtils.TryFindString(StringTbl, "AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
+				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
+					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+				{
+					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
+					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
+					// above is removed then the Word List Concordance shows the word being concorded in the
+					// right pane title bar.
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName, titleStr);
+				}
 			}
 			else if (Clerk.OwningObject != null)
 			{
-
 				if (XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
 					"ShowOwnerShortname"))
 				{
@@ -598,7 +608,6 @@ namespace SIL.FieldWorks.XWorks
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-
 			InitBase(mediator, configurationParameters);
 			m_browseViewer.Init(mediator, configurationParameters);
 			m_fullyInitialized = true;

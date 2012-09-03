@@ -55,7 +55,7 @@
 	<BaseAddress>285212672</BaseAddress>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -66,7 +66,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.0.1.24078, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -123,12 +123,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="FlexDePlugin.cs">
 	  <SubType>Form</SubType>
 	</Compile>
 	<Compile Include="myFolders.cs" />
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

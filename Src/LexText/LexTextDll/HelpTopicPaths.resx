@@ -1955,7 +1955,7 @@
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Status" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Status_fld_(Variant_Types).htm</value>
   </data>
-  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Subtypes" xml:space="preserve">
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Subitems" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Subtypes_fld_(Variant_Types).htm</value>
   </data>
   <data name="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract" xml:space="preserve">
@@ -2893,5 +2893,47 @@
   </data>
   <data name="khtpField-PhonologicalRuleEdit-PhSegRuleRHS-RequiredProperties" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Required_Properties.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/description_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/discussion_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/name_fid_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Researchers_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Restrictions_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-ReverseAbbr" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Abbr_fld_Variant_Types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Status_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Subtypes_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpToolsConvertVariants" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Convert_variants_utility.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-GlossAppend" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Append_to_Gloss.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-InflFeats" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Inflection_Features.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Slots" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Slots.htm</value>
   </data>
 </root>

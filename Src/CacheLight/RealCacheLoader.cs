@@ -380,7 +380,6 @@ namespace SIL.FieldWorks.CacheLight
 						// <Details18><Binary>05000000\r\n</Binary></Details18>
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						// "<Str><Run ws=\"eZPI\">Te mgyeey ne la Benit nuu Pwert. Za men gun men inbitar xmig men ne la Jasint nuu San José. Za Benit. Weey Benit mël. Weey Benit mëlbyuu ne ygued Benit lo xmig Benit, Jasint. Chene wdxiin Benit ruxyuu Jasint, re Benit:</Run></Str>"
 						foreach (XmlNode strNode in fieldNode.ChildNodes)
 						{
@@ -390,7 +389,6 @@ namespace SIL.FieldWorks.CacheLight
 						// CacheStringProp(hvo, tag, tss);
 						break;
 					case CellarPropertyType.MultiString: // <AStr>
-					case CellarPropertyType.MultiBigString: // <AStr
 						foreach (XmlNode aStrAlt in fieldNode.ChildNodes)
 						{
 							int wsAStr;
@@ -398,8 +396,7 @@ namespace SIL.FieldWorks.CacheLight
 							m_realDataCache.CacheStringAlt(hvo, flid, wsAStr, tssAlt);
 						}
 						break;
-					case CellarPropertyType.Unicode: // Fall through.
-					case CellarPropertyType.BigUnicode:
+					case CellarPropertyType.Unicode:
 						string unicodeText = fieldNode.FirstChild.InnerText;
 						m_realDataCache.CacheUnicodeProp(hvo, flid, unicodeText, unicodeText.Length);
 						break;
@@ -410,8 +407,6 @@ namespace SIL.FieldWorks.CacheLight
 							var uniText = uniNode.InnerText;
 							m_realDataCache.CacheStringAlt(hvo, flid, ws, m_itsf.MakeString(uniText, ws));
 						}
-						break;
-					case CellarPropertyType.MultiBigUnicode:
 						break;
 
 					// Cases for regular objects.

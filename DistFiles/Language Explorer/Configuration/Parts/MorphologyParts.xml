@@ -1717,6 +1717,9 @@
 		<part id="FsFeatStruc-Jt-Browse" type="jtview">
 			<string field="ShortNameTSS"/>
 		</part>
+		<part id="FsFeatStruc-Jt-Long" type="jtview">
+			<string field="LongNameTSS"/>
+		</part>
 	</bin>
 	<bin class="FsFeatureSpecification">
 		<part id="FsFeatureSpecification-Detail-Feature" type="Detail">

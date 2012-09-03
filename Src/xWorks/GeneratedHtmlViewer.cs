@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 									{
 											sOutputFile = sOutputFile + (ix + 1);
 											XmlUtils.TransformFileToFile(Path.Combine(TransformPath, rgsXslts[ix]), parameterList, sInputFile, sOutputFile + ".xml");
-											sInputFile = sOutputFile;
+											sInputFile = sOutputFile + ".xml";
 									}
 								}
 								CopyFile(sInputFile, outPath);

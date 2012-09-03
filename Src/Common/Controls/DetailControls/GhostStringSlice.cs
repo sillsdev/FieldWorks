@@ -308,13 +308,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						default:
 							throw new Exception("ghost property must store strings!");
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 							sdaReal.SetMultiStringAlt(hvoStringObj, m_flidStringProp, m_wsToCreate, tssTyped);
 							break;
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							sdaReal.SetString(hvoStringObj, m_flidStringProp, tssTyped);
 							break;
 					}

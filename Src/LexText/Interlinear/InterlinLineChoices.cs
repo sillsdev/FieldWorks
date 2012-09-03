@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="fExact">if true, see if we can find a line choice that matches the exact writing system given.
 		/// if false, we'll try to see if a line choice refers to a collection (via magic value) that contains the ws.</param>
 		/// <returns></returns>
-		private int IndexOf(int flid, int ws, bool fExact)
+		internal int IndexOf(int flid, int ws, bool fExact)
 		{
 			for (int i = 0; i < m_specs.Count; i++)
 			{

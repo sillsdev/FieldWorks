@@ -319,15 +319,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.MetaDataCacheTests
 			type = (CellarPropertyType)m_mdc.GetFieldType(55005);
 			Assert.AreEqual(CellarPropertyType.MultiUnicode, type, "Wrong field data type for MultiUnicode data.");
 
-			type = (CellarPropertyType)m_mdc.GetFieldType(5016030);
-			Assert.AreEqual(CellarPropertyType.BigString, type, "Wrong field data type for BigString data.");
-
-			type = (CellarPropertyType)m_mdc.GetFieldType(5016020);
-			Assert.AreEqual(CellarPropertyType.MultiBigString, type, "Wrong field data type for MultiBigString data.");
-
-			type = (CellarPropertyType)m_mdc.GetFieldType(34001);
-			Assert.AreEqual(CellarPropertyType.BigUnicode, type, "Wrong field data type for BigUnicode data.");
-
 			type = (CellarPropertyType)m_mdc.GetFieldType(7012);
 			Assert.AreEqual(CellarPropertyType.OwningAtomic, type, "Wrong field data type for Atomic Owing data.");
 

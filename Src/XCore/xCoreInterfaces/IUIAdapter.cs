@@ -94,6 +94,18 @@ namespace XCore
 		void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer);
+
+		/// <summary>
+		/// This is similar except that an action may be supplied to tweak the choice group after populating it.
+		/// </summary>
+		/// <param name="group"></param>
+		/// <param name="location"></param>
+		/// <param name="temporaryColleagueParam"></param>
+		/// <param name="sequencer"></param>
+		/// <param name="adjustAfterPopulate"></param>
+		void ShowContextMenu(ChoiceGroup group, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu);
 	}
 
 	/// <summary>

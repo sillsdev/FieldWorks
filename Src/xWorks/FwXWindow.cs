@@ -426,6 +426,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void ClearInvalidatedStoredData()
+		{
+			DiscardProperties();
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Construct a new form
@@ -2407,6 +2412,15 @@ namespace SIL.FieldWorks.XWorks
 					return ((IFindAndReplaceContext)((Control)ActiveView).Parent).FindTabHelpId;
 				return null;
 			}
+		}
+
+		/// <summary>
+		/// Mediator message handling Priority.
+		/// To fix LT-13375, this needs to have a slightly higher priority than normal.
+		/// </summary>
+		public override int Priority
+		{
+			get { return ((int)ColleaguePriority.Medium) - 1; }
 		}
 	}
 

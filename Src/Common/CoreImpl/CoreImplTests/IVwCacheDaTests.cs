@@ -533,17 +533,13 @@ namespace SIL.CoreImpl
 						flag = (expValues[2] is byte[]);
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						flag = (expValues[6] != null);
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						flag = (expValues[7] != null);
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						flag = (expValues[8] != null);
 						break;
 					case CellarPropertyType.OwningAtomic:

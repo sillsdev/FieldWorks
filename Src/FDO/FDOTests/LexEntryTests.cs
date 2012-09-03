@@ -979,6 +979,45 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				helper.RollBack = false; // hopefully all our changes succeeded.
 			}
 		}
+		/// <summary>
+		/// Inspired by LT-13152 - tests homograph renumbering following a merge.
+		/// </summary>
+		[Test]
+		public void HomographMerging()
+		{
+			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				var morphTypeRepository = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				var morphTypePrefix = morphTypeRepository.GetObject(MoMorphTypeTags.kguidMorphPrefix);
+				var entry1 = MakeAffixEntry("a", morphTypePrefix);
+				var entry2 = MakeAffixEntry("a", morphTypePrefix);
+				var entry3 = MakeAffixEntry("a", morphTypePrefix);
+				var entry4 = MakeAffixEntry("a", morphTypePrefix);
+
+				Assert.AreEqual(1, entry1.HomographNumber,
+					"first entry should have homograph number 1.");
+				Assert.AreEqual(2, entry2.HomographNumber,
+					"second entry should have homograph number 2.");
+				Assert.AreEqual(3, entry3.HomographNumber,
+					"third entry should have homograph number 3.");
+				Assert.AreEqual(4, entry4.HomographNumber,
+					"fourth entry should have homograph number 4.");
+
+				// We now have entry1 (a1); entry2 (a2); entry3 (a3); entry4 (a4)
+				// Merging entry1 into entry3 should give us:
+				// entry1 - obsolete; entry2 (a1); entry3 (a2); entry4 (a3)
+				entry3.MergeObject(entry1);
+
+				Assert.AreEqual(1, entry2.HomographNumber,
+					"second entry should have changed to homograph number 1.");
+				Assert.AreEqual(2, entry3.HomographNumber,
+					"third entry should have changed to homograph number 2.");
+				Assert.AreEqual(3, entry4.HomographNumber,
+					"fourth entry should have changed to homograph number 3.");
+
+				helper.RollBack = false; // hopefully all our changes succeeded.
+			}
+		}
 
 		/// <summary>
 		/// Things with the same LexemeForm and different morph types are not homographs.

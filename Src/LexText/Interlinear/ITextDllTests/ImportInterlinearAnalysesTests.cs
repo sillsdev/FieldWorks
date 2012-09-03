@@ -785,6 +785,45 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void WordsFragDoc_OneWordAndOneGloss_AvoidDuplication()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			IWritingSystem wsKal;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+
+			const string xml =
+				@"<document>
+					  <word>
+						<item type='txt' lang='qaa-x-kal'>glossedonce</item>
+						<item type='gls' lang='en'>onlygloss</item>
+					  </word>
+				</document>";
+
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+
+			// First import
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+
+			// Second Import
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+
+			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedonce");
+			Assert.That(wff1, Is.Not.Null);
+			Assert.That(wff1.AnalysesOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC.ElementAt(0).Form.get_String(wsEn).Text, Is.EqualTo("onlygloss"));
+
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().Count, Is.EqualTo(1));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().Count, Is.EqualTo(1));
+		}
+
+		[Test]
 		public void WordsFragDoc_OneWordAndMultiGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -820,6 +859,47 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void WordsFragDoc_OneWordAndMultiGloss_AvoidDuplication()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			IWritingSystem wsKal;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+
+			const string xml =
+				@"<document>
+					  <word>
+						<item type='txt' lang='qaa-x-kal'>glossedtwice</item>
+						<item type='gls' lang='en'>firstgloss</item>
+						<item type='gls' lang='en'>secondgloss</item>
+					  </word>
+				</document>";
+
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			// First import
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+
+			// Second import
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+
+			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedtwice");
+			Assert.That(wff1, Is.Not.Null);
+			Assert.That(wff1.AnalysesOC, Has.Count.EqualTo(2), "multiple word glosses (without specifying morphology) should create separate WfiAnalyses with separate glosses");
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC.ElementAt(0).Form.get_String(wsEn).Text, Is.EqualTo("firstgloss"));
+			Assert.That(wff1.AnalysesOC.ElementAt(1).MeaningsOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(1).MeaningsOC.ElementAt(0).Form.get_String(wsEn).Text, Is.EqualTo("secondgloss"));
+
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(2));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().Count, Is.EqualTo(2));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().Count, Is.EqualTo(1));
+		}
+
+		[Test]
 		public void WordsFragDoc_OneWordPhraseAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -835,6 +915,43 @@ namespace SIL.FieldWorks.IText
 				</document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+
+			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "support a phrase");
+			Assert.That(wff1, Is.Not.Null);
+			Assert.That(wff1.AnalysesOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC, Has.Count.EqualTo(1));
+			Assert.That(wff1.AnalysesOC.ElementAt(0).MeaningsOC.ElementAt(0).Form.get_String(wsEn).Text, Is.EqualTo("phrase gloss"));
+
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().Count, Is.EqualTo(1));
+			Assert.That(Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void WordsFragDoc_OneWordPhraseAndOneGloss_AvoidDuplicates()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			IWritingSystem wsKal;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+
+			const string xml =
+				@"<document>
+					  <word>
+						<item type='txt' lang='qaa-x-kal'>support a phrase</item>
+						<item type='gls' lang='en'>phrase gloss</item>
+					  </word>
+				</document>";
+
+			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+			// First Import
+			Assert.DoesNotThrow(() => li.ImportWordsFrag(
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
+				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+			// Second Import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
 				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
 				LinguaLinksImport.ImportAnalysesLevel.WordGloss));

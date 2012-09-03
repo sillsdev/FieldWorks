@@ -1557,7 +1557,10 @@ namespace SIL.FieldWorks.Discourse
 			if (myAbnormalRows.Count == 0)
 				return;
 			var clsMrkrTargets = new Set<IConstChartRow>();
-			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr => mrkr.Owner.Owner.Hvo == m_chart.Hvo);
+			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr =>
+				mrkr.Owner != null &&
+				mrkr.Owner.Owner != null &&
+				mrkr.Owner.Owner.Hvo == m_chart.Hvo);
 			foreach (var clsMrkr in myClsMrkrs)
 				clsMrkrTargets.AddRange(clsMrkr.DependentClausesRS);
 			foreach (var row in myAbnormalRows.Where(row => !clsMrkrTargets.Contains(row)))
@@ -2806,8 +2809,9 @@ namespace SIL.FieldWorks.Discourse
 			{
 				var fReported = false;
 				// Clobber any deleted words, etc.
-				var crows = m_chart.RowsOS.Count;
-				for (var irow = 0; irow < crows; irow++) // not foreach here, as we may delete some as we go
+				// GJM 2012.06.15 -- having too many problems with number of rows changing, so now we will check
+				// row count each time through instead of maintaining a count that can get messed up.
+				for (var irow = 0; irow < m_chart.RowsOS.Count; irow++) // not foreach here, as we may delete some as we go
 				{
 					var curRow = m_chart.RowsOS[irow];
 					var citems = curRow.CellsOS.Count;
@@ -2842,34 +2846,48 @@ namespace SIL.FieldWorks.Discourse
 						if (curPart is IConstChartClauseMarker)
 						{
 							if (!((IConstChartClauseMarker)curPart).HasValidRefs)
-								ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							{
+								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+							}
 							continue;
 						}
 						if (curPart is IConstChartMovedTextMarker)
 						{
 							if (!((IConstChartMovedTextMarker)curPart).HasValidRef)
-								ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							{
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+							}
 							continue;
 						}
 						// Do some further checking because it's a ConstChartWordGroup.
 						var curWordGroup = curPart as IConstChartWordGroup;
 						if (!curWordGroup.IsValidRef || !WordGroupTextMatchesChartText(curWordGroup))
 						{
-							// This is an invalid cell part. We need to delete this cell part.
-							ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems);
+							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								ref fReported, ref ipart, ref citems))
+								irow--;
 							continue; // Skip to next.
 						}
-						var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
-						if (occurrences.Count > 0)
-							continue;
+						try
+						{
+							var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
+							if (occurrences.Count > 0)
+								continue;
+						}
+						catch (NullReferenceException)
+						{
+							// This is a real problem, but not for the chart. There may be a WfiAnalysis or
+							// WfiGloss with no owner!
+						}
 						// CCWordGroup is now empty, take it out of row!
-						ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup, ref fReported, ref ipart, ref citems);
+						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
+							ref fReported, ref ipart, ref citems))
+							irow--;
 					} // cellPart loop
-					if (curRow.Hvo > 0)
-						continue;
-					// row is now empty and has disappeared automatically, update counts
-					irow--;
-					crows--;
 				} // row loop
 				if (fReported)
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
@@ -2887,7 +2905,18 @@ namespace SIL.FieldWorks.Discourse
 			return wgText.Hvo == Chart.BasedOnRA.Hvo; // But Chart IS set now!
 		}
 
-		private void ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
+		/// <summary>
+		/// Reports warning about chart messup (if it hasn't already been reported),
+		/// deletes bad cell part, restarts cell loop. If this returns false, then
+		/// the row index needs to be decremented (before the auto loop increment).
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="part"></param>
+		/// <param name="fReported"></param>
+		/// <param name="index"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		private bool ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
 			IConstituentChartCellPart part, ref bool fReported, ref int index, ref int count)
 		{
 			//Debug.Assert(false, "About to delete cell part. Why!?");
@@ -2902,6 +2931,7 @@ namespace SIL.FieldWorks.Discourse
 			index = -1; // after auto-increment in for loop, starts over at beginning.
 			// if we just removed the last cell in the row, the row will be deleted too!
 			count = row.IsValidObject ? row.CellsOS.Count : 0;
+			return row.IsValidObject; // if row gets deleted, returns false.
 		}
 
 		/// <summary>
@@ -4577,9 +4607,9 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.RemoveMissingMarker(m_dstCell);
 
 			// Get markers and WordGroups from destination
-			int indexDest; // This will keep track of where we are in rowDst.AppliesTo
+			int indexDest; // This will keep track of where we are in rowDst.CellsOS
 			m_cellPartsDest = m_logic.CellPartsInCell(m_dstCell, out indexDest);
-			// indexDest is now the index in the destination row's AppliesTo of the first WordGroup in the destination cell.
+			// indexDest is now the index in the destination row's CellsOS of the first WordGroup in the destination cell.
 			m_wordGroupsDest = ConstituentChartLogic.CollectCellWordGroups(m_cellPartsDest);
 
 			// Here is where we need to check to see if the destination cell contains any movedText markers
@@ -4594,11 +4624,19 @@ namespace SIL.FieldWorks.Discourse
 				// The destination is completely empty. Just move the m_wordGroupsSrc.
 				if (HvoSrcRow == HvoDstRow)
 				{
-					// This is where we worry about reordering SrcRow.Cells if other wordforms exist between
+					// This is where we worry about reordering SrcRow.CellsOS if other items (tags?) exist between
 					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
-					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && m_forward)
+					// Moving forward past a chart Tag.
+					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && m_forward && m_wordGroupsSrc[0].Hvo == m_cellPartsSrc[0].Hvo)
 					{
 						MoveWordGroupsToEndOfCell(indexDest); // in preparation to moving data to next cell
+					}
+					// This is where we worry about reordering SrcRow.CellsOS if other items (MovedTextMrkr?) exist between
+					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
+					// Moving back past a MovedTextMarker.
+					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && !m_forward && m_wordGroupsSrc[0].Hvo != m_cellPartsSrc[0].Hvo)
+					{
+						MoveWordGroupsToBeginningOfCell(indexDest); // in preparation to moving data to previous cell
 					}
 					m_logic.ChangeColumn(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex],
 							SrcRow);
@@ -4680,9 +4718,22 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void MoveWordGroupsToEndOfCell(int iDest)
 		{
-			Debug.Assert(iDest > 0, "Bad destination index.");
 			var istart = m_wordGroupsSrc[0].IndexInOwner;
+			Debug.Assert(0 < iDest && iDest >= istart, "Bad destination index.");
 			// Does MoveTo work when the src and dest sequences are the same? Yes.
+			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
+		}
+
+		/// <summary>
+		/// Moves the WordGroups to the beginning of the source cell in preparation to move them to the previous cell.
+		/// Solves confusion in row.Cells
+		/// Situation: moving back in same row, nothing in destination cell.
+		/// </summary>
+		private void MoveWordGroupsToBeginningOfCell(int iDest)
+		{
+			var istart = m_wordGroupsSrc[0].IndexInOwner;
+			Debug.Assert(-1 < iDest && iDest <= istart, "Bad destination index.");
+			// Does MoveTo work when going backwards? Yes.
 			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
 		}
 

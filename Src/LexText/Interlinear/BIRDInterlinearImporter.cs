@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.IText
 					AddSegmentItemData(cache, wsFactory, phrase, newSegment, tsStrFactory, ref textInFile, ref phraseText);
 
 					bool lastWasWord = false;
-					if (phrase.WordsContent != null)
+					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
 						foreach (var word in phrase.WordsContent.Words)
 						{
@@ -331,8 +331,7 @@ namespace SIL.FieldWorks.IText
 							phraseText = phraseBldr.GetString();
 						}
 						lastWasWord = isWord;
-						isWord = false;
-						break;
+						return; // only handle the baseline "txt" or "punct" once per "word" bundle, especially don't want extra writing system content in the baseline.
 				}
 			}
 		}
@@ -532,15 +531,18 @@ namespace SIL.FieldWorks.IText
 						if (item.type == "txt")
 							EnsureVernacularLanguage(interlinText, item.lang);
 					}
-					foreach (var word in phrase.WordsContent.Words)
+					if(phrase.WordsContent.Words != null)
 					{
-						foreach (var item in word.Items)
+						foreach (var word in phrase.WordsContent.Words)
 						{
-							if (item.type == "txt")
-								EnsureVernacularLanguage(interlinText, item.lang);
+							foreach (var item in word.Items)
+							{
+								if (item.type == "txt")
+									EnsureVernacularLanguage(interlinText, item.lang);
+							}
+							// We could dig into the morphemes, but any client generating morphemes probably
+							// does things right, and anyway we don't import that yet.
 						}
-						// We could dig into the morphemes, but any client generating morphemes probably
-						// does things right, and anyway we don't import that yet.
 					}
 				}
 			}
@@ -599,14 +601,15 @@ namespace SIL.FieldWorks.IText
 			if (word.Items == null || word.Items.Length <= 0) return null;
 			IAnalysis analysis = null;
 			var wsFact = cache.WritingSystemFactory;
+			ILgWritingSystem wsMainVernWs = null;
 			foreach (var wordItem in word.Items)
 			{
 				ITsString wordForm = null;
 				switch (wordItem.type)
 				{
 					case "txt":
-						wordForm = strFactory.MakeString(wordItem.Value,
-														 GetWsEngine(wsFact, wordItem.lang).Handle);
+						wsMainVernWs = GetWsEngine(wsFact, wordItem.lang);
+						wordForm = strFactory.MakeString(wordItem.Value, wsMainVernWs.Handle);
 						analysis = WfiWordformServices.FindOrCreateWordform(cache, wordForm);
 						break;
 					case "punct":
@@ -615,7 +618,16 @@ namespace SIL.FieldWorks.IText
 						analysis = WfiWordformServices.FindOrCreatePunctuationform(cache, wordForm);
 						break;
 				}
+				if (wordForm != null)
+					break;
 			}
+
+			// now add any alternative word forms. (overwrite any existing)
+			if (analysis != null && analysis.HasWordform)
+			{
+				AddAlternativeWssToWordform(analysis, word, wsMainVernWs, strFactory);
+			}
+
 			if (analysis != null)
 			{
 				UpgradeToWordGloss(word, ref analysis);
@@ -639,6 +651,35 @@ namespace SIL.FieldWorks.IText
 				//}
 			}
 			return analysis;
+		}
+
+		/// <summary>
+		/// add any alternative forms (in alternative writing systems) to the wordform.
+		/// Overwrite any existing alternative form in a given alternative writing system.
+		/// </summary>
+		/// <param name="analysis"></param>
+		/// <param name="word"></param>
+		/// <param name="wsMainVernWs"></param>
+		/// <param name="strFactory"></param>
+		private static void AddAlternativeWssToWordform(IAnalysis analysis, Word word, ILgWritingSystem wsMainVernWs, ITsStrFactory strFactory)
+		{
+			ILgWritingSystemFactory wsFact = analysis.Cache.WritingSystemFactory;
+			var wf = analysis.Wordform;
+			foreach (var wordItem in word.Items)
+			{
+				ITsString wffAlt = null;
+				switch (wordItem.type)
+				{
+					case "txt":
+						var wsAlt = GetWsEngine(wsFact, wordItem.lang);
+						if (wsAlt.Handle == wsMainVernWs.Handle)
+							continue;
+						wffAlt = strFactory.MakeString(wordItem.Value, wsAlt.Handle);
+						if (wffAlt.Length > 0)
+							wf.Form.set_String(wsAlt.Handle, wffAlt);
+						break;
+				}
+			}
 		}
 
 		/// <summary>
@@ -684,12 +725,12 @@ namespace SIL.FieldWorks.IText
 					IWfiGloss matchingGloss = null;
 					if (hasGlosses)
 					{
-						matchingGloss =
-							wfiWord.AnalysesOC
-								.Select(
-									wfia =>
-									wfia.MeaningsOC.Where(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss)).FirstOrDefault())
-								.FirstOrDefault();
+						foreach (var wfa in wfiWord.AnalysesOC)
+						{
+							matchingGloss = wfa.MeaningsOC.FirstOrDefault(wfg => wfg.Form.get_String(wsNewGloss).Equals(newGlossTss));
+							if (matchingGloss != null)
+								break;
+						}
 					}
 
 					if (matchingGloss != null)

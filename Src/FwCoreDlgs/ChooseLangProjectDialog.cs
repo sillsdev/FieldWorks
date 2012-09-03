@@ -88,8 +88,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ChooseLangProjectDialog()
 		{
 			InitializeComponent();
-			//hide the FLExBridge related link if unavailable
+			//hide the FLExBridge related link and image if unavailable
 			m_linkOpenBridgeProject.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
+			pictureBox1.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -545,7 +546,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			Project = projectName;
 			Server = null;
-			DialogResult = String.IsNullOrEmpty(Project) ? DialogResult.Cancel : DialogResult.OK;
+			if (String.IsNullOrEmpty(Project))
+				return; // Don't close the Open project dialog yet (LT-13187)
+			// Apparently setting the DialogResult to something other than 'None' is what tells
+			// the model dialog that it can close.
+			DialogResult =  DialogResult.OK;
 			OkButtonClick(null, null);
 		}
 
@@ -568,7 +573,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_btnAddHost.Enabled = !String.IsNullOrEmpty(m_txtAddHost.Text);
 		}
-		#endregion
 
+		private void ChooseLangProjectDialog_Load(object sender, EventArgs e)
+		{
+			// If the FLExBridge image is not displayed, collapse its panel.
+			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
+		}
+		#endregion
 	}
 }

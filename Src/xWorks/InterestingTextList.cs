@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 using XCore;
 
@@ -31,11 +32,23 @@ namespace SIL.FieldWorks.XWorks
 		/// tested efficiently.
 		/// </summary>
 		private HashSet<IStText> m_interestingTests;
+		/// <summary>
+		/// These two RecordClerks both need to respond to InterestingTextList changes EVEN when not loaded.
+		/// (LT-13217)
+		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
+		/// </summary>
+		private static string[] RelatedClerkIds = { "interlinearTexts", "concordanceWords" };
+
+		/// <summary>
+		/// Used by InvalidateRelatedSortSequences()
+		/// </summary>
+		public FdoCache Cache { get; set; }
 
 		public InterestingTextList(PropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
 			: this(propertyTable, repo, stTextRepo, true)
 		{
 		}
+
 		public InterestingTextList(PropertyTable propertyTable, ITextRepository repo,
 			IStTextRepository stTextRepo, bool includeScripture)
 		{
@@ -45,6 +58,14 @@ namespace SIL.FieldWorks.XWorks
 			CoreTexts = GetCoreTexts();
 			m_scriptureTexts = GetScriptureTexts();
 			IncludeScripture = includeScripture;
+			GetCache();
+		}
+
+		private void GetCache()
+		{
+			if (m_propertyTable == null)
+				return;
+			Cache = (FdoCache)m_propertyTable.GetValue("cache");
 		}
 
 		private List<IStText> m_coreTexts;
@@ -229,14 +250,20 @@ namespace SIL.FieldWorks.XWorks
 					if (cvDel > 0)
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
-							if (!m_propertyTable.IsDisposed)
+							if (m_propertyTable != null && !m_propertyTable.IsDisposed)
 								UpdatePropertyTable();
+					}
+					break;
+				default:
+					if (tag == Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts)
+					{
+						UpdateInterestingTexts();
 					}
 					break;
 			}
 		}
 
-		public void UpdateInterestingTexts()
+		private void UpdateInterestingTexts()
 		{
 			// Need to add the new text(s). Have to find which ones to add.
 			var coreTextsSet = new HashSet<IStText>(CoreTexts);
@@ -254,8 +281,43 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RaiseInterestingTextsChanged(int insertAt, int inserted, int deleted)
 		{
+			if (inserted == 0 && deleted == 0)
+				return;
+			InvalidateRelatedSortSequences();
 			if (InterestingTextsChanged != null)
 				InterestingTextsChanged(this, new InterestingTextsChangedArgs(insertAt, inserted, deleted));
+		}
+
+		private void InvalidateRelatedSortSequences()
+		{
+			if (Cache == null)
+				return;
+
+			// We won't keep track of the clerk between calls since it could change from time to time.
+			var clerk = m_propertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+			if (clerk == null)
+				return;
+
+			if (!RelatedClerkIds.Contains(clerk.Id))
+			{
+				Debug.Fail("We may need to add a new RelatedClerkId.");
+				return; // somehow we got in here with the wrong clerk?!
+			}
+			var otherRelatedClerkIds = GetRelatedClerkIds(clerk.Id);
+			foreach (var clerkId in otherRelatedClerkIds)
+			{
+				RemoveSortSequenceFile(RecordView.GetSortFilePersistPathname(Cache, clerkId));
+			}
+		}
+
+		private void RemoveSortSequenceFile(string filename)
+		{
+			FileUtils.Delete(filename);
+		}
+
+		private static IEnumerable<string> GetRelatedClerkIds(string id)
+		{
+			return RelatedClerkIds.Where(clerkId => clerkId != id);
 		}
 
 		//Remove invalid objects from the list. Return true if any were removed.

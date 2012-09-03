@@ -343,6 +343,83 @@ namespace SIL.FieldWorks.IText
 				Assert.True(result, "ImportInterlinear was not successful.");
 			}
 		}
+
+		/*
+		 * LT-13505 - FlexText Import of texts with multiple Writing Systems gets them all mixed up
+		 */
+		[Test]
+		public void ImportWordsWithMultipleWss()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			IWritingSystem wsWbl;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Arab-AF", out wsWbl);
+			wsWbl.RightToLeftScript = true;
+			IWritingSystem wsWblIpa;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Qaaa-AF-fonipa-x-Zipa", out wsWblIpa);
+
+			const string xml =
+			@"<document version='2'>
+			  <interlinear-text guid='5eecc8be-f41b-4433-be94-8950a8ce75e5'>
+				<item type='title' lang='wbl-Arab-AF'>تست</item>
+				<item type='title' lang='en'>Test</item>
+				<item type='comment' lang='en'></item>
+				<paragraphs>
+				  <paragraph guid='b21daced-5c85-4610-8023-8d7d4b3191f4'>
+					<phrases>
+					  <phrase guid='0b0346e0-3bb8-40e7-a0a4-f7771d233e93'>
+						<item type='segnum' lang='en'>1</item>
+						<words>
+						  <word guid='0b548dff-6a8e-4c21-a977-fcc4ddc268be'>
+							<item type='txt' lang='wbl-Arab-AF'>baseline</item>
+							<item type='txt' lang='wbl-Qaaa-AF-fonipa-x-Zipa'>beslain</item>
+							<item type='gls' lang='en'>gloss</item>
+						  </word>
+						</words>
+					  </phrase>
+					</phrases>
+				  </paragraph>
+				</paragraphs>
+				<languages>
+					<language lang='wbl-Arab-AF' font='Times New Roman' vernacular='true' RightToLeft='true' />
+					<language lang='en' font='Times New Roman' />
+					<language lang='wbl-Qaaa-AF-fonipa-x-Zipa' font='Doulos SIL' vernacular='true' />
+				</languages>
+			</interlinear-text>
+			</document>";
+
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				var options = new LinguaLinksImport.ImportInterlinearOptions
+				{
+					Progress = new DummyProgressDlg(),
+					AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.Wordform,
+					BirdData = stream,
+					AllottedProgress = 0,
+					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal
+				};
+				FDO.IText importedText = null;
+				var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
+				var result = li.ImportInterlinear(options, ref importedText);
+				Assert.True(result, "ImportInterlinear was not successful.");
+				Assert.That(importedText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
+				var paraImported = importedText.ContentsOA[0];
+				var testPara = paraImported.Contents;
+				Assert.That(testPara.Text, Is.EqualTo("baseline"));
+				Assert.That(TsStringUtils.GetWsAtOffset(testPara, 0), Is.EqualTo(wsWbl.Handle));
+				Assert.That(testPara.RunCount, Is.EqualTo(1));
+				// main writing system should be the first one in the import
+				var mainWs = importedText.ContentsOA.MainWritingSystem;
+				Assert.That(mainWs, Is.EqualTo(wsWbl.Handle));
+
+				// Next verify that the IPA content got added to the imported word form
+				var a0 = paraImported.SegmentsOS[0].AnalysesRS[0];
+				var wf0 = a0 as IWfiWordform;
+				Assert.That(wf0, Is.Not.Null);
+				Assert.That(wf0.Form.get_String(wsWbl.Handle).Text, Is.EqualTo("baseline"));
+				Assert.That(wf0.Form.get_String(wsWblIpa.Handle).Text, Is.EqualTo("beslain"));
+			}
+		}
+
 		#endregion ScrElements
 
 		[Test]

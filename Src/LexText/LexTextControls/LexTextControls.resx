@@ -1257,4 +1257,51 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
 	<value>Word Gloss</value>
 	<comment>name for SFM import field; name matches enumeration member name</comment>
   </data>
+  <data name="ksFldAbbreviation" xml:space="preserve">
+	<value>Abbreviation (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldBaseline" xml:space="preserve">
+	<value>Baseline</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldComment" xml:space="preserve">
+	<value>Comment (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldFreeTranslation" xml:space="preserve">
+	<value>Free Translation</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldId" xml:space="preserve">
+	<value>New Text</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldLiteralTranslation" xml:space="preserve">
+	<value>Literal Translation</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldNote" xml:space="preserve">
+	<value>Note</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldParagraphBreak" xml:space="preserve">
+	<value>Paragraph Break</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldReference" xml:space="preserve">
+	<value>Reference</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldSource" xml:space="preserve">
+	<value>Source (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldTitle" xml:space="preserve">
+	<value>Title (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksPeopleAdded" xml:space="preserve">
+	<value>The following People were added to the language project:</value>
+  </data>
 </root>

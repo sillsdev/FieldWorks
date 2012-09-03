@@ -1,6 +1,6 @@
 ﻿namespace SIL.FieldWorks.LexText.Controls
 {
-	partial class SfmToTextsAndWordesMappingBaseDlg
+	partial class SfmToTextsAndWordsMappingDlg
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -29,7 +29,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SfmToTextsAndWordesMappingBaseDlg));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SfmToTextsAndWordsMappingDlg));
 			this.m_destinationLabel = new System.Windows.Forms.Label();
 			this.m_destinationsListBox = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -133,7 +133,7 @@
 			this.Controls.Add(this.m_destinationLabel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "SfmToTextsAndWordesMappingBaseDlg";
+			this.Name = "SfmToTextsAndWordsMappingDlg";
 			this.ShowIcon = false;
 			this.ResumeLayout(false);
 			this.PerformLayout();

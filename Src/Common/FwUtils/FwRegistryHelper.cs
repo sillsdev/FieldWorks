@@ -165,5 +165,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return "UserWs";
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines the installation or absence of the Paratext program by checking for the
+		/// existence of the registry key that that application uses to store its program files
+		/// directory in the local machine settings.
+		/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw(7,8,9)'
+		/// NOTE: This key is not opened for write access because it will fail on
+		/// non-administrator logins.
+		///
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static bool Paratext7orLaterInstalled()
+		{
+			using (RegistryKey ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
+			{
+				if (ParatextKey == null)
+					return false;
+				for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
+				{
+					object dummy;
+					if (RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw" + i))
+						return true;
+				}
+				return false;
+			}
+		}
 	}
+
 }

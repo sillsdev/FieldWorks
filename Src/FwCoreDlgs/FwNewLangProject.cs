@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 
@@ -479,6 +480,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void btnOK_Click(object sender, EventArgs e)
 		{
+			if (CheckForNonAsciiProjectName())
+			{
+				if (DisplayNonAsciiWarningDialog() == DialogResult.Cancel)
+				{
+					m_fIgnoreClose = true;
+					ProjectName = RemoveNonAsciiCharsFromProjectName();
+					m_txtName.Focus();
+					return;
+				}
+			}
 			Enabled = false;
 			DialogResult = DialogResult.OK;
 
@@ -535,6 +546,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				CreateNewLangProjWithProgress();
 			}
+		}
+
+		private string RemoveNonAsciiCharsFromProjectName()
+		{
+			return Unicode.RemoveNonAsciiCharsFromString(ProjectName);
+		}
+
+		private bool CheckForNonAsciiProjectName()
+		{
+			return Unicode.CheckForNonAsciiCharacters(ProjectName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -703,6 +724,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get { return true; }
 		}
+
+		/// <summary>
+		/// Displays a warning to the user that they have entered a project name containing
+		/// non-Ascii characters which may prevent them from using Send/Receive.
+		/// Protected for testing.
+		/// </summary>
+		protected virtual DialogResult DisplayNonAsciiWarningDialog()
+		{
+			return MessageBox.Show(this, FwCoreDlgs.ksNonAsciiProjectNameWarning, FwCoreDlgs.ksWarning,
+				MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
 		#endregion
 
 		#region Interface methods

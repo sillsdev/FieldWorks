@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<PropertyGroup>
+		<SrcDir>../../..</SrcDir>
+	</PropertyGroup>
+	<PropertyGroup>
+		<FdoDir>$(SrcDir)/FDO</FdoDir>
+	</PropertyGroup>
+	<PropertyGroup>
+		<RootDir>$(SrcDir)/..</RootDir>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PartsDir>$(RootDir)/DistFiles/Parts</PartsDir>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ModelFile Include="$(FdoDir)/MasterFieldWorksModel.xml"/>
+	</ItemGroup>
+	<ItemGroup>
+		<GeneratedParts Include="$(PartsDir)/GeneratedParts.xml"/>
+	</ItemGroup>
+	<ItemGroup>
+		<GeneratedLayouts Include="$(PartsDir)/Generated.fwlayout"/>
+	</ItemGroup>
+	<ItemGroup>
+		<GeneratedFiles Include="@(GeneratedParts)"/>
+		<GeneratedFiles Include="@(GeneratedLayouts)"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ServiceLocatorFiles Include="Microsoft.Practices.ServiceLocation.dll"/>
+	</ItemGroup>
+
+	<Target Name="AfterClean">
+		<Delete Files="@(GeneratedFiles)" ContinueOnError="true"/>
+	</Target>
+
+	<Target Name="GenerateAll" Inputs="@(ModelFile)" Outputs="@(GeneratedFiles)">
+		<XslTransformation OutputPaths="@(GeneratedParts)" XmlInputPaths="@(ModelFile)" XslInputPath="PartGenerator/PartGenerate.xslt"/>
+		<XslTransformation OutputPaths="@(GeneratedLayouts)" XmlInputPaths="@(ModelFile)" XslInputPath="PartGenerator/LayoutGenerate.xslt"/>
+	</Target>
+
+	<Target Name="BeforeBuild" DependsOnTargets="GenerateAll">
+	</Target>
+</Project>

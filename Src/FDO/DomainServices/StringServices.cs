@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (ICmObject obj in cache.ServiceLocator.ObjectRepository.AllInstances())
 			{
 				foreach (int flid in mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.AllMulti
-					| (int)CellarPropertyTypeFilter.String | (int)CellarPropertyTypeFilter.BigString))
+					| (int)CellarPropertyTypeFilter.String))
 				{
 					if (mdc.get_IsVirtual(flid))
 						continue;
@@ -634,7 +634,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					switch ((CellarPropertyType)mdc.GetFieldType(flid))
 					{
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							ITsString oldStr = sda.get_StringProp(obj.Hvo, flid);
 							ITsString newStr = stringModifier(obj, oldStr);
 							if (oldStr != newStr)
@@ -642,9 +641,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							break;
 
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 							multiStringModifier(obj, sda.get_MultiStringProp(obj.Hvo, flid));
 							break;
 					}
@@ -654,7 +651,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// <summary>
 		/// Crawls all strings in the specified FDO cache. doSomething is called for each string property
-		/// in FDO. MultiUnicode (and MultiBigUnicode) are currently skipped. The two ints are flid and ws;
+		/// in FDO. MultiUnicode is currently skipped. The two ints are flid and ws;
 		/// ws will be passed as zero for non-multistrings.
 		/// </summary>
 		public static void CrawlStyledStrings(FdoCache cache, Action<ICmObject, int, int, ITsString> doSomething)
@@ -664,7 +661,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (ICmObject obj in cache.ServiceLocator.ObjectRepository.AllInstances())
 			{
 				foreach (int flid in mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.AllMulti
-					| (int)CellarPropertyTypeFilter.String | (int)CellarPropertyTypeFilter.BigString))
+					| (int)CellarPropertyTypeFilter.String))
 				{
 					if (mdc.get_IsVirtual(flid))
 						continue;
@@ -672,14 +669,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					switch ((CellarPropertyType)mdc.GetFieldType(flid))
 					{
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							doSomething(obj, flid, 0, sda.get_StringProp(obj.Hvo, flid));
 							break;
 
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 							var multistring = sda.get_MultiStringProp(obj.Hvo, flid);
 							for (int i = 0; i < multistring.StringCount; i++)
 							{

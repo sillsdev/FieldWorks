@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
+	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</ProjectGuid>
 	<SccProjectName>Perforce Project</SccProjectName>
@@ -233,6 +233,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AddCnvtrDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -412,9 +415,6 @@
 	</Compile>
 	<Compile Include="FwUserProperties.cs">
 	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="HelperMenu.cs">
 	  <SubType>Component</SubType>
@@ -618,9 +618,9 @@
 	  <DependentUpon>WritingSystemPropertiesDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
 	<None Include="Resources\FwCopyRight.png" />

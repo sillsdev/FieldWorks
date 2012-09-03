@@ -1106,11 +1106,110 @@ namespace SIL.FieldWorks.LexText.Controls {
 		}
 
 		/// <summary>
+		///   Looks up a localized string similar to Abbreviation (of text).
+		/// </summary>
+		internal static string ksFldAbbreviation {
+			get {
+				return ResourceManager.GetString("ksFldAbbreviation", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Baseline.
+		/// </summary>
+		internal static string ksFldBaseline {
+			get {
+				return ResourceManager.GetString("ksFldBaseline", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Comment (of text).
+		/// </summary>
+		internal static string ksFldComment {
+			get {
+				return ResourceManager.GetString("ksFldComment", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Free Translation.
+		/// </summary>
+		internal static string ksFldFreeTranslation {
+			get {
+				return ResourceManager.GetString("ksFldFreeTranslation", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to New Text.
+		/// </summary>
+		internal static string ksFldId {
+			get {
+				return ResourceManager.GetString("ksFldId", resourceCulture);
+			}
+		}
+
+		/// <summary>
 		///   Looks up a localized string similar to Don&apos;t Import.
 		/// </summary>
 		internal static string ksFldIgnored {
 			get {
 				return ResourceManager.GetString("ksFldIgnored", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Literal Translation.
+		/// </summary>
+		internal static string ksFldLiteralTranslation {
+			get {
+				return ResourceManager.GetString("ksFldLiteralTranslation", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Note.
+		/// </summary>
+		internal static string ksFldNote {
+			get {
+				return ResourceManager.GetString("ksFldNote", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Paragraph Break.
+		/// </summary>
+		internal static string ksFldParagraphBreak {
+			get {
+				return ResourceManager.GetString("ksFldParagraphBreak", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Reference.
+		/// </summary>
+		internal static string ksFldReference {
+			get {
+				return ResourceManager.GetString("ksFldReference", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Source (of text).
+		/// </summary>
+		internal static string ksFldSource {
+			get {
+				return ResourceManager.GetString("ksFldSource", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Title (of text).
+		/// </summary>
+		internal static string ksFldTitle {
+			get {
+				return ResourceManager.GetString("ksFldTitle", resourceCulture);
 			}
 		}
 
@@ -2015,6 +2114,15 @@ namespace SIL.FieldWorks.LexText.Controls {
 		internal static string ksPartsOfSpeechAdded {
 			get {
 				return ResourceManager.GetString("ksPartsOfSpeechAdded", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to The following People were added to the language project:.
+		/// </summary>
+		internal static string ksPeopleAdded {
+			get {
+				return ResourceManager.GetString("ksPeopleAdded", resourceCulture);
 			}
 		}
 

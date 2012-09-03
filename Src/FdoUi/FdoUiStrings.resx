@@ -112,10 +112,10 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAlternateForms" xml:space="preserve">
 	<value>Select the form to merge the current allomorph into:</value>
@@ -279,5 +279,16 @@ Without these, we cannot find related entries.</value>
   </data>
   <data name="ksDuplicateWordformsMsg" xml:space="preserve">
 	<value>FieldWorks has detected that there are two wordforms with the form {0}. This is not supposed to happen! If you can figure out how it came about please let the developers know. It would be good to manually delete all but one of them. In the meantime, here is the information on the first of them.</value>
+  </data>
+  <data name="ksCtrlClick" xml:space="preserve">
+	<value> (Ctrl-Click)</value>
+	<comment>String (typcially with leading space) that gets appended to one item in certain right-click menus to indicate the one that will be activated by ctrl-click.</comment>
+  </data>
+  <data name="ksDeleteFileAlso" xml:space="preserve">
+	<value>The FieldWorks internal copy of this file ({0}) is not used elsewhere in the project. Would you like to delete it also? (This cannot be undone!)</value>
+	<comment>Used in deleting pictures, sounds,...</comment>
+  </data>
+  <data name="ksDeleteFileCaption" xml:space="preserve">
+	<value>Delete File?</value>
   </data>
 </root>

@@ -1510,18 +1510,18 @@ namespace SIL.FieldWorks.XWorks
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				int hvo = 0;
-				string sHvo = m_mediator.PropertyTable.GetValue("ReversalIndexHvo") as string;
-				if (!String.IsNullOrEmpty(sHvo) && Int32.TryParse(sHvo, out hvo))
+				string sGuid = m_mediator.PropertyTable.GetValue("ReversalIndexGuid", null) as string;
+				if (sGuid != null)
 				{
-					if (hvo > 0)
+					try
 					{
-						IReversalIndex idx = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvo);
-						fContentsExists = idx.EntriesOC.Count > 0;
+						Guid riGuid = new Guid(sGuid);
+						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+						fContentsExists = ri.EntriesOC.Count > 0;
 					}
-					else
+					catch
 					{
-						fContentsExists = false;
+						fContentsExists = false; // Can't get an index if we have a bad guid.
 					}
 				}
 			}

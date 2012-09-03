@@ -73,7 +73,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>bin\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -97,7 +97,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.1.19725, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -213,9 +213,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="BookMerger.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -244,9 +247,6 @@
 	</Compile>
 	<Compile Include="DiffViewWrapper.cs">
 	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="IBookVersionAgent.cs" />
 	<Compile Include="TeDiffViewResources.Designer.cs">

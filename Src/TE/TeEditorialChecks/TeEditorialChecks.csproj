@@ -47,9 +47,10 @@
 	<DocumentationFile>..\..\..\Output\Debug\TeEditorialChecks.xml</DocumentationFile>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -61,7 +62,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.1.19725, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -167,6 +168,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="BitmapStatus.cs" />
 	<Compile Include="CheckControl.cs">
 	  <SubType>UserControl</SubType>
@@ -209,8 +213,7 @@
 	<Compile Include="EditorialChecksViewWrapper.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="InstalledScriptureChecks.cs" />
 	<Compile Include="IViewFootnotes.cs" />
 	<Compile Include="CheckGridStatusCell.cs" />

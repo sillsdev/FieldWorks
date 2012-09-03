@@ -56,9 +56,9 @@ namespace LexTextControlsTests
 \wc Pyle:PYLEE-1007
 \cdt 2012-06-05T08:23:54Z
 ";
-			var mappings = new List<WordMapping>();
-			mappings.Add(new WordMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
-			mappings.Add(new WordMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
+			var mappings = new List<InterlinearMapping>();
+			mappings.Add(new InterlinearMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
+			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input1", Encoding.UTF8.GetBytes(input1));
 			var converter = new Sfm2FlexTextWordsFrag();
@@ -118,9 +118,9 @@ namespace LexTextControlsTests
 \lx wordtwo
 \lx wordthree
 ";
-			var mappings = new List<WordMapping>();
-			mappings.Add(new WordMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
-			mappings.Add(new WordMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
+			var mappings = new List<InterlinearMapping>();
+			mappings.Add(new InterlinearMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
+			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input2", Encoding.UTF8.GetBytes(input2));
 			var converter = new Sfm2FlexTextWordsFrag();

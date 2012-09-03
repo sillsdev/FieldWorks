@@ -17,18 +17,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-
-using System.Xml.Linq;
-using System.Xml.XPath;
-
 using Palaso.Lift;
 using Palaso.Lift.Parsing;
 using Palaso.WritingSystems;
-using Palaso.WritingSystems.Migration;
-using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -194,6 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		IPhEnvironmentFactory m_factPhEnvironment;
 		ILexReferenceFactory m_factLexReference;
 		ILexEntryRefFactory m_factLexEntryRef;
+		ICmPersonFactory m_factCmPerson;
 
 		IFsComplexFeatureFactory m_factFsComplexFeature;
 		IFsOpenFeatureFactory m_factFsOpenFeature;
@@ -2397,18 +2391,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					ITsString tss = StoreTsStringValue(m_fCreatingNewEntry | m_fCreatingNewSense,
 						m_cache.MainCacheAccessor.get_StringProp(hvo, flid), contents);
 					m_cache.MainCacheAccessor.SetString(hvo, flid, tss);
 					break;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					MergeInMultiString(tsm, flid, contents, cmo.Guid);
 					break;
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					MergeInMultiUnicode(tsm, flid, contents, cmo.Guid);
 					break;
@@ -2738,19 +2729,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					ITsString tss = m_cache.MainCacheAccessor.get_StringProp(hvo, flid);
 					if (StringsConflict(tss, GetFirstLiftTsString(contents)))
 						return true;
 					break;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					if (MultiTsStringsConflict(tsm, contents))
 						return true;
 					break;
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					if (MultiUnicodeStringsConflict(tsm, contents, false, Guid.Empty, 0))
 						return true;

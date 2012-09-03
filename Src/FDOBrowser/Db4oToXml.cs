@@ -54,9 +54,6 @@ namespace FDOBrowser
 				case CellarPropertyType.MultiString:
 					retval = "MultiString";
 					break;
-				case CellarPropertyType.MultiBigString:
-					retval = "MultiBigString";
-					break;
 				case CellarPropertyType.Unicode:
 					retval = "Unicode";
 					break;

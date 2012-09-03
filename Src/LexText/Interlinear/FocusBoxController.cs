@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.IText
 
 		public void UpdateLineChoices(InterlinLineChoices choices)
 		{
-			m_sandbox.UpdateLineChoices(choices);
+			// Under certain circumstances this can get called when sandbox is null (LT-11468)
+			if (m_sandbox != null)
+				m_sandbox.UpdateLineChoices(choices);
 		}
 
 		public FocusBoxController(Mediator mediator, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
@@ -115,7 +117,7 @@ namespace SIL.FieldWorks.IText
 			{
 				InterlinDoc.RecordGuessIfNotKnown(selected);
 			}
-			int color = (int) CmObjectUi.RGB(DefaultBackColor);
+			int color = (int)CmObjectUi.RGB(DefaultBackColor);
 			//if this sandbox is presenting a wordform with multiple possible analyses then set the
 			//bg color indicator
 			if (selected.Analysis.Analysis == null && selected.Analysis.Wordform != null &&

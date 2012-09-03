@@ -13,17 +13,19 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using Timer = System.Threading.Timer;
 
 namespace SIL.FieldWorks.LexicalProvider
 {
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Manages FieldWorks's lexical service provider for access by external applications.
@@ -35,6 +37,12 @@ namespace SIL.FieldWorks.LexicalProvider
 
 		private static Timer s_lexicalProviderTimer;
 		private static readonly Dictionary<Type, ServiceHost> s_runningProviders = new Dictionary<Type, ServiceHost>();
+
+		private static string PtCommunicationProbTitle = "Paratext Communication Problem";
+		private static string PtCommunicationProb =
+			"The project you are opening will not communicate with Paratext because a project with the same name is " +
+			"already open. If you want to use Paratext with this project, make a change in this project" +
+			" (so that it will start first), close both projects, then restart Flex.";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -74,7 +82,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			string sNamedPipe = providerLocation.ToString();
 			// REVIEW: we don't dispose ServiceHost. It might be better to add it to the
 			// SingletonsContainer
-			ServiceHost providerHost;
+			ServiceHost providerHost = null;
 			try
 			{
 				providerHost = new ServiceHost(provider);
@@ -97,7 +105,14 @@ namespace SIL.FieldWorks.LexicalProvider
 			catch (Exception e)
 			{
 				Logger.WriteError(e);
-				throw new PipeException("Unable to handle named pipe: " + sNamedPipe);
+				providerHost = null;
+				var paratextInstalled = FwRegistryHelper.Paratext7orLaterInstalled();
+				if (paratextInstalled)
+				{
+					MessageBox.Show(PtCommunicationProb, PtCommunicationProbTitle,
+						MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				return;
 			}
 
 			Logger.WriteEvent("Started provider " + providerLocation + " for type " + providerType + ".");

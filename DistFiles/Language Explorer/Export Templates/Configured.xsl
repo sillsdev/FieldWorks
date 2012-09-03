@@ -587,6 +587,14 @@
 </xsl:template>
 
 
+<!-- Copy over any Custom fields. -->
+<xsl:template match="*[@userlabel]">
+	<xsl:copy>
+		<xsl:copy-of select="@*"/>
+		<xsl:apply-templates/>
+	</xsl:copy>
+</xsl:template>
+
 <!-- This is the basic default processing. -->
 
 <xsl:template match="*">

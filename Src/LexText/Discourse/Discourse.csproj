@@ -51,7 +51,7 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -62,7 +62,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.1.0.19828, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -142,6 +142,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AdvancedMTDialog.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -149,12 +152,10 @@
 	  <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ChartLocation.cs" />
-	<Compile Include="ConstChartBody.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="ConstChartBody.cs" />
 	<Compile Include="ConstChartRowDecorator.cs" />
 	<Compile Include="ConstituentChart.cs">
-	  <SubType>UserControl</SubType>
+	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="ConstituentChart.Designer.cs">
 	  <DependentUpon>ConstituentChart.cs</DependentUpon>
@@ -162,17 +163,12 @@
 	<Compile Include="ConstituentChartLogic.cs">
 	  <SubType>Component</SubType>
 	</Compile>
-	<Compile Include="DiscourseExportDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
+	<Compile Include="DiscourseExportDialog.cs" />
 	<Compile Include="DiscourseExporter.cs" />
-	<Compile Include="InterlinRibbon.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="InterlinRibbon.cs" />
 	<Compile Include="InterlinRibbonDecorator.cs" />
 	<Compile Include="MaxStringWidthForChartColumn.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="DiscourseStrings.Designer.cs">
 	  <DependentUpon>DiscourseStrings.resx</DependentUpon>
 	  <AutoGen>True</AutoGen>

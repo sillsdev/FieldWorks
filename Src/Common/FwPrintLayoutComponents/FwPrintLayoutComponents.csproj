@@ -71,7 +71,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -95,7 +95,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -174,9 +174,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<EmbeddedResource Include="FwPageSetup.resx">
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>FwPageSetup.Designer.cs</LastGenOutput>
@@ -199,6 +199,9 @@
 	  <DependentUpon>PageSetupDlg.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="FwPageSetup.Designer.cs">
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
@@ -208,9 +211,6 @@
 	  <AutoGen>True</AutoGen>
 	  <DesignTime>True</DesignTime>
 	  <DependentUpon>FwPrintLayoutStrings.resx</DependentUpon>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="HeaderFooterModifyDlg.cs">
 	  <SubType>Form</SubType>
@@ -222,9 +222,7 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="HFDialogsPageInfo.cs" />
-	<Compile Include="HFSetView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="HFSetView.cs" />
 	<Compile Include="IPageInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>

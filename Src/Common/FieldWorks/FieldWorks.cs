@@ -156,6 +156,9 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
 				SetupErrorReportInformation();
+				// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
+				// The default without this would be HKLM\Software\SIL\SIL FieldWorks (wrong).
+				RegistryHelper.ProductName = "FieldWorks";
 
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
@@ -1445,10 +1448,8 @@ namespace SIL.FieldWorks
 			}
 			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
 			{
-				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-					return null;
-
-				return new ProjectId(dlg.Project, dlg.Server);
+				dlg.ShowDialog(dialogOwner);
+				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
 			}
 		}
 

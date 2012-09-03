@@ -50,7 +50,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -62,7 +62,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
 	</Reference>
@@ -81,7 +81,10 @@
 	<Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="AccessibleNameCreator.cs" />
 	<Compile Include="AlphaOutline.cs" />
 	<Compile Include="ArrayUtils.cs" />
@@ -126,7 +129,6 @@
 	<Compile Include="MergeSort.cs" />
 	<Compile Include="PrinterUtils.cs" />
 	<Compile Include="PriorityQueue.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
 	<Compile Include="RegistryGroup.cs" />
 	<Compile Include="TreeDictionary.cs" />
 	<Compile Include="RegistryRedirect.cs" />

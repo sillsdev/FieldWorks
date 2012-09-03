@@ -22,7 +22,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Text;
@@ -300,6 +299,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// EventHandler used when a refresh of the BrowseView has been performed.
 		/// </summary>
 		public event EventHandler RefreshCompleted;
+
+		/// <summary>
+		/// Handler to use when checking if two sorters are compatible, should be implemented in the Clerk
+		/// </summary>
+		public event SortCompatibleHandler SortersCompatible;
 
 		/// <summary>
 		/// True during a major change that affects the master list of objects.
@@ -1242,7 +1246,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				FilterSortItem fsi = m_filterBar.ColumnInfo[icol];
 				RecordSorter thisSorter = fsi.Sorter;
-				if (thisSorter.CompatibleSorter(sorter))
+				if (SortersCompatible(thisSorter, sorter))
 				{
 					iSortColumn = icol;
 					break;
@@ -2497,6 +2501,7 @@ namespace SIL.FieldWorks.Common.Controls
 				new List<XmlNode>(ColumnSpecs), m_mediator, stringTbl))
 			{
 				dlg.RootObjectHvo = RootObjectHvo;
+				dlg.FinishInitialization();
 
 				if (m_bulkEditBar != null)
 					// If we have a Bulk Edit bar, we should show the helpful icons
@@ -3773,6 +3778,14 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 	}
+
+	/// <summary>
+	/// Signature for the methods which will test if two sorters are compatible.
+	/// </summary>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
+	public delegate bool SortCompatibleHandler(RecordSorter first, RecordSorter second);
 
 	/// <summary>
 	/// This class manages the parts of the BrowseViewer that scroll horizontally in sync.

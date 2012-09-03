@@ -48,16 +48,6 @@ namespace SIL.FieldWorks.IText
 				interestingTexts.AllCoreTexts.Count()) + (string.IsNullOrEmpty(baseStatus) ? "" : "; " + baseStatus);
 		}
 
-		public override bool OnDeleteRecord(object commandObject)
-		{
-			bool result = base.OnDeleteRecord(commandObject);
-			if(result)
-			{
-				GetInterestingTextList().UpdateInterestingTexts();
-			}
-			return result;
-		}
-
 		/// <summary>
 		/// The current object in this view is either a WfiWordform or an StText, and if we can delete
 		/// an StText at all, we want to delete its owning Text.
@@ -316,13 +306,11 @@ namespace SIL.FieldWorks.IText
 			{
 				var newText =
 					Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				//Cache.LangProject.TextsOC.Add(newText);
 				NewStText =
 					Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				newText.ContentsOA = NewStText;
 				Clerk.CreateFirstParagraph(NewStText, wsText);
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
-				Clerk.GetInterestingTextList().UpdateInterestingTexts();
 			}
 
 			#endregion
@@ -403,6 +391,27 @@ namespace SIL.FieldWorks.IText
 			}
 			return wsText;
 		}
+
+		/// <summary>
+		/// This class creates text, it must delete it here when UNDO is commanded
+		/// so it can update InterestingTexts.
+		/// </summary>
+/*		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (cvDel != 1)
+				return;
+			SaveOnChangeRecord();
+			SuppressSaveOnChangeRecord = true;
+			try
+			{
+				m_list.DeleteCurrentObject();
+			}
+			finally
+			{
+				SuppressSaveOnChangeRecord = false;
+			}
+			GetInterestingTextList().UpdateInterestingTexts();
+		} */
 
 		#region IBookImporter Members
 		/// ------------------------------------------------------------------------------------

@@ -244,12 +244,8 @@ VALUE	Translation", 0x409, 1200
 2003	Loading %<0>u %<1>s of Object Ownership Hierarchy data took %<2>d %<3>s.\n
 1211	row
 1212	rows
-2004	Loading %<0>u %<1>s of ""BigString"" data took %<2>d %<3>s.\n
-2005	Loading %<0>u %<1>s of ""BigUnicode"" data took %<2>d %<3>s.\n
 2006	Loading %<0>u %<1>s of ""Binary"" data took %<2>d %<3>s.\n
 2007	Loading %<0>u %<1>s of ""Image"" data took %<2>d %<3>s.\n
-2008	Loading %<0>u %<1>s of ""MultiBigString"" data took %<2>d %<3>s.\n
-2009	Loading %<0>u %<1>s of ""MultiBigUnicode"" data took %<2>d %<3>s.\n
 2010	Loading %<0>u %<1>s of ""MultiString"" data took %<2>d %<3>s.\n
 2011	Loading %<0>u %<1>s of ""MultiUnicode"" data took %<2>d %<3>s.\n
 2012	Loading %<0>u %<1>s of ""ReferenceAtom"" data took %<2>d %<3>s.\n

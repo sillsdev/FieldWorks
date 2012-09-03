@@ -72,7 +72,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>bin\Release\</OutputPath>
 	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -96,7 +96,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="COMInterfaces, Version=6.1.1.24363, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -136,13 +136,10 @@
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
-	<None Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="DataZipTest.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
+	<Compile Include="DataZipTest.cs">
 	  <SubType>Code</SubType>
 	</Compile>
   </ItemGroup>

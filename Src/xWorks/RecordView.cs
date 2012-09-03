@@ -173,6 +173,7 @@ namespace SIL.FieldWorks.XWorks
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
+				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, guid), false);
 			}
 		}
@@ -269,11 +270,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetClerkPersistPathname()
 		{
-			var filename = Clerk.Id + "_SortSeq";
+			return GetSortFilePersistPathname(Cache, Clerk.Id);
+		}
+
+		internal static string GetSortFilePersistPathname(FdoCache cache, string clerkId)
+		{
+			var filename = clerkId + "_SortSeq";
 			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
 			// Also to FwXWindow.DiscardProperties().
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, DirectoryFinder.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, DirectoryFinder.ksSortSequenceTempDir);
 			if (!Directory.Exists(tempDirectory))
 				Directory.CreateDirectory(tempDirectory);
 			return Path.Combine(tempDirectory, filenameWithExt);
@@ -288,8 +294,8 @@ namespace SIL.FieldWorks.XWorks
 			// be persisted because of the crash. LT-11446.
 			if (FwApp.InCrashedState)
 				return;
-			string pathname = GetClerkPersistPathname();
-			Stopwatch watch = new Stopwatch();
+			var pathname = GetClerkPersistPathname();
+			var watch = new Stopwatch();
 			watch.Start();
 			Clerk.PersistListOn(pathname);
 			watch.Stop();
@@ -299,12 +305,12 @@ namespace SIL.FieldWorks.XWorks
 		// Enhance JohnT: need to verify that sort sequence is current.
 		private bool RestoreSortSequence()
 		{
-			string pathname = GetClerkPersistPathname();
+			var pathname = GetClerkPersistPathname();
 			if (!File.Exists(pathname))
 				return false;
-			Stopwatch watch = new Stopwatch();
+			var watch = new Stopwatch();
 			watch.Start();
-			bool result = Clerk.RestoreListFrom(pathname);
+			var result = Clerk.RestoreListFrom(pathname);
 			watch.Stop();
 			Debug.WriteLine("Restoring clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
 			return result;

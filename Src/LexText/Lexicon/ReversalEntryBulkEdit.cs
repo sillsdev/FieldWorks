@@ -34,10 +34,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			BaseInit(cache, mediator, recordListNode);
 			//string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
-			int rih = GetReversalIndexHvo(mediator);
-			if (rih > 0)
+			Guid riGuid = GetReversalIndexGuid(mediator);
+			if (riGuid != Guid.Empty)
 			{
-				IReversalIndex ri = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(rih);
+				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 				m_owningObject = ri;
 				m_fontName = cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DefaultFontName;
 			}
@@ -73,21 +73,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Get the current reversal index hvo.  If there is none, create a new reversal index
+		/// Get the current reversal index guid.  If there is none, create a new reversal index
 		/// since there must not be any.  This fixes LT-6653.
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		internal static int GetReversalIndexHvo(Mediator mediator)
+		internal static Guid GetReversalIndexGuid(Mediator mediator)
 		{
-			string sHvo = (string)mediator.PropertyTable.GetValue("ReversalIndexHvo");
-			if (String.IsNullOrEmpty(sHvo))
+			string sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
+			if (sGuid == null)
 			{
 				mediator.SendMessage("InsertReversalIndex_FORCE", null);
-				sHvo = (string)mediator.PropertyTable.GetValue("ReversalIndexHvo");
+				sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid");
 			}
-			int rih = int.Parse(sHvo);
-			return rih;
+			try
+			{
+				Guid riGuid = new Guid(sGuid);
+				return riGuid;
+			}
+			catch
+			{
+				return Guid.Empty; // Something went wrong.
+			}
 		}
 
 		protected override IEnumerable<int> GetObjectSet()
@@ -127,11 +134,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get
 			{
 				ICmPossibilityList list = null;
-				int rih = int.Parse((string)m_mediator.PropertyTable.GetValue("ReversalIndexHvo"));
-				if (rih > 0)
+				string sGuid = (string)m_mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
+				if (sGuid != null)
 				{
-					IReversalIndex ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(rih);
-					list = ri.PartsOfSpeechOA;
+					try
+					{
+						Guid riGuid = new Guid(sGuid);
+						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+						list = ri.PartsOfSpeechOA;
+					}
+					catch
+					{
+						// Can't get an index if we have a bad guid.
+					}
 				}
 				return list;
 			}

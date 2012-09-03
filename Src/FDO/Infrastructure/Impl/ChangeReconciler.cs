@@ -857,7 +857,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							return;
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 						{
 							if (element == null)
 								continue;
@@ -879,7 +878,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						}
 						break;
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						{
 							if (element == null)
 								continue;
@@ -902,7 +900,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						}
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						{
 							ITsString foreign = null;
 							if (element != null)

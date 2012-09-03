@@ -177,6 +177,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int clsidForm; // The subclass of MoMorph to create if we need a new object.
 			var realForm = tssfullForm.Text; // Gets stripped of morpheme-type characters.
 			var mmt = FindMorphType(owningEntry.Cache, ref realForm, out clsidForm);
+			if (mmt.Guid == MoMorphTypeTags.kguidMorphStem)
+			{
+				// Might just be that our 'fullform' went in without any 'morpheme-type characters'
+				// But really should be an affix type (for instance) (LT-12995)
+				// Try to use the owningEntry's morph type.
+				if (!owningEntry.IsMorphTypesMixed && owningEntry.MorphTypes.Count > 0)
+					mmt = owningEntry.MorphTypes[0];
+				if (mmt.IsAffixType)
+					clsidForm = MoAffixAllomorphTags.kClassId;
+			}
 			//MoForm allomorph = null;
 			IMoForm allomorph;
 			switch (clsidForm)

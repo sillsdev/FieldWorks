@@ -714,7 +714,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool IsNew(IWritingSystem ws)
 		{
-			IWritingSystem origWs = m_tempWritingSystems[ws];
+			IWritingSystem origWs;
+			bool present = m_tempWritingSystems.TryGetValue(ws, out origWs);
+			//IWritingSystem origWs = m_tempWritingSystems[ws];
 			return origWs == null || origWs.Handle == 0;
 		}
 

@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (wsSpec != null)
 			{
 				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-				int ws;
+				int ws = 0;
 				switch (wsSpec)
 				{
 					case "vernacular":
@@ -62,11 +62,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
 						break;
 					case "reversal":
-						int rih = int.Parse((string)mediator.PropertyTable.GetValue("ReversalIndexHvo"));
-						if (rih > 0)
+						string sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
+						if (sGuid != null)
 						{
-							var ri = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(rih);
-							ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
+							try
+							{
+								Guid riGuid = new Guid(sGuid);
+								IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+								ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
+							}
+							catch
+							{
+								throw new ApplicationException("Couldn't find current reversal index.");
+							}
 						}
 						else
 							throw new ApplicationException("Couldn't find current reversal index.");
@@ -396,11 +404,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					int ws = mdc.GetFieldWs(flid);
 					switch (ws)
 					{

@@ -6960,7 +6960,7 @@ namespace SIL.FieldWorks.TE
 			if (propTag == StTxtParaTags.kflidContents)
 			{
 				// selection is in a vernacular paragraph
-				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a bigString");
+				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a string");
 				wsAlt = 0; // Some code depends on this being zero to indicate we are in vernacular
 				// Adjust the insertion position to the beginning of a word - not in the middle
 				ich = tss.FindWordBoundary(ich, UnicodeCharProps, ScrStyleNames.ChapterAndVerse);
@@ -6987,7 +6987,7 @@ namespace SIL.FieldWorks.TE
 				if (propTag == CmTranslationTags.kflidTranslation)
 				{
 					// selection is in a back translation
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 				}
 				else if (propTag == RootSite.kTagUserPrompt)
 				{
@@ -6996,7 +6996,7 @@ namespace SIL.FieldWorks.TE
 					// get writing system from zero-width space in run 0 of the user prompt
 					wsAlt = tss.get_Properties(0).GetIntPropValues(
 						(int)FwTextPropType.ktptWs, out nVar);
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 					Debug.Assert(tss.get_Properties(0).GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nVar) == 1);
 
 					// Replace the TextSelInfo with stuff we can use
@@ -7291,13 +7291,13 @@ namespace SIL.FieldWorks.TE
 			if (propTag == StTxtParaTags.kflidContents)
 			{
 				// selection is in a vernacular paragraph
-				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a bigString");
+				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a string");
 				wsAlt = 0; // Some code depends on this being zero to indicate we are in vernacular
 			}
 			else if (propTag == CmTranslationTags.kflidTranslation || propTag == SegmentTags.kflidFreeTranslation)
 			{
 				// selection is in a back translation
-				Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+				Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 			}
 			else if (propTag == SimpleRootSite.kTagUserPrompt)
 			{
@@ -7316,7 +7316,7 @@ namespace SIL.FieldWorks.TE
 				else
 				{
 					// Get writing system from zero-width space in run 0 of the user prompt
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 					propTag = Options.UseInterlinearBackTranslation ?
 						SegmentTags.kflidFreeTranslation : CmTranslationTags.kflidTranslation;
 				}

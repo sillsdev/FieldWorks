@@ -259,6 +259,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					watch.Stop();
 					Debug.WriteLine("Making surrogates took " + watch.ElapsedMilliseconds + " ms.");
 				}
+				catch (ArgumentException e)
+				{
+					Logger.WriteError(e);
+					// Failed to get a version number from the file!
+					OfferToRestore(Properties.Resources.kstidInvalidFieldWorksXMLFile);
+					continue; // backup restored, if previous call returns.
+				}
 				catch (XmlException e)
 				{
 					Logger.WriteError(e);
@@ -838,6 +845,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			while (GetRtElement())
 			{
 			}
+			// Test for incomplete File save (sometimes happens in power failure; see LT-12947)
+			if(!EndMarkerFound())
+				throw new XmlException("File does not end with project end tag.");
+		}
+
+		private bool EndMarkerFound()
+		{
+			const int extraBuffer = 5;
+			var lengthEndTag = m_finalClosingTag.Length;
+			if (m_currentIndex < (lengthEndTag + extraBuffer))
+				return false;
+			string lastBufferString = Encoding.UTF8.GetString(m_currentBuffer, m_currentIndex - (lengthEndTag + extraBuffer),
+															  m_currentBufLength - (m_currentIndex - (lengthEndTag + extraBuffer)));
+
+			return lastBufferString.Contains(Encoding.UTF8.GetString(m_finalClosingTag, 0, lengthEndTag));
 		}
 
 		private static byte closeBracket = Encoding.UTF8.GetBytes(">")[0];

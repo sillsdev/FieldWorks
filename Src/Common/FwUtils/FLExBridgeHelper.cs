@@ -96,8 +96,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ServiceHost host = null;
 			try
 			{
-				host = new ServiceHost(typeof(FLExBridgeService),
-					new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName) });
+				host = new ServiceHost(typeof (FLExBridgeService),
+										new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName)});
 
 				//open host ready for business
 				host.AddServiceEndpoint(typeof (IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
@@ -106,10 +106,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			catch (InvalidOperationException) // Can happen if Conflict Report is open and we try to run FLExBridge again.
 			{
 				if (host != null)
-					((IDisposable)host).Dispose();
+					((IDisposable) host).Dispose();
 				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
 			}
-
+			catch (AddressAlreadyInUseException) // Can happen if FLExBridge has been launched and we try to launch FLExBridge again.
+			{
+				// host is normally not null for this exception, but there is no pipe to dispose
+				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
+			}
 			//Launch the bridge process.
 			if (command == ConflictViewer)
 			{

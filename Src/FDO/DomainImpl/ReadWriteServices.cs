@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -145,23 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			var genDateStr = reader.Attribute("val").Value;
-			if (!string.IsNullOrEmpty(genDateStr) && Convert.ToInt32(genDateStr) != 0)
-			{
-				var ad = true;
-				if (genDateStr.StartsWith("-"))
-				{
-					ad = false;
-					genDateStr = genDateStr.Substring(1);
-				}
-				genDateStr = genDateStr.PadLeft(9, '0');
-				var year = Convert.ToInt32(genDateStr.Substring(0, 4));
-				var month = Convert.ToInt32(genDateStr.Substring(4, 2));
-				var day = Convert.ToInt32(genDateStr.Substring(6, 2));
-				var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
-				return new GenDate(precision, month, day, year, ad);
-			}
-
-			return new GenDate();
+			return GenDate.LoadFromString(genDateStr);
 		}
 
 		/// <summary>
@@ -185,7 +170,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (string.IsNullOrEmpty(elementName)) throw new ArgumentNullException("elementName");
 
-			if (multiProperty == null || multiProperty.StringCount <= 0) return;
+			if (multiProperty == null || multiProperty.StringCount == 0 || multiProperty.Values.All(alt => string.IsNullOrEmpty(alt.Text)))
+				return;
 
 			writer.WriteStartElement(elementName); // Open prop. element.
 			multiProperty.ToXMLString(writer);
@@ -335,7 +321,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (cache == null) throw new ArgumentNullException("cache");
 			if (string.IsNullOrEmpty(elementName)) throw new ArgumentNullException("elementName");
 
-			if (propertyData == null) return;
+			if (propertyData == null || string.IsNullOrEmpty(propertyData.Text))
+				return;
 
 			writer.WriteStartElement(elementName); // Open prop. element.
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;

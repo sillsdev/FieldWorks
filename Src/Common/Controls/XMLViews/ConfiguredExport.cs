@@ -26,7 +26,6 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -681,25 +680,26 @@ namespace SIL.FieldWorks.Common.Controls
 				for (int i = 0; i < rgsRules.Length; ++i)
 				{
 					string sRule = rgsRules[i];
+					RemoveICUEscapeChars(ref sRule);
 					// This is a valid rule that specifies that the digraph aa should be ignored
 					// [last tertiary ignorable] = \u02bc = aa
 					// This may never happen, but some single characters should be ignored or they will
-					// will be confused for digraphs with following characters.
+					// will be confused for digraphs with following characters.)))
 					if (sRule.Contains("["))
 					{
+						const string endMarker = "ignorable] = ";
 						// parse out the ignorables and add them to the ignore list
-						int sqBracketEnd = sRule.IndexOf("ignorable] = ");
-						if (sqBracketEnd > -1)
+						int bracketEnd = sRule.IndexOf(endMarker);
+						if (bracketEnd > -1)
 						{
-							sqBracketEnd += 13; // skip over the search target
-							string[] chars = sRule.Substring(sqBracketEnd)
-								.Split(new [ ] {" = "}, StringSplitOptions.RemoveEmptyEntries);
+							bracketEnd += endMarker.Length; // skip over the search target
+							string[] chars = sRule.Substring(bracketEnd).Split(new [ ] {" = "},
+																			   StringSplitOptions.RemoveEmptyEntries);
 							if (chars.Length > 0)
 							{
 								foreach (var ch in chars)
-								{   // get rid of escaping and add to ignore list
-									string rep = ch.Replace("\\", String.Empty);
-									chIgnoreSet.Add(rep);
+								{
+									chIgnoreSet.Add(ch);
 								}
 							}
 						}
@@ -759,6 +759,18 @@ namespace SIL.FieldWorks.Common.Controls
 			m_mapWsMapChars.Add(sWs, mapChars);
 			m_mapWsIgnorables.Add(sWs, chIgnoreSet);
 			return digraphs;
+		}
+
+		private void RemoveICUEscapeChars(ref string sRule)
+		{
+			const string quoteEscape = @"!@#quote#@!";
+			const string slashEscape = @"!@#slash#@!";
+			sRule = sRule.Replace(@"''", quoteEscape);
+			sRule = sRule.Replace(@"'", String.Empty);
+			sRule = sRule.Replace(quoteEscape, @"'");
+			sRule = sRule.Replace(@"\\\\", slashEscape);
+			sRule = sRule.Replace(@"\\", String.Empty);
+			sRule = sRule.Replace(slashEscape, @"\\");
 		}
 
 		private void WriteReversalLetterHeadIfNeeded(int hvoItem)

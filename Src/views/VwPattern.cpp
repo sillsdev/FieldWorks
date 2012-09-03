@@ -36,6 +36,7 @@ VwPattern::VwPattern()
 	ModuleEntry::ModuleAddRef();
 	Assert(m_fStoppedAtLimit == 0);
 	m_sbstrDefaultCharStyle = L"<!default chars!>";
+	m_fMatchDiacritics = true;
 }
 
 

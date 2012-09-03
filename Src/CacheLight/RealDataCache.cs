@@ -594,7 +594,7 @@ namespace SIL.FieldWorks.CacheLight
 			CheckHvoTagMatch(obj, tag);
 			// Make sure Unicode is legal for the given tag.
 			var flidType = (CellarPropertyType)MetaDataCache.GetFieldType(tag);
-			if ((flidType != CellarPropertyType.Unicode) && (flidType != CellarPropertyType.BigUnicode))
+			if (flidType != CellarPropertyType.Unicode)
 				throw new ArgumentException(String.Format("Can only put Unicode data in the tag/flid '{0}'.", tag));
 
 			m_basicStringCache[new HvoFlidKey(obj, tag)] = val;
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.CacheLight
 			CheckHvoTagMatch(obj, tag);
 			// Make sure Unicode is legal for the given tag.
 			var flidType = (CellarPropertyType)MetaDataCache.GetFieldType(tag);
-			if ((flidType != CellarPropertyType.BigString) && (flidType != CellarPropertyType.String))
+			if (flidType != CellarPropertyType.String)
 				throw new ArgumentException(String.Format("Can only put String data in the tag/flid '{0}'.", tag));
 
 			m_basicITsStringCache[new HvoFlidKey(obj, tag)] = tss;
@@ -966,9 +966,7 @@ namespace SIL.FieldWorks.CacheLight
 			// Make sure ITsString is legal for the given tag.
 			var flidType = (CellarPropertyType)MetaDataCache.GetFieldType(tag);
 			if ((flidType == CellarPropertyType.MultiUnicode) ||
-				(flidType == CellarPropertyType.MultiBigUnicode) ||
-				(flidType == CellarPropertyType.MultiString) ||
-				(flidType == CellarPropertyType.MultiBigString))
+				(flidType == CellarPropertyType.MultiString))
 			{
 				m_extendedKeyCache[new HvoFlidWSKey(obj, tag, ws)] = tss;
 			}
@@ -1453,18 +1451,14 @@ namespace SIL.FieldWorks.CacheLight
 						break; //  m_intCache.ContainsKey(key);
 					case CellarPropertyType.Binary:
 						break;
-					case CellarPropertyType.String: // Fall through.
-					case CellarPropertyType.BigString:
+					case CellarPropertyType.String:
 						result = m_basicITsStringCache[key];
 						break;
-					case CellarPropertyType.MultiUnicode: // Fall through.
-					case CellarPropertyType.MultiBigUnicode: // Fall through.
-					case CellarPropertyType.MultiString: // Fall through.
-					case CellarPropertyType.MultiBigString:
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
 						result = get_MultiStringProp(hvo, tag);
 						break;
-					case CellarPropertyType.Unicode: // Fall through.
-					case CellarPropertyType.BigUnicode:
+					case CellarPropertyType.Unicode:
 						result = m_basicStringCache[key];
 						break;
 
@@ -1524,16 +1518,12 @@ namespace SIL.FieldWorks.CacheLight
 					return false; //  m_intCache.ContainsKey(key);
 				case CellarPropertyType.Binary:
 					return false;
-				case CellarPropertyType.String: // Fall through.
-				case CellarPropertyType.BigString:
+				case CellarPropertyType.String:
 					return m_basicITsStringCache.ContainsKey(key);
 				case CellarPropertyType.MultiUnicode: // Fall through.
-				case CellarPropertyType.MultiBigUnicode: // Fall through.
-				case CellarPropertyType.MultiString: // Fall through.
-				case CellarPropertyType.MultiBigString:
+				case CellarPropertyType.MultiString:
 					return m_extendedKeyCache.ContainsKey(keyWs);
-				case CellarPropertyType.Unicode: // Fall through.
-				case CellarPropertyType.BigUnicode:
+				case CellarPropertyType.Unicode:
 					return m_basicStringCache.ContainsKey(key);
 
 				case CellarPropertyType.OwningAtomic:

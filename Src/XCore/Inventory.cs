@@ -98,7 +98,7 @@ namespace XCore
 		protected Set<string> m_inventoryPaths;
 		// The pattern used to find files to load into the inventory in a directory.
 		// PersistOverrideElement assumes that it can strip off one character to get a useful
-		// suffix for a file name (e.g., '*Layouts.xml' is a typical pattern).
+		// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
 		protected string m_filePattern;
 		protected string m_sDatabase = null;
 		protected string m_projectPath;
@@ -267,7 +267,7 @@ namespace XCore
 				{
 					// LT-11193 Don't delete user overrides if they are new dictionary views
 					// (from the Manage Views dialog)
-					if(sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 2)
+					if(sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 1)
 						continue;
 
 					File.Delete(sFilename);
@@ -296,8 +296,8 @@ namespace XCore
 		///    attributes. For example, if we have
 		/// 			keyAttrs["layout"] = new string[] {"class", "type", "name" };
 		///    and an element layout class="LexEntry" type="Detail" name="Full"
-		///    and our m_filePattern is "Layouts.xml"
-		///    we want to make a file LexEntry_Layouts.xml.
+		///    and our m_filePattern is ".fwlayout"
+		///    we want to make a file LexEntry.fwlayout.
 		///   If this file already exists, we replace or append the element that matches
 		///   the one we're given according to our key attributes.
 		///
@@ -350,7 +350,7 @@ namespace XCore
 			if (String.IsNullOrEmpty(name))
 				name = XmlUtils.GetManditoryAttributeValue(element, keyAttrs[0]);
 			string sDatabase = String.IsNullOrEmpty(m_sDatabase) ? "default$$" : "";
-			string fileName = sDatabase + name + ksUnderscore + m_filePattern.Substring(1); // strip off leading *
+			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
 			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
 			CreateDirectoryIfNonexistant(UserOverrideConfigurationSettingsPath);
 			XmlDocument doc = null;
@@ -771,6 +771,16 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// This routine just takes an xpath, and returns the matching elements.
+		/// </summary>
+		/// <param name="xpath">xpath string</param>
+		/// <returns></returns>
+		public XmlNodeList GetElements(string xpath)
+		{
+			return m_mainDoc["Main"].SelectNodes(xpath);
+		}
+
+		/// <summary>
 		/// This routine takes a set of arguments, typically with a less complete set of attr vals
 		/// than GetElement, and returns all matching elements. Currently it is not guaranteed to
 		/// find alterations.
@@ -1099,6 +1109,14 @@ namespace XCore
 			foreach (XmlNode node in nodeList)
 			{
 				NoteIfNodeWsTagged(node);
+				//"layoutType" nodes are handled differently in the Inventory.
+				//Don't ask me why, the reason seems to have been lost to history.
+				//It is important to follow through on that here though. naylor 6/7/2012
+				if (node.Name == "layoutType")
+				{
+					AddLayoutTypeToInventory(node);
+					continue;
+				}
 				//if the version is the same then we want to use the basic AddNode to get it into the inventory
 				if(version == Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString())))
 				{
@@ -1142,16 +1160,29 @@ namespace XCore
 				// None of our installer provided files have a version number.
 				// That is why we check for an optional version attribute.
 
-				// LT-12778 revealed a bug related to version number. In previous versions of FieldWorks the version attribute
+				// LT-12778 revealed a defect related to version number. In previous versions of FieldWorks the version attribute
 				// was not being added to the user configuration files. Therefore many layout elements were being processed
-				// as if they were in the default configuration files.  Therefore the loadUserOverRides boolean was added to ensure
+				// as if they were in the default configuration files.  The loadUserOverRides boolean was added to ensure
 				// version number is added to the elements in the user configuration files.
 
-				int fileVersion;
-				if (loadUserOverRides)
-					fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", "0"));
-				else
-					fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", version.ToString()));
+				int fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version",
+																				 loadUserOverRides ? "0" : version.ToString()));
+
+				//The layoutType element in user config files (i.e. a copy of the root dictionary view)
+				//failed to include a version number, even though all the layout elements had one.
+				if (fileVersion == 0)
+				{
+					//So to make sure that copies of the dictionary views get reloaded we will look for
+					//the version number of a sibling node.
+					if (node.ParentNode != null)
+					{
+						var versionedSibling = node.SelectSingleNode("../*[@version]");
+						// ReSharper disable PossibleNullReferenceException
+						// if we found a node, it has a version attribute.
+						fileVersion = Int32.Parse(versionedSibling != null ? versionedSibling.Attributes["version"].Value : "0");
+						// ReSharper restore PossibleNullReferenceException
+					}
+				}
 
 				if (fileVersion != version && Merger != null && XmlUtils.GetOptionalAttributeValue(node, "base") == null)
 				{

@@ -345,7 +345,11 @@ namespace SIL.FieldWorks.XWorks
 					xWorksStrings.ksUndoDeleteMediaLink,
 					xWorksStrings.ksRedoDeleteMediaLink,
 					Cache.ActionHandlerAccessor,
-					() => Cache.DomainDataByFlid.DeleteObj(media.Hvo));
+					() =>
+					{
+						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator);
+						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
+					});
 			}
 			return true;
 		}

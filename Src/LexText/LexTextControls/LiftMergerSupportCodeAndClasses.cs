@@ -348,7 +348,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ITsString CreateTsStringFromLiftString(LiftString liftstr, int wsHvo)
 		{
 			ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
-			tsb.Replace(0, tsb.Length, liftstr.Text, m_tpf.MakeProps(null, wsHvo, 0));
+			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
+			tsb.Replace(0, tsb.Length, convertSafeXmlToText, m_tpf.MakeProps(null, wsHvo, 0));
 			int wsSpan;
 			// TODO: handle nested spans.
 			foreach (LiftSpan span in liftstr.Spans)
@@ -1368,10 +1369,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		#endregion // Storing LIFT import residue...
 
 		#region Methods for processing LIFT header elements
-		private int FindOrCreateCustomField(string sLabel, LiftMultiText lmtDesc, int clid, out Guid possListGuid)
+		private int FindOrCreateCustomField(string sName, LiftMultiText lmtDesc, int clid, out Guid possListGuid)
 		{
 			var sClass = m_cache.MetaDataCacheAccessor.GetClassName(clid);
-			var sTag = String.Format("{0}-{1}", sClass, sLabel);
+			var sTag = String.Format("{0}-{1}", sClass, sName);
 			var flid = 0;
 			possListGuid = Guid.Empty;
 			if (m_dictCustomFlid.TryGetValue(sTag, out flid))
@@ -1415,7 +1416,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (var fd in FieldDescription.FieldDescriptors(m_cache))
 			{
-				if (fd.Custom != 0 && fd.Userlabel == sLabel && fd.Class == clid)
+				if (fd.Custom != 0 && fd.Name == sName && fd.Class == clid)
 				{
 					if (String.IsNullOrEmpty(sSpec))
 					{
@@ -1455,12 +1456,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case CellarPropertyType.String:
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigString:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 					if (wsSelector == 0)
 						wsSelector = WritingSystemServices.kwsAnalVerns;		// we need a WsSelector value!
 					clidDst = -1;
@@ -1483,8 +1480,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Type = type,
 				Class = clid,
-				Name = sLabel,
-				Userlabel = sLabel,
+				Name = sName,
+				Userlabel = sName,
 				HelpString = sDesc,
 				WsSelector = wsSelector,
 				DstCls = clidDst,
@@ -1518,22 +1515,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool CheckForCompatibleTypes(CellarPropertyType type, FieldDescription fd)
 		{
 			if (fd.Type == type)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiString && type == CellarPropertyType.MultiBigString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigString && type == CellarPropertyType.MultiString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiUnicode && type == CellarPropertyType.MultiBigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigUnicode && type == CellarPropertyType.MultiUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.String && type == CellarPropertyType.BigString)
-				return true;
-			if (fd.Type == CellarPropertyType.BigString && type == CellarPropertyType.String)
-				return true;
-			if (fd.Type == CellarPropertyType.Unicode && type == CellarPropertyType.BigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.BigUnicode && type == CellarPropertyType.Unicode)
 				return true;
 			if (fd.Type == CellarPropertyType.Binary && type == CellarPropertyType.Image)
 				return true;
@@ -1696,6 +1677,25 @@ namespace SIL.FieldWorks.LexText.Controls
 				SetNewPossibilityAttributes(id, description, label, abbrev, poss);
 				dict[id] = poss;
 				rgNew.Add(poss);
+			}
+		}
+
+		private void ProcessPerson(string id, string guidAttr, string parent,
+			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
+			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list)
+		{
+			var person = FindExistingPossibility(id, guidAttr, label, abbrev, dict, list);
+			if (person == null)
+			{
+				ICmObject possParent = null;
+				if (!String.IsNullOrEmpty(parent) && dict.ContainsKey(parent))
+					possParent = dict[parent];
+				else
+					possParent = list;
+				person = CreateNewCmPerson(guidAttr, possParent);
+				SetNewPossibilityAttributes(id, description, label, abbrev, person);
+				dict[id] = person;
+				rgNew.Add(person);
 			}
 		}
 
@@ -3714,6 +3714,35 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_factLexEntryRef == null)
 				m_factLexEntryRef = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>();
 			return m_factLexEntryRef.Create();
+		}
+
+		internal ICmPerson CreateNewCmPerson()
+		{
+			if (m_factCmPerson == null)
+				m_factCmPerson = m_cache.ServiceLocator.GetInstance<ICmPersonFactory>();
+			return m_factCmPerson.Create();
+		}
+
+		internal ICmPerson CreateNewCmPerson(string guidAttr, ICmObject owner)
+		{
+			if (!(owner is ICmPossibilityList))
+				throw new ArgumentException("Person should be in the People list", "owner");
+			if (m_factCmPerson == null)
+				m_factCmPerson = m_cache.ServiceLocator.GetInstance<ICmPersonFactory>();
+			if (!String.IsNullOrEmpty(guidAttr))
+			{
+				Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
+				return m_factCmPerson.Create(guid, owner as ICmPossibilityList);
+			}
+			else
+			{
+				ICmPerson csd = m_factCmPerson.Create();
+				if (owner is ICmPossibility)
+					(owner as ICmPossibility).SubPossibilitiesOS.Add(csd);
+				else
+					(owner as ICmPossibilityList).PossibilitiesOS.Add(csd);
+				return csd;
+			}
 		}
 
 		private int GetWsFromStr(string sWs)

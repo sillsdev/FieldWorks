@@ -321,8 +321,6 @@ namespace SIL.FieldWorks.LexText.Controls
 							w.WriteLine("</field>");
 						}
 						break;
-					case CellarPropertyType.MultiBigString:
-					case CellarPropertyType.MultiBigUnicode:
 					case CellarPropertyType.MultiString:
 						break;
 					case CellarPropertyType.ReferenceAtomic:
@@ -1213,13 +1211,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (!m_mdc.IsCustom(flid))
 					continue;
-				var labelName = m_mdc.GetFieldLabel(flid);
+				// LT-13202. Need to use fieldName since that matches custom data.
 				var fieldName = m_mdc.GetFieldName(flid);
-				if (String.IsNullOrEmpty(labelName))
-					labelName = fieldName;
 				var sHelp = m_mdc.GetFieldHelp(flid);
 				var sSpec = GetCustomFieldDefinition(className, flid);
-				w.WriteLine("<field tag=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(labelName));
+				w.WriteLine("<field tag=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
 				w.WriteLine("<form lang=\"en\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sHelp));
 				w.WriteLine("<form lang=\"qaa-x-spec\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sSpec));
 				w.WriteLine("</field>");
@@ -2001,8 +1997,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sPeopleOA);
 			foreach (var person in m_cache.LangProject.PeopleOA.ReallyReallyAllPossibilities.OfType<ICmPerson>())
 			{
-				if (!person.IsResearcher)
-					continue;
+				// LT-13480 We need all the people written out, especially if custom lists might refer to them!
+				// if (!person.IsResearcher)
+				//    continue;
 				var liftId = person.Name.BestAnalysisVernacularAlternative.Text;
 				string liftIdParent = null;
 				if (person.OwningFlid == CmPossibilityTags.kflidSubPossibilities)

@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name='flid'>Field identification number.</param>
 		/// <remarks>
 		/// This type value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence).
 		/// These numeric values are defined in the 'FWROOT\Src\Cellar\lib\CmTypes.h' file.
 		/// </remarks>
@@ -1193,9 +1193,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						case CellarPropertyType.ReferenceCollection:
 							collData.Add(GetFieldName(propId));
 							break;
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigUnicode:
 						case CellarPropertyType.MultiUnicode:
 							multiAltData.Add(GetFieldName(propId));
 							break;

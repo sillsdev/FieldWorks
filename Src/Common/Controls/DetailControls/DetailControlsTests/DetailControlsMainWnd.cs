@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			keyAttrs["part"] = new string[] {"id", "type", "mode"};
 
 			Inventory parts = new Inventory(new string[] {partDirectory},
-				"*Layouts.xml", "/PartInventory/*", keyAttrs, "DetailControlsMainWnd", "ProjectPath");
+				"*.fwlayout", "/PartInventory/*", keyAttrs, "DetailControlsMainWnd", "ProjectPath");
 			m_dataEntryForm.Initialize(m_cache, true, layouts, parts);
 			m_dataEntryForm.Dock = System.Windows.Forms.DockStyle.Fill;
 			Controls.Add(m_dataEntryForm);

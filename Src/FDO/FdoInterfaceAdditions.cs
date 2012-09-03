@@ -2468,6 +2468,15 @@ namespace SIL.FieldWorks.FDO
 		/// Get the number of the analysis within the collection of the owning wordform's human disapproved analyses.
 		/// </summary>
 		string HumanDisapprovedNumber { get; }
+
+		/// <summary>
+		/// The segments that reference an occurrence of this analysis in a text.
+		/// </summary>
+		IEnumerable<ISegment> OccurrencesInTexts
+		{
+			get;
+		}
+
 	}
 
 	/// <summary>

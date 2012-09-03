@@ -982,10 +982,69 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			foreach (LayoutTreeNode ltnSub in ltn.Nodes)
 			{
-				if (ltnSub.Configuration == node)
+				if (NodesMatch(ltnSub.Configuration, node))
 					return ltnSub;
 			}
 			return FindMatchingNode(ltn.Parent as LayoutTreeNode, node);
+		}
+
+		private static bool NodesMatch(XmlNode first, XmlNode second)
+		{
+			if (first.Name != second.Name)
+				return false;
+			if((first.Attributes == null) && (second.Attributes != null))
+				return false;
+			if(first.Attributes == null)
+			{
+				return ChildNodesMatch(first.ChildNodes, second.ChildNodes);
+			}
+			if(first.Attributes.Count != second.Attributes.Count)
+			{
+				return false;
+			}
+
+			var firstAtSet = new SortedList<string, string>();
+			var secondAtSet = new SortedList<string, string>();
+			for (int i = 0; i < first.Attributes.Count; ++i)
+			{
+				firstAtSet.Add(first.Attributes[i].Name, first.Attributes[i].Value);
+				secondAtSet.Add(second.Attributes[i].Name, second.Attributes[i].Value);
+			}
+			var firstIter = firstAtSet.GetEnumerator();
+			var secondIter = secondAtSet.GetEnumerator();
+			for(;firstIter.MoveNext() && secondIter.MoveNext();)
+			{
+				if(!firstIter.Current.Equals(secondIter.Current))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// This method should sort the node lists and call NodesMatch with each pair.
+		/// </summary>
+		/// <param name="firstNodeList"></param>
+		/// <param name="secondNodeList"></param>
+		/// <returns></returns>
+		private static bool ChildNodesMatch(XmlNodeList firstNodeList, XmlNodeList secondNodeList)
+		{
+			if (firstNodeList.Count != secondNodeList.Count)
+				return false;
+			var firstAtSet = new SortedList<string, XmlNode>();
+			var secondAtSet = new SortedList<string, XmlNode>();
+			for (int i = 0; i < firstNodeList.Count; ++i)
+			{
+				firstAtSet.Add(firstNodeList[i].Name, firstNodeList[i]);
+				secondAtSet.Add(secondNodeList[i].Name, secondNodeList[i]);
+			}
+			var firstIter = firstAtSet.GetEnumerator();
+			var secondIter = secondAtSet.GetEnumerator();
+			for (; firstIter.MoveNext() && secondIter.MoveNext(); )
+			{
+				if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
+					return false;
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -1120,7 +1179,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// The "layout" in a part node can actually refer directly to another part, so check
 				// for that possibility.
-				var subPart = m_parts.GetElement("part", new[] { rgsClasses[0] + "-Jt-" + sLayout });
+				var subPart = m_parts.GetElement("part", new[] { rgsClasses[0] + "-Jt-" + sLayout }) ??
+							  m_parts.GetElement("part", new[] { className + "-Jt-" + sLayout });
 				if (subPart == null && !sLayout.EndsWith("-en"))
 				{
 					// Complain if we can't find either a layout or a part, and the name isn't tagged
@@ -1638,6 +1698,18 @@ namespace SIL.FieldWorks.XWorks
 					m_cache.ProjectId.ProjectFolder);
 				Inventory layouts = Inventory.GetInventory("layouts", null);
 				Inventory parts = Inventory.GetInventory("parts", null);
+				//preserve layouts which are marked as copies
+				var layoutTypes = m_layouts.GetLayoutTypes();
+				var layoutCopies = m_layouts.GetElements("//layout[contains(@name, '#')]");
+				foreach (var type in layoutTypes)
+				{
+					layouts.AddLayoutTypeToInventory(type);
+				}
+				foreach (var layoutCopy in layoutCopies)
+				{
+					var copy = layoutCopy as XmlNode;
+					layouts.AddNodeToInventory(copy);
+				}
 				m_layouts = layouts;
 				m_parts = parts;
 				// recreate the layout trees.
@@ -3332,6 +3404,10 @@ namespace SIL.FieldWorks.XWorks
 				Debug.Assert(m_layouts.DatabaseName == null);
 				m_layouts.DeleteUserOverrides(m_cache.ProjectId.Name);
 				m_parts.DeleteUserOverrides(m_cache.ProjectId.Name);
+				//Make sure to retain any data from user override files that were not deleted i.e. copies of dictionary views
+				m_layouts.LoadUserOverrides(LayoutCache.LayoutVersionNumber, m_cache.ProjectId.Name);
+				m_parts.LoadUserOverrides(LayoutCache.LayoutVersionNumber, m_cache.ProjectId.Name);
+
 				Inventory.SetInventory("layouts", m_cache.ProjectId.Name, m_layouts);
 				Inventory.SetInventory("parts", m_cache.ProjectId.Name, m_parts);
 				Inventory.RemoveInventory("layouts", null);
@@ -4327,11 +4403,17 @@ namespace SIL.FieldWorks.XWorks
 								}
 								else if (ltn.HiddenNodeLayout == xnDirtyLayout)
 								{
-									xnLayout.AppendChild(ltn.HiddenNode.CloneNode(true));
+									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
+													  BuildXPathFromAttributes(ltn.HiddenNode.Attributes) + "]";
+									if (xnLayout.SelectSingleNode(xpathString) == null)
+										xnLayout.AppendChild(ltn.HiddenNode.CloneNode(true));
 								}
 								else if (ltn.HiddenChildLayout == xnDirtyLayout)
 								{
-									xnLayout.AppendChild(ltn.HiddenChild.CloneNode(true));
+									var xpathString = "/" + ltn.HiddenNode.Name + "[" +
+													  BuildXPathFromAttributes(ltn.HiddenChild.Attributes) + "]";
+									if (xnLayout.SelectSingleNode(xpathString) == null)
+										xnLayout.AppendChild(ltn.HiddenChild.CloneNode(true));
 								}
 								else
 								{
@@ -4373,6 +4455,25 @@ namespace SIL.FieldWorks.XWorks
 				if (Level > 0 && fDirty)
 					StoreUpdatedValuesInConfiguration();
 				return fDirty || HasMoved || IsNew;
+			}
+
+			private static string BuildXPathFromAttributes(XmlAttributeCollection attributes)
+			{
+				if (attributes == null)
+					return "";
+				string xpath = null;
+				foreach(XmlAttribute attr in attributes)
+				{
+					if(String.IsNullOrEmpty(xpath))
+					{
+						xpath = "@" + attr.Name + "='" + attr.Value + "'";
+					}
+					else
+					{
+						xpath += " and @" + attr.Name + "='" + attr.Value + "'";
+					}
+				}
+				return xpath;
 			}
 
 			internal bool IsNew { get; set; }
@@ -4832,6 +4933,13 @@ namespace SIL.FieldWorks.XWorks
 		private void CopyConfiguration(XmlNode xnBaseConfig, string code, string label)
 		{
 			var xnNewConfig = xnBaseConfig.CloneNode(true);
+			//set the version number on the layoutType node to indicate user configured
+// ReSharper disable PossibleNullReferenceException
+// With any xml node that can possibly be copied here we have an owner and attributes
+			var versionAtt = xnNewConfig.OwnerDocument.CreateAttribute("version");
+			versionAtt.Value = LayoutCache.LayoutVersionNumber.ToString();
+			xnNewConfig.Attributes.Append(versionAtt);
+// ReSharper restore PossibleNullReferenceException
 			Debug.Assert(xnNewConfig.Attributes != null);
 			var xaLabel = xnNewConfig.Attributes["label"];
 			xaLabel.Value = label;
@@ -4950,7 +5058,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var label = XmlUtils.GetManditoryAttributeValue(xnConfig, "label");
 			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.FirstChild, "class");
-			var name = String.Format("{0}_{1}_Layouts.xml", label, className);
+			var name = String.Format("{0}_{1}.fwlayout", label, className);
 			return Path.Combine(configDir, name);
 		}
 

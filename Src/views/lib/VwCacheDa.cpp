@@ -705,8 +705,6 @@ STDMETHODIMP VwCacheDa::get_IsPropInCache(HVO hvo, PropTag tag, int cpt, int ws,
 
 	case kcptMultiUnicode:
 	case kcptMultiString:
-	case kcptMultiBigString:
-	case kcptMultiBigUnicode:
 		{
 			ObjPropEncRec opreKey(hvo, tag, ws);
 			ITsStringPtr qtss;
@@ -714,14 +712,12 @@ STDMETHODIMP VwCacheDa::get_IsPropInCache(HVO hvo, PropTag tag, int cpt, int ws,
 		}
 		break;
 	case kcptString:
-	case kcptBigString:
 		{
 			ITsStringPtr qtss;
 			*pfCached = m_hmoprtss.Retrieve(oprKey, qtss);
 		}
 		break;
 	case kcptUnicode:
-	case kcptBigUnicode:
 		{
 			StrUni stu;
 			*pfCached = m_hmoprstu.Retrieve(oprKey, &stu);

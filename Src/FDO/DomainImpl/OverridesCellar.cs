@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -1095,7 +1096,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (!wsHashTable.TryGetValue(possibilityKey, out poss))
 					{
 						// Category is missing, so create a new one.
-						possibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+						possibility = CreatePossibilityOrAppropriateSubclass();
 						possibilityList.Add(possibility);
 						possibility.Abbreviation.set_String(ws, strName);
 						possibility.Name.set_String(ws, strName);
@@ -1116,6 +1117,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			throw new InvalidProgramException(
 				"Unable to create a dictionary for the writing system in the annotation category hash table");
+		}
+
+		private ICmPossibility CreatePossibilityOrAppropriateSubclass()
+		{
+			var destinationClassId = ItemClsid;
+			if (destinationClassId < CmPossibilityTags.kClassId)
+				destinationClassId = CmPossibilityTags.kClassId; // Default to CmPossibility
+			var factType = GetServicesFromFWClass.GetFactoryTypeFromFWClassID(Cache.MetaDataCache as IFwMetaDataCacheManaged, destinationClassId);
+			var factory = Cache.ServiceLocator.GetInstance(factType);
+			return ReflectionHelper.GetResult(factory, "Create", null) as ICmPossibility;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1904,6 +1915,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ILexExampleSentence OwningExample
 		{
 			get { return (ILexExampleSentence)Owner; }
+		}
+	}
+	#endregion
+
+	#region VirtualOrdering Class
+	internal partial class VirtualOrdering
+	{
+		public override bool IsFieldRelevant(int flid)
+		{
+			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var flids = mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All);
+			return flids.Contains(flid);
 		}
 	}
 	#endregion

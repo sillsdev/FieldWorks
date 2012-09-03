@@ -71,6 +71,9 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="BCVRef.cs" />
 	<Compile Include="CharacterCategorizer.cs" />
 	<Compile Include="IChecksDataSource.cs" />
@@ -79,8 +82,7 @@
 	<Compile Include="IScrProjMetaDataProvider.cs" />
 	<Compile Include="ITextToken.cs" />
 	<Compile Include="IVerseReference.cs" />
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="MatchedPairs.cs" />
 	<Compile Include="MultilingScrBooks.cs" />
 	<Compile Include="PunctuationPatterns.cs" />

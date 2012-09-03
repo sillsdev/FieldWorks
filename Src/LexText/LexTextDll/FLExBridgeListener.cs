@@ -81,6 +81,16 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnShowConflictReport(object commandObject)
 		{
+			if (IsDb4oProject)
+			{
+				var dlg = new Db4oSendReceiveDialog();
+				if (dlg.ShowDialog() == DialogResult.Abort)
+				{
+					// User clicked on link
+					_mediator.SendMessage("FileProjectSharingLocation", null);
+				}
+				return true;
+			}
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
@@ -115,6 +125,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true; // We dealt with it.
 		}
 
+		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
+		private bool IsVernacularSpellingEnabled(Mediator mediator)
+		{
+			return mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+		}
+
 		/// <summary>
 		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
 		/// via the OnFLExBridge message
@@ -135,13 +151,41 @@ namespace SIL.FieldWorks.XWorks.LexText
 				}
 				return true;
 			}
+			ProjectLockingService.UnlockCurrentProject(Cache);
+			string fullProjectFileName;
+			string projectFolder;
+			// Enhance GJM: When Hg is upgraded to work with non-Ascii filenames, this section can be removed.
+			if (Unicode.CheckForNonAsciiCharacters(Cache.ProjectId.Name))
+			{
+				var revisedProjName = Unicode.RemoveNonAsciiCharsFromString(Cache.ProjectId.Name);
+				if (revisedProjName == string.Empty)
+					return true; // The whole pre-existing project name is non-Ascii characters!
+				if (DisplayNonAsciiWarning(revisedProjName) == DialogResult.Cancel)
+					return true;
+				// Rename Project
+				projectFolder = RevisedProjectFolder(Cache.ProjectId.ProjectFolder, revisedProjName);
+				if (CheckForExistingFileName(projectFolder, revisedProjName))
+					return true;
+
+				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				if (app.FwManager.RenameProject(revisedProjName, app))
+				{
+					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
+					// Try a more indirect approach...
+					fullProjectFileName = Path.Combine(projectFolder, revisedProjName + ".fwdata");
+					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
+					// to hopefully come back here after resetting things
+				}
+				return true;
+			}
 			//Unlock project
 			string url;
-			ProjectLockingService.UnlockCurrentProject(Cache);
-			var projectFolder = Cache.ProjectId.ProjectFolder;
+			//ProjectLockingService.UnlockCurrentProject(Cache);
+			projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
+			fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, Environment.UserName,
 								FLExBridgeHelper.SendReceive, out dataChanged, out dummy);
@@ -157,16 +201,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 				fixer.FixErrorsAndSave();
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
-				var manager = app.FwManager;
-				//var appArgs = new FwAppArgs(app.ApplicationName, Cache.ProjectId.Name, "", "", Guid.Empty);
-				var appArgs = new FwAppArgs(fullProjectFileName); // this should be all that's necessary
-
-				var newApp = manager.ReopenProject(Cache.ProjectId.Name, appArgs);
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 
 				if (conflictOccurred)
 				{
-					((FwXWindow) newApp.ActiveMainWindow).Mediator.SendMessage("ShowConflictReport", null);
-					//OnShowConflictReport(null); no good, we've been disposed.
+					//send a message for the reopened instance to display the conflict report, we have been disposed by now
+					newAppWindow.Mediator.SendMessage("ShowConflictReport", null);
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -174,6 +214,42 @@ namespace SIL.FieldWorks.XWorks.LexText
 				ProjectLockingService.LockCurrentProject(Cache);
 			}
 			return true;
+		}
+
+		private DialogResult DisplayNonAsciiWarning(string revisedProjName)
+		{
+			return MessageBox.Show(string.Format(LexTextStrings.ksNonAsciiProjectNameWarning, revisedProjName), LexTextStrings.ksWarning,
+					MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+		}
+
+		private bool CheckForExistingFileName(string projectFolder, string revisedFileName)
+		{
+			if(File.Exists(Path.Combine(projectFolder, revisedFileName + ".fwdata")))
+			{
+				MessageBox.Show(
+					LexTextStrings.ksExistingProjectName, LexTextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return true;
+			}
+			return false;
+		}
+
+		private string RevisedProjectFolder(string oldProjectFolder, string revisedProjName)
+		{
+			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
+		}
+
+		private FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
+		{
+			var manager = app.FwManager;
+			var appArgs = new FwAppArgs(fullProjectFileName);
+			var newAppWindow =
+				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+			if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
+				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
+			//clear out any sort cache files (or whatever else might mess us up) and then refresh
+			newAppWindow.ClearInvalidatedStoredData();
+			newAppWindow.RefreshDisplay();
+			return newAppWindow;
 		}
 
 		protected virtual bool IsDb4oProject

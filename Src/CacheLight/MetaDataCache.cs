@@ -220,7 +220,6 @@ namespace SIL.FieldWorks.CacheLight
 							default:
 								break;
 							case "basic":
-								var isBig = XmlUtils.GetOptionalBooleanAttributeValue(fieldNode, "big", false);
 								switch (mfr.m_sig)
 								{
 									case "TextPropBinary":
@@ -236,16 +235,16 @@ namespace SIL.FieldWorks.CacheLight
 										mfr.m_fieldType = CellarPropertyType.Time;
 										break;
 									case "String":
-										mfr.m_fieldType = (isBig) ? CellarPropertyType.BigString : CellarPropertyType.String;
+										mfr.m_fieldType = CellarPropertyType.String;
 										break;
 									case "MultiString":
-										mfr.m_fieldType = (isBig) ? CellarPropertyType.MultiBigString : CellarPropertyType.MultiString;
+										mfr.m_fieldType = CellarPropertyType.MultiString;
 										break;
 									case "Unicode":
-										mfr.m_fieldType = (isBig) ? CellarPropertyType.BigUnicode : CellarPropertyType.Unicode;
+										mfr.m_fieldType = CellarPropertyType.Unicode;
 										break;
 									case "MultiUnicode":
-										mfr.m_fieldType = (isBig) ? CellarPropertyType.MultiBigUnicode : CellarPropertyType.MultiUnicode;
+										mfr.m_fieldType = CellarPropertyType.MultiUnicode;
 										break;
 									case "Guid":
 										mfr.m_fieldType = CellarPropertyType.Guid;
@@ -558,7 +557,7 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>Output field type</returns>
 		/// <remarks>
 		/// This type value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence).
 		/// These numeric values are defined in the 'FWROOT\src\cellar\lib\CmTypes.h' file.
 		/// </remarks>
@@ -858,7 +857,7 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='virtualFlid'>Field identifier for the enw virtual field</param>
 		/// <param name='iFieldType'>
 		/// This type value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence).
 		/// These numeric values are defined in CoreImpl\CellarPropertyType.cs.
 		/// It must NOT have the virtual bit OR'd in.
@@ -905,13 +904,9 @@ namespace SIL.FieldWorks.CacheLight
 				case CellarPropertyType.GenDate:
 				case CellarPropertyType.Binary:
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.OwningAtomic:
 				case CellarPropertyType.ReferenceAtomic:
 				case CellarPropertyType.OwningCollection:

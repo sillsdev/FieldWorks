@@ -610,6 +610,63 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// Tests MoveCellBack() moving into and through a MovedText marker to make sure the result
+		/// has the right columns and order of cell parts in the row.
+		/// Exposed by LT-13543.
+		/// </summary>
+		[Test]
+		public void MoveCellBackPastMarkerDoesntMessupColumns()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var ilastCol = m_logic.AllMyColumns.Length - 1;
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			var cellPart1_1 = m_helper.MakeMovedTextMarker(row1, 2, cellPart1_0, true);
+			var cellPartMoving = m_helper.MakeWordGroup(row1, 3, allParaOccurrences[2], allParaOccurrences[3]);
+			EndSetupTask();
+
+			// SUT
+			m_logic.MoveCellBack(MakeLocObj(row1, 3));
+			m_logic.MoveCellBack(MakeLocObj(row1, 2)); // move back through and past MovedTextMarker
+
+			// Verify
+			// Same WordGroups and marker should still be there
+			VerifyRowContents(1, new IConstituentChartCellPart[] { cellPart1_0, cellPartMoving, cellPart1_1 });
+			VerifyMovedText(1, 2, m_logic.AllMyColumns[2], cellPart1_0, true);
+			VerifyWordGroup(1, 1, m_logic.AllMyColumns[1], new List<AnalysisOccurrence>() {allParaOccurrences[2], allParaOccurrences[3]});
+		}
+
+		/// <summary>
+		/// Tests MoveCellForward() moving into and through a MovedText marker to make sure the result
+		/// has the right columns and order of cell parts in the row.
+		/// </summary>
+		[Test]
+		public void MoveCellForwardPastMarkerDoesntMessupColumns()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var ilastCol = m_logic.AllMyColumns.Length - 1;
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			var cellPartMoving = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
+			var cellPart1_1 = m_helper.MakeMovedTextMarker(row1, 2, cellPart1_0, true);
+			EndSetupTask();
+
+			// SUT
+			m_logic.MoveCellForward(MakeLocObj(row1, 1));
+			m_logic.MoveCellForward(MakeLocObj(row1, 2)); // move forward through and past MovedTextMarker
+
+			// Verify
+			// Same WordGroups and marker should still be there
+			VerifyRowContents(1, new IConstituentChartCellPart[] { cellPart1_0, cellPart1_1, cellPartMoving });
+			VerifyMovedText(1, 1, m_logic.AllMyColumns[2], cellPart1_0, true);
+			VerifyWordGroup(1, 2, m_logic.AllMyColumns[3], new List<AnalysisOccurrence>() { allParaOccurrences[2], allParaOccurrences[3] });
+		}
+
+		/// <summary>
 		/// Tests moving a WordGroup into a preposed marker's cell (but preposed for something else).
 		/// </summary>
 		[Test]
@@ -856,6 +913,42 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// If we load a chart that has two bad cells that need to be deleted in subsequent rows,
+		/// and the two rows in question have no other contents, we don't want the sequential row
+		/// deletions to crash the chart fixer method!
+		/// </summary>
+		[Test]
+		public void TwoBadRowsInSequenceDontCrash()
+		{
+			var strangeText = m_helper.CreateANewText();
+			var newPara = m_helper.MakeParagraphForGivenText(strangeText);
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2); // from original paragraph
+			var strangeOccurrence = m_helper.m_allOccurrences[newPara][0];
+			var strangeOccurrence2 = m_helper.m_allOccurrences[newPara][1];
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var row2 = m_helper.MakeRow(m_chart, "1c");
+			var row3 = m_helper.MakeRow(m_chart, "1d");
+			var cellPart0_0 = m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPartWrongText = m_helper.MakeWordGroup(row1, 0, strangeOccurrence, strangeOccurrence);
+			var cellPartFoolish = m_helper.MakeWordGroup(row2, 2, strangeOccurrence2, strangeOccurrence2);
+			m_helper.MakeWordGroup(row3, 1, allParaOccurrences[1], allParaOccurrences[1]);
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			// Should delete cellPartWrongText and cellPartFoolish in sequential rows that are otherwise
+			// unoccupied. This means we delete both rows and have two remaining.
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify
+			m_helper.VerifyDeletedHvos(new int[] { row1.Hvo, row2.Hvo, cellPartWrongText.Hvo, cellPartFoolish.Hvo },
+				"Second and third rows and only CellPart in both those rows ought to get deleted.");
+			m_helper.VerifyRow(0, "1a", 1);
+			m_helper.VerifyRow(1, "1b", 1);
+			AssertUsedAnalyses(allParaOccurrences, 2); // no change in ribbon
+		}
+
+		/// <summary>
 		/// If we load a ConstChartWordGroup, and it references analyses on the wrong StText,
 		/// we need to delete that WordGroup.
 		/// </summary>
@@ -896,7 +989,7 @@ namespace SIL.FieldWorks.Discourse
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			var cellPart1_0 = m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
 			var cellPartFoolish = m_helper.MakeMovedTextMarker(row0, 2, cellPart1_0, false);
-			cellPartFoolish.WordGroupRA = null;
+			cellPartFoolish.WordGroupRA = null; // Actually this statement results in the part's deletion!!!
 			EndSetupTask(); // SUT has its own UOW
 
 			// SUT

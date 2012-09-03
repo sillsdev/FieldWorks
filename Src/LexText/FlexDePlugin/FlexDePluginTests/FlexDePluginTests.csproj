@@ -51,7 +51,7 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
@@ -62,7 +62,7 @@
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=6.1.1.19725, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -96,7 +96,8 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
 	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SilUtils, Version=7.3.0.21465, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />

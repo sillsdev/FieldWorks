@@ -29,8 +29,8 @@ struct BasicElem
 static const BasicElem g_rgbel[] =
 {
 	// These must be lexically ordered as by strcmp so that a binary search may be used.
-	{ "AStr",		kcptMultiString },		// May actually be kcptMultiBigString.
-	{ "AUni",		kcptMultiUnicode },		// May actually be kcptMultiBigUnicode.
+	{ "AStr",		kcptMultiString },
+	{ "AUni",		kcptMultiUnicode },
 	{ "Binary",		kcptBinary },
 	{ "Boolean",	kcptBoolean },
 	{ "Float",		kcptFloat },
@@ -42,9 +42,9 @@ static const BasicElem g_rgbel[] =
 	{ "Link",		kcptReferenceAtom },
 	{ "Numeric",	kcptNumeric },
 	{ "Prop",		kcptRuleProp },
-	{ "Str",		kcptString },			// May actually be kcptBigString.
+	{ "Str",		kcptString },
 	{ "Time",		kcptTime },
-	{ "Uni",		kcptUnicode },			// May actually be kcptBigUnicode.
+	{ "Uni",		kcptUnicode },
 };
 static const int g_cbel = isizeof(g_rgbel) / isizeof(BasicElem);
 

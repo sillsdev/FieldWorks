@@ -111,7 +111,7 @@
 	</target>
 	<!-- -->
 	<target name="clear-dirs" description="Clear directories"
-		depends="clear-src,clear-distfiles,clear-extensionfiles,clear-tempfiles,clean-misc">
+		depends="clear-src,clear-distfiles,clear-tempfiles,clean-misc">
 		<delete dir="${dir.fwobj}" failonerror="false"/>
 
 		<!-- Make sure all the files in the output folder can be deleted -->
@@ -149,7 +149,6 @@
 			<fileset basedir="${fwroot}/Src/">
 				<include name="**/obj"/>
 				<include name="**/bin"/>
-				<include name="**/GeneratedAssemblyInfo.cs"/>
 				<include name="**/Collection.cpp"/>
 				<include name="**/asserts.log"/>
 				<include name="Common/*.*"/>
@@ -178,10 +177,6 @@
 		</delete>
 		<delete dir="${dir.fwdistfiles}/Icu28" failonerror="false"/>
 		<delete dir="${dir.fwdistfiles}/Editorial Checks" failonerror="false"/>
-	</target>
-	<!-- -->
-	<target name="clear-extensionfiles" description="Clear extension files in subdirectories of DistFiles">
-		<delete file="${dir.fwdistfiles}/Language Explorer/Configuration/Available Plugins/Concorder/RBRExtensions.dll" verbose="true" failonerror="false"/>
 	</target>
 	<!-- -->
 	<target name="clean-bsc" description="Blow away the BSC directory if this is a debug cleancom build and BUILD_BSC=Y">

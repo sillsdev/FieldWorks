@@ -20,20 +20,20 @@ namespace SIL.FieldWorks.Common.Controls
 	public class ColumnConfigureDialog : Form, IFWDisposable
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ColumnHeader FieldColumn;
-		private System.Windows.Forms.ColumnHeader InfoColumn;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Button addButton;
-		private System.Windows.Forms.Button removeButton;
-		internal System.Windows.Forms.Button moveUpButton;
-		internal System.Windows.Forms.Button moveDownButton;
+		private Label label1;
+		private Label label2;
+		private ColumnHeader FieldColumn;
+		private ColumnHeader InfoColumn;
+		private Button okButton;
+		private Button cancelButton;
+		private Button helpButton;
+		private Button addButton;
+		private Button removeButton;
+		internal Button moveUpButton;
+		internal Button moveDownButton;
 		private FwOverrideComboBox wsCombo;
-		private System.Windows.Forms.Label label3;
-		internal System.Windows.Forms.ListView currentList;
+		private Label label3;
+		internal ListView currentList;
 
 		List<XmlNode> m_possibleColumns;
 		List<XmlNode> m_currentColumns;
@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.Controls
 		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
 		private int m_hvoRootObj = 0;
 
-		private System.Windows.Forms.ListView optionsList;
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private ListView optionsList;
+		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
 		private PictureBox blkEditIcon;
@@ -119,6 +119,16 @@ namespace SIL.FieldWorks.Common.Controls
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetShowHelp(this, true);
 			}
+
+			// Call FinishInitialization to do setup that might depend on previously setting
+			// the root object (which is done by the caller after exiting the constructor.
+		}
+
+		/// <summary>
+		/// Do dialog initialization that might depend on previously setting the root object.
+		/// </summary>
+		public void FinishInitialization()
+		{
 			InitCurrentList();
 
 			InitChoicesList();
@@ -615,13 +625,23 @@ namespace SIL.FieldWorks.Common.Controls
 				case "reversal":
 					{
 						// Get the language for this reversal index.
-						var sWsName = GetDefaultReversalWsName();
+						string sWsName = null;
+						if (m_hvoRootObj > 0)
+						{
+							var servLoc = m_cache.ServiceLocator;
+							var ri = servLoc.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
+							//var ws = servLoc.WritingSystemManager.Get(ri.WritingSystem);
+							//sWsName = ws.DisplayLabel;
+							sWsName = ri.ShortName;
+						}
+						if (String.IsNullOrEmpty(sWsName))
+							sWsName = GetDefaultReversalWsName();
 						if (!String.IsNullOrEmpty(sWsName))
 							result = sWsName;
 					}
 					break;
-				case "reversal index": // ??? is this case used?
-					break;
+				//case "reversal index": // ??? is this case used? Nope.
+				//    break;
 				case "analysis vernacular":
 					result = XMLViewsStrings.ksDefaultAnal;
 					break;
@@ -791,8 +811,8 @@ namespace SIL.FieldWorks.Common.Controls
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.currentList = new System.Windows.Forms.ListView();
-			this.FieldColumn = new System.Windows.Forms.ColumnHeader();
-			this.InfoColumn = new System.Windows.Forms.ColumnHeader();
+			this.FieldColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.InfoColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.okButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.helpButton = new System.Windows.Forms.Button();
@@ -804,8 +824,8 @@ namespace SIL.FieldWorks.Common.Controls
 			this.wsCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.optionsList = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.helpProvider = new HelpProvider();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.helpProvider = new System.Windows.Forms.HelpProvider();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.blkEditIcon = new System.Windows.Forms.PictureBox();
 			this.blkEditText = new System.Windows.Forms.Label();
@@ -989,15 +1009,37 @@ namespace SIL.FieldWorks.Common.Controls
 			if (this.DialogResult != DialogResult.OK)
 				return;
 
+			if (HasDuplicateColumns())
+			{
+				ShowDuplicatesWarning(GetDuplicateColumns());
+				e.Cancel = true;
+				return;
+			}
+		}
+
+		private void ShowDuplicatesWarning(List<string> duplicateColumnLabels)
+		{
+			string duplicates = string.Join(", ", duplicateColumnLabels.ToArray());
+			MessageBox.Show(String.Format(XMLViewsStrings.ksDuplicateColumnMsg, duplicates),
+							XMLViewsStrings.ksDuplicateColumn,
+							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		private bool HasDuplicateColumns()
+		{
+			return (GetDuplicateColumns().Count > 0);
+		}
+
+		private List<string> GetDuplicateColumns()
+		{
+			// Make sure the ws and label of the current column are accurate (necessary when this is called in addButton_Click()).
+			UpdateWsAndLabelOfCurrentColumn();
+
+			var duplicateColumnLabels = new List<string>();
+
 			for (int i = 0; i < CurrentSpecs.Count; i++)
 			{
-				string label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[i],
-					"originalLabel", null);
-				if (label == null)
-					label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[i],
-						"label", null);
-				if (label == null)
-					label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[i], "label");
+				string label = GetColumnLabel(i);
 				string wsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[i]);
 
 				// This tries to interpret the ws paramter into an int.  Sometimes the parameter cannot be interpreted without an object,
@@ -1021,13 +1063,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 					bool sameSpec = false;
 
-					string otherLabel = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[j],
-						"originalLabel", null);
-					if (otherLabel == null)
-						otherLabel = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[j],
-							"label", null);
-					if (otherLabel == null)
-						otherLabel = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[j], "label");
+					string otherLabel = GetColumnLabel(j);
 					if (label == otherLabel)
 					{
 						string otherWsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[j] as XmlNode);
@@ -1046,18 +1082,29 @@ namespace SIL.FieldWorks.Common.Controls
 								sameSpec = true;
 						}
 
-						if (sameSpec)
+						if (sameSpec) // Found a duplicate column.
 						{
-							// Found a duplicate column, cancel the closing event and return
-							MessageBox.Show(String.Format(XMLViewsStrings.ksDuplicateColumnMsg, label),
-								XMLViewsStrings.ksDuplicateColumn,
-								MessageBoxButtons.OK, MessageBoxIcon.Warning);
-							e.Cancel = true;
-							return;
+							if (!duplicateColumnLabels.Contains(label)) // Don't add the same label twice!
+							{
+								duplicateColumnLabels.Add(label);
+							}
 						}
 					}
 				}
 			}
+			return duplicateColumnLabels;
+		}
+
+		private string GetColumnLabel(int columnIndex)
+		{
+			string label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+															   "originalLabel", null);
+			if (label == null)
+				label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+															"label", null);
+			if (label == null)
+				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
+			return label;
 		}
 
 		private void addButton_Click(object sender, System.EventArgs e)
@@ -1068,8 +1115,34 @@ namespace SIL.FieldWorks.Common.Controls
 			if (index >= 0)
 				currentList.Items[index].Selected = false;
 			AddCurrentItem(item).Selected = true;
-			UpdateWsAndLabelOfCurrentColumn();
+
+			while ((HasDuplicateColumns() && DuplicateIsReleventForItem(item, GetDuplicateColumns()))
+				&& (wsCombo.SelectedIndex < wsCombo.Items.Count))
+			{
+				if (wsCombo.SelectedIndex.Equals(wsCombo.Items.Count - 1))
+				{
+					wsCombo.SelectedIndex = 0;
+					UpdateWsAndLabelOfCurrentColumn();
+					break;
+				}
+				wsCombo.SelectedIndex++;
+			}
+
+			if (HasDuplicateColumns())
+			{
+				List<string> duplicates = GetDuplicateColumns();
+				if (DuplicateIsReleventForItem(item, duplicates))
+				{
+					ShowDuplicatesWarning(duplicates);
+				}
+			}
+
 			currentList.Focus();
+		}
+
+		private bool DuplicateIsReleventForItem(XmlNode item, List<string> duplicateColumnLabels)
+		{
+			return duplicateColumnLabels.Contains(item.Attributes.GetNamedItem("label").Value);
 		}
 
 		private void removeButton_Click(object sender, System.EventArgs e)

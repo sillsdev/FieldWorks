@@ -32,8 +32,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			// first change the class of all the known systemGuids
 			foreach (var systemGuid in irregularlyInflectedFormVariantTypeSystemGuids)
 			{
-				var dtoVariantType = domainObjectDtoRepository.GetDTO(systemGuid);
-				ChangeClassOfOwnerAndChildren(domainObjectDtoRepository, dtoVariantType, LexEntryTypeTags.kClassName, LexEntryInflTypeTags.kClassName);
+				DomainObjectDTO dtoVariantType;
+				// LT-13312 Note some projects may not have these guids.
+				if (domainObjectDtoRepository.TryGetValue(systemGuid, out dtoVariantType))
+				{
+					ChangeClassOfOwnerAndChildren(domainObjectDtoRepository, dtoVariantType,
+						LexEntryTypeTags.kClassName, LexEntryInflTypeTags.kClassName);
+				}
 			}
 			DataMigrationServices.IncrementVersionNumber(domainObjectDtoRepository);
 		}
