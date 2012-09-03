@@ -494,4 +494,10 @@ StrUni ConvertException(DWORD dwExcept)
 	return stuResult;
 }
 
+void ThrowHrEx(HRESULT hr, int hHelpId)
+{
+	StrUni msg = ConvertException(::GetLastError());
+	ThrowHr(hr, msg.Chars(), hHelpId);
+}
+
 #endif

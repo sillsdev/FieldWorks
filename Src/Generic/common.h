@@ -372,10 +372,10 @@ template<typename T> inline T * GetPtr(void *pv, int ib)
 #include "UtilRect.h"
 #include "UtilTime.h" // Before UtilString.
 #include "GenericResource.h" // Before UtilString
-#include "UtilString.h"
 #include "Throwable.h"
-#include "UtilCom.h" // Before UtilMem.h on Linux
 #include "UtilMem.h"
+#include "UtilString.h"
+#include "UtilCom.h"
 #include "Mutex.h"
 #include "GenSmartPtr.h"
 #include "UtilSort.h"
