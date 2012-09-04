@@ -141,25 +141,44 @@ namespace FixFwDataDllTests
 			var testPath = Path.Combine(basePath, "DanglingReference");
 			// This test checks that dangling references guids are identified and removed
 			// and that an error message is produced for them.
-			string testGuid = "cccccccc-a7d4-4e1e-a403-deec87c34455";
+			string testGuid = "dddddddd-a7d4-4e1e-a403-deec87c34455";
 			string testObjsurGuid = "aaaaaaaa-e15a-448e-a618-3855f93bd3c2";
 			string lexSenseGuid = "2210cf83-ad6c-47fe-91f8-8bf789473792";
+			string lexEntryGuid = "64cf9708-a7d4-4e1e-a403-deec87c34455";
+			string testChangeGuid = "cccccccc-a7d4-4e1e-a403-deec87c34455";
+			string moStemMsaGuid = "508ba7ca-e15a-448e-a618-3855f93bd3c2";
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
-			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
-			Assert.True(errors[0].EndsWith("Removing link to nonexistent ownerguid='" + testGuid
-				+ "' (class='LexSense', guid='" + lexSenseGuid + "')."),
-				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistentOwner
-			Assert.True(errors[1].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"),
+			Assert.AreEqual(3, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+
+			Assert.True(errors[1].StartsWith("Changing ownerguid value from '" + testChangeGuid + "' to '" + lexEntryGuid
+				+ "' (class='LexSense', guid='" + lexSenseGuid),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+
+			Assert.True(errors[2].EndsWith("Removing link to nonexistent ownerguid='" + testGuid
+				+ "' (class='MoStemMsa', guid='" + moStemMsaGuid + "')."),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistentOwner
+
+			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 1, false);
+				"//rt[@class=\"MoStemMsa\" and @ownerguid=\"" + testGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testChangeGuid + "\"]", 1, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 1, false);
+			// Check that they were fixed
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"MoStemMsa\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
 		}
 
 		[Test]
@@ -311,21 +330,21 @@ namespace FixFwDataDllTests
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"ConstChartRow\" and @guid=\"" + chartRowGuid + "\"]", 0, false);
 			Assert.AreEqual(6, errors.Count, "Unexpected number of errors found.");
-			Assert.AreEqual("Removing owner of empty sequence (guid='" + chartRowGuid +
-				"' class='ConstChartRow') from its owner (guid='" + chartGuid + "').", errors[0],
-				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
 			Assert.True(errors[1].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
-			Assert.True(errors[2].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='ConstChartWordGroup'"),
-				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
-			Assert.True(errors[3].StartsWith("Removing reference to missing Segment by deleting analysis object guid='" +
+			Assert.True(errors[2].StartsWith("Removing reference to missing Segment by deleting analysis object guid='" +
 				chartCellGuid + "', class='ConstChartWordGroup'"),
 				"Error message is incorrect."); // SequenceFixer--ksRemovingBadAnalysisRefObj
-			Assert.True(errors[4].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='TextTag'"),
+			Assert.True(errors[3].StartsWith("Removing dangling link to '" + segmentGuid + "' (class='TextTag'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
-			Assert.True(errors[5].EndsWith("changing analysis object guid='" + textTagGuid +
+			Assert.True(errors[4].EndsWith("changing analysis object guid='" + textTagGuid +
 				"', class='TextTag', field='EndSegment'."),
 				"Error message is incorrect."); // SequenceFixer--ksAdjustingAnalysisRefObj
+			Assert.AreEqual("Removing owner of empty sequence (guid='" + chartRowGuid +
+				"' class='ConstChartRow') from its owner (guid='" + chartGuid + "').", errors[5],
+				"Error message is incorrect.");//SequenceFixer--ksRemovingOwnerOfEmptySequence
 		}
 
 		[Test]

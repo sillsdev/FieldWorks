@@ -3,18 +3,18 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Nov 03 12:30:32 2011
+ /* File created by MIDL compiler version 7.00.0555 */
+/* at Tue Sep 04 09:42:36 2012
  */
-/* Compiler settings for D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\Output\Common\FwKernelTlb.idl:
-	Oicf, W1, Zp8, env=Win32 (32b run)
+/* Compiler settings for d:\jenkins\workspace\FieldWorks-WW-build-tlb\Output\Common\FwKernelTlb.idl:
+	Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555
 	protocol : dce , ms_ext, c_ext, robust
 	error checks: allocation ref bounds_check enum stub_data
 	VC __declspec() decoration level:
 		 __declspec(uuid()), __declspec(selectany), __declspec(novtable)
 		 DECLSPEC_UUID(), MIDL_INTERFACE()
 */
-//@@MIDL_FILE_HEADING(  )
+/* @@MIDL_FILE_HEADING(  ) */
 
 #pragma warning( disable: 4049 )  /* more than 64k source lines */
 
@@ -1943,7 +1943,7 @@ LgIcuLocaleEnumerator
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsString * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -2322,7 +2322,7 @@ LgIcuLocaleEnumerator
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IUndoGrouper * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -2541,7 +2541,7 @@ LgIcuLocaleEnumerator
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IFwMetaDataCache * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -2872,7 +2872,7 @@ LgIcuLocaleEnumerator
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IUndoAction * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3087,7 +3087,7 @@ LgIcuLocaleEnumerator
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IActionHandler * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3414,7 +3414,7 @@ ActionHandler;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IDebugReportSink * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3505,7 +3505,7 @@ ActionHandler;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IDebugReport * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3597,7 +3597,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IComDisposable * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3725,7 +3725,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsTextProps * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3964,7 +3964,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsStrFactory * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4187,7 +4187,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsPropsFactory * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4415,7 +4415,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsStrBldr * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4723,7 +4723,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsIncStrBldr * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4934,7 +4934,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsPropsBldr * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5108,7 +5108,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ITsMultiString * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5252,7 +5252,7 @@ DebugReport;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgWritingSystemFactory * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5491,7 +5491,7 @@ TsMultiString;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgInputMethodEditor * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5780,7 +5780,7 @@ TsMultiString;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwGraphics * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6174,7 +6174,7 @@ TsMultiString;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IJustifyingRenderer * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6290,7 +6290,7 @@ TsMultiString;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ISimpleInit * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6389,7 +6389,7 @@ TsMultiString;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwGraphicsWin32 * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6879,7 +6879,7 @@ VwGraphicsWin32;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwTextSource * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7095,7 +7095,7 @@ VwGraphicsWin32;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwJustifier * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7414,7 +7414,7 @@ VwJustifier;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgSegment * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7895,7 +7895,7 @@ VwJustifier;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IRenderEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8084,7 +8084,7 @@ FwGrEngine;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IRenderingFeatures * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8440,7 +8440,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgCharacterPropertyEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8968,7 +8968,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgStringConverter * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9072,7 +9072,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgTokenizer * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9172,7 +9172,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgSpellCheckFactory * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9285,7 +9285,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgSpellChecker * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9468,7 +9468,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgCollatingEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9644,7 +9644,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgSearchEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9827,7 +9827,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgWritingSystem * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -10051,7 +10051,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgTextServices * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -10145,7 +10145,7 @@ FwGraphiteProcess;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgFontManager * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -10269,7 +10269,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgIcuCharPropEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -10847,7 +10847,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgNumericEngine * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11016,7 +11016,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgKeymanHandler * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11140,7 +11140,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgCodePageEnumerator * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11229,7 +11229,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgLanguageEnumerator * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11323,7 +11323,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgIcuConverterEnumerator * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11426,7 +11426,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgIcuTransliteratorEnumerator * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11542,7 +11542,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgIcuLocaleEnumerator * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11689,7 +11689,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ILgIcuResourceBundle * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -11846,7 +11846,7 @@ LgFontManager;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IRegexMatcher * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(

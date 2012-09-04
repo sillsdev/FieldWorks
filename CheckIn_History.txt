@@ -5213,7 +5213,7 @@ JohnT, 1 Sep 2011. LT-11876, Add progress bar during import
 		made it smart about starting a new text for any header field;
 		made importing multiple texts in a file work.
 	Later: LT-11879, Error checking
-	Later: LT-11897, Sentences can be seperated with BOTH . and ง
+	Later: LT-11897, Sentences can be seperated with BOTH . and ยง
 		LT-11898, Visible way to reset and see default settings file
 	Later: LT-11867, Wording of Step 1 of 3 should be reviewed.
 JohnT, AnnB, 1 Sept 2011, LT-11895 Migration crash in 7.1 and 7.2.
@@ -6095,3 +6095,5 @@ KenZ, 31 Aug 2012. Get correct registry key so FieldWorks products will run.
 RickM, 31 Aug 2012 A couple corrections were made in  Build/Linux.targets and LexTextExe.csproj  so that MSBuild will run on the command line.
 GordonM, 31 Aug 2012. Removed obsolete creation of xCoreInterfaces.XmlSerializers.dll from xCoreInterfaces.
 JohnT, 31 Aug 2012. Handle RegFree task in MSBuild for FieldWorks.exe and FDOBrowser.exe.
+EberhardB, 3 Sep 2012. Integration Calgary/WW --> WW.
+KenZ, 3 Sep 2012. Reduced size of FixFwDataDll test data by about 36Mb.

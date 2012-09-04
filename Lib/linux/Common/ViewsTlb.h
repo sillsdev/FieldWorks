@@ -3,18 +3,18 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Nov 03 12:30:33 2011
+ /* File created by MIDL compiler version 7.00.0555 */
+/* at Tue Sep 04 09:42:36 2012
  */
-/* Compiler settings for D:\jenkins\jobs\FieldWorks-Calgary-WW-build-tlb\workspace\Output\Common\ViewsTlb.idl:
-	Oicf, W1, Zp8, env=Win32 (32b run)
+/* Compiler settings for d:\jenkins\workspace\FieldWorks-WW-build-tlb\Output\Common\ViewsTlb.idl:
+	Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555
 	protocol : dce , ms_ext, c_ext, robust
 	error checks: allocation ref bounds_check enum stub_data
 	VC __declspec() decoration level:
 		 __declspec(uuid()), __declspec(selectany), __declspec(novtable)
 		 DECLSPEC_UUID(), MIDL_INTERFACE()
 */
-//@@MIDL_FILE_HEADING(  )
+/* @@MIDL_FILE_HEADING(  ) */
 
 #pragma warning( disable: 4049 )  /* more than 64k source lines */
 
@@ -1154,7 +1154,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwNotifyChange * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -1418,7 +1418,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwSelection * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -1852,7 +1852,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwEmbeddedWindow * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -2047,7 +2047,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwStylesheet * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -2523,7 +2523,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwEnv * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3171,7 +3171,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwViewConstructor * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -3497,7 +3497,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwRootSite * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4157,7 +4157,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			ISilDataAccess * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -4854,7 +4854,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IStructuredTextDataAccess * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5047,7 +5047,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwCacheDa * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -5618,7 +5618,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwRootBox * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6310,7 +6310,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwPropertyStore * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6554,7 +6554,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwOverlay * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -6910,7 +6910,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwPrintContext * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7150,7 +7150,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwSearchKiller * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7252,7 +7252,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwSynchronizer * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7425,7 +7425,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwVirtualHandler * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7728,7 +7728,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwLayoutStream * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -7928,7 +7928,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwLayoutManager * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8264,7 +8264,7 @@ VwPrintContextWin32;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwPattern * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8702,7 +8702,7 @@ VwPattern;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwTxtSrcInit2 * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8791,7 +8791,7 @@ VwMappedTxtSrc;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwTxtSrcInit * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -8916,7 +8916,7 @@ VwSearchKiller;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwDrawRootBuffered * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9073,7 +9073,7 @@ VwLayoutStream;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IIMEKeyboardSwitcher * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9182,7 +9182,7 @@ VwLayoutStream;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IPictureFactory * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9274,7 +9274,7 @@ PictureFactory;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IVwWindow * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
@@ -9400,7 +9400,7 @@ VwWindow;
 		HRESULT ( STDMETHODCALLTYPE *QueryInterface )(
 			IViewInputMgr * This,
 			/* [in] */ REFIID riid,
-			/* [iid_is][out] */
+			/* [annotation][iid_is][out] */
 			__RPC__deref_out  void **ppvObject);
 
 		ULONG ( STDMETHODCALLTYPE *AddRef )(
