@@ -145,7 +145,7 @@
 	  WorkingDirectory="$(fwrt)/Src/Language"/>
   </Target>
 
-  <Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;GrEngine">
+  <Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
 	<CreateProperty Value="check" Condition="'$(action)'=='test'">
 	  <Output TaskParameter="Value" PropertyName="make-target"/>
 	</CreateProperty>
