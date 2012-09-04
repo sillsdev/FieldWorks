@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<Executable>$(OutDir)FwRemoteDatabaseConnectorService.exe</Executable>
+	</PropertyGroup>
+	<ItemGroup>
+		<SourceFiles Include="remoting_tcp_server.config"/>
+	</ItemGroup>
+	 <Import Project="../../../Build/RegFree.targets"/>
+	<Target Name="BeforeBuild">
+		<Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>
+	</Target>
+	<Target Name="AfterBuild" DependsOnTargets="RegFree">
+	</Target>
+</Project>

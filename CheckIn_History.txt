@@ -1,4 +1,4 @@
-FieldWorks check-in process, and also to record a history of the changes made to the project.
+﻿FieldWorks check-in process, and also to record a history of the changes made to the project.
 
 Please read CheckIn_Process.txt for details on how to check changes in to Perforce.
 
@@ -6098,3 +6098,4 @@ JohnT, 31 Aug 2012. Handle RegFree task in MSBuild for FieldWorks.exe and FDOBro
 EberhardB, 3 Sep 2012. Integration Calgary/WW --> WW.
 KenZ, 3 Sep 2012. Reduced size of FixFwDataDll test data by about 36Mb.
 EberhardB, 4 Sep 2012. Integration Calgary/WW --> WW.
+RickM, 4 Sept 2012. copy remoting_tcp_server.config to output/debug and handle RegFree task in MSBuild
