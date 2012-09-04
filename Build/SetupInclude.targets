@@ -4,9 +4,9 @@
 
 	<!-- Generate CommonAssemblyInfo.cs from CommonAssemblyInfoTemplate.cs-->
 	<ItemGroup>
-		<VersionTemplate Include="../src/CommonAssemblyInfoTemplate.cs"/>
-		<VersionSymbols Include="../src/MasterVersionInfo.txt"/>
-		<VersionOutput Include="../src/CommonAssemblyInfo.cs"/>
+		<VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs"/>
+		<VersionSymbols Include="../Src/MasterVersionInfo.txt"/>
+		<VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
 		<VersionInputs Include="@(VersionSymbols)"/>
 		<VersionInputs Include="@(VersionTemplate)"/>
 	</ItemGroup>
@@ -221,6 +221,7 @@
 	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH)" Condition="'$(OS)'=='Windows_NT'"/>
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config)" />
+	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
 
 	<!-- Create the output directories if they don't already exist -->
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>

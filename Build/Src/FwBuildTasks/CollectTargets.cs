@@ -60,13 +60,21 @@ namespace FwBuildTasks
 		{
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
-			// These projects from Lib appear to have been built through nant regularly.
+			// These projects from Lib had nant targets.
 			var infoSilUtil = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SilUtils"));
 			CollectInfo(infoSilUtil);
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
-			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
 			CollectInfo(infoScr);
+			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			CollectInfo(infoScr2);
+			var infoScr3 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
+			CollectInfo(infoScr3);
+			var infoPhr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/PhraseTranslationHelper"));
+			CollectInfo(infoPhr);
+			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
+			CollectInfo(infoObj);
 			WriteTargetFiles();
 		}
 
@@ -167,11 +175,18 @@ namespace FwBuildTasks
 								bldr.AppendFormat(";{0}", dep);
 						}
 					}
+					if (project == "COMInterfaces")
+					{
+						if (bldr.Length == 0)
+							bldr.Append("mktlbs");
+						else
+							bldr.Insert(0, "mktlbs;");
+					}
 					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"3.5\"/>");
+					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"4.0\"/>");
 					if (project.EndsWith("Tests"))
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
