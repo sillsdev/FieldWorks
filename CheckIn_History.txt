@@ -6099,3 +6099,4 @@ EberhardB, 3 Sep 2012. Integration Calgary/WW --> WW.
 KenZ, 3 Sep 2012. Reduced size of FixFwDataDll test data by about 36Mb.
 EberhardB, 4 Sep 2012. Integration Calgary/WW --> WW.
 RickM, 4 Sept 2012. copy remoting_tcp_server.config to output/debug and handle RegFree task in MSBuild
+GordonM, 4 Sep 2012. Fix LT-11950 so InsertEntryDlg won't mess up multi-ws fields.
