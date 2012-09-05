@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		[Test]
-		public void OnSelectedFontSizesIndexChanged_UpdatesFontSizeTextBox()
+		public void OnSelectedFontSizesIndexChanged_UpdatesFontSizeAndTextBox()
 		{
 			var dialog_fontSizeTextBox = GetField(m_dialog, "m_tbFontSize") as TextBox;
 			var dialog_lbFontSizes = GetField(m_dialog, "m_lbFontSizes") as ListBox;
@@ -334,10 +334,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			dialog_lbFontSizes.SelectedIndex = 4;
 			CallMethod(m_dialog, "OnSelectedFontSizesIndexChanged", new object[] {null, null});
 			Assert.That(dialog_fontSizeTextBox.Text, Is.EqualTo(fourthSize));
+			Assert.That(GetProperty(m_dialog, "FontSize").ToString(), Is.EqualTo(fourthSize));
 
 			dialog_lbFontSizes.SelectedIndex = 5;
 			CallMethod(m_dialog, "OnSelectedFontSizesIndexChanged", new object[] {null, null});
 			Assert.That(dialog_fontSizeTextBox.Text, Is.EqualTo(fifthSize));
+			Assert.That(GetProperty(m_dialog, "FontSize").ToString(), Is.EqualTo(fifthSize));
 		}
 	}
 }
