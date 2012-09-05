@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public partial class FwFontDialog : Form, IFontDialog
 	{
 		#region Member variables
-		private bool m_fInSelectedIndexChangedHandler;
+		/// <summary/>
+		protected bool m_fInSelectedIndexChangedHandler;
 		private int m_DefaultWs;
 		private IHelpTopicProvider m_helpTopicProvider;
 		#endregion
@@ -54,13 +55,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 		}
 
-		#region Private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fills the font list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void FillFontList()
+		protected void FillFontList()
 		{
 			m_lbFontNames.Items.Clear();
 			m_lbFontNames.Items.Add(ResourceHelper.GetResourceString("kstidDefaultFont"));
@@ -73,7 +73,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var name in fontNames)
 				m_lbFontNames.Items.Add(name);
 		}
-		#endregion
 
 		#region IFontDialog Members
 		/// ------------------------------------------------------------------------------------
@@ -268,7 +267,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		private void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
+		protected void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
 		{
 			m_fInSelectedIndexChangedHandler = true;
 			try
@@ -307,7 +306,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Returns true if applied, or false if size is not valid or is not changed.
 		/// </summary>
-		private bool ApplyNewFontSizeIfValid(string size)
+		protected bool ApplyNewFontSizeIfValid(string size)
 		{
 			bool isNewAndValidSize = UpdateFontSizeIfValid(size);
 			if (isNewAndValidSize)
@@ -330,7 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// If text size is already set or is not a valid font size, does not update and
 		/// returns false.
 		/// </summary>
-		private bool UpdateFontSizeIfValid(string size)
+		protected bool UpdateFontSizeIfValid(string size)
 		{
 			int newSize;
 			Int32.TryParse(size, out newSize);
@@ -387,8 +386,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region Private methods
-		private int FontSize
+		/// <summary/>
+		protected int FontSize
 		{
 			get; set;
 		}
@@ -397,7 +396,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Updates the preview.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void UpdatePreview()
+		protected virtual void UpdatePreview()
 		{
 			if (FontSize <= 0)
 				return;
@@ -430,7 +429,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_preview.Tss = strBldr.GetString();
 			m_preview.Invalidate();
 		}
-		#endregion
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{

@@ -21,6 +21,7 @@ using System;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Collections.Generic;
 using System.Linq;
+using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -28,6 +29,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	[TestFixture]
 	public class FwFontDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		class FakeFwFontDialog : FwFontDialog
+		{
+			public FakeFwFontDialog(IHelpTopicProvider helpTopicProvider) : base(helpTopicProvider)
+			{
+			}
+
+			/// <summary>
+			/// No-op
+			/// </summary>
+			protected override void UpdatePreview()
+			{
+			}
+		}
+
 		/// <summary>
 		/// Object to test
 		/// </summary>
@@ -39,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dialog = new FwFontDialog(null);
+			m_dialog = new FakeFwFontDialog(null);
 		}
 
 		/// <summary></summary>
@@ -304,6 +319,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(resultingFontSize, Is.EqualTo(initialFontSize), "Should not have changed font size.");
 
 			Assert.That(dialog_fontSizeTextBox.SelectionStart, Is.EqualTo(1), "");
+		}
+
+		/// <summary/>
+		[Test]
+		public void OnSelectedFontSizesIndexChanged_UpdatesFontSizeTextBox()
+		{
+			var dialog_fontSizeTextBox = GetField(m_dialog, "m_tbFontSize") as TextBox;
+			var dialog_lbFontSizes = GetField(m_dialog, "m_lbFontSizes") as ListBox;
+			var fourthSize = dialog_lbFontSizes.Items[4];
+			var fifthSize = dialog_lbFontSizes.Items[5];
+			Assert.That(fourthSize, Is.Not.EqualTo(fifthSize), "Not a good unit test.");
+
+			dialog_lbFontSizes.SelectedIndex = 4;
+			CallMethod(m_dialog, "OnSelectedFontSizesIndexChanged", new object[] {null, null});
+			Assert.That(dialog_fontSizeTextBox.Text, Is.EqualTo(fourthSize));
+
+			dialog_lbFontSizes.SelectedIndex = 5;
+			CallMethod(m_dialog, "OnSelectedFontSizesIndexChanged", new object[] {null, null});
+			Assert.That(dialog_fontSizeTextBox.Text, Is.EqualTo(fifthSize));
 		}
 	}
 }
