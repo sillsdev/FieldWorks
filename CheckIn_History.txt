@@ -282,3 +282,4 @@ KenZ, 20 Aug 2012. Fixed LT-13558, failure to import non-Roman SFM file.
 KenZ, 20 Aug 2012. Integrated Gordon's fix to LT-13541 from WW (avoid crash on bad data)
 KenZ, 20 Aug 2012. Integrated Gordn's fix fo LT-13543 from WW (crash moving chart words past marker)
 LastufkaM, 27 Aug 2012. LT-13472 FLEx stops responding on changing WS of a text.
+GordonM, 5 Sep 2012. Integrate fix for LT-11950 from WW (by hand).

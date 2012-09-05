@@ -1461,6 +1461,7 @@ catch(Exception e)
 			entryComponents.LexemeFormAlternatives.Add(BestTssForm);
 			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(Gloss, m_cache.DefaultAnalWs));
 			entryComponents.MSA = m_msaGroupBox.SandboxMSA;
+			var bldr = m_cache.TsStrFactory;
 			if (msLexicalForm != null)
 			{
 				// Save the other writing systems.
@@ -1470,7 +1471,8 @@ catch(Exception e)
 					ITsString tss = msLexicalForm.ValueAndWs(i, out ws);
 					if (tss != null && tss.Text != null)
 					{
-						entryComponents.LexemeFormAlternatives.Add(tss);
+						// In the case of copied text, sometimes the string had the wrong ws attached. (LT-11950)
+						entryComponents.LexemeFormAlternatives.Add(bldr.MakeString(tss.Text, ws));
 					}
 				}
 			}
@@ -1481,7 +1483,8 @@ catch(Exception e)
 				{
 					int ws;
 					ITsString tss = msGloss.ValueAndWs(i, out ws);
-					entryComponents.GlossAlternatives.Add(tss);
+						// In the case of copied text, sometimes the string had the wrong ws attached. (LT-11950)
+					entryComponents.GlossAlternatives.Add(bldr.MakeString(tss.Text, ws));
 				}
 			}
 			if (m_MGAGlossListBoxItems != null)
