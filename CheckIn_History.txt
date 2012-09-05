@@ -284,3 +284,4 @@ KenZ, 20 Aug 2012. Integrated Gordn's fix fo LT-13543 from WW (crash moving char
 LastufkaM, 27 Aug 2012. LT-13472 FLEx stops responding on changing WS of a text.
 GordonM, 5 Sep 2012. Integrate fix for LT-11950 from WW (by hand).
 	later... Fix crash in MSAInflectionFeatureListDlg (LT-12780).
+	more later... Fix LT-13004 so Enchant message isn't hidden by splash screen.

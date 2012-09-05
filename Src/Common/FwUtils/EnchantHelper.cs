@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// This class provides a very low-level common place to put code we want shared by
 	/// everything using Enchant (except C++ code).
 	/// </summary>
-	public class EnchantHelper
+	public static class EnchantHelper
 	{
 		/// <summary>
 		/// Get a dictionary for the specified writing system, or null if we don't know of one.
@@ -114,8 +114,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!ValidEnchantId(wsId))
 			{
 				var wsName = wsf.GetStrFromWs(ws);
+				var form = Form.ActiveForm;
 				var msg = string.Format(FwUtilsStrings.kstidInvalidDictId, wsName, wsId);
-				MessageBox.Show(msg, FwUtilsStrings.kstidCantDoDictExistsCaption,
+				MessageBox.Show(form, msg, FwUtilsStrings.kstidCantDoDictExistsCaption,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false;
 			}
@@ -128,7 +129,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			else
 			{
 				result = false;
-				MessageBox.Show(String.Format(FwUtilsStrings.kstIdCantDoDictExists, wsId), FwUtilsStrings.kstidCantDoDictExistsCaption,
+
+				var form = Form.ActiveForm;
+				MessageBox.Show(form, String.Format(FwUtilsStrings.kstIdCantDoDictExists, wsId), FwUtilsStrings.kstidCantDoDictExistsCaption,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			s_existingDictionaries[wsId] = result;
