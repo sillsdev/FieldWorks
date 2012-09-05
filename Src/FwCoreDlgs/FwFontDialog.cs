@@ -18,7 +18,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
@@ -100,7 +99,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_preview.StyleSheet = styleSheet;
 
 			m_tbFontName.Text = fontInfo.UIFontName;
-			m_tbFontSize.Text = (fontInfo.m_fontSize.Value / 1000).ToString();
+			FontSize = fontInfo.m_fontSize.Value / 1000;
+			m_tbFontSize.Text = FontSize.ToString();
 
 			m_FontAttributes.UpdateForStyle(fontInfo);
 			m_FontAttributes.AllowSuperSubScript = fAllowSubscript;
@@ -276,6 +276,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_lbFontSizes.SelectedIndex > -1)
 				{
 					m_tbFontSize.Text = m_lbFontSizes.Text;
+					ApplyNewFontSizeIfValid(m_tbFontSize.Text);
 					UpdatePreview();
 				}
 			}
@@ -297,7 +298,58 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_fInSelectedIndexChangedHandler)
 				return;
 
-			int iFontSize = m_lbFontSizes.FindStringExact(m_tbFontSize.Text);
+			if (!ApplyNewFontSizeIfValid(m_tbFontSize.Text))
+				return;
+			SelectFontSizeInList(FontSize.ToString());
+			UpdatePreview();
+		}
+
+		/// <summary>
+		/// Returns true if applied, or false if size is not valid or is not changed.
+		/// </summary>
+		private bool ApplyNewFontSizeIfValid(string size)
+		{
+			bool isNewAndValidSize = UpdateFontSizeIfValid(size);
+			if (isNewAndValidSize)
+				return true;
+
+			int insertionPointLocationBeforeRevert = m_tbFontSize.SelectionStart;
+			m_tbFontSize.Text = FontSize.ToString();
+			// Move insertion point back to where it was before the invalid
+			// character was rejected, rather than letting it jump to the beginning
+			// of the textbox.
+			int newInsertionPointLocation = insertionPointLocationBeforeRevert - 1;
+			if (newInsertionPointLocation < 0)
+				newInsertionPointLocation = 0;
+			m_tbFontSize.Select(newInsertionPointLocation, 0);
+			return false;
+		}
+
+		/// <summary>
+		/// Update FontSize from size and return true.
+		/// If text size is already set or is not a valid font size, does not update and
+		/// returns false.
+		/// </summary>
+		private bool UpdateFontSizeIfValid(string size)
+		{
+			int newSize;
+			Int32.TryParse(size, out newSize);
+			if (newSize <= 0)
+				return false;
+			if (newSize > 999)
+				return false;
+			if (newSize == FontSize)
+				return false;
+			FontSize = newSize;
+			return true;
+		}
+
+		/// <summary>
+		/// Update the position or selection in the font list based on size.
+		/// </summary>
+		private void SelectFontSizeInList(string size)
+		{
+			int iFontSize = m_lbFontSizes.FindStringExact(size);
 
 			if (iFontSize != ListBox.NoMatches)
 			{
@@ -307,7 +359,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else
 			{
 				// find closest match and scroll that to the top of the list
-				for (string text = m_tbFontSize.Text; text.Length > 0 && iFontSize == ListBox.NoMatches;
+				for (string text = size; text.Length > 0 && iFontSize == ListBox.NoMatches;
 					text = text.Substring(0, text.Length - 1))
 				{
 					iFontSize = m_lbFontSizes.FindString(text);
@@ -319,7 +371,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				iFontSize = 0;
 
 			m_lbFontSizes.TopIndex = iFontSize;
-			UpdatePreview();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -337,16 +388,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Private methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the size of the font.
-		/// </summary>
-		/// <value>The size of the font.</value>
-		/// ------------------------------------------------------------------------------------
 		private int FontSize
 		{
-			get { return (m_tbFontSize.Text == string.Empty) ? 0 :
-				Int32.Parse(m_tbFontSize.Text); }
+			get; set;
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
