@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			dialog_fontSizeTextBox.Select(0, 0);
 			CallMethod(m_dialog, "ApplyNewFontSizeIfValid", new[] {""});
 
-			Assert.That(dialog_fontSizeTextBox.SelectionStart, Is.EqualTo(0), "");
+			Assert.That(dialog_fontSizeTextBox.SelectionStart, Is.EqualTo(0));
 		}
 
 		/// <summary/>
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			int? resultingFontSize = GetProperty(m_dialog, "FontSize") as int?;
 			Assert.That(resultingFontSize, Is.EqualTo(initialFontSize), "Should not have changed font size.");
 
-			Assert.That(dialog_fontSizeTextBox.SelectionStart, Is.EqualTo(1), "");
+			Assert.That(dialog_fontSizeTextBox.SelectionStart, Is.EqualTo(1));
 		}
 
 		/// <summary/>
