@@ -3019,7 +3019,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					IMoMorphSynAnalysis msaToConsider = msaList[i];
 					if (msaToProcess.EqualsMsa(msaToConsider))
 					{
-						msaToProcess.MergeObject(msaToConsider, fLoseNoStringData);
+						// LT-13007 if fLoseNoStringData is true, merging two entries with identical MSAs
+						// gives duplicated grammatical information.
+						//msaToProcess.MergeObject(msaToConsider, fLoseNoStringData);
+						msaToProcess.MergeObject(msaToConsider, false);
 						msaList.Remove(msaToConsider);
 					}
 				}
