@@ -116,7 +116,7 @@
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
+  <!--ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -142,7 +142,7 @@
 	  <ProductName>.NET Framework 3.5 SP1</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
+  </ItemGroup-->
   <ItemGroup>
 	<None Include="Properties\DropDownArrowWide.png" />
   </ItemGroup>

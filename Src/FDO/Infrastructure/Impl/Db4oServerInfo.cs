@@ -85,6 +85,10 @@ namespace FwRemoteDatabaseConnector
 		/// <summary></summary>
 		public Db4oServerInfo()
 		{
+			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
+			// The default without this would be HKLM\Software\SIL\SIL FieldWorks,
+			// which breaks FwRemoteDatabaseConnectorService.exe.
+			SIL.Utils.RegistryHelper.ProductName = "FieldWorks";
 			RemotingServer.ServerObject = this;
 		}
 
