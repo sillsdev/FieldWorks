@@ -204,6 +204,8 @@ namespace FwBuildTasks
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					if (project == "MigrateSqlDbs")
 						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
+					if (project.StartsWith("LinuxSmoke"))
+						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
 					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"4.0\"/>");

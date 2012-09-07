@@ -82,7 +82,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="Mono.Posix" />
+	<Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'"/>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AlphaOutlineTests.cs" />

@@ -13,6 +13,7 @@
   <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
+  <UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>
@@ -64,6 +65,7 @@
   </Target>
 
   <Import Project="Linux.targets"/>
+  <Import Project="Windows.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
   <Import Project="Localize.targets"/>

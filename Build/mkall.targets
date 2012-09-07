@@ -2,14 +2,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <!-- Make all of FieldWorks. -->
-  <Target Name="mkall" DependsOnTargets="allCpp;allCsharp">
+  <Target Name="mkall" DependsOnTargets="initLinux;initWindows;allCpp;allCsharp">
 	<Message Text="Finished mkall Target."/>
   </Target>
 
   <Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine"/>
   <Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine"/>
 
-  <Target Name="DebugProcs" DependsOnTargets="initLinux">
+  <Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
 	<CreateProperty Value="all" Condition="'$(action)'=='test'">
 	  <Output TaskParameter="Value" PropertyName="make-target"/>
 	</CreateProperty>
@@ -25,7 +25,7 @@
 		  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
   </Target>
 
-  <Target Name="GenericLib" DependsOnTargets="initLinux;DebugProcs">
+  <Target Name="GenericLib" DependsOnTargets="DebugProcs">
 	<CreateProperty Value="all" Condition="'$(action)'=='test'">
 	  <Output TaskParameter="Value" PropertyName="make-target"/>
 	</CreateProperty>

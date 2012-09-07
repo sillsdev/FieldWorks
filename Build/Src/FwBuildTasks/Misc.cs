@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 using System.Threading;
+
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -110,6 +112,23 @@ namespace FwBuildTasks
 		public override bool Execute()
 		{
 			Environment.SetEnvironmentVariable(Variable, Value);
+			return true;
+		}
+	}
+
+	/// <summary>
+	/// Check whether the user has administrative privilege.
+	/// </summary>
+	public class CheckAdminPrivilege : Task
+	{
+		[Output]
+		public bool UserIsAdmin { get; set; }
+
+		public override bool Execute()
+		{
+			WindowsIdentity id = WindowsIdentity.GetCurrent();
+			WindowsPrincipal p = new WindowsPrincipal(id);
+			UserIsAdmin = p.IsInRole(WindowsBuiltInRole.Administrator);
 			return true;
 		}
 	}
