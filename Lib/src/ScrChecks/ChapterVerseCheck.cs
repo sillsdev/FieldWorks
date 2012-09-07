@@ -69,8 +69,8 @@ namespace SILUBS.ScriptureChecks
 		private int m_nChapterToCheck; // 0 = all chapters in book
 		private RecordErrorHandler m_recordError;
 
-		/// <summary>Verses encountered in current chapter</summary>
-		private List<int> m_versesFound;
+//		/// <summary>Verses encountered in current chapter</summary>
+//		private List<int> m_versesFound;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -178,7 +178,7 @@ namespace SILUBS.ScriptureChecks
 			GetParameters();
 
 			m_recordError = record;
-			m_versesFound = new List<int>();
+//			m_versesFound = new List<int>();
 			m_chapTokens.Clear();
 
 			ChapterToken currChapterToken = null;

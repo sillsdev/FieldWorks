@@ -60,13 +60,21 @@ namespace FwBuildTasks
 		{
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
-			// These projects from Lib appear to have been built through nant regularly.
+			// These projects from Lib had nant targets.  They really should be under Src.
 			var infoSilUtil = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SilUtils"));
 			CollectInfo(infoSilUtil);
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
-			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
 			CollectInfo(infoScr);
+			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			CollectInfo(infoScr2);
+			var infoScr3 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
+			CollectInfo(infoScr3);
+			var infoPhr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/PhraseTranslationHelper"));
+			CollectInfo(infoPhr);
+			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
+			CollectInfo(infoObj);
 			WriteTargetFiles();
 		}
 
@@ -98,7 +106,25 @@ namespace FwBuildTasks
 				return;		// Skip this project -- it should be under Lib, not Src!
 #if TEMPFIX
 			// These projects are obsolete, but still exist in the Linux branches.
-			if (project == "ProgressBarTest" || project == "MenuExtender" || project == "MenuExtenderTests")
+			if (project == "MenuExtender" ||			// independent target in nant build files
+				project == "MenuExtenderTests" ||		// implied target in nant build files
+				project == "ParserWatcher" ||			// independent target in nant build files
+				project == "RunAddConverter" ||			// independent target in nant build files
+				project == "ProgressBarTest" ||
+				project == "P4Helper" ||
+				project == "FixUp" ||
+				project == "RemoteReport" ||
+				project == "VwGraphicsReplayer" ||
+				project == "XCoreSample" ||
+				project == "SilSidePaneTestApp" ||
+				project == "SfmStats" ||
+				project == "ConvertSFM" ||
+				project == "XSLTTester")
+			{
+				return;
+			}
+			// This project shouldn't be obsolete, but has been broken for months.
+			if (project == "FixFwData")
 				return;
 #endif
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
@@ -167,11 +193,20 @@ namespace FwBuildTasks
 								bldr.AppendFormat(";{0}", dep);
 						}
 					}
+					if (project == "COMInterfaces")
+					{
+						if (bldr.Length == 0)
+							bldr.Append("mktlbs");
+						else
+							bldr.Insert(0, "mktlbs;");
+					}
 					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
+					if (project == "MigrateSqlDbs")
+						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"3.5\"/>");
+					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"4.0\"/>");
 					if (project.EndsWith("Tests"))
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
@@ -182,7 +217,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t       ErrorOutputFile=\"$(dir-outputBase)/{0}.dll-nunit-errors.xml\"", project);
 						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
 						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
-						writer.WriteLine("\t\t       ContinueOnError=\"false\" />");
+						writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
 					}
 					writer.WriteLine("\t</Target>");
 					writer.WriteLine();
@@ -191,6 +226,8 @@ namespace FwBuildTasks
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
+					if (project == "SharpViews" || project == "SharpViewsTests")
+						continue;		// These projects are experimental.
 					if (first)
 						writer.Write(project);
 					else
@@ -203,6 +240,8 @@ namespace FwBuildTasks
 				first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
+					if (project == "SharpViews" || project == "SharpViewsTests")
+						continue;		// These projects are experimental.
 					if (project.EndsWith("Tests"))
 						continue;
 					if (first)

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,7 +40,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>..\..\..\Output\Debug</OutputPath>
+	<OutputPath>..\..\Output\Debug</OutputPath>
 	<DefineConstants>DEBUG</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -51,7 +51,7 @@
 	<DebugType>none</DebugType>
 	<Optimize>false</Optimize>
 	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>bin\Release</OutputPath>
+	<OutputPath>..\..\Output\Release</OutputPath>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>

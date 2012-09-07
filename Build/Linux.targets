@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
+  <PropertyGroup Condition="'$(OS)'=='Unix'">
+	<build4ux>1</build4ux>
+  </PropertyGroup>
+
   <!-- call preparatory Linux targets -->
   <Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate"
 	  Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
-	<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true"/>
+	<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
+		  DestinationFolder="$(dir-outputBase)"
+		  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+		  Condition="'$(action)'!='clean'"/>
   </Target>
 
   <Target Name="unitpp" Condition="'$(OS)'=='Unix'" DependsOnTargets="setenvLinux">
@@ -20,12 +27,12 @@
 	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)"/>
   </Target>
 
-  <Target Name="tlbs-copy">
+  <Target Name="tlbs-copy" Condition="'$(action)'!='clean'">
 	<MakeDir Directories="$(dir-fwoutputCommon)"/>
 	<CreateItem Include="$(fwrt)/Lib/linux/Common/**/*.*">
 	  <Output TaskParameter="Include" ItemName="LinuxCommonFiles"/>
 	</CreateItem>
-	<Copy SourceFiles="@(LinuxCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true"/>
+	<Copy SourceFiles="@(LinuxCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
   </Target>
 
   <!-- Copy (or delete copied) TECKit files -->
@@ -39,7 +46,7 @@
 	<CreateItem Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so">
 	  <Output TaskParameter="Include" ItemName="CopyTECkitFiles"/>
 	</CreateItem>
-	<Copy SourceFiles="@(CopyTECkitFiles)" DestinationFolder="$(dir-outputBase)" Condition="'$(action)'!='clean'" SkipUnchangedFiles="true"/>
+	<Copy SourceFiles="@(CopyTECkitFiles)" DestinationFolder="$(dir-outputBase)" Condition="'$(action)'!='clean'" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	<CreateItem Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so">
 	  <Output TaskParameter="Include" ItemName="DeleteTECkitFiles"/>
 	</CreateItem>
@@ -50,24 +57,23 @@
 	<!-- unzip icu file -->
 	<!-- NOTE: we can't use the Unzip task since we have to adjust the line endings,
 	 especially for Makefiles and shell scripts (option -a). -->
-	<Exec Command="unzip -qq -a -u Icu40src.zip -d .." WorkingDirectory="$(fwrt)/Lib/src/icu"/>
+	<Exec Command="unzip -qq -a -u Icu40src.zip -d .." WorkingDirectory="$(fwrt)/Lib/src/icu" Condition="'$(action)'!='clean'"/>
 	<!-- build icu -->
 	<CreateProperty Value='--prefix=%24(cd ../.. &amp;&amp; pwd)/install$(arch)'>
 	  <Output TaskParameter="Value" PropertyName="icu-configure-prefix"/>
 	</CreateProperty>
 	<Message Text="icu-configure-prefix='$(icu-configure-prefix)'; icu_lib='$(icu_lib)'; arch='$(arch)'"/>
-	<Exec Command="sh -c 'cd source &amp;&amp; mkdir -p build$(arch) &amp;&amp; cd build$(arch) &amp;&amp; ../configure $(icu-configure-prefix) &amp;&amp; make &amp;&amp; make install'" WorkingDirectory="$(fwrt)/Lib/src/icu"/>
+	<Exec Command="sh -c 'cd source &amp;&amp; mkdir -p build$(arch) &amp;&amp; cd build$(arch) &amp;&amp; ../configure $(icu-configure-prefix) &amp;&amp; make &amp;&amp; make install'" WorkingDirectory="$(fwrt)/Lib/src/icu" Condition="'$(action)'!='clean'"/>
   </Target>
   <Target Name="linuxLibs" DependsOnTargets="iculibs;setenvLinux">
-	<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)"/>
+	<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
   </Target>
 
   <!--
 	  On Linux we can't generate TLBs, so we do that on Windows and check them in.
 	  But this means that whenever the *.idh files change we have to regenerate these
 	  files. This task checks that they are up-to-date and fails the build early on
-	  if they are outdated. We have to use unix line endings so that we get the same
-	  checksum on both Windows and Linux.
+	  if they are outdated.
   -->
   <Target Name="checkTLBsUpToDate">
 	<Message Text="TODO: checkTLBsUpToDate"/>

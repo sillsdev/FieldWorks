@@ -102,7 +102,9 @@ namespace FwBuildTasks
 		[Required]
 		public string Variable { get; set; }
 
-		[Required]
+		/// <summary>
+		/// Value might be empty, so it can't be [Required].
+		/// </summary>
 		public string Value { get; set; }
 
 		public override bool Execute()

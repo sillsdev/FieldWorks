@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -285,11 +285,6 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
-	<Content Include="xtst.xml">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
-  </ItemGroup>
-  <ItemGroup>
 	<WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
@@ -310,10 +305,5 @@
 	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>

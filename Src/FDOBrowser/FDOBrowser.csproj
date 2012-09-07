@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,9 +69,18 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
 	</Reference>
-	<Reference Include="Db4objects.Db4o, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
-	<Reference Include="Db4objects.Db4o.CS, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
-	<Reference Include="Db4objects.Db4o.Linq, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
+	<Reference Include="Db4objects.Db4o, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.dll</HintPath>
+	</Reference>
+	<Reference Include="Db4objects.Db4o.CS, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.CS.dll</HintPath>
+	</Reference>
+	<Reference Include="Db4objects.Db4o.Linq, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
+	</Reference>
 	<Reference Include="DetailControls, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
