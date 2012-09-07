@@ -6103,3 +6103,5 @@ GordonM, 4 Sep 2012. Fix LT-11950 so InsertEntryDlg won't mess up multi-ws field
 KenZ, 5 Sep 2012. Fixed crash starting Flex when FwRemoteDatabaseConnectorService was running.
 SteveMc, September 7, 2012.  Get all of the standard C# and C++ targets to build using msbuild
 	on Windows.
+SteveMc, September 7, 2012.  Added regasm/regsvr32 calls to EncConvertersDlls target in
+	Windows.targets.
