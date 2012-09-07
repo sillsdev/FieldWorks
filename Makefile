@@ -675,13 +675,13 @@ CodeGen-clean:
 
 teckit:
 	if [ ! -e "$(OUT_DIR)/libTECkit_x86.so" ] || \
-		[ "$(BUILD_ROOT)/DistFiles/libTECkit_x86.so" -nt "$(OUT_DIR)/libTECkit_x86.so" ]; then \
+		[ "$(BUILD_ROOT)/DistFiles/Linux/libTECkit_x86.so" -nt "$(OUT_DIR)/libTECkit_x86.so" ]; then \
 		mkdir -p $(OUT_DIR); \
-		cp -p "$(BUILD_ROOT)/DistFiles/libTECkit_x86.so" "$(OUT_DIR)/libTECkit_x86.so"; fi
+		cp -p "$(BUILD_ROOT)/DistFiles/Linux/libTECkit_x86.so" "$(OUT_DIR)/libTECkit_x86.so"; fi
 	if [ ! -e "$(OUT_DIR)/libTECkit_Compiler_x86.so" ] || \
-		[ "$(BUILD_ROOT)/DistFiles/libTECkit_Compiler_x86.so" -nt "$(OUT_DIR)/libTECkit_Compiler_x86.so" ]; then \
+		[ "$(BUILD_ROOT)/DistFiles/Linux/libTECkit_Compiler_x86.so" -nt "$(OUT_DIR)/libTECkit_Compiler_x86.so" ]; then \
 		mkdir -p $(OUT_DIR); \
-		cp -p "$(BUILD_ROOT)/DistFiles/libTECkit_Compiler_x86.so" "$(OUT_DIR)/libTECkit_Compiler_x86.so"; fi
+		cp -p "$(BUILD_ROOT)/DistFiles/Linux/libTECkit_Compiler_x86.so" "$(OUT_DIR)/libTECkit_Compiler_x86.so"; fi
 
 teckit-clean:
 	rm -f $(OUT_DIR)/libTECkit_x86.so $(OUT_DIR)/libTECkit_Compiler_x86.so

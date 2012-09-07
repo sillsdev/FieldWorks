@@ -189,6 +189,10 @@ namespace SILUBS.ScriptureChecks
 		{
 #if DEBUG
 			List<ITextToken> AllTokens = new List<ITextToken>(tokens);
+			if (AllTokens.Count == 0)
+			{
+				// Keep the compiler from complaining about assigning to a variable, but not using it.
+			}
 #endif
 			m_characterCategorizer = m_checksDataSource.CharacterCategorizer;
 			ValidItems = m_checksDataSource.GetParameterValue(kValidItemsParameter);

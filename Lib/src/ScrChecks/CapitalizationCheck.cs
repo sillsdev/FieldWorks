@@ -24,16 +24,16 @@ namespace SILUBS.ScriptureChecks
 
 		/// <summary>name of parameter to provide serialized style information for this check.</summary>
 		readonly string kStyleSheetInfoParameter = "StylesInfo";
-		/// <summary>name of parameter to provide punctuation that occurs sentence-finally</summary>
-		readonly string kSentenceFinalPuncParameter = "SentenceFinalPunctuation";
+//		/// <summary>name of parameter to provide punctuation that occurs sentence-finally</summary>
+//		readonly string kSentenceFinalPuncParameter = "SentenceFinalPunctuation";
 
 		private StylePropsInfo m_stylePropsInfo;
 		/// <summary>Dictionary keyed by the style name containing the type of style (character/paragraph)
 		/// and a value indicating why it should begin with a capital.</summary>
 		private Dictionary<string, StyleCapInfo> m_allCapitalizedStyles = new Dictionary<string,StyleCapInfo>();
 
-		/// <summary>string containing punctuation that ends sentences.</summary>
-		string m_SentenceFinalPunc = null;
+//		/// <summary>string containing punctuation that ends sentences.</summary>
+//		string m_SentenceFinalPunc = null;
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ namespace SILUBS.ScriptureChecks
 		/// ------------------------------------------------------------------------------------
 		public List<TextTokenSubstring> GetReferences(IEnumerable<ITextToken> tokens)
 		{
-			m_SentenceFinalPunc = m_chkDataSource.GetParameterValue(kSentenceFinalPuncParameter);
+//			m_SentenceFinalPunc = m_chkDataSource.GetParameterValue(kSentenceFinalPuncParameter);
 			if (m_stylePropsInfo == null)
 			{
 				string styleInfo = m_chkDataSource.GetParameterValue(kStyleSheetInfoParameter);

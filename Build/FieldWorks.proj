@@ -12,6 +12,7 @@
   <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>

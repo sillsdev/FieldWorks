@@ -93,9 +93,8 @@ namespace TestViews
 		ITsStrFactoryPtr m_qtsf;
 		void AddString(IVwEnv* pvwenv, OLECHAR * pszText)
 		{
-			OLECHAR * pszFt = OleStringLiteral(pszText);
 			ITsStringPtr qtss;
-			m_qtsf->MakeStringRgch(pszFt, wcslen(pszFt), g_wsEng, &qtss);
+			m_qtsf->MakeStringRgch(pszText, wcslen(pszText), g_wsEng, &qtss);
 			pvwenv->AddString(qtss);
 		}
 		void AddCell(IVwEnv* pvwenv, OLECHAR * pszText)
@@ -144,26 +143,26 @@ namespace TestViews
 					pvwenv->OpenTableBody();
 					pvwenv->OpenTableRow();
 					{
-						AddCell(pvwenv, L"Hello");
+						AddCell(pvwenv, OleStringLiteral(L"Hello"));
 						pvwenv->OpenTableCell(1,1);
 						{
-							AddString(pvwenv, L"this");
-							AddString(pvwenv, L"is");
-							AddString(pvwenv, L"the");
+							AddString(pvwenv, OleStringLiteral(L"this"));
+							AddString(pvwenv, OleStringLiteral(L"is"));
+							AddString(pvwenv, OleStringLiteral(L"the"));
 						}
 						pvwenv->CloseTableCell();
-						AddCell(pvwenv, L"world");
+						AddCell(pvwenv, OleStringLiteral(L"world"));
 					}
 					pvwenv->CloseTableRow();
 
 					pvwenv->OpenTableRow();
 					{
-						AddCell(pvwenv, L"Where");
-						AddCell(pvwenv, L"will");
+						AddCell(pvwenv, OleStringLiteral(L"Where"));
+						AddCell(pvwenv, OleStringLiteral(L"will"));
 						pvwenv->OpenTableCell(1,1);
 						{
-							AddString(pvwenv, L"we");
-							AddString(pvwenv, L"select?");
+							AddString(pvwenv, OleStringLiteral(L"we"));
+							AddString(pvwenv, OleStringLiteral(L"select?"));
 						}
 						pvwenv->CloseTableCell();
 					}

@@ -222,25 +222,26 @@
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
+	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu40/icudt40l" />
 
 	<!-- Create the output directories if they don't already exist -->
-	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)"/>
+	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)" Condition="'$(action)'!='clean'"/>
 
 	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
+	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
 	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
 	</MakeDir>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config)') And '$(OS)'=='Unix'"
+	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
+	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="'@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
 
 	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>

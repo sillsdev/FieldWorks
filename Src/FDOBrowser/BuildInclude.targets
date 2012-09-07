@@ -1,5 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<PropertyGroup>
+		<Db4oFilesSource Condition="'$(OS)'=='Windows_NT'">../../DistFiles/Windows</Db4oFilesSource>
+		<Db4oFilesSource Condition="'$(OS)'=='Unix'">../../DistFiles/Linux</Db4oFilesSource>
+	</PropertyGroup>
+	<ItemGroup>
+		<FDOBrowser-FilesToCopy Include="$(Db4oFilesSource)/Db4objects.Db4o*.dll"/>
+	</ItemGroup>
+	<Target Name="BeforeBuild">
+		<Copy SourceFiles="@(FDOBrowser-FilesToCopy)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+	</Target>
+
 	<PropertyGroup>
 		<Executable>$(OutDir)FDOBrowser.exe</Executable>
 	</PropertyGroup>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+  <PropertyGroup Condition="'$(OS)'=='Unix'">
+	<PlatformLibDir>../../../Lib/linux/$(Configuration)</PlatformLibDir>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OS)'=='Unix'">
+	<Files-for-KeyboardSwitcher-Build Include="$(PlatformLibDir)/ibusdotnet.dll"/>
+	<Files-for-KeyboardSwitcher-Build Include="$(PlatformLibDir)/NDesk.DBus.dll"/>
+	<Files-for-KeyboardSwitcher-Build Include="$(PlatformLibDir)/NDesk.DBus.dll.config"/>
+	<Files-for-KeyboardSwitcher-Build Include="$(PlatformLibDir)/ECInterfaces.dll"/>
+	<Files-for-KeyboardSwitcher-Build Include="$(PlatformLibDir)/SilEncConverters40.dll"/>
+  </ItemGroup>
+
+  <Target Name="BeforeBuild" Condition="'$(OS)'=='Unix'">
+	<Copy SourceFiles="@(Files-for-KeyboardSwitcher-Build)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
+  </Target>
+
+</Project>

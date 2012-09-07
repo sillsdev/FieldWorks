@@ -954,7 +954,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		/// <param name="guid">The Guid of the object to return</param>
 		/// <returns>The CmObject that has the given Guid.</returns>
-		/// <exception cref="KeyNotFoundException">Thrown when the given Guid is not in the dictionary.</exception>
+		/// <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the given Guid is not in the dictionary.</exception>
 		public ICmObject GetObject(ICmObjectId guid)
 		{
 			var obj = m_identityMap.GetObject(guid);

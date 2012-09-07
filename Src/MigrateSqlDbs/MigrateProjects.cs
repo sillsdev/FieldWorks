@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			if (m_fAutoClose)
 				m_btnClose.Text = Properties.Resources.ksSkip;
 			this.Text = String.Format(this.Text, version);
-			foreach (string proj in projects)
+			foreach (string proj in m_projects)
 			{
 				if (proj == ImportFrom6_0.TempDatabaseName)
 				{

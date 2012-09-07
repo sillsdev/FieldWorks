@@ -120,4 +120,5 @@
 	  <Install>false</Install>
 	</BootstrapperPackage>
   </ItemGroup>
+  <Import Project="BuildInclude.targets" Condition="'$(OS)'=='Unix'"/>
 </Project>
