@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -163,10 +163,10 @@
 	<Reference Include="ManagedVwDrawRootBuffered">
 	  <HintPath>..\..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
 	</Reference>
-	<Reference Include="NDesk.DBus">
+	<Reference Include="NDesk.DBus" Condition="'$(OS)'=='Unix'">
 	  <HintPath>..\..\..\Output\Debug\NDesk.DBus.dll</HintPath>
 	</Reference>
-	<Reference Include="ibusdotnet">
+	<Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
 	  <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
 	</Reference>
 	<Reference Include="KeyboardSwitcher">

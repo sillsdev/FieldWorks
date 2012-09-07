@@ -79,4 +79,23 @@
 	<Message Text="TODO: checkTLBsUpToDate"/>
   </Target>
 
+<!--
+	<copy todir="${dir.outputBase}">
+	<fileset basedir="${dir.fwoutputlibPlatformBase}">
+	<include name="*.*"/>
+	</fileset>
+	</copy>
+	<copy todir="${dir.outputBase}">
+	<fileset basedir="${dir.fwoutputlibPlatform}">
+	<include name="*.config"/>
+	</fileset>
+	</copy>
+	<mkdir dir="${dir.outputBase}/EC/Plugins" verbose="${verbose}"/>
+	<copy todir="${dir.outputBase}/EC/Plugins">
+	<fileset basedir="${dir.fwoutputlibPlatform}/ECPlugins">
+	<include name="*.xml"/>
+	</fileset>
+	</copy>
+-->
+
 </Project>
