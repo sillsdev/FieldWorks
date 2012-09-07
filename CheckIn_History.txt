@@ -287,3 +287,4 @@ GordonM, 5 Sep 2012. Integrate fix for LT-11950 from WW (by hand).
 	more later... Fix LT-13004 so Enchant message isn't hidden by splash screen.
 GordonM, 6 Sep 2012. Fix LT-13007 so merging entries don't duplicate grammatical info.
 	  forgot to save minor change before check in.
+LastufkaM, 7 Sep 2012. LT-13414 Backspace in the baseline causes a crash.

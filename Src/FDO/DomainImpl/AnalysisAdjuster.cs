@@ -934,12 +934,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (annObjectsToCheck == null)
 				return null; // none to remove.
-			var result = annObjectsToCheck.Where(refObj => refObj.EndRef().Segment.IndexInOwner < m_iSegFirstModified ||
-								refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified).ToList();
+			List<IAnalysisReference> result;
+			result = annObjectsToCheck.Where(segmentIsOutsideOfRange).ToList();
 			if (result.Count > 0)
 				foreach (var iar in result)
 					annObjectsToCheck.Remove(iar);
 			return annObjectsToCheck;
+		}
+
+		private bool segmentIsOutsideOfRange(IAnalysisReference refObj)
+		{
+			ISegment seg = null;
+			var endRef = refObj.EndRef();
+			if (endRef != null) // added for LT-13414 - one segment had a null endRef
+				seg = refObj.EndRef().Segment;
+			return seg != null && (seg.IndexInOwner < m_iSegFirstModified || refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified);
 		}
 
 		// Compute segment offsets as required for new paragraph contents.
