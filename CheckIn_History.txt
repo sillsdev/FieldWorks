@@ -6105,3 +6105,4 @@ SteveMc, September 7, 2012.  Get all of the standard C# and C++ targets to build
 	on Windows.
 SteveMc, September 7, 2012.  Added regasm/regsvr32 calls to EncConvertersDlls target in
 	Windows.targets.
+JohnT, 10 Sep 2012. Added support for building the FW localizations using MSBuild.

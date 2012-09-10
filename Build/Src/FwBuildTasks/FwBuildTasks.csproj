@@ -9,7 +9,7 @@
 	<OutputType>Library</OutputType>
 	<RootNamespace>FwBuildTasks</RootNamespace>
 	<AssemblyName>FwBuildTasks</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<CodePage>65001</CodePage>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
@@ -35,6 +35,7 @@
 	<SccLocalPath>SAK</SccLocalPath>
 	<SccAuxPath>SAK</SccAuxPath>
 	<SccProvider>SAK</SccProvider>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -62,6 +63,9 @@
 	<Reference Include="IDLImporter">
 	  <HintPath>..\..\..\Bin\IDLImporter.dll</HintPath>
 	</Reference>
+	<Reference Include="nunit.framework">
+	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	</Reference>
 	<Reference Include="NVelocity">
 	  <HintPath>..\..\..\Bin\nant\bin\extensions\common\neutral\FwTasks\NVelocity.dll</HintPath>
 	</Reference>
@@ -72,6 +76,7 @@
 	  <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
 	</Reference>
 	<Reference Include="System.Xml" />
+	<Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AssemblyInfo.cs" />
@@ -87,7 +92,11 @@
 	<Compile Include="FdoGenerate\RelationalProperty.cs" />
 	<Compile Include="FdoGenerate\TypeInfo.cs" />
 	<Compile Include="IdlImp.cs" />
+	<Compile Include="LocalizeFieldWorks.cs" />
+	<Compile Include="LocalizeFieldWorksTests.cs" />
 	<Compile Include="Make.cs" />
+	<Compile Include="Po2XmlConverter.cs" />
+	<Compile Include="POString.cs" />
 	<Compile Include="RegFree.cs" />
 	<Compile Include="RegFreeCreator.cs" />
 	<Compile Include="Substitute.cs" />
