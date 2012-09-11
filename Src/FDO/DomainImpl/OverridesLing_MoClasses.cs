@@ -2956,9 +2956,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		protected override void ITsStringAltChangedSideEffectsInternal(int multiAltFlid, IWritingSystem alternativeWs, ITsString originalValue, ITsString newValue)
 		{
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
-			if (multiAltFlid == MoFormTags.kflidForm && alternativeWs.Handle == Cache.DefaultVernWs && Owner is LexEntry)
+			if (multiAltFlid == MoFormTags.kflidForm && Owner is LexEntry)
 			{
-				((LexEntry)Owner).MoFormFormChanged(this, originalValue == null ? "" : originalValue.Text);
+				((LexEntry)Owner).MLHeadwordChanged(alternativeWs.Handle);
+				if (alternativeWs.Handle == Cache.DefaultVernWs)
+				{
+					((LexEntry) Owner).MoFormFormChanged(this, originalValue == null ? "" : originalValue.Text);
+				}
 			}
 		}
 

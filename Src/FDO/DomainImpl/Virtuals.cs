@@ -24,10 +24,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl // TODO: Move this to DomainServices
 		private int m_lexDbEntries;
 		private int m_stParaIsFinalParaInText;
 		private int m_langProjectAllWordforms;
+		private int m_lexEntryMLHeadWord;
 
 		internal Virtuals(IFwMetaDataCacheManaged mdc)
 		{
 			m_mdc = mdc;
+		}
+
+		/// <summary>
+		/// The Flic for the LexEntry.MLHeadWord property.
+		/// </summary>
+		public int LexEntryMLHeadWord
+		{
+			get
+			{
+				if (m_lexEntryMLHeadWord == 0)
+					m_lexEntryMLHeadWord = m_mdc.GetFieldId("LexEntry", "MLHeadWord", false);
+				return m_lexEntryMLHeadWord;
+			}
 		}
 
 		/// <summary>

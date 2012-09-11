@@ -646,13 +646,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// <summary></summary>
 	internal partial class LexEntry
 	{
-		private int m_MLHeadWordFlid;
-
 		protected override void SetDefaultValuesAfterInit()
 		{
 			base.SetDefaultValuesAfterInit();
-
-			m_MLHeadWordFlid = Cache.MetaDataCache.GetFieldId("LexEntry", "MLHeadWord", false);
 
 			RegisterVirtualsModifiedForObjectCreation(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
 		}
@@ -1654,6 +1650,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Something happened which may cause a change to the MLHeadword Virtual property for the specified writing system.
+		/// </summary>
+		/// <param name="ws"></param>
+		internal void MLHeadwordChanged(int ws)
+		{
+			// Enhance JohnT: is there some way to pass a valid old value? Does it matter?
+			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryMLHeadWord, ws, null, MLHeadWord.get_String(ws));
+		}
+
+		/// <summary>
 		/// Handle a (possible) change to the lexeme form's default vern WS. Arguments are
 		/// the old and new default vernacular lexeme form.
 		/// </summary>
@@ -1738,6 +1745,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// Another consequence is that the MLOwnerOutlineName of senses will change.
 				// Enhance JohnT: conceivably the change does not affect this WS, or does affect some other.
 				NotifySensesOfHeadwordChange();
+				// And almost certainly the HeadWord will too.
+				MLHeadwordChanged(alternativeWs.Handle);
 			}
 		}
 
@@ -2197,7 +2206,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return new VirtualStringAccessor(this, m_MLHeadWordFlid, HeadWordForWs);
+				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryMLHeadWord, HeadWordForWs);
 			}
 		}
 
