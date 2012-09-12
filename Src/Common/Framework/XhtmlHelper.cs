@@ -1498,7 +1498,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (bullet != null)
 				m_writer.WriteLine("    content: \"{0}  \";", bullet);
 			else
-				m_writer.WriteLine("    content: counter({0}, {1}) \" \";", sCounter, type);
+				m_writer.WriteLine("    content: counter({0}{1}) \" \";", sCounter, type);
 			m_writer.WriteLine("    counter-increment: {0};", sCounter);
 			m_writer.WriteLine("}");
 		}
