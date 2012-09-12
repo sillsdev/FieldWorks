@@ -293,3 +293,4 @@ JohnT, 12 Sep 2012. LT-13402 duplicate div class="subentry" in Reversal index =>
 GordonM, 12 Sep 2012. LT-13500 fix PgUp/Down in non-editable text (Analyze tab)
 JohnT, 12 Sep 2012. LT-13425. After copying "Dictionary views", reopening FW with holding down the shift key leads to crashes.
 JohnT, 12 Sep 2012. LT-13532, Sena 2, both Por and Eng glosses appear in Dictionary when only Default Analysis is selected for display.
+	Later: LT-13566. Changing to "Occurs Exactly Once" option in Phonological Rule removes an existing element entirely

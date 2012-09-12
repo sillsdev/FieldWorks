@@ -707,7 +707,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					var iterCtxt = ctxt as IPhIterationContext;
 					if (min == 1 && max == 1)
 					{
-						index = OverwriteContext(iterCtxt.MemberRA, iterCtxt, cellId == PhSegRuleRHSTags.kflidLeftContext, false);
+						// We want to replace the iteration context with the original (simple?) context which it
+						// specifies repeat counts for. That is, we will replace the iterCtxt with its own MemberRA.
+						// Then we will delete the iteration context (false argument).
+						// We have to do this carefully, however, because when a PhIterationContext is deleted,
+						// it also deletes its MemberRA. So if the MemberRA is still linked to the simple context,
+						// both get deleted, and the replace unexpectedly fails (LT-13566).
+						// So, we must break the link before we do the replacement.
+						var temp = iterCtxt.MemberRA;
+						iterCtxt.MemberRA = null;
+						index = OverwriteContext(temp, iterCtxt, cellId == PhSegRuleRHSTags.kflidLeftContext, false);
 					}
 					else
 					{
