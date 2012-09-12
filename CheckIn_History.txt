@@ -291,3 +291,4 @@ LastufkaM, 7 Sep 2012. LT-13414 Backspace in the baseline causes a crash.
 JohnT, 11 Sep 2012. LT-13325, Dictionary Preview not updated after changes to lexeme or citation form.
 JohnT, 12 Sep 2012. LT-13402 duplicate div class="subentry" in Reversal index => Xhtml output.
 GordonM, 12 Sep 2012. LT-13500 fix PgUp/Down in non-editable text (Analyze tab)
+JohnT, LT-13425. After copying "Dictionary views", reopening FW with holding down the shift key leads to crashes.

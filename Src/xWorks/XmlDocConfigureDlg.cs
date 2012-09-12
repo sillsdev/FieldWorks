@@ -1610,6 +1610,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="duplicates">list to add the modified layout to</param>
 		private void DuplicateLayout(XmlNode xnLayout, string suffixCode, List<XmlNode> duplicates)
 		{
+			// It is important for at least one caller that the FIRST node added to duplicates is the copy of xnLayout.
 			duplicates.Add(xnLayout);
 			AdjustAttributeValue(xnLayout, "name", suffixCode);
 			var className = XmlUtils.GetManditoryAttributeValue(xnLayout, "class");
@@ -3415,8 +3416,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			for (int i = 0; i < rgxnLayouts.Count; ++i)
 				m_layouts.PersistOverrideElement(rgxnLayouts[i]);
+			var layoutsPersisted = new HashSet<XmlNode>(rgxnLayouts);
 			foreach (var xnNewBase in m_rgxnNewLayoutNodes)
-				m_layouts.PersistOverrideElement(xnNewBase);
+				if (!layoutsPersisted.Contains(xnNewBase)) // don't need to persist a node that got into both lists twice
+					m_layouts.PersistOverrideElement(xnNewBase);
 			m_rgxnNewLayoutNodes.Clear();
 		}
 
@@ -5031,6 +5034,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var duplicates = new List<XmlNode>();
 				DuplicateLayout(xnLayout.Clone(), suffixCode, duplicates);
+				// This method is used to duplicate the layouts used by one of the top level nodes
+				// of the configuration. I think most of the layout nodes get matched up to tree nodes
+				// and persisted as a result of that. sublayout ones don't, so we need to record them
+				// as extras in the loop below. Also, the root one does not become a node in the tree,
+				// so we need to remember it explicitly. (The line immediately below was added to fix
+				// LT-13425.)
+				m_rgxnNewLayoutNodes.Add(duplicates[0]);
 				foreach (var xn in duplicates)
 				{
 					m_layouts.AddNodeToInventory(xn);
