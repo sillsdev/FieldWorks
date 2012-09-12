@@ -14,14 +14,9 @@
   </Target>
 
   <!-- Main target for processing all .po files -->
+  <UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
   <Target Name="processLanguages">
-<!--
-	<tstamp/>
-	<exec program="${fwroot}/Bin/ProcessLanguagesBld.exe"
-	  commandline='${config} ${fwroot} ${dir.fwoutput}'
-	  failonerror="true" verbose="${verbose}"/>
-	<tstamp/>
--->
+	  <LocalizeFieldWorks RootDirectory="$(fwroot)" Config="$(config)"/>
   </Target>
 
 </Project>
