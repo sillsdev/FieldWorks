@@ -473,6 +473,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private OrientationManager m_orientationManager;
 
+		/// <summary/>
+		protected bool IsVertical
+		{
+			get { return m_orientationManager.IsVertical; }
+		}
+
 #if __MonoCS__
 		/// <summary> manage SimpleRootSite ibus interaction </summary>
 		protected InputBusController m_inputBusController;
@@ -2828,7 +2834,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				#region DoAutoHScroll
 				if (DoAutoHScroll)
 				{
-					if (m_orientationManager.IsVertical)
+					if (IsVertical)
 					{
 						// In all current vertical views we have no vertical scrolling, so only need
 						// to consider horizontal. Also we have no laziness, so no need to mess with
@@ -5556,6 +5562,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return ScrollRange; }
 		}
 
+		/// <summary>
+		/// To make sure ScrollRange is enough.
+		///
+		/// Add 8 to get well clear of the descenders of the last line;
+		/// about 4 is needed but we add a few more for good measure
+		/// </summary>
+		protected virtual int ScrollRangeFudgeFactor { get { return 8; } }
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the scroll ranges in both directions.
@@ -5582,7 +5596,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return new Size(0, 0);
 				}
 				// Refactor JohnT: would it be clearer to extract this into a method of orientation manager?
-				if (m_orientationManager.IsVertical)
+				if (IsVertical)
 				{
 					//swap and add margins to height
 					int temp = dysHeight;
@@ -5611,12 +5625,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				result.Width = (int)((long)dxsWidth * rcDstRoot.Width / rcSrcRoot.Width);
 
-				// Add 8 to get well clear of the descenders of the last line;
-				// about 4 is needed but we add a few more for good measure
-				if (m_orientationManager.IsVertical)
-					result.Width += 8;
+				if (IsVertical)
+					result.Width += ScrollRangeFudgeFactor;
 				else
-					result.Height += 8;
+					result.Height += ScrollRangeFudgeFactor;
+
 				return result;
 			}
 		}
@@ -5662,7 +5675,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual bool WantHScroll
 		{
-			get { return m_orientationManager.IsVertical; }
+			get { return IsVertical; }
 		}
 
 		/// <summary>
@@ -6298,7 +6311,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				SelectionRectangle(vwsel, out rcPrimary, out fEndBeforeAnchor);
 			}
-			if (m_orientationManager.IsVertical)
+			if (IsVertical)
 			{
 				// In all current vertical views we have no vertical scrolling, so only need
 				// to consider horizontal.

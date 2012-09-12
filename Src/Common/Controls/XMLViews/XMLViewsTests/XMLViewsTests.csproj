@@ -195,6 +195,12 @@
       <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+	<Reference Include="CacheLightTests">
+	  <HintPath>..\..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtilsTests">
+	  <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
