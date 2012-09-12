@@ -290,3 +290,4 @@ GordonM, 6 Sep 2012. Fix LT-13007 so merging entries don't duplicate grammatical
 LastufkaM, 7 Sep 2012. LT-13414 Backspace in the baseline causes a crash.
 JohnT, 11 Sep 2012. LT-13325, Dictionary Preview not updated after changes to lexeme or citation form.
 JohnT, 12 Sep 2012. LT-13402 duplicate div class="subentry" in Reversal index => Xhtml output.
+GordonM, 12 Sep 2012. LT-13500 fix PgUp/Down in non-editable text (Analyze tab)

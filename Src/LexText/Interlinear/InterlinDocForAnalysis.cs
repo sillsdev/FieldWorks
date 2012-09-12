@@ -14,6 +14,7 @@ using XCore;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Application;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1667,9 +1668,16 @@ namespace SIL.FieldWorks.IText
 				if (flid == -2)
 				{
 					helper.AssocPrev = !helper.AssocPrev;
-					var newSel = helper.MakeRangeSelection(this.RootBox, false);
-					helper = SelectionHelper.Create(newSel, this);
-					flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+					try
+					{
+						var newSel = helper.MakeRangeSelection(this.RootBox, false);
+						helper = SelectionHelper.Create(newSel, this);
+						flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+					}
+					catch (COMException)
+					{
+						// Ignore HResult E_Fail caused by Extended Keys (PgUp/PgDown) in non-editable text (LT-13500)
+					}
 				}
 				//Fixes LT-9884 Crash when clicking on the blank space in Text & Words--->Print view area!
 				if (helper.LevelInfo.Length == 0)
