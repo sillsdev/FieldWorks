@@ -108,7 +108,7 @@
 	<layout class="LexSense" type="jtview" name="publishStem">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStem" css="grammatical-info"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishStemSenseType" css="sense-type"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishStem" css="examples"/>
@@ -176,7 +176,7 @@
 	<layout class="LexSense" type="jtview" name="publishStemMinor">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStemMinor" css="grammatical-info-minor"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishStemMinorSenseType" css="sense-type-minor"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishStemMinor" css="examples-minor"/>
@@ -244,7 +244,7 @@
 	<layout class="LexSense" type="jtview" name="publishRoot">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRoot" css="grammatical-info"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootSenseType" css="sense-type"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRoot" css="examples"/>
@@ -313,7 +313,7 @@
 	<layout class="LexSense" type="jtview" name="publishRootMinor">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootMinor" css="grammatical-info-minor"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootMinorSenseType" css="sense-type-minor"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRootMinor" css="examples-minor"/>
@@ -376,12 +376,12 @@
 	</layout>
 
 	<layout class="LexSense" type="jtview" name="publishMinorComplexFormDefn">
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before=" " after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor-complex"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before=" " after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor-complex"/>
 	</layout>
 	<layout class="LexSense" type="jtview" name="publishRootSub">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootSub" css="grammatical-info-sub"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootSubSenseType" css="sense-type-sub"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-sub"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-sub"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRootSub" css="examples-sub"/>
@@ -449,7 +449,7 @@
 	<layout class="LexSense" type="jtview" name="publishRootMinorSub">
 		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootMinorSub" css="grammatical-info-minor"/>
 		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootMinorSubSenseType" css="sense-type-minor"/>
-		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
 		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
 		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRootMinorSub" css="examples-minor"/>
