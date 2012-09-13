@@ -10,13 +10,13 @@
 	<LocalizedListFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
   </ItemGroup>
   <Target Name="copyLocalizedLists">
-	<Copy SourceFiles="@(LocalizedListFiles)" DestinationFolder="$(fwroot)/DistFiles/Templates" SkipUnchangedFiles="true"/>
+	<Copy SourceFiles="@(LocalizedListFiles)" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true"/>
   </Target>
 
   <!-- Main target for processing all .po files -->
   <UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
   <Target Name="processLanguages">
-	  <LocalizeFieldWorks RootDirectory="$(fwroot)" Config="$(config)"/>
+	  <LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config)"/>
   </Target>
 
 </Project>
