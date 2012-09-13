@@ -296,3 +296,4 @@ JohnT, 12 Sep 2012. LT-13532, Sena 2, both Por and Eng glosses appear in Diction
 	Later: LT-13566. Changing to "Occurs Exactly Once" option in Phonological Rule removes an existing element entirely
 	Later: LT-13571. Crash on assigning gramatical info.
 JohnT, 13 Sep 2012. LT-13577. Crash on merging entries.
+GordonM, 13 Sep 2012. LT-13494 Fix Duplicate function so it actually duplicates ALL the features of the node.

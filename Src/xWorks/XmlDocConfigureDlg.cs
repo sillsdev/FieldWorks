@@ -3441,6 +3441,8 @@ namespace SIL.FieldWorks.XWorks
 		public class LayoutTreeNode : TreeNode
 		{
 			// These are basic values that we need to know for every node.
+			// **Important Note**: In most cases, adding a member variable here means you need to add it to
+			// CopyValuesTo() also, so that a duplicate node will end up with the right values.
 			XmlNode m_xnConfig;
 			string m_sLayoutName;
 			string m_sPartName;
@@ -3479,13 +3481,13 @@ namespace SIL.FieldWorks.XWorks
 			bool m_fShowWsLabels;
 			bool m_fSenseIsPara;
 			string m_sSenseParaStyle;
-			//string m_sSingleSenseStyle;
 
 			// These are used to trace creating, deleting, and moving nodes.
 			bool m_fDuplicate;
 			string m_sDup;
 			int m_cSubnodes = -1;
 			int m_idxOrig = -1;
+			// **NB**: If you're planning to add a member variable here, see the Important Note above.
 
 			XmlNode m_xnCallingLayout;
 			XmlNode m_xnParentLayout;
@@ -3633,7 +3635,6 @@ namespace SIL.FieldWorks.XWorks
 						m_fAllowDivParaStyle = !String.IsNullOrEmpty(m_sStyleName);
 					}
 					m_sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(config, "parastyle");
-					//m_sSingleSenseStyle = XmlUtils.GetOptionalAttributeValue(config, "singlestyle");
 					m_sNumber = XmlUtils.GetOptionalAttributeValue(config, "number");
 					m_sNumStyle = XmlUtils.GetOptionalAttributeValue(config, "numstyle");
 					m_fNumSingle = XmlUtils.GetOptionalBooleanAttributeValue(config, "numsingle", false);
@@ -3714,47 +3715,55 @@ namespace SIL.FieldWorks.XWorks
 
 			private void CopyValuesTo(LayoutTreeNode ltn)
 			{
-				ltn.m_xnConfig = m_xnConfig;
-				ltn.m_sLayoutName = m_sLayoutName;
-				ltn.m_sPartName = m_sPartName;
-				ltn.m_sClassName = m_sClassName;
-				ltn.m_sLabel = m_sLabel;
-				ltn.m_sVisibility = m_sVisibility;
-				ltn.m_fContentVisible = m_fContentVisible;
-				ltn.m_fUseParentConfig = m_fUseParentConfig;
-				ltn.m_fShowSenseConfig = m_fShowSenseConfig;
-				ltn.m_sParam = m_sParam;
-				ltn.m_sFlowType = m_sFlowType;
-				ltn.m_sBeforeStyleName = m_sBeforeStyleName;
+				// Review: might be difficult to keep this up-to-date! How do we know we've got
+				// everything in here that needs to be here?! --gjm
+				ltn.m_cSubnodes = m_cSubnodes;
 				ltn.m_fAllowBeforeStyle = m_fAllowBeforeStyle;
-				ltn.m_sBefore = m_sBefore;
+				ltn.m_fAllowCharStyle = m_fAllowCharStyle;
+				ltn.m_fAllowDivParaStyle = m_fAllowDivParaStyle;
+				ltn.m_fAllowParaStyle = m_fAllowParaStyle;
+				ltn.m_fContentVisible = m_fContentVisible;
+				ltn.m_fDuplicate = m_fDuplicate;
+				//ltn.m_fHiddenChildDirty = m_fHiddenChildDirty;
+				ltn.m_fNumSingle = m_fNumSingle;
+				//ltn.m_fPreventNullStyle = m_fPreventNullStyle;
+				ltn.m_fSenseIsPara = m_fSenseIsPara;
+				ltn.m_fShowComplexFormPara = m_fShowComplexFormPara;
+				ltn.m_fShowComplexFormParaConfig = m_fShowComplexFormParaConfig;
+				ltn.m_fShowGramInfoConfig = m_fShowGramInfoConfig;
+				ltn.m_fShowSenseConfig = m_fShowSenseConfig;
+				ltn.m_fShowWsLabels = m_fShowWsLabels;
+				ltn.m_fSingleGramInfoFirst = m_fSingleGramInfoFirst;
+				ltn.m_fStyleFromHiddenChild = m_fStyleFromHiddenChild;
+				ltn.m_fUseParentConfig = m_fUseParentConfig;
+				ltn.m_idxOrig = m_idxOrig;
+				//ltn.m_rgltnMerged = m_rgltnMerged;
 				ltn.m_sAfter = m_sAfter;
+				ltn.m_sBefore = m_sBefore;
+				ltn.m_sBeforeStyleName = m_sBeforeStyleName;
+				ltn.m_sClassName = m_sClassName;
+				ltn.m_sDup = m_sDup;
+				ltn.m_sFlowType = m_sFlowType;
+				ltn.m_sLabel = m_sLabel;
+				ltn.m_sLayoutName = m_sLayoutName;
+				ltn.m_sNumber = m_sNumber;
+				ltn.m_sNumFont = m_sNumFont;
+				ltn.m_sNumStyle = m_sNumStyle;
+				ltn.m_sParam = m_sParam;
+				ltn.m_sPartName = m_sPartName;
+				ltn.m_sSenseParaStyle = m_sSenseParaStyle;
 				ltn.m_sSep = m_sSep;
+				ltn.m_sStyleName = m_sStyleName;
+				ltn.m_sVisibility = m_sVisibility;
 				ltn.m_sWsLabel = m_sWsLabel;
 				ltn.m_sWsType = m_sWsType;
-				ltn.m_sStyleName = m_sStyleName;
-				ltn.m_fAllowCharStyle = m_fAllowCharStyle;
-				ltn.m_sNumber = m_sNumber;
-				ltn.m_sNumStyle = m_sNumStyle;
-				ltn.m_fNumSingle = m_fNumSingle;
-				ltn.m_sNumFont = m_sNumFont;
-				ltn.m_fSingleGramInfoFirst = m_fSingleGramInfoFirst;
-				ltn.m_fShowComplexFormPara = m_fShowComplexFormPara;
-				ltn.m_fShowWsLabels = m_fShowWsLabels;
-				ltn.m_fDuplicate = m_fDuplicate;
-				ltn.m_sDup = m_sDup;
-				ltn.m_cSubnodes = m_cSubnodes;
-				ltn.m_idxOrig = m_idxOrig;
 				ltn.m_xnCallingLayout = m_xnCallingLayout;
-				ltn.m_xnParentLayout = m_xnParentLayout;
-				ltn.m_xnHiddenNode = m_xnHiddenNode;
-				ltn.m_xnHiddenParentLayout = m_xnHiddenParentLayout;
+				ltn.m_xnConfig = m_xnConfig;
 				ltn.m_xnHiddenChild = m_xnHiddenChild;
 				ltn.m_xnHiddenChildLayout = m_xnHiddenChildLayout;
-				ltn.m_fStyleFromHiddenChild = m_fStyleFromHiddenChild;
-				ltn.m_fSenseIsPara = m_fSenseIsPara;
-				ltn.m_sSenseParaStyle = m_sSenseParaStyle;
-				//ltn.m_sSingleSenseStyle = m_sSingleSenseStyle;
+				ltn.m_xnHiddenNode = m_xnHiddenNode;
+				ltn.m_xnHiddenParentLayout = m_xnHiddenParentLayout;
+				ltn.m_xnParentLayout = m_xnParentLayout;
 				ltn.LexRelType = LexRelType;
 				ltn.RelTypeList = RelTypeList;
 				ltn.EntryType = EntryType;
@@ -3921,12 +3930,6 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_sSenseParaStyle; }
 				set { m_sSenseParaStyle = value; }
 			}
-
-			//public string SingleSenseStyle
-			//{
-			//    get { return m_sSingleSenseStyle; }
-			//    set { m_sSingleSenseStyle = value; }
-			//}
 
 			public bool ContentVisible
 			{
@@ -4251,9 +4254,6 @@ namespace SIL.FieldWorks.XWorks
 							var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "parastyle");
 							if (sSenseParaStyle != m_sSenseParaStyle)
 								return true;
-							//var sSingleParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "singlestyle");
-							//if (sSingleParaStyle != m_sSingleSenseStyle)
-							//    return true;
 						}
 						if (!String.IsNullOrEmpty(LexRelType))
 						{
@@ -4652,8 +4652,6 @@ namespace SIL.FieldWorks.XWorks
 				{
 					bool fSenseIsPara = m_sParam != null && m_sParam.EndsWith("_AsPara");
 					var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "parastyle");
-					//var sSingleParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "singlestyle");
-					//if (fSenseIsPara != m_fSenseIsPara || sSenseParaStyle != m_sSenseParaStyle || sSingleParaStyle != m_sSingleSenseStyle)
 					if (fSenseIsPara != m_fSenseIsPara || sSenseParaStyle != m_sSenseParaStyle)
 						UpdateSenseConfig(xn);
 				}
@@ -4690,7 +4688,6 @@ namespace SIL.FieldWorks.XWorks
 					UpdateAttribute(xn, "param", sParam);
 					UpdateAttribute(xn, "flowType", "divInPara");
 					UpdateAttribute(xn, "parastyle", m_sSenseParaStyle);
-					//UpdateAttribute(xn, "singlestyle", m_sSingleSenseStyle);
 					UpdateAttribute(xn, "before", "");
 					UpdateAttribute(xn, "sep", "");
 					UpdateAttribute(xn, "after", "");
