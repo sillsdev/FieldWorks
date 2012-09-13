@@ -6107,3 +6107,4 @@ SteveMc, September 7, 2012.  Added regasm/regsvr32 calls to EncConvertersDlls ta
 	Windows.targets.
 JohnT, 10 Sep 2012. Added support for building the FW localizations using MSBuild.
 KenZ, 12 Sep 2012. Fixed one msbuild problem that failed on my machine.
+SteveMc, September 12, 2012.  Integrated from Calgary/WW to WW.
