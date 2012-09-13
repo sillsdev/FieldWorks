@@ -116,6 +116,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			s_magicWsIdToWsName[kwsFirstVern] = "best vernacular";
 			s_magicWsIdToWsName[kwsFirstAnalOrVern] = "best analorvern";
 			s_magicWsIdToWsName[kwsFirstVernOrAnal] = "best vernoranal";
+			s_magicWsIdToWsName[kwsPronunciation] = "pronunciation";
 			s_magicWsIdToWsName[kwsFirstPronunciation] = "best pronunciation";
 			s_magicWsIdToWsName[kwsPronunciations] = "all pronunciation";
 			s_magicWsIdToWsName[kwsReversalIndex] = "reversal";
