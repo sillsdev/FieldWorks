@@ -156,7 +156,10 @@ namespace FwBuildTasks
 		/// <returns></returns>
 		public override bool Execute()
 		{
+#if DEBUG
 			string test = RealFwRoot;
+			Debug.WriteLine("RealFwRoot => '{0}'", test);	// keeps compiler from complaining.
+#endif
 			// Get all the .po files paths:
 			string[] poFiles = Directory.GetFiles(PoFileDirectory, PoFileLeadIn + "*" + PoFileExtension);
 
@@ -234,12 +237,20 @@ namespace FwBuildTasks
 			{
 				resgenProc.StartInfo.UseShellExecute = false;
 				resgenProc.StartInfo.RedirectStandardOutput = true;
-				resgenProc.StartInfo.FileName = "resgen.exe"; // Linux: no .exe?
-				// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
-				var clrFolder = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-				string drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
-				string formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
-				resgenProc.StartInfo.Arguments = Quote(localizedResxPath) + " " + Quote(outputResourcePath) + " /r:" + Quote(drawingPath) + " /r:" + Quote(formsPath);
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+				{
+					resgenProc.StartInfo.FileName = "resgen";
+					resgenProc.StartInfo.Arguments = Quote(localizedResxPath) + " " + Quote(outputResourcePath);
+				}
+				else
+				{
+					resgenProc.StartInfo.FileName = "resgen.exe";
+					// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
+					var clrFolder = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+					string drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
+					string formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
+					resgenProc.StartInfo.Arguments = Quote(localizedResxPath) + " " + Quote(outputResourcePath) + " /r:" + Quote(drawingPath) + " /r:" + Quote(formsPath);
+				}
 				// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
 				// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
 				resgenProc.StartInfo.WorkingDirectory = originalResxFolder;
@@ -253,7 +264,7 @@ namespace FwBuildTasks
 					LogError("Error: resgen returned error " + resgenProc.ExitCode +
 						" for " + localizedResxPath + "."
 						+ "\n  Full command line was \n     "
-						+ "resgen " + resgenProc.StartInfo.Arguments);
+						+ resgenProc.StartInfo.FileName + " " + resgenProc.StartInfo.Arguments);
 					return false;
 				}
 			}
@@ -277,13 +288,16 @@ namespace FwBuildTasks
 		/// <returns>true unless an error occurs. (Not currently used).</returns>
 		internal virtual bool RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources )
 		{
-			// Run al.exe (Linux: al?) with the specified arguments
+			// Run assembly linker with the specified arguments
 			Directory.CreateDirectory(Path.GetDirectoryName(outputDllPath)); // make sure the directory in which we want to make it exists.
 			using (var alProc = new Process())
 			{
 				alProc.StartInfo.UseShellExecute = false;
 				alProc.StartInfo.RedirectStandardOutput = true;
-				alProc.StartInfo.FileName = "al.exe"; // Linux: no .exe?
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					alProc.StartInfo.FileName = "al";
+				else
+					alProc.StartInfo.FileName = "al.exe";
 				StringBuilder builder = new StringBuilder();
 				builder.Append(" /out:");
 				builder.Append(Quote(outputDllPath));
@@ -294,8 +308,11 @@ namespace FwBuildTasks
 					builder.Append(",");
 					builder.Append(info.Name);
 				}
-				builder.Append(" /culture:");
-				builder.Append(culture);
+				if (!String.IsNullOrEmpty(culture))
+				{
+					builder.Append(" /culture:");
+					builder.Append(culture);
+				}
 				builder.Append(" /fileversion:");
 				builder.Append(fileversion);
 				builder.Append(" /productversion:");
@@ -317,7 +334,7 @@ namespace FwBuildTasks
 					LogError("Error: assembly linker returned error " + alProc.ExitCode +
 						" for " + outputDllPath + "."
 							  + "\n  Full command line was \n     "
-						+ "alProc " + alProc.StartInfo.Arguments);
+						+ alProc.StartInfo.FileName + " " + alProc.StartInfo.Arguments);
 					return false;
 				}
 			}
@@ -351,6 +368,16 @@ namespace FwBuildTasks
 			var currentFileName = Path.GetFileName(currentFile);
 			Locale = currentFileName.Substring(LocalizeFieldWorks.PoFileLeadIn.Length,
 				currentFileName.Length - LocalizeFieldWorks.PoFileLeadIn.Length - LocalizeFieldWorks.PoFileExtension.Length);
+			try
+			{
+				var x = new System.Globalization.CultureInfo(Locale);
+				LocaleIsSupported = x != null;
+			}
+			catch
+			{
+				Console.WriteLine("Warning: Culture name {0} is not supported.", Locale);
+				LocaleIsSupported = false;
+			}
 		}
 
 		private LocalizeFieldWorks ParentTask;
@@ -362,10 +389,16 @@ namespace FwBuildTasks
 		public string CurrentFile { get; set; }
 
 		private string Locale { get; set; }
+		private bool LocaleIsSupported { get; set; }
 
 		private string Version { get; set; }
 		private string FileVersion { get; set; }
 		private string InformationVersion { get; set; }
+
+		TimeSpan m_xsltTime;
+		TimeSpan m_setupTime;
+		TimeSpan m_resgenTime;
+		TimeSpan m_alTime;
 
 		internal virtual void LogError(string message)
 		{
@@ -374,40 +407,60 @@ namespace FwBuildTasks
 
 		public bool ProcessFile()
 		{
-			if (!CheckForPoFileProblems())
-				return false;
-
-			CreateStringsXml();
-
-			CreateXmlMappingFromPo();
-
-			List<string> projectFolders;
-			if (!GetProjectFolders(out projectFolders))
-				return false;
-			var reader = new StreamReader(ParentTask.AssemblyInfoPath, Encoding.UTF8);
-			while (!reader.EndOfStream)
+			try
 			{
-				string line = reader.ReadLine();
-				if (line == null)
-					continue;
-				if (line.StartsWith("[assembly: AssemblyFileVersion"))
-					FileVersion = ExtractVersion(line);
-				else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
-					InformationVersion = ExtractVersion(line);
-				else if (line.StartsWith("[assembly: AssemblyVersion"))
-					Version = ExtractVersion(line);
+				DateTime dtStart = DateTime.Now;
+				if (ParentTask.Log != null)
+					ParentTask.Log.LogMessage(MessageImportance.Normal, "LocalizeFieldWorks: Processing localization for {0}", Locale);
+				if (!CheckForPoFileProblems())
+					return false;
+
+				CreateStringsXml();
+
+				CreateXmlMappingFromPo();
+
+				List<string> projectFolders;
+				if (!GetProjectFolders(out projectFolders))
+					return false;
+				var reader = new StreamReader(ParentTask.AssemblyInfoPath, Encoding.UTF8);
+				while (!reader.EndOfStream)
+				{
+					string line = reader.ReadLine();
+					if (line == null)
+						continue;
+					if (line.StartsWith("[assembly: AssemblyFileVersion"))
+						FileVersion = ExtractVersion(line);
+					else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
+						InformationVersion = ExtractVersion(line);
+					else if (line.StartsWith("[assembly: AssemblyVersion"))
+						Version = ExtractVersion(line);
+				}
+				reader.Close();
+				if (string.IsNullOrEmpty(FileVersion))
+					FileVersion = "0.0.0.0";
+				if (string.IsNullOrEmpty(InformationVersion))
+					InformationVersion = FileVersion;
+				if (string.IsNullOrEmpty(Version))
+					Version = FileVersion;
+
+				m_setupTime += DateTime.Now - dtStart;
+				Parallel.ForEach(projectFolders, ProcessProject);
+
+				if (ParentTask.Log != null)
+				{
+					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: setup for {0} took {1}", Locale, m_setupTime);
+					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: processing XSLT for {0} took {1} for {2} projects", Locale, m_xsltTime, projectFolders.Count);
+					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: resgen for {0} took {1}", Locale, m_resgenTime);
+					ParentTask.Log.LogMessage(MessageImportance.Low, "LocalizeFieldWorks: al for {0} took {1}", Locale, m_alTime);
+				}
+				return true;
 			}
-			reader.Close();
-			if (string.IsNullOrEmpty(FileVersion))
-				FileVersion = "0.0.0.0";
-			if (string.IsNullOrEmpty(InformationVersion))
-				InformationVersion = FileVersion;
-			if (string.IsNullOrEmpty(Version))
-				Version = FileVersion;
-
-			Parallel.ForEach(projectFolders, ProcessProject);
-
-			return true;
+			catch (Exception ex)
+			{
+				LogError(String.Format("Caught exception processing {0}: {1}", Locale, ex.Message));
+				//LogError(ex.StackTrace);
+				return false;
+			}
 		}
 
 		string ExtractVersion(string line)
@@ -419,37 +472,51 @@ namespace FwBuildTasks
 
 		private void ProcessProject(string projectFolder)
 		{
-			var resxFiles = Directory.GetFiles(projectFolder, "*.resx").ToList();
-			// include child folders, one level down, which do not have their own .csproj.
-			foreach (var childFolder in Directory.GetDirectories(projectFolder))
+			try
 			{
-				if (Directory.GetFiles(childFolder, "*.csproj").Count() > 0)
-					continue;
-				resxFiles.AddRange(Directory.GetFiles(childFolder, "*.resx"));
-			}
-			if (resxFiles.Count == 0)
-				return; // nothing to localize; in particular we should NOT call al with no inputs.
-			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
-			XDocument doc = XDocument.Load(projectFile);
-			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
-			string rootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value;
-			string assemblyName = doc.Descendants(ns + "AssemblyName").First().Value;
-			var embedResources = new List<EmbedInfo>();
-			foreach (var resxFile in resxFiles)
-			{
-				string localizedResxPath = LocalizeResx(resxFile, rootNameSpace, projectFolder);
-				string localizedResourcePath = Path.ChangeExtension(localizedResxPath, ".resources");
-				ParentTask.RunResGen(localizedResourcePath, localizedResxPath, Path.GetDirectoryName(resxFile));
-				embedResources.Add(new EmbedInfo(localizedResourcePath, Path.GetFileName(localizedResourcePath)));
-			}
-			var projectPath = Directory.GetFiles(projectFolder, "*.csproj").First();
-			var projectName = Path.GetFileNameWithoutExtension(projectPath);
-			var resourceFileName = assemblyName + ".resources.dll";
-			var mainDllFolder = Path.Combine(ParentTask.OutputFolder, ParentTask.Config);
-			var localDllFolder = Path.Combine(mainDllFolder, Locale);
-			string resourceDll = Path.Combine(localDllFolder, resourceFileName);
+				DateTime dtStart = DateTime.Now;
+				var resxFiles = Directory.GetFiles(projectFolder, "*.resx").ToList();
+				// include child folders, one level down, which do not have their own .csproj.
+				foreach (var childFolder in Directory.GetDirectories(projectFolder))
+				{
+					if (Directory.GetFiles(childFolder, "*.csproj").Count() > 0)
+						continue;
+					resxFiles.AddRange(Directory.GetFiles(childFolder, "*.resx"));
+				}
+				if (resxFiles.Count == 0)
+					return; // nothing to localize; in particular we should NOT call al with no inputs.
+				var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // only called if there is exactly one.
+				XDocument doc = XDocument.Load(projectFile);
+				XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
+				string rootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value;
+				string assemblyName = doc.Descendants(ns + "AssemblyName").First().Value;
+				var embedResources = new List<EmbedInfo>();
+				m_setupTime += DateTime.Now - dtStart;
+				foreach (var resxFile in resxFiles)
+				{
+					string localizedResxPath = LocalizeResx(resxFile, rootNameSpace, projectFolder);
+					DateTime dtStartRes = DateTime.Now;
+					string localizedResourcePath = Path.ChangeExtension(localizedResxPath, ".resources");
+					ParentTask.RunResGen(localizedResourcePath, localizedResxPath, Path.GetDirectoryName(resxFile));
+					embedResources.Add(new EmbedInfo(localizedResourcePath, Path.GetFileName(localizedResourcePath)));
+					m_resgenTime += DateTime.Now - dtStartRes;
+				}
+				DateTime dtStartAl = DateTime.Now;
+				var resourceFileName = assemblyName + ".resources.dll";
+				var mainDllFolder = Path.Combine(ParentTask.OutputFolder, ParentTask.Config);
+				var localDllFolder = Path.Combine(mainDllFolder, Locale);
+				string resourceDll = Path.Combine(localDllFolder, resourceFileName);
+				string culture = LocaleIsSupported ? Locale : String.Empty;
 
-			ParentTask.RunAssemblyLinker(resourceDll, Locale, FileVersion, InformationVersion, Version, embedResources);
+				ParentTask.RunAssemblyLinker(resourceDll, culture, FileVersion, InformationVersion, Version, embedResources);
+				m_alTime += DateTime.Now - dtStartAl;
+			}
+			catch (Exception ex)
+			{
+				LogError(String.Format("Caught exception processing {0} for {1}: {2}", Path.GetFileName(projectFolder), Locale, ex.Message));
+				//LogError(ex.StackTrace);
+				throw;
+			}
 		}
 
 		private string LocalizeResx(string resxPath, string rootNamespace, string projectFolder)
@@ -464,27 +531,21 @@ namespace FwBuildTasks
 			if (partialDir.Length > projectPartialDir.Length)
 				subFolder = Path.GetFileName(partialDir) + ".";
 			string fileName = rootNamespace + "." + subFolder + resxFileName + "." + Locale + ".resx";
-			// Review Linux: this may be very slow.
-			var transform = new XslCompiledTransform();
-			string stylesheet = Path.Combine(ParentTask.RealBldFolder, "LocalizeResx.xsl");
-			// Settings are required to allow the stylesheet to use the document function to load the translation file.
-			// I don't know whether it actually needs the scripts capability.
-			transform.Load(stylesheet,new XsltSettings(true, true), null);
 			Directory.CreateDirectory(outputFolder);
+			var stylesheet = Path.Combine(ParentTask.RealBldFolder, "LocalizeResx.xsl");
 			var localizedResxPath = Path.Combine(outputFolder, fileName);
-			var writer = new StreamWriter(localizedResxPath, false, Encoding.UTF8);
-			var arguments = new XsltArgumentList();
-			arguments.AddParam("lang", "", Locale);
+			DateTime dtStart = DateTime.Now;
+			var parameters = new List<BuildUtils.XsltParam>();
+			parameters.Add(new BuildUtils.XsltParam() { Name = "lang", Value = Locale });
 			// The output directory that the transform wants is not the one where it will write the file, but the base
 			// Output directory, where it expects to find that we have written the XML version of the PO file, [locale].xml.
-			//arguments.AddParam("verbose", "", "true");
-			arguments.AddParam("outputdir", "", ParentTask.OutputFolder);
-
-			transform.Transform(resxPath, arguments, writer);
-
-			writer.Close();
+			parameters.Add(new BuildUtils.XsltParam() { Name = "outputdir", Value = ParentTask.OutputFolder });
+			//parameters.Add(new XsltParam() { Name = "verbose", Value = "true" });
+			BuildUtils.ApplyXslt(stylesheet, resxPath, localizedResxPath, parameters);
+			m_xsltTime += DateTime.Now - dtStart;
 			return localizedResxPath;
 		}
+
 
 		internal bool GetProjectFolders(out List<string> projectFolders)
 		{
@@ -503,16 +564,20 @@ namespace FwBuildTasks
 		/// <returns></returns>
 		private bool CollectInterestingProjects(string root, List<string> projectFolderCollector)
 		{
+			if (root.EndsWith("Tests"))
+				return true;
+			if (Path.GetFileName(root) == "SidebarLibrary")
+				return true;
+			if (Path.GetFileName(root) == "obj" || Path.GetFileName(root) == "bin")
+				return true;
 			foreach (var subfolder in Directory.EnumerateDirectories(root))
 			{
 				if (!CollectInterestingProjects(subfolder, projectFolderCollector))
 					return false;
 			}
-			if (root.EndsWith("Tests"))
-				return true;
-			if (Path.GetFileName(root) == "SidebarLibrary")
-				return true;
-			var projectFiles = Directory.EnumerateFiles(root, "*.csproj");
+			//for Mono 10.4, Directory.EnumerateFiles(...) seems to see only writeable files???
+			//var projectFiles = Directory.EnumerateFiles(root, "*.csproj");
+			var projectFiles = Directory.GetFiles(root, "*.csproj");
 			if (projectFiles.Count() > 1)
 			{
 				Errors.Add("Error: folder " + root + " has multiple .csproj files.");
@@ -733,68 +798,89 @@ namespace FwBuildTasks
 			converter.Run();
 		}
 
+		enum PoState
+		{
+			Start,		// beginning of file
+			MsgId,		// msgid seen most recently
+			MsgStr		// msgstr seen most recently
+		};
 		private bool CheckForPoFileProblems()
 		{
-			string contents = File.ReadAllText(CurrentFile);
-			// Check for translator using a look-alike character in place of digit 0 or 1 in string.Format control string.
-			if (CheckForError(contents, new Regex("{[oOlLiI]}"),
-				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker using a letter in place of digit 0 or 1"))
-				return false;
-			if (CheckForError(contents, new Regex("[{}][0-9]{"),
-				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
-				return false;
-			if (CheckForError(contents, new Regex("}[0-9][{}]"),
-				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
-				return false;
-			if (CheckForError(contents, new Regex("(^|\r|\n)(msgid|msgstr)[^{]*[0-9]}"),
-				"{0} contains a suspicious string in ({1}) that is probably a mis-typed string substitution marker with a missing opening brace"))
-				return false;
-			if (CheckForError(contents, new Regex("{[0-9][^}]*($|\r|\n)"),
-				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with a missing closing brace"))
-				return false;
-			if (CheckForError(contents, new Regex("(^|\r|\n)(msgid|msgstr)[ \\t]+[^\"]"),
-				"{0} contains a suspicious line starting with ({1}) that is probably a key or value with missing required open quote"))
-				return false;
-			if (CheckForError(contents, new Regex("(^|\r|\n)(msgid|msgstr)[ \\t]+\"[^\"\\r\\n]*(\r|\n)"),
-				"{0} contains a suspicious line ({1}) that is probably a key or value with missing required closing quote"))
-				return false;
-			// Looks for a line starting with msgid followed by any number of lines not starting with msgstr followed by msgid
-			if (CheckForError(contents, new Regex("(^|\r|\n)msgid[^\\r\\n]*(\r|\n)((?!msgstr)[^\\r\\n]*(\r|\n))*(msgid|$)"),
-				"{0} contains a key with no corresponding value: ({1})"))
-				return false;
-			// Looks for a line starting with msgstr followed by any number of lines not starting with msgid followed by msgstr
-			if (CheckForError(contents, new Regex("(^|\r|\n)msgstr[^\\r\\n]*(\r|\n)((?!msgid)[^\\r\\n]*(\r|\n))*msgstr"),
-				"{0} contains a value with no corresponding key: ({1})"))
-				return false; var keyValRegex = new Regex("(^|\r|\n)msgid[ \\t]+\"(.*)\"\\s+msgstr[ \\t]+\"(.*)\"");
-			var matches = keyValRegex.Matches(contents);
+			bool retval = true;
 			var keys = new HashSet<string>();
-			foreach (Match match in matches)
+			var state = PoState.Start;
+			var currentId = String.Empty;
+			var currentValue = string.Empty;
+			foreach (var line in File.ReadLines(CurrentFile))
 			{
-				string msgid = match.Groups[2].Value;
-				if (keys.Contains(msgid))
+				if (String.IsNullOrEmpty(line.Trim()) || line.StartsWith("#"))
+					continue;
+				// Check for translator using a look-alike character in place of digit 0 or 1 in string.Format control string.
+				if (CheckForError(line, new Regex("{[oOlLiI]}"),
+					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker using a letter in place of digit 0 or 1"))
+					retval = false;
+				if (CheckForError(line, new Regex("[{}][0-9]{"),
+					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
+					retval = false;
+				if (CheckForError(line, new Regex("}[0-9][{}]"),
+					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with braces messed up"))
+					retval = false;
+				if (CheckForError(line, new Regex("^(msgid|msgstr)[^{]*[0-9]}"),
+					"{0} contains a suspicious string in ({1}) that is probably a mis-typed string substitution marker with a missing opening brace"))
+					retval = false;
+				if (CheckForError(line, new Regex("{[0-9][^}]*$"),
+					"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker with a missing closing brace"))
+					retval = false;
+				if (CheckForError(line, new Regex("^(msgid|msgstr)[ \\t]+[^\"]"),
+					"{0} contains a suspicious line starting with ({1}) that is probably a key or value with missing required open quote"))
+					retval = false;
+				if (CheckForError(line, new Regex("^(msgid|msgstr)[ \\t]+\"[^\"]*$"),
+					"{0} contains a suspicious line ({1}) that is probably a key or value with missing required closing quote"))
+					retval = false;
+				if (line.StartsWith("msgid"))
 				{
-					LogError(string.Format("{0} contains a duplicate key: {1}", CurrentFile, msgid));
-					return false;
-				}
-				keys.Add(msgid);
-				string msgstr = match.Groups[3].Value;
-				var argRegEx = new Regex("{[0-9]}");
-				int maxArg = -1;
-				foreach (Match idmatch in argRegEx.Matches(msgid))
-					maxArg = Math.Max(maxArg, Convert.ToInt32(idmatch.Value[1]));
-				foreach (Match strmatch in argRegEx.Matches(msgstr))
-				{
-					if (Convert.ToInt32(strmatch.Value[1]) > maxArg)
+					if (state == PoState.MsgStr)
 					{
-						LogError(
-							string.Format(
-								"{0} contains a key/value pair where the value ({1}) has more arguments than the key ({2})",
-								CurrentFile, msgstr, msgid));
-						return false;
+						// We've collected the full Id and Value, so check them.
+						if (!CheckMsgidAndMsgstr(keys, currentId, currentValue))
+							retval = false;
 					}
+					if (state == PoState.MsgId)
+					{
+						LogError(String.Format("{0} contains a key with no corresponding value: ({1})", CurrentFile, currentId));
+						retval = false;
+					}
+					state = PoState.MsgId;
+					currentId = ExtractMsgValue(line);
+					currentValue = string.Empty;
+				}
+				else if (line.StartsWith("msgstr"))
+				{
+					currentValue = ExtractMsgValue(line);
+					if (state != PoState.MsgId)
+					{
+						LogError(String.Format("{0} contains a value with no corresponding key: ({1})", CurrentFile, currentValue));
+						retval = false;
+					}
+					state = PoState.MsgStr;
+				}
+				else if (state == PoState.MsgId)
+				{
+					var id = ExtractMsgValue(line);
+					if (!String.IsNullOrEmpty(id))
+						currentId = currentId + id;
+				}
+				else if (state == PoState.MsgStr)
+				{
+					var val = ExtractMsgValue(line);
+					if (!String.IsNullOrEmpty(val))
+						currentValue = currentValue + val;
 				}
 			}
-			return true;
+			// We need to check the final msgid/msgstr pair.
+			if (!CheckMsgidAndMsgstr(keys, currentId, currentValue))
+				retval = false;
+			return retval;
 		}
 
 		bool CheckForError(string contents, Regex pattern, string message)
@@ -803,6 +889,44 @@ namespace FwBuildTasks
 			if (matches.Count == 0)
 				return false; // all is well.
 			LogError(string.Format(message, CurrentFile, matches[0].Value));
+			return true;
+		}
+
+		string ExtractMsgValue(string line)
+		{
+			var idxMin = line.IndexOf('"');
+			var idxLim = line.LastIndexOf('"');
+			if (idxMin < 0 || idxLim <= idxMin)
+				return string.Empty;
+			++idxMin;	//step past the quote
+			return line.Substring(idxMin, idxLim - idxMin);
+		}
+
+		bool CheckMsgidAndMsgstr(HashSet<string> keys, string msgid, string msgstr)
+		{
+			// allow empty data without complaint
+			if (String.IsNullOrEmpty(msgid) && String.IsNullOrEmpty(msgstr))
+				return true;
+			if (keys.Contains(msgid))
+			{
+				LogError(string.Format("{0} contains a duplicate key: {1}", CurrentFile, msgid));
+				return false;
+			}
+			keys.Add(msgid);
+			var argRegEx = new Regex("{[0-9]}");
+			int maxArg = -1;
+			foreach (Match idmatch in argRegEx.Matches(msgid))
+				maxArg = Math.Max(maxArg, Convert.ToInt32(idmatch.Value[1]));
+			foreach (Match strmatch in argRegEx.Matches(msgstr))
+			{
+				if (Convert.ToInt32(strmatch.Value[1]) > maxArg)
+				{
+					LogError(String.Format(
+						"{0} contains a key/value pair where the value ({1}) has more arguments than the key ({2})",
+						CurrentFile, msgstr, msgid));
+					return false;
+				}
+			}
 			return true;
 		}
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -132,7 +131,6 @@ namespace FwBuildTasks
 
 		private void CreateResX(string folder, string fileName)
 		{
-			XNamespace ns = @"xml";
 			var doc = new XDocument(
 				new XElement("root",
 					new XElement("data",
@@ -251,22 +249,22 @@ namespace FwBuildTasks
 
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
 			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(4));
-			VerifyLinkerArgs(m_sut.OutputFolder + @"\Release\es\FDO.resources.dll", new EmbedInfo[]
-			{ new EmbedInfo(m_sut.OutputFolder + @"\es\FDO\SIL.FDO.FDO-strings.es.resources",
-				"SIL.FDO.FDO-strings.es.resources")
-			});
-			VerifyLinkerArgs(m_sut.OutputFolder + @"\Release\es\FieldWorks.resources.dll", new EmbedInfo[]
-			{ new EmbedInfo(m_sut.OutputFolder + @"\es\Common\FieldWorks\SIL.FieldWorks.FieldWorks-strings.es.resources",
-				"SIL.FieldWorks.FieldWorks-strings.es.resources"),
-			   new EmbedInfo(m_sut.OutputFolder + @"\es\Common\FieldWorks\SIL.FieldWorks.strings.es.resources",
-				"SIL.FieldWorks.strings.es.resources"),
-			   new EmbedInfo(m_sut.OutputFolder + @"\es\Common\FieldWorks\Properties\SIL.FieldWorks.Properties.more strings.es.resources",
-				"SIL.FieldWorks.Properties.more strings.es.resources")
-			});
-			VerifyLinkerArgs(m_sut.OutputFolder + @"\Release\es\xCoreIntName.resources.dll", new EmbedInfo[]
-			{ new EmbedInfo(m_sut.OutputFolder + @"\es\xCore\xCoreInterfaces\SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources",
-				"SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources")
-			});
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FDO.resources.dll"), new EmbedInfo[] {
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "FDO", "SIL.FDO.FDO-strings.es.resources"),
+							  "SIL.FDO.FDO-strings.es.resources")
+				});
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FieldWorks.resources.dll"), new EmbedInfo[] {
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "SIL.FieldWorks.FieldWorks-strings.es.resources"),
+							  "SIL.FieldWorks.FieldWorks-strings.es.resources"),
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "SIL.FieldWorks.strings.es.resources"),
+							  "SIL.FieldWorks.strings.es.resources"),
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "Properties", "SIL.FieldWorks.Properties.more strings.es.resources"),
+							  "SIL.FieldWorks.Properties.more strings.es.resources")
+				});
+			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "xCoreIntName.resources.dll"), new EmbedInfo[] {
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "xCore", "xCoreInterfaces", "SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources"),
+							  "SIL.xCoreInterfaces.xCoreInterfaces-strings.es.resources")
+				});
 		}
 
 		private void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources )
@@ -583,7 +581,7 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				var path = Assembly.GetExecutingAssembly().CodeBase.Substring(@"file:///".Length);
+				var path = BuildUtils.GetAssemblyFolder();
 				while (Path.GetFileName(path) != "Build")
 					path = Path.GetDirectoryName(path);
 				return Path.GetDirectoryName(path);
