@@ -1497,6 +1497,9 @@ catch(Exception e)
 
 		private void InsertEntryDlg_Closed(object sender, EventArgs e)
 		{
+			if (IsDisposed)
+				return; // Prevent interaction w/ Paratext from causing crash here (LT-13582)
+
 			// Save location.
 			SettingsKey.SetValue("InsertX", Location.X);
 			SettingsKey.SetValue("InsertY", Location.Y);
