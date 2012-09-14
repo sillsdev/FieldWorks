@@ -20,7 +20,7 @@
 	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs|ReversalIndexEntry_Subentries">
+  <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs|ReversalIndexEntry_ReferringSenses|ReversalIndexEntry Subentries">
 	<xsl:apply-templates/>
   </xsl:template>
 

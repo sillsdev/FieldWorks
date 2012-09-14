@@ -46,14 +46,8 @@ display/printout!
 	  <xsl:for-each select="../WritingSystemInfo">
 		<xsl:element name="meta">
 		  <xsl:attribute name="name"><xsl:value-of select="@lang"/></xsl:attribute>
-		  <xsl:attribute name="content"><xsl:value-of select="@name"/></xsl:attribute>
-		  <xsl:attribute name="scheme"><xsl:text>Language Name</xsl:text></xsl:attribute>
-	</xsl:element><xsl:text>&#13;&#10;</xsl:text>
-		<xsl:element name="meta">
-		  <xsl:attribute name="name"><xsl:value-of select="@lang"/></xsl:attribute>
 		  <xsl:attribute name="content"><xsl:value-of select="@font"/></xsl:attribute>
-		  <xsl:attribute name="scheme"><xsl:text>Default Font</xsl:text></xsl:attribute>
-	</xsl:element><xsl:text>&#13;&#10;</xsl:text>
+		</xsl:element><xsl:text>&#13;&#10;</xsl:text>
 	  </xsl:for-each>
 	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
   </xsl:template>

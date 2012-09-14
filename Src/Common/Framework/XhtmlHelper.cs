@@ -2173,6 +2173,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns></returns>
 		private string ExtractText(string str, int fromHere, string label, string delimiter)
 		{
+			str = str.Replace("\u2028", "<br/>");
 			int horizon = 30;
 			if (fromHere > str.Length - 1) return null; // nothing to look for
 			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;
