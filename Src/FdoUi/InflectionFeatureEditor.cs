@@ -13,6 +13,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
+using System.Linq;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -300,7 +301,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// (d) Make a new MoStemMsa in the LexEntry with the required POS and features
 		/// and point the sense at it.
 		/// </summary>
-		public void DoIt(Set<int> itemsToChange, ProgressState state)
+		public void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			CheckDisposed();
 
@@ -311,13 +312,13 @@ namespace SIL.FieldWorks.FdoUi
 			var sensesByEntry = new Dictionary<int, Set<ILexSense>>();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach(int hvoSense in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 20 / itemsToChange.Count;
+					state.PercentDone = i * 20 / itemsToChange.Count();
 					state.Breath();
 				}
 				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS))
@@ -477,7 +478,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tagFakeFlid"></param>
 		/// <param name="tagEnable"></param>
 		/// <param name="state"></param>
-		public void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
@@ -486,13 +487,13 @@ namespace SIL.FieldWorks.FdoUi
 			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				bool fEnable = IsItemEligible(m_sda, hvo, possiblePOS);

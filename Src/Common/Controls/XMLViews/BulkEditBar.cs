@@ -1300,7 +1300,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void SetEnabledForAllItems()
 		{
-			m_items = ItemsToChange(false);
+			m_items = ItemsToChangeSet(false);
 			// No.
 			// IVwCacheDa cda = m_cache.VwCacheDaAccessor;
 			UpdateCurrentGhostParentHelper(); // needed for AllowDeleteItem()
@@ -1759,7 +1759,49 @@ namespace SIL.FieldWorks.Common.Controls
 				m_bcNonEmptyTargetControl.TssSeparator, m_bcNonEmptyTargetControl.NonEmptyMode);
 		}
 
-		internal Set<int> ItemsToChange(bool fOnlyIfSelected)
+		/// <summary>
+		/// Return the items that should be changed by the current bulk-edit operation. If the flag is set,
+		/// (which also means we will really do it), return only the ones the user has checked.
+		/// Also in that case, we force a partial sort by homograph number for any lexical entries.
+		/// This helps preserve the homograph numbers in the case where the change causes more than one item
+		/// to move from one homograph set to another.
+		/// </summary>
+		/// <param name="fOnlyIfSelected"></param>
+		/// <returns></returns>
+		internal IEnumerable<int> ItemsToChange(bool fOnlyIfSelected)
+		{
+			var result = ItemsToChangeSet(fOnlyIfSelected);
+			if (!fOnlyIfSelected)
+				return result; // Unordered is fine for preview
+			var repo = m_cache.ServiceLocator.ObjectRepository;
+			var objects = (from hvo in result select repo.GetObject(hvo)).ToList();
+			// The objective is to sort them so that we modify anything that affects a homograph number before we modify
+			// anything that affects the HN of a homograph of the same entry. Thus, things like LexemeForm that affect
+			// the owning entry are sorted by the owning entry.
+			// Where entries have the same HN, we sort arbitrarily.
+			// This means for example that when a bulk edit merges two groups of homographs, changing both, the resulting
+			// order will assign 1 and 2 to the original HN1 items, then 3 and 4 to the original HN2 ones, and so forth.
+			// It will be unpredictable which gets 1 and which gets 2 and so forth.
+			// If this becomes an issue a smarter sort could be produced. It would be slighly more predictable if we just
+			// compared HVO when HN is the same, or we could compare Headwords (before the change).
+			objects.Sort((x,y) =>
+				{
+					var entry1 = x as ILexEntry;
+					if (entry1 == null && x is IMoForm)
+						entry1 = x.Owner as ILexEntry;
+					var entry2 = y as ILexEntry;
+					if (entry2 == null && y is IMoForm)
+						entry1 = y.Owner as ILexEntry;
+					if (entry1 == null)
+						return entry2 == null ? 0 : -1; // any entry is larger than a non-entry.
+					if (entry2 == null)
+						return 1;
+					return entry1.HomographNumber.CompareTo(entry2.HomographNumber);
+				});
+			return (from obj in objects select obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
+		}
+
+		internal Set<int> ItemsToChangeSet(bool fOnlyIfSelected)
 		{
 			CheckDisposed();
 
@@ -4194,7 +4236,7 @@ namespace SIL.FieldWorks.Common.Controls
 		IVwStylesheet Stylesheet { set;}
 		/// <summary>Invoked when the command is to be executed. The argument contains an array of
 		/// the HVOs of the items to which the change should be done (those visible and checked).</summary>
-		void DoIt(Set<int> itemsToChange, ProgressState state);
+		void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is called when the preview button is clicked. The control is passed
@@ -4208,7 +4250,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="tagEnabled">The tag enabled.</param>
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
-		void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state);
+		void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state);
 
 		/// <summary>
 		/// True if the editor can set a value that will make the field 'clear'.
@@ -4473,17 +4515,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="tagEnable">The tag enable.</param>
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
 		{
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				bool fEnable = OkToChange(hvo);
@@ -4493,19 +4535,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		public void Doit(Set<int> itemsToChange, ProgressState state)
+		public void Doit(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			m_sda.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
 			string commitChanges = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "commitChanges");
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				Doit(hvo);
@@ -5008,7 +5050,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_combo; }
 		}
 
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -5017,14 +5059,14 @@ namespace SIL.FieldWorks.Common.Controls
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			foreach (int hvoItem in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				// If the field is on an owned object that might not exist, we don't want to create
@@ -5081,7 +5123,7 @@ namespace SIL.FieldWorks.Common.Controls
 				((int)val == (int)SpellingStatusStates.correct));
 		}
 
-		public override void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			int val = ((IntComboItem) m_combo.SelectedItem).Value;
 			ITsString tssVal = m_cache.TsStrFactory.MakeString(m_combo.SelectedItem.ToString(),
@@ -5089,7 +5131,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			int type = m_sda.MetaDataCache.GetFieldType(m_flid);
 			foreach (int hvoItem in itemsToChange)
@@ -5097,7 +5139,7 @@ namespace SIL.FieldWorks.Common.Controls
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				bool fEnable;
@@ -5221,14 +5263,14 @@ namespace SIL.FieldWorks.Common.Controls
 
 		}
 
-		public override void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
 			ITsString tssVal = TsStringUtils.MakeTss(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
 			{
 				// we present this to the user as "Show" instead of "Hide"
@@ -5241,7 +5283,7 @@ namespace SIL.FieldWorks.Common.Controls
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					Debug.Assert(m_sda.get_IntProp(hvoItem, CmObjectTags.kflidClass) == LexEntryRefTags.kClassId);
@@ -5259,7 +5301,7 @@ namespace SIL.FieldWorks.Common.Controls
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					int hvoField = m_sda.get_ObjectProp(hvoItem, m_flid);
@@ -5279,7 +5321,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return sda.get_IntProp(hvoField, m_flidSub);
 		}
 
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -5287,7 +5329,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
 			{
 				// we present this to the user as "Show" instead of "Hide"
@@ -5300,7 +5342,7 @@ namespace SIL.FieldWorks.Common.Controls
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					Debug.Assert(m_sda.get_IntProp(hvoItem, CmObjectTags.kflidClass) == LexEntryRefTags.kClassId);
@@ -5316,7 +5358,7 @@ namespace SIL.FieldWorks.Common.Controls
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					int hvoField = sda.get_ObjectProp(hvoItem, m_flid);
@@ -5429,12 +5471,12 @@ namespace SIL.FieldWorks.Common.Controls
 			set {  }
 		}
 
-		public virtual void DoIt(Set<int> itemsToChange, ProgressState state)
+		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public virtual void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
@@ -5576,7 +5618,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		public virtual void DoIt(Set<int> itemsToChange, ProgressState state)
+		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
 				m_cache.ActionHandlerAccessor, () =>
@@ -5590,13 +5632,13 @@ namespace SIL.FieldWorks.Common.Controls
 				var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 				int i = 0;
 				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-				int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 				foreach (int hvoItem in itemsToChange)
 				{
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					// If the field is on an owned object that might not exist, the hvoItem might
@@ -5647,7 +5689,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="state">The state.</param>
 		/// ------------------------------------------------------------------------------------
 		/// ------------------------------------------------------------------------------------
-		public virtual void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
 			ProgressState state)
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -5659,13 +5701,13 @@ namespace SIL.FieldWorks.Common.Controls
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach(int hvoItem in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				bool fEnable;
@@ -6040,7 +6082,7 @@ namespace SIL.FieldWorks.Common.Controls
 			set {  }
 		}
 
-		public virtual void DoIt(Set<int> itemsToChange, ProgressState state)
+		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
 				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
@@ -6050,13 +6092,13 @@ namespace SIL.FieldWorks.Common.Controls
 				var chosenObjs = m_chosenObjs;
 				int i = 0;
 				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-				int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 				foreach (int hvoItem in itemsToChange)
 				{
 					i++;
 					if (i % interval == 0)
 					{
-						state.PercentDone = i * 100 / itemsToChange.Count;
+						state.PercentDone = i * 100 / itemsToChange.Count();
 						state.Breath();
 					}
 					if (DisableItem(hvoItem))
@@ -6086,20 +6128,20 @@ namespace SIL.FieldWorks.Common.Controls
 			});
 		}
 
-		public virtual void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
 			ProgressState state)
 		{
 			var chosenObjs = m_chosenObjs;
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			ITsString tssChosenVal = BuildValueString(chosenObjs);
 			foreach (int hvoItem in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				ITsString tssVal = tssChosenVal;
@@ -6306,13 +6348,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return !m_complexEntryRefs.Contains(hvoItem);
 		}
 
-		public override void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			m_complexEntryRefs = null;	// reset the filtered entry refs cache.
 			base.FakeDoit(itemsToChange, tagFakeFlid, tagEnabled, state);
 		}
 
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			m_complexEntryRefs = null; // reset the filtered entry refs cache.
 			base.DoIt(itemsToChange, state);
@@ -6392,7 +6434,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit, m_cache.ActionHandlerAccessor,
 				() =>
@@ -6442,7 +6484,7 @@ namespace SIL.FieldWorks.Common.Controls
 							// (but no more than once per item!)
 							Set<int> idsToDel = new Set<int>();
 							var newForms = new Dictionary<IMoForm, ILexEntry>();
-							int interval = Math.Min(80, Math.Max(itemsToChange.Count/50, 1));
+							int interval = Math.Min(80, Math.Max(itemsToChange.Count()/50, 1));
 							int i = 0;
 							foreach (int hvoLexEntry in itemsToChange)
 							{
@@ -6450,7 +6492,7 @@ namespace SIL.FieldWorks.Common.Controls
 								// new MoForms to LexemeForm slot.
 								if ((i + 1)%interval == 0)
 								{
-									state.PercentDone = i*80/itemsToChange.Count;
+									state.PercentDone = i*80/itemsToChange.Count();
 									state.Breath();
 								}
 								i++;
@@ -6531,7 +6573,7 @@ namespace SIL.FieldWorks.Common.Controls
 			idsToDel.Add(origForm.Hvo);
 		}
 
-		public override void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnabled,
+		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled,
 			ProgressState state)
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -6542,13 +6584,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			int i = 0;
 			foreach (int hvoLexEntry in itemsToChange)
 			{
 				if ((i + 1) % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				int hvoLexemeForm = sda.get_ObjectProp(hvoLexEntry, m_flidParent);

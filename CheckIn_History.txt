@@ -301,3 +301,4 @@ JohnT, 13 Sep 2012. LT-13562 Pronunciation disappears from reversal index
 NaylorJ, 14 Sep 2012. LT-13592 Partially resolves the issue described, does not deal with all Unicode characters, but only the Linebreak one.
 	Also, added some changes which should cleanup xhtml output for reversal indexes.
 JohnT, 14 Sep 2012. LT-13579 Filter not giving correct results
+	Later: LT-12501 Homograph numbers can be inadvertently changed (reordered) via a Citation Form Bulk Replace operation
