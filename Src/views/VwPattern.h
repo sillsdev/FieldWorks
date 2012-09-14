@@ -172,7 +172,7 @@ protected:
 
 	StrUni m_stuLocale; // The name of the locale to use in searching.
 	Locale m_locale; // The locale itself.
-	StrUni m_stuRules; // Any collating rules to use in searching.
+	StrUni m_stuRules; // Any collating rules to use in searching. If the first character is #, it is followed by a locale name, otherwise whole is ICU rules.
 	Collator * m_pcoll; // Collator with all relevant properties.
 	RuleBasedCollator * m_prcoll; // Same collater, if rule-based; otherwise null.
 	Collator::ECollationStrength m_strength; // (PRIMARY, SECONDARY or TERTIARY)
