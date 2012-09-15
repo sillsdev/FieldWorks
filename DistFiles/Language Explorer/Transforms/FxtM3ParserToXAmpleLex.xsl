@@ -1929,7 +1929,7 @@ InflClass
 					   for that inflection class.  In the latter case, we do not create any MECs for those inflection classes and their subclasses. -->
 						<xsl:call-template name="OutputInflectionSubclassAffixMECs">
 							<xsl:with-param name="sTypes" select="$sTypes"/>
-							<xsl:with-param name="class" select="key('InflClassID',@dst)/MoInflClass"/>
+							<xsl:with-param name="class" select="key('InflClassID',@dst)/Subclasses/MoInflClass"/>
 							<xsl:with-param name="sInflectonClassesOfOtherFormsInEntry" select="$sInflectonClassesOfOtherFormsInEntry"/>
 						</xsl:call-template>
 					</xsl:if>
@@ -1989,7 +1989,7 @@ InflClass
 				</xsl:call-template>
 				<xsl:call-template name="OutputInflectionSubclassAffixMECs">
 					<xsl:with-param name="sTypes" select="$sTypes"/>
-					<xsl:with-param name="class" select="MoInflClass"/>
+					<xsl:with-param name="class" select="Subclasses/MoInflClass"/>
 					<xsl:with-param name="sInflectonClassesOfOtherFormsInEntry" select="$sInflectonClassesOfOtherFormsInEntry"/>
 				</xsl:call-template>
 			</xsl:if>

@@ -150,14 +150,14 @@
 \o NaN NaN
 \wc 15341
 \fd InflectionFS16604
-\a ی {15612} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ +/ {InflClass18664} ... _ +/ {ToInflClass18664} ... _ / [15666]_ ا  | / [V] _ ا
+\a ی {15612} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ / [15666]_ ا  | / [V] _ ا
 
-\a ئ {15684} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ +/ {InflClass18664} ... _ +/ {ToInflClass18664} ... _ / [15666]_ [18660]  | / [V] _ [YEH]
+\a ئ {15684} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ / [15666]_ [18660]  | / [V] _ [YEH]
 
 
  ~/ [15666]_ ا  | ~/ [V] _ ا
 
-\a ی {18665} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ +/ {InflClass18664} ... _ +/ {ToInflClass18664} ... _ / _ ے  | / _ ے
+\a ی {18665} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ / _ ے  | / _ ے
 		 / _ ا  | / _ ا
 
 

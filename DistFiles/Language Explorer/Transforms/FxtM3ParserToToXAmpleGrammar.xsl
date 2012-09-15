@@ -1313,7 +1313,7 @@ Let </xsl:text>
 		  <xsl:value-of select="$sInflClassAffix"/>
 		 <xsl:value-of select="@Id"/>
 		 <xsl:choose>
-			<xsl:when test="MoInflClass">
+			<xsl:when test="Subclasses/MoInflClass">
 			   <xsl:text> be {
 		 [inflectionClass:</xsl:text>
 			</xsl:when>
@@ -1325,7 +1325,7 @@ Let </xsl:text>
 		 <xsl:text>]
 		 </xsl:text>
 		 <xsl:call-template name="OutputInflectionSubclassTemplates"/>
-		 <xsl:if test="MoInflClass">
+		 <xsl:if test="Subclasses/MoInflClass">
 			<xsl:text>}
 			</xsl:text>
 		 </xsl:if>
@@ -1351,7 +1351,7 @@ Let&amp;</xsl:text>
 			   <xsl:text>[inflectionClass:</xsl:text>
 			   <xsl:value-of select="@dst"/>
 			   <xsl:text>]</xsl:text>
-			   <xsl:for-each select="key('InflClassID',@dst)[MoInflClass]">
+			   <xsl:for-each select="key('InflClassID',@dst)[Subclasses/MoInflClass]">
 				  <xsl:call-template name="OutputInflectionSubclassTemplates"/>
 			   </xsl:for-each>
 			</xsl:for-each>
@@ -1373,7 +1373,7 @@ Let&amp;</xsl:text>
 	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    -->
    <xsl:template name="OutputInflectionSubclassTemplates">
-	  <xsl:for-each select="MoInflClass">
+	  <xsl:for-each select="Subclasses/MoInflClass">
 		 <xsl:text>[inflectionClass:</xsl:text>
 		 <xsl:value-of select="@Id"/>
 		  <!-- It is crucial tha the following does *not* have any whitespace in it -->
