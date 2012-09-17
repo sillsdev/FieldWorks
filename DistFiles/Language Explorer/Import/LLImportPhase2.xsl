@@ -236,7 +236,14 @@
 	  </xsl:element>
    </xsl:template>
 
-   <!-- Copy everything else -->
+	<!-- Delete elements with empty writing systems (arising from ignore requests in the configuration).
+	We got rid of most of thse in phase 1, but pathologically some higher-level rules may copy
+	strings that still have bad runs. The other two are just insurance.-->
+	<xsl:template match="AStr[@ws='']"/>
+	<xsl:template match="AUni[@ws='']"/>
+	<xsl:template match="Run[@ws='']"/>
+
+	<!-- Copy everything else -->
 
    <xsl:template match="* | @*">
 	  <xsl:copy>
