@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -92,11 +92,11 @@
 	</Reference>
 	<Reference Include="BasicUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>../../../Output/Debug/BasicUtils.dll</HintPath>
+	  <HintPath>..\..\..\Output\$(Configuration)\BasicUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>../../../Output/Debug/Ethnologue.dll</HintPath>
+	  <HintPath>..\..\..\Output\$(Configuration)\Ethnologue.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -104,7 +104,7 @@
 	</Reference>
 	<Reference Include="SilUtils, Version=7.3.0.15611, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	  <HintPath>..\..\..\Output\$(Configuration)\SilUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>

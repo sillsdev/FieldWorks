@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 	<!-- call preparatory Windows targets -->
-	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="EncConvertersDlls"
+	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="MakeDirs;EncConvertersDlls"
 			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 			  DestinationFolder="$(dir-outputBase)"
@@ -17,8 +17,8 @@
 		<EncConverterDllInputs Include="..\DistFiles\Windows\EC\ECInterfaces.dll"/>
 		<EncConverterDllInputs Include="..\DistFiles\Windows\EC\SilEncConverters40.dll"/>
 
-		<EncConverterDllOutputs Include="..\Output\$(config)\ECInterfaces.dll"/>
-		<EncConverterDllOutputs Include="..\Output\$(config)\SilEncConverters40.dll"/>
+		<EncConverterDllOutputs Include="..\Output\$(config-capital)\ECInterfaces.dll"/>
+		<EncConverterDllOutputs Include="..\Output\$(config-capital)\SilEncConverters40.dll"/>
 	</ItemGroup>
 
 	<Target Name="EncConvertersDlls" Condition="'$(OS)'=='Windows_NT'"

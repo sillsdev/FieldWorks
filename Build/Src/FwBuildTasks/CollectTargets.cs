@@ -173,25 +173,27 @@ namespace FwBuildTasks
 				{
 					writer.Write("\t<Target Name=\"{0}\"", project);
 					var bldr = new StringBuilder();
+					bldr.Append("MakeDirs");	// ensure the output directories exist.
+					if (project == "COMInterfaces")
+						bldr.Append(";mktlbs");
+//					{
+//						if (bldr.Length == 0)
+//							bldr.Append("mktlbs");
+//						else
+//							bldr.Insert(0, "mktlbs;");
+//					}
 					var dependencies = m_mapProjDepends[project];
 					foreach (var dep in dependencies)
 					{
 						if (m_mapProjFile.ContainsKey(dep))
 						{
-							if (bldr.Length == 0)
-								bldr.Append(dep);
-							else
+//							if (bldr.Length == 0)
+//								bldr.Append(dep);
+//							else
 								bldr.AppendFormat(";{0}", dep);
 						}
 					}
-					if (project == "COMInterfaces")
-					{
-						if (bldr.Length == 0)
-							bldr.Append("mktlbs");
-						else
-							bldr.Insert(0, "mktlbs;");
-					}
-					if (bldr.Length > 0)
+//					if (bldr.Length > 0)
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					if (project == "MigrateSqlDbs")
 						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");

@@ -9,7 +9,6 @@
 	<OutputType>Library</OutputType>
 	<RootNamespace>FwBuildTasks</RootNamespace>
 	<AssemblyName>FwBuildTasks</AssemblyName>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<CodePage>65001</CodePage>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
@@ -35,7 +34,6 @@
 	<SccLocalPath>SAK</SccLocalPath>
 	<SccAuxPath>SAK</SccAuxPath>
 	<SccProvider>SAK</SccProvider>
-	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -105,6 +103,7 @@
 	<Compile Include="Misc.cs" />
 	<Compile Include="CollectTargets.cs" />
 	<Compile Include="BuildUtils.cs" />
+	<Compile Include="ForceDelete.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

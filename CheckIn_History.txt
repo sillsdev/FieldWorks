@@ -6110,3 +6110,4 @@ KenZ, 12 Sep 2012. Fixed one msbuild problem that failed on my machine.
 SteveMc, September 12, 2012.  Integrated from Calgary/WW to WW.
 SteveMc, September 13, 2012.  Integrated from Calgary/WW to WW.
 Andy Black, 12 Sep 2012.  Fix handling of nested inflection classes for XAmple.
+SteveMc, September 17, 2012.  Integrate from Calgary/WW to WW.
