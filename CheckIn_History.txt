@@ -307,3 +307,4 @@ JohnT, 17 Sep 2012. LT-13467 Error Importing LinguaLinks data
 	Later: parts of LT-13592 Follow standards recommendations for XHTML: handle U+2029, generate direction infor for lang attrs.
 	Later: LT-13587 In the XHTML Export, with multiple senses the numbers are not included in the sense objects.
 	Later: LT-13588 XHTML Export outputs empty subentries elements
+GordonM, 17 Sep 2012. LT-13596 fixed crash importing bad LIFT inflection features and prevent creating them.

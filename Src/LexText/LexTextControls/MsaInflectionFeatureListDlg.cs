@@ -600,6 +600,14 @@ namespace SIL.FieldWorks.LexText.Controls
 									}
 								}
 							}
+							// If the user emptied all the FeatureSpecs (i.e. chose "None of the above" in each area),
+							// then we need to delete the FsFeatStruc. (LT-13596)
+							if (FS.FeatureSpecsOC.Count == 0)
+							{
+								if (m_fs.CanDelete)
+									m_fs.Delete();
+								m_fs = null;
+							}
 						});
 			}
 
