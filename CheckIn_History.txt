@@ -6114,3 +6114,4 @@ SteveMc, September 17, 2012.  Integrate from Calgary/WW to WW.
 RandyR, 17 Sep 2012. Add DM 7000061 that zaps all sorts of unexpectedly unowed 'clutter'. Update FLEx Bridge installer to 0.3.73.
 RandyR, 17 Sep 2012. Revert part of 38583.
 SteveMc, September 17, 2012. Integrate from Calgary/WW to WW again (but different).
+Andy Black, 17 September 2012.  Fix bug in XAmple which caused a crash in Try a Word.
