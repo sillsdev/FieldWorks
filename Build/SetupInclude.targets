@@ -270,7 +270,7 @@
 <!--	<property name="samebranch" -->
 <!--		value="${property::get-value('fwrt') == property::get-value('fwpath')}"-->
 <!--		if="${property::exists('fwpath')}"/>-->
-	<CreateProperty Value="Configuration=$(config-capital)">
+	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase)">
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
 
@@ -317,16 +317,6 @@
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
 	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
-
-	<!-- simplify life by ensuring symbolic links to both Debug and Release -->
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/Debug') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/Debug"/>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/debug') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Debug $(fwrt)/Output/debug"/>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/Release') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Release $(fwrt)/Output/Release"/>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/release') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Release $(fwrt)/Output/release"/>
   </Target>
 
   <PropertyGroup>
