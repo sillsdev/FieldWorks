@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -35,6 +36,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// The data migration stes *must* increment it after it has done its work.
 		/// </summary>
 		int CurrentModelVersion { get; set; }
+
+		/// <summary>
+		/// Get the metadata cache for the repository.
+		/// </summary>
+		IFwMetaDataCacheManaged MDC { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -234,7 +240,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		private readonly HashSet<DomainObjectDTO> m_oldTimers = new HashSet<DomainObjectDTO>();
 		private readonly string m_projectFolder;
 
-		private IFwMetaDataCacheManaged m_mdc;	// needed for some data migrations changing over to custom fields.
+		private readonly IFwMetaDataCacheManaged m_mdc;	// needed for some data migrations changing over to custom fields.
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -357,6 +363,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		{
 			get { return m_currentModelVersionNumber; }
 			set { m_currentModelVersionNumber = value; }
+		}
+
+		/// <summary>
+		/// Get the metadata cache for the repository.
+		/// </summary>
+		public IFwMetaDataCacheManaged MDC
+		{
+			get { return m_mdc; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -695,7 +709,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Create a custom field using the given values.
 		/// </summary>
-		public void CreateCustomField(string className, string fieldName, SIL.CoreImpl.CellarPropertyType cpt,
+		public void CreateCustomField(string className, string fieldName, CellarPropertyType cpt,
 			int destClid, string helpString, int wsSelector, Guid listRoot)
 		{
 			m_mdc.AddCustomField(className, fieldName, cpt, destClid, helpString, wsSelector, listRoot);

@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		}
 
 		/// <summary>
-		/// Rest the xml in the DTO and register the DTO as udated with the repository.
+		/// Reset the xml in the DTO and register the DTO as updated with the repository.
 		/// Use this overload if the class name is changing.
 		/// </summary>
 		/// <remarks>
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 					if (!RemoveEmptyPropertyElements(dtoRepos, ownerDto, ownerElement))
 					{
-						// No empty property elememtns removed, so we have to do the update.
+						// No empty property elements removed, so we have to do the update.
 						UpdateDTO(dtoRepos, ownerDto, ownerElement.ToString());
 					}
 				}
@@ -170,7 +170,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		}
 
 		/// <summary>
-		///	1. Remove objects that claim to have owners, but the owners do not exist.
+		///	1. Remove objects (zombies) that:
+		///		A. claim to have owners, but the owners do not exist, or
+		///		B. owners don't know they own it, or
+		///		C. objects with no owners that are not supported as allowing no owners.
 		///	2. Remove 'dangling' references to objects that no longer exist.
 		/// 3. Remove properties that have no attributes or content.
 		/// </summary>
@@ -179,10 +182,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			// Remove zombies.
 			// By removing zombies first, any references to them will be 'dangling',
 			// so can be removed in the following step.
-			var allInstancesWithValidClasses = dtoRepos.AllInstancesWithValidClasses();
+			var allInstancesWithValidClasses = dtoRepos.AllInstancesWithValidClasses().ToList();
 			RemoveZombies(dtoRepos, allInstancesWithValidClasses);
 			// Ask again, since zombies will have been removed.
-			allInstancesWithValidClasses = dtoRepos.AllInstancesWithValidClasses();
+			allInstancesWithValidClasses = dtoRepos.AllInstancesWithValidClasses().ToList();
 			RemoveDanglingReferences(dtoRepos, allInstancesWithValidClasses);
 			// Get rid of all property elements that are empty,
 			// since the xml loader code isn't happy with certain empty elements.
@@ -191,14 +194,39 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		private static void RemoveZombies(
 			IDomainObjectDTORepository dtoRepos,
-			IEnumerable<DomainObjectDTO> allDtos)
+			IList<DomainObjectDTO> allDtos)
 		{
-			var count = allDtos.Count();
+			var count = allDtos.Count;
+			var legalOwnerlessClasses = new HashSet<string>
+				{
+					// Start at 7.0
+					"LangProject", // Started as no owner allowed.
+					"ScrRefSystem", // Started as no owner allowed.
+					"CmPossibilityList", // Started as required owner. // Optionally unowed 7000010. Required owner re-added and removed again by 7000020.
+					"CmPicture", // Started as no owner allowed. Optionally unowed by 7000019
+					//"UserView", // Started as no owner allowed. Removed in 7000031
+					//"LgWritingSystem", // Started as no owner allowed. Removed in 7000019
+					"WfiWordform", // none 7000001
+					"PunctuationForm", // Added to model in 7000010. Added 'none' between 7000010 and 7000011
+					"LexEntry", // 7000028
+					// Initial release: 7.0.6 at DM 7000037
+
+					//"VirtualOrdering", // 7000040 (added class in 7000038. Added 'none' with no model change number between 39 and 40).
+					// Release 7.1.1 at DM 7000044
+					// Release 7.2.x at DM 7000051 (51 added in 7.2 branch.)
+					// Release 7.3.x at DM 70000xx
+				};
+			if (dtoRepos.CurrentModelVersion >= 7000040)
+				legalOwnerlessClasses.Add("VirtualOrdering");
+			if (dtoRepos.CurrentModelVersion >= 7000059)
+				legalOwnerlessClasses.Add("Text");
+
+
 			var goners = new List<DomainObjectDTO>(count);
 			// Key is guid of owner. Value is set of guids it owns.
 			// In one very large project that ran out of memory, it had 1281871 dtos, and
 			// 115694 of them owned more than one other dto.  So we'll guess that 1/10th
-			// of the total count is a reasonable estimate for the capacity of s_ownerMap.
+			// of the total count is a reasonable estimate for the capacity of ownerMap.
 			var ownerMap = new Dictionary<DomainObjectDTO, HashSet<string>>(count/10);
 			foreach (var currentDto in allDtos)
 			{
@@ -206,7 +234,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (dtoRepos.TryGetOwner(currentDto.Guid, out owningDto))
 				{
 					if (owningDto == null)
-						continue; // does not claim to have an owner, not a problem.
+					{
+						if (dtoRepos.CurrentModelVersion >= 7000060 && !legalOwnerlessClasses.Contains(currentDto.Classname))
+							goners.Add(currentDto); // Not allowed to be unowned, so zap it.
+						continue;
+					}
 
 					// Has owner, but does owner know that it owns it?
 					HashSet<string> ownees;
@@ -217,12 +249,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						if (ownees.Count > 2)
 							ownerMap[owningDto] = ownees;
 					}
-					if (!ownees.Contains(currentDto.Guid.ToLowerInvariant()))
-					{
-						// Current dto  is a zombie, so remove it, and everything it owns.
-						goners.Add(currentDto);
+					if (ownees.Contains(currentDto.Guid.ToLowerInvariant()))
 						continue;
-					}
+					// Current dto  is a zombie, so remove it, and everything it owns.
+					goners.Add(currentDto);
 				}
 				else
 				{
@@ -323,7 +353,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 			// Notify of update, if it changed.
 			var results = false;
-			if (emptyPropertyElements.Count() > 0)
+			if (emptyPropertyElements.Any())
 			{
 				UpdateDTO(dtoRepos, currentDto, rtElement.ToString());
 				results = true;

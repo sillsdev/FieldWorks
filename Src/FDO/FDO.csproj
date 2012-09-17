@@ -346,6 +346,7 @@
 	<Compile Include="DomainServices\DataMigration\DataMigration7000057.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000059.cs" />
 	<Compile Include="DomainServices\DataMigration\DataMigration7000060.cs" />
+	<Compile Include="DomainServices\DataMigration\DataMigration7000061.cs" />
 	<Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
 	<Compile Include="DomainServices\DataMigration\FWVersionTooOld.cs">
 	  <SubType>Form</SubType>

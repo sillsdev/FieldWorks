@@ -309,7 +309,6 @@
 	  <DependentUpon>FocusBoxController.cs</DependentUpon>
 	</Compile>
 	<None Include="ClassDiagram1.cd" />
-	<None Include="FreeTransEditMonitor.cs" />
 	<Compile Include="ImageHolder.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
@@ -367,9 +366,6 @@
 	<Compile Include="InterlinTaggingChild.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
-	<None Include="InterlinTxtCtrl.cs">
-	  <SubType>Code</SubType>
-	</None>
 	<Compile Include="InterlinPrintView.Designer.cs">
 	  <DependentUpon>InterlinPrintView.cs</DependentUpon>
 	</Compile>
@@ -515,10 +511,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="InterlinTaggingChild.resx">
 	  <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="InterlinTxtCtrl.resx">
-	  <DependentUpon>InterlinTxtCtrl.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="IText.ico" />

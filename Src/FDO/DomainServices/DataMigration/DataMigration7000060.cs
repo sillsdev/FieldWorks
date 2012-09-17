@@ -50,13 +50,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		public void PerformMigration(IDomainObjectDTORepository repoDto)
 		{
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000059);
+
 			var configFolder = Path.Combine(repoDto.ProjectFolder, DirectoryFinder.ksConfigurationSettingsDir);
-			var layoutSuffix = "_Layouts.xml";
-			var filesToRename = Directory.GetFiles(configFolder, "*" + layoutSuffix);
-			foreach (var path in filesToRename)
+			if (Directory.Exists(configFolder)) // Some of Randy's test data doesn't have the config folder, so it crashes here.
 			{
-				var newPath = path.Substring(0, path.Length - layoutSuffix.Length) + ".fwlayout";
-				File.Move(path, newPath);
+				const string layoutSuffix = "_Layouts.xml";
+				var filesToRename = Directory.GetFiles(configFolder, "*" + layoutSuffix);
+				foreach (var path in filesToRename)
+				{
+					var newPath = path.Substring(0, path.Length - layoutSuffix.Length) + ".fwlayout";
+					File.Move(path, newPath);
+				}
 			}
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);

@@ -240,7 +240,6 @@
 	<None Include="..\..\..\AppForTests.config">
 	  <Link>AppForTests.config</Link>
 	</None>
-	<None Include="ConcordanceControlTests.cs" />
 	<Compile Include="ImportInterlinearAnalysesTests.cs" />
 	<Compile Include="InterlinearExporterTests.cs" />
 	<Compile Include="BIRDFormatImportTests.cs" />
@@ -259,13 +258,11 @@
 	  <SubType>UserControl</SubType>
 	</Compile>
 	<Compile Include="WordBreakGuesserTests.cs" />
-	<None Include="TextEditingTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="FlexTextImport\FlexTextExportOutput.flextext" />
 	<Content Include="ParagraphParserTestTexts.xml" />
 	<Content Include="InterlinearExporterTests.xml" />
-	<Content Include="TextEditingTestsTexts.xml" />
 	<Content Include="toolConfigurationForITextDllTests.xml" />
   </ItemGroup>
   <ItemGroup>
