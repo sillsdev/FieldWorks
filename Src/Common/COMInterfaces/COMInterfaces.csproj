@@ -92,11 +92,11 @@
 	</Reference>
 	<Reference Include="BasicUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\$(Configuration)\BasicUtils.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\$(Configuration)\Ethnologue.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\Ethnologue.dll</HintPath>
 	</Reference>
 	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -104,7 +104,7 @@
 	</Reference>
 	<Reference Include="SilUtils, Version=7.3.0.15611, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\$(Configuration)\SilUtils.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>
