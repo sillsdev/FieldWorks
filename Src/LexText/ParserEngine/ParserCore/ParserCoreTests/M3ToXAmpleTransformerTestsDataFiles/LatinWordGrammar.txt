@@ -868,9 +868,7 @@ Let ICA18431 be [inflectionClass:18431]
 Let InflClass18432 be [inflectionClass:18432]
 Let FromInflClass18432 be [fromInflectionClass:18432]
 Let ToInflClass18432 be [toInflectionClass:18432]
-Let ICA18432 be {
-		 [inflectionClass:18432]
-		 [inflectionClass:19018][inflectionClass:19019]}
+Let ICA18432 be [inflectionClass:18432]
 
 Let InflClass19018 be [inflectionClass:19018]
 Let FromInflClass19018 be [fromInflectionClass:19018]
@@ -885,16 +883,12 @@ Let ICA19019 be [inflectionClass:19019]
 Let InflClass18433 be [inflectionClass:18433]
 Let FromInflClass18433 be [fromInflectionClass:18433]
 Let ToInflClass18433 be [toInflectionClass:18433]
-Let ICA18433 be {
-		 [inflectionClass:18433]
-		 [inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015]}
+Let ICA18433 be [inflectionClass:18433]
 
 Let InflClass19007 be [inflectionClass:19007]
 Let FromInflClass19007 be [fromInflectionClass:19007]
 Let ToInflClass19007 be [toInflectionClass:19007]
-Let ICA19007 be {
-		 [inflectionClass:19007]
-		 [inflectionClass:19008][inflectionClass:19012]}
+Let ICA19007 be [inflectionClass:19007]
 
 Let InflClass19008 be [inflectionClass:19008]
 Let FromInflClass19008 be [fromInflectionClass:19008]
@@ -909,9 +903,7 @@ Let ICA19012 be [inflectionClass:19012]
 Let InflClass19013 be [inflectionClass:19013]
 Let FromInflClass19013 be [fromInflectionClass:19013]
 Let ToInflClass19013 be [toInflectionClass:19013]
-Let ICA19013 be {
-		 [inflectionClass:19013]
-		 [inflectionClass:19014][inflectionClass:19015]}
+Let ICA19013 be [inflectionClass:19013]
 
 Let InflClass19014 be [inflectionClass:19014]
 Let FromInflClass19014 be [fromInflectionClass:19014]
@@ -926,16 +918,12 @@ Let ICA19015 be [inflectionClass:19015]
 Let InflClass18434 be [inflectionClass:18434]
 Let FromInflClass18434 be [fromInflectionClass:18434]
 Let ToInflClass18434 be [toInflectionClass:18434]
-Let ICA18434 be {
-		 [inflectionClass:18434]
-		 [inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19006]}
+Let ICA18434 be [inflectionClass:18434]
 
 Let InflClass19005 be [inflectionClass:19005]
 Let FromInflClass19005 be [fromInflectionClass:19005]
 Let ToInflClass19005 be [toInflectionClass:19005]
-Let ICA19005 be {
-		 [inflectionClass:19005]
-		 [inflectionClass:19009][inflectionClass:19010][inflectionClass:19011]}
+Let ICA19005 be [inflectionClass:19005]
 
 Let InflClass19009 be [inflectionClass:19009]
 Let FromInflClass19009 be [fromInflectionClass:19009]
@@ -965,9 +953,7 @@ Let ICA18435 be [inflectionClass:18435]
 Let InflClass19047 be [inflectionClass:19047]
 Let FromInflClass19047 be [fromInflectionClass:19047]
 Let ToInflClass19047 be [toInflectionClass:19047]
-Let ICA19047 be {
-		 [inflectionClass:19047]
-		 [inflectionClass:19214]}
+Let ICA19047 be [inflectionClass:19047]
 
 Let InflClass19214 be [inflectionClass:19214]
 Let FromInflClass19214 be [fromInflectionClass:19214]
@@ -977,9 +963,7 @@ Let ICA19214 be [inflectionClass:19214]
 Let InflClass19060 be [inflectionClass:19060]
 Let FromInflClass19060 be [fromInflectionClass:19060]
 Let ToInflClass19060 be [toInflectionClass:19060]
-Let ICA19060 be {
-		 [inflectionClass:19060]
-		 [inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
+Let ICA19060 be [inflectionClass:19060]
 
 Let InflClass19061 be [inflectionClass:19061]
 Let FromInflClass19061 be [fromInflectionClass:19061]
@@ -994,37 +978,35 @@ Let ICA19062 be [inflectionClass:19062]
 Let InflClass19063 be [inflectionClass:19063]
 Let FromInflClass19063 be [fromInflectionClass:19063]
 Let ToInflClass19063 be [toInflectionClass:19063]
-Let ICA19063 be {
-		 [inflectionClass:19063]
-		 [inflectionClass:19374]}
+Let ICA19063 be [inflectionClass:19063]
 
 Let InflClass19374 be [inflectionClass:19374]
 Let FromInflClass19374 be [fromInflectionClass:19374]
 Let ToInflClass19374 be [toInflectionClass:19374]
 Let ICA19374 be [inflectionClass:19374]
 
-Let ICA19012ICA19015ICA19063 be {[inflectionClass:19012][inflectionClass:19015][inflectionClass:19063][inflectionClass:19374]}
-Let ICA18435ICA19047 be {[inflectionClass:18435][inflectionClass:19047][inflectionClass:19214]}
-Let ICA18434ICA18435ICA19047 be {[inflectionClass:18434][inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19006][inflectionClass:18435][inflectionClass:19047][inflectionClass:19214]}
+Let ICA19012ICA19015ICA19063 be {[inflectionClass:19012][inflectionClass:19015][inflectionClass:19063]}
+Let ICA18435ICA19047 be {[inflectionClass:18435][inflectionClass:19047]}
+Let ICA18434ICA18435ICA19047 be {[inflectionClass:18434][inflectionClass:18435][inflectionClass:19047]}
 Let ICA18435ICA19061 be {[inflectionClass:18435][inflectionClass:19061]}
-Let ICA18434ICA18435 be {[inflectionClass:18434][inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19006][inflectionClass:18435]}
-Let ICA19011ICA19018ICA19047 be {[inflectionClass:19011][inflectionClass:19018][inflectionClass:19047][inflectionClass:19214]}
-Let ICA18431ICA18433 be {[inflectionClass:18431][inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015]}
-Let ICA18433ICA19009ICA19010ICA19061ICA19063 be {[inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015][inflectionClass:19009][inflectionClass:19010][inflectionClass:19061][inflectionClass:19063][inflectionClass:19374]}
-Let ICA18433ICA19060 be {[inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015][inflectionClass:19060][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
-Let ICA18434ICA19047 be {[inflectionClass:18434][inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19006][inflectionClass:19047][inflectionClass:19214]}
-Let ICA19005ICA19047 be {[inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19047][inflectionClass:19214]}
-Let ICA18431ICA19008ICA19014ICA19060 be {[inflectionClass:18431][inflectionClass:19008][inflectionClass:19014][inflectionClass:19060][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
-Let ICA19006ICA19012ICA19047ICA19374 be {[inflectionClass:19006][inflectionClass:19012][inflectionClass:19047][inflectionClass:19214][inflectionClass:19374]}
-Let ICA18432ICA18433ICA19060 be {[inflectionClass:18432][inflectionClass:19018][inflectionClass:19019][inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015][inflectionClass:19060][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
-Let ICA19006ICA19047 be {[inflectionClass:19006][inflectionClass:19047][inflectionClass:19214]}
-Let ICA18434ICA19018ICA19047 be {[inflectionClass:18434][inflectionClass:19005][inflectionClass:19009][inflectionClass:19010][inflectionClass:19011][inflectionClass:19006][inflectionClass:19018][inflectionClass:19047][inflectionClass:19214]}
-Let ICA19013ICA19060 be {[inflectionClass:19013][inflectionClass:19014][inflectionClass:19015][inflectionClass:19060][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
-Let ICA19015ICA19061ICA19062ICA19063 be {[inflectionClass:19015][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
-Let ICA19015ICA19060 be {[inflectionClass:19015][inflectionClass:19060][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063][inflectionClass:19374]}
+Let ICA18434ICA18435 be {[inflectionClass:18434][inflectionClass:18435]}
+Let ICA19011ICA19018ICA19047 be {[inflectionClass:19011][inflectionClass:19018][inflectionClass:19047]}
+Let ICA18431ICA18433 be {[inflectionClass:18431][inflectionClass:18433]}
+Let ICA18433ICA19009ICA19010ICA19061ICA19063 be {[inflectionClass:18433][inflectionClass:19009][inflectionClass:19010][inflectionClass:19061][inflectionClass:19063]}
+Let ICA18433ICA19060 be {[inflectionClass:18433][inflectionClass:19060]}
+Let ICA18434ICA19047 be {[inflectionClass:18434][inflectionClass:19047]}
+Let ICA19005ICA19047 be {[inflectionClass:19005][inflectionClass:19047]}
+Let ICA18431ICA19008ICA19014ICA19060 be {[inflectionClass:18431][inflectionClass:19008][inflectionClass:19014][inflectionClass:19060]}
+Let ICA19006ICA19012ICA19047ICA19374 be {[inflectionClass:19006][inflectionClass:19012][inflectionClass:19047][inflectionClass:19374]}
+Let ICA18432ICA18433ICA19060 be {[inflectionClass:18432][inflectionClass:18433][inflectionClass:19060]}
+Let ICA19006ICA19047 be {[inflectionClass:19006][inflectionClass:19047]}
+Let ICA18434ICA19018ICA19047 be {[inflectionClass:18434][inflectionClass:19018][inflectionClass:19047]}
+Let ICA19013ICA19060 be {[inflectionClass:19013][inflectionClass:19060]}
+Let ICA19015ICA19061ICA19062ICA19063 be {[inflectionClass:19015][inflectionClass:19061][inflectionClass:19062][inflectionClass:19063]}
+Let ICA19015ICA19060 be {[inflectionClass:19015][inflectionClass:19060]}
 Let ICA19011ICA19061ICA19062 be {[inflectionClass:19011][inflectionClass:19061][inflectionClass:19062]}
-Let ICA18432ICA18433 be {[inflectionClass:18432][inflectionClass:19018][inflectionClass:19019][inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015]}
-Let ICA18433ICA19009ICA19010ICA19061ICA19063ICA19214 be {[inflectionClass:18433][inflectionClass:19007][inflectionClass:19008][inflectionClass:19012][inflectionClass:19013][inflectionClass:19014][inflectionClass:19015][inflectionClass:19009][inflectionClass:19010][inflectionClass:19061][inflectionClass:19063][inflectionClass:19374][inflectionClass:19214]}
+Let ICA18432ICA18433 be {[inflectionClass:18432][inflectionClass:18433]}
+Let ICA18433ICA19009ICA19010ICA19061ICA19063ICA19214 be {[inflectionClass:18433][inflectionClass:19009][inflectionClass:19010][inflectionClass:19061][inflectionClass:19063][inflectionClass:19214]}
 Let ICA19061ICA19062 be {[inflectionClass:19061][inflectionClass:19062]}
 
 

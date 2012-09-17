@@ -1526,9 +1526,7 @@ Let ICA18509 be [inflectionClass:18509]
 Let InflClass18663 be [inflectionClass:18663]
 Let FromInflClass18663 be [fromInflectionClass:18663]
 Let ToInflClass18663 be [toInflectionClass:18663]
-Let ICA18663 be {
-		 [inflectionClass:18663]
-		 [inflectionClass:18664]}
+Let ICA18663 be [inflectionClass:18663]
 
 Let InflClass18664 be [inflectionClass:18664]
 Let FromInflClass18664 be [fromInflectionClass:18664]
