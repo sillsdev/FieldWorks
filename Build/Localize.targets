@@ -16,7 +16,7 @@
   <!-- Main target for processing all .po files -->
   <UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
   <Target Name="processLanguages">
-	  <LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config)"/>
+	  <LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)"/>
   </Target>
 
 </Project>

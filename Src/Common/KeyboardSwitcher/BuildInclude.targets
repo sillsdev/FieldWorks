@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <Target Name="BeforeBuild" Condition="'$(OS)'=='Unix'">
-	<Copy SourceFiles="@(Files-for-KeyboardSwitcher-Build)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
+	<Copy SourceFiles="@(Files-for-KeyboardSwitcher-Build)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
   </Target>
 
 </Project>

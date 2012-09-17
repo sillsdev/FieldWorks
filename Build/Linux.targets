@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <!-- call preparatory Linux targets -->
-  <Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate"
+  <Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="MakeDirs;unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate"
 	  Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 	<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 		  DestinationFolder="$(dir-outputBase)"
@@ -15,7 +15,7 @@
   </Target>
 
   <Target Name="unitpp" Condition="'$(OS)'=='Unix'" DependsOnTargets="setenvLinux">
-	<Make Makefile="$(fwrt)/Makefile" Target="Unit++-package" Configuration="$(config)" BuildRoot="$(fwrt)" WorkingDirectory="$(fwrt)"/>
+	<Make Makefile="$(fwrt)/Makefile" Target="Unit++-package" Configuration="$(config-capital)" BuildRoot="$(fwrt)" WorkingDirectory="$(fwrt)"/>
   </Target>
 
   <Target Name="setenvLinux" Condition="'$(OS)'=='Unix'">
