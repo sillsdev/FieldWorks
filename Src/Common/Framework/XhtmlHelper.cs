@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -447,6 +448,13 @@ namespace SIL.FieldWorks.Common.Framework
 					m_writer.WriteLine("    counter-increment: page;");
 				}
 				m_writer.WriteLine("}");
+				m_writer.WriteLine();
+				var langProj = m_cache.LangProject;
+				foreach (var ws in langProj.CurrentAnalysisWritingSystems.Union(langProj.CurrentPronunciationWritingSystems).Union(langProj.CurrentVernacularWritingSystems))
+				{
+					var dir = ws.RightToLeftScript;
+					m_writer.WriteLine(":lang(" + ws.IcuLocale+ ") {direction:" + (dir ? "rtl" : "ltr") + "}");
+				}
 				m_writer.WriteLine();
 				if (type == CssType.Dictionary)
 				{
@@ -2173,7 +2181,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns></returns>
 		private string ExtractText(string str, int fromHere, string label, string delimiter)
 		{
+			// Users expect both these characters to cause a break before the next element, but embedding
+			// them in HTML is considered bad practice (LT-13592) so we replace with a break.
 			str = str.Replace("\u2028", "<br/>");
+			str = str.Replace("\u2029", "<br/>");
 			int horizon = 30;
 			if (fromHere > str.Length - 1) return null; // nothing to look for
 			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;

@@ -304,3 +304,4 @@ JohnT, 14 Sep 2012. LT-13579 Filter not giving correct results
 	Later: LT-12501 Homograph numbers can be inadvertently changed (reordered) via a Citation Form Bulk Replace operation
 GordonM, 14 Sep 2012. LT-13582 fixed crash when adding word through Paratext.
 JohnT, 17 Sep 2012. LT-13467 Error Importing LinguaLinks data
+	Later: parts of LT-13592 Follow standards recommendations for XHTML: handle U+2029, generate direction infor for lang attrs.
