@@ -420,7 +420,7 @@
 
 	<layout class="LexEntry" type="jtview" name="publishRootSubentry" css="$fwstyle=Dictionary-Subentry">
 		<sublayout name="publishRootSubentryPara" group="para"/>
-		<part ref="RootSubentriesConfig" flowType="div" label="Subsubentries" parastyle="Dictionary-Subentry" css="subsubentries" recurseConfig="false" param="publishRootSubentry" entrytype="complex" indent="true"/>
+		<part ref="RootSubentriesConfig" flowType="div" label="Subsubentries" parastyle="Dictionary-Subentry" css="subsubentries" recurseConfig="false" param="publishRootSubentry" entrytype="complex" indent="true" visibility="ifdata"/>
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishRootSubentryPara" css="$fwstyle=Dictionary-Subentry">
