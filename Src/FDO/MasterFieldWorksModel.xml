@@ -33,6 +33,13 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  13 September 2012 (7000061): No actual model change, but a data migration to:
+	1. Do the new styles guids properly.
+		A. Remove any unowned StStyle instances, since 38014 didn't remove the old ones or add the new ones to respective owners,
+		B. Reset the "Version" properties to the respective fooStyles.xml files, *before* changeset 38014.
+			This is for CmResource instances with names of "TeStyles" and "FlexStyles", if they are in the data set.
+	2. Remove all but the first <objsur> elements in all atomic owning and reference properties. Also remove all corresponding owned objects. This is to fix bad FW 6.0 data.
+	3. Run Delint method to clean up everything.
   29 Aug 2012 (no model update): Remove 'big' attribute from system.
   16 Aug 2012 (7000060): Change configuration layout files from X_Layouts.xml to X.fwlayout. No model change, just need to run migration.
   29 May 2012 (7000059): Make IText objects unowned to avoid S/R Merge problems.
@@ -167,7 +174,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000060" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000061" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

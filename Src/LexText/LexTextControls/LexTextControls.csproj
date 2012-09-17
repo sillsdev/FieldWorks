@@ -413,10 +413,6 @@
 	  <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<None Include="LiftSynchronizeDlg.cs" />
-	<Compile Include="LiftSynchronizeDlg.Designer.cs">
-	  <DependentUpon>LiftSynchronizeDlg.cs</DependentUpon>
-	</Compile>
 	<Compile Include="LinkAllomorphDlg.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -572,10 +568,6 @@
 	  <SubType>Designer</SubType>
 	  <Generator>ResXFileCodeGenerator</Generator>
 	  <LastGenOutput>LexTextControls.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
-	<EmbeddedResource Include="LiftSynchronizeDlg.resx">
-	  <DependentUpon>LiftSynchronizeDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<EmbeddedResource Include="LinkAllomorphDlg.resx">
 	  <DependentUpon>LinkAllomorphDlg.cs</DependentUpon>

@@ -84,7 +84,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="COMInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
 	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
@@ -234,9 +234,6 @@
 	<Compile Include="CustomListDlgTests.cs">
 	  <SubType>Form</SubType>
 	</Compile>
-	<None Include="DataTreeSmokeTests.cs">
-	  <SubType>Code</SubType>
-	</None>
 	<Compile Include="DeleteCustomListTests.cs" />
 	<Compile Include="DictionaryConfigManagerTests.cs" />
 	<Compile Include="DictionaryConfigViewerStub.cs" />
@@ -246,9 +243,6 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="InterestingTextsTests.cs" />
-	<None Include="RecordClerkTests.cs">
-	  <SubType>Code</SubType>
-	</None>
 	<Compile Include="ItemClickedTests.cs">
 	  <SubType>UserControl</SubType>
 	</Compile>
