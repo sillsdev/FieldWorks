@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string key in forms.Keys)
 			{
 				int wsHvo = GetWsFromLiftLang(key);
-				string form = forms[key].Text;
+				string form =  XmlUtils.DecodeXml(forms[key].Text);
 				if (wsHvo > 0 && !String.IsNullOrEmpty(form))
 				{
 					multi.Remove(wsHvo);
@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (wsHvo > 0)
 					{
 						multi.Remove(wsHvo);
-						string sText = forms[key].Text;
+						string sText = XmlUtils.DecodeXml(forms[key].Text);
 						if (sText.Length > cchMax)
 						{
 							StoreTruncatedDataInfo(sText, cchMax, guidObj, flid, wsHvo);
