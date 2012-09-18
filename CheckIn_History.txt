@@ -312,3 +312,4 @@ GordonM, 18 Sep 2012. revert part of change that caused failing test.
 	  Later: Integrate Eric's fix for LT-13505 from WW
 RickM, 18 Sept 2012. LT-13602 Another case of incorrect xml escaping in LIFT
 JohnT, 18 Sep 2012. LT-13586 XHTML Export error with multiple sense export
+	Later: optimize sorting of SubEntries and VisibleComplexFormBackRefs.

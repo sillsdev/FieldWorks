@@ -1658,6 +1658,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Enhance JohnT: is there some way to pass a valid old value? Does it matter?
 			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this,
 				Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryMLHeadWord, ws, null, MLHeadWord.get_String(ws));
+			((LexEntryRepository)Cache.ServiceLocator.GetInstance<ILexEntryRepository>()).SomeHeadWordChanged();
 		}
 
 		/// <summary>
