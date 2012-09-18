@@ -3659,10 +3659,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		[VirtualProperty(CellarPropertyType.Boolean)]
 		public bool IsEmpty
 		{
-			//get { return TypeRA == null && FeatureDisjunctionsOC.Count == 0 && FeatureSpecsOC.Count == 0; }
+			get { return TypeRA == null && FeatureDisjunctionsOC.Count == 0 && FeatureSpecsOC.Count == 0; }
+
+			// TODO: The following definition of IsEmpty is more accurate for LiftExporter,
+			// but it is used in so many places that it's not trivial to make sure it doesn't break something else.
+
 			// FeatureDisjunctions not yet used. Export should consider a FeatStruc as empty if either Type
 			// or FeatureSpecs is empty. (LT-13596)
-			get { return TypeRA == null || FeatureSpecsOC.Count == 0; }
+			//get { return TypeRA == null || FeatureSpecsOC.Count == 0; }
 		}
 
 		/// <summary>

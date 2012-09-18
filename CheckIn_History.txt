@@ -308,3 +308,4 @@ JohnT, 17 Sep 2012. LT-13467 Error Importing LinguaLinks data
 	Later: LT-13587 In the XHTML Export, with multiple senses the numbers are not included in the sense objects.
 	Later: LT-13588 XHTML Export outputs empty subentries elements
 GordonM, 17 Sep 2012. LT-13596 fixed crash importing bad LIFT inflection features and prevent creating them.
+GordonM, 18 Sep 2012. revert part of change that caused failing test.
