@@ -5529,17 +5529,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		class CompareSensesForReversal : Comparer<ILexSense>
 		{
+			Dictionary<ILexSense, string> m_keySaver = new Dictionary<ILexSense, string>();
+
 			IWritingSystem m_wsVern;
+
 			internal CompareSensesForReversal(IWritingSystem ws)
 			{
 				m_wsVern = ws;
 			}
 
+			string Key(ILexSense sense)
+			{
+				string result;
+				if (m_keySaver.TryGetValue(sense, out result))
+					return result;
+				result = sense.FullReferenceName.Text;
+				m_keySaver[sense] = result;
+				return result;
+			}
+
 			public override int Compare(ILexSense x, ILexSense y)
 			{
-				ITsString tss1 = x.FullReferenceName;
-				ITsString tss2 = y.FullReferenceName;
-				return m_wsVern.Collator.Compare(tss1.Text, tss2.Text);
+				return m_wsVern.Collator.Compare(Key(x), Key(y));
 			}
 		}
 	}

@@ -1154,10 +1154,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// LexEntry/LexSense in ComponentLexemes.
 		public IEnumerable<ILexEntry> GetComplexFormEntries(ICmObject mainEntryOrSense)
 		{
+			var entry = mainEntryOrSense as LexEntry;
+			IEnumerable<ILexEntryRef> candidates;
+			if (entry != null)
+				candidates = entry.ComplexFormRefsWithThisPrimaryEntry;
+			else
+				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisPrimarySense;
 			var retval = new Set<ILexEntry>();
-			foreach (ILexEntryRef ler in m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances())
+			foreach (ILexEntryRef ler in candidates)
 			{
-				if (ler.RefType == LexEntryRefTags.krtComplexForm && ler.ComponentLexemesRS.Contains(mainEntryOrSense))
+				if (ler.RefType == LexEntryRefTags.krtComplexForm)
 				{
 					Debug.Assert(ler.Owner is ILexEntry);
 					retval.Add(ler.Owner as ILexEntry);
