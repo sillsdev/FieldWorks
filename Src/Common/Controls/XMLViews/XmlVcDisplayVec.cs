@@ -313,19 +313,43 @@ namespace SIL.FieldWorks.Common.Controls
 			return fAllMsaSame;
 		}
 
+		// Display the first child (item in the vector) in a special mode which suppresses everything except the child
+		// marked singlegraminfofirst, to show the POS.
 		private void DisplayFirstChildPOS(int firstChildHvo, int childFrag)
 		{
-			// Display the first child in a special mode which suppresses everything except the child
-			// marked singlegraminfofirst, to show the POS.
-			m_viewConstructor.TurnOnGramInfoOnlyDisplay();
-			try
+			var dispCommand = (MainCallerDisplayCommand)m_viewConstructor.m_idToDisplayCommand[childFrag];
+			string layoutName;
+			var parent = dispCommand.GetNodeForChild(out layoutName, childFrag, m_viewConstructor, firstChildHvo);
+			foreach(XmlNode gramInfoPartRef in parent.ChildNodes)
 			{
-				m_vwEnv.AddObj(firstChildHvo, m_viewConstructor, childFrag);
+				if (XmlUtils.GetOptionalBooleanAttributeValue(gramInfoPartRef, "singlegraminfofirst", false))
+				{
+					// It really is the gram info part ref we want.
+					//m_viewConstructor.ProcessPartRef(gramInfoPartRef, firstChildHvo, m_vwEnv); no! the sense is not on the stack.
+					var sVisibility = XmlUtils.GetOptionalAttributeValue(gramInfoPartRef, "visibility", "always");
+					if (sVisibility == "never")
+						return; // user has configured gram info first, but turned off gram info.
+					string morphLayoutName = XmlUtils.GetManditoryAttributeValue(gramInfoPartRef, "ref");
+					var part = m_viewConstructor.GetNodeForPart(firstChildHvo, morphLayoutName, false);
+					if (part == null)
+						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName + " does not exist");
+					var objNode = XmlUtils.GetFirstNonCommentChild(part);
+					if (objNode == null || objNode.Name != "obj")
+						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName + " does not hav a single <obj> child");
+					int flid = XmlVc.GetFlid(objNode, firstChildHvo, m_viewConstructor.DataAccess);
+					int hvoTarget = m_viewConstructor.DataAccess.get_ObjectProp(firstChildHvo, flid);
+					if (hvoTarget == 0)
+						return; // first sense has no category.
+					int fragId = m_viewConstructor.GetSubFragId(objNode, gramInfoPartRef);
+					if (m_vwEnv is ConfiguredExport)
+						(m_vwEnv as ConfiguredExport).BeginCssClassIfNeeded(gramInfoPartRef);
+					m_vwEnv.AddObj(hvoTarget, m_viewConstructor, fragId);
+					if (m_vwEnv is ConfiguredExport)
+						(m_vwEnv as ConfiguredExport).EndCssClassIfNeeded(gramInfoPartRef);
+					return;
+				}
 			}
-			finally
-			{
-				m_viewConstructor.TurnOffGramInfoOnlyDisplay();
-			}
+			throw new ArgumentException("Attempt to display gram info of first child, but template has no singlegraminfofirst");
 		}
 
 		private ITsString SetBeforeString(XmlNode specialAttrsNode, XmlNode listDelimitNode)

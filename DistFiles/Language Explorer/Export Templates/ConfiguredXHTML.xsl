@@ -140,6 +140,17 @@ display/printout!
 	<xsl:apply-templates/>
   </xsl:template>
 
+	<!-- if the senses span begins with an isolated grammatical info that is not part of
+	an individual sense, move it outside the senses list.-->
+	<xsl:template match="span[@class='senses' and LexEntry_Senses/span/@class='grammatical-info']">
+		<xsl:apply-templates select="LexEntry_Senses/span[@class='grammatical-info']"/>
+		<span class="senses"><xsl:apply-templates select="LexEntry_Senses/*[not(name()='span' and @class='grammatical-info')]"/></span>
+	</xsl:template>
+
+	<xsl:template match="MoStemMsa|MoStemMsa_MLPartOfSpeech">
+		<xsl:apply-templates/>
+	</xsl:template>
+
   <xsl:template match="LexEntry_Senses|LexEntry_AlternateForms|LexEntry_Etymology|LexEntry_Pronunciations">
 	<xsl:apply-templates/>
   </xsl:template>

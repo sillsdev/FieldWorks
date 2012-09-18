@@ -146,10 +146,6 @@ namespace SIL.FieldWorks.Common.Controls
 		internal bool ShouldIgnoreGramInfo { get; set; }
 
 		/// <summary>
-		/// This flag is set while we output JUST the child part that is marked 'singlegraminfofirst', typically an MSA.
-		/// </summary>
-		private bool m_fDisplayGramInfoOnly = false;
-		/// <summary>
 		/// This stores a delayed number set up because of the "numDelay" attribute.
 		/// </summary>
 		ITsString m_tssDelayedNumber = null;
@@ -270,22 +266,6 @@ namespace SIL.FieldWorks.Common.Controls
 				return m_mapGuidToReferenceInfo != null || m_mapGuidToComplexRefInfo != null ||
 					   m_mapGuidToVariantRefInfo != null;
 			}
-		}
-
-		/// <summary>
-		/// This allows this flag to be reset while in the DisplayVec method object.
-		/// </summary>
-		internal void TurnOffGramInfoOnlyDisplay()
-		{
-			m_fDisplayGramInfoOnly = false;
-		}
-
-		/// <summary>
-		/// This allows this flag to be set while in the DisplayVec method object.
-		/// </summary>
-		internal void TurnOnGramInfoOnlyDisplay()
-		{
-			m_fDisplayGramInfoOnly = true;
 		}
 
 		/// <summary>
@@ -2394,7 +2374,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Process a 'part ref' node (frag) for the specified object an env.
-		private void ProcessPartRef(XmlNode frag, int hvo, IVwEnv vwenv)
+		internal void ProcessPartRef(XmlNode frag, int hvo, IVwEnv vwenv)
 		{
 			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
 			XmlNode node;
@@ -2410,18 +2390,10 @@ namespace SIL.FieldWorks.Common.Controls
 			if (node == null)
 				return;
 			bool fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(frag, "singlegraminfofirst", false);
-			// If we are ONLY displaying gram info, that is, we're displaying the POS itself ahead of the
-			// list of senses, return unless we found the flag marking the grammatical info part.
-			if (m_fDisplayGramInfoOnly && !fSingleGramInfoFirst)
-				return; // some part ref we want to ignore while inserting the gram info first.
 			// OTOH, if we're displaying the sequence of senses and suppressing gram info and this is the gram
 			// info part, suppress it.
 			if (fSingleGramInfoFirst && ShouldIgnoreGramInfo)
 				return;
-			bool wasDisplayGramInfoOnly = m_fDisplayGramInfoOnly;
-			// In case we're displaying the preliminary gram info, we must turn the flag off while we display it,
-			// to avoid suppressing embedded part refs.
-			m_fDisplayGramInfoOnly = false;
 			try
 			{
 				m_stackPartRef.Insert(0, frag);
@@ -2539,7 +2511,6 @@ namespace SIL.FieldWorks.Common.Controls
 			finally
 			{
 				m_stackPartRef.RemoveAt(0);
-				m_fDisplayGramInfoOnly = wasDisplayGramInfoOnly;
 			}
 		}
 
@@ -4175,7 +4146,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the sub frag id.
 		/// </summary>
-		protected int GetSubFragId(XmlNode frag, XmlNode caller)
+		protected internal int GetSubFragId(XmlNode frag, XmlNode caller)
 		{
 			// New approach: generate an ID that identifies Pair(frag, caller) in m_idToDisplayInfo
 			return GetId(new MainCallerDisplayCommand(frag, caller, false, WsForce), m_idToDisplayCommand, m_displayCommandToId);
