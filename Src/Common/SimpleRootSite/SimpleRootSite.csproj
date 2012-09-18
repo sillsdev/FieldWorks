@@ -59,7 +59,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\Output\Debug\SimpleRootSite.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\SimpleRootSite.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoStdLib>false</NoStdLib>

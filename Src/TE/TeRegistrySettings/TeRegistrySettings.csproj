@@ -51,7 +51,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>obj\TeRegistrySettings.xml</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\TeRegistrySettings.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<Optimize>false</Optimize>

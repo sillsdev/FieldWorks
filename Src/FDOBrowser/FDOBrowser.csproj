@@ -47,7 +47,7 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<DocumentationFile>..\..\Output\Debug\FDOBrowser.XML</DocumentationFile>
+	<DocumentationFile>..\..\Output\Debug\FDOBrowser.xml</DocumentationFile>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<PlatformTarget>x86</PlatformTarget>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>

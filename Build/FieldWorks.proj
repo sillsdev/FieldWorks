@@ -13,7 +13,8 @@
   <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
-  <UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+  <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
+  <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>
@@ -25,6 +26,9 @@
 
   <!-- do nothing target that merely recreates the FieldWorks.targets file -->
   <Target Name="refreshTargets" />
+
+  <!-- dummy target to perform platform specific initialization -->
+  <Target Name="init" DependsOnTargets="initLinux;initWindows"/>
 
   <Target Name="allCsharp">
 	<Message Text="Try building again, the FieldWorks.targets file should now exist."/>

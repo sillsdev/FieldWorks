@@ -112,6 +112,10 @@ namespace FwBuildTasks
 		public override bool Execute()
 		{
 			Environment.SetEnvironmentVariable(Variable, Value);
+			if (Value == null)
+				Log.LogMessage(MessageImportance.Low, "SetEnvVar: '{0}' set to null", Variable);
+			else
+				Log.LogMessage(MessageImportance.Low, "SetEnvVar: '{0}' set to '{1}'", Variable, Value);
 			return true;
 		}
 	}

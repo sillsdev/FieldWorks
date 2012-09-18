@@ -105,6 +105,8 @@
 	<Compile Include="XslTransformation.cs" />
 	<Compile Include="BuildUtils.cs" />
 	<Compile Include="ForceDelete.cs" />
+	<Compile Include="WriteRegistry.cs" />
+	<Compile Include="WriteTextFile.cs" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

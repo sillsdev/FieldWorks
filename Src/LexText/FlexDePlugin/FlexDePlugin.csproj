@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -50,7 +50,7 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<DocumentationFile>..\..\..\Output\Debug\FlexDePlugin.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\FlexDePlugin.xml</DocumentationFile>
 	<FileAlignment>4096</FileAlignment>
 	<BaseAddress>285212672</BaseAddress>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
