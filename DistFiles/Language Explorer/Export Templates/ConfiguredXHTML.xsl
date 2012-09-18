@@ -102,8 +102,19 @@ display/printout!
 				</div>
 				<xsl:text>&#13;&#10;</xsl:text>
 			</xsl:when>
-			<!-- sometimes we get completely empty ones for derived forms...omit them-->
-			<xsl:when test="not(LexEntry_Self)"></xsl:when>
+			<xsl:when test="count(*) = 1 and LexEntry_Self[not(*)]">
+				<!-- Prevent empty LexEntry/LexEntry_Self nodes LT-13589
+				These LexEntries are compound forms with "Show Subentry under" a component
+				and "Show Minor Entry" checked. No main entry should be generated for these.
+				Details: The LexEntry node is generated in ConfiguredExport.AddObjVecItems()
+				while CollectorEnv.AddObjProp() emits tags for LexEntry_Self and
+				/LexEntry_Self via ConfiguredExport.WriteFieldStartTag() and
+				WriteFieldEndTag(). CollectorEnv.AddObjProp() calls XmlVc.Display() which
+				rejects the content in ProcessPartRef() where sVisibility == never. -->
+						</xsl:when>
+			<xsl:when test="not(LexEntry_Self)">
+				<!-- sometimes we get completely empty nodes for derived forms...omit them-->
+						</xsl:when>
 			<xsl:otherwise>
 				<div class="entry">
 					<xsl:copy-of select="@*"/>
