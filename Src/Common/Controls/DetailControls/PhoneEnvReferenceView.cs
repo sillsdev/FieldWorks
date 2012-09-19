@@ -652,6 +652,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
+				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
+				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+				{
+					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
+					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+				}
+
 				int countOfThisEntrysEnvironments = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 				// We need one less than the size,
 				// because the last 'env' is a dummy that lets the user type a new one.
@@ -701,16 +710,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Exclude blank environments
 				var newListOfEnvironmentHvosForEntry = hvosOfEnvironmentsUsedInEntry.Where((hvo) => hvo > 0);
 
-				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
-				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
-				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-				{
-					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
-					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-				}
 				if ((countOfExistingEnvironmentsInDatabaseForEntry != newListOfEnvironmentHvosForEntry.Count())
 					|| !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
 				{
