@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 
-				countOfThisEntrysEnvironments = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
 				int[] contents;
@@ -721,10 +721,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-				if ((countOfThisEntrysEnvironments != newHvos.Length)
+				if ((countOfExistingEnvironmentsInDatabaseForEntry != newHvos.Length)
 					|| !equalArrays(contents, newHvos))
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfThisEntrysEnvironments, newHvos, newHvos.Length);
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newHvos, newHvos.Length);
 				}
 				m_fdoCache.DomainDataByFlid.EndUndoTask();
 			}
