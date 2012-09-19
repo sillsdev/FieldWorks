@@ -714,15 +714,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
-				int[] contents;
+				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
 				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 				{
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
-					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
 				if ((countOfExistingEnvironmentsInDatabaseForEntry != newHvos.Length)
-					|| !equalArrays(contents, newHvos))
+					|| !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newHvos))
 				{
 					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newHvos, newHvos.Length);
 				}
