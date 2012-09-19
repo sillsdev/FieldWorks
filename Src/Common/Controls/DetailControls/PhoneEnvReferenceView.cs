@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
@@ -678,7 +679,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					else
 					{
-						env = FindPhoneEnv(phoneEnvs, rep, tss);
+						env = FindPhoneEnv(phoneEnvs, rep, tss, hvos);
 						if (env == null)
 						{
 							env = factEnv.Create();
@@ -736,23 +737,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private static IPhEnvironment FindPhoneEnv(IFdoOwningSequence<IPhEnvironment> phoneEnvs, string rep, ITsString tss)
+		private static IPhEnvironment FindPhoneEnv(IFdoOwningSequence<IPhEnvironment> phoneEnvsHaystack, string environmentPattern, ITsString tss, int[] usedHvosInASlice)
 		{
-			IPhEnvironment env = null;
-			foreach (IPhEnvironment envCurrent in phoneEnvs)
+			IPhEnvironment envNeedle = null;
+			IPhEnvironment candidateMatch = null;
+			foreach (IPhEnvironment envCurrent in phoneEnvsHaystack)
 			{
 				// Compare them without spaces, since they are not needed.
 				if (envCurrent.StringRepresentation.Text != null &&
 					envCurrent.StringRepresentation.Text.Replace(" ", null) ==
-					rep.Replace(" ", null))
+					environmentPattern.Replace(" ", null))
 				{
-					env = envCurrent;
+					candidateMatch = envCurrent;
+					// Try to find an environment not yet used by this slice, so skip any previously used ones for now
+					if (usedHvosInASlice.Contains(envCurrent.Hvo))
+						continue;
+					envNeedle = envCurrent;
 					// Maybe the ws has changed, so change the real one, in case.
-					env.StringRepresentation = tss;
+					envNeedle.StringRepresentation = tss;
 					break;
 				}
 			}
-			return env;
+			// Go ahead and re-use an envirovment in the slice if couldn't get an unused one.
+			if (envNeedle == null && candidateMatch != null)
+			{
+				envNeedle = candidateMatch;
+				// Maybe the ws has changed, so change the real one, in case.
+				envNeedle.StringRepresentation = tss;
+			}
+			return envNeedle;
 		}
 
 		/// <summary>
