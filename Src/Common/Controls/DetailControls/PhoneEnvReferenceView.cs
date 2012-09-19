@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (a == null || b == null)
 				return false;
-			return a.Replace(" ", null) == b.Replace(" ", null);
+			return RemoveSpaces(a) == RemoveSpaces(b);
 		}
 
 		/// <summary>
