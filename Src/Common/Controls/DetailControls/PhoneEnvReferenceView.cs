@@ -678,19 +678,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					else
 					{
-						foreach (IPhEnvironment envCurrent in phoneEnvs)
-						{
-							// Compare them without spaces, since they are not needed.
-							if (envCurrent.StringRepresentation.Text != null &&
-								envCurrent.StringRepresentation.Text.Replace(" ", null) ==
-								rep.Replace(" ", null))
-							{
-								env = envCurrent;
-								// Maybe the ws has changed, so change the real one, in case.
-								env.StringRepresentation = tss;
-								break;
-							}
-						}
+						env = FindPhoneEnv(phoneEnvs, rep, tss);
 						if (env == null)
 						{
 							env = factEnv.Create();
@@ -746,6 +734,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					wc = null;
 				}
 			}
+		}
+
+		private static IPhEnvironment FindPhoneEnv(IFdoOwningSequence<IPhEnvironment> phoneEnvs, string rep, ITsString tss)
+		{
+			IPhEnvironment env = null;
+			foreach (IPhEnvironment envCurrent in phoneEnvs)
+			{
+				// Compare them without spaces, since they are not needed.
+				if (envCurrent.StringRepresentation.Text != null &&
+					envCurrent.StringRepresentation.Text.Replace(" ", null) ==
+					rep.Replace(" ", null))
+				{
+					env = envCurrent;
+					// Maybe the ws has changed, so change the real one, in case.
+					env.StringRepresentation = tss;
+					break;
+				}
+			}
+			return env;
 		}
 
 		/// <summary>
