@@ -762,11 +762,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// the project, by string
 					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(
 						allAvailablePhoneEnvironmentsInProject, envStringRep,
-						envTssRep, newListOfEnvironmentHvosForEntry.ToArray(),
+						newListOfEnvironmentHvosForEntry.ToArray(),
 						existingListOfEnvironmentHvosInDatabaseForEntry);
 
 					// Maybe the ws has changed, so change the real env in database,
-					//  in case.
+					// in case.
 					anEnvironmentInEntry.StringRepresentation = envTssRep;
 
 					ITsStrBldr bldr = envTssRep.GetBldr();
@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private static IPhEnvironment FindPhoneEnv(
 			IFdoOwningSequence<IPhEnvironment> allProjectEnvs,
-			string environmentPattern, ITsString tss, int[] alreadyUsedHvos,
+			string environmentPattern, int[] alreadyUsedHvos,
 			int[] preferredHvos)
 		{
 			// Try to find a match in the preferred set that isn't already used
