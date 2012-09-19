@@ -608,6 +608,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CacheEnvironments((IMoAffixAllomorph)m_rootObj);
 		}
 
+		/// <returns>
+		/// First matching environment from environmentsHaystack or null if none
+		/// found.
+		/// </returns>
+		private static IPhEnvironment GetEnvironmentFromHvo(
+			IFdoOwningSequence<IPhEnvironment> environmentsHaystack,
+			int hvoPattern)
+		{
+			return environmentsHaystack.FirstOrDefault(env =>
+				env.Hvo == hvoPattern);
+		}
+
 		/// <remarks>
 		/// From local m_sda, not from database
 		/// </remarks>
@@ -618,6 +630,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
 			return environmentTssRep ?? m_fdoCache.TsStrFactory.MakeString(
 				String.Empty, m_fdoCache.DefaultAnalWs);
+		}
+
+		/// <summary>
+		/// From local m_sda, not from database
+		/// </summary>
+		private string GetStringOfEnvironment(
+			int localDummyHvoOfAnEnvironmentInEntry)
+		{
+			return GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry).Text;
 		}
 
 		/// <summary>
@@ -664,26 +685,34 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
-				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				var countOfExistingEnvironmentsInDatabaseForEntry =
+					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				// Contains environments already in entry or recently selected in dialog, but not ones just typed
 				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
-				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
+					m_rootObj.Hvo, m_rootFlid);
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 				{
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
 
-				int countOfThisEntrysEnvironments = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
-				// We need one less than the size,
-				// because the last 'env' is a dummy that lets the user type a new one.
-				int[] hvosOfEnvironmentsUsedInEntry = new int[countOfThisEntrysEnvironments - 1];
-				for (int i = hvosOfEnvironmentsUsedInEntry.Length - 1; i >= 0; --i)
+				// -1 since last one is a dummy that lets the user type a new environment
+				int countOfThisEntrysEnvironments =
+					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) - 1;
+				// Build list of local dummy hvos of environments in the entry
+				// after (possibly) being changed.
+				var envsBeingRequestedForThisEntry =
+					new List<int>();
+				for (int i = 0; i < countOfThisEntrysEnvironments; i++)
 				{
-					int localDummyHvoOfAnEnvironmentInEntry = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-					ITsString tsStringOfAnEnvironmentInEntry = GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
-					string stringOfAnEnvironmentInEntry = tsStringOfAnEnvironmentInEntry.Text;
+					int localDummyHvoOfAnEnvironmentInEntry =
+						m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
 
-					if (stringOfAnEnvironmentInEntry == null || stringOfAnEnvironmentInEntry.Trim().Length == 0)
+					// Remove and exclude blank entries
+					ITsString envTssRep = GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
+					string envStringRep = envTssRep.Text;
+					if (envStringRep == null || envStringRep.Trim().Length == 0)
 					{
 						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
 						// Remove it from the dummy cache.
@@ -691,41 +720,67 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
 						RemoveFromDummyCache(i);
 						m_hvoOldSelection = oldSelId;
-						continue;
 					}
+					else
+						envsBeingRequestedForThisEntry.Add(
+							localDummyHvoOfAnEnvironmentInEntry);
+				}
 
-					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject,
-						stringOfAnEnvironmentInEntry, tsStringOfAnEnvironmentInEntry,
-						hvosOfEnvironmentsUsedInEntry);
-					if (anEnvironmentInEntry == null)
-					{
-						// New environment to project
-						anEnvironmentInEntry = environmentFactory.Create();
-						allAvailablePhoneEnvironmentsInProject.Add(anEnvironmentInEntry);
-						anEnvironmentInEntry.StringRepresentation = tsStringOfAnEnvironmentInEntry;
-					}
-					ITsStrBldr bldr = tsStringOfAnEnvironmentInEntry.GetBldr();
+				// Environments just typed into slice that are not already used for this entry or known about in the project.
+				var newEnvsJustTyped =
+					envsBeingRequestedForThisEntry.Where(localDummyHvoOfAnEnvInEntry =>
+						!allAvailablePhoneEnvironmentsInProject
+							.Select(projectEnv => RemoveSpaces(projectEnv.StringRepresentation.Text))
+							.Contains(RemoveSpaces(GetStringOfEnvironment(localDummyHvoOfAnEnvInEntry))));
+				// Add new environments to project
+				foreach (var localDummyHvoOfAnEnvironmentInEntry in newEnvsJustTyped)
+				{
+					ITsString envTssRep = GetTsStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
+					IPhEnvironment newEnv = environmentFactory.Create();
+					allAvailablePhoneEnvironmentsInProject.Add(newEnv);
+					newEnv.StringRepresentation = envTssRep;
+				}
+
+				// Build up list of hvos used in real database for the environments in the entry
+				var newListOfEnvironmentHvosForEntry = new List<int>();
+				foreach (var localDummyHvoOfAnEnvironmentInEntry in
+					envsBeingRequestedForThisEntry)
+				{
+					ITsString envTssRep = GetTsStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
+					string envStringRep = envTssRep.Text;
+
+					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(
+						allAvailablePhoneEnvironmentsInProject, envStringRep,
+						envTssRep, newListOfEnvironmentHvosForEntry.ToArray());
+
+					ITsStrBldr bldr = envTssRep.GetBldr();
 					ConstraintFailure failure;
 					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
-						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref tsStringOfAnEnvironmentInEntry, ref bldr);
+						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref envTssRep, ref bldr);
 					else
-						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref tsStringOfAnEnvironmentInEntry, ref bldr);
-					hvosOfEnvironmentsUsedInEntry[i] = anEnvironmentInEntry.Hvo;
+						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref envTssRep, ref bldr);
+
+					newListOfEnvironmentHvosForEntry.Add(anEnvironmentInEntry.Hvo);
+
 					// Refresh
 					m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
 					m_rootb.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0,
-						tsStringOfAnEnvironmentInEntry.Length, tsStringOfAnEnvironmentInEntry.Length);
+						envTssRep.Length, envTssRep.Length);
 				}
-
-				// Exclude blank environments
-				var newListOfEnvironmentHvosForEntry = hvosOfEnvironmentsUsedInEntry.Where((hvo) => hvo > 0);
 
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
-				if ((countOfExistingEnvironmentsInDatabaseForEntry != newListOfEnvironmentHvosForEntry.Count())
-					|| !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
+				if ((countOfExistingEnvironmentsInDatabaseForEntry !=
+					newListOfEnvironmentHvosForEntry.Count()) ||
+					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry,
+						newListOfEnvironmentHvosForEntry.ToArray()))
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray(), newListOfEnvironmentHvosForEntry.Count());
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0,
+						countOfExistingEnvironmentsInDatabaseForEntry,
+						newListOfEnvironmentHvosForEntry.ToArray(),
+						newListOfEnvironmentHvosForEntry.Count());
 				}
 				m_fdoCache.DomainDataByFlid.EndUndoTask();
 			}
@@ -739,7 +794,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private static IPhEnvironment FindPhoneEnv(IFdoOwningSequence<IPhEnvironment> phoneEnvsHaystack, string environmentPattern, ITsString tss, int[] usedHvosInASlice)
+		private static string RemoveSpaces(string s)
+		{
+			if (s == null)
+				return null;
+			return s.Replace(" ", null);
+		}
+
+		/// <summary>
+		/// Find an environment in phoneEnvsHaystack of string representation
+		/// environmentPattern. Prefer to find a match that isn't in
+		/// usedHvosInASlice.
+		/// </summary>
+		private static IPhEnvironment FindPhoneEnv(
+			IFdoOwningSequence<IPhEnvironment> phoneEnvsHaystack,
+			string environmentPattern, ITsString tss, int[] usedHvosInASlice)
 		{
 			IPhEnvironment envNeedle = null;
 			IPhEnvironment candidateMatch = null;
@@ -751,7 +820,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					environmentPattern.Replace(" ", null))
 				{
 					candidateMatch = envCurrent;
-					// Try to find an environment not yet used by this slice, so skip any previously used ones for now
+					// Try to find an environment not yet used by this slice, so
+					// skip any previously used ones for now
 					if (usedHvosInASlice.Contains(envCurrent.Hvo))
 						continue;
 					envNeedle = envCurrent;
@@ -760,7 +830,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
-			// Go ahead and re-use an envirovment in the slice if couldn't get an unused one.
+			// Go ahead and re-use an envirovment in the slice if couldn't get an
+			// unused one.
 			if (envNeedle == null && candidateMatch != null)
 			{
 				envNeedle = candidateMatch;
