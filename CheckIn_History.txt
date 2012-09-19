@@ -6117,3 +6117,4 @@ SteveMc, September 17, 2012. Integrate from Calgary/WW to WW again (but differen
 Andy Black, 17 September 2012.  Fix bug in XAmple which caused a crash in Try a Word.
 LastufkaM, 18 September 2012. LT-13589 XHTML Export exports empty entries and assigns them id tags.
 SteveMc, September 19, 2012.  Integrate from Calgary/WW to WW.
+SteveMc, September 19, 2012.  Fix MigrateSqlDbs project to NOT copy output to DistFiles.

@@ -182,11 +182,10 @@
 	   Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
-  <PropertyGroup>
-	<PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\..\DistFiles\$(TargetFileName)
-copy $(TargetPath) $(ProjectDir)..\..\Output\$(ConfigurationName)\$(TargetFileName)</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterBuild">
+	<Copy SourceFiles="$(TargetPath)"
+		  DestinationFolder="$(ProjectDir)..\..\Output\$(ConfigurationName)"
+		  Condition="'$(OS)'=='Windows_NT'"/>
+  </Target>
 </Project>
