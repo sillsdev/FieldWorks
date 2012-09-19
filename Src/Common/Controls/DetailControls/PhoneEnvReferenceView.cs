@@ -658,43 +658,46 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int cvDel = 0;
 				for (int i = hvosOfEnvironmentsUsedInEntry.Length - 1; i >= 0; --i)
 				{
-					IPhEnvironment env = null;
-					int hvoDummyObj = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-					ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
-					if (tss == null)
-						tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
-					ITsStrBldr bldr = tss.GetBldr();
-					string rep = tss.Text;
-					if (rep == null || rep.Trim().Length == 0)
+					int localDummyHvoOfAnEnvironmentInEntry = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
+					ITsString tssStringOfAnEnvironmentInEntry = m_sda.get_StringProp(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
+					if (tssStringOfAnEnvironmentInEntry == null)
+						tssStringOfAnEnvironmentInEntry = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
+					string stringOfAnEnvironmentInEntry = tssStringOfAnEnvironmentInEntry.Text;
+					if (stringOfAnEnvironmentInEntry == null || stringOfAnEnvironmentInEntry.Trim().Length == 0)
 					{
 						// The environment at 'i' is being deleted, so
 						// shrink the array of hvos that go into the real cache.
 						cvDel++;
-						m_realEnvs.Remove(hvoDummyObj);
+						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
 						// Remove it from the dummy cache.
 						int oldSelId = m_hvoOldSelection;
-						m_hvoOldSelection = hvoDummyObj;
+						m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
 						RemoveFromDummyCache(i);
 						m_hvoOldSelection = oldSelId;
 					}
 					else
 					{
-						env = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject, rep, tss, hvosOfEnvironmentsUsedInEntry);
-						if (env == null)
+						IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject,
+							stringOfAnEnvironmentInEntry, tssStringOfAnEnvironmentInEntry,
+							hvosOfEnvironmentsUsedInEntry);
+						if (anEnvironmentInEntry == null)
 						{
-							env = environmentFactory.Create();
-							allAvailablePhoneEnvironmentsInProject.Add(env);
-							env.StringRepresentation = tss;
+							// New environment to project
+							anEnvironmentInEntry = environmentFactory.Create();
+							allAvailablePhoneEnvironmentsInProject.Add(anEnvironmentInEntry);
+							anEnvironmentInEntry.StringRepresentation = tssStringOfAnEnvironmentInEntry;
 						}
+						ITsStrBldr bldr = tssStringOfAnEnvironmentInEntry.GetBldr();
 						ConstraintFailure failure;
-						if (env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
-							ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
+						if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
+							ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref tssStringOfAnEnvironmentInEntry, ref bldr);
 						else
-							MakeSquigglyLine(hvoDummyObj, failure.XmlDescription, ref tss, ref bldr);
-						hvosOfEnvironmentsUsedInEntry[i] = env.Hvo;
+							MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref tssStringOfAnEnvironmentInEntry, ref bldr);
+						hvosOfEnvironmentsUsedInEntry[i] = anEnvironmentInEntry.Hvo;
 						// Refresh
-						m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
-						m_rootb.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
+						m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
+						m_rootb.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0,
+							tssStringOfAnEnvironmentInEntry.Length, tssStringOfAnEnvironmentInEntry.Length);
 					}
 				}
 				int[] newHvos = new int[hvosOfEnvironmentsUsedInEntry.Length];
