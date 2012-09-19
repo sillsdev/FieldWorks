@@ -651,6 +651,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IPhEnvironmentFactory environmentFactory = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
+
 				int countOfThisEntrysEnvironments = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 				// We need one less than the size,
 				// because the last 'env' is a dummy that lets the user type a new one.
