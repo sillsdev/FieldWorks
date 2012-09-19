@@ -59,7 +59,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>obj\FwCoreDlgsTests.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\FwCoreDlgsTests.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoStdLib>false</NoStdLib>

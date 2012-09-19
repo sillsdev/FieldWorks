@@ -84,6 +84,7 @@
 	</Target>
 
   <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
+
 	<!-- set fwrt to the proper value before we do anything else. -->
 	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
 	  <Output TaskParameter="Value" PropertyName="fwrt"/>
@@ -122,7 +123,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-buildOutputInterop"/>
 	</CreateProperty>
 
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="Lib">
+	<PathCombine BasePath="$(fwrt)" SubPath="Lib">
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlib"/>
 	</PathCombine>
 

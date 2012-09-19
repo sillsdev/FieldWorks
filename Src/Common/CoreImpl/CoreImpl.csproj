@@ -46,7 +46,7 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<DocumentationFile>obj/CoreImpl.xml</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\CoreImpl.xml</DocumentationFile>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>

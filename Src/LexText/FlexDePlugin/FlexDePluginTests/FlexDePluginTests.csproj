@@ -45,7 +45,7 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<DocumentationFile>..\..\..\..\Output\Debug\FlexDePluginTests.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\..\Output\Debug\FlexDePluginTests.xml</DocumentationFile>
 	<FileAlignment>4096</FileAlignment>
 	<BaseAddress>285212672</BaseAddress>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>

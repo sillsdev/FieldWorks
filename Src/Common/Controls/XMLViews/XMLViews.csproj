@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -59,7 +59,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\..\Output\Debug\XMLViews.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\..\Output\Debug\XMLViews.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>

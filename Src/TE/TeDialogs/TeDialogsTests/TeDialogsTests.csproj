@@ -59,7 +59,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>obj\TeDialogsTests.xml</DocumentationFile>
+	<DocumentationFile>..\..\..\..\Output\Debug\TeDialogsTests.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoStdLib>false</NoStdLib>

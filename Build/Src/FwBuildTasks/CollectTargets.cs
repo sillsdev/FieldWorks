@@ -201,7 +201,21 @@ namespace FwBuildTasks
 						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\" Properties=\"$(msbuild-props)\" ToolsVersion=\"4.0\"/>");
+					var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
+					projectSubDir = projectSubDir.Substring(m_fwroot.Length);
+					projectSubDir = projectSubDir.Replace("\\", "/");
+					if (projectSubDir.StartsWith("/Src/"))
+						projectSubDir = projectSubDir.Substring(5);
+					else if (projectSubDir.StartsWith("/Lib/src/"))
+						projectSubDir = projectSubDir.Substring(9);
+					else if (projectSubDir.StartsWith("/"))
+						projectSubDir = projectSubDir.Substring(1);
+					if (Path.DirectorySeparatorChar != '/')
+						projectSubDir = projectSubDir.Replace('/', Path.DirectorySeparatorChar);
+					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
+					writer.WriteLine("\t\t         Properties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
+						Path.DirectorySeparatorChar, projectSubDir);
+					writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
 					if (project.EndsWith("Tests"))
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");

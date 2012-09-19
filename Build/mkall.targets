@@ -6,8 +6,18 @@
 		<Message Text="Finished mkall Target."/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine"/>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine"/>
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine;createCompMaps">
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+	</Target>
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine;createCompMaps">
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
 		<CreateProperty Value="all" Condition="'$(action)'=='test'">
@@ -278,7 +288,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;MakeDirs;IcuData;mkall"/>
+	<Target Name="remakefw" DependsOnTargets="CleanAll;MakeDirs;IcuData;setRegistryValues;CopyDlls;mkall"/>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
@@ -288,6 +298,62 @@
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(IcuDataFiles)"/>
+
+		<Message Text="Finished deleting the output directories!"/>
+	</Target>
+
+	<Target Name="CopyDlls">
+		<!-- .Net assemblies -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/log4net.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/Lib/Common/Interop.ResourceDriver.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Linux shared libraries -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/libxample32.so" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+		<!-- Windows dynamically loaded libraries -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+	</Target>
+
+	<Target Name="setRegistryValues" Condition="'$(OS)'=='Unix' Or '$(UserIsAdmin)'=='True'" DependsOnTargets="initLinux;initWindows">
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
+					   Value="$(dir-fwdistfiles)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
+					   Value="$(dir-fwdistfiles)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
+					   Value="$(dir-fwdistfiles)\Projects"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\Icu40DataDir"
+					   Value="$(dir-icuData)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\Icu40Dir"
+					   Value="$(dir-icu)"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC Common"
+					   Condition="'$(OS)'=='Windows_NT'"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
+					   Condition="'$(OS)'=='Windows_NT'"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+					   Value="$(dir-outputBase)"
+					   Condition="'$(OS)'=='Unix'"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+					   Value="$(dir-outputBase)/EC/Plugins"
+					   Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 </Project>
