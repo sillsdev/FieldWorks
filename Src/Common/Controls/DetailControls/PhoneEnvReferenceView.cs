@@ -656,7 +656,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We need one less than the size,
 				// because the last 'env' is a dummy that lets the user type a new one.
 				int[] hvosOfEnvironmentsUsedInEntry = new int[countOfThisEntrysEnvironments - 1];
-				int countOfEnvironmentsBeingRemovedFromEntry = 0;
 				for (int i = hvosOfEnvironmentsUsedInEntry.Length - 1; i >= 0; --i)
 				{
 					int localDummyHvoOfAnEnvironmentInEntry = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
@@ -667,9 +666,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 					if (stringOfAnEnvironmentInEntry == null || stringOfAnEnvironmentInEntry.Trim().Length == 0)
 					{
-						// The environment at 'i' is being deleted, so
-						// shrink the array of hvos that go into the real cache.
-						countOfEnvironmentsBeingRemovedFromEntry++;
 						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
 						// Remove it from the dummy cache.
 						int oldSelId = m_hvoOldSelection;
@@ -702,19 +698,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						tssStringOfAnEnvironmentInEntry.Length, tssStringOfAnEnvironmentInEntry.Length);
 				}
 
-				int[] newListOfEnvironmentHvosForEntry = new int[hvosOfEnvironmentsUsedInEntry.Length];
-				hvosOfEnvironmentsUsedInEntry.CopyTo(newListOfEnvironmentHvosForEntry, 0);
-				if (countOfEnvironmentsBeingRemovedFromEntry > 0)
-				{
-					newListOfEnvironmentHvosForEntry = new int[hvosOfEnvironmentsUsedInEntry.Length - countOfEnvironmentsBeingRemovedFromEntry];
-					int j = 0;
-					for (int i = 0; i < hvosOfEnvironmentsUsedInEntry.Length; ++i)
-					{
-						int tempHvo = hvosOfEnvironmentsUsedInEntry[i];
-						if (tempHvo > 0)
-							newListOfEnvironmentHvosForEntry[j++] = tempHvo;
-					}
-				}
+				// Exclude blank environments
+				var newListOfEnvironmentHvosForEntry = hvosOfEnvironmentsUsedInEntry.Where((hvo) => hvo > 0);
 
 				var countOfExistingEnvironmentsInDatabaseForEntry = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
@@ -726,10 +711,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-				if ((countOfExistingEnvironmentsInDatabaseForEntry != newListOfEnvironmentHvosForEntry.Length)
-					|| !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry))
+				if ((countOfExistingEnvironmentsInDatabaseForEntry != newListOfEnvironmentHvosForEntry.Count())
+					|| !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newListOfEnvironmentHvosForEntry, newListOfEnvironmentHvosForEntry.Length);
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray(), newListOfEnvironmentHvosForEntry.Count());
 				}
 				m_fdoCache.DomainDataByFlid.EndUndoTask();
 			}
