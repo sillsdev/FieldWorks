@@ -648,15 +648,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fdoCache.DomainDataByFlid.BeginUndoTask(
 					String.Format(DetailControlsStrings.ksUndoSet, fieldname),
 					String.Format(DetailControlsStrings.ksRedoSet, fieldname));
-				IPhEnvironmentFactory factEnv = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
-				IFdoOwningSequence<IPhEnvironment> phoneEnvs =
+				IPhEnvironmentFactory environmentFactory = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
+				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
-				int count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
+				int countOfThisEntrysEnvironments = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 				// We need one less than the size,
 				// because the last 'env' is a dummy that lets the user type a new one.
-				int[] hvos = new int[count - 1];
+				int[] hvosOfEnvironmentsUsedInEntry = new int[countOfThisEntrysEnvironments - 1];
 				int cvDel = 0;
-				for (int i = hvos.Length - 1; i >= 0; --i)
+				for (int i = hvosOfEnvironmentsUsedInEntry.Length - 1; i >= 0; --i)
 				{
 					IPhEnvironment env = null;
 					int hvoDummyObj = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
@@ -679,11 +679,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					else
 					{
-						env = FindPhoneEnv(phoneEnvs, rep, tss, hvos);
+						env = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject, rep, tss, hvosOfEnvironmentsUsedInEntry);
 						if (env == null)
 						{
-							env = factEnv.Create();
-							phoneEnvs.Add(env);
+							env = environmentFactory.Create();
+							allAvailablePhoneEnvironmentsInProject.Add(env);
 							env.StringRepresentation = tss;
 						}
 						ConstraintFailure failure;
@@ -691,26 +691,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
 						else
 							MakeSquigglyLine(hvoDummyObj, failure.XmlDescription, ref tss, ref bldr);
-						hvos[i] = env.Hvo;
+						hvosOfEnvironmentsUsedInEntry[i] = env.Hvo;
 						// Refresh
 						m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
 						m_rootb.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
 					}
 				}
-				int[] newHvos = new int[hvos.Length];
-				hvos.CopyTo(newHvos, 0);
+				int[] newHvos = new int[hvosOfEnvironmentsUsedInEntry.Length];
+				hvosOfEnvironmentsUsedInEntry.CopyTo(newHvos, 0);
 				if (cvDel > 0)
 				{
-					newHvos = new int[hvos.Length - cvDel];
-					count = 0;
-					for (int i = 0; i < hvos.Length; ++i)
+					newHvos = new int[hvosOfEnvironmentsUsedInEntry.Length - cvDel];
+					countOfThisEntrysEnvironments = 0;
+					for (int i = 0; i < hvosOfEnvironmentsUsedInEntry.Length; ++i)
 					{
-						int tempHvo = hvos[i];
+						int tempHvo = hvosOfEnvironmentsUsedInEntry[i];
 						if (tempHvo > 0)
-							newHvos[count++] = tempHvo;
+							newHvos[countOfThisEntrysEnvironments++] = tempHvo;
 					}
 				}
-				count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				countOfThisEntrysEnvironments = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
 				int[] contents;
@@ -720,10 +720,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-				if ((count != newHvos.Length)
+				if ((countOfThisEntrysEnvironments != newHvos.Length)
 					|| !equalArrays(contents, newHvos))
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, count, newHvos, newHvos.Length);
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfThisEntrysEnvironments, newHvos, newHvos.Length);
 				}
 				m_fdoCache.DomainDataByFlid.EndUndoTask();
 			}
