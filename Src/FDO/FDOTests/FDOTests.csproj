@@ -50,6 +50,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<AppConfig>..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -231,9 +232,6 @@
 	<Compile Include="..\..\AssemblyInfoForTests.cs">
 	  <Link>AssemblyInfo.cs</Link>
 	</Compile>
-	<None Include="..\..\AppForTests.config">
-	  <Link>App.config</Link>
-	</None>
 	<Compile Include="AnalysisAdjusterTests.cs" />
 	<Compile Include="AnalysisGuessServicesTests.cs" />
 	<Compile Include="AnalysisOccurrenceTests.cs" />

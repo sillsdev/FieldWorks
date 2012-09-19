@@ -46,7 +46,7 @@
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
 	<TargetFrameworkProfile />
-	<AppConfig>..\Common\FieldWorks\App.config</AppConfig>
+	<!--AppConfig>..\Common\FieldWorks\App.config</AppConfig-->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\Output\Debug\</OutputPath>
@@ -56,7 +56,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\Output\Debug\TeExe.xml</DocumentationFile>
+	<DocumentationFile>..\..\Output\Debug\TE.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoStdLib>false</NoStdLib>

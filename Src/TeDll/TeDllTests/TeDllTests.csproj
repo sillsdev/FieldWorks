@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
@@ -50,6 +50,7 @@
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
 	<TargetFrameworkProfile />
+	<AppConfig>..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -380,11 +381,6 @@
 	  <ProductName>.NET Framework 3.5 SP1</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="..\..\AppForTests.config">
-	  <Link>AppForTests.config</Link>
-	</None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
