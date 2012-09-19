@@ -702,14 +702,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (cvDel > 0)
 				{
 					newHvos = new int[hvosOfEnvironmentsUsedInEntry.Length - cvDel];
-					countOfThisEntrysEnvironments = 0;
+					int j = 0;
 					for (int i = 0; i < hvosOfEnvironmentsUsedInEntry.Length; ++i)
 					{
 						int tempHvo = hvosOfEnvironmentsUsedInEntry[i];
 						if (tempHvo > 0)
-							newHvos[countOfThisEntrysEnvironments++] = tempHvo;
+							newHvos[j++] = tempHvo;
 					}
 				}
+
 				countOfThisEntrysEnvironments = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
