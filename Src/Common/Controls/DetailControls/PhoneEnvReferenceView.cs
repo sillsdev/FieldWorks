@@ -687,7 +687,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				var countOfExistingEnvironmentsInDatabaseForEntry =
 					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-				// Contains environments already in entry or recently selected in dialog, but not ones just typed
+				// Contains environments already in entry or recently selected in
+				// dialog, but not ones just typed
 				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
 				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
 					m_rootObj.Hvo, m_rootFlid);
@@ -697,13 +698,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
 
-				// -1 since last one is a dummy that lets the user type a new environment
+				// Last one is a dummy that lets the user type a new environment
+				const int countOfDummyEnvsForTypingNewEnvs = 1;
 				int countOfThisEntrysEnvironments =
-					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) - 1;
+					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) -
+					countOfDummyEnvsForTypingNewEnvs;
 				// Build list of local dummy hvos of environments in the entry
-				// after (possibly) being changed.
-				var envsBeingRequestedForThisEntry =
-					new List<int>();
+				// (including any changes).
+				var envsBeingRequestedForThisEntry = new List<int>();
 				for (int i = 0; i < countOfThisEntrysEnvironments; i++)
 				{
 					int localDummyHvoOfAnEnvironmentInEntry =
@@ -720,10 +722,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
 						RemoveFromDummyCache(i);
 						m_hvoOldSelection = oldSelId;
+						continue;
 					}
-					else
-						envsBeingRequestedForThisEntry.Add(
-							localDummyHvoOfAnEnvironmentInEntry);
+
+					envsBeingRequestedForThisEntry.Add(
+						localDummyHvoOfAnEnvironmentInEntry);
 				}
 
 				// Environments just typed into slice that are not already used for this entry or known about in the project.
@@ -732,8 +735,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						!allAvailablePhoneEnvironmentsInProject
 							.Select(projectEnv => RemoveSpaces(projectEnv.StringRepresentation.Text))
 							.Contains(RemoveSpaces(GetStringOfEnvironment(localDummyHvoOfAnEnvInEntry))));
-				// Add new environments to project
-				foreach (var localDummyHvoOfAnEnvironmentInEntry in newEnvsJustTyped)
+				// Add the unknown/new environments to project
+				foreach (var localDummyHvoOfAnEnvironmentInEntry in
+					newEnvsJustTyped)
 				{
 					ITsString envTssRep = GetTsStringOfEnvironment(
 						localDummyHvoOfAnEnvironmentInEntry);
@@ -742,7 +746,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					newEnv.StringRepresentation = envTssRep;
 				}
 
-				// Build up list of hvos used in real database for the environments in the entry
+				// Build up a list of real hvos used in database for the
+				// environments in the entry
 				var newListOfEnvironmentHvosForEntry = new List<int>();
 				foreach (var localDummyHvoOfAnEnvironmentInEntry in
 					envsBeingRequestedForThisEntry)
@@ -751,6 +756,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						localDummyHvoOfAnEnvironmentInEntry);
 					string envStringRep = envTssRep.Text;
 
+					// Pick a sensible environment from the known environments in
+					// the project, by string
 					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(
 						allAvailablePhoneEnvironmentsInProject, envStringRep,
 						envTssRep, newListOfEnvironmentHvosForEntry.ToArray(),
