@@ -14,7 +14,7 @@ namespace FwBuildTasks
 	{
 		public override bool Execute()
 		{
-			var gen = new FwBuildTasks.CollectTargets();
+			var gen = new FwBuildTasks.CollectTargets(Log);
 			gen.Generate();
 			return true;
 		}
@@ -36,7 +36,31 @@ namespace FwBuildTasks
 			// this is the root of the FieldWorks repository tree.
 			var fwrt = BuildUtils.GetAssemblyFolder();
 			while (!Directory.Exists(Path.Combine(fwrt, "Build")) || !Directory.Exists(Path.Combine(fwrt, "Src")))
+			{
 				fwrt = Path.GetDirectoryName(fwrt);
+				if (fwrt == null)
+				{
+					Console.WriteLine("Error pulling the working folder from the running assembly.");
+					break;
+				}
+			}
+			m_fwroot = fwrt;
+		}
+
+		public CollectTargets(TaskLoggingHelper log)
+		{
+			// Get the parent directory of the running program.  We assume that
+			// this is the root of the FieldWorks repository tree.
+			var fwrt = BuildUtils.GetAssemblyFolder();
+			while (!Directory.Exists(Path.Combine(fwrt, "Build")) || !Directory.Exists(Path.Combine(fwrt, "Src")))
+			{
+				fwrt = Path.GetDirectoryName(fwrt);
+				if (fwrt == null)
+				{
+					log.LogError("Error pulling the working folder from the running assembly.");
+					break;
+				}
+			}
 			m_fwroot = fwrt;
 		}
 
@@ -91,7 +115,7 @@ namespace FwBuildTasks
 				return;		// Skip the extensions -- they're either obsolete or nonstandard.
 			var project = Path.GetFileNameWithoutExtension(filename);
 			if (project == "ICSharpCode.SharpZLib")
-				return;		// Skip this project -- it should be under Lib, not Src!
+				return;
 #if TEMPFIX
 			// These projects are obsolete, but still exist in the Linux branches.
 			if (project == "MenuExtender" ||			// independent target in nant build files
@@ -111,9 +135,6 @@ namespace FwBuildTasks
 			{
 				return;
 			}
-			// This project shouldn't be obsolete, but has been broken for months.
-			if (project == "FixFwData")
-				return;
 #endif
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
 			{
@@ -176,29 +197,23 @@ namespace FwBuildTasks
 					bldr.Append("MakeDirs");	// ensure the output directories exist.
 					if (project == "COMInterfaces")
 						bldr.Append(";mktlbs");
-//					{
-//						if (bldr.Length == 0)
-//							bldr.Append("mktlbs");
-//						else
-//							bldr.Insert(0, "mktlbs;");
-//					}
 					var dependencies = m_mapProjDepends[project];
 					foreach (var dep in dependencies)
 					{
 						if (m_mapProjFile.ContainsKey(dep))
-						{
-//							if (bldr.Length == 0)
-//								bldr.Append(dep);
-//							else
-								bldr.AppendFormat(";{0}", dep);
-						}
+							bldr.AppendFormat(";{0}", dep);
 					}
-//					if (bldr.Length > 0)
-						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
+					writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 					if (project == "MigrateSqlDbs")
+					{
 						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
-					if (project.StartsWith("LinuxSmoke"))
+					}
+					if (project.StartsWith("LinuxSmoke") ||
+						project.StartsWith("ManagedLgIcuCollator") ||
+						project.StartsWith("ManagedVwWindow"))
+					{
 						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
+					}
 					writer.WriteLine(">");
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
 					var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
@@ -237,6 +252,8 @@ namespace FwBuildTasks
 				{
 					if (project == "SharpViews" || project == "SharpViewsTests")
 						continue;		// These projects are experimental.
+					if (project == "FxtExe" || project == "FixFwData")
+						continue;		// These projects weren't built by nant normally.
 					if (first)
 						writer.Write(project);
 					else
@@ -251,6 +268,8 @@ namespace FwBuildTasks
 				{
 					if (project == "SharpViews" || project == "SharpViewsTests")
 						continue;		// These projects are experimental.
+					if (project == "FxtExe" || project == "FixFwData")
+						continue;		// These projects weren't built by nant normally.
 					if (project.EndsWith("Tests"))
 						continue;
 					if (first)

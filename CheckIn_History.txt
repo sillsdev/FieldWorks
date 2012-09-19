@@ -6116,3 +6116,11 @@ RandyR, 17 Sep 2012. Revert part of 38583.
 SteveMc, September 17, 2012. Integrate from Calgary/WW to WW again (but different).
 Andy Black, 17 September 2012.  Fix bug in XAmple which caused a crash in Try a Word.
 LastufkaM, 18 September 2012. LT-13589 XHTML Export exports empty entries and assigns them id tags.
+SteveMc, September 19, 2012.  Integrate from Calgary/WW to WW.
+SteveMc, September 19, 2012.  Fix MigrateSqlDbs project to NOT copy output to DistFiles.
+SteveMc, September 19, 2012.  Fix MigrateSqlDbs project to output directly to
+	../../Output/$(Configuration).
+GordonM, 19 Sep 2012. Add another needed dll to Build directory.
+NaylorJ, 19 Sep 2012. Fixed some minor bugs in the build utility. Now works with windows machines with lowercase drive letters.
+SteveMc, September 19, 2012.  Get msbuild closer to producing the same files as nant in
+	Output/Debug.

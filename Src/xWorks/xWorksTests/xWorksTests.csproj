@@ -44,6 +44,7 @@
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
 	<TargetFrameworkProfile />
+	<AppConfig>..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -254,9 +255,6 @@
 	<Compile Include="..\..\AssemblyInfoForTests.cs">
 	  <Link>AssemblyInfo.cs</Link>
 	</Compile>
-	<None Include="..\..\AppForTests.config">
-	  <Link>App.config</Link>
-	</None>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

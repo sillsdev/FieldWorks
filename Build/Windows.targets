@@ -4,12 +4,8 @@
 	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 
 	<!-- call preparatory Windows targets -->
-	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="MakeDirs;EncConvertersDlls"
-			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
-		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
+	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
+			DependsOnTargets="MakeDirs;EncConvertersDlls">
 	</Target>
 
 	<!-- Copy the EncodingConverters files, registering them on Windows -->
@@ -26,7 +22,7 @@
 	<Target Name="EncConvertersDlls" Condition="'$(OS)'=='Windows_NT'"
 			Inputs="@(EncConverterDllInputs)" Outputs="@(EncConverterDllOutputs)">
 		<Copy SourceFiles="@(EncConverterSources)"
-			  DestinationFolder="$(dir-outputBase)"
+			  DestinationFolder="$(dir-outputBase)\%(RecursiveDir)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
 		<CheckAdminPrivilege>

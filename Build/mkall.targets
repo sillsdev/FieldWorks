@@ -65,6 +65,11 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
+		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
+				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				 Condition="'$(OS)'=='Windows_NT'"/>
+		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
+			  Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="$(dir-outputBase)\testGenericLib.exe -v -l"
 			  WorkingDirectory="$(dir-outputBase)"
 			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
@@ -118,7 +123,7 @@
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				 Dlls="$(dir-outputBase)\FwKernel.dll"
+				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>

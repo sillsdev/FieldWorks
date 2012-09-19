@@ -26,7 +26,7 @@ namespace FwBuildTasks
 			else
 				path = codebase;
 			// Handle Windows style absolute paths.
-			Regex r = new Regex("^/[A-Z]:");
+			Regex r = new Regex("^/[A-Za-z]:");
 			if (r.IsMatch(path))
 				path = path.Substring(1);
 			return Path.GetDirectoryName(path);

@@ -50,6 +50,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<AppConfig>..\..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -237,9 +238,6 @@
 	</Compile>
 	<Compile Include="AddWordsToLexiconTests.cs">
 	</Compile>
-	<None Include="..\..\..\AppForTests.config">
-	  <Link>AppForTests.config</Link>
-	</None>
 	<Compile Include="ImportInterlinearAnalysesTests.cs" />
 	<Compile Include="InterlinearExporterTests.cs" />
 	<Compile Include="BIRDFormatImportTests.cs" />
