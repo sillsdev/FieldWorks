@@ -6120,3 +6120,4 @@ SteveMc, September 19, 2012.  Integrate from Calgary/WW to WW.
 SteveMc, September 19, 2012.  Fix MigrateSqlDbs project to NOT copy output to DistFiles.
 SteveMc, September 19, 2012.  Fix MigrateSqlDbs project to output directly to
 	../../Output/$(Configuration).
+GordonM, 19 Sep 2012. Add another needed dll to Build directory.
