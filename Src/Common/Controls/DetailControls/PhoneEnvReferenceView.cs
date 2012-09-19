@@ -717,7 +717,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						localDummyHvoOfAnEnvironmentInEntry);
 				}
 
-				// Environments just typed into slice that are not already used for this entry or known about in the project.
+				// Environments just typed into slice that are not already used for
+				// this entry or known about in the project.
 				var newEnvsJustTyped =
 					envsBeingRequestedForThisEntry.Where(localDummyHvoOfAnEnvInEntry =>
 						!allAvailablePhoneEnvironmentsInProject
