@@ -14,7 +14,7 @@ namespace FwBuildTasks
 	{
 		public override bool Execute()
 		{
-			var gen = new FwBuildTasks.CollectTargets();
+			var gen = new FwBuildTasks.CollectTargets(Log);
 			gen.Generate();
 			return true;
 		}
@@ -30,13 +30,20 @@ namespace FwBuildTasks
 		Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
 		Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
 
-		public CollectTargets()
+		public CollectTargets(TaskLoggingHelper log)
 		{
 			// Get the parent directory of the running program.  We assume that
 			// this is the root of the FieldWorks repository tree.
 			var fwrt = BuildUtils.GetAssemblyFolder();
 			while (!Directory.Exists(Path.Combine(fwrt, "Build")) || !Directory.Exists(Path.Combine(fwrt, "Src")))
+			{
 				fwrt = Path.GetDirectoryName(fwrt);
+				if (fwrt == null)
+				{
+					log.LogError("Error pulling the working folder from the running assembly.");
+					break;
+				}
+			}
 			m_fwroot = fwrt;
 		}
 
