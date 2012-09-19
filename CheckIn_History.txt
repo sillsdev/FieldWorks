@@ -6124,3 +6124,4 @@ GordonM, 19 Sep 2012. Add another needed dll to Build directory.
 NaylorJ, 19 Sep 2012. Fixed some minor bugs in the build utility. Now works with windows machines with lowercase drive letters.
 SteveMc, September 19, 2012.  Get msbuild closer to producing the same files as nant in
 	Output/Debug.
+NaylorJ, 19 Sep 2012. Introduce a batch file which should setup the environment prior to running the build for this branch.
