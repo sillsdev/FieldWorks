@@ -753,7 +753,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(
 						allAvailablePhoneEnvironmentsInProject, envStringRep,
-						envTssRep, newListOfEnvironmentHvosForEntry.ToArray());
+						envTssRep, newListOfEnvironmentHvosForEntry.ToArray(),
+						existingListOfEnvironmentHvosInDatabaseForEntry);
+
+					// Maybe the ws has changed, so change the real env in database,
+					//  in case.
+					anEnvironmentInEntry.StringRepresentation = envTssRep;
 
 					ITsStrBldr bldr = envTssRep.GetBldr();
 					ConstraintFailure failure;
@@ -801,44 +806,57 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return s.Replace(" ", null);
 		}
 
+		private static bool EqualsIgnoringSpaces(string a, string b)
+		{
+			if (a == null || b == null)
+				return false;
+			return a.Replace(" ", null) == b.Replace(" ", null);
+		}
+
 		/// <summary>
-		/// Find an environment in phoneEnvsHaystack of string representation
-		/// environmentPattern. Prefer to find a match that isn't in
-		/// usedHvosInASlice.
+		/// Find an environment in allProjectEnvs of string representation
+		/// environmentPattern. Prefer to find a match that is in preferredHvos
+		/// (such as hvos used before recent editing) and not in alreadyUsedHvos
+		/// (hvos already used in slice).
+		/// Preferring matching a hvo used before recent editing helps the
+		/// Environments dialog behave more sensibly in the case of multiple
+		/// items with the same string representation. (eg FWNX-822)
 		/// </summary>
 		private static IPhEnvironment FindPhoneEnv(
-			IFdoOwningSequence<IPhEnvironment> phoneEnvsHaystack,
-			string environmentPattern, ITsString tss, int[] usedHvosInASlice)
+			IFdoOwningSequence<IPhEnvironment> allProjectEnvs,
+			string environmentPattern, ITsString tss, int[] alreadyUsedHvos,
+			int[] preferredHvos)
 		{
-			IPhEnvironment envNeedle = null;
-			IPhEnvironment candidateMatch = null;
-			foreach (IPhEnvironment envCurrent in phoneEnvsHaystack)
+			// Try to find a match in the preferred set that isn't already used
+			var preferredMatches = preferredHvos.Where(preferredHvo =>
+				EqualsIgnoringSpaces(
+					GetEnvironmentFromHvo(allProjectEnvs, preferredHvo)
+						.StringRepresentation.Text,
+					environmentPattern));
+			if (preferredMatches.Count() > 0)
 			{
-				// Compare them without spaces, since they are not needed.
-				if (envCurrent.StringRepresentation.Text != null &&
-					envCurrent.StringRepresentation.Text.Replace(" ", null) ==
-					environmentPattern.Replace(" ", null))
-				{
-					candidateMatch = envCurrent;
-					// Try to find an environment not yet used by this slice, so
-					// skip any previously used ones for now
-					if (usedHvosInASlice.Contains(envCurrent.Hvo))
-						continue;
-					envNeedle = envCurrent;
-					// Maybe the ws has changed, so change the real one, in case.
-					envNeedle.StringRepresentation = tss;
-					break;
-				}
+				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos);
+				if (unusedPreferred.Count() > 0)
+					return GetEnvironmentFromHvo(allProjectEnvs,
+						unusedPreferred.First());
 			}
-			// Go ahead and re-use an envirovment in the slice if couldn't get an
-			// unused one.
-			if (envNeedle == null && candidateMatch != null)
-			{
-				envNeedle = candidateMatch;
-				// Maybe the ws has changed, so change the real one, in case.
-				envNeedle.StringRepresentation = tss;
-			}
-			return envNeedle;
+
+			// Broaden where we look to all project environments
+			var anyMatches = allProjectEnvs.Where(env =>
+				EqualsIgnoringSpaces(
+					env.StringRepresentation.Text,
+					environmentPattern));
+			if (anyMatches.Count() == 0)
+				return null; // Shouldn't happen if adding envs new to project ahead of time.
+
+			// Try to return a match that isn't already used.
+			var unused = anyMatches.Select(env => env.Hvo).Except(alreadyUsedHvos);
+
+			if (unused.Count() > 0)
+				return GetEnvironmentFromHvo(allProjectEnvs, unused.First());
+
+			// Just re-use an env
+			return anyMatches.First();
 		}
 
 		/// <summary>
