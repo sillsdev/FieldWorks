@@ -685,19 +685,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
-				var countOfExistingEnvironmentsInDatabaseForEntry =
-					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-				// Contains environments already in entry or recently selected in
-				// dialog, but not ones just typed
-				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
-				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
-					m_rootObj.Hvo, m_rootFlid);
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-				{
-					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
-					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-				}
-
 				// Last one is a dummy that lets the user type a new environment
 				const int countOfDummyEnvsForTypingNewEnvs = 1;
 				int countOfThisEntrysEnvironments =
@@ -744,6 +731,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					IPhEnvironment newEnv = environmentFactory.Create();
 					allAvailablePhoneEnvironmentsInProject.Add(newEnv);
 					newEnv.StringRepresentation = envTssRep;
+				}
+
+				var countOfExistingEnvironmentsInDatabaseForEntry =
+					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				// Contains environments already in entry or recently selected in
+				// dialog, but not ones just typed
+				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
+				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
+					m_rootObj.Hvo, m_rootFlid);
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+				{
+					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
+					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
 
 				// Build up a list of real hvos used in database for the
