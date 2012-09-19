@@ -700,8 +700,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
 
 					// Remove and exclude blank entries
-					ITsString envTssRep = GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
-					string envStringRep = envTssRep.Text;
+					string envStringRep = GetStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
 					if (envStringRep == null || envStringRep.Trim().Length == 0)
 					{
 						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
