@@ -685,14 +685,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
-				// Last one is a dummy that lets the user type a new environment
+				// Build list of local dummy hvos of environments in the entry
+				// (including any changes).
+				var envsBeingRequestedForThisEntry = new List<int>();
+				// Last env in local m_sda is a dummy that lets the user type a
+				// new environment
 				const int countOfDummyEnvsForTypingNewEnvs = 1;
 				int countOfThisEntrysEnvironments =
 					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) -
 					countOfDummyEnvsForTypingNewEnvs;
-				// Build list of local dummy hvos of environments in the entry
-				// (including any changes).
-				var envsBeingRequestedForThisEntry = new List<int>();
 				for (int i = 0; i < countOfThisEntrysEnvironments; i++)
 				{
 					int localDummyHvoOfAnEnvironmentInEntry =
