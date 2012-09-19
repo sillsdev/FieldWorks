@@ -608,6 +608,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CacheEnvironments((IMoAffixAllomorph)m_rootObj);
 		}
 
+		/// <remarks>
+		/// From local m_sda, not from database
+		/// </remarks>
+		private ITsString GetTsStringOfEnvironment(
+			int localDummyHvoOfAnEnvironmentInEntry)
+		{
+			ITsString environmentTssRep = m_sda.get_StringProp(
+				localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
+			return environmentTssRep ?? m_fdoCache.TsStrFactory.MakeString(
+				String.Empty, m_fdoCache.DefaultAnalWs);
+		}
+
 		/// <summary>
 		/// Integrate changes in dummy cache to real cache and DB.
 		/// </summary>
@@ -668,10 +680,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				for (int i = hvosOfEnvironmentsUsedInEntry.Length - 1; i >= 0; --i)
 				{
 					int localDummyHvoOfAnEnvironmentInEntry = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-					ITsString tssStringOfAnEnvironmentInEntry = m_sda.get_StringProp(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
-					if (tssStringOfAnEnvironmentInEntry == null)
-						tssStringOfAnEnvironmentInEntry = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
-					string stringOfAnEnvironmentInEntry = tssStringOfAnEnvironmentInEntry.Text;
+					ITsString tsStringOfAnEnvironmentInEntry = GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
+					string stringOfAnEnvironmentInEntry = tsStringOfAnEnvironmentInEntry.Text;
 
 					if (stringOfAnEnvironmentInEntry == null || stringOfAnEnvironmentInEntry.Trim().Length == 0)
 					{
@@ -685,26 +695,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 
 					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject,
-						stringOfAnEnvironmentInEntry, tssStringOfAnEnvironmentInEntry,
+						stringOfAnEnvironmentInEntry, tsStringOfAnEnvironmentInEntry,
 						hvosOfEnvironmentsUsedInEntry);
 					if (anEnvironmentInEntry == null)
 					{
 						// New environment to project
 						anEnvironmentInEntry = environmentFactory.Create();
 						allAvailablePhoneEnvironmentsInProject.Add(anEnvironmentInEntry);
-						anEnvironmentInEntry.StringRepresentation = tssStringOfAnEnvironmentInEntry;
+						anEnvironmentInEntry.StringRepresentation = tsStringOfAnEnvironmentInEntry;
 					}
-					ITsStrBldr bldr = tssStringOfAnEnvironmentInEntry.GetBldr();
+					ITsStrBldr bldr = tsStringOfAnEnvironmentInEntry.GetBldr();
 					ConstraintFailure failure;
 					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
-						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref tssStringOfAnEnvironmentInEntry, ref bldr);
+						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref tsStringOfAnEnvironmentInEntry, ref bldr);
 					else
-						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref tssStringOfAnEnvironmentInEntry, ref bldr);
+						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref tsStringOfAnEnvironmentInEntry, ref bldr);
 					hvosOfEnvironmentsUsedInEntry[i] = anEnvironmentInEntry.Hvo;
 					// Refresh
 					m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
 					m_rootb.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0,
-						tssStringOfAnEnvironmentInEntry.Length, tssStringOfAnEnvironmentInEntry.Length);
+						tsStringOfAnEnvironmentInEntry.Length, tsStringOfAnEnvironmentInEntry.Length);
 				}
 
 				// Exclude blank environments
