@@ -33,6 +33,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
+		<Message Text="Finished building DebugProcs."/>
 	</Target>
 
 	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
@@ -49,6 +50,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Generic"/>
+		<Message Text="Finished building GenericLib."/>
 	</Target>
 
 	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
@@ -73,6 +75,7 @@
 		<Exec Command="$(dir-outputBase)\testGenericLib.exe -v -l"
 			  WorkingDirectory="$(dir-outputBase)"
 			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
+		<Message Text="Finished building testGenericLib."/>
 	</Target>
 
 	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel">
@@ -89,6 +92,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+		<Message Text="Finished building GrEngine."/>
 	</Target>
 
 	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore">
@@ -106,6 +110,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Kernel"/>
+		<Message Text="Finished building FwKernel."/>
 	</Target>
 
 	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
@@ -130,6 +135,7 @@
 		<Exec Command="$(dir-outputBase)\testFwKernel.exe -v -l"
 			  WorkingDirectory="$(dir-outputBase)"
 			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
+		<Message Text="Finished building testFwKernel."/>
 	</Target>
 
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
@@ -142,6 +148,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/AppCore"/>
+		<Message Text="Finished building AppCore."/>
 	</Target>
 
 	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
@@ -158,6 +165,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Language"/>
+		<Message Text="Finished building Language."/>
 	</Target>
 
 	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
@@ -182,6 +190,7 @@
 		<Exec Command="$(dir-outputBase)\testLanguage.exe -v -l"
 			  WorkingDirectory="$(dir-outputBase)"
 			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
+		<Message Text="Finished building testLanguage."/>
 	</Target>
 
 	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants"><!-- mktlbs -->
@@ -198,6 +207,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/views"/>
+		<Message Text="Finished building Views."/>
 	</Target>
 
 	<Target Name="testViews" DependsOnTargets="GenericLib;Views">
@@ -222,6 +232,7 @@
 		<Exec Command="$(dir-outputBase)\testViews.exe -v -l"
 			  WorkingDirectory="$(dir-outputBase)"
 			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
+		<Message Text="Finished building testViews."/>
 	</Target>
 
 	<ItemGroup>

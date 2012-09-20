@@ -238,10 +238,15 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
 						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
 						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
-						writer.WriteLine("\t\t       ErrorOutputFile=\"$(dir-outputBase)/{0}.dll-nunit-errors.xml\"", project);
 						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
 						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
 						writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
+					}
+					else
+					{
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\"/>", project);
 					}
 					writer.WriteLine("\t</Target>");
 					writer.WriteLine();
