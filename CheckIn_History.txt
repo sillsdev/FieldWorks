@@ -317,3 +317,5 @@ KenZ, 18 Sep 2012. Fixed LT-13610 Try A Word crashes with Andy's help.
 JohnT, 18 Sep 2012. Further optimizations related to sorting reversal index by sense and filtering by complex form.
 JohnT, 19 Sep 2012. LT-13607 SFM import 'loses' data with in-line codes
 	Later: Repaired problem in fix of LT-13256 Reversal XHTML export puts "[Otherwise Stuff]" between senses, instead of being a bulleted list
+KenZ, 20 Sep 2012. Replaced Zedit with new version that fixes a serious bug when inserting Return at beginning of ine in UTF-8 mode
+	that inserted null instead of LF following CR.
