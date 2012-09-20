@@ -2067,6 +2067,10 @@ namespace SIL.FieldWorks.Common.Framework
 					string sLine = rdr.ReadLine();
 					while (sLine != null)
 					{
+						// Users expect both these characters to cause a break before the next element, but embedding
+						// them in HTML is considered bad practice (LT-13592) so we replace with a break.
+						sLine = sLine.Replace("\u2028", "<br/>");
+						sLine = sLine.Replace("\u2029", "<br/>");
 						int idxClass = -1;
 						while ((idxClass = sLine.IndexOf(" class=\"", idxClass + 1, StringComparison.Ordinal)) >= 0)
 						{
@@ -2181,10 +2185,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns></returns>
 		private string ExtractText(string str, int fromHere, string label, string delimiter)
 		{
-			// Users expect both these characters to cause a break before the next element, but embedding
-			// them in HTML is considered bad practice (LT-13592) so we replace with a break.
-			str = str.Replace("\u2028", "<br/>");
-			str = str.Replace("\u2029", "<br/>");
 			int horizon = 30;
 			if (fromHere > str.Length - 1) return null; // nothing to look for
 			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;
