@@ -6126,3 +6126,4 @@ SteveMc, September 19, 2012.  Get msbuild closer to producing the same files as 
 	Output/Debug.
 NaylorJ, 19 Sep 2012. Introduce a batch file which should setup the environment prior to running the build for this branch.
 SteveMc, September 20, 2012.  Integrate from Calgary/WW to WW.
+SteveMc, September 20, 2012.  Fix invalid messages in messages.fa.po.
