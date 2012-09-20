@@ -250,10 +250,13 @@ namespace FwBuildTasks
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project == "SharpViews" || project == "SharpViewsTests")
-						continue;		// These projects are experimental.
-					if (project == "FxtExe" || project == "FixFwData")
-						continue;		// These projects weren't built by nant normally.
+					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
+						project == "FxtExe" ||					// These projects weren't built by nant normally.
+						project == "FixFwData" ||
+						project.StartsWith("LinuxSmokeTest"))
+					{
+						continue;
+					}
 					if (first)
 						writer.Write(project);
 					else
@@ -266,12 +269,14 @@ namespace FwBuildTasks
 				first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project == "SharpViews" || project == "SharpViewsTests")
-						continue;		// These projects are experimental.
-					if (project == "FxtExe" || project == "FixFwData")
-						continue;		// These projects weren't built by nant normally.
-					if (project.EndsWith("Tests"))
+					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
+						project == "FxtExe" ||					// These projects weren't built by nant normally.
+						project == "FixFwData" ||
+						project.StartsWith("LinuxSmokeTest") ||
+						project.EndsWith("Tests"))				// These are tests.
+					{
 						continue;
+					}
 					if (first)
 						writer.Write(project);
 					else
