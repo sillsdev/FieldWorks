@@ -238,10 +238,15 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
 						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
 						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
-						writer.WriteLine("\t\t       ErrorOutputFile=\"$(dir-outputBase)/{0}.dll-nunit-errors.xml\"", project);
 						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
 						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
 						writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
+					}
+					else
+					{
+						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\"/>", project);
 					}
 					writer.WriteLine("\t</Target>");
 					writer.WriteLine();
@@ -250,10 +255,13 @@ namespace FwBuildTasks
 				bool first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project == "SharpViews" || project == "SharpViewsTests")
-						continue;		// These projects are experimental.
-					if (project == "FxtExe" || project == "FixFwData")
-						continue;		// These projects weren't built by nant normally.
+					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
+						project == "FxtExe" ||					// These projects weren't built by nant normally.
+						project == "FixFwData" ||
+						project.StartsWith("LinuxSmokeTest"))
+					{
+						continue;
+					}
 					if (first)
 						writer.Write(project);
 					else
@@ -266,12 +274,14 @@ namespace FwBuildTasks
 				first = true;
 				foreach (var project in m_mapProjFile.Keys)
 				{
-					if (project == "SharpViews" || project == "SharpViewsTests")
-						continue;		// These projects are experimental.
-					if (project == "FxtExe" || project == "FixFwData")
-						continue;		// These projects weren't built by nant normally.
-					if (project.EndsWith("Tests"))
+					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
+						project == "FxtExe" ||					// These projects weren't built by nant normally.
+						project == "FixFwData" ||
+						project.StartsWith("LinuxSmokeTest") ||
+						project.EndsWith("Tests"))				// These are tests.
+					{
 						continue;
+					}
 					if (first)
 						writer.Write(project);
 					else

@@ -15,6 +15,9 @@
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
+  <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>

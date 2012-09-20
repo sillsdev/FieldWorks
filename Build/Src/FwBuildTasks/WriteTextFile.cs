@@ -60,6 +60,8 @@ namespace FwBuildTasks
 		[Required]
 		public string TargetFile { get; set; }
 
+		public bool UseUnixNewlines { get; set; }
+
 		public override bool Execute()
 		{
 			using (StreamWriter writer = new StreamWriter(TargetFile))
@@ -71,7 +73,10 @@ namespace FwBuildTasks
 						while (!reader.EndOfStream)
 						{
 							var line = reader.ReadLine();
-							writer.WriteLine(line);
+							if (!UseUnixNewlines || Environment.OSVersion.Platform == PlatformID.Unix)
+								writer.WriteLine(line);
+							else
+								writer.Write(line + "\n");
 						}
 						reader.Close();
 					}
