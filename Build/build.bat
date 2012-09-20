@@ -12,6 +12,9 @@ If %ERRORLEVEL% == 0 (
 	set KEY_NAME=HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0
 )
 
+del CheckOS.txt
+del StringCheck.txt
+
 set VALUE_NAME=InstallDir
 
 REM Check for presence of key first.
