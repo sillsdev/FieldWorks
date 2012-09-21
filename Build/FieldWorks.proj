@@ -12,6 +12,7 @@
   <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>

@@ -85,8 +85,7 @@ namespace FwBuildTasks
 					}
 					catch (Exception)
 					{
-						// TODO: use the msbuild logging features?
-						Console.WriteLine("Error unzipping {0}.", newFileName);
+						Log.LogError("Error unzipping {0}.", newFileName);
 						return;
 					}
 				}

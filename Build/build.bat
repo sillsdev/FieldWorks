@@ -1,5 +1,8 @@
 echo off
 
+REM cause Environment variable changes to be lost after this process dies:
+if not "%OS%"=="" setlocal
+
 Set RegQry=HKLM\Hardware\Description\System\CentralProcessor\0
 
 REG.exe Query %RegQry% > checkOS.txt
@@ -11,6 +14,9 @@ If %ERRORLEVEL% == 0 (
 ) ELSE (
 	set KEY_NAME=HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0
 )
+
+del CheckOS.txt
+del StringCheck.txt
 
 set VALUE_NAME=InstallDir
 

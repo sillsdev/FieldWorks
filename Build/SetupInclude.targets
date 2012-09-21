@@ -82,7 +82,6 @@
 		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)"/>
 		<!-- Enhance JohnT: eventually should also generate buildinc.h for the C++ world-->
 	</Target>
-
   <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
 
 	<!-- set fwrt to the proper value before we do anything else. -->
@@ -298,8 +297,15 @@
 	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
 
   </Target>
+  <Target Name="DeleteTestFiles">
+	<CreateItem Include="$(dir-outputBase)\*-nunit-output.xml">
+	  <Output TaskParameter="Include" ItemName="TestFilesToDelete"/>
+	</CreateItem>
+	<Delete Files="@(TestFilesToDelete)" />
+	<Message Text="Finished deleting NUnit report files." Importance="normal" />
+  </Target>
 
-  <Target Name="MakeDirs" DependsOnTargets="Setup">
+  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)" Condition="'$(action)'!='clean'"/>
 
 	<!-- extra directory (and symbolic links) needed for Linux -->

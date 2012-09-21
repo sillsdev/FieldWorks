@@ -6125,3 +6125,7 @@ NaylorJ, 19 Sep 2012. Fixed some minor bugs in the build utility. Now works with
 SteveMc, September 19, 2012.  Get msbuild closer to producing the same files as nant in
 	Output/Debug.
 NaylorJ, 19 Sep 2012. Introduce a batch file which should setup the environment prior to running the build for this branch.
+SteveMc, September 20, 2012.  Integrate from Calgary/WW to WW.
+SteveMc, September 20, 2012.  Fix invalid messages in messages.fa.po.
+... a couple of Imrie checkins...
+GordonM, 21 Sep 2012. GenerateNUnitReports task for MSBuild process
