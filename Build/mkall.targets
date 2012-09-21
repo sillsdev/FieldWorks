@@ -4,6 +4,10 @@
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;allCpp;allCsharp">
 		<Message Text="Finished mkall Target."/>
+		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
+			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
+		</CreateItem>
+		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
 	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine;createCompMaps">
