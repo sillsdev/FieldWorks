@@ -1860,7 +1860,13 @@ namespace SIL.FieldWorks.Common.Framework
 						try
 						{
 							if (action == FileLocationChoice.Move)
-								FileUtils.Move(sOldPathname, sNewPathname);
+							{
+								//LT-13343 do copy followed by delete to ensure the file gets put in the new location.
+								//If the current FLEX record has a picture displayed the File.Delete will fail.
+								File.Copy(sOldPathname, sNewPathname);
+								File.Delete(sOldPathname);
+							}
+
 							else
 								File.Copy(sOldPathname, sNewPathname);
 						}
