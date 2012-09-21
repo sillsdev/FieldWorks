@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.That(FileUtils.DirectoryExists(
 				Path.GetDirectoryName(m_expectedPathDesktop)), Is.True,
 				"Unit test error. Trying to create a launcher in a nonexistent directory.");
-			Assert.That(FileUtils.FileExists(m_expectedPathDesktop), Is.False,
+			Assert.That(FileUtils.SimilarFileExists(m_expectedPathDesktop), Is.False,
 				"Launcher shouldn't exist yet.");
 			AssertCreateProjectLauncherWorks(m_expectedPathDesktop);
 		}
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.Common.Framework
 				Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
 				m_projectName + tail + m_pathExtension);
 
-			Assert.That(FileUtils.FileExists(expectedPath), Is.False,
+			Assert.That(FileUtils.SimilarFileExists(expectedPath), Is.False,
 				"Launcher shouldn't exist yet.");
 
 			AssertCreateProjectLauncherWorks(expectedPath);
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// use the real thing for this test.
 				FileUtils.Manager.Reset();
 
-				Assert.That(FileUtils.FileExists(m_expectedPathTmp), Is.False,
+				Assert.That(FileUtils.SimilarFileExists(m_expectedPathTmp), Is.False,
 					"Launcher shouldn't exist yet.");
 				AssertCreateProjectLauncherWorks(m_expectedPathTmp);
 
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// Use a real file for test since using a system call
 				FileUtils.Manager.Reset();
 
-				Assert.That(FileUtils.FileExists(m_expectedPathTmp), Is.False,
+				Assert.That(FileUtils.SimilarFileExists(m_expectedPathTmp), Is.False,
 					"Launcher shouldn't exist yet.");
 				AssertCreateProjectLauncherWorks(m_expectedPathTmp);
 
@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 				window.CreateShortcut(Path.GetDirectoryName(expectedPath));
 
-				Assert.That(FileUtils.FileExists(expectedPath), Is.True,
+				Assert.That(FileUtils.SimilarFileExists(expectedPath), Is.True,
 					String.Format("Expected file does not exist: {0}", expectedPath));
 
 				string actualLauncherData;

@@ -628,6 +628,31 @@ namespace SIL.Utils
 			return s_fileos.FileExists(filename);
 		}
 
+		/// <summary>
+		/// Checks whether the specified file exists. Check if the file exists with diacritics composed or
+		/// decomposed. Also check variations for unix/linux.
+		/// </summary>
+		/// <param name="sPath"></param>
+		/// <param name="sCorrectedPath"></param>
+		/// <returns></returns>
+		public static bool TrySimilarFileExists(string sPath, out string sCorrectedPath)
+		{
+			sCorrectedPath = ActualFilePath(sPath);
+			return s_fileos.FileExists(sCorrectedPath);
+		}
+
+		/// <summary>
+		/// Checks whether the specified file exists. Check if the file exists with diacritics composed or
+		/// decomposed. Also check variations for unix/linux.
+		/// </summary>
+		/// <param name="sPath"></param>
+		/// <returns></returns>
+		public static bool SimilarFileExists(string sPath)
+		{
+			var sCorrectedPath = ActualFilePath(sPath);
+			return s_fileos.FileExists(sCorrectedPath);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks whether the specified directory exists.

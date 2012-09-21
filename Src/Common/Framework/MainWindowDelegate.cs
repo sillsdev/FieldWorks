@@ -928,7 +928,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			// Choose a different name if already in use
 			int tailNumber = 2;
-			while (FileUtils.FileExists(launcherPath))
+			while (FileUtils.SimilarFileExists(launcherPath))
 			{
 				var tail = "-" + tailNumber.ToString();
 				launcherPath = MakeLauncherPath(directory, projectName, tail, pathExtension);

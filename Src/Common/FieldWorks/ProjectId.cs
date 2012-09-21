@@ -402,7 +402,7 @@ namespace SIL.FieldWorks
 					}
 					break;
 				case FDOBackendProviderType.kXML:
-					if (!FileUtils.FileExists(Path))
+					if (!FileUtils.SimilarFileExists(Path))
 						throw new FwStartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;
 				case FDOBackendProviderType.kInvalid:
@@ -528,7 +528,7 @@ namespace SIL.FieldWorks
 			}
 			// If the file doesn't have the expected extension and exists with the extension or
 			// does not exist without it, we add the expected extension.
-			if (SysPath.GetExtension(name) != ext && (FileUtils.FileExists(name + ext) || !FileUtils.FileExists(name)))
+			if (SysPath.GetExtension(name) != ext && (FileUtils.SimilarFileExists(name + ext) || !FileUtils.SimilarFileExists(name)))
 				name += ext;
 			return name;
 		}

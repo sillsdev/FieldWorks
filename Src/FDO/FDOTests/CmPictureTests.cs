@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string internalPathUpdated = m_pict.PictureFileRA.InternalPath;
 			Assert.AreEqual(sNewFile, internalPathUpdated, "Internal path not set correctly");
 			Assert.AreEqual(sNewFile, m_pict.PictureFileRA.AbsoluteInternalPath, "Files outside LangProject.LinkedFilesRootDir are stored as absolute paths");
-			Assert.IsFalse(FileUtils.FileExists(sNewFile));
+			Assert.IsFalse(FileUtils.SimilarFileExists(sNewFile));
 		}
 
 		/// -------------------------------------------------------------------------------------

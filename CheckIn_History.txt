@@ -320,3 +320,4 @@ JohnT, 19 Sep 2012. LT-13607 SFM import 'loses' data with in-line codes
 KenZ, 20 Sep 2012. Replaced Zedit with new version that fixes a serious bug when inserting Return at beginning of ine in UTF-8 mode
 	that inserted null instead of LF following CR.
 JohnT, 20 Sep 2012. LT-13592, output <br/> in place of U+2028 and U+2029 in XHTML export
+RickM, 21 Sept 2012. LT-13613  Changing LinkedFiles path location does not copy Picture files with diacritics to the new location.

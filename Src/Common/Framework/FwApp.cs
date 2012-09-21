@@ -1815,8 +1815,8 @@ namespace SIL.FieldWorks.Common.Framework
 				foreach (var linkInfo in hyperlinks)
 				{
 					if (!rgFilesToMove.Contains(linkInfo.RelativePath) &&
-						FileUtils.FileExists(Path.Combine(sOldLinkedFilesRootDir, linkInfo.RelativePath)) &&
-						!FileUtils.FileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
+						FileUtils.SimilarFileExists(Path.Combine(sOldLinkedFilesRootDir, linkInfo.RelativePath)) &&
+						!FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
 					{
 						rgFilesToMove.Add(linkInfo.RelativePath);
 					}
@@ -1854,8 +1854,8 @@ namespace SIL.FieldWorks.Common.Framework
 						string sNewDir = Path.GetDirectoryName(sNewPathname);
 						if (!Directory.Exists(sNewDir))
 							Directory.CreateDirectory(sNewDir);
-						Debug.Assert(FileUtils.FileExists(sOldPathname));
-						if (FileUtils.FileExists(sNewPathname))
+						Debug.Assert(FileUtils.TrySimilarFileExists(sOldPathname, out sOldPathname));
+						if (FileUtils.TrySimilarFileExists(sNewPathname, out sNewPathname))
 							File.Delete(sNewPathname);
 						try
 						{
@@ -1923,14 +1923,16 @@ namespace SIL.FieldWorks.Common.Framework
 					// Don't put the same file in more than once!
 					if (rgFilesToMove.Contains(sFilepath))
 						continue;
-					if (FileUtils.FileExists(Path.Combine(sOldRootDir, sFilepath)))
+					var sOldFilePath = Path.Combine(sOldRootDir, sFilepath);
+					if (FileUtils.TrySimilarFileExists(sOldFilePath, out sOldFilePath))
 					{
-						if (FileUtils.FileExists(Path.Combine(sNewRootDir, sFilepath)))
+						var sNewFilePath= Path.Combine(sNewRootDir, sFilepath);
+						if (FileUtils.TrySimilarFileExists(sNewFilePath, out sNewFilePath))
 						{
 							//if the file exists in the destination LinkedFiles location, then only copy/move it if
 							//file in the source location is newer.
-							var dateTimeOfFileSourceFile = File.GetLastWriteTime(Path.Combine(sOldRootDir, sFilepath));
-							var dateTimeOfFileDestinationFile = File.GetLastWriteTime(Path.Combine(sNewRootDir, sFilepath));
+							var dateTimeOfFileSourceFile = File.GetLastWriteTime(sOldFilePath);
+							var dateTimeOfFileDestinationFile = File.GetLastWriteTime(sNewFilePath);
 							if (dateTimeOfFileSourceFile > dateTimeOfFileDestinationFile)
 								rgFilesToMove.Add(sFilepath);
 						}
@@ -1961,8 +1963,8 @@ namespace SIL.FieldWorks.Common.Framework
 				string sFilepath = file.InternalPath;
 				if (!Path.IsPathRooted(sFilepath))
 				{
-					if (FileUtils.FileExists(Path.Combine(sOldRootDir, sFilepath)) &&
-						!FileUtils.FileExists(Path.Combine(sNewRootDir, sFilepath)))
+					if (FileUtils.SimilarFileExists(Path.Combine(sOldRootDir, sFilepath)) &&
+						!FileUtils.SimilarFileExists(Path.Combine(sNewRootDir, sFilepath)))
 					{
 						file.InternalPath = Path.Combine(sOldRootDir, sFilepath);
 					}
