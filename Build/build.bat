@@ -1,5 +1,8 @@
 echo off
 
+REM cause Environment variable changes to be lost after this process dies:
+if not "%OS%"=="" setlocal
+
 Set RegQry=HKLM\Hardware\Description\System\CentralProcessor\0
 
 REG.exe Query %RegQry% > checkOS.txt
