@@ -53,11 +53,28 @@
 	<xsl:template name="IdOfIrregularlyInflectedFormEntry">
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="lexEntryRef"/>
+		<xsl:param name="msa"/>
 		<xsl:value-of select="$lexEntry/@Id"/>
 		<xsl:variable name="iPos" select="count($lexEntryRef/preceding-sibling::LexEntryRef)"/>
 		<xsl:if test="$iPos &gt; 0">
 			<xsl:text>.</xsl:text>
 			<xsl:value-of select="$iPos"/>
+		</xsl:if>
+		<xsl:call-template name="AppendAnyMsaCountNumber">
+			<xsl:with-param name="msa" select="$msa"/>
+		</xsl:call-template>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		AppendAnyMsaCountNumber
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="AppendAnyMsaCountNumber">
+		<xsl:param name="msa"/>
+		<xsl:variable name="iMsaPos" select="count($msa/preceding-sibling::MorphoSyntaxAnalysis)"/>
+		<xsl:if test="$iMsaPos &gt; 0">
+			<xsl:text>.</xsl:text>
+			<xsl:value-of select="$iMsaPos"/>
 		</xsl:if>
 	</xsl:template>
 

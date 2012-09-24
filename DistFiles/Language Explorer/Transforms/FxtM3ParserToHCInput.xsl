@@ -358,6 +358,7 @@
 										<xsl:with-param name="componentLexEntry" select="$componentLexEntry"/>
 										<xsl:with-param name="sVariantOfGloss" select="key('LexSenseId',$componentLexEntry/Sense[1]/@dst)/Gloss"/>
 										<xsl:with-param name="msa" select="$stemMsa"/>
+										<xsl:with-param name="lexEntryMsa" select="."/>
 									</xsl:call-template>
 								</xsl:for-each>
 							</xsl:when>
@@ -479,6 +480,7 @@
 		<xsl:param name="lexEntryRef"/>
 		<xsl:param name="componentLexEntry"/>
 		<xsl:param name="sVariantOfGloss"/>
+		<xsl:param name="lexEntryMsa"/>
 		<xsl:variable name="morphType" select="key('MorphTypeId', $entry/LexemeForm/@MorphType)/@Guid"/>
 		<xsl:if test="$lexEntryRef/LexEntryInflType">
 			<LexicalEntry>
@@ -486,6 +488,7 @@
 					<xsl:call-template name="IdOfIrregularlyInflectedFormEntry">
 						<xsl:with-param name="lexEntry" select="$entry"/>
 						<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+						<xsl:with-param name="msa" select="$lexEntryMsa"/>
 					</xsl:call-template>
 				</xsl:variable>
 				<xsl:attribute name="id">
@@ -548,6 +551,9 @@
 						<xsl:value-of select="$entry/@Id"/>
 						<xsl:text>_</xsl:text>
 						<xsl:value-of select="$componentLexEntry/@Id"/>
+						<xsl:call-template name="AppendAnyMsaCountNumber">
+							<xsl:with-param name="msa" select="$lexEntryMsa"/>
+						</xsl:call-template>
 						<xsl:text>_LEX</xsl:text>
 					</xsl:attribute>
 					<xsl:value-of select="$gloss"/>
