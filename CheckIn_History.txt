@@ -6139,3 +6139,4 @@ JohnT, 24 Sep 2012. Integrated changes from 7.2. Made a new build tool to replac
 	people's hands.
 	I have not tested the changes to make the Linux build use the new CollectCppUnitTests build process.
 JohnT, 24 Sep 2012. MSBuild now working and running all unit tests successfully (cd ww/build; build /t:remakefw /v:m /property:action=test)
+RickM, 24 Sept 2012. LT-10424 Complex Form Types and Variant Types columns need to use Best Analysis

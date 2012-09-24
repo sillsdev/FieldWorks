@@ -140,7 +140,7 @@
 	<column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
 	<column layout="PrimaryLexemesBrowse" label="Subentry under" multipara="true" editable="false"  visibility="dialog" />
 	<!-- until we enable identifying theses by RefType enum, disallow bulk editing on complex entry types via bulkDelete="false" -->
-	<column layout="ComplexEntryTypesBrowse" ws="$ws=analysis" label="Complex Form Types" multipara="true" editable="false"  visibility="dialog"
+	<column layout="ComplexEntryTypesBrowse" ws="$ws=best analysis" label="Complex Form Types" multipara="true" editable="false"  visibility="dialog"
 			chooserFilter="complexListMultiple" canChooseEmpty="true"
 			ghostListField="LexDb.AllComplexEntryRefPropertyTargets"
 			bulkEdit="complexEntryTypes" field="LexEntryRef.ComplexEntryTypes" bulkDelete="false" list="LexDb.ComplexEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis"/>
@@ -148,7 +148,7 @@
 			bulkEdit="booleanOnSubfield" field="LexEntry.EntryRefs" subfield="LexEntryRef.HideMinorEntry" items="0:no;1:yes" blankPossible="yes"/>
 	<column layout="ComplexFormsBrowse" label="Complex Forms" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
 	<column layout="ComponentLexemesBrowse" label="Variant of" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
-	<column layout="VariantEntryTypesBrowse" ws="$ws=analysis" label="Variant Types" multipara="true" editable="false" visibility="dialog"
+	<column layout="VariantEntryTypesBrowse" ws="$ws=best analysis" label="Variant Types" multipara="true" editable="false" visibility="dialog"
 			chooserFilter="complexListMultiple" canChooseEmpty="true"
 			ghostListField="LexDb.AllVariantEntryRefPropertyTargets"
 			bulkEdit="variantEntryTypes" field="LexEntryRef.VariantEntryTypes" list="LexDb.VariantEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis"/>
