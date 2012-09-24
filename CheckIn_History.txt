@@ -6129,3 +6129,4 @@ SteveMc, September 20, 2012.  Integrate from Calgary/WW to WW.
 SteveMc, September 20, 2012.  Fix invalid messages in messages.fa.po.
 ... a couple of Imrie checkins...
 GordonM, 21 Sep 2012. GenerateNUnitReports task for MSBuild process
+LastufkaM 24 Sep 2012. LT-13574 Crash opening project "Richard G".
