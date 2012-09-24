@@ -340,6 +340,10 @@
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Needed for at least one set of unit tests. Since the installer combines distfiles with output/release, probably not necessary otherwise.
+		Possibly could be moved into a buildInclude for projects that need it. Old version did not copy for remakele-->
+		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="setRegistryValues" Condition="'$(OS)'=='Unix' Or '$(UserIsAdmin)'=='True'" DependsOnTargets="initLinux;initWindows">

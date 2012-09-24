@@ -6138,3 +6138,4 @@ JohnT, 24 Sep 2012. Integrated changes from 7.2. Made a new build tool to replac
 	I will work on solving these problems, but I think the evidence is pretty good that the integration succeeded, so wanted to get those changes in
 	people's hands.
 	I have not tested the changes to make the Linux build use the new CollectCppUnitTests build process.
+JohnT, 24 Sep 2012. MSBuild now working and running all unit tests successfully (cd ww/build; build /t:remakefw /v:m /property:action=test)

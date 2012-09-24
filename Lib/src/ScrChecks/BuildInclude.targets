@@ -9,8 +9,14 @@
   <ItemGroup>
 	<ScrChecksFiles Include="$(TargetPath)"/>
 	<ScrChecksFiles Include="$(TargetDir)$(TargetName).pdb"/>
+	  <ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll"/>
+	  <ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).pdb"/>
   </ItemGroup>
   <Target Name="AfterBuild">
-	<Copy SourceFiles="@(SrcCheckFiles)" DestinationFolder="..\..\..\DistFiles\Editorial Checks" OverwriteReadOnlyFiles="true"/>
+	<MakeDir Directories="..\..\..\DistFiles\Editorial Checks"/>
+	<Copy SourceFiles="@(ScrChecksFiles)" DestinationFolder="..\..\..\DistFiles\Editorial Checks" OverwriteReadOnlyFiles="true"/>
+  </Target>
+  <Target Name="AfterClean">
+	<Delete Files="@(ScrChecksCopied)" ContinueOnError="true"/>
   </Target>
 </Project>
