@@ -1,0 +1,1495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Nonstandard layouts for LexEntry and related classes. -->
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
+  <layout class="LexEntry" type="detail" name="Normal">
+	<part label="Lexeme Form" ref="LexemeForm"/>
+	<part label="Citation Form" ref="CitationFormAllV"/>
+	<part ref="ComplexFormEntries" visibility="ifdata"/>
+	<part ref="EntryRefs" param="Normal" visibility="ifdata"/>
+	<part ref="EntryRefsGhostComponents" visibility="always"/>
+	<part ref="EntryRefsGhostVariantOf" visibility="never"/>
+	<part ref="Pronunciations" param="Normal" visibility="ifdata"/>
+	<part ref="Etymology" menu="mnuDataTree-InsertEtymology" visibility="ifdata" />
+	<part ref="CommentAllA"/>
+	<part ref="LiteralMeaningAllA"  visibility="ifdata"/> <!-- Only for Subentries. -->
+	<part ref="BibliographyAllA"   visibility="ifdata" />
+	<part ref="RestrictionsAllA"   visibility="ifdata" />
+	<part ref="SummaryDefinitionAllA" visibility="ifdata"/>
+
+	<part ref="CurrentLexReferences"   visibility="ifdata" />
+
+	<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+	<part customFields="here" />
+
+	<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
+	<part ref="DateCreatedAllA"  visibility="never"/>
+	<part ref="DateModifiedAllA"  visibility="never"/>
+	  <part ref="Senses" param="Normal" expansion="expanded"/>
+	<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
+		<indent>
+			<part ref="VariantForms"/>
+		</indent>
+	</part>
+	<part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree-AlternateForms" hotlinks="mnuDataTree-AlternateForms-Hotlinks">
+		<indent>
+			<part ref="AlternateForms" param="Normal"/>
+		</indent>
+	</part>
+	  <part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
+		  <indent>
+			  <part ref="MorphoSyntaxAnalyses" param="Normal"/>
+		  </indent>
+	  </part>
+	  <part ref="PublicationSection" label="Publication Settings" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
+		<indent>
+			<part ref="PublishIn"   visibility="ifdata" />
+			<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="ifdata" />
+			<part ref="EntryRefs" param="Publication" visibility="ifdata"/>
+			<part ref="ShowMinorEntry"/>
+			<part ref="Subentries" visibility="ifdata"/>
+			<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
+		</indent>
+	</part>
+  </layout>
+
+
+	<layout class="LexEntry" type="detail" name="AsVariantForm">
+		<part ref="AsVariantForm"/>
+	</layout>
+
+  <layout class="LexEntry" type="jtview" name="pubSenseSubEntry">
+	<part ref="CrossRefName"/>
+	<part ref="EntryType" param="SpaceParenAbbr"/>
+	<part ref="SummaryDefinitionAllA"/>
+	<part ref="Space"/>
+  </layout>
+
+ <layout class="LexEtymology" type="detail" name="default">
+	<part ref="FormAllWs" menu="mnuDataTree-DeleteEtymology" expansion="expanded">
+	<indent>
+		<part ref="GlossAllA"/>
+		<part ref="CommentAllA"/>
+		<part ref="Source"/>
+	</indent>
+	</part>
+  </layout>
+
+  <layout class="LexEntry" type="jtview" name="CrossRefPub">
+	<part ref="MLHeadWordPub" label="Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+  </layout>
+	<layout class="LexEntry" type="jtview" name="SubentryUnderPub">
+		<part ref="MLHeadWordPub" label="Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " hideConfig="true" showLabels="false" style="Dictionary-CrossReferences"/>
+	</layout>
+
+  <layout class="LexPronunciation" type="detail" name="Normal">
+	  <part ref="FormOnly" label="Pronunciation"/>
+	  <part ref="MediaFiles" param="FileAndLabel"/>
+	  <part ref="CVPattern" label="CV Pattern"/>
+	  <part ref="Tone"/>
+	  <part ref="Location"/>
+  </layout>
+
+
+	<layout class="LexEntryRef" type="detail" name="Normal">
+		<part ref="VariantEntryTypes"/>
+		<part ref="ComplexEntryTypes"/>
+		<part ref="ComponentLexemes"/>
+		<part ref="Summary" visibility="ifdata"/>
+	</layout>
+
+	<layout class="LexEntryRef" type="detail" name="Publication">
+		<part ref="PrimaryLexemes"/>
+	</layout>
+
+	<layout class="LexEntryRef" type="detail" name="VariantSection">
+		<part ref="RefVariantForm"/>
+		<part ref="RefVariantEntryTypes"/>
+		<part ref="RefShowMinorEntry"/>
+		<part ref="RefSummary" visibility="ifdata"/>
+	</layout>
+
+
+  <layout class="CmMedia" type="detail" name="FileAndLabel">
+	<part ref="MediaFile"/>
+	<part ref="Label"/>
+  </layout>
+
+  <layout class="CmPossibility" type="jtview" name="classifiedDict">
+	<sublayout name="domainLabel" group="para" style="Classified-MainEntry"/>
+	<part ref="ReferringSenses" param="classifiedDict"/>
+  </layout>
+
+  <layout class="CmPossibility" type="jtview" name="domainLabel">
+	<part ref="ConfigureAbbr" after=" " ws="best analorvern"/>
+	<part ref="ConfigureName" ws="best analorvern"/>
+  </layout>
+
+	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
+	<!--
+		Naming Convention:
+		Layout names are laid out like this: publish<Type>(Minor)<Field>
+		For instance, publishStem or publishRoot for the top-level layout called by the Language Explorer tool.
+					  publishStemEntry - layout for a full entry in a stem-based dictionary
+					  publishStemMinorEntry - layout for a minor entry in a stem-based dictionary
+					  publishStemPara - sublayout containing paragraph contents for a full entry
+					  publishStemMinorPara - sublayout containing paragraph contents for a minor entry
+
+		Part names end with either Pub (for string and other simple types) or Config (for fields that invoke other layouts).
+		Some part names for simple type fields may just be the field name without either ending.
+	-->
+
+	<layout class="LexEntry" type="jtview" name="publishStem">
+		<part ref="StemConfig" param="publishStem{0}Entry"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRoot">
+		<part ref="RootConfig" param="publishRoot{0}Entry"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishStemPreview">
+		<part ref="StemConfig" param="publishStem{0}EntryPreview"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootPreview">
+		<part ref="RootConfig" param="publishRoot{0}EntryPreview"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishStemEntry">
+		<sublayout name="publishStemPara" group="para" style="Dictionary-Normal"/>
+		<part ref="PicturesConfig" label="Pictures" style="Dictionary-Pictures" flowType="para" visibility="ifdata" sep="  " param="publishStem" css="$fwstyle=Dictionary-Pictures"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemEntryPreview">
+		<part ref="PublishEntryPreviewConfig" param="publishStemEntry"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootEntryPreview">
+		<part ref="PublishEntryPreviewConfig" param="publishRootEntry"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorEntryPreview">
+		<part ref="PublishEntryPreviewConfig" param="publishStemMinorEntry"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorEntryPreview">
+		<part ref="PublishEntryPreviewConfig" param="publishRootMinorEntry"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemPara" css="$fwstyle=Dictionary-Normal">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishStemLexemeForm"/>
+		<part ref="CitationFormPub" label="Citation Form" before="" after=" " visibility="never" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false" />
+		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
+		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishStemForLexEntry" css="pronunciations"/>
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishStemVariantRef" css="variantrefs"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before="" after=" " param="publishStemEtymology" css="etymology"/>
+		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishStemEntry" css="crossrefs" lexreltype="entry"/>
+		<part ref="StemMainEntryConfig" label="Component References" param="publishStemEntryRefs" visibility="ifdata" before="(" after=") " sep=", " css="primaryrefs"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry"/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishStem" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true" />
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishStemForm"/>
+		<part ref="DateCreated" label="Date Created" before="created on: " after=" " visibility="never"/>
+		<part ref="DateModified" label="Date Modified" before="modified on: " after=" " visibility="never"/>
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishStemComplexFormRef" visibility="ifdata" before="" after=" " sep=", " showasindentedpara="no" css="complexformrefs" entrytype="complex" disallowCharStyle="true"/>
+		<generate class="LexEntry" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishStemMinorEntry">
+		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorPara" css="$fwstyle=Dictionary-Normal">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword-minor" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number."/>
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishStemMinorLexemeForm"/>
+		<part ref="CitationFormPub" label="Citation Form" before="" after=" " visibility="never" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false"/>
+		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
+		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishStemMinorForLexEntry" css="pronunciations-minor"/>
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishStemMinorVariantRef" css="variantrefs-minor"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="never" before=" " after=" " param="publishStemMinorEtymology" css="etymology-minor"/>
+		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="never" sep="; " after=". " param="publishStemMinorEntry" css="crossrefs-minor" lexreltype="entry"/>
+		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishStemMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="summarydef-minor"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry-minor"/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishStemMinor" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishStemMinorForm"/>
+		<part ref="DateCreated" label="Date Created" before=" created on: " after="" visibility="never"/>
+		<part ref="DateModified" label="Date Modified" before=" modified on: " after="" visibility="never"/>
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishStemMinorComplexFormRef" visibility="ifdata" before=" " after=" " sep=", " showasindentedpara="no" css="complexformrefs-minor" entrytype="complex" disallowCharStyle="true"/>
+		<generate class="LexEntry" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+
+
+	<layout class="LexEntry" type="jtview" name="publishRootEntry">
+		<sublayout name="publishRootPara" group="para" style="Dictionary-Normal"/>
+		<part ref="PicturesConfig" label="Pictures" style="Dictionary-Pictures" flowType="para" visibility="ifdata" sep="  " param="publishRoot" css="$fwstyle=Dictionary-Pictures"/>
+		<part ref="RootSubentriesConfig" label="Subentries" param="publishRootSubentry" parastyle="Dictionary-Subentry" preventnullstyle="true" flowType="div" css="subentries" entrytype="complex" visibility="ifdata"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootPara" css="$fwstyle=Dictionary-Normal">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishRootLexemeForm"/>
+		<part ref="CitationFormPub" label="Citation Form" before="" after=" " visibility="never" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false"/>
+		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
+		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootForLexEntry" css="pronunciations"/>
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootVariantRef" css="variantrefs"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " param="publishRootEtymology" css="etymology"/>
+		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootEntry" css="crossrefs" lexreltype="entry"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry"/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRoot" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishRootForm"/>
+		<part ref="DateCreated" label="Date Created" before=" created on: " after="" visibility="never"/>
+		<part ref="DateModified" label="Date Modified" before=" modified on: " after="" visibility="never"/>
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+		<part ref="ComplexFormsNotSubentries" label="Other Referenced Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootComplexFormRef" css="complexformrefs"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishRootMinorEntry">
+		<part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishRootMinorPara" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorPara" css="$fwstyle=Dictionary-Normal">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword"  css="headword-minor" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number."/>
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishRootMinorLexemeForm"/>
+		<part ref="CitationFormPub" label="Citation Form" before="" after=" " visibility="never" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false"/>
+		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
+		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootMinorForLexEntry" css="pronunciations-minor"/>
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootMinorVariantRef" css="variantrefs-minor"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="never" before=" " after=" " param="publishRootMinorEtymology" css="etymology-minor"/>
+		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="never" sep="; " after=". " param="publishRootMinorEntry" css="crossrefs-minor" lexreltype="entry"/>
+		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishRootMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
+		<part ref="StemMinorComponentsConfig" label="Components" param="publishRootComponentRefs" visibility="ifdata" before=" (" after=")" sep=", " entrytype="complex" css="components-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="summarydef-minor"/>
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry-minor"/>
+		<part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishRootMinor" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishRootMinorForm"/>
+		<part ref="DateCreated" label="Date Created" before=" created on: " after="" visibility="never"/>
+		<part ref="DateModified" label="Date Modified" before=" modified on: " after="" visibility="never"/>
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<if target="$fieldName" is="StText">
+					<obj field="$fieldName" layout="FullText"/>
+				</if>
+				<ifnot target="$fieldName" is="StText">
+					<obj field="$fieldName" layout="Name"/>
+				</ifnot>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<part ref="ComplexFormsNotSubentries" label="Referenced Complex Forms" param="publishRootMinorComplexFormRef" visibility="ifdata" before=" " after=" " sep=", " showasindentedpara="yes" css="complexformrefs-minor" entrytype="complex" disallowCharStyle="true"/>
+		<generate class="LexEntry" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishRootSubentry" css="$fwstyle=Dictionary-Subentry">
+		<sublayout name="publishRootSubentryPara" group="para"/>
+		<part ref="RootSubentriesConfig" flowType="div" label="Subsubentries" parastyle="Dictionary-Subentry" css="subsubentries" recurseConfig="false" param="publishRootSubentry" entrytype="complex" indent="true" visibility="ifdata"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishRootSubentryPara" css="$fwstyle=Dictionary-Subentry">
+		<part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword"  css="headword-sub" visibility="ifdata"
+				comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking."/>
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishRootSubLexemeForm"/>
+		<part ref="CitationFormPub" label="Citation Form" before="" after=" " visibility="never" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false"/>
+		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
+		<part ref="RootSubEntryTypeConfig" param="publishRootSubEntryType" hideConfig="true"/>
+		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootSubForLexEntry" css="pronunciations-sub"/>
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootSubVariantRef" css="variantrefs-sub"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " param="publishRootSubEtymology" css="etymology-sub"/>
+		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootSubEntry" css="crossrefs-sub" lexreltype="entry"/>
+		<!-- the next part is not wanted according to LT-9566 -->
+		<!--part ref="RootSubMainEntryConfig" label="Primary Entry References" visibility="ifdata" before="" after=" " sep=", " css="primaryrefs-sub"/-->
+		<part ref="SensesConfig" label="Senses" sep=" " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishRootSub" css="senses-sub" cssNumber="xsensenumber-sub" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true"/>
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="CommentPub" label="Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="LiteralMeaningPub" label="Literal Meaning" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishRootSubForm"/>
+		<part ref="DateCreated" label="Date Created" before=" created on: " after="" visibility="never"/>
+		<part ref="DateModified" label="Date Modified" before=" modified on: " after="" visibility="never"/>
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+
+	<!-- This is according to spec, but loses the ability to group variants of a common type. -->
+	<layout class="LexEntryRef" type="jtview" name="publishStemVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForStemVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForStemSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemSenseVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemMinorVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemMinorVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemMinorVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForStemMinorVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemMinorVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemMinorSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemMinorSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemMinorSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForStemMinorSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemMinorSenseVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSenseVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootMinorVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSubVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorSubVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorSubVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootMinorSubVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorSubVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootMinorSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorSenseVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSubSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorSubSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-minor"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorSubSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootMinorSubSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-minor"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorSubSenseVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSubVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSubVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-sub"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSubVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootSubVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-sub"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSubVariantRef" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSubSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSubSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-sub"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSubSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForRootSubSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-sub"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSubSenseVariantRef" hideConfig="true"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemMinorVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemMinorSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootMinorVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootMinorSubVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootMinorSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootMinorSubSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootSubVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form-sub"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForRootSubSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form-sub"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishPronunForStemVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemForEntryVariant" visibility="never" before=" " after="" sep=", "/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForStemSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForStemMinorVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemMinorForEntryVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForStemMinorSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemMinorForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootForEntryVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootMinorVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootMinorForEntryVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootMinorSubVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootMinorSubForEntryVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootMinorSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootMinorForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootMinorSubSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootMinorSubForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootSubVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootSubForEntryVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForRootSubSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishRootSubForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+
+	<layout class="LexEntryRef" type="jtview" name="publishStemEntryRefs">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemEntryType" before="" after=" " sep=", " visibility="ifdata" css="entryref-type"/>
+		<part ref="ComponentHeadwordsConfig" label="Components" param="publishStemComponentTarget" before="" after="" sep=", " visibility="ifdata" css="entryref-component"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemMinorEntryRefs">
+		<part ref="EntryTypesConfig" label="Variant Type" param="publishStemMinorEntryType" before="" after=" " sep=", " visibility="ifdata" css="variant-type-minor"/>
+		<part ref="ComponentHeadwordsConfig" label="Referenced Entries" param="publishStemMinorPrimaryTarget" before=" " after="" sep=", " visibility="ifdata" css="variant-primary-minor"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootComponentRefs">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootComponentType" before="" after=" " sep=", " visibility="ifdata" css="complex-type-minor"/>
+		<part ref="ComponentHeadwordsConfig" label="Referenced Entries" param="publishRootMinorComponentTarget" before=" " after="" sep=", " visibility="ifdata" css="complex-primary-minor"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="complex-summary-minor"/>
+		<part ref="SubentryUnder" label="Subentry Under" param ="SubentryUnderPub" before=", see under " after="" sep =", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="complex-subentry-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorEntryRefs">
+		<part ref="EntryTypesConfig" label="Variant Type" param="publishRootMinorEntryType" before="" after=" " sep=", " visibility="ifdata" css="variant-type-minor"/>
+		<part ref="ComponentHeadwordsConfig" label="Referenced Entries" param="publishRootMinorPrimaryTarget" before=" " after="" sep=", " visibility="ifdata" css="variant-primary-minor"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSubEntryRefs">
+		<part ref="EntryTypesConfig" label="Variant/Complex Form Type" param="publishRootSubEntryRefType" before="" after=" " sep=", " visibility="ifdata" css="entryref-type-sub"/>
+		<part ref="ComponentHeadwordsConfig" label="Primary Entry (all)" param="publishRootSubComponentTarget" before="" after=" " sep=", " visibility="ifdata" css="entryref-component-sub"/>
+		<part ref="PrimaryHeadwordsConfig" label="Primary Entry (subentry under)" param="publishRootSubPrimaryTarget" before=" " after="" sep=", " visibility="never" css="entryref-primary-sub"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary-sub"/>
+	</layout>
+
+	<layout class="LexEntryRef" type="jtview" name="publishStemComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishStemComplexFormHeadword" hideConfig="true"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before="" after=" " sep=", " param="publishStemComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemComplexFormExample" visibility="never" css="complexform-examples"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishStemSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemSenseComplexFormExample" visibility="never" css="sense-complexform-examples"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemMinorComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishStemMinorComplexFormHeadword" hideConfig="true"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishStemMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormMinorSmartDefinitionConfig" param="publishStemMinorComplexFormDefinition" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemMinorComplexFormExample" visibility="never" css="complexform-examples-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemMinorSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishStemMinorSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootSenseComplexFormExample" visibility="never" css="sense-complexform-examples"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootMinorComplexFormHeadword" hideConfig="true"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishRootMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormMinorSmartDefinitionConfig" param="publishRootMinorComplexFormDefinition" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorComplexFormExample" visibility="never" css="complexform-examples-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootMinorSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootMinorSubSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorSubSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootMinorSubSenseComplexFormHeadword" visibility="ifdata" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorSubSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSubSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootMinorSubSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishRootSubSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootSubSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-sub"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishRootSubSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-sub"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootSubSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootSubSenseComplexFormExample" visibility="never" css="sense-complexform-examples-sub"/>
+		<part ref="SubentryUnder" label="Subentry Under Reference" param="publishRootSubSenseSubUnderTarget" before=" (see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-sub"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormDefinition">
+		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormDefinition">
+		<part ref="SensesForComplexFormSmartDefn" param="publishMinorComplexFormDefn" hideConfig="true" />
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after=" " ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form-sub"/>
+	</layout>
+
+
+	<layout class="LexEntry" type="jtview" name="publishStemComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="complexform-summarydef"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef-sub"/>
+	</layout>
+
+
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemMinorVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemMinorSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSubVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSubSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootSubVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after="" ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-sub"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootSubSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-sub"/>
+	</layout>
+
+	<layout class="LexEntryRef" type="jtview" name="publishRootSubEntryType">
+		<part ref="RootSubEntryType" label="Complex Form Type" param="publishRootSubEntryType" before="" after=" " sep=", " visibility="ifdata" style="" css="subentry-type"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishStemCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref-sub"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+
+
+	<layout class="LexEntry" type="jtview" name="publishStemComponentTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+	<!--layout class="LexEntry" type="jtview" name="publishStemPrimaryTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout-->
+	<!--layout class="LexEntry" type="jtview" name="publishStemMinorComponentTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout-->
+	<layout class="LexEntry" type="jtview" name="publishStemMinorPrimaryTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+	<!--layout class="LexEntry" type="jtview" name="publishRootMinorComponentTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout-->
+	<layout class="LexEntry" type="jtview" name="publishRootMinorPrimaryTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorComponentTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubPrimaryTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubComponentTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubPrimaryTarget">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="ifdata" before=" " after="" ws="analysis"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishRootSenseSubUnderTarget">
+		<part ref="MLHeadWordPub" ws="vernacular" sep=" " showLabels="false" hideConfig="true"/>
+	</layout>
+	<layout class="LexSense" type="jtview" name="publishRootSenseSubUnderTarget">
+		<part ref="OwningEntry" hideConfig="true" param="publishRootSenseSubUnderTarget"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubSubUnderTarget">
+		<part ref="MLHeadWordPub" ws="vernacular" sep=" " showLabels="false" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSenseSubUnderTarget">
+		<part ref="MLHeadWordPub" ws="vernacular" sep=" " showLabels="false" hideConfig="true"/>
+	</layout>
+	<layout class="LexSense" type="jtview" name="publishRootMinorSenseSubUnderTarget">
+		<part ref="OwningEntry" hideConfig="true" param="publishRootMinorSenseSubUnderTarget"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorSubSenseSubUnderTarget">
+		<part ref="MLHeadWordPub" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" hideConfig="true"/>
+	</layout>
+	<layout class="LexSense" type="jtview" name="publishRootMinorSubSenseSubUnderTarget">
+		<part ref="OwningEntry" hideConfig="true" param="publishRootMinorSubSenseSubUnderTarget"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootSubSenseSubUnderTarget">
+		<part ref="MLHeadWordPub" ws="vernacular" sep=" " showLabels="false" hideConfig="true"/>
+	</layout>
+	<layout class="LexSense" type="jtview" name="publishRootSubSenseSubUnderTarget">
+		<part ref="OwningEntry" hideConfig="true" param="publishRootSubSenseSubUnderTarget"/>
+	</layout>
+
+	<layout class="LexEntry" type="jtview" name="publishStemRefMainEntry">
+		<part ref="MLHeadWordPub" hideConfig="true" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="mainentryref"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishStemMinorRefMainEntry">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="mainentryref-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRootMinorRefMainEntry">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="mainentryref-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemMinorForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation-minor"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemMinorLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemMinorLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation-minor"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorSubForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation-minor"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorSubLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorSubLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootSubForLexEntry">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation-sub"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootSubLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootSubLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemMinorForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemMinorVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemMinorVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishStemMinorForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemMinorSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishStemMinorSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorSubForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorSubVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorSubVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootMinorSubForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootMinorSubSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootMinorSubSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootSubForEntryVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootSubVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootSubVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishRootSubForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishRootSubSenseVariantLocation"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishRootSubSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishStemMinorRefMainEntryCondition">
+		<part ref="NamePub" label="Condition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="minorentry-condition"/>
+	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishRootMinorRefMainEntryCondition">
+		<part ref="NamePub" label="Condition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="minorentry-condition"/>
+	</layout>
+
+	<layout class="LexEtymology" type="jtview" name="publishStemEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishStemMinorEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishRootEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishRootMinorEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishRootMinorSubEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishRootSubEtymology">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-sub"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-sub"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
+
+	<layout class="LexReference" type="jtview" name="publishStemEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " before="" after="" visibility="ifdata" param="publishStemCrossRef" css="crossref-targets"/>
+	</layout>
+	<layout class="LexReference" type="jtview" name="publishStemMinorEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-minor"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishStemMinorCrossRef" css="crossref-targets-minor"/>
+	</layout>
+	<layout class="LexReference" type="jtview" name="publishRootEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootCrossRef" css="crossref-targets"/>
+	</layout>
+	<layout class="LexReference" type="jtview" name="publishRootMinorEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-minor"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootMinorCrossRef" css="crossref-targets-minor"/>
+	</layout>
+	<!-- <layout class="LexReference" type="jtview" name="publishRootMinorSubEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-minor"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootMinorSubCrossRef" css="crossref-targets-minor"/>
+	</layout> -->
+	<layout class="LexReference" type="jtview" name="publishRootSubEntry">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-sub"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootSubCrossRef" css="crossref-targets-sub"/>
+	</layout>
+
+<!--
+	<layout class="LexEntryType" type="jtview" name="publishStemAbbreviation">
+		<part ref="AbbreviationPub" label="Entry Type Abbreviation" before="" after="" ws="analysis" wsType="analysis" css="entry-type-abbr" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorAbbreviation">
+		<part ref="AbbreviationPub" label="Entry Type Abbreviation" before="" after="" ws="analysis" wsType="analysis" css="entry-type-abbr-minor" hideConfig="true"/>
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorAbbreviation">
+		<part ref="AbbreviationPub" label="Entry Type Abbreviation" before="" after="" ws="analysis" wsType="analysis" css="entry-type-abbr-minor" hideConfig="true"/>
+	</layout>
+-->
+	<layout class="LexEntryType" type="jtview" name="publishRootSubEntryType">
+		<part ref="ReverseAbbrPub" label="Abbreviation" before="(" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="entry-type-abbr-sub"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+
+	<layout class="LexEntryType" type="jtview" name="publishStemEntryType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorEntryType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorEntryType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSubEntryType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootComponentType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSubEntryRefType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+
+	<layout class="LexEntryType" type="jtview" name="publishStemComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSubComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSubSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSubSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+
+	<layout class="LexEntryType" type="jtview" name="publishStemVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishStemMinorSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSubVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootMinorSubSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSubVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishRootSubSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+
+
+	<layout class="MoForm" type="jtview" name="publishStemForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+		<part ref="FormEnvPub" label="Environments" after=" " visibility="never" sep=", "/>
+		<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishStemMinorForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemMinorMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootMinorForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootMinorMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootMinorSubForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootMinorSubMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootSubForm">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootSubMorphType"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+
+	<layout class="MoForm" type="jtview" name="publishStemLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular"/>
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishStemMinorLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular"/>
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootMinorLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootSubLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishRootMinorSubLexemeForm">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+
+	<layout class="MoMorphType" type="jtview" name="publishStemMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+	<layout class="MoMorphType" type="jtview" name="publishStemMinorMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+	<layout class="MoMorphType" type="jtview" name="publishRootMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+	<layout class="MoMorphType" type="jtview" name="publishRootMinorMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+	<layout class="MoMorphType" type="jtview" name="publishRootMinorSubMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+	<layout class="MoMorphType" type="jtview" name="publishRootSubMorphType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
+
+
+	<layout class="LexDb" type="jtview" name="publishFound">
+		<part ref="EntriesFound" param="publishStem"/>
+	</layout>
+
+</LayoutInventory>

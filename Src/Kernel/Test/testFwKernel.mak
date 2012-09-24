@@ -88,4 +88,4 @@ $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
  $(FWKERNELTEST_SRC)\TestTsPropsBldr.h\
  $(FWKERNELTEST_SRC)\TestTsTextProps.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
-	$(COLLECT) $** >$(FWKERNELTEST_SRC)\Collection.cpp
+	$(COLLECT) $** $(FWKERNELTEST_SRC)\Collection.cpp

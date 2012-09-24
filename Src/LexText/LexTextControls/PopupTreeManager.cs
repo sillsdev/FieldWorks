@@ -509,9 +509,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (item != null)
 			{
-				// Simulate a mouse click so that TextBox gets updated.
-				popupTree.SelectByAction = TreeViewAction.ByMouse;
+				// We do NOT want to simulate a mouse click because that will cause the
+				// text box in the combo to be focused. We may be updating this from a PropChanged
+				// that should not set focus.
+				popupTree.SelectByAction = TreeViewAction.Unknown;
 				popupTree.SelectedNode = item;
+				if (m_treeCombo != null)
+					m_treeCombo.SetComboText(item);
 			}
 		}
 

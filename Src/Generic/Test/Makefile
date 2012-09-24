@@ -145,7 +145,7 @@ $(INT_DIR)/Collection.cpp: \
 	TestUtilString.h \
 	TestUtilXml.h
 	@echo Collecting tests for testGenericLib
-	$(COLLECT) $^ >$@
+	$(COLLECT) $** $@
 
 OTHER_PROGS =
 OTHER_OBJS  = $(GENERIC_OBJ)/UnicodeConverter.o $(GENERIC_OBJ)/HashMap.o $(GENERIC_OBJ)/OleStringLiteral.o \

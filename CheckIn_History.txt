@@ -6130,3 +6130,11 @@ SteveMc, September 20, 2012.  Fix invalid messages in messages.fa.po.
 ... a couple of Imrie checkins...
 GordonM, 21 Sep 2012. GenerateNUnitReports task for MSBuild process
 LastufkaM 24 Sep 2012. LT-13574 Crash opening project "Richard G".
+JohnT, 24 Sep 2012. Integrated changes from 7.2. Made a new build tool to replace the (recently became flaky) gawk script used in building C++ tests.
+	Note that the nant build is broken, even before this change: the script generated for MigrateSql is broken, has target init-Debug twice.
+	The MSBuild (ww\build directory, build /t:remakefw) succeeds, but some unit tests fail (also even before this change).
+	The xWorks ones pass when retried, I think we're missing a dependency.
+	Others pass when Output/X/ScrChecks.dll/pdb is copied to Distfiles/Editorial Checks and Utilities.dll is copied from Distfiles to Output/Debug.
+	I will work on solving these problems, but I think the evidence is pretty good that the integration succeeded, so wanted to get those changes in
+	people's hands.
+	I have not tested the changes to make the Linux build use the new CollectCppUnitTests build process.

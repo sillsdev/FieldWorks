@@ -201,7 +201,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Create an XmlTextWriter to output the result of the transform.
 				using (XmlTextWriter writer = new XmlTextWriter(output, System.Text.Encoding.UTF8))
 				{
-					writer.Formatting = Formatting.Indented;
+					// Do NOT set Formatting.Indented. It can insert spurious white space, for example,
+					// when the first child of a Custom element in phase 2 is an InFieldMarker, it inserts
+					// a newline before it, which becomes part of the content of the string, with bad consequences
+					// (LT-LT-13607)
+					// NO! don't do this!!  writer.Formatting = Formatting.Indented;
 
 					// Transform the file.
 					xslt.Transform(reader, writer);

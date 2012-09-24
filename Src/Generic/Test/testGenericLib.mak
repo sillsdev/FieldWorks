@@ -72,6 +72,6 @@ $(GENERICTEST_SRC)\Collection.cpp: $(GENERICTEST_SRC)\testGenericLib.h\
  $(GENERICTEST_SRC)\TestErrorHandling.h\
  $(GENERICTEST_SRC)\TestFwSettings.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
-	$(COLLECT) $** >$(GENERICTEST_SRC)\Collection.cpp
+	$(COLLECT) $** $(GENERICTEST_SRC)\Collection.cpp
 
 $(INT_DIR)\genpch\testGeneric.obj: $(GENERICTEST_SRC)\testGeneric.cpp

@@ -740,6 +740,24 @@ namespace SIL.FieldWorks.IText
 			searches[7] = "<!DOCTYPE";
 		}
 
+		/// <summary>
+		/// JohnT: I didn't write this, but a preliminary read and the comment in the progress dialog indicate that it is
+		/// attempting to convert the language data elements of the input file (a) using the specified encoding converter
+		/// for the appropriate writing system, if any, and then (b) to UTF8. Also, it converts the ws attribute values to
+		/// the appropriate FW encoding identifiers the user has selected.
+		///
+		/// To do this it uses a complex state machine. It's basic purpose seems to be to isolate the data needing conversion
+		/// in one buffer, then save any intermediate markup in another buffer, until it gets the correspondig ws attribute
+		/// which allows it to determine the appropriate converter to use. Each state corresponds to some step in the process.
+		///
+		/// For each state there are up to eight keywords being looked for...usually only one or two except in the initial
+		/// state, where there are seven (see InitializeSearches). Searches [0] is reserved for the most likely WRONG thing
+		/// that would indicate that the thing we're looking for is missing.
+		///
+		/// Processing proceeds one character at a time. An array loc keeps track of how much of each search string has been
+		/// matched by the preceeding and current characters.
+		/// </summary>
+		/// <returns></returns>
 		private bool Convert1()
 		{
 			const int maxSearch = 8;

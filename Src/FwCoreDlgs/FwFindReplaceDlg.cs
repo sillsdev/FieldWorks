@@ -2112,6 +2112,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.UseRegularExpressions = chkUseRegularExpressions.Checked;
 			m_vwPattern.ReplaceWith = ReplaceText;
 			m_resultReplaceText = ReplaceText;
+			SimpleStringMatcher.SetupPatternCollating(m_vwPattern, m_cache);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -2280,6 +2280,64 @@ namespace LexTextControlsTests
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 		}
 
+		static private readonly string[] s_LiftData9 = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2012-02-23T11:53:26Z\" dateModified=\"2012-08-16T08:10:28Z\" id=\"test\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+			"<lexical-unit>",
+			"<form lang=\"grh\"><text>test</text></form>",
+			"<form lang=\"grh-fonipa\"><text>testipa</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<field type=\"Syllable shape\">",
+			"<form lang=\"en\"><text>CV-CV</text></form>",
+			"</field>",
+			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2012-08-12T12:27:12Z\" dateModified=\"2012-08-12T12:27:12Z\">",
+			"<grammatical-info value=\"Noun\">",
+			"<trait name=\"inflection-feature\" value=\"{Infl}\"/>",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>black.plum</text></gloss>",
+			"<gloss lang=\"fr\"><text>noir</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>black plum tree</text></form>",
+			"<form lang=\"fr\"><text>noir: noir est un manque de couleur</text></form>",
+			"</definition>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of inflection feature with empty value. Lose it!
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportEmptyInflectionFeature()
+		{
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			var sOrigFile = CreateInputFile(s_LiftData9);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+			var todoEntry = repoEntry.GetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"));
+			Assert.AreEqual("Noun", todoEntry.SensesOS[0].MorphoSyntaxAnalysisRA.LongName,
+				"MSA should NOT have any Inflection Feature stuff on it.");
+		}
+
 		private static readonly string[] s_ComponentTest = new[]
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",

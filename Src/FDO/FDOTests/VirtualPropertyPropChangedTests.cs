@@ -157,6 +157,38 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// Updating MoForm.Form shoulld update the MlHeadword virtual property.
+		/// </summary>
+		[Test]
+		public void MlHeadwordDependsOnMoFormForm()
+		{
+			var entry = MakeEntry("form", "gloss");
+			PrepareToTrackPropChanged();
+			UndoableUnitOfWorkHelper.Do("undo set form", "redo", m_actionHandler,
+				() =>
+				{
+					entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formX", Cache.DefaultVernWs);
+				});
+			CheckChange(LexEntryTags.kClassId, entry, "MLHeadWord", Cache.DefaultVernWs, 0, 0, "MlHeadword not updated when Form changed");
+		}
+
+		/// <summary>
+		/// Updating LexEntry.CitationForm shoulld update the MlHeadword virtual property.
+		/// </summary>
+		[Test]
+		public void MlHeadwordDependsOnCitationForm()
+		{
+			var entry = MakeEntry("form", "gloss");
+			PrepareToTrackPropChanged();
+			UndoableUnitOfWorkHelper.Do("undo set form", "redo", m_actionHandler,
+				() =>
+				{
+					entry.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formX", Cache.DefaultVernWs);
+				});
+			CheckChange(LexEntryTags.kClassId, entry, "MLHeadWord", Cache.DefaultVernWs, 0, 0, "MlHeadword not updated when Form changed");
+		}
+
+		/// <summary>
 		/// CmSemanticDomain.ReferringSenses is updated when the SemanticDomains of the sense is changed.
 		/// </summary>
 		[Test]

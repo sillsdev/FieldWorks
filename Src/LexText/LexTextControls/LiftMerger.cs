@@ -4955,6 +4955,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				sFeatureString = sFeatureString.Substring(idx + 1);
 				sFeatureString = sFeatureString.Trim();
 			}
+			if (sFeatureString.Length == 0)
+				return false; // In case of bad data as in LT-13596
+
 			if (sFeatureString[0] == '[' && sFeatureString.EndsWith("]"))
 			{
 				// Remove the outermost bracketing
