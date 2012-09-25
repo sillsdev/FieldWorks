@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
@@ -626,6 +627,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				MessageBox.Show(xWorksStrings.FieldNameShouldNotBeEmpty,
 						xWorksStrings.EmptyFieldName, MessageBoxButtons.OK);
+				return true;
+			}
+
+			if (new Regex(@"\p{P}").IsMatch(fieldName))
+			{
+				string msg = string.Format(xWorksStrings.PunctInFieldNameError, fieldName);
+				MessageBox.Show(this, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return true;
 			}
 
