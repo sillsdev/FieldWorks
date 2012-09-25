@@ -2187,7 +2187,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (m_sliceFilter != null &&
 					flid != 0 &&
-					!m_sliceFilter.IncludeSlice(node, obj, flid))
+					!m_sliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
 				{
 					return NodeTestResult.kntrNothing;
 				}

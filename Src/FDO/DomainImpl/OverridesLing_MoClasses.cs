@@ -1464,12 +1464,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <remarks>
 		/// Inflection class is irrelevant for LeftMsa and RightMsa in binary compounds and also if no category.
 		/// FromPartsOfSpeech is irrelevant
 		/// </remarks>
 		/// <returns></returns>
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (flid == MoStemMsaTags.kflidInflectionClass)
 			{
@@ -1482,21 +1483,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			else if (flid == MoStemMsaTags.kflidFromPartsOfSpeech)
 			{
-				if (!OwningLexEntryHasProCliticOrEnclitic())
+				if (!OwningLexEntryHasProCliticOrEnclitic(propsToMonitor))
 					return false;
 			}
-			return base.IsFieldRelevant(flid);
+			return base.IsFieldRelevant(flid, propsToMonitor);
 		}
 
-		private bool OwningLexEntryHasProCliticOrEnclitic()
+		private bool OwningLexEntryHasProCliticOrEnclitic(HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (OwningFlid != LexEntryTags.kflidMorphoSyntaxAnalyses)
 			{ // FromPartsOfSpeech only relevant for a proclitic or enclitic
 				return false;
 			}
+
 			try
 			{
 				ILexEntry entry = Owner as ILexEntry;
+
+				propsToMonitor.Add(new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidLexemeForm));
+				propsToMonitor.Add(new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidAlternateForms));
+				foreach (var form in entry.AllAllomorphs)
+					propsToMonitor.Add(new Tuple<int, int>(form.Hvo, MoFormTags.kflidMorphType));
+
 				foreach (IMoMorphType mt in entry.MorphTypes)
 				{
 					if ((mt.Guid == MoMorphTypeTags.kguidMorphProclitic) ||
@@ -3574,10 +3582,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (flid == MoStemAllomorphTags.kflidStemName)
 			{
+				propsToMonitor.Add(new Tuple<int, int>(Hvo, MoFormTags.kflidMorphType));
 				if (MorphTypeRA == null)
 					return false;
 				Guid guid = MorphTypeRA.Guid;
@@ -3590,7 +3599,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				else
 					return false;
 			}
-			return base.IsFieldRelevant(flid);
+			return base.IsFieldRelevant(flid, propsToMonitor);
 		}
 
 		protected override void OnBeforeObjectDeleted()
@@ -3688,8 +3697,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <returns></returns>
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (flid != MoAffixFormTags.kflidInflectionClasses)
 				return true;
@@ -3697,8 +3707,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// MoAffixForm.inflection classes are only relevant if the MSAs of the
 			// entry include an inflectional affix MSA.
 
+			// Todo JohnT: SupportsInflectionClasses should possibly return propsToMonitor info.
 			ILexEntry entry = Owner as ILexEntry;
-			return entry.SupportsInflectionClasses() && base.IsFieldRelevant(flid);
+			return entry.SupportsInflectionClasses() && base.IsFieldRelevant(flid, propsToMonitor);
 		}
 	}
 
@@ -3768,18 +3779,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <remarks>
 		/// Position is only relevant when the MorphType is infix.
 		/// </remarks>
 		/// <returns></returns>
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (flid == MoAffixAllomorphTags.kflidPosition)
 			{
 				if (!MorphTypeIsInfix())
 					return false;
 			}
-			return base.IsFieldRelevant(flid);
+			return base.IsFieldRelevant(flid, propsToMonitor);
 		}
 	}
 

@@ -1421,8 +1421,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <returns></returns>
-		public bool IsFieldRelevant(int flid)
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			throw new NotImplementedException();
 		}

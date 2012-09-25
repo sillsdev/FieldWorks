@@ -1922,7 +1922,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	#region VirtualOrdering Class
 	internal partial class VirtualOrdering
 	{
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var flids = mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All);

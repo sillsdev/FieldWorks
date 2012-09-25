@@ -535,13 +535,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <remarks>e.g. "color" would not be relevant on a part of speech, ever.
 		/// e.g.  MoAffixForm.inflection classes are only relevant if the MSAs of the
 		/// entry include an inflectional affix MSA.
 		/// </remarks>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool IsFieldRelevant(int flid)
+		public virtual bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			return true;//it is up to subclasses to override and return false where needed.
 		}
@@ -3388,7 +3389,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		bool IReferenceSource.RefersTo(ICmObject target, int flid)
 		{
 			// Always ensure the flid is valid.
-			return ( IsFieldRelevant(flid) && ((this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo) );
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			return ( IsFieldRelevant(flid, propsToMonitor) && ((this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo) );
 		}
 
 		#endregion

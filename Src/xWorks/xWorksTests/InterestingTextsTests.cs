@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public bool IsFieldRelevant(int flid)
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			throw new NotImplementedException();
 		}

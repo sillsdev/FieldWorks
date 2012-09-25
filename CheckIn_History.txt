@@ -6141,3 +6141,4 @@ JohnT, 24 Sep 2012. Integrated changes from 7.2. Made a new build tool to replac
 JohnT, 24 Sep 2012. MSBuild now working and running all unit tests successfully (cd ww/build; build /t:remakefw /v:m /property:action=test)
 RickM, 24 Sept 2012. LT-10424 Complex Form Types and Variant Types columns need to use Best Analysis
 Andy Black, 24 Sep 2012. Fix LT-13632 "Hermit Crab file preparation fails if a variant refers to an entry with two or more MSAs"
+JohnT, 25 Sep 2012. LT-10763 Show "Attaches to Categories" immediately when entry becomes enclitic/proclitic
