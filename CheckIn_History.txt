@@ -6145,3 +6145,4 @@ JohnT, 25 Sep 2012. LT-10763 Show "Attaches to Categories" immediately when entr
 Andy Black, 25 Sep 2012.  Fix failure in CreateXAmpleLexicon test in ParserCore.
 GordonM, 25 Sep 2012. A cmd line version of the nunit report build task (NUnitReport).
 JohnT, 25 Sep 2012. LT-12507 XHTML export failure with custom fields with punctuation
+JohnT, 26 Sep 2012. LT-12617 Audio sound playback is unreliable
