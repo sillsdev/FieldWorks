@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				var ws = WsForSoundField(control, out wsIndex);
 				if (ws != null)
 				{
-					var sel = GetSelAtStartOfWs(wsIndex, ws);
+					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, wsIndex, ws);
 					Rectangle selRect;
 					bool fEndBeforeAnchor; // not used
 					using (new HoldGraphics(this))
@@ -110,18 +110,6 @@ namespace SIL.FieldWorks.Common.Widgets
 					control.Width = Width - indent;
 					control.Top = selRect.Top;
 				}
-			}
-		}
-
-		private IVwSelection GetSelAtStartOfWs(int wsIndex, IWritingSystem ws)
-		{
-			try
-			{
-				return m_rootb.MakeTextSelection(0, 0, null, m_flid, wsIndex, 0, 0, (ws == null) ? 0 : ws.Handle, false, -1, null, false);
-			}
-			catch (COMException)
-			{
-				return null; // can fail if we are hiding an empty WS.
 			}
 		}
 
@@ -175,8 +163,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				index++;
 				var pws = ws as WritingSystemDefinition;
-				if (pws == null || !pws.IsVoice || GetSelAtStartOfWs(index, ws) == null)
+				if (pws == null || !pws.IsVoice ||
+					MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, index, ws) == null)
+				{
 					continue;
+				}
 				var soundFieldControl = new ShortSoundFieldControl();
 				m_soundControls.Add(soundFieldControl); // todo: one for each audio one
 				soundFieldControl.Visible = true;
@@ -402,7 +393,21 @@ namespace SIL.FieldWorks.Common.Widgets
 			catch
 			{
 				e.Handled = true;
+			}
 		}
+
+		/// <summary>
+		/// Override to handle KeyUp/KeyDown within a multi-string field -- LT-13334
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+			if (!e.Handled && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
+			{
+				MultiStringSelectionUtils.HandleUpDownArrows(e, m_rootb, RootSiteEditingHelper.CurrentSelection,
+					WritingSystemsToDisplay, m_flid);
+			}
 		}
 
 		static bool s_fProcessingSelectionChanged = false;
@@ -1300,6 +1305,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (!m_editingHelper.HandleOnKeyDown(e))
 				base.OnKeyDown(e);
+			if (!e.Handled && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
+			{
+				MultiStringSelectionUtils.HandleUpDownArrows(e, RootBox, EditingHelper.CurrentSelection, WritingSystems, kflid);
+			}
 		}
 
 		internal ITsString Value(int ws)
@@ -1621,6 +1630,70 @@ namespace SIL.FieldWorks.Common.Widgets
 		public IVwEnv Environment
 		{
 			get { return m_env; }
+		}
+	}
+
+	/// <summary>
+	/// A start at refactoring two similar, but different classes to use some shared code.
+	/// 1. LabeledMultiStringView is a RootSiteControl
+	/// 2. InnerLabeledMultiStringControl is a SimpleRootSite
+	///    but which is wrapped in a LabeledMultiStringControl (used in InsertEntryDlg), which is a UserControl.
+	/// </summary>
+	internal static class MultiStringSelectionUtils
+	{
+		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, IWritingSystem ws)
+		{
+			try
+			{
+				return rootBox.MakeTextSelection(0, 0, null, flid, wsIndex, 0, 0, (ws == null) ? 0 : ws.Handle, false, -1, null, false);
+			}
+			catch (COMException)
+			{
+				return null; // can fail if we are hiding an empty WS.
+			}
+		}
+
+		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<IWritingSystem> writingSystems)
+		{
+			var ws = curSel.SelProps.GetWs();
+			int index = -1;
+			for (var i = 0; i < writingSystems.Count; i++)
+			{
+				if (writingSystems[i].Handle == ws)
+				{
+					index = i;
+					break;
+				}
+			}
+			return index;
+		}
+
+		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<IWritingSystem> wsList, int flid)
+		{
+			if (!curSel.IsValid)
+				return;
+			var index = GetCurrentSelectionIndex(curSel, wsList);
+			if (index < 0)
+				return;
+			var maxWsIndex = wsList.Count - 1;
+			if (e.KeyCode == Keys.Up)
+			{
+				// Handle Up arrow
+				if ((index - 1) < 0)
+					return;
+				index--;
+			}
+			else
+			{
+				// Handle Down arrow
+				if ((index + 1) > maxWsIndex)
+					return;
+				index++;
+			}
+			// make new selection at index
+			var newSelection = GetSelAtStartOfWs(rootBox, flid, index, wsList[index]);
+			newSelection.Install();
+			e.Handled = true;
 		}
 	}
 }

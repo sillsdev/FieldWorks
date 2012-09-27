@@ -705,13 +705,13 @@ namespace SIL.FieldWorks.Common.RootSites
 					OnKeyPress(new KeyPressEventArgs((char)(int)VwSpecialChars.kscDelForward), e.Modifiers);
 					break;
 
-			case Keys.Space:
-				if (CanEdit() && (e.Modifiers & Keys.Control) == Keys.Control)
-				{
-					e.Handled = true;
-					RemoveCharFormatting();
-				}
-				break;
+				case Keys.Space:
+					if (CanEdit() && (e.Modifiers & Keys.Control) == Keys.Control)
+					{
+						e.Handled = true;
+						RemoveCharFormatting();
+					}
+					break;
 
 				case Keys.F10:
 					if (GetShiftStatus(e.Modifiers) == VwShiftStatus.kfssShift)

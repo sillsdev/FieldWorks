@@ -6147,3 +6147,4 @@ GordonM, 25 Sep 2012. A cmd line version of the nunit report build task (NUnitRe
 JohnT, 25 Sep 2012. LT-12507 XHTML export failure with custom fields with punctuation
 JohnT, 26 Sep 2012. LT-12617 Audio sound playback is unreliable
 JohnT, 27 Sep 2012. LT-12664 Find Entry shows no results sometimes after typing quickly, in version 7
+GordonM, 27 Sep 2012. LT-13334 Up/Down arrows in MultiString fields and some refactoring.
