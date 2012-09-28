@@ -147,7 +147,7 @@ display/printout!
 		<span class="senses"><xsl:apply-templates select="LexEntry_Senses/*[not(name()='span' and @class='grammatical-info')]"/></span>
 	</xsl:template>
 
-	<xsl:template match="MoStemMsa|MoStemMsa_MLPartOfSpeech">
+  <xsl:template match="span[@class='grammatical-info']/MoStemMsa|span[@class='grammatical-info-sub']/MoStemMsa">
 		<xsl:apply-templates/>
 	</xsl:template>
 
@@ -731,7 +731,7 @@ display/printout!
 
 	<!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
 
-  <xsl:template match="MoMorphSynAnalysisLink_MLPartOfSpeech">
+  <xsl:template match="MoMorphSynAnalysisLink_MLPartOfSpeech|MoStemMsa_MLPartOfSpeech">
 	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
   </xsl:template>
 
