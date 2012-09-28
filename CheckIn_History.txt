@@ -6149,4 +6149,5 @@ JohnT, 26 Sep 2012. LT-12617 Audio sound playback is unreliable
 JohnT, 27 Sep 2012. LT-12664 Find Entry shows no results sometimes after typing quickly, in version 7
 GordonM, 27 Sep 2012. LT-13334 Up/Down arrows in MultiString fields and some refactoring.
 RickM, 27 Sept 2012. LT-13620 In Sena 3, the word "tenepa" has a corrupted analysis that can cause a crash. It should be deleted.
-JohnT, 27 Sep2012. LT-13597 HC Parser crashes if there are certain characters in an affix allomorph
+JohnT, 27 Sep 2012. LT-13597 HC Parser crashes if there are certain characters in an affix allomorph
+NaylorJ, 28 Sep 2012. Replaced sed with a .NET app which specifically fixes generated COM header files, modified the build to use it. Removed all cygwin dlls.

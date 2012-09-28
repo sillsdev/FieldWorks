@@ -121,7 +121,7 @@ DELETEFILE=del
 TYPEFILE=type
 MD=$(BUILD_ROOT)\bin\mkdir.exe -p
 DELNODE=$(BUILD_ROOT)\bin\delnode.exe
-SED=$(BUILD_ROOT)\bin\sed.exe
+FIXCOMHEADER=$(BUILD_ROOT)\bin\FixGenComHeaderFile.exe
 
 # next 4 are for .NET
 IDLIMP=@$(BUILD_ROOT)\bin\idlimp.exe
