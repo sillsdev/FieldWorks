@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.Common.FwUtils;
+﻿using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
