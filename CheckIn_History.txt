@@ -6151,3 +6151,4 @@ GordonM, 27 Sep 2012. LT-13334 Up/Down arrows in MultiString fields and some ref
 RickM, 27 Sept 2012. LT-13620 In Sena 3, the word "tenepa" has a corrupted analysis that can cause a crash. It should be deleted.
 JohnT, 27 Sep 2012. LT-13597 HC Parser crashes if there are certain characters in an affix allomorph
 NaylorJ, 28 Sep 2012. Replaced sed with a .NET app which specifically fixes generated COM header files, modified the build to use it. Removed all cygwin dlls.
+NaylorJ, 28 Sep 2012. Fixed some recently added invalid XHTML output which showed up in LT-13585.
