@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.IText
 			m_clerk.ConcordanceControl = this;
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbSearchText.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
 			m_tbSearchText.Text = String.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;

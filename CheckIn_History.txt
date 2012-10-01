@@ -6154,3 +6154,4 @@ NaylorJ, 28 Sep 2012. Replaced sed with a .NET app which specifically fixes gene
 NaylorJ, 28 Sep 2012. Fixed some recently added invalid XHTML output which showed up in LT-13585.
 GordonM, 28 Sep 2012. JohnT and I fixed LT-13603, Affix Process rule table was disappearing.
 JohnT, 28 Sep 2012. LT-12846 Cache default vernacular and analysis writing systems
+JohnT, 1 Oct 2012. LT-13126 Concordance "For the text" box should show increased font sizes

@@ -131,6 +131,36 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
+		/// Adjust the height of the text box appropriately for the given stylesheet.
+		/// This version moves any controls below the text box, but does not adjust the size of the parent control.
+		/// </summary>
+		/// <param name="ss"></param>
+		public void AdjustForStyleSheet(IVwStylesheet ss)
+		{
+			int oldHeight = Height;
+			StyleSheet = ss;
+			int newHeight = Math.Max(oldHeight, PreferredHeight);
+			int delta = newHeight - oldHeight;
+			if (delta == 0)
+				return;
+			Height = newHeight;
+			// Need to get the inner box's height adjusted BEFORE we fix the string.
+			PerformLayout();
+			Tss = FontHeightAdjuster.GetUnadjustedTsString(Tss);
+			foreach (Control c in this.Parent.Controls)
+			{
+				if (c == this)
+					continue;
+				bool anchorTop = ((((int)c.Anchor) & ((int)AnchorStyles.Top)) != 0);
+				if (c.Top > this.Top && anchorTop)
+				{
+					// Anchored at the top and below our control: move it down
+					c.Top += delta;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the text box has a border.
 		/// </summary>
 		/// <value>
