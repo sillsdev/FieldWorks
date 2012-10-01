@@ -20,6 +20,16 @@
 	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
   </xsl:template>
 
+  <!-- Preserve paragraphs which are direct children of _ReferringSenses as divs. These will be senses configured as paragraphs
+  with a (possibly custom) style. The code which generates out stylesheet replaces spaces in style names with underscore,
+  as required for CSS, so we do the same here.-->
+	<xsl:template match="_ReferringSenses/Paragraph">
+		<div>
+			<xsl:attribute name="class"><xsl:value-of select="translate(@style, ' ', '_')"/></xsl:attribute>
+			<xsl:apply-templates/>
+		</div>
+	</xsl:template>
+
   <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs|ReversalIndexEntry_ReferringSenses|ReversalIndexEntry_Subentries">
 	<xsl:apply-templates/>
   </xsl:template>

@@ -1473,10 +1473,10 @@ namespace SIL.FieldWorks.Common.Framework
 				case VwBulNum.kvbnLetterLower:	type = ", lower-latin";	break;
 				case VwBulNum.kvbnLetterUpper:	type = ", upper-latin";	break;
 				case VwBulNum.kvbnBulletBase + 0: bullet = "\\00B7"; break;		// MIDDLE DOT
-				case VwBulNum.kvbnBulletBase + 1: type = "disc"; break;			// BULLET
+				case VwBulNum.kvbnBulletBase + 1: bullet = "\\2022"; break;		// BULLET (note: in a list item, consider using 'disc' somehow?)
 				case VwBulNum.kvbnBulletBase + 2: bullet = "\\25CF"; break;		// BLACK CIRCLE
 				case VwBulNum.kvbnBulletBase + 3: bullet = "\\274D"; break;		// SHADOWED WHITE CIRCLE
-				case VwBulNum.kvbnBulletBase + 4: type = "square"; break;		// BLACK SMALL SQUARE
+				case VwBulNum.kvbnBulletBase + 4: bullet = "\\25AA"; break;		// BLACK SMALL SQUARE (note: in a list item, consider using 'square' somehow?)
 				case VwBulNum.kvbnBulletBase + 5: bullet = "\\25A0"; break;		// BLACK SQUARE
 				case VwBulNum.kvbnBulletBase + 6: bullet = "\\25AB"; break;		// WHITE SMALL SQUARE
 				case VwBulNum.kvbnBulletBase + 7: bullet = "\\25A1"; break;		// WHITE SQUARE
