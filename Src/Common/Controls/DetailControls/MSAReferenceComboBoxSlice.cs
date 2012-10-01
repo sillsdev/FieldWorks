@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							sense.SandboxMSA = sandoxMSA;
 						});
 					}
-					else if (sense.MorphoSyntaxAnalysisRA.Hvo != obj.Hvo)
+					else if (sense.MorphoSyntaxAnalysisRA != obj)
 					{
 						ContainingDataTree.DoNotRefresh = true;
 						UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),

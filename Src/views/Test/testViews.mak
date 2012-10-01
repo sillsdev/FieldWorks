@@ -130,4 +130,4 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestVwTableBox.h \
 
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
-	$(COLLECT) $** >$(VIEWSTEST_SRC)\Collection.cpp
+	$(COLLECT) $** $(VIEWSTEST_SRC)\Collection.cpp

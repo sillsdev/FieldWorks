@@ -1096,18 +1096,22 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IMoAffixAllomorph allomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			entry.AlternateFormsOS.Add(allomorph);
-			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should not be relevant until an inflectional affix MSA with a category has been added.");
+			Assert.That(propsToMonitor, Is.Empty);
 			IMoInflAffMsa orange = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(orange);
-			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should not be relevant until an inflectional affix MSA with a category has been added.");
+			// Review JohnT: should this result in monitoring any properties?
 			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
 			orange.PartOfSpeechRA = pos;
-			Assert.IsTrue(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			propsToMonitor.Clear();
+			Assert.IsTrue(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should now be relevant since an inflectional affix MSA with a category has been added.");
-
+			Assert.That(propsToMonitor, Is.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1131,6 +1135,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual("Stem/root of unknown category; takes any affix", msa.LongNameTs.Text);
 		}
 
+		void VerifyPropsToMonitor(HashSet<Tuple<int, int>> propsToMonitor, Tuple<int, int>[] expected)
+		{
+			Assert.That(propsToMonitor.Count, Is.EqualTo(expected.Length));
+			foreach (var item in expected)
+				Assert.That(propsToMonitor.Contains(item));
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// test the method which tells us whether the inflection classes field is relevant
@@ -1145,62 +1156,80 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			IMoStemMsa msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphStem);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
+			var initialPropsToMonitor = new[]
+				{
+					new Tuple<int, int>(allomorph.Hvo, MoFormTags.kflidMorphType),
+					new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidLexemeForm),
+					new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidAlternateForms)
+				};
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor);
+			propsToMonitor.Clear();
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphProclitic);
-			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should now be relevant since the entry has a proclitic.");
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor);
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphEnclitic);
-			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should now be relevant since the entry has an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphClitic);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphBoundRoot);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphBoundStem);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphCircumfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphDiscontiguousPhrase);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphInfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphInfixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphParticle);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPhrase);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPrefix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPrefixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphRoot);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSimulfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuffix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuffixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuprafix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
+
+			IMoStemAllomorph lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = lf;
+			SetMorphType(lf, MoMorphTypeTags.kguidMorphProclitic);
+			propsToMonitor.Clear();
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
+				"FromPartsOfSpeech should now be relevant since the entry has a proclitic.");
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor.Concat(new [] {new Tuple<int, int>(lf.Hvo, MoFormTags.kflidMorphType)}).ToArray());
 		}
 
 		private void SetMorphType(IMoStemAllomorph allomorph, Guid guidType)
@@ -1225,16 +1254,17 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			compound.RightMsaOA = msaRight;
 			IMoStemMsa msaTo = factStemMsa.Create();
 			compound.ToMsaOA = msaTo;
-			Assert.IsFalse(msaLeft.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(msaLeft.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for LeftMsa.");
-			Assert.IsFalse(msaRight.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsFalse(msaRight.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for RightMsa.");
-			Assert.IsFalse(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsFalse(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for ToMsa if it does not have a category.");
 			IPartOfSpeech pos = new PartOfSpeech();
 			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
 			msaTo.PartOfSpeechRA = pos;
-			Assert.IsTrue(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsTrue(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should be relevant for ToMsa when it has a category.");
 		}
 
@@ -1304,67 +1334,72 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ILexEntry stemEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IMoStemAllomorph stemAllomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			stemEntry.LexemeFormOA = stemAllomorph;
-			Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 				"Stem allomorph stem name should not be relevant when there is no morph type.");
 			foreach (IMoMorphType mmt in Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS)
 			{
 				stemAllomorph.MorphTypeRA = mmt;
 				if (mmt.Guid == MoMorphTypeTags.kguidMorphRoot)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+				{
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a root morph type.");
+					VerifyPropsToMonitor(propsToMonitor,
+						new[] {new Tuple<int, int>(stemAllomorph.Hvo, MoFormTags.kflidMorphType)});
+				}
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a bound root morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphStem)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a stem morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundStem)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a bound stem morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphCircumfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a circumfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a discontiguous phrasemorph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphClitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a clitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphEnclitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an enclitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphInfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an infix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphInfixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an infixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphParticle)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a particle morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPhrase)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a phrase morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPrefix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a prefix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPrefixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a prefixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphProclitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a proclitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSimulfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a simulfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuffix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suffix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuffixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suffixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuprafix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suprafix morph type.");
 			}
 		}

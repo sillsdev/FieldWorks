@@ -1518,6 +1518,9 @@ catch(Exception e)
 
 		private void InsertEntryDlg_Closed(object sender, EventArgs e)
 		{
+			if (IsDisposed)
+				return; // Prevent interaction w/ Paratext from causing crash here (LT-13582)
+
 			// Save location.
 			using (var regKey = SettingsKey)
 			{

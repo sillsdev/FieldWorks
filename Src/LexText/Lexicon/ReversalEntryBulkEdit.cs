@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 using System.IO;
 
@@ -176,20 +177,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// required POS and use it.
 		/// (d) Make a new IMoStemMsa in the ILexEntry with the required POS and point the sense at it.
 		/// </summary>
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			CheckDisposed();
 
 			m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoBulkEditRevPOS,
 				LexEdStrings.ksRedoBulkEditRevPOS);
 			int i = 0;
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int entryId in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 80 / itemsToChange.Count + 20;
+					state.PercentDone = i * 80 / itemsToChange.Count() + 20;
 					state.Breath();
 				}
 				IReversalIndexEntry entry = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entryId);

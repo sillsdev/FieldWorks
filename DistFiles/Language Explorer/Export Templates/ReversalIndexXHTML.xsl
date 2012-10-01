@@ -20,7 +20,7 @@
 	</xsl:copy><xsl:text>&#13;&#10;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs">
+  <xsl:template match="ReversalIndexEntry_Self|LexSenseLink_VariantFormEntryBackRefs|ReversalIndexEntry_ReferringSenses|ReversalIndexEntry_Subentries">
 	<xsl:apply-templates/>
   </xsl:template>
 
@@ -30,9 +30,9 @@
 		<xsl:when test="parent::div[@class='letData']">
 		  <div class="entry"><xsl:apply-templates/></div>
 		</xsl:when>
-		<xsl:when test="ancestor::ReversalIndexEntry_Subentries">
-		  <div class="subentry"><xsl:apply-templates/></div>
-		</xsl:when>
+		<!-- Another likely parent is ReversalIndexEntry_Subentries. However this always(?) has a child
+		Paragraph style="Dictionary-Subentry" which is converted by the included stylesheet to
+		the div class="subentry" that we want. Don't put a second level of that.-->
 		<xsl:otherwise><xsl:apply-templates/></xsl:otherwise>
 	</xsl:choose>
   </xsl:template>

@@ -254,13 +254,13 @@
 	$(DISPLAY) Compiling $<
 	if exist "$@" del "$@"
 	$(MIDL) $(MIDL_OPTS) $(DEFS) /out $(COM_OUT_DIR_RAW) /tlb $(<R).tlb /dlldata $(COM_OUT_DIR_RAW)\$(<B)_d.c $<
-	$(SED) -f "$(BUILD_ROOT)\bld\fixidl.sed" $(COM_OUT_DIR_RAW)\$(<B).h > $(<R).h
+	$(FIXCOMHEADER) $(COM_OUT_DIR_RAW)\$(<B).h  $(<R).h
 
 .idl.h:
 	$(DISPLAY) Compiling $<
 	if exist "$@" del "$@"
 	$(MIDL) $(MIDL_OPTS) $(DEFS) /out $(COM_OUT_DIR_RAW) /tlb $(<R).tlb /dlldata $(COM_OUT_DIR_RAW)\$(<B)_d.c $<
-	$(SED) -f "$(BUILD_ROOT)\bld\fixidl.sed" $(COM_OUT_DIR_RAW)\$(<B).h > $(<R).h
+	$(FIXCOMHEADER) $(COM_OUT_DIR_RAW)\$(<B).h  $(<R).h
 
 {$(ARG_SRCDIR)}.odl{$(COM_OUT_DIR)}.odl:
 	$(DISPLAY) Copying $<

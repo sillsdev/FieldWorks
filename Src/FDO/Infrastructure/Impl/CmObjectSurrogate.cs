@@ -492,12 +492,33 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							var rtElement = XElement.Parse(sXml);
 							RawXmlBytes = null;
 							if (!m_objectWasAttached)
+							{
 								m_object = (ICmObject)s_classToConstructorInfo[m_classname].Invoke(null);
-							((ICmObjectInternal)m_object).LoadFromDataStore(
-								m_cache,
-								rtElement,
-								((IServiceLocatorInternal)m_cache.ServiceLocator).LoadingServices);
-							// Have to set m_objectWasAttached to false, before the registration,
+								try
+								{
+									((ICmObjectInternal) m_object).LoadFromDataStore(
+										m_cache,
+										rtElement,
+										((IServiceLocatorInternal) m_cache.ServiceLocator).LoadingServices);
+								}
+								catch (InvalidOperationException ioe)
+								{   // Asserting just so developers know that this is happening
+									Debug.Assert(false, "See LT-13574: something is corrupt in this database.");
+									// LT-13574 had a m_classname that was different from the that in rtElement.
+									// That causes attributes to be leftover or missing - hence the exception.
+									rtElement = XElement.Parse(sXml); // rtElement is consumed in loading, so re-init
+									var className = rtElement.Attribute("class").Value;
+									if (className != m_classname)
+									{
+										m_object = (ICmObject)s_classToConstructorInfo[className].Invoke(null);
+										((ICmObjectInternal)m_object).LoadFromDataStore(
+											m_cache,
+											rtElement,
+											((IServiceLocatorInternal)m_cache.ServiceLocator).LoadingServices);
+									}
+								}
+							}
+						// Have to set m_objectWasAttached to false, before the registration,
 							// since RegisterActivatedSurrogate calls this' Object prop,
 							// and it would result in a stack overflow, with it still being true,
 							// as it would try again to create the object.

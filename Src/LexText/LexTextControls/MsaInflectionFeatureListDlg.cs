@@ -607,6 +607,14 @@ namespace SIL.FieldWorks.LexText.Controls
 									}
 								}
 							}
+							// If the user emptied all the FeatureSpecs (i.e. chose "None of the above" in each area),
+							// then we need to delete the FsFeatStruc. (LT-13596)
+							if (FS.FeatureSpecsOC.Count == 0)
+							{
+								if (m_fs.CanDelete)
+									m_fs.Delete();
+								m_fs = null;
+							}
 						});
 			}
 
@@ -701,7 +709,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					val = fs.GetOrCreateValue(closedFeat);
 					val.FeatureRA = closedFeat;
 					if (fs.TypeRA == null)
-						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.SingleOrDefault(type => type.FeaturesRS.Contains(closedFeat));
+					{
+						// SingleOrDefault() gave an exception if 2 complex features used the same feature (LT-12780)
+						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.FirstOrDefault(type => type.FeaturesRS.Contains(closedFeat));
+					}
 					break;
 				case FeatureTreeNodeInfo.NodeKind.SymFeatValue:
 					var closed = val as IFsClosedValue;

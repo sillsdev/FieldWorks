@@ -119,7 +119,7 @@ $(INT_DIR)/Collection.cpp: testLanguage.h \
 	TestRomRenderEngine.h \
 	RenderEngineTestBase.h
 	@echo Collecting tests for testLanguage
-	$(COLLECT) $^ >$@
+	$(COLLECT) $^ $@
 
 #	TestLgWritingSystemFactoryBuilder.h \
 #	RenderEngineTestBase.h \

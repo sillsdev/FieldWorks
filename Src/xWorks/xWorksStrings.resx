@@ -741,4 +741,14 @@ Are you sure you want to delete this list?</value>
   <data name="ksInvalidFieldInFilterOrSorter" xml:space="preserve">
 	<value>FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence.</value>
   </data>
+  <data name="PunctInfieldNameCaption" xml:space="preserve">
+	<value>Punctuation in custom field name</value>
+  </data>
+  <data name="PunctInFieldNameError" xml:space="preserve">
+	<value>Please remove the punctuation from the custom field name ("{0}") to allow export and some other functions to work.</value>
+  </data>
+  <data name="PunctInFieldNameWarning" xml:space="preserve">
+	<value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+Do you want to continue with the export?</value>
+  </data>
 </root>

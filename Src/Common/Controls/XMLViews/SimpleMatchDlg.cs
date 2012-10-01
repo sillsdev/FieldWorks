@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Forms;
+using System.Diagnostics;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -42,6 +44,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		private IVwPattern m_ivwpattern;
+		private FdoCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -51,14 +54,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="ws">The ws.</param>
 		/// <param name="ss">The ss.</param>
+		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
 		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider,
-			int ws, IVwStylesheet ss)
+			int ws, IVwStylesheet ss, FdoCache cache)
 		{
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+
+			m_cache = cache;
 
 			// We do this outside the designer-controlled code because it does funny things
 			// to FwTextBoxes, owing to the need for a writing system factory, and some
@@ -163,6 +169,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_ivwpattern.MatchWholeWord = false;
 				m_ivwpattern.UseRegularExpressions = false;
 				m_ivwpattern.IcuLocale = m_textBox.WritingSystemFactory.GetStrFromWs(m_textBox.WritingSystemCode);
+				SimpleStringMatcher.SetupPatternCollating(m_ivwpattern, m_cache);
 
 				if (m_anywhereButton.Checked)
 					return new AnywhereMatcher(m_ivwpattern);

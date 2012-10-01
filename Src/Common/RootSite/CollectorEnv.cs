@@ -25,6 +25,7 @@ using System.Text;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils.ComTypes;
@@ -1458,11 +1459,30 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Finished)
 				return;
 			OpenProp(tag);
-			int cobj = m_sda.get_VecSize(m_hvoCurr, tag);
+			int[] items = null;
+			var managedSda = m_sda as ISilDataAccessManaged;
+			int cobj;
+			if (managedSda != null)
+			{
+				// We only have to compute the vector, if it should be virtual, once.
+				// Note: we COULD do this with the VecProp method of the regular ISilDataAccess.
+				// But in practice the SDA will (almost?) always be a managed one, and using the
+				// COM VecProp involves marshalling that is messy and slow on both sides.
+				items = managedSda.VecProp(m_hvoCurr, tag);
+				cobj = items.Length;
+			}
+			else
+			{
+				cobj = m_sda.get_VecSize(m_hvoCurr, tag);
+			}
 
 			for (int i = 0; i < cobj; i++)
 			{
-				int hvoItem = m_sda.get_VecItem(m_hvoCurr, tag, i);
+				int hvoItem;
+				if (items == null)
+					hvoItem = m_sda.get_VecItem(m_hvoCurr, tag, i);
+				else
+					hvoItem = items[i];
 				if (DisplayThisObject(hvoItem, tag))
 				{
 					OpenTheObject(hvoItem, i);

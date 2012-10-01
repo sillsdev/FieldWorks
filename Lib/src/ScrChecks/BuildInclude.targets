@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-<!--
-  <Target Name="BeforeBuild">
-  </Target>
--->
+	<!--
+		<Target Name="BeforeBuild">
+		</Target>
+	-->
 
-  <ItemGroup>
-	<ScrChecksFiles Include="$(TargetPath)"/>
-	<ScrChecksFiles Include="$(TargetDir)$(TargetName).pdb"/>
-  </ItemGroup>
-  <Target Name="AfterBuild">
-	<Copy SourceFiles="@(SrcCheckFiles)" DestinationFolder="..\..\..\DistFiles\Editorial Checks" OverwriteReadOnlyFiles="true"/>
-  </Target>
+	<ItemGroup>
+		<ScrChecksFiles Include="$(TargetPath)"/>
+		<ScrChecksFiles Include="$(TargetDir)$(TargetName).pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<ScrChecksFiles Include="$(TargetPath).mdb" Condition="'$(OS)'=='Unix'"/>
+		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll"/>
+		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll.mdb" Condition="'$(OS)'=='Unix'"/>
+	</ItemGroup>
+	<Target Name="AfterBuild">
+		<MakeDir Directories="..\..\..\DistFiles\Editorial Checks"/>
+		<Copy SourceFiles="@(ScrChecksFiles)" DestinationFolder="..\..\..\DistFiles\Editorial Checks" OverwriteReadOnlyFiles="true"/>
+	</Target>
+	<Target Name="AfterClean">
+		<Delete Files="@(ScrChecksCopied)" ContinueOnError="true"/>
+	</Target>
 </Project>

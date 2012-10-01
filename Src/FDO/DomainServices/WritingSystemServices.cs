@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			s_magicWsIdToWsName[kwsFirstVern] = "best vernacular";
 			s_magicWsIdToWsName[kwsFirstAnalOrVern] = "best analorvern";
 			s_magicWsIdToWsName[kwsFirstVernOrAnal] = "best vernoranal";
+			s_magicWsIdToWsName[kwsPronunciation] = "pronunciation";
 			s_magicWsIdToWsName[kwsFirstPronunciation] = "best pronunciation";
 			s_magicWsIdToWsName[kwsPronunciations] = "all pronunciation";
 			s_magicWsIdToWsName[kwsReversalIndex] = "reversal";
@@ -1990,6 +1991,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly int m_flid;
 
 		/// <summary>
+		/// Event fired when the contents of the list changes.
+		/// </summary>
+		public event EventHandler<EventArgs> Changed;
+
+		internal void RaiseChanged()
+		{
+			if (Changed != null)
+				Changed(this, new EventArgs());
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="WritingSystemCollection"/> class.
 		/// </summary>
 		/// <param name="obj">The obj.</param>
@@ -2049,6 +2061,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				wsIds.Add(item.Id);
 				WsIds = wsIds;
 			}
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2057,6 +2070,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public void Clear()
 		{
 			Wss = string.Empty;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2119,6 +2133,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					newWsIds.Add(wsId);
 			}
 			WsIds = newWsIds;
+			RaiseChanged();
 			return removed;
 		}
 
@@ -2160,6 +2175,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			set
 			{
 				m_obj.Cache.DomainDataByFlid.SetUnicode(m_obj.Hvo, m_flid, value, value.Length);
+				RaiseChanged();
 			}
 		}
 
@@ -2189,6 +2205,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					first = false;
 				}
 				Wss = sb.ToString();
+				RaiseChanged();
 			}
 		}
 	}
@@ -2221,6 +2238,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			else
 				wss += " " + item.Id;
 			Wss = wss;
+			RaiseChanged();
 		}
 
 		#region Implementation of IList<WritingSystem>
@@ -2259,6 +2277,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (index == wsIds.Count)
 				newWsIds.Add(item.Id);
 			WsIds = newWsIds;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2279,6 +2298,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					newWsIds.Add(wsIds[i]);
 			}
 			WsIds = newWsIds;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2307,6 +2327,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				var newWsIds = new List<string>(wsIds);
 				newWsIds[index] = value.Id;
 				WsIds = newWsIds;
+				RaiseChanged();
 			}
 		}
 

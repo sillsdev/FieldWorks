@@ -74,6 +74,7 @@ namespace FwBuildTasks
 
 			ImportantMessage("Failures: {0}    Ignored: {1}    Passed: {2}", projFails, projIgnores, projPasses);
 			NormalMessage("     Elapsed time: {0}", secsToRun);
+			ImportantMessage("*************************************************");
 
 			// Parse out TestCases
 			var cases = resultsNode.SelectNodes("//test-case"); // does this get all of them?

@@ -23,7 +23,6 @@ using Palaso.WritingSystems;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -1928,7 +1927,7 @@ namespace LexTextControlsTests
 			throw new NotImplementedException();
 		}
 
-		public bool IsFieldRelevant(int flid)
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			throw new NotImplementedException();
 		}

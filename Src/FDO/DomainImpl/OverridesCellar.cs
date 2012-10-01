@@ -1922,7 +1922,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	#region VirtualOrdering Class
 	internal partial class VirtualOrdering
 	{
-		public override bool IsFieldRelevant(int flid)
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var flids = mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All);
@@ -3695,6 +3695,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public bool IsEmpty
 		{
 			get { return TypeRA == null && FeatureDisjunctionsOC.Count == 0 && FeatureSpecsOC.Count == 0; }
+
+			// TODO: The following definition of IsEmpty is more accurate for LiftExporter,
+			// but it is used in so many places that it's not trivial to make sure it doesn't break something else.
+
+			// FeatureDisjunctions not yet used. Export should consider a FeatStruc as empty if either Type
+			// or FeatureSpecs is empty. (LT-13596)
+			//get { return TypeRA == null || FeatureSpecsOC.Count == 0; }
 		}
 
 		/// <summary>

@@ -1656,11 +1656,26 @@ public:
 		// locale/rules, match case, match diacritics, and match whole word.
 		if (m_pat->m_stuRules.Length() > 0)
 		{
-			// Make an iterator based on the rule-based collater in the pattern.
-			Assert(m_pat->m_prcoll != NULL);
-			m_piter = new StringSearch(m_pat->m_stuCompiled.Chars(), m_pchBuf,
-				m_pat->m_prcoll, m_pbi, m_error);
-			CheckError();
+			if (m_pat->m_stuRules.Chars()[0] == '#')
+			{
+				// Special trick case: this is not a valid start for an ICU collation, we use it to mark
+				// a language that wants a collation like some other language, whose locale is specified in the rest
+				// of the rules.
+				StrAnsi staOtherLocale(m_pat->m_stuRules.Chars() + 1);
+				Locale otherLocale = Locale::createFromName(staOtherLocale.Chars());
+				m_piter = new StringSearch(m_pat->m_stuCompiled.Chars(), m_pchBuf, otherLocale,
+					m_pbi, m_error);
+				CheckError();
+				m_piter->getCollator()->setStrength(m_pat->m_strength);
+			}
+			else
+			{
+				// Make an iterator based on the rule-based collater in the pattern.
+				Assert(m_pat->m_prcoll != NULL);
+				m_piter = new StringSearch(m_pat->m_stuCompiled.Chars(), m_pchBuf,
+					m_pat->m_prcoll, m_pbi, m_error);
+				CheckError();
+			}
 		}
 		else
 		{
@@ -2349,10 +2364,25 @@ void VwPattern::Compile()
 		}
 		if (m_stuRules.Length() > 0)
 		{
-			// Make a rule-based collater and an iterator based on it.
-			m_pcoll = m_prcoll = new RuleBasedCollator(m_stuRules.Chars(), m_strength, error);
-			if (U_FAILURE(error))
-				ThrowHr(E_FAIL);
+			if (m_stuRules.Chars()[0] == '#')
+			{
+				// Special trick case: this is not a valid start for an ICU collation, we use it to mark
+				// a language that wants a collation like some other language, whose locale is specified in the rest
+				// of the rules.
+				StrAnsi staOtherLocale(m_stuRules.Chars() + 1);
+				Locale otherLocale = Locale::createFromName(staOtherLocale.Chars());
+				m_pcoll = Collator::createInstance(otherLocale, error);
+				if (U_FAILURE(error))
+					ThrowHr(E_FAIL);
+				m_pcoll->setStrength(m_strength);
+			}
+			else
+			{
+				// Make a rule-based collater and an iterator based on it.
+				m_pcoll = m_prcoll = new RuleBasedCollator(m_stuRules.Chars(), m_strength, error);
+				if (U_FAILURE(error))
+					ThrowHr(E_FAIL);
+			}
 		}
 		else
 		{

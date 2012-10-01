@@ -110,4 +110,4 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	TestTsPropsBldr.h \
 	TestTsTextProps.h
 	@echo Collecting tests for testFwKernel
-	$(COLLECT) $^ >$@
+	$(COLLECT) $^ $@

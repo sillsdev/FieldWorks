@@ -197,6 +197,14 @@ namespace FwBuildTasks
 					bldr.Append("MakeDirs");	// ensure the output directories exist.
 					if (project == "COMInterfaces")
 						bldr.Append(";mktlbs");
+					// The xWorksTests require us to have built on of the adapters, typically FlexUIAdapter.dll.
+					// However, we don't discover that dependency, because it is invoked by reflection (in xCore) and neither xWorks
+					// nor xCore references it. Nor can we fix it by adding a reference, because (a) this would break the aimed-for
+					// independence of xCore from a particular adapter, and (b) for some bizarre historical reason, the project that
+					// builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane. We may eventually get around to fixing the latter
+					// problem and decide to sacrifice the independence of xCore, but for now, it's simplest to patch the target generation.
+					if (project == "xWorksTests")
+						bldr.Append(";XCoreAdapterSilSidePane");
 					var dependencies = m_mapProjDepends[project];
 					foreach (var dep in dependencies)
 					{

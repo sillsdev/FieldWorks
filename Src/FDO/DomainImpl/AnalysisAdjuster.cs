@@ -101,7 +101,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		// In HandleMoveDest, the analyses to move to the destination (from the incompletely moved seg).
 		private List<IAnalysis> m_analysesToMove;
 		private ISegment m_segPartlyMoved; // the sourceof m_analysesToMove, if any incomplete segment overlaps the move.
+		private bool m_changedFontOnly;
 		#endregion
+
 		#region DebuggingUtility
 		/// <summary>
 		/// This method is available to help display information about how the adjustments are being calculated,
@@ -201,8 +203,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_para = para;
 			m_oldContents = oldContents;
 			m_newContents = m_para.Contents;
-			if(diffInfo == null || diffInfo.IchFirstDiff != 0 || diffInfo.CchDeleteFromOld != diffInfo.CchInsert ||
-				m_oldContents == null || m_newContents == null || m_oldContents.Length == 0 || !m_oldContents.GetChars(0, m_oldContents.Length).Equals(m_newContents.GetChars(0, m_newContents.Length)))
+			m_changedFontOnly = false;
+			if(diffInfo != null && ( diffInfo.IchFirstDiff != 0 || diffInfo.CchDeleteFromOld != diffInfo.CchInsert ||
+				m_oldContents == null || m_newContents == null || m_oldContents.Length == 0 ||
+				!m_oldContents.GetChars(0, m_oldContents.Length).Equals(m_newContents.GetChars(0, m_newContents.Length))))
 			{
 				m_paraDiffInfo = diffInfo;
 			}
@@ -211,6 +215,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				//We didn't really change it, maybe the ws changed, but all the characters are identical
 				//let's let the user keep their analysis
 				m_paraDiffInfo = new TsStringDiffInfo(0, 0, 0);
+				m_changedFontOnly = true; // a flag to let later adjustment ops remember this
 			}
 		}
 		#endregion
@@ -929,12 +934,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (annObjectsToCheck == null)
 				return null; // none to remove.
-			var result = annObjectsToCheck.Where(refObj => refObj.EndRef().Segment.IndexInOwner < m_iSegFirstModified ||
-								refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified).ToList();
+			List<IAnalysisReference> result;
+			result = annObjectsToCheck.Where(segmentIsOutsideOfRange).ToList();
 			if (result.Count > 0)
 				foreach (var iar in result)
 					annObjectsToCheck.Remove(iar);
 			return annObjectsToCheck;
+		}
+
+		private bool segmentIsOutsideOfRange(IAnalysisReference refObj)
+		{
+			ISegment seg = null;
+			var endRef = refObj.EndRef();
+			if (endRef != null) // added for LT-13414 - one segment had a null endRef
+				seg = refObj.EndRef().Segment;
+			return seg != null && (seg.IndexInOwner < m_iSegFirstModified || refObj.BegRef().Segment.IndexInOwner > m_iOldSegLastModified);
 		}
 
 		// Compute segment offsets as required for new paragraph contents.
@@ -1140,7 +1154,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			AnalyzeNewText();
 
 			int iTokenIndex;
-			int iLastAnalysisToFix = GetLastAnalysisToFix(out iTokenIndex);
+			int iLastAnalysisToFix;
+			if (!m_changedFontOnly)
+			{
+				iLastAnalysisToFix = GetLastAnalysisToFix(out iTokenIndex);
+			}
+			else
+			{	// if the font changed, but text did not change, we want the wordform analyses to be completely replaced,
+				// but the segment annotations to remain. GetLastAnalysisToFix was retaining some of the old
+				// analyses (typically a wordform and end punctuation). Later this causes problems in
+				// OverridesCellar ParsedParagraphOffsetsMethod.AdvancePastWord() which returns 0 for the
+				// length of the old wordform. This means methods like FindAnnotation() can't progress to the
+				// next character - stuck in an endless loop. LT-13472
+				iTokenIndex = m_trailingTokens.Count - 1;
+				iLastAnalysisToFix = m_oldAnalyses.Count - 1;
+			}
 
 			List<IAnalysis> newAnalyses = GetNewWordformAnalyses(iTokenIndex);
 

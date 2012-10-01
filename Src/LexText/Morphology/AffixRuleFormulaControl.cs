@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -744,7 +740,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						Rule.InputOS.Remove(m_removeCol);
 						m_removeCol = null;
 					});
-					//m_view.RootBox.Reconstruct();
 					sel.RestoreSelectionAndScrollPos();
 					return;
 				}
@@ -758,63 +753,63 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 			int index = -1;
-		UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
-			MEStrings.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
-		{
-			using (var featChooser = new PhonologicalFeatureChooserDlg())
+			UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
+				MEStrings.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
 			{
-				var obj = CurrentObject;
-				switch (obj.ClassID)
+				using (var featChooser = new PhonologicalFeatureChooserDlg())
 				{
-					case MoCopyFromInputTags.kClassId:
-						featChooser.SetDlgInfo(m_cache, m_mediator);
-						if (featChooser.ShowDialog() == DialogResult.OK)
-						{
-							// create a new natural class behind the scenes
-							var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
-							m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
-							featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName,
-								Rule.Form.BestVernacularAnalysisAlternative.Text));
-							featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-							featChooser.FS = featNC.FeaturesOA;
-							featChooser.UpdateFeatureStructure();
-
-							var copy = obj as IMoCopyFromInput;
-							var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
-							Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
-							newModify.ModificationRA = featNC;
-							newModify.ContentRA = copy.ContentRA;
-							index = newModify.IndexInOwner;
-
-							Rule.OutputOS.Remove(copy);
-							reconstruct = true;
-						}
-						break;
-
-					case MoModifyFromInputTags.kClassId:
-						var modify = obj as IMoModifyFromInput;
-						featChooser.SetDlgInfo(m_cache, m_mediator, modify.ModificationRA.FeaturesOA);
-						if (featChooser.ShowDialog() == DialogResult.OK)
-						{
-							if (modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count == 0)
+					var obj = CurrentObject;
+					switch (obj.ClassID)
+					{
+						case MoCopyFromInputTags.kClassId:
+							featChooser.SetDlgInfo(m_cache, m_mediator);
+							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
-								var newCopy = m_cache.ServiceLocator.GetInstance<IMoCopyFromInputFactory>().Create();
-								Rule.OutputOS.Insert(modify.IndexInOwner, newCopy);
-								newCopy.ContentRA = modify.ContentRA;
-								index = newCopy.IndexInOwner;
+								// create a new natural class behind the scenes
+								var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
+								featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName,
+									Rule.Form.BestVernacularAnalysisAlternative.Text));
+								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+								featChooser.FS = featNC.FeaturesOA;
+								featChooser.UpdateFeatureStructure();
 
-								Rule.OutputOS.Remove(modify);
+								var copy = obj as IMoCopyFromInput;
+								var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
+								Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
+								newModify.ModificationRA = featNC;
+								newModify.ContentRA = copy.ContentRA;
+								index = newModify.IndexInOwner;
+
+								Rule.OutputOS.Remove(copy);
+								reconstruct = true;
 							}
-							else
+							break;
+
+						case MoModifyFromInputTags.kClassId:
+							var modify = obj as IMoModifyFromInput;
+							featChooser.SetDlgInfo(m_cache, m_mediator, modify.ModificationRA.FeaturesOA);
+							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
-								index = modify.IndexInOwner;
+								if (modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count == 0)
+								{
+									var newCopy = m_cache.ServiceLocator.GetInstance<IMoCopyFromInputFactory>().Create();
+									Rule.OutputOS.Insert(modify.IndexInOwner, newCopy);
+									newCopy.ContentRA = modify.ContentRA;
+									index = newCopy.IndexInOwner;
+
+									Rule.OutputOS.Remove(modify);
+								}
+								else
+								{
+									index = modify.IndexInOwner;
+								}
+								reconstruct = true;
 							}
-							reconstruct = true;
-						}
-						break;
+							break;
+					}
 				}
-			}
-		});
+			});
 
 			m_view.Select();
 			if (reconstruct)
@@ -837,30 +832,30 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (selectedNc != null)
 			{
 				int index = -1;
-		UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetNC,
-			MEStrings.ksAffixRuleRedoSetNC, m_cache.ActionHandlerAccessor, () =>
-		{
-			var curObj = CurrentObject;
-			switch (curObj.ClassID)
-			{
-				case MoCopyFromInputTags.kClassId:
-					var copy = curObj as IMoCopyFromInput;
-					var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
-					Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
-					newModify.ModificationRA = selectedNc;
-					newModify.ContentRA = copy.ContentRA;
-					index = newModify.IndexInOwner;
+				UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetNC,
+					MEStrings.ksAffixRuleRedoSetNC, m_cache.ActionHandlerAccessor, () =>
+				{
+					var curObj = CurrentObject;
+					switch (curObj.ClassID)
+					{
+						case MoCopyFromInputTags.kClassId:
+							var copy = curObj as IMoCopyFromInput;
+							var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
+							Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
+							newModify.ModificationRA = selectedNc;
+							newModify.ContentRA = copy.ContentRA;
+							index = newModify.IndexInOwner;
 
-					Rule.OutputOS.Remove(copy);
-					break;
+							Rule.OutputOS.Remove(copy);
+							break;
 
-				case MoModifyFromInputTags.kClassId:
-					var modify = curObj as IMoModifyFromInput;
-					modify.ModificationRA = selectedNc;
-					index = modify.IndexInOwner;
-					break;
-			}
-		});
+						case MoModifyFromInputTags.kClassId:
+							var modify = curObj as IMoModifyFromInput;
+							modify.ModificationRA = selectedNc;
+							index = modify.IndexInOwner;
+							break;
+					}
+				});
 
 				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
 			}

@@ -120,13 +120,14 @@ namespace SIL.FieldWorks.FDO
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor">hvo, flid pairs which should be monitored, since if they change, the outcome may change</param>
 		/// <remarks>e.g. "color" would not be relevant on a part of speech, ever.
 		/// e.g.  MoAffixForm.inflection classes are only relevant if the MSAs of the
 		/// entry include an inflectional affix MSA.
 		/// </remarks>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		bool IsFieldRelevant(int flid);
+		bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor);
 
 		/// <summary>
 		/// Return true if possibleOwner is one of the owners of 'this'.

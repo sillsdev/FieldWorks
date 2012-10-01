@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using System.Text;
@@ -23,6 +24,7 @@ using SIL.Utils;
 using SIL.HermitCrab;
 using PatrParserWrapper;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Validation;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -530,7 +532,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private string ParseWordWithHermitCrab(string form, int hvoWordform, bool fDotrace)
 		{
-			Debug.Assert(m_loader.IsLoaded, "It looks like the calling code forgot to load HC.NET");
+			if (!m_loader.IsLoaded)
+				return ParserCoreStrings.ksDidNotParse;
 
 			var sb = new StringBuilder();
 			var settings = new XmlWriterSettings
@@ -553,12 +556,39 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void LoadParser(ref XmlDocument model, XmlDocument template)
 		{
+			string hcPath = Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml");
+			File.Delete(hcPath); // In case we don't produce one successfully, don't keep an old one.
+			// Check for errors that will prevent the transformations working.
+			foreach (var affix in m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().AllInstances())
+			{
+				string form = affix.Form.VernacularDefaultWritingSystem.Text;
+				if (string.IsNullOrEmpty(form) || !form.Contains("["))
+					continue;
+				string environment = "/_" + form;
+				// A form containing a reduplication expression should look like an environment
+				var validator = new PhonEnvRecognizer(
+					m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+				if (!validator.Recognize(environment))
+				{
+					string msg = string.Format(ParserCoreStrings.ksHermitCrabReduplicationProblem, form,
+						validator.ErrorMessage);
+					m_cache.ThreadHelper.Invoke(() => // We may be running in a background thread
+						{
+
+							MessageBox.Show(Form.ActiveForm, msg, ParserCoreStrings.ksBadAffixForm,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
+						});
+					m_loader.Reset(); // make sure nothing thinks it is in a useful state
+					return; // We can't load the parser, hopefully our caller will realize we failed.
+				}
+			}
+
 			var transformer = new M3ToHCTransformer(m_projectName, m_taskUpdateHandler);
 			transformer.MakeHCFiles(ref model);
 
 			string gramPath = Path.Combine(m_outputDirectory, m_projectName + "gram.txt");
 			m_patr.LoadGrammarFile(gramPath);
-			string hcPath = Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml");
 			m_loader.Load(hcPath);
 
 			XmlNode delReappsNode = model.SelectSingleNode("/M3Dump/ParserParameters/HC/DelReapps");

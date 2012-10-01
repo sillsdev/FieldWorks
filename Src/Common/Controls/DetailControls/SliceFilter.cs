@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj"></param>
 		/// <param name="flid"></param>
 		/// <returns>true if this slice should be included</returns>
-		virtual public bool IncludeSlice(XmlNode configurationNode, ICmObject obj, int flid)
+		virtual public bool IncludeSlice(XmlNode configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (m_filterList!= null)
 			{
@@ -52,9 +53,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 
-			//skip slices representing fields which are not relevant under the current circumstances
+			//skip slices representing fields which are not relevant under the current circumstances.
+			// If necessary note that the list of slices
+			var result = obj.IsFieldRelevant(flid, propsToMonitor);
 
-			return obj.IsFieldRelevant(flid);
+			return result;
 		}
 	}
 }

@@ -79,6 +79,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override int DesiredHeight(RootSite rs)
 		{
+			if (rs != null && !rs.AllowLayout)
+				rs.AllowLayout = true; // Fixes LT-13603 where sometimes the slice was constructed by not laid out by now.
 			int height = base.DesiredHeight(rs);
 			// only include the height of the insertion contorl when it is visible
 			if (RuleFormulaControl.InsertionControl.Visible)

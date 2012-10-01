@@ -108,7 +108,7 @@ $(LANGUAGETEST_SRC)\Collection.cpp: $(LANGUAGETEST_SRC)\testLanguage.h\
  $(LANGUAGETEST_SRC)\TestRomRenderEngine.h\
  $(LANGUAGETEST_SRC)\RenderEngineTestBase.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
-	$(COLLECT) $** >$(LANGUAGETEST_SRC)\Collection.cpp
+	$(COLLECT) $** $(LANGUAGETEST_SRC)\Collection.cpp
 
 $(INT_DIR)\Language.res: $(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\Language.res
 	copy $(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Language\Language.res $(INT_DIR)\Language.res >nul

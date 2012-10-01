@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks {
 		///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
 		///Note: {0} items in your database have data in this field,
 		///and {1} views have been configured to display this field!
-		///Are you SURE you want to delete the field {2}?..
+		///Are you SURE you want to delete the field {2}?.
 		/// </summary>
 		internal static string DeletingFieldCannotBeUndone0Items1Views {
 			get {
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.XWorks {
 		/// <summary>
 		///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
 		///Note: {0} views have been configured to display this field!
-		///Are you SURE you want to delete the field {1}?..
+		///Are you SURE you want to delete the field {1}?.
 		/// </summary>
 		internal static string DeletingFieldCannotBeUndone0Views {
 			get {
@@ -1607,6 +1607,34 @@ namespace SIL.FieldWorks.XWorks {
 		internal static string Promote {
 			get {
 				return ResourceManager.GetString("Promote", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Punctuation in custom field name.
+		/// </summary>
+		internal static string PunctInfieldNameCaption {
+			get {
+				return ResourceManager.GetString("PunctInfieldNameCaption", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Please remove the punctuation from the custom field name (&quot;{0}&quot;) to allow export and some other functions to work..
+		/// </summary>
+		internal static string PunctInFieldNameError {
+			get {
+				return ResourceManager.GetString("PunctInFieldNameError", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+		///Do you want to continue with the export?.
+		/// </summary>
+		internal static string PunctInFieldNameWarning {
+			get {
+				return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
 			}
 		}
 

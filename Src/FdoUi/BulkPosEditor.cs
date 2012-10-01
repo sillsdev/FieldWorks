@@ -327,22 +327,22 @@ namespace SIL.FieldWorks.FdoUi
 
 		#region IBulkEditSpecControl implementation
 
-		public abstract void DoIt(Set<int> itemsToChange, ProgressState state);
+		public abstract void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
 
-		public void FakeDoit(Set<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
+		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
 			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count;
+					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
 				bool fEnable = CanFakeIt(hvo);
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.FdoUi
 			get {return m_cache.LanguageProject.PartsOfSpeechOA; }
 		}
 
-		public override void DoIt(Set<int> itemsToChange, ProgressState state)
+		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			CheckDisposed();
 			var senseRepo = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
@@ -429,13 +429,13 @@ namespace SIL.FieldWorks.FdoUi
 			var sensesByEntry = new Dictionary<ILexEntry, List<ILexSense>>();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count / 50, 1));
+			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			foreach (int hvoSense in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 20 / itemsToChange.Count;
+					state.PercentDone = i * 20 / itemsToChange.Count();
 					state.Breath();
 				}
 				var sense = senseRepo.GetObject(hvoSense);

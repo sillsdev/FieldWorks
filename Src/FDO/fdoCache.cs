@@ -859,6 +859,7 @@ namespace SIL.FieldWorks.FDO
 			}
 		}
 
+		private int m_wsDefaultAnalysis;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The default analysis writing system.
@@ -868,12 +869,17 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultAnalysis == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+					m_wsDefaultAnalysis = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultAnalysis;
 			}
 		}
 
+		private int m_wsDefaultPron;
 		/// <summary>
 		/// The default pronunciation writing system.
 		/// </summary>
@@ -881,12 +887,17 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultPron == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
+					m_wsDefaultPron = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultPron;
 			}
 		}
 
+		private int m_wsDefaultVern;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The default vernacular writing system.
@@ -896,10 +907,25 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultVern == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
+					m_wsDefaultVern = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultVern;
 			}
+		}
+
+		/// <summary>
+		/// This should be called when anything changes that may make it necessary for
+		/// DefaultVernWs or DefaultAnalWs to return a different result.
+		/// </summary>
+		internal void ResetDefaultWritingSystems()
+		{
+			m_wsDefaultVern = 0;
+			m_wsDefaultAnalysis = 0;
+			m_wsDefaultPron = 0;
 		}
 
 		/// ------------------------------------------------------------------------------------

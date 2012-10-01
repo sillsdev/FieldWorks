@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		}
 
 		/// <summary></summary>
-		public bool IsFieldRelevant(int flid)
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			throw new NotImplementedException();
 		}

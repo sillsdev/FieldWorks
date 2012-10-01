@@ -2637,7 +2637,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_bv.Mediator);
 			using (SimpleMatchDlg dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory,
-				m_bv.Mediator.HelpTopicProvider, m_ws, stylesheet))
+				m_bv.Mediator.HelpTopicProvider, m_ws, stylesheet, m_bv.Cache))
 			{
 				dlg.SetDlgValues(m_matcher, stylesheet);
 				if (dlg.ShowDialog() != DialogResult.OK || dlg.Pattern.Length == 0)

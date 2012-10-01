@@ -6129,3 +6129,28 @@ SteveMc, September 20, 2012.  Integrate from Calgary/WW to WW.
 SteveMc, September 20, 2012.  Fix invalid messages in messages.fa.po.
 ... a couple of Imrie checkins...
 GordonM, 21 Sep 2012. GenerateNUnitReports task for MSBuild process
+LastufkaM 24 Sep 2012. LT-13574 Crash opening project "Richard G".
+JohnT, 24 Sep 2012. Integrated changes from 7.2. Made a new build tool to replace the (recently became flaky) gawk script used in building C++ tests.
+	Note that the nant build is broken, even before this change: the script generated for MigrateSql is broken, has target init-Debug twice.
+	The MSBuild (ww\build directory, build /t:remakefw) succeeds, but some unit tests fail (also even before this change).
+	The xWorks ones pass when retried, I think we're missing a dependency.
+	Others pass when Output/X/ScrChecks.dll/pdb is copied to Distfiles/Editorial Checks and Utilities.dll is copied from Distfiles to Output/Debug.
+	I will work on solving these problems, but I think the evidence is pretty good that the integration succeeded, so wanted to get those changes in
+	people's hands.
+	I have not tested the changes to make the Linux build use the new CollectCppUnitTests build process.
+JohnT, 24 Sep 2012. MSBuild now working and running all unit tests successfully (cd ww/build; build /t:remakefw /v:m /property:action=test)
+RickM, 24 Sept 2012. LT-10424 Complex Form Types and Variant Types columns need to use Best Analysis
+Andy Black, 24 Sep 2012. Fix LT-13632 "Hermit Crab file preparation fails if a variant refers to an entry with two or more MSAs"
+JohnT, 25 Sep 2012. LT-10763 Show "Attaches to Categories" immediately when entry becomes enclitic/proclitic
+Andy Black, 25 Sep 2012.  Fix failure in CreateXAmpleLexicon test in ParserCore.
+GordonM, 25 Sep 2012. A cmd line version of the nunit report build task (NUnitReport).
+JohnT, 25 Sep 2012. LT-12507 XHTML export failure with custom fields with punctuation
+JohnT, 26 Sep 2012. LT-12617 Audio sound playback is unreliable
+JohnT, 27 Sep 2012. LT-12664 Find Entry shows no results sometimes after typing quickly, in version 7
+GordonM, 27 Sep 2012. LT-13334 Up/Down arrows in MultiString fields and some refactoring.
+RickM, 27 Sept 2012. LT-13620 In Sena 3, the word "tenepa" has a corrupted analysis that can cause a crash. It should be deleted.
+JohnT, 27 Sep 2012. LT-13597 HC Parser crashes if there are certain characters in an affix allomorph
+NaylorJ, 28 Sep 2012. Replaced sed with a .NET app which specifically fixes generated COM header files, modified the build to use it. Removed all cygwin dlls.
+NaylorJ, 28 Sep 2012. Fixed some recently added invalid XHTML output which showed up in LT-13585.
+GordonM, 28 Sep 2012. JohnT and I fixed LT-13603, Affix Process rule table was disappearing.
+JohnT, 28 Sep 2012. LT-12846 Cache default vernacular and analysis writing systems

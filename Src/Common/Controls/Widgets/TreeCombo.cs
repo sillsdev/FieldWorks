@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Sets the text but doesn't cause a focus.
 		/// </summary>
-		private void SetComboText(TreeNode node)
+		public void SetComboText(TreeNode node)
 		{
 			if (node == null)
 			{

@@ -544,7 +544,24 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				string sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string) m_tryAWordResult.AsyncState);
+				var message = (string)m_tryAWordResult.AsyncState;
+				string sOutput;
+				if (!message.StartsWith("<"))
+				{
+					// It's an error message.
+					sOutput = Path.GetTempFileName();
+					var writer = new StreamWriter(sOutput);
+					writer.WriteLine("<!DOCTYPE html>");
+					writer.WriteLine("<body>");
+					writer.WriteLine(message);
+					writer.WriteLine("</body>");
+					writer.WriteLine("</html>");
+					writer.Close();
+				}
+				else
+				{
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string)m_tryAWordResult.AsyncState);
+				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;
 				// got result so enable Try It button

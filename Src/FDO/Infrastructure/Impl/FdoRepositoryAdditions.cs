@@ -1154,10 +1154,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// LexEntry/LexSense in ComponentLexemes.
 		public IEnumerable<ILexEntry> GetComplexFormEntries(ICmObject mainEntryOrSense)
 		{
+			var entry = mainEntryOrSense as LexEntry;
+			IEnumerable<ILexEntryRef> candidates;
+			if (entry != null)
+				candidates = entry.ComplexFormRefsWithThisPrimaryEntry;
+			else
+				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisPrimarySense;
 			var retval = new Set<ILexEntry>();
-			foreach (ILexEntryRef ler in m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances())
+			foreach (ILexEntryRef ler in candidates)
 			{
-				if (ler.RefType == LexEntryRefTags.krtComplexForm && ler.ComponentLexemesRS.Contains(mainEntryOrSense))
+				if (ler.RefType == LexEntryRefTags.krtComplexForm)
 				{
 					Debug.Assert(ler.Owner is ILexEntry);
 					retval.Add(ler.Owner as ILexEntry);
@@ -1166,11 +1172,30 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return SortEntries(retval);
 		}
 
+		// A temporary cache for fast lookup of headwords (for sorting).
+		// Cleared
+		Dictionary<ILexEntry, string> m_cachedHeadwords = new Dictionary<ILexEntry, string>();
+
+		internal void SomeHeadWordChanged()
+		{
+			m_cachedHeadwords.Clear();
+		}
+
+		public string HeadWordText(ILexEntry entry)
+		{
+			string result;
+			if (m_cachedHeadwords.TryGetValue(entry, out result))
+				return result;
+			result = entry.HeadWord.Text;
+			m_cachedHeadwords[entry] = result;
+			return result;
+		}
+
 		IEnumerable<ILexEntry> SortEntries(IEnumerable<ILexEntry> input)
 		{
 			var retval = new List<ILexEntry>(input);
 			var collator = Cache.LangProject.DefaultVernacularWritingSystem.Collator;
-			retval.Sort((left, right) => collator.Compare(left.HeadWord.Text, right.HeadWord.Text));
+			retval.Sort((left, right) => collator.Compare(HeadWordText(left), HeadWordText(right)));
 			return retval;
 		}
 
@@ -1459,7 +1484,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			var retval = new List<ILexEntryRef>(input);
 			var collator = Cache.LangProject.DefaultVernacularWritingSystem.Collator;
-			retval.Sort((left, right) => collator.Compare(((ILexEntry)left.Owner).HeadWord.Text, ((ILexEntry)right.Owner).HeadWord.Text));
+			var entryRepo = (LexEntryRepository) Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			retval.Sort((left, right) => collator.Compare(entryRepo.HeadWordText((ILexEntry)left.Owner), entryRepo.HeadWordText((ILexEntry)right.Owner)));
 			return retval;
 		}
 

@@ -597,7 +597,7 @@
 	  <xsl:if test="CmAnnotation/InstanceOf34/Link[@name = $trigger]">
 		 <xsl:element name="{$newelement}">
 			<xsl:for-each
-			   select="CmAnnotation/Comment34/AStr[../../InstanceOf34/Link/@name = $trigger]">
+			   select="CmAnnotation/Comment34/AStr[@ws!='' and ../../InstanceOf34/Link/@name = $trigger]">
 			   <xsl:variable name="thisws" select="@ws"/>
 			   <!-- xsl:if test="string-length(string(../../preceding-sibling::CmAnnotation/Comment34/AStr[../../InstanceOf34/Link/@name = $trigger][@ws = $thisws])) = 0" -->
 			   <xsl:if
@@ -677,7 +677,7 @@
 		 test="CmAnnotation/InstanceOf34/Link[@name != 'anthropology'][@name != 'discourse'][@name != 'grammar'][@name != 'phonology'][@name != 'semantics'][@name != 'sociolinguistics'][@name != 'encyclopedic'][@name != 'bibliography']">
 		 <GeneralNote5016>
 			<xsl:for-each
-			   select="CmAnnotation/Comment34/AStr[../../InstanceOf34/Link/@name != 'anthropology'][../../InstanceOf34/Link/@name != 'discourse'][../../InstanceOf34/Link/@name != 'grammar'][../../InstanceOf34/Link/@name != 'phonology'][../../InstanceOf34/Link/@name != 'semantics'][../../InstanceOf34/Link/@name != 'sociolinguistics'][../../InstanceOf34/Link/@name != 'encyclopedic'][../../InstanceOf34/Link/@name != 'bibliography']">
+			   select="CmAnnotation/Comment34/AStr[@ws!='' and ../../InstanceOf34/Link/@name != 'anthropology'][../../InstanceOf34/Link/@name != 'discourse'][../../InstanceOf34/Link/@name != 'grammar'][../../InstanceOf34/Link/@name != 'phonology'][../../InstanceOf34/Link/@name != 'semantics'][../../InstanceOf34/Link/@name != 'sociolinguistics'][../../InstanceOf34/Link/@name != 'encyclopedic'][../../InstanceOf34/Link/@name != 'bibliography']">
 			   <xsl:variable name="thisws" select="@ws"/>
 			   <xsl:if
 				  test="not (../../preceding-sibling::CmAnnotation/Comment34/AStr[../../InstanceOf34/Link/@name != 'anthropology'][../../InstanceOf34/Link/@name != 'discourse'][../../InstanceOf34/Link/@name != 'grammar'][../../InstanceOf34/Link/@name != 'phonology'][../../InstanceOf34/Link/@name != 'semantics'][../../InstanceOf34/Link/@name != 'sociolinguistics'][../../InstanceOf34/Link/@name != 'encyclopedic'][../../InstanceOf34/Link/@name != 'bibliography'][@ws = $thisws])">
@@ -816,7 +816,7 @@
 
    <xsl:template match="Annotations5002">
 	  <Comment5002>
-		 <xsl:for-each select="CmAnnotation/Comment34/AStr">
+		 <xsl:for-each select="CmAnnotation/Comment34/AStr[@ws!='']">
 			<xsl:variable name="thisws" select="@ws"/>
 			<xsl:if test="not (../../preceding-sibling::CmAnnotation/Comment34/AStr[@ws = $thisws])">
 			   <AStr>
@@ -885,10 +885,10 @@
    </xsl:template>
 
    <xsl:template match="ReversalEntries5016">
-	  <xsl:if test="Link[@form!='']">
+	  <xsl:if test="Link[@form!='' and @ws!='']">
 		 <ReversalEntries5016>
 			<xsl:for-each select="Link">
-			   <xsl:if test="@form!=''">
+			   <xsl:if test="@form!='' and @ws!=''">
 				  <xsl:copy>
 					 <xsl:apply-templates select="@* | node()"/>
 				  </xsl:copy>
@@ -8667,7 +8667,16 @@
    <xsl:template
 	  match="IsBodyWithHeadword5007 | SubentryType5007 | SubentryTypes5005 | CrossReferences5002 | LexicalRelations5016 | Sound5014 | SourceSegment5004"/>
 
-   <!-- Insert the DTD statement at the root -->
+	<!-- Delete elements with empty writing systems (arising from ignore requests in the configuration).
+	Mainly we want to delete useless alternatives, but also bad runs in multilingual strings in a different main WS,
+	and entire reversal indexes in unwanted ones.-->
+	<xsl:template match="Link[@ws='']"/>
+	<xsl:template match="AStr[@ws='']"/>
+	<xsl:template match="AUni[@ws='']"/>
+	<xsl:template match="Run[@ws='']"/>
+	<xsl:template match="ReversalIndex[WritingSystem5052/Link/@ws='']"/>
+
+	<!-- Insert the DTD statement at the root -->
 
    <xsl:template match="/">
 	  <!-- <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE FwDatabase SYSTEM "FwDatabase.dtd"&gt;</xsl:text> -->

@@ -152,6 +152,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CurrentContext ccOld = WriteClassStartTag(hvoItem);
 
+			WriteDelayedItemNumber();
+
 			base.AddObj(hvoItem, vc, frag);
 
 			WriteClassEndTag(hvoItem, ccOld);
@@ -1052,7 +1054,23 @@ namespace SIL.FieldWorks.Common.Controls
 				bldr.Replace(0, before.Length, "", null);
 			if (after.Length > 0)
 				bldr.Replace(bldr.Length - after.Length, bldr.Length, "", null);
-			WriteStringBody("ItemNumber", " class=\"" + cssClass + "\"", bldr.GetString());
+			// We want the number to be part of the item. However, the VC outputs it just before the item.
+			// So we postpone outputting the number until the AddObj call. Yuck.
+			m_delayedItemNumberClass = cssClass;
+			m_delayedItemNumberValue = bldr.GetString();
+		}
+
+		private string m_delayedItemNumberClass;
+		private ITsString m_delayedItemNumberValue;
+
+		private void WriteDelayedItemNumber()
+		{
+			if (m_delayedItemNumberValue == null)
+				return;
+			WriteStringBody("ItemNumber", " class=\"" + m_delayedItemNumberClass + "\"", m_delayedItemNumberValue);
+			m_delayedItemNumberValue = null;
+			m_delayedItemNumberClass = null;
+
 		}
 
 		internal void BeginCssClassIfNeeded(XmlNode frag)
