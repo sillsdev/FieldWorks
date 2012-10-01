@@ -6156,3 +6156,4 @@ GordonM, 28 Sep 2012. JohnT and I fixed LT-13603, Affix Process rule table was d
 JohnT, 28 Sep 2012. LT-12846 Cache default vernacular and analysis writing systems
 JohnT, 1 Oct 2012. LT-13126 Concordance "For the text" box should show increased font sizes
 RickM, 1 Oct 2012. LT-13460  Lexical relations not cleaned up following deletes
+GordonM, 1 Oct 2012. LT-13503 Crash in Concordance of Analysis after modifying.
