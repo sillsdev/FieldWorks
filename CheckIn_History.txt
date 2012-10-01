@@ -323,3 +323,4 @@ JohnT, 20 Sep 2012. LT-13592, output <br/> in place of U+2028 and U+2029 in XHTM
 RickM, 21 Sept 2012. LT-13613  Changing LinkedFiles path location does not copy Picture files with diacritics to the new location.
 RickM, 21 Sept 2012. LT-13343 Changing LinkedFiles path location does not copy Picture files to the new location.
 NaylorJ, 28 Sep 2012. (Integrated from WW) Fixed some recently added invalid XHTML output which showed up in LT-13585.
+NaylorJ, 1 Oct 2012. (Integrated from WW)  LT-13428 Fix to some more Reversal sorting issues. Should be the last fix for now.

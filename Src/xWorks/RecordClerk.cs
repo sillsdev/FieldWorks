@@ -2811,6 +2811,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Test to see if the two given sorters are compatible, override if you need to check for something
+		/// beyond what the RecordSorter.CompatibleSorter() will test.
+		/// </summary>
+		/// <param name="first"></param>
+		/// <param name="second"></param>
+		/// <returns></returns>
+		public virtual bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			return first.CompatibleSorter(second);
+		}
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the clerk is using the default sorting.
 		/// </summary>
 		/// <value>

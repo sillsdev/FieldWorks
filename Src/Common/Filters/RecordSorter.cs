@@ -1407,10 +1407,6 @@ namespace SIL.FieldWorks.Filters
 					return result;
 				var item = key as IManyOnePathSortItem;
 
-				// This may help with solving LT-2205, but is probably too expensive to run always.
-				// if (!item.KeyCmObjectUsing(item.RootObject.Cache).IsValidObject())
-				//	throw new Exception("Sorter found IManyOnePathSortItem with invalid key object with HVO " + item.KeyObject);
-
 				result =  m_finder.SortStrings(item, sortedFromEnd);
 				m_objToKey[key] = result;
 				return result;
