@@ -142,6 +142,6 @@ $(INT_DIR)/Collection.cpp: \
 	TestVwTextBoxes.h \
 	TestVwTableBox.h
 	@echo Collecting tests for testViews
-	$(COLLECT) $** $@
+	$(COLLECT) $^ $@
 
 -include $(DEPS)
