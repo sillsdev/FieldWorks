@@ -425,6 +425,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public void ClearInvalidatedStoredData()
+		{
+			DiscardProperties();
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Construct a new form
@@ -1807,7 +1812,7 @@ namespace SIL.FieldWorks.XWorks
 			var form = ActiveForm;
 			if (form == null)
 				form = this;
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialog())
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;
@@ -2391,22 +2396,6 @@ namespace SIL.FieldWorks.XWorks
 			get { return true; }
 		}
 		#endregion implementation of (some of) IMainWindowDelegateCallbacks
-
-// CS0169
-#if false
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwXWindow));
-			this.SuspendLayout();
-			//
-			// FwXWindow
-			//
-			resources.ApplyResources(this, "$this");
-			this.Name = "FwXWindow";
-			this.ResumeLayout(false);
-
-		}
-#endif
 
 		/// <summary>
 		/// Get a special-case find dialog help ID. We attempt to retrieve it from our active view or its parent.
