@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Visits the grammar tool views. -->
+
+<accil on-fail="assert">
+   <goal>Visits all Grammar views</goal>
+
+	<bug id="FWR-1487" desc="Yellow Error window viewing grammar/phonemes in Kalaba"/>
+   <bug id="FWR-1037" desc="Crash going to Ad hoc Rules view"/>
+   <bug id="FWR-315" desc="Crash generating Grammar Sketch"/>
+   <bug id="LT-8031" desc="Click grammar/ad hoc rules, crash"/>
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+<on-application log="all" run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+  <click path="statusbar:StatusBar"/>
+  <model select="menubar/view/grammar/*">
+
+	 <click path="$guiPath"/>
+	 <if><condition of="$guiName" is="'Grammar Sketch'"/>
+		<then>
+		  <click path="9:panelTop/button:btnGenerate"/>
+		</then>
+	 </if>
+
+  </model>
+
+</on-application>
+</accil>

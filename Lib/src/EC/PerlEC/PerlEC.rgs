@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'PerlEC5100b'
+		'PerlEC5100b.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}

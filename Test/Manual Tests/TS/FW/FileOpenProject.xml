@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileopen" num="2.1.2" abbr="flopn" file="FW\FileOpenProject.xml">
+<title tag="fileopen">File - Open Language Project Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The <i>Open Project</i> dialog is used to navigate to specific projects and to open them into Fieldworks Explorer. This dialog is modeled after other File-Open dialogs used in Windows programs. The main difference here is that in order to reflect the database servers, a tree is displayed showing the network structure instead of folders on a hard disk.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html" type="doc">Open Project Dialog.</link>
+</p>
+</introduction>
+<context>
+<p>This test is run from FieldWorks Explorer. The first words of the bug report title should be a noun phrase containing the words "Open Project".</p>
+</context>
+
+<case id="flopnAct" num="1" order="any">
+<title tag="flprAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File-Open.
+<r>The Open Project dialog box is displayed.</r>
+<p name="bug">File-Open menu item fails</p>
+</step>
+</case>
+
+<case id="flopnDiac" num="2.0" order="any">
+<title tag="flopnDiac">Exercise dialog controls</title>
+<context>
+<p>When the Open Project dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use the image at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html" type="doc">Open Project dialog </link> to visually inspect the dialog layout.
+   <r>
+<ul>
+ <li>When the Look in tree first comes up, it is expanded only to show the first level.</li>
+ <li>The local machine is selected.</li>
+ <li>There are at least two items in this list, even for non-networked machines: the name of the local machine, and the Network Neighborhood node.</li>
+ <li>Up to approximate size and position the two should be the same - especially any text and icons.</li>
+</ul>
+</r>
+<p name="bug">Open Project layout incorrect</p>
+<p name="bug">Open Project tree initially expanded</p>
+<p name="bug">Open Project local machine not initially selected</p>
+<p name="bug">Open Project Look in list missing items</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Open Project" as the name of the dialog.</r>
+</step>
+<step name="2.3">Use <link uri="../StdCtrls/Tree.xml">Tree Tests</link> to test the network tree under <i>Look in</i>.
+   <r>Report any failures as suggested using "Open Project Look in" as the name of the control.</r>
+</step>
+<step name="2.4" link="Bug">Select a Look in computer.
+   <r>
+<ul>
+ <li>Language Projects list updates to display the projects on selected computer.</li>
+ <li>The roving flashlight animation is displayed.</li>
+</ul>
+</r>
+<p name="bug">Open Project Look displays wrong project list</p>
+</step>
+<step name="2.5" link="Bug"> Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the listbox under <i>Choose a Language Project</i>.
+   <r>
+<ul>
+ <li>When there are no projects on the selected computer of the Project Type selected or the Look in selection is not a computer, it shows "There are no items to show in this list".</li>
+ <li>When a list cannot be built, then it shows "This machine's database isn't running".</li>
+ <li>Each list item has an icon according to its type.</li>
+ <li>The selection is placed in the <i>Project Name</i> text box.</li>
+ <li>Report any failures as suggested using "Open Project Choose" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Open Project Choose list is empty</p>
+<p name="bug">Open Project Choose wrong icon displayed</p>
+<p name="bug">Open Project Choose selection not placed in Project Name</p>
+</step>
+<step name="2.6" link="Bug">Right-click a Choose list project. Click <i>Remove this Language Project...</i>
+   <r>
+<ul>
+ <li>A warning dialog launches.</li>
+ <li>Text: You are about to remove the XYZ Language Project from your computer. This action cannot be undone. We strongly recommend that you first backup this language project (using File - Backup/Restore) before continuing. // If you are sure you want to remove the XYZ Language Project from your computer, click Remove, otherwise click Cancel.</li>
+ <li>Buttons: Remove, Cancel, Help.</li>
+ <li>Focus is on Cancel.</li>
+ <li>When the Choose list is not for the user's computer, the item is disabled on the right-click menu.</li>
+</ul>
+</r>
+<p name="bug">Open Project Choose r-click Remove warning fails</p>
+<p name="bug">Open Project Choose r-click Remove warning text incorrect</p>
+<p name="bug">Open Project Choose r-click Remove button missing</p>
+<p name="bug">Open Project Choose r-click initial Remove focus wrong</p>
+<p name="bug">Open Project Choose r-click Remove enabled for networked computer</p>
+</step>
+<step name="2.7" link="Bug">Right-click a Choose list Topics list. Click <i>Delete this Topics List...</i>
+   <r>
+<ul>
+ <li>A warning dialog launches.</li>
+ <li>Text: You are about to delete the XYZ Topics List from the ZYX language project. This action cannot be undone. // If you are sure you want to remove the XYZ Topics List, click Delete, otherwise click Cancel.</li>
+ <li>Buttons: Delete, Cancel, Help.</li>
+ <li>Focus is on Cancel.</li>
+ <li>When the Choose list is not for the user's computer, the item is disabled on the right-click menu.</li>
+</ul>
+</r>
+<p name="bug">Open Project Choose r-click Delete warning fails</p>
+<p name="bug">Open Project Choose r-click Delete warning text incorrect</p>
+<p name="bug">Open Project Choose r-click Delete button missing</p>
+<p name="bug">Open Project Choose r-click initial Delete focus wrong</p>
+<p name="bug">Open Project Choose r-click Delete enabled for networked computer</p>
+</step>
+<step name="2.8" link="Bug"> Use <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> to test the <i>Project Name</i> text box.
+   <r>
+<ul>
+ <li>Default: The same value as the project selected in the Choose list box.</li>
+ <li>Default: When nothing is selected, it is blank.</li>
+ <li>When typing, the Choose list box selection moves to the first match.</li>
+ <li>When nothing matches, selection highlight is removed from the Choose list.</li>
+</ul>
+</r>
+<p name="bug">Open Project Name not in sync with Choose list</p>
+<p name="bug">Open Project Name wrong default</p>
+</step>
+<step name="2.9" link="Bug"> Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the <i>Open</i> button.
+   <r>
+<ul>
+ <li>When a valid project name is in the Project Name text box, this button is enabled.</li>
+ <li>When the file was created with a previous version of the application, a message box asks the user if the data is to be updated. Answering No cancels the action and the application returns to its previous state.</li>
+ <li>The selected project is loaded.</li>
+</ul>
+</r>
+<p name="bug">Open Project Open not enabled for valid project</p>
+<p name="bug">Open Project Open enabled with no project selection</p>
+<p name="bug">Open Project Open Falis to ask about older version data</p>
+<p name="bug">Open Project Open fails to load selected project</p>
+</step>
+</case>
+
+<case id="flopnextc" num="3.0" order="any">
+<title tag="flopnDiac">Extended controls</title>
+<p name="Discussion">This step is to be applied only in later versions after the combo box <i>Projects of type</i> has been added.</p>
+<context>
+<p>When the Open Project dialog is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Open the <i>Projects of type</i> combo box.
+   <r>The choices, <i>Language Project, Carla Project, Survey Project, and Any Project</i> are displayed.</r>
+<p name="bug">Open Project Projects of type combo box shows wrong types</p>
+</step>
+<step name="3.2" link="Bug">Select any of the project types in the <i>Projects of type</i> combo box.
+   <r>
+<ul>
+<li>The type of project selected is displayed in the text box.</li>
+<li>The Choose list displays only the selected type of projects.</li>
+</ul>
+</r>
+<p name="bug">Open Project Projects of type combo box not working.</p>
+</step>
+</case>
+
+<update date="Aug-29-01" author="ShalomA">Test created.</update>
+<update date="Dec-05-01" author="MikeL">Expanded.</update>
+<update date="Sep-05-02" author="MikeL">Added bit about opening older version data</update>
+</test>

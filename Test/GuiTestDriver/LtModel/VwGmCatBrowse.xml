@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<category-browse role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.">
+
+  <!-- the browse pane -->
+  <categories role="pane" path="Two/9:XCore.PaneBarContainer/">
+	<var id="grmPosList" set="9:POSList/9:POSList/$nl"/>
+
+	<title name="Categories (or Parts of Speech)" path="9:XCore.PaneBar/9:$name"/>
+	<col path="$grmPosList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/> <!-- add path="Name" or Description, etc.. -->
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]/" >
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$grmPosList;/20:RootSite/24:Table[$row;]">
+	  <col path="/$Col;[$col;]/$Text"/>
+	</record>
+	<scroll path="$grmPosList;[2]">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </categories>
+
+</category-browse>

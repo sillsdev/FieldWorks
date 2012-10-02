@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="btnCancel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="btnCancel.HelpString" xml:space="preserve">
+	<value>Closes this dialog box without saving any changes you have made.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>333, 461</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnCancel.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>17</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+	<value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+	<value>18</value>
+  </data>
+  <metadata name="m_lblExplainDialog.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblExplainDialog.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblExplainDialog.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 8</value>
+  </data>
+  <data name="m_lblExplainDialog.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblExplainDialog.Size" type="System.Drawing.Size, System.Drawing">
+	<value>472, 32</value>
+  </data>
+  <data name="m_lblExplainDialog.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblExplainDialog.Text" xml:space="preserve">
+	<value>This dialog helps you create a new FieldWorks project, into which you can then enter data using FieldWorks applications.</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainDialog.Name" xml:space="preserve">
+	<value>m_lblExplainDialog</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainDialog.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainDialog.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainDialog.ZOrder" xml:space="preserve">
+	<value>15</value>
+  </data>
+  <metadata name="m_lblExplainName.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblExplainName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblExplainName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 72</value>
+  </data>
+  <data name="m_lblExplainName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblExplainName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>472, 16</value>
+  </data>
+  <data name="m_lblExplainName.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_lblExplainName.Text" xml:space="preserve">
+	<value>Enter the name for this project.  For example, use the name of a language or culture.</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainName.Name" xml:space="preserve">
+	<value>m_lblExplainName</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainName.ZOrder" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <metadata name="m_lblExplainVernWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblExplainVernWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblExplainVernWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 224</value>
+  </data>
+  <data name="m_lblExplainVernWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblExplainVernWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>472, 42</value>
+  </data>
+  <data name="m_lblExplainVernWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_lblExplainVernWrtSys.Text" xml:space="preserve">
+	<value>These are the languages used for translations, texts, lexical headwords, example sentences, people, location names, etc. Select, or define, a default vernacular language writing system.</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainVernWrtSys.Name" xml:space="preserve">
+	<value>m_lblExplainVernWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainVernWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainVernWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainVernWrtSys.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="m_lblExplainAnalWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblExplainAnalWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblExplainAnalWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 330</value>
+  </data>
+  <data name="m_lblExplainAnalWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblExplainAnalWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>472, 42</value>
+  </data>
+  <data name="m_lblExplainAnalWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_lblExplainAnalWrtSys.Text" xml:space="preserve">
+	<value>Analysis languages are the languages for notes, back translations, glosses, definitions, analyses, etc. Select, or define, a default analysis language writing system.</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainAnalWrtSys.Name" xml:space="preserve">
+	<value>m_lblExplainAnalWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainAnalWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainAnalWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainAnalWrtSys.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <metadata name="m_btnNewVernWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnNewVernWrtSys.HelpString" xml:space="preserve">
+	<value>Opens the  wizard for  creating a new writing system.</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>224, 269</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 23</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_btnNewVernWrtSys.Text" xml:space="preserve">
+	<value>&amp;Define New...</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewVernWrtSys.Name" xml:space="preserve">
+	<value>m_btnNewVernWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewVernWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewVernWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewVernWrtSys.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="m_lblTipText.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblTipText.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblTipText.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 412</value>
+  </data>
+  <data name="m_lblTipText.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblTipText.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 42</value>
+  </data>
+  <data name="m_lblTipText.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="m_lblTipText.Text" xml:space="preserve">
+	<value>You may add additional writing systems and edit existing ones in the Project Properties dialog box.</value>
+  </data>
+  <data name="&gt;&gt;m_lblTipText.Name" xml:space="preserve">
+	<value>m_lblTipText</value>
+  </data>
+  <data name="&gt;&gt;m_lblTipText.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblTipText.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblTipText.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="m_btnNewAnalWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnNewAnalWrtSys.HelpString" xml:space="preserve">
+	<value>Opens the  wizard for  creating a new writing system.</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>224, 375</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 23</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_btnNewAnalWrtSys.Text" xml:space="preserve">
+	<value>D&amp;efine New...</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewAnalWrtSys.Name" xml:space="preserve">
+	<value>m_btnNewAnalWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewAnalWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewAnalWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnNewAnalWrtSys.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <metadata name="lblTip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblTip.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblTip.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblTip.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 412</value>
+  </data>
+  <data name="lblTip.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblTip.Size" type="System.Drawing.Size, System.Drawing">
+	<value>71, 13</value>
+  </data>
+  <data name="lblTip.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="lblTip.Text" xml:space="preserve">
+	<value>Tip:</value>
+  </data>
+  <data name="lblTip.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;lblTip.Name" xml:space="preserve">
+	<value>lblTip</value>
+  </data>
+  <data name="&gt;&gt;lblTip.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblTip.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblTip.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="m_lblExplainWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblExplainWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblExplainWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 160</value>
+  </data>
+  <data name="m_lblExplainWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblExplainWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>472, 32</value>
+  </data>
+  <data name="m_lblExplainWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_lblExplainWrtSys.Text" xml:space="preserve">
+	<value>In FieldWorks, you need to set up a writing system in order to enter data in a particular language.</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainWrtSys.Name" xml:space="preserve">
+	<value>m_lblExplainWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblExplainWrtSys.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <metadata name="m_lblAnalysisWrtSys.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblAnalysisWrtSys.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 10pt, style=Bold</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 306</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>247, 17</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="m_lblAnalysisWrtSys.Text" xml:space="preserve">
+	<value>&amp;Analysis language writing system</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnalysisWrtSys.Name" xml:space="preserve">
+	<value>m_lblAnalysisWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnalysisWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnalysisWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnalysisWrtSys.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="btnOK.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnOK.HelpString" xml:space="preserve">
+	<value>Creates a FieldWorks Project with the name you have supplied and closes this dialog box.</value>
+  </data>
+  <data name="btnOK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
+	<value>253, 461</value>
+  </data>
+  <data name="btnOK.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnOK.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="btnOK.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Name" xml:space="preserve">
+	<value>btnOK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
+	<value>17</value>
+  </data>
+  <data name="btnHelp.HelpString" xml:space="preserve">
+	<value>Displays more information to help you use this dialog box.</value>
+  </data>
+  <data name="btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>413, 461</value>
+  </data>
+  <data name="btnHelp.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>18</value>
+  </data>
+  <data name="btnHelp.Text" xml:space="preserve">
+	<value>&amp;Help</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
+	<value>btnHelp</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+	<value>16</value>
+  </data>
+  <data name="m_txtName.HelpString" xml:space="preserve">
+	<value>Specifies the name for this project.</value>
+  </data>
+  <data name="m_txtName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 96</value>
+  </data>
+  <data name="m_txtName.MaxLength" type="System.Int32, mscorlib">
+	<value>128</value>
+  </data>
+  <data name="m_txtName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_txtName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>320, 20</value>
+  </data>
+  <data name="m_txtName.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_txtName.Name" xml:space="preserve">
+	<value>m_txtName</value>
+  </data>
+  <data name="&gt;&gt;m_txtName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_txtName.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 10pt, style=Bold</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 200</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>271, 17</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_lblVernacularWrtSys.Text" xml:space="preserve">
+	<value>&amp;Vernacular language writing system </value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularWrtSys.Name" xml:space="preserve">
+	<value>m_lblVernacularWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularWrtSys.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_cbVernWrtSys.HelpString" xml:space="preserve">
+	<value>Specifies the writing system to use as the initial vernacular language writing system.</value>
+  </data>
+  <data name="m_cbVernWrtSys.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_cbVernWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 269</value>
+  </data>
+  <data name="m_cbVernWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbVernWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>152, 21</value>
+  </data>
+  <data name="m_cbVernWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;m_cbVernWrtSys.Name" xml:space="preserve">
+	<value>m_cbVernWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_cbVernWrtSys.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.23047, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_cbVernWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbVernWrtSys.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_cbAnalWrtSys.HelpString" xml:space="preserve">
+	<value>Specifies the writing system to use as the initial analysis language writing system.</value>
+  </data>
+  <data name="m_cbAnalWrtSys.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_cbAnalWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 375</value>
+  </data>
+  <data name="m_cbAnalWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbAnalWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>152, 21</value>
+  </data>
+  <data name="m_cbAnalWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="&gt;&gt;m_cbAnalWrtSys.Name" xml:space="preserve">
+	<value>m_cbAnalWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_cbAnalWrtSys.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.23047, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_cbAnalWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbAnalWrtSys.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_lblProjectName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblProjectName.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 10pt, style=Bold</value>
+  </data>
+  <data name="m_lblProjectName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblProjectName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 48</value>
+  </data>
+  <data name="m_lblProjectName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblProjectName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>132, 17</value>
+  </data>
+  <data name="m_lblProjectName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_lblProjectName.Text" xml:space="preserve">
+	<value>&amp;Name the project</value>
+  </data>
+  <data name="&gt;&gt;m_lblProjectName.Name" xml:space="preserve">
+	<value>m_lblProjectName</value>
+  </data>
+  <data name="&gt;&gt;m_lblProjectName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblProjectName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblProjectName.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 10pt, style=Bold</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 136</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.Size" type="System.Drawing.Size, System.Drawing">
+	<value>182, 17</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_lblSpecifyWrtSys.Text" xml:space="preserve">
+	<value>Specify Writing Systems</value>
+  </data>
+  <data name="&gt;&gt;m_lblSpecifyWrtSys.Name" xml:space="preserve">
+	<value>m_lblSpecifyWrtSys</value>
+  </data>
+  <data name="&gt;&gt;m_lblSpecifyWrtSys.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblSpecifyWrtSys.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblSpecifyWrtSys.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>498, 495</value>
+  </data>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>New FieldWorks Project</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>FwNewLangProject</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

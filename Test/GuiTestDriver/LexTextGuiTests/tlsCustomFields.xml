@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+
+<accil>
+
+	<goal>Exercises Custom Fields dialog</goal>
+	<bug id="FWR-457" desc="Custom Fields immediately fogotten"/>
+
+   <!--Start FLEx with "Kalaba" project loaded -->
+   <var id="projectName" set="Kalaba"/>
+   <sound frequency = "500" duration = "500"/>
+
+   <!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+   <registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+   <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail = "assert">
+
+	  <!-- go to View/Lexicon/Lexicon Edit -->
+	  <click select="//menubar/view/lexicon/lexicon-edit"/>
+	  <model select="lexicon-edit[@role='view']">
+		 <!-- set all combo boxes to "show all" -->
+		 <click select="//toolbar/view/no-filters"/>
+		 <click select="//toolbar/standard/first"/>
+		 <var id="col" set="1"/>
+		 <var id="row" set="*"/>
+		 <click select="entries/record/col" path="/value:himbakosa"/>
+
+		 <!-- quick test for "Help" and "Cancel" -->
+		 <click wait="500" select="//menubar/tools/configure/custom-fields"/>
+		 <on-dialog select="//custom-fields[@role='dialog']">
+			<click wait="500" select="help"/>
+			<on-dialog select="//help[@role='dialog']">
+			   <click wait="300" select="favorites/tab"/>
+			   <click wait="300" select="favorites/add"/>
+			   <click wait="300" select="favorites/list" path="Custom Fields overview"/>
+			   <click wait="300" select="favorites/remove"/>
+			   <click select="close"/>
+			</on-dialog>
+			<click wait="500" select="cancel"/>
+		 </on-dialog>
+
+		 <!-- create nine custom fields, titled from "a" to "i"  -->
+		 <click select="//menubar/tools/configure/custom-fields"/>
+		 <on-dialog select="//custom-fields[@role='dialog']">
+			<!-- add and delete an empty field -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="delete"/>
+			<!-- "a" = Allomorph, First Analysis Writing System -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">a</insert>
+			<click wait="300" select="settings/location/drop"/>
+			<insert wait="300">a</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="a"/>
+			<!-- "b" = Entry, First Analysis Writing System -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">b</insert>
+			<click wait="300" select="settings/location/drop"/>
+			<insert wait="300">ee</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="b"/>
+			<!-- "c" = Example Sentence, First Analysis Writing System -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">c</insert>
+			<click wait="300" select="settings/location/drop"/>
+			<insert wait="300">e</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="c"/>
+			<!-- "d" = Sense, First Analysis Writing System -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">d</insert>
+			<click wait="300" select="settings/location/drop"/>
+			<insert wait="300">s</insert>
+			<insert wait="300">~</insert>
+			<click wait="100" select="settings/description/text"/>
+			<insert wait="300">this one gets a description!</insert>
+			<glimpse select="cf-list/list-item" path="d"/>
+			<!-- "e" = Entry, First Vernacular Writing System -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">e</insert>
+			<click wait="300" select="settings/location/drop"/>
+			<insert wait="300">ee</insert>
+			<insert wait="300">~</insert>
+			<click wait="300" select="settings/writing-systems/drop"/>
+			<insert wait="300">f</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="e"/>
+			<!-- "f" = Entry, All Analysis Writing Systems -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">f</insert>
+			<click wait="300" select="settings/writing-systems/drop"/>
+			<insert wait="300">a</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="f"/>
+			<!-- "g" = Entry, All Vernacular Writing Systems -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">g</insert>
+			<click wait="300" select="settings/writing-systems/drop"/>
+			<insert wait="300">{DOWN}</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="g"/>
+			<!-- "h" = All Analysis then all Vernacular Writing Systems -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			 <insert wait="300">{END}</insert>
+			<insert>+{HOME}</insert>
+			<insert wait="300">h</insert>
+			<click wait="300" select="settings/writing-systems/drop"/>
+			<insert wait="300">{DOWN}</insert>
+			 <insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="h"/>
+			<!-- "i" = All Vernacular then all Analysis Writing Systems -->
+			<click wait="300" select="add"/>
+			<click wait="300" select="settings/custom-field-name" dy="35"/>
+			<insert wait="300">{END}</insert>
+			 <insert>+{HOME}</insert>
+			<insert wait="300">i</insert>
+			<click wait="300" select="settings/writing-systems/drop"/>
+			<insert wait="300">{DOWN}</insert>
+			<insert wait="300">~</insert>
+			<glimpse select="cf-list/list-item" path="i"/>
+			<click select="ok"/>
+		 </on-dialog>
+
+		 <!-- look through the fields and see if the custom fields exist-->
+		 <!-- NOTE: a and d's paths are nonexistent for some reason-->
+		 <!-- b should be in "Sense 1"; an example must be created to see b -->
+		 <var id="ind" set="1"/>
+		 <click wait="300" side="right" select="entry/slice/sense"/>
+		 <insert wait="300">e</insert>
+		 <var id="ind" set="*"/>
+		 <glimpse id="b" select="entry/slice/autocustom/label" path="b"/>
+		 <!-- delete the created example -->
+		 <click wait="300" side="right" select= "entry/slice/example-label"/>
+		 <insert wait="300">{DOWN 2}</insert>
+		 <insert wait="500">~</insert>
+		 <on-dialog title="Delete Example" name="ConfirmDeleteObjectDlg">
+			<click wait="500" path="$delete"/>
+		 </on-dialog>
+		 <!-- c, e-i should be in "Entries" -->
+		 <var id="ind" set="*"/>
+		 <glimpse id="c" select="entry/slice/autocustom/label" path="c"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="e" select="entry/slice/autocustom/label" path="e"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="f" select="entry/slice/autocustom/label" path="f"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="g" select="entry/slice/autocustom/label" path="g"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="h" select="entry/slice/autocustom/label" path="h"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="i" select="entry/slice/autocustom/label" path="i"/>
+
+		 <!-- go to Browse view and show the custom field b -->
+
+
+
+<skip>
+
+		 <!-- open the "Custom Fields" dialog again and delete all the custom fields -->
+		 <click select="//menubar/tools/configure/custom-fields"/>
+		 <on-dialog select="//custom-fields[@role='dialog']">
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<click wait="1000" select="delete"/>
+			<insert wait="300">~</insert>
+
+			<glimpse id="da" select="cf-list/list-item" path="a" on-pass="assert"/>
+			<glimpse id="db" select="cf-list/list-item" path="b" on-pass="assert"/>
+			<glimpse id="dc" select="cf-list/list-item" path="c" on-pass="assert"/>
+			<glimpse id="dd" select="cf-list/list-item" path="d" on-pass="assert"/>
+			<glimpse id="de" select="cf-list/list-item" path="e" on-pass="assert"/>
+			<glimpse id="df" select="cf-list/list-item" path="f" on-pass="assert"/>
+			<glimpse id="dg" select="cf-list/list-item" path="g" on-pass="assert"/>
+			<glimpse id="dh" select="cf-list/list-item" path="h" on-pass="assert"/>
+			<glimpse id="di" select="cf-list/list-item" path="i" on-pass="assert"/>
+
+			<click wait="300" select="ok"/>
+		 </on-dialog>
+
+		 <!-- glimpse to make sure the custom fields are no longer in the entry pane -->
+		 <var id="ind" set="1"/>
+		 <click wait="300" side="right" select="entry/slice/sense"/>
+		 <insert wait="300">e</insert>
+		 <var id="ind" set="*"/>
+		 <glimpse id="ec" select="entry/slice/autocustom/label" path="c" on-pass="assert"/>
+		 <!-- delete the created example -->
+		 <click wait="300" side="right" select= "entry/slice/example-label"/>
+		 <insert wait="300">{DOWN 2}</insert>
+		 <insert wait="500">~</insert>
+		 <on-dialog title="Delete Example" name="ConfirmDeleteObjectDlg">
+			<click wait="500" path="$delete"/>
+		 </on-dialog>
+		 <!-- b, e-i should be in "Entries" -->
+		 <var id="ind" set="*"/>
+		 <glimpse id="eb" select="entry/slice/autocustom/label" path="b" on-pass="assert"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="ee" select="entry/slice/autocustom/label" path="e" on-pass="assert"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="ef" select="entry/slice/autocustom/label" path="f" on-pass="assert"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="eg" select="entry/slice/autocustom/label" path="g" on-pass="assert"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="eh" select="entry/slice/autocustom/label" path="h" on-pass="assert"/>
+		 <var id="ind" set="*"/>
+		 <glimpse id="ei" select="entry/slice/autocustom/label" path="i" on-pass="assert"/>
+
+</skip>
+
+	  </model>
+   </on-application>
+</accil>

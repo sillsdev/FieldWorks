@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>msinfl</form>
+  <resultSoFar>
+	<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+	  <fs id="14988">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <morph alloid="14989" morphname="14988" type="root" wordType="root">
+		<shortName>ms (masc.sing): ms</shortName>
+		<alloform>ms</alloform>
+		<gloss>masc.sing</gloss>
+		<citationForm>ms</citationForm>
+		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+		  <fs id="14988">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</stemMsa>
+	  </morph>
+	</stem>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </resultSoFar>
+  <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<word syncat="259" syncatAbbr="n">
+	  <failure>The category 'n' requires inflection, but there was no inflection.</failure>
+	  <full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
+		<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		  <fs id="14988">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <morph alloid="14989" morphname="14988" type="root" wordType="root">
+			<shortName>ms (masc.sing): ms</shortName>
+			<alloform>ms</alloform>
+			<gloss>masc.sing</gloss>
+			<citationForm>ms</citationForm>
+			<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			  <fs id="14988">
+				<feature>
+				  <name>nagr</name>
+				  <value>
+					<fs id="0">
+					  <feature>
+						<name>gen</name>
+						<value>m</value>
+					  </feature>
+					  <feature>
+						<name>num</name>
+						<value>sg</value>
+					  </feature>
+					</fs>
+				  </value>
+				</feature>
+			  </fs>
+			</stemMsa>
+		  </morph>
+		</stem>
+	  </full>
+	</word>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </seq>
+</word>

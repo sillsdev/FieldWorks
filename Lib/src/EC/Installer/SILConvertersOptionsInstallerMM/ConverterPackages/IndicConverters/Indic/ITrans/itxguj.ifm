@@ -1,0 +1,425 @@
+% Date: Mon, 23 Oct 1995 13:44:28 -0400
+% From: "P. A. Trivedi" <prakash@aero.odu.edu>
+% File created by "P. A. Trivedi" <prakash@aero.odu.edu>, for use
+% with ITRANS program
+% Feb 96: Corrections made, Avinash Chopde.
+% Nov 96: Moved from ScGUJ to SdGUJ - positions 128-160 no longer used,
+%         also moved a lot of glyphs around.
+% To make these fonts work with PC/Mac/X11 Netscape 3.0 HTML
+% browser, do not use these char codes too: 168, 173 and maybe more.
+% --- Avinash Chopde <avinash@acm.org> http://www.aczone.com/
+%
+itrans: StartINDIAN
+itrans: TEXT_TTY gujarati
+XX Disable Hyphenation, so no: itrans: HYPHENCHAR 45 ;
+itrans: DEFAULTVOWEL a ;
+itrans: Comment Created Oct 1995, Prakash A. Trivedi
+
+itrans: Comment -------------- Vowels --------------------------
+itrans: CC a 1 ; PCC 231 0 0 ;
+itrans: CC aa 2 ; PCC 231 0 0 ; PCC 201 0 0 ;
+itrans: CC i 1 ; PCC 114 0 0 ;
+itrans: CC ii 1 ; PCC 87 0 0 ;
+itrans: CC u 1 ; PCC 76 0 0 ;
+itrans: CC uu 1 ; PCC 184 0 0 ;
+itrans: CC ri 1 ; PCC 75 0 0 ;
+itrans: Comment Vowels rii, li & lii not used...
+itrans: CC ay 2 ; PCC 231 0 0 ; PCC 101 0 0 ;
+itrans: CC ai 2 ; PCC 231 0 0 ; PCC 68 0 0 ;
+itrans: CC o 2 ; PCC 231 0 0 ; PCC 109 0 0 ;
+itrans: CC au 2 ; PCC 231 0 0 ; PCC 79 0 0 ;
+itrans: CC am 2 ; PCC 231 0 0 ; PCC 214 0 0 ;
+itrans: CC aha 1 ; PCC 58 0 0 ;
+
+itrans: Comment -------- helpers for consonants (tmplA,B...)  --------
+
+itrans: Comment User Defined Khadi:tmplA - chars such as ka, ddha, da
+itrans: CCADD tmplA ;
+itrans: CC tmplA-half 2 ; PCC implicit 0 0 ; PCC 116 -40 0 ;
+itrans: CC tmplA-conjunct 2 ; PCC implicit 0 0 ; PCC 116 -40 0 ;
+itrans: CC tmplA-a 1 ; PCC implicit 0 0 ;
+itrans: CC tmplA-aa 2 ; PCC implicit 0 0 ; PCC 201 0 0 ;
+itrans: CC tmplA-i 2 ; PCC 175 0 0 ; PCC implicit 0 0 ;
+itrans: CC tmplA-ii 2 ; PCC implicit 0 0 ; PCC 73 0 0 ;
+itrans: CC tmplA-u 2 ; PCC implicit 0 0 ; PCC 117 0 0 ;
+itrans: CC tmplA-uu 2 ; PCC implicit 0 0 ; PCC 85 0 0 ;
+itrans: CC tmplA-ri 2 ; PCC implicit 0 0 ; PCC 242 0 0 ;
+itrans: CC tmplA-ay 2 ; PCC implicit 0 0 ; PCC 101 0 0 ;
+itrans: CC tmplA-ai 2 ; PCC implicit 0 0 ; PCC 68 0 0 ;
+itrans: CC tmplA-o 2 ; PCC implicit 0 0 ; PCC 109 0 0 ;
+itrans: CC tmplA-au 2 ; PCC implicit 0 0 ; PCC 79 0 0 ;
+itrans: Comment hmm...-am rule is never used, always uses anusvara...!
+itrans: Comment CC tmplA-am 2 ; PCC implicit 0 0 ; PCC 214 0 0 ;
+itrans: CC tmplA-aha 2 ; PCC implicit 0 0 ; PCC 58 0 0 ;
+
+itrans: Comment User Defined Khadi:tmplB - chars such as kha, nna, ...
+itrans: CCADD tmplB ;
+itrans: Comment tmplB is chained back to tmplA for most forms
+itrans: CCS tmplB tmplA ;
+itrans: CC tmplB-i 2 ; PCC 171 0 0 ; PCC implicit 0 0 ;
+
+itrans: Comment User Defined Khadi for tmplC - chars such as kha,gha,etc
+itrans: CCADD tmplC ;
+itrans: Comment tmplC is chained back to tmplA for most forms
+itrans: CCS tmplC tmplA ;
+itrans: CC tmplC-i 2 ; PCC 105 0 0 ; PCC implicit 0 0 ;
+itrans: CC tmplC-ii 2 ; PCC implicit 0 0 ; PCC 73 0 0 ;
+
+itrans: Comment User Defined Khadi:tmplD - (corresponds to tmplA)
+itrans: Comment Used for all the ra-<cons> ligatures (hindi half-ra)
+itrans: CCADD tmplD ;
+itrans: CC tmplD-half 3 ; PCC implicit 0 0 ; PCC 225 0 0 ; PCC 116 -40 0 ;
+itrans: CC tmplD-conjunct 3 ; PCC implicit 0 0 ; PCC 225 0 0 ; PCC 116 -40 0 ;
+itrans: CC tmplD-a 2 ; PCC implicit 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-aa 3 ; PCC implicit 0 0 ; PCC 201 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-i 3 ; PCC 175 0 0 ; PCC implicit 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-ii 3 ; PCC implicit 0 0 ; PCC 73 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-u 3 ; PCC implicit 0 0 ; PCC 117 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-uu 3 ; PCC implicit 0 0 ; PCC 85 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-ri 3 ; PCC implicit 0 0 ; PCC 242 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-ay 3 ; PCC implicit 0 0 ; PCC 101 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-ai 3 ; PCC implicit 0 0 ; PCC 68 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-o 3 ; PCC implicit 0 0 ; PCC 109 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-au 3 ; PCC implicit 0 0 ; PCC 79 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplD-aha 3 ; PCC implicit 0 0 ; PCC 225 0 0 ; PCC 58 0 0 ;
+
+itrans: CCADD tmplE ;
+itrans: CCS tmplE tmplD ;
+itrans: CC tmplE-i 3 ; PCC 171 0 0 ; PCC implicit 0 0 ; PCC 225 0 0 ;
+
+itrans: CCADD tmplF ;
+itrans: CCS tmplF tmplD ;
+itrans: CC tmplF-i 3 ; PCC 105 0 0 ; PCC implicit 0 0 ; PCC 225 0 0 ;
+itrans: CC tmplF-ii 3 ; PCC implicit 0 0 ; PCC 73 0 0 ; PCC 225 0 0 ;
+
+itrans: Comment -------------- Consonants --------------------------
+
+itrans: CCS ka tmplA ;
+itrans: CC ka-conjunct 2 ; PCC 163 0 0 ; PCC none -30 0 ;
+itrans: CC ka-implicit 2 ; PCC 205 0 0 ; PCC none 30 0 ;
+
+itrans: CCS kadot ka ;
+itrans: CC kadot-implicit 2 ; PCC 205 0 0 ; PCC none 30 0 ;
+
+itrans: CCS kha tmplB ;
+itrans: CC kha-conjunct 2 ; PCC 240 0 0 ; PCC none 0 0 ;
+itrans: CC kha-implicit 1 ; PCC 251 0 0 ;
+
+itrans: CCS khadot kha ;
+itrans: CC khadot-implicit 1 ; PCC 251 0 0 ;
+
+itrans: CCS ga tmplC ;
+itrans: CC ga-conjunct 2 ; PCC 167 0 0 ; PCC none 0 0 ;
+itrans: CC ga-implicit 1 ; PCC 169 0 0 ;
+
+itrans: CCS gadot ga ;
+itrans: CC gadot-implicit 1 ; PCC 169 0 0 ;
+
+itrans: CCS gha tmplC ;
+itrans: CC gha-conjunct 2 ; PCC 104 0 0 ; PCC none 0 0 ;
+itrans: CC gha-implicit 1 ; PCC 202 0 0 ;
+
+itrans: CCS nga tmplC ;
+itrans: CC nga-implicit 1 ; PCC 215 0 0 ;
+
+itrans: CCS cha tmplC ;
+itrans: CC cha-conjunct 2 ; PCC 67 0 0 ; PCC none -70 0 ;
+itrans: CC cha-implicit 1 ; PCC 235 0 0 ;
+
+itrans: CCS chha tmplC ;
+itrans: CC chha-implicit 1 ; PCC 227 0 0 ;
+
+itrans: CCS ja tmplC ;
+itrans: CC ja-conjunct 2 ; PCC 239 0 0 ; PCC none 0 0 ;
+itrans: CC ja-implicit 2 ; PCC 239 0 0 ; PCC none 20 0 ;
+itrans: CC ja-ii 1 ; PCC 190 0 0 ;
+
+itrans: CCS jadot ja ;
+itrans: CC jadot-implicit 2 ; PCC 239 0 0 ; PCC none 20 0 ;
+
+itrans: CCS jha tmplC ;
+itrans: CC jha-conjunct 2 ; PCC 230 0 0 ; PCC none 0 0 ;
+itrans: CC jha-implicit 1 ; PCC 119 0 0 ;
+
+itrans: CCS tta tmplC ;
+itrans: CC tta-implicit 1 ; PCC 203 0 0 ;
+
+itrans: CCS ttha tmplC ;
+itrans: CC ttha-implicit 1 ; PCC 233 0 0 ;
+
+itrans: CCS dda tmplC ;
+itrans: CC dda-implicit 1 ; PCC 229 0 0 ;
+
+itrans: CCS ddadot dda ;
+itrans: CC ddadot-implicit 1 ; PCC 229 0 0 ;
+
+itrans: CCS ddha tmplA ;
+itrans: CC ddha-implicit 1 ; PCC 195 0 0 ;
+
+itrans: CCS ddhadot ddha ;
+itrans: CC ddhadot-implicit 1 ; PCC 195 0 0 ;
+
+itrans: CCS nna tmplB ;
+itrans: CC nna-conjunct 2 ; PCC 122 0 0 ; PCC none -30 0 ;
+itrans: CC nna-implicit 1 ; PCC 208 0 0 ;
+
+itrans: CCS ta tmplC ;
+itrans: CC ta-conjunct 2 ; PCC 84 0 0 ; PCC none -70 0 ;
+itrans: CC ta-implicit 1 ; PCC 112 0 0 ;
+
+itrans: CCS tha tmplC ;
+itrans: CC tha-conjunct 2 ; PCC 81 0 0 ; PCC none -70 0 ;
+itrans: CC tha-implicit 1 ; PCC 113 0 0 ;
+
+itrans: CCS da tmplA ;
+itrans: CC da-implicit 1 ; PCC 236 0 0 ;
+
+itrans: CCS dha tmplC ;
+itrans: CC dha-conjunct 2 ; PCC 206 0 0 ; PCC none -70 0 ;
+itrans: CC dha-implicit 1 ; PCC 207 0 0 ;
+
+itrans: CCS na tmplC ;
+itrans: CC na-conjunct 2 ; PCC 193 0 0 ; PCC none -70 0 ;
+itrans: CC na-implicit 1 ; PCC 111 0 0 ;
+
+itrans: CCS pa tmplC ;
+itrans: CC pa-conjunct 2 ; PCC 80 0 0 ; PCC none -40 0 ;
+itrans: CC pa-implicit 1 ; PCC 110 0 0 ;
+
+itrans: CCS pha tmplA ;
+itrans: CC pha-conjunct 2 ; PCC 204 0 0 ; PCC none -70 0 ;
+itrans: CC pha-implicit 1 ; PCC 162 0 0 ;
+
+itrans: CCS phadot pha ;
+itrans: CC phadot-implicit 1 ; PCC 162 0 0 ;
+
+itrans: CCS ba tmplC ;
+itrans: CC ba-conjunct 2 ; PCC 66 0 0 ; PCC none -70 0 ;
+itrans: CC ba-implicit 1 ; PCC 234 0 0 ;
+
+itrans: CCS bha tmplB ;
+itrans: CC bha-conjunct 2 ; PCC 245 0 0 ; PCC none -70 0 ;
+itrans: CC bha-implicit 1 ; PCC 108 0 0 ;
+
+itrans: CCS ma tmplC ;
+itrans: CC ma-conjunct 2 ; PCC 170 0 0 ; PCC none -70 0 ;
+itrans: CC ma-implicit 1 ; PCC 186 0 0 ;
+
+itrans: CCS ya tmplC ;
+itrans: CC ya-conjunct 2 ; PCC 89 0 0 ; PCC none -70 0 ;
+itrans: CC ya-implicit 1 ; PCC 120 0 0 ;
+
+itrans: CCS ra tmplA ;
+itrans: CC ra-conjunct 1 ; PCC none 0 0 ;
+itrans: CC ra-implicit 1 ; PCC 118 0 0 ;
+itrans: CC ra-uu 1 ; PCC 196 0 0 ;
+
+% marathi half ra
+itrans: CCS rra tmplA ;
+itrans: CC rra-conjunct 1 ; PCC 82 0 0 ;
+itrans: CC rra-implicit 1 ; PCC 118 0 0 ;
+itrans: CC rra-uu 1 ; PCC 196 0 0 ;
+
+itrans: CCS la tmplC ;
+itrans: CC la-conjunct 2 ; PCC 165 0 0 ; PCC none -70 0 ;
+itrans: CC la-implicit 1 ; PCC 191 0 0 ;
+
+itrans: CCS va tmplC ;
+itrans: CC va-conjunct 2 ; PCC 86 0 0 ; PCC none -70 0 ;
+itrans: CC va-implicit 1 ; PCC 115 0 0 ;
+
+itrans: CCS sha tmplC ;
+itrans: CC sha-conjunct 2 ; PCC 88 0 0 ; PCC none -30 0 ;
+itrans: CC sha-implicit 1 ; PCC 187 0 0 ;
+
+itrans: CCS shha tmplC ;
+itrans: CC shha-conjunct 2 ; PCC 188 0 0 ; PCC none -40 0 ;
+itrans: CC shha-implicit 1 ; PCC 197 0 0 ;
+
+itrans: CCS sa tmplC ;
+itrans: CC sa-conjunct 2 ; PCC 83 0 0 ; PCC none 0 0 ;
+itrans: CC sa-implicit 1 ; PCC 178 0 0 ;
+
+itrans: CCS ha tmplA ;
+itrans: CC ha-conjunct 2 ; PCC 181 0 0 ; PCC 116 -70 0 ;
+itrans: CC ha-implicit 1 ; PCC 181 0 0 ;
+itrans: CC ha-ri 1 ; PCC 238 0 0 ;
+
+itrans: CCS lda tmplA ;
+itrans: CC lda-conjunct 2 ; PCC 241 0 0 ; PCC none 0 0 ;
+itrans: CC lda-implicit 1 ; PCC 194 0 0 ;
+
+itrans: CCS ksha tmplB ;
+itrans: CC ksha-conjunct 2 ; PCC 126 0 0 ; PCC none 0 0 ;
+itrans: CC ksha-implicit 1 ; PCC 237 0 0 ;
+
+itrans: CCS gya tmplC ;
+itrans: CC gya-implicit 1 ; PCC 216 0 0 ;
+
+itrans: CCS ja-jnh tmplC ;
+itrans: CC ja-jnh-implicit 1 ; PCC 216 0 0 ;
+
+itrans: Comment Specials
+itrans: CC rahalf-implicit 1 ; PCC 225 0 0 ;
+itrans: CC anusvara-implicit 1 ; PCC 214 0 0 ;
+itrans: CC chandra-implicit 1 ; PCC 209 0 0 ;
+itrans: CC chandrabindu-implicit 1 ; PCC 102 0 0 ;
+itrans: CC aum-implicit 1 ; PCC 221 0 0 ;
+itrans: CC viraam-implicit 1 ; PCC 116 0 0 ;
+itrans: CC avagraha-implicit 1 ; PCC 121 0 0 ;
+
+itrans: Comment Up To Here Modified on 10-16-95.
+
+itrans: Comment ----------- Ligatures ------------------
+
+itrans: CC ka-shha-implicit 1 ; PCC 237 0 0 ;
+
+itrans: CCS da-da tmplA ;
+itrans: CC da-da-implicit 1 ; PCC 94 0 0 ;
+itrans: CCS da-va tmplA ;
+itrans: CC da-va-implicit 1 ; PCC 232 0 0 ;
+itrans: CCS da-ya tmplA ;
+itrans: CC da-ya-implicit 1 ; PCC 176 0 0 ;
+itrans: CCS da-dha tmplA ;
+itrans: CC da-dha-implicit 1 ; PCC 250 0 0 ;
+itrans: CCS da-bha tmplA ;
+itrans: CC da-bha-implicit 1 ; PCC 78 0 0 ;
+itrans: CCS da-ma tmplC ;
+itrans: CC da-ma-implicit 1 ; PCC 180 0 0 ;
+
+itrans: CCS dda-dda tmplC ;
+itrans: CC dda-dda-implicit 1 ; PCC 107 0 0 ;
+
+itrans: CCS tta-tta tmplC ;
+itrans: CC tta-tta-implicit 1 ; PCC 74 0 0 ;
+
+itrans: CCS ttha-ttha tmplC ;
+itrans: CC ttha-ttha-implicit 1 ; PCC 70 0 0 ;
+
+itrans: CCS ddha-ddha tmplA ;
+itrans: CC ddha-ddha-implicit 1 ; PCC 99 0 0 ;
+
+itrans: CCS ta-ta tmplC ;
+itrans: CC ta-ta-conjunct 2 ; PCC 255 0 0 ; PCC none -40 0 ;
+itrans: CC ta-ta-implicit 1 ; PCC 71 0 0 ;
+
+itrans: CCS ha-na tmplA ;
+itrans: CC ha-na-implicit 1 ; PCC 98 0 0 ;
+itrans: CCS ha-ya tmplA ;
+itrans: CC ha-ya-implicit 1 ; PCC 77 0 0 ;
+
+itrans: CCS sha-cha tmplC ;
+itrans: CC sha-cha-implicit 1 ; PCC 103 0 0 ;
+
+itrans: Comment <cons>-ra Ligatures ------------------
+
+itrans: CCS ka-ra tmplA ;
+itrans: CC ka-ra-implicit 2 ; PCC 205 0 0 ; PCC 179 0 0 ;
+itrans: CCS kha-ra tmplB ;
+itrans: CC kha-ra-implicit 2 ; PCC 251 0 0 ; PCC 179 0 0 ;
+itrans: CCS ga-ra tmplC ;
+itrans: CC ga-ra-implicit 2 ; PCC 169 0 0 ; PCC 179 0 0 ;
+itrans: CCS gha-ra tmplC ;
+itrans: CC gha-ra-implicit 2 ; PCC 202 0 0 ; PCC 179 -40 0 ;
+itrans: CCS cha-ra tmplC ;
+itrans: CC cha-ra-implicit 2 ; PCC 235 0 0 ; PCC 179 -40 0 ;
+itrans: CCS chha-ra tmplC ;
+itrans: CC chha-ra-implicit 2 ; PCC 227 0 0 ; PCC 172 -40 0 ;
+itrans: CCS ja-ra tmplC ;
+itrans: CC ja-ra-implicit 2 ; PCC 239 0 0 ; PCC none 20 0 ;
+itrans: CCS jha-ra tmplC ;
+itrans: CC jha-ra-implicit 2 ; PCC 119 0 0 ; PCC 172 -40 0 ;
+itrans: CCS tta-ra tmplC ;
+itrans: CC tta-ra-implicit 2 ; PCC 203 0 0 ; PCC 172 -40 0 ;
+itrans: CCS ttha-ra tmplC ;
+itrans: CC ttha-ra-implicit 2 ; PCC 233 0 0 ; PCC 172 -40 0 ;
+itrans: CCS dda-ra tmplC ;
+itrans: CC dda-ra-implicit 2 ; PCC 229 0 0 ; PCC 172 -40 0 ;
+itrans: CCS ddha-ra tmplA ;
+itrans: CC ddha-ra-implicit 2 ; PCC 195 0 0 ; PCC 172 -40 0 ;
+itrans: CCS nna-ra tmplB ;
+itrans: CC nna-ra-implicit 2 ; PCC 208 0 0 ; PCC 179 0 0 ;
+itrans: CCS ta-ra tmplC ;
+itrans: CC ta-ra-conjunct 2 ; PCC 228 0 0 ; PCC none -40 0 ;
+itrans: CC ta-ra-implicit 1 ; PCC 69 0 0 ;
+itrans: CCS tha-ra tmplC ;
+itrans: CC tha-ra-implicit 2 ; PCC 113 0 0 ; PCC 179 0 0 ;
+itrans: CCS da-ra tmplA ;
+itrans: CC da-ra-implicit 1 ; PCC 90 0 0 ;
+itrans: CCS dha-ra tmplC ;
+itrans: CC dha-ra-implicit 2 ; PCC 207 0 0 ; PCC 179 0 0 ;
+itrans: CCS na-ra tmplC ;
+itrans: CC na-ra-implicit 2 ; PCC 111 0 0 ; PCC 179 0 0 ;
+itrans: CCS pa-ra tmplC ;
+itrans: CC pa-ra-conjunct 2 ; PCC 80 0 0 ; PCC 179 0 0 ;
+itrans: CC pa-ra-implicit 2 ; PCC 110 0 0 ; PCC 179 0 0 ;
+itrans: CCS pha-ra tmplA ;
+itrans: CC pha-ra-implicit 2 ; PCC 162 0 0 ; PCC 179 0 0 ;
+itrans: CCS ba-ra tmplC ;
+itrans: CC ba-ra-implicit 2 ; PCC 234 0 0 ; PCC 179 0 0 ;
+itrans: CCS bha-ra tmplB ;
+itrans: CC bha-ra-implicit 2 ; PCC 108 0 0 ; PCC 179 0 0 ;
+itrans: CCS ma-ra tmplC ;
+itrans: CC ma-ra-implicit 2 ; PCC 186 0 0 ; PCC 179 0 0 ;
+itrans: CCS ya-ra tmplC ;
+itrans: CC ya-ra-implicit 2 ; PCC 120 0 0 ; PCC 179 0 0 ;
+itrans: CCS la-ra tmplC ;
+itrans: CC la-ra-implicit 2 ; PCC 191 0 0 ; PCC 179 0 0 ;
+itrans: CCS va-ra tmplC ;
+itrans: CC va-ra-implicit 2 ; PCC 115 0 0 ; PCC 179 -40 0 ;
+itrans: CCS sha-ra tmplC ;
+itrans: CC sha-ra-implicit 1 ; PCC 185 0 0 ;
+itrans: CCS shha-ra tmplC ;
+itrans: CC shha-ra-implicit 2 ; PCC 197 0 0 ; PCC 179 0 0 ;
+itrans: CCS sa-ra tmplC ;
+itrans: CC sa-ra-implicit 2 ; PCC 178 0 0 ; PCC 179 0 0 ;
+itrans: CCS ha-ra tmplA ;
+itrans: CC ha-ra-implicit 2 ; PCC 181 0 0 ; PCC 179 0 0 ;
+itrans: CCS lda-ra tmplA ;
+itrans: CC lda-ra-implicit 2 ; PCC 194 0 0 ; PCC 179 0 0 ;
+itrans: CCS ksha-ra tmplB ;
+itrans: CC ksha-ra-implicit 2 ; PCC 237 0 0 ; PCC 179 0 0 ;
+
+itrans: Comment ra-<cons> Ligatures ------------------
+itrans: %%%% from dvng.ifm: All the ra-<cons> ligatures (hindi form)
+% for hindi half-ra to work, ra-conjunct must contain only PCC none.
+% Also, there must be CCS ra-<cons> lines, but no CC ra-<cons>-implicit
+% lines. See dflt_mkl.c for details. Marathi ra-half is ok, and needs no
+% such stuff...
+
+itrans: CCS ra-ka tmplD ;
+itrans: CCS ra-kha tmplE ;
+itrans: CCS ra-ga tmplF ;
+itrans: CCS ra-gha tmplF ;
+itrans: CCS ra-cha tmplF ;
+itrans: CCS ra-chha tmplF ;
+itrans: CCS ra-ja tmplF ;
+itrans: CCS ra-jha tmplF ;
+itrans: CCS ra-tta tmplF ;
+itrans: CCS ra-ttha tmplF ;
+itrans: CCS ra-dda tmplF ;
+itrans: CCS ra-ddha tmplD ;
+itrans: CCS ra-nna tmplE ;
+itrans: CCS ra-ta tmplF ;
+itrans: CCS ra-tha tmplF ;
+itrans: CCS ra-da tmplD ;
+itrans: CCS ra-dha tmplF ;
+itrans: CCS ra-na tmplF ;
+itrans: CCS ra-pa tmplF ;
+itrans: CCS ra-pha tmplD ;
+itrans: CCS ra-ba tmplF ;
+itrans: CCS ra-bha tmplE ;
+itrans: CCS ra-ma tmplF ;
+itrans: CCS ra-ya tmplF ;
+itrans: CCS ra-ra tmplD ;
+itrans: CCS ra-la tmplF ;
+itrans: CCS ra-va tmplF ;
+itrans: CCS ra-sha tmplF ;
+itrans: CCS ra-shha tmplF ;
+itrans: CCS ra-sa tmplF ;
+itrans: CCS ra-ha tmplD ;
+itrans: CCS ra-lda tmplD ;
+itrans: CCS ra-ksha tmplE ;
+itrans: CCS ra-gya tmplF ;
+
+itrans: EndINDIAN

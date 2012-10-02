@@ -1,0 +1,546 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{ADF93BBC-BF8B-42F2-8791-7A04DD1AFA51}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>ITextDll</AssemblyName>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.IText</RootNamespace>
+	<RunPostBuildEvent>Always</RunPostBuildEvent>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Release\ITextDll\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	  <Name>Accessibility</Name>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="DetailControls, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FDO, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FdoUi, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Filters, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Framework, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwControls, Version=7.2.0.15477, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwCoreDlgs, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwResources, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FxtDll, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="LexTextControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="LiftIO, Version=1.0.2547.19639, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\Extensions\Flex.LiftImport\lib\LiftIO.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <Package>/home/eberhard/repogit/Calgary/WW/Output_x86_64/Debug/Microsoft.Practices.ServiceLocation.dll</Package>
+	</Reference>
+	<Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\ParatextShared.dll</HintPath>
+	</Reference>
+	<Reference Include="ParserCore, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="RootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Sfm2Xml, Version=1.0.4246.16219, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="AxInterop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
+	</Reference>
+	<Reference Include="BasicUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Enchant.Net.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
+	</Reference>
+	<Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
+	</Reference>
+	<Reference Include="MessageBoxExLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
+	</Reference>
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
+	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="Widgets, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="xCore, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="XMLUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="xWorks, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="BIRDInterlinearImporter.cs" />
+	<Compile Include="ChooseAnalysisHander.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ChooseTextWritingSystemDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ChooseTextWritingSystemDlg.Designer.cs">
+	  <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ConcordanceContainer.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="ConcordanceControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ConcordanceControl.Designer.cs">
+	  <DependentUpon>ConcordanceControl.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ConcordanceWordList.cs" />
+	<Compile Include="ConfigureInterlinDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="CreateAllomorphTypeMismatchDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="EditMorphBreaksDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Content Include="FlexInterlinModel\FlexInterlinear-generated.cs" />
+	<Compile Include="FlexInterlinModel\FlexInterlinear.cs" />
+	<Compile Include="FocusBoxController.ApproveAndMove.cs">
+	  <DependentUpon>FocusBoxController.cs</DependentUpon>
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FocusBoxController.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FocusBoxController.Designer.cs">
+	  <DependentUpon>FocusBoxController.cs</DependentUpon>
+	</Compile>
+	<None Include="ClassDiagram1.cd" />
+	<None Include="FreeTransEditMonitor.cs" />
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImageHolder.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InfoPane.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterAreaBookmark.cs" />
+	<Compile Include="InterlinDocChart.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinearExportDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="InterlinearExporter.cs" />
+	<Compile Include="InterlinearImportDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="InterlinearImportDlg.Designer.cs">
+	  <DependentUpon>InterlinearImportDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinDocForAnalysis.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinDocForAnalysis.Designer.cs">
+	  <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinearSfmImportWizard.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="InterlinearSfmImportWizard.Designer.cs">
+	  <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinearTextsRecordClerk.cs" />
+	<Compile Include="InterlinLineChoices.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InterlinDocRootSiteBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinDocRootSiteBase.Designer.cs">
+	  <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinMaster.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinMasterNoTitleBar.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinMasterNoTitleContent.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinPrintView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinTaggingChild.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<None Include="InterlinTxtCtrl.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="InterlinPrintView.Designer.cs">
+	  <DependentUpon>InterlinPrintView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinTaggingChild.Designer.cs">
+	  <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinVc.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InterlinMaster.Designer.cs">
+	  <DependentUpon>InterlinMaster.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InterlinMasterBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InterlinViewDataCache.cs" />
+	<Compile Include="ITextStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>ITextStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="LinguaLinksImport.cs" />
+	<Compile Include="LinguaLinksImportDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="RawTextPane.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="Sandbox.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SandboxBase.ComboHandlers.cs">
+	  <DependentUpon>SandboxBase.cs</DependentUpon>
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SandboxBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SandboxBase.designer.cs">
+	  <DependentUpon>SandboxBase.cs</DependentUpon>
+	</Compile>
+	<Compile Include="SandboxBase.GetRealyAnalysisMethod.cs">
+	  <DependentUpon>SandboxBase.cs</DependentUpon>
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SandboxBase.MorphemeBreaker.cs">
+	  <DependentUpon>SandboxBase.cs</DependentUpon>
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SandboxBase.SandboxVc.cs">
+	  <DependentUpon>SandboxBase.cs</DependentUpon>
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="Sfm2FlexText.cs" />
+	<Compile Include="SfmInterlinearMappingDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SfmInterlinearMappingDlg.Designer.cs">
+	  <DependentUpon>SfmInterlinearMappingDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ShowSpaceDecorator.cs" />
+	<Compile Include="StatisticsView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="StatisticsView.Designer.cs">
+	  <DependentUpon>StatisticsView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="TextsFilterItem.cs" />
+	<Compile Include="TitleContentsPane.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="WordBreakGuesser.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WsListManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<EmbeddedResource Include="ChooseTextWritingSystemDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ConcordanceControl.resx">
+	  <DependentUpon>ConcordanceControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ConfigureInterlinDialog.resx">
+	  <DependentUpon>ConfigureInterlinDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CreateAllomorphTypeMismatchDlg.resx">
+	  <DependentUpon>CreateAllomorphTypeMismatchDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="EditMorphBreaksDlg.resx">
+	  <DependentUpon>EditMorphBreaksDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FocusBoxController.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FocusBoxController.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ImageHolder.resx">
+	  <DependentUpon>ImageHolder.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InfoPane.resx">
+	  <DependentUpon>InfoPane.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinDocChart.resx">
+	  <DependentUpon>InterlinDocChart.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinDocForAnalysis.resx">
+	  <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinDocRootSiteBase.resx">
+	  <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinearImportDlg.resx">
+	  <DependentUpon>InterlinearImportDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinMaster.resx">
+	  <DependentUpon>InterlinMaster.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinMasterNoTitleBar.resx">
+	  <DependentUpon>InterlinMasterNoTitleBar.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinPrintView.resx">
+	  <DependentUpon>InterlinPrintView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinTaggingChild.resx">
+	  <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InterlinTxtCtrl.resx">
+	  <DependentUpon>InterlinTxtCtrl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="IText.ico" />
+	<EmbeddedResource Include="ITextStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ITextStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LinguaLinksImportDlg.resx">
+	  <DependentUpon>LinguaLinksImportDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Sandbox.resx">
+	  <DependentUpon>Sandbox.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="InterlinearSfmImportWizard.resx">
+	  <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InvisibleSpaceCursor.cur" />
+	<EmbeddedResource Include="SfmInterlinearMappingDlg.resx">
+	  <DependentUpon>SfmInterlinearMappingDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="StatisticsView.resx">
+	  <DependentUpon>StatisticsView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="ZeroWidth.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000041">
+<rt guid="2a665291-c5bc-44b5-85d0-5c6d719e4f0a" class="LangProject">
+<DateCreated val="2004-9-17 3:49:39.780" />
+<DateModified val="2011-5-20 15:49:31.641" />
+<AnalysisWss><Uni>en zh-CN</Uni></AnalysisWss>
+<CurVernWss><Uni>ii</Uni></CurVernWss>
+<CurAnalysisWss><Uni>en zh-CN</Uni></CurAnalysisWss>
+<CurPronunWss><Uni>ii-x-pin</Uni></CurPronunWss>
+<VernWss><Uni>ii</Uni></VernWss>
+<LexDb>
+<objsur guid="9c2d5e12-c0e5-4165-b4fc-44d7a81b2b91" t="o" />
+</LexDb>
+</rt>
+<rt guid="9c2d5e12-c0e5-4165-b4fc-44d7a81b2b91" class="LexDb" ownerguid="2a665291-c5bc-44b5-85d0-5c6d719e4f0a">
+<Name>
+<AUni ws="en">Dictionary</AUni>
+</Name>
+<DateCreated val="2006-3-6 18:19:44.870" />
+<DateModified val="2008-1-29 0:34:34.500" />
+<VariantEntryTypes>
+<objsur guid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9" t="o" />
+</VariantEntryTypes>
+<ComplexEntryTypes>
+<objsur guid="c634258a-97b0-499b-b8ef-e330f695b7de" t="o" />
+</ComplexEntryTypes>
+<MorphTypes>
+<objsur guid="d7f713d8-e8cf-11d3-9764-00c04f186933" t="o" />
+</MorphTypes>
+</rt>
+<rt class="CmPossibilityList" guid="c634258a-97b0-499b-b8ef-e330f695b7de" ownerguid="9c2d5e12-c0e5-4165-b4fc-44d7a81b2b91">
+<DateCreated val="2010-12-13 16:4:29.410" />
+<DateModified val="2010-12-13 16:4:29.410" />
+<Name>
+<AUni ws="en">Complex Form Types</AUni>
+<AUni ws="zh-CN">复合类型</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Complex entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">ComEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" />
+<objsur t="o" guid="aaffa708-19b6-4d66-99fe-9fe997904be1" />
+<objsur t="o" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" />
+<objsur t="o" guid="9466d126-246e-400b-8bba-0703e09bc567" />
+<objsur t="o" guid="9100ed6f-b740-4499-99ef-ebef72976083" />
+<objsur t="o" guid="322b7069-4c9b-49f9-ad22-3209599f339f" />
+</Possibilities>
+</rt>
+<rt class="CmPossibilityList" guid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9" ownerguid="9c2d5e12-c0e5-4165-b4fc-44d7a81b2b91">
+<DateCreated val="2010-12-13 16:4:29.47" />
+<DateModified val="2010-12-13 16:4:29.47" />
+<Name>
+<AUni ws="en">Variant Types</AUni>
+<AUni ws="zh-CN">变体类型</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Variant entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">VarEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="024b62c9-93b3-41a0-ab19-587a0030219a" />
+<objsur t="o" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" />
+<objsur t="o" guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" />
+<objsur t="o" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" />
+<objsur t="o" guid="73551e04-910f-4f0e-adbe-c93e962576d5" />
+</Possibilities>
+</rt>
+<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a" ownerguid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9">
+<DateCreated val="2005-8-25 4:16:5.110" />
+<DateModified val="2006-10-24 15:17:27.507" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">方言变体</AUni>
+<AUni ws="en">Dialectal variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">方言</AUni>
+<AUni ws="en">dial. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme characteristic of a specific demographic subset of the language.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">dial. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" ownerguid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9">
+<DateCreated val="2005-8-25 4:16:5.110" />
+<DateModified val="2006-12-6 16:41:46.660" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">自由变体</AUni>
+<AUni ws="en">Free variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">自由变</AUni>
+<AUni ws="en">fr. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant which may substitute for a major entry lexeme in the same environment without causing a change in meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">fr. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" ownerguid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9">
+<DateCreated val="2005-8-25 4:16:5.120" />
+<DateModified val="2006-10-24 15:17:33.587" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="false" />
+<Name>
+<AUni ws="zh-CN">屈折变体</AUni>
+<AUni ws="en">Inflectional variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">屈折变</AUni>
+<AUni ws="en">inf. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme that expresses a grammatical contrast which is obligatory for the stem's word class in some given grammatical context.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">inf. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" ownerguid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9">
+<DateCreated val="2005-8-25 4:16:5.140" />
+<DateModified val="2006-10-24 15:17:39.603" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">写法变体</AUni>
+<AUni ws="en">Spelling variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">写变</AUni>
+<AUni ws="en">sp. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregularly spelled variant of a major entry lexeme, not attributable to variety of speech.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">sp. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="73551e04-910f-4f0e-adbe-c93e962576d5" ownerguid="f1ce5ae2-bb63-4b83-888b-8329406e4ab9">
+<DateCreated val="2006-1-11 14:46:46.403" />
+<DateModified val="2006-10-28 4:22:0.753" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<Name>
+<AUni ws="zh-CN">有条件的变体</AUni>
+<AUni ws="en">Conditioned variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">条件变</AUni>
+<AUni ws="en">cond. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An alternate form of a main entry. The alternate form appears in certain phonological or grammatical environments.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">cond. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-8-25 4:16:5.60" />
+<DateModified val="2005-8-25 4:16:5.60" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">复合词</AUni>
+<AUni ws="en">Compound</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">复合</AUni>
+<AUni ws="en">comp. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of more than one root.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">comp.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="aaffa708-19b6-4d66-99fe-9fe997904be1" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-8-25 4:16:5.100" />
+<DateModified val="2006-7-18 14:23:39.337" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">派生过程</AUni>
+<AUni ws="en">Derivative</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">派生</AUni>
+<AUni ws="en">deriv. fr.</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of a root plus an affix that adds a non-inflectional component of meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">der.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-8-25 4:16:5.130" />
+<DateModified val="2006-10-24 15:18:17.927" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">词组动词</AUni>
+<AUni ws="en">Phrasal verb</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">词组动词 </AUni>
+<AUni ws="en">ph. v. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A combination of a lexical verb and a verbal particle that forms a single semantic and syntactic unit.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">ph. v.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9466d126-246e-400b-8bba-0703e09bc567" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-8-25 4:16:5.130" />
+<DateModified val="2005-8-25 4:16:5.130" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="zh-CN">成语</AUni>
+<AUni ws="en">Saying</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">成语 </AUni>
+<AUni ws="en">say. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">We are trying to delete this entry type. But the program wouldn't allow us to for some reason.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">say.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9100ed6f-b740-4499-99ef-ebef72976083" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-11-30 3:33:39.477" />
+<DateModified val="2006-7-18 14:34:16.713" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<Name>
+<AUni ws="zh-CN">四字格</AUni>
+<AUni ws="en">Four syllable form</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">四字格</AUni>
+<AUni ws="en">4-syll. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A four syllable idiom which carries the same lexical meaning as its more basic two syllable form, but can differ slightly in its usage.</Run>
+</AStr>
+</Description>
+</rt>
+<rt class="LexEntryType" guid="322b7069-4c9b-49f9-ad22-3209599f339f" ownerguid="c634258a-97b0-499b-b8ef-e330f695b7de">
+<DateCreated val="2005-11-30 3:35:9.217" />
+<DateModified val="2006-7-18 14:29:9.893" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<Name>
+<AUni ws="zh-CN">ＸＹＹ</AUni>
+<AUni ws="en">Enhanced modifier</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="zh-CN">ＸＹＹ</AUni>
+<AUni ws="en">enh. mod. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">In Sichuan Yi, this is usually a three syllable form in which the second syllable is reduplicated. The reduplication usually emphasizes the basic meaning of the two syllable form. Occasionally the meaning is diminished or softened instead.</Run>
+</AStr>
+</Description>
+</rt>
+<rt class="LexEntry" guid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<DateCreated val="2002-6-17 13:0:0.0" />
+<DateModified val="2007-6-27 8:23:28.687" />
+<MorphoSyntaxAnalyses>
+<objsur t="o" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur t="o" guid="117891e2-b47b-4211-b394-2f18f0caebfc" />
+</Senses>
+<LexemeForm>
+<objsur t="o" guid="90f27e9d-618b-4c77-a37e-4c6e42df0fee" />
+</LexemeForm>
+</rt>
+<rt class="MoStemMsa" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+<rt class="LexSense" guid="117891e2-b47b-4211-b394-2f18f0caebfc" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" />
+</MorphoSyntaxAnalysis>
+<Gloss>
+<AUni ws="en">jug</AUni>
+</Gloss>
+<Definition>
+<AStr ws="en"><Run ws="en">earthen jar (various sizes)</Run></AStr>
+</Definition>
+</rt>
+<rt class="MoStemAllomorph" guid="90f27e9d-618b-4c77-a37e-4c6e42df0fee" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<MorphType>
+<objsur t="r" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" />
+</MorphType>
+<Form>
+<AUni ws="ii">ꄣ</AUni>
+</Form>
+</rt>
+<rt class="LexEntry" guid="e34999fa-936d-499c-8104-7b75e174cb06">
+<DateCreated val="2003-4-3 13:0:0.0" />
+<DateModified val="2006-8-6 3:14:38.547" />
+<MainEntriesOrSenses>
+<objsur t="r" guid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+</MainEntriesOrSenses>
+<MorphoSyntaxAnalyses>
+<objsur t="o" guid="d50d6be8-ca10-4f40-af93-79f3110f31d7" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur t="o" guid="1dc6be0d-17d4-42b3-83d4-bd044f8068e8" />
+</Senses>
+<LexemeForm>
+<objsur t="o" guid="cbd71591-903e-4fc5-83b7-dc68d866901d" />
+</LexemeForm>
+<EntryRefs>
+<objsur t="o" guid="afb73302-0d0d-40e0-b8ba-200c47a6dc50" />
+</EntryRefs>
+</rt>
+<rt class="MoStemMsa" guid="d50d6be8-ca10-4f40-af93-79f3110f31d7" ownerguid="e34999fa-936d-499c-8104-7b75e174cb06" />
+<rt class="LexSense" guid="1dc6be0d-17d4-42b3-83d4-bd044f8068e8" ownerguid="e34999fa-936d-499c-8104-7b75e174cb06">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="d50d6be8-ca10-4f40-af93-79f3110f31d7" />
+</MorphoSyntaxAnalysis>
+<Gloss>
+<AUni ws="en">jar</AUni>
+</Gloss>
+<Definition>
+<AStr ws="en">
+<Run ws="en">small jar for keeping such things as homemade liquor, tofu, pickles</Run>
+</AStr>
+</Definition>
+</rt>
+<rt class="MoStemAllomorph" guid="cbd71591-903e-4fc5-83b7-dc68d866901d" ownerguid="e34999fa-936d-499c-8104-7b75e174cb06">
+<MorphType>
+<objsur t="r" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" />
+</MorphType>
+<Form>
+<AUni ws="ii">ꄢꌺ</AUni>
+</Form>
+</rt>
+<rt class="LexEntryRef" guid="afb73302-0d0d-40e0-b8ba-200c47a6dc50" ownerguid="e34999fa-936d-499c-8104-7b75e174cb06">
+<HideMinorEntry val="1" />
+<RefType val="1" />
+<ComplexEntryTypes>
+<objsur t="r" guid="aaffa708-19b6-4d66-99fe-9fe997904be1" />
+</ComplexEntryTypes>
+<PrimaryLexemes>
+<objsur t="r" guid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+</PrimaryLexemes>
+<ComponentLexemes>
+<objsur t="r" guid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+</ComponentLexemes>
+<ShowComplexFormsIn>
+<objsur t="r" guid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+</ShowComplexFormsIn>
+</rt>
+<rt class="CmPossibilityList" guid="d7f713d8-e8cf-11d3-9764-00c04f186933" ownerguid="9c2d5e12-c0e5-4165-b4fc-44d7a81b2b91">
+<DateCreated val="2006-3-6 18:19:44.870" />
+<DateModified val="2006-3-6 18:19:44.870" />
+<Name>
+<AUni ws="en">Morpheme Types</AUni>
+</Name>
+<Depth val="1" />
+<IsSorted val="true" />
+<IsClosed val="true" />
+<ItemClsid val="5042" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">MjeTyp</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" />
+</Possibilities>
+</rt>
+<rt class="MoMorphType" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" ownerguid="d7f713d8-e8cf-11d3-9764-00c04f186933">
+<DateCreated val="2004-9-17 3:49:47.920" />
+<DateModified val="2004-9-17 3:49:47.920" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">root</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">ubd root</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en"><Run ws="en">A root is the portion of a word that ...</Run></AStr>
+</Description>
+</rt>
+</languageproject>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Exercises Sorts and Filters in Grammar \ Category Browse -->
+
+<accil on-fail="assert">
+
+   <goal>Exercises Category Browse view</goal>
+
+   <bug id="FWR-2101" desc="Show Category in Concordance jumps to Interlinear Text"/>
+   <bug id="FWR-1277" desc="Crash deleting catagory in Kalaba"/>
+   <bug id="FWR-453" desc="Crash right-clicking  Grammar/Categories Browse &quot;Show Cat in Concord&quot;"/>
+   <bug id="FWR-318" desc="Categories/Browse has no right-menu"/>
+   <bug id="LT-9655" desc="Category Browse right-click menu missing"/>
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+<on-application log="all" run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+   <click select="menubar/view/grammar/categories-browse"/>
+
+  <model select="category-browse[@role='view']">
+
+   <click select="categories/col/filter/text" col="1"/>
+   <insert wait="500">n</insert> <!-- Non-blanks-->
+   <insert wait="500">~</insert> <!-- Non-blanks-->
+   <click select="//toolbar/standard/first"/>
+   <!--click select="categories/scroll/up"/-->
+   <insert>{UP}</insert>
+   <var id="num" set="55"/>
+   <glimpse id="1of55" select="//statusbar/one-of" prop="name" expect="1/$num"/>
+
+   <click select="categories/col/filter/text"/>
+   <insert wait="500">b~</insert> <!-- Blanks-->
+   <glimpse id="noRecs" select="//statusbar/no-records"/>
+
+   <click select="categories/col/filter/text"/>
+   <insert wait="500">F~</insert> <!-- Find ...-->
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert wait="500">ad</insert>
+	 <click path="9:Whole item/45:Whole item"/>
+	 <click path="$ok"/>
+   </on-dialog>
+   <glimpse id="noRecs2" select="//statusbar/no-records"/>
+
+	<click select="categories/col/filter/text"/>
+	<insert wait="500">S~</insert>  <!-- Show All -->
+	<glimpse id="1of55b" select="//statusbar/one-of" prop="name" expect="1/$num"/>
+
+	<click select="categories/col/filter/text"/>
+	<insert wait="500">F~</insert> <!-- Find ...-->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	  <insert wait="500">N</insert>
+	  <click path="9:Whole item/45:Whole item"/>
+	  <click path="$ok"/>
+	</on-dialog>
+	<glimpse id="noRecs3" select="//statusbar/no-records"/>
+
+	<click select="categories/col/filter/text"/>
+	<insert wait="500">S~</insert> <!-- Show All -->
+	<glimpse id="1of55c" select="//statusbar/one-of" prop="name" expect="1/$num"/>
+
+	<!-- sort via Name -->
+	<click select="categories/col/header" path="Name"/>
+	<click select="//toolbar/standard/first"/>
+	<click select="categories/scroll/up"/>
+	<glimpse id="voiceM" select="categories/record/col" prop="value" expect="voice marker" row="1" col="1"/>
+
+	<click select="categories/col/filter/text" col="2"/>
+	<insert wait="500">N~</insert>  <!-- Non-blanks-->
+	<click select="categories/col/header" path="Abbreviation"/>
+	<click select="categories/col/header" path="Name"/>
+	<click select="categories/col/header" path="Abbreviation"/>
+
+	<click select="//menubar/view/grammar/category-edit"/>
+
+	<click select="//menubar/view/grammar/categories-browse"/>
+
+	<click select="categories/col/filter/text" col="2"/>
+	<insert wait="500">S~</insert>  <!-- Show All -->
+
+	<click select="categories/col/filter/text" col="3"/>
+	<insert wait="500">F~</insert> <!-- Find ...-->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <insert wait="500">1</insert>
+	   <click path="9:Whole item/45:Whole item"/>
+	   <click path="$ok"/>
+	</on-dialog>
+	<glimpse id="noRecs4" select="//statusbar/no-records"/>
+
+	<click select="categories/col/filter/text" col="4"/>
+	<insert wait="500">B~</insert> <!-- Blanks-->
+	<glimpse id="noRecs5" select="//statusbar/no-records"/>
+	<insert wait="500">S~</insert>  <!-- Show All -->
+	<glimpse id="noRecs6" select="//statusbar/no-records"/>
+
+	<click select="categories/col/filter/text" col="3"/>
+	<insert wait="500">s~</insert> <!-- Show All -->
+	<glimpse id="1of55d" select="//statusbar/one-of" prop="name" expect="1/$num"/>
+
+	<click side="right" path="table:Table/row:Row"/>
+	<insert wait="500">{DOWN 2}~</insert> <!-- show in concordance-->
+	<!-- in words/concordance view -->
+	<glimpse id="Criteria" select="//concordance[@role='view']/criteria/label"/>
+
+	<click select="//menubar/view/grammar/categories-browse"/> <!-- go back -->
+
+	<!--delete category-->
+	 <click select="categories/record/col" row="1" col="1"/>
+	<glimpse id ="check1" select="categories/record/col" prop="value" on-fail="skip" on-pass="skip"/>
+	<click select="//toolbar/standard/delete"/>
+	<insert wait="500">d</insert>
+	<glimpse id ="check2" select="categories/record/col" prop="value" expect="$check1.value" on-fail="skip" on-pass="assert"/>
+	<insert wait="500">^z</insert>
+
+	<click select="categories/record/col"/> <!-- Click to move off toolbar so the next test doen't fail -->
+
+  </model>
+
+ </on-application>
+</accil>

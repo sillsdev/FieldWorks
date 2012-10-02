@@ -1,0 +1,81 @@
+;Test rules which apply at word boundaries
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name cons       features (cons + voc -)>)
+(load_nat_class message <nat_class name vowel      features (cons - voc +)>)
+(load_nat_class message <nat_class name vl_unasp   features (vd - asp -)>)
+(morpher_set message (*quit_on_error* false))
+
+;Load the first rule (msg 6505):
+; C -> [-vd -asp] / _#
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class vl_unasp>)
+						  right_environ <ptemp fin true pseq ()>
+					>
+				   )
+  >
+)
+;Trace it (msg 6535):
+(trace_morpher_rule message (true true rule3))
+;We'll trace lex lookup, too:
+(trace_lexical_lookup message true)
+;And morph, should be 3x ambig:
+(morph_and_lookup_word pretty_print gap)
+;Now turn lex lookup tracing back off:
+(trace_lexical_lookup message false)
+;And change the rule of devoicing again:
+; C -> [-vd -asp] / _VC#
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class vl_unasp>)
+						  right_environ <ptemp fin true
+											   pseq (<simp_cntxt class vowel>
+													 <simp_cntxt class cons>)>
+					>
+				   )
+  >
+)
+;Parse, expect 2x ambiguity:
+(morph_and_lookup_word pretty_print kab)
+;And change thr rule of devoicing again:
+; C -> [-vd -asp] / #_
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class vl_unasp>)
+						  left_environ <ptemp init true pseq ()>
+					>
+				   )
+  >
+)
+;Parse, expect 2x ambiguity:
+(morph_and_lookup_word pretty_print kab)
+;And change the rule of devoicing again:
+; C -> [-vd -asp] / #CV_
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class vl_unasp>)
+						  left_environ <ptemp init true
+											  pseq (<simp_cntxt class cons>
+													<simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+;Parse, expect 3x ambiguity:
+(morph_and_lookup_word pretty_print gap)
+
+(morpher_set message (*quit_on_error* true))
+;Now remove the rule (msg 6506):
+(remove_morpher_rule message rule3)
+;...and the natural classes:
+(remove_nat_class message cons)
+(remove_nat_class message vowel)
+(remove_nat_class message vl_unasp)

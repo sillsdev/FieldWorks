@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--Copyright (c) 2003 SIL International-->
+<sfConversion defaultMapping="ISO-8859-1">
+	<sfMarkers escape="\"
+				chars="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				mapping="ISO-8859-1">
+		<marker name="id" mapping="ISO-8859-1"/>
+		<marker name="bk" mapping="ISO-8859-1"/>
+		<marker name="ch" mapping="ISO-8859-1"/>
+		<marker name="te" mapping="SILEzratoUni50"/>
+	</sfMarkers>
+	<inlineMarkers escape="|" start="{" end="}"
+				chars="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				mapping="ISO-8859-1">
+		<marker name="a1" mapping="ISO-8859-1"/>
+		<marker name="a2" mapping="SILEzratoUni50"/>
+	</inlineMarkers>
+</sfConversion>

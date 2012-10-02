@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlslist" num="2.7.6" abbr="tlli" file="FW\TlsList.xml">
+<title tag="tlslist">Tools-Lists Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This menu item brings up a dialog, which lists the various lists that are important to the application. For example, the Research Notebook has lists of participants, locations, weather conditions, confidence levels, etc..</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Lists" type="doc">Tools-Lists</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html" type="doc">Lists Dialog</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Lists"</p>
+</context>
+
+<case id="tlliAct" num="0" order="any">
+<title tag="tlliAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Invoke Tools-Lists. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Lists" type="doc">Definition of Tools-Lists.</link>
+<r>The Lists dialog for the activating application is displayed.</r>
+<p name="bug">Tools-Lists dialog not displayed</p>
+<p name="bug">Tools-Lists dialog not displayed for the activating application</p>
+</step>
+<step name="0.1" link="Bug">Invoke Tools-Lists. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html" type="doc">Tools-Lists specification</link> to visually inspect the dialog layout.
+   <r>
+<ul>
+<li>The list is alphabetized</li>
+<li>The first item is selected</li>
+<li>Up to approximate size and position the two are the same - especially any text and icons</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists layout incorrect</p>
+<p name="bug">Tools-Lists list not alphabetized</p>
+<p name="bug">Tools-Lists first item not selected</p>
+</step>
+</case>
+
+<case id="tlliDiac" num="1" order="any">
+<title tag="tlliDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools-Lists is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Use the<link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>There is an "OK" button if this dialog is activated from the Tools-Options-Custom Fields tab.</li>
+<li>Otherwise, the "Close" button retains any changes to the list but triggers no actions. If nothing is changed, it acts as a "Cancel" button.</li>
+<li>Report any failures as suggested using "Tools-Lists" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists dialog invoked from custom fields has no OK button</p>
+<p name="bug">Tools-Lists dialog invoked from Tools Lists has no Close button</p>
+</step>
+<step name="1.2" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;A&gt; to test the Add control.
+   <r>
+<ul>
+<li>Launches the List Properties dialog</li>
+<li>Inserts a dummy entry into the new list, named "New List" (if Cancel is selected in Properties, dummy list must be deleted manually)</li>
+<li>Report any failures as suggested using "Tools-Lists Add" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists List Properties dialog not launched from Add action</p>
+<p name="bug">Tools-Lists List Editor dialog not launched from Add action</p>
+<p name="bug">Tools-Lists List Add does not insert a list name in the list</p>
+<p name="bug">Tools-Lists List "New List Item" not present in List Editor after Add</p>
+</step>
+<step name="1.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;C&gt; to test the Copy control.
+   <r>
+<ul>
+<li>Makes an identical copy of a list.</li>
+<li>The name placed in the list is "Copy of ..." with a (1) (2) etc.</li>
+<li>An in-place edit box opens on this new name.</li>
+<li>Report any failures as suggested using "Tools-Lists Copy" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists copy does not work</p>
+<p name="bug">Tools-Lists copy forms wrong name in list</p>
+<p name="bug">Tools-Lists copy name is not created in an open edit box</p>
+</step>
+<step name="1.4" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;D&gt; to test the Delete control.
+   <r>
+<ul>
+<li>Deletes a list.</li>
+<li>It is enabled only for user created lists that have not yet been used.</li>
+<li>Report any failures as suggested using "Tools-Lists Delete" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists Delete does not work</p>
+<p name="bug">Tools-Lists Delete enabled for used user list</p>
+<p name="bug">Tools-Lists Delete enabled for factory list</p>
+</step>
+<step name="1.5" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;E&gt; to test the Edit List control.
+   <r>
+<ul>
+<li>Launches the List Editor for the selected list.</li>
+<li>Report any failures as suggested using "Tools-Lists Edit" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists Edit does not launch list editor.</p>
+</step>
+<step name="1.6" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;P&gt; to test the Properties control.
+   <r>
+<ul>
+<li>Launches the Properties dialog for the selected list.</li>
+<li>Report any failures as suggested using "Tools-Lists Properties" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Tools-Lists Properties does not launch properties dialog</p>
+</step>
+</case>
+
+<case id="tlliRd" num="2" order="any">
+<title tag="tlliRd">List Properties dialog</title>
+<context>
+<p>When the Tools - Lists dialog is displayed:</p>
+</context>
+<step name="2.1" link="Bug">
+Click Properties to open the List Properties Dialog. Use the <link uri="../TLE/FilePropsTLE.xml" type="module">File - Topics List Properties Tests</link> to test the List Properties Dialog.
+<r>Dialog contains information associated with the selected list. Report any errors with "Tools - Lists Properties" as the name of the dialog</r>
+<p name="bug">Tools - Lists Properties dialog not working correctly for existing list.</p>
+</step>
+
+<step name="2.2" link="Bug">
+Click Add.. Button to invoke the List Properties Dialog.
+<r>Dialog should appear and function in same manner as above but contains the default values for a new list like "New ListX" for Name, Description, Abbrieviation, etc. (where X is a number 2 or greater if more than one new list is created). For more information see <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html" type="doc">Tools - Lists</link> specs.</r>
+<p name="bug">Tools - Lists Properties dialog not working correctly for new list.</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Sep-10-01" author="MikeL">Added content</update>
+<update date="Jun-13-02" author="RussD">Minor updates, moved some tests to FilePropsTLE.xml</update>
+</test>

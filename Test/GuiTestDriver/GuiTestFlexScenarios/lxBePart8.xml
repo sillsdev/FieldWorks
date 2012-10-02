@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 8: Click Copy test -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Goto Bulk Copy tab -->
+   <click path="$BEE;9:BulkEditBar/9:$besSelTarg;[2]/37:Click Copy"/>
+<!-- Set Target to Import Residue (Entry) -->
+   <click  path="$BEE;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:Target Field[2]/41:Target Field"/>
+   <insert>i~</insert>
+<!-- Set Copy to Word -->
+   <click path="$BEE;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:Copy/20:Copy/9:Word/45:Word"/>
+<!-- Set If target is not empty... to Append -->
+   <click path="$BEE;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:$besCCifTarg;/20:$besCCifTarg;/9:Append/45:Append"/>
+
+<!-- Click a word in each column to see the change in Import Residue (Entry) -->
+
+   <click path="$beeRec;[4]/$Col;[4]/$Text"/><!-- the first record is off screen -->
+   <click path="$firstRec"/><!-- Select the first record -->
+   <click path="$beeRec;[*ind]/$Col;[2]/$Text;/value:-ko"/>
+   <glimpse id="1" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="-ko"/>
+   <click path="$beeRec;[*ind]/$Col;[3]/$Text;/value:mwadia"/>
+   <glimpse id="2" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="mwadia"/>
+   <click path="$beeRec;[*ind]/$Col;[4]/$Text;/value:-ko"/>
+   <glimpse id="3" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="-ko"/>
+   <click path="$beeRec;[*ind]/$Col;[5]/$Text;/value:Associativo "/>
+   <glimpse id="4" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="Associativo"/>
+   <click path="$beeRec;[*ind]/$Col;[6]/$Text;/value:PASSADO"/>
+   <glimpse id="5" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="PASSADO"/>
+   <click path="$beeRec;[3]/$Col;[7]/$Text;/value:Main Entry"/>
+   <glimpse id="6" path="$beeRec;[3]/$Col;[4]/$Text" prop="value" expect="Main"/>
+   <click path="$beeRec;[*ind]/$Col;[8]/$Text;/value:suffix"/>
+   <glimpse id="7" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="-ko suffix"/>
+
+<!-- Set Copy to String, reordered at word clicked -->
+   <click path="$BEE;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:Copy/20:Copy/9:$besCCstrRo;/45:$besCCstrRo"/>
+<!-- Filter Morph Type by phrase -->
+   <click path="$beeFilter;[7]"/>
+   <insert>f~</insert>
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	  <insert wait="200">phrase</insert>
+	  <insert wait="500">~</insert>
+   </on-dialog>
+   <click dx="60" path="$beeRec;[3]/28:Row/29:Cell[6]/$Text;[2]/42:String"/> <!-- marido -->
+   <glimpse id="marido" path="$beeRec;[3]/$Col;[4]/$Text" prop="value" expect="marido, filho de "/>
+
+<!-- Set If target is not empty... to Overwrite -->
+   <click path="$BEE;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:$besCCifTarg;/20:$besCCifTarg;/9:Overwrite/45:Overwrite"/>
+   <click dx="35" path="$beeRec;[3]/28:Row/29:Cell[6]/$Text;[2]/42:String"/> <!-- de -->
+   <glimpse id="de" path="$beeRec;[3]/$Col;[4]/$Text" prop="value" expect="de marido, filho "/>
+
+ </on-application>
+</accil>

@@ -1,0 +1,21 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Bugs\Pattern.xml">
+ <title tag="bugPat">What is a bug pattern?</title>
+ <index>
+  <li>bug pattern: definition</li>
+  <li>test step: bug pattern</li>
+ </index>
+ <definition>
+  <p>When excution of a <link uri="..\TCL\CaseStep.xml" type="module">test step</link> fails, these patterns show how the bug is to be <link uri="Report.xml" type="module">reported</link>.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a bug pattern:</p>
+  <table>
+   <tr><td>Bug pattern number</td><td>A number that is unique to this bug pattern.</td></tr>
+   <tr><td>Title pattern</td><td>Format of the title of the bug to be reported with slots for adding specific details to make it unique.</td></tr>
+   <tr><td><link uri="..\TCL\Action.xml" type="module">Steps to failure</link></td><td>Usually the action of the test case step.</td></tr>
+   <tr><td><link uri="..\TCL\Result.xml" type="module">Result</link></td><td>Usually the expected result of the test case step.</td></tr>
+   <tr><td>Failure description</td><td>How the behavior deviated from the expected result.</td></tr>
+  </table>
+ </partsAndFunctions>
+</concept>

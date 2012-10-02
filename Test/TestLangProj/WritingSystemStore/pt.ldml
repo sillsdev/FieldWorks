@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T14:01:19" />
+		<language
+			type="pt" />
+	</identity>
+	<collations>
+		<collation>
+			<base>
+				<alias
+					source="pt" />
+			</base>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="OtherLanguage" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Por" />
+		<palaso:defaultFontFamily
+			value="Times New Roman" />
+		<palaso:languageName
+			value="Portuguese" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:matchedPairs
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;MatchedPairs&gt;   &lt;pair open=&quot;(&quot; close=&quot;)&quot; permitParaSpanning=&quot;false&quot; /&gt;   &lt;pair open=&quot;[&quot; close=&quot;]&quot; permitParaSpanning=&quot;false&quot; /&gt; &lt;/MatchedPairs&gt;" />
+		<fw:punctuationPatterns
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;PunctuationPatterns&gt;   &lt;pattern value=&quot;’ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot; ‘&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot; “&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;.” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;? &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;), &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;-&quot; context=&quot;WordMedial&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;: &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;, &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;! &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot; (&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;; &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;   &lt;pattern value=&quot;. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt; &lt;/PunctuationPatterns&gt;" />
+		<fw:quotationMarks
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;QuotationMarks LangUsedFrom=&quot;pt_BR&quot; ContinuationType=&quot;RequireAll&quot; ContinuationMark=&quot;Opening&quot;&gt;   &lt;Levels&gt;     &lt;Pair Opening=&quot;“&quot; Closing=&quot;”&quot; /&gt;     &lt;Pair Opening=&quot;‘&quot; Closing=&quot;’&quot; /&gt;   &lt;/Levels&gt; &lt;/QuotationMarks&gt;" />
+		<fw:validChars
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;ValidCharacters&gt;   &lt;WordForming&gt;a￼A￼á￼Á￼à￼À￼â￼Â￼å￼ã￼ą￼Ą￼æ￼b￼B￼c￼C￼ć￼Ć￼ç￼Ç￼d￼D￼e￼E￼é￼É￼è￼ê￼ë￼ę￼Ę￼f￼F￼g￼G￼h￼H￼i￼I￼í￼Í￼î￼j￼J￼k￼K￼l￼L￼ł￼Ł￼m￼M￼n￼N￼ń￼Ń￼o￼O￼ó￼Ó￼ô￼õ￼p￼P￼q￼Q￼r￼R￼s￼S￼ś￼Ś￼t￼T￼u￼U￼ú￼ù￼ü￼v￼V￼w￼W￼x￼y￼Y￼z￼Z￼ź￼Ź￼-&lt;/WordForming&gt;   &lt;Numeric&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9&lt;/Numeric&gt;   &lt;Other&gt;U+0020￼,￼;￼:￼!￼?￼.￼‘￼’￼&quot;￼“￼”￼(￼)￼[￼]￼{￼}￼/￼&amp;amp;￼‰&lt;/Other&gt; &lt;/ValidCharacters&gt;" />
+		<fw:windowsLCID
+			value="2070" />
+	</special>
+</ldml>

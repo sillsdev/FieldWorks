@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000016">
+<rt guid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC" class="LangProject">
+<ResearchNotebook>
+<objsur guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" t="o" />
+</ResearchNotebook>
+<WeatherConditions>
+<objsur guid="D7186B26-EA5E-11DE-9294-0013722F8DEC" t="o" />
+</WeatherConditions>
+  <Overlays>
+	<objsur guid="D71D2D03-BFE5-4c82-82F7-16EB261AD09D" t="o" />
+	<objsur guid="529B12D1-97EB-4705-BB65-673EE8612FC0" t="o" />
+	<objsur guid="AFAE4097-C26C-4108-9A8D-F0C6848D83BC" t="o" />
+  </Overlays>
+</rt>
+  <rt class="CmOverlay" guid="D71D2D03-BFE5-4c82-82F7-16EB261AD09D" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<PossItems>
+	  <objsur guid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC" t="r" />
+	</PossItems>
+	<PossList>
+	  <objsur guid="D7186B26-EA5E-11DE-9294-0013722F8DEC" t="r" />
+	</PossList>
+  </rt>
+  <rt class="CmOverlay" guid="529B12D1-97EB-4705-BB65-673EE8612FC0" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<PossItems>
+	  <objsur guid="00951e6f-2523-4ac9-a649-ad42c659cf83" t="r" />
+	</PossItems>
+  </rt>
+  <rt class="CmOverlay" guid="AFAE4097-C26C-4108-9A8D-F0C6848D83BC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<PossList>
+	  <objsur guid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC" t="r" />
+	</PossList>
+  </rt>
+<rt class="RnResearchNbk" guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+<Name><AUni ws="en">Data Notebook</AUni></Name>
+<Records>
+<objsur guid="cf1aecfc-ba66-45ae-934b-7823afdfec78" t="o" />
+<objsur guid="295b4bcb-1ed2-49ab-a363-e094cb9c95c8" t="o" />
+<objsur guid="a05e5194-deaa-49ee-8edd-bc901fbef623" t="o" />
+<objsur guid="31f0e0ed-c173-4f46-bfbf-3d99b4ec8c5b" t="o" />
+<objsur guid="49a819c1-990d-418d-832b-07b43f0a75f6" t="o" />
+<objsur guid="7f9259a8-04f3-4cb0-ad03-bb4cb18bd975" t="o" />
+</Records>
+<RecTypes>
+<objsur t="o" guid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC" />
+</RecTypes>
+</rt>
+<rt class="CmPossibilityList" guid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Name><AUni ws="en">Entry Types</AUni></Name>
+<Abbreviation><AUni ws="en">Type</AUni></Abbreviation>
+<Depth val="127" />
+<ItemClsid val="7" />
+<WsSelector val="-3" />
+<Possibilities>
+<objsur t="o" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" />
+<objsur t="o" guid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC" />
+<objsur t="o" guid="82290763-1633-4998-8317-0EC3F5027FBD" />
+<objsur t="o" guid="bcb1cf88-582d-463a-b96f-0023f6ac2395" />
+<objsur t="o" guid="06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9" />
+</Possibilities>
+</rt>
+<rt class="CmPossibility" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
+<Abbreviation><AUni ws="en">Evnt</AUni></Abbreviation>
+<Name><AUni ws="en">Event</AUni></Name>
+<SubPossibilities>
+<objsur t="o" guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" />
+<objsur t="o" guid="b7b37b86-ea5e-11de-80e9-0013722f8dec" />
+<objsur t="o" guid="b7bf673e-ea5e-11de-9c4d-0013722f8dec" />
+<objsur t="o" guid="b7f63d0e-ea5e-11de-9f02-0013722f8dec" />
+</SubPossibilities>
+</rt>
+<rt class="CmPossibility" guid="B7B37B86-EA5E-11DE-80E9-0013722F8DEC" ownerguid="00951e6f-2523-4ac9-a649-ad42c659cf83">
+<Abbreviation><AUni ws="en">Con</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">In a conversation, ...</Run></AStr></Description>
+<Name><AUni ws="en">Conversation</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC" ownerguid="00951e6f-2523-4ac9-a649-ad42c659cf83">
+<Abbreviation><AUni ws="en">Intv</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">Interviews involve ...</Run></AStr></Description>
+<Name><AUni ws="en">Interview</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="B7EA5156-EA5E-11DE-9F9C-0013722F8DEC" ownerguid="00951e6f-2523-4ac9-a649-ad42c659cf83">
+<Abbreviation><AUni ws="en">Obs</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">This will be one of your ...</Run></AStr></Description>
+<Name><AUni ws="en">Observation</AUni></Name>
+<SubPossibilities />
+</rt>
+<rt class="CmPossibility" guid="B7F63D0E-EA5E-11DE-9F02-0013722F8DEC" ownerguid="00951e6f-2523-4ac9-a649-ad42c659cf83">
+<Abbreviation><AUni ws="en">Per</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">A "performance" is a ...</Run></AStr></Description>
+<Name><AUni ws="en">Performance</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+<Abbreviation><AUni ws="en">Lit</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">Literature summaries are ...</Run></AStr></Description>
+<Name><AUni ws="en">Literature Summary</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="82290763-1633-4998-8317-0EC3F5027FBD" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+<Abbreviation><AUni ws="en">Ana</AUni></Abbreviation>
+<Description><AStr ws="en"><Run ws="en">Reflection on events and ...</Run></AStr></Description>
+<Name><AUni ws="en">Analysis</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="bcb1cf88-582d-463a-b96f-0023f6ac2395" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
+<Abbreviation><AUni ws="en">Method</AUni></Abbreviation>
+<Name><AUni ws="en">Methodology</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
+<Abbreviation><AUni ws="en">Wthr</AUni></Abbreviation>
+<Name><AUni ws="en">Weather</AUni></Name>
+</rt>
+<rt guid="cf1aecfc-ba66-45ae-934b-7823afdfec78" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">test</Run></Str></Title>
+<DateOfEvent val="200906161" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+<Weather>
+<objsur guid="BBF9CD80-EA5E-11DE-9591-0013722F8DEC" t="r"/>
+<objsur guid="BC461866-EA5E-11DE-8F26-0013722F8DEC" t="r"/>
+<objsur guid="BC94C59C-EA5E-11DE-8252-0013722F8DEC" t="r"/>
+<objsur guid="BCC2120E-EA5E-11DE-87C1-0013722F8DEC" t="r"/>
+</Weather>
+</rt>
+<rt guid="295b4bcb-1ed2-49ab-a363-e094cb9c95c8" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">First Supportive Clue</Run></Str></Title>
+<DateOfEvent val="201001011" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+<Weather>
+<objsur guid="BD04D396-EA5E-11DE-91A3-0013722F8DEC" t="r"/>
+</Weather>
+</rt>
+<rt guid="a05e5194-deaa-49ee-8edd-bc901fbef623" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">Second Supportive Clue</Run></Str></Title>
+<DateOfEvent val="201003171" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+</rt>
+<rt guid="31f0e0ed-c173-4f46-bfbf-3d99b4ec8c5b" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">You've got to be kidding!</Run></Str></Title>
+<DateOfEvent val="200910011" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+<SubRecords>
+<objsur guid="dca1b910-68b1-49eb-9930-19fdbf1fab76" t="o" />
+<objsur guid="5030364d-fcfd-49cb-b856-41514594a0ba" t="o" />
+</SubRecords>
+</rt>
+<rt guid="49a819c1-990d-418d-832b-07b43f0a75f6" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">another test</Run></Str></Title>
+<DateOfEvent val="201002141" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+</rt>
+<rt guid="7f9259a8-04f3-4cb0-ad03-bb4cb18bd975" class="RnGenericRec" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+<Title><Str><Run ws="en">new, improved test</Run></Str></Title>
+<DateOfEvent val="201003251" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+<SubRecords>
+<objsur guid="e55ef993-3a84-4d5a-920d-801dca3ba0eb" t="o" />
+<objsur guid="042853cd-0e74-4ba2-b772-bd9e4aef9fa7" t="o" />
+</SubRecords>
+<Weather>
+<objsur guid="BCAC9D02-EA5E-11DE-87CE-0013722F8DEC" t="r"/>
+<objsur guid="BC7F5090-EA5E-11DE-93B5-0013722F8DEC" t="r"/>
+</Weather>
+</rt>
+<rt guid="dca1b910-68b1-49eb-9930-19fdbf1fab76" class="RnGenericRec" ownerguid="31f0e0ed-c173-4f46-bfbf-3d99b4ec8c5b">
+<Title><Str><Run ws="en">this is a joke</Run></Str></Title>
+<DateOfEvent val="201005111" />
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+</rt>
+<rt guid="5030364d-fcfd-49cb-b856-41514594a0ba" class="RnGenericRec" ownerguid="31f0e0ed-c173-4f46-bfbf-3d99b4ec8c5b">
+<Title><Str><Run ws="en">humor is in the eyes of the observer</Run></Str></Title>
+<Type><objsur guid="82290763-1633-4998-8317-0ec3f5027fbd" t="r" /></Type>
+</rt>
+<rt guid="e55ef993-3a84-4d5a-920d-801dca3ba0eb" class="RnGenericRec" ownerguid="7f9259a8-04f3-4cb0-ad03-bb4cb18bd975">
+<Title><Str><Run ws="en">test sub 1</Run></Str></Title>
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+<SubRecords>
+<objsur guid="36672663-7835-4aad-bf24-ffce39a3534a" t="o" />
+</SubRecords>
+</rt>
+<rt guid="36672663-7835-4aad-bf24-ffce39a3534a" class="RnGenericRec" ownerguid="e55ef993-3a84-4d5a-920d-801dca3ba0eb">
+<Title><Str><Run ws="en">test sub 2</Run></Str></Title>
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+</rt>
+<rt guid="042853cd-0e74-4ba2-b772-bd9e4aef9fa7" class="RnGenericRec" ownerguid="7f9259a8-04f3-4cb0-ad03-bb4cb18bd975">
+<Title><Str><Run ws="en">tes tsub 3</Run></Str></Title>
+<Type><objsur guid="b7ea5156-ea5e-11de-9f9c-0013722f8dec" t="r" /></Type>
+</rt>
+<rt class="CmPossibilityList" guid="D7186B26-EA5E-11DE-9294-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+<Name><AUni ws="en">Weather</AUni></Name>
+<Abbreviation><AUni ws="en">Wea</AUni></Abbreviation>
+<Depth val="127" />
+<ItemClsid val="7" />
+<WsSelector val="-3" />
+<Possibilities>
+<objsur t="o" guid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC" />
+<objsur t="o" guid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC" />
+<objsur t="o" guid="BC8B3C3E-EA5E-11DE-9A3F-0013722F8DEC" />
+<objsur t="o" guid="BCB62660-EA5E-11DE-9037-0013722F8DEC" />
+</Possibilities>
+</rt>
+<rt class="CmPossibility" guid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC" ownerguid="D7186B26-EA5E-11DE-9294-0013722F8DEC">
+<Abbreviation><AUni ws="en">Precip</AUni></Abbreviation>
+<Name><AUni ws="en">Precipitation</AUni></Name>
+<SubPossibilities>
+<objsur t="o" guid="BBF9CD80-EA5E-11DE-9591-0013722F8DEC" />
+<objsur t="o" guid="BC0356DE-EA5E-11DE-9073-0013722F8DEC" />
+<objsur t="o" guid="BC0F4296-EA5E-11DE-919C-0013722F8DEC" />
+<objsur t="o" guid="BC1B2E44-EA5E-11DE-8824-0013722F8DEC" />
+<objsur t="o" guid="BC24B7A2-EA5E-11DE-936C-0013722F8DEC" />
+<objsur t="o" guid="BC30A35A-EA5E-11DE-9D21-0013722F8DEC" />
+</SubPossibilities>
+</rt>
+<rt class="CmPossibility" guid="BBF9CD80-EA5E-11DE-9591-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">No</AUni></Abbreviation>
+<Name><AUni ws="en">None</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC0356DE-EA5E-11DE-9073-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">Light</AUni></Abbreviation>
+<Name><AUni ws="en">Light Rain</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC0F4296-EA5E-11DE-919C-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">Med</AUni></Abbreviation>
+<Name><AUni ws="en">Medium Rain</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC1B2E44-EA5E-11DE-8824-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">Heavy</AUni></Abbreviation>
+<Name><AUni ws="en">Heavy Rain</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC24B7A2-EA5E-11DE-936C-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">Thun</AUni></Abbreviation>
+<Name><AUni ws="en">Thunderstorm</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC30A35A-EA5E-11DE-9D21-0013722F8DEC" ownerguid="BBEDE1D2-EA5E-11DE-9EB1-0013722F8DEC">
+<Abbreviation><AUni ws="en">Mon</AUni></Abbreviation>
+<Name><AUni ws="en">Monsoon</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC" ownerguid="D7186B26-EA5E-11DE-9294-0013722F8DEC">
+<Abbreviation><AUni ws="en">Temp</AUni></Abbreviation>
+<Name><AUni ws="en">Temperature</AUni></Name>
+<SubPossibilities>
+<objsur t="o" guid="BC461866-EA5E-11DE-8F26-0013722F8DEC" />
+<objsur t="o" guid="BC520414-EA5E-11DE-8A58-0013722F8DEC" />
+<objsur t="o" guid="BC5DEFCC-EA5E-11DE-8E33-0013722F8DEC" />
+<objsur t="o" guid="BC69DB7A-EA5E-11DE-9026-0013722F8DEC" />
+<objsur t="o" guid="BC7364D8-EA5E-11DE-8A9A-0013722F8DEC" />
+<objsur t="o" guid="BC7F5090-EA5E-11DE-93B5-0013722F8DEC" />
+</SubPossibilities>
+</rt>
+<rt class="CmPossibility" guid="BC461866-EA5E-11DE-8F26-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Frig</AUni></Abbreviation>
+<Name><AUni ws="en">Frigid</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC520414-EA5E-11DE-8A58-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Cold</AUni></Abbreviation>
+<Name><AUni ws="en">Cold</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC5DEFCC-EA5E-11DE-8E33-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Cool</AUni></Abbreviation>
+<Name><AUni ws="en">Cool</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC69DB7A-EA5E-11DE-9026-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Mild</AUni></Abbreviation>
+<Name><AUni ws="en">Mild</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC7364D8-EA5E-11DE-8A9A-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Hot</AUni></Abbreviation>
+<Name><AUni ws="en">Hot</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC7F5090-EA5E-11DE-93B5-0013722F8DEC" ownerguid="BC3C8F08-EA5E-11DE-944F-0013722F8DEC">
+<Abbreviation><AUni ws="en">VHot</AUni></Abbreviation>
+<Name><AUni ws="en">Very hot</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BC8B3C3E-EA5E-11DE-9A3F-0013722F8DEC" ownerguid="D7186B26-EA5E-11DE-9294-0013722F8DEC">
+<Abbreviation><AUni ws="en">Hum</AUni></Abbreviation>
+<Name><AUni ws="en">Humidity</AUni></Name>
+<SubPossibilities>
+<objsur t="o" guid="BC94C59C-EA5E-11DE-8252-0013722F8DEC" />
+<objsur t="o" guid="BCA0B14A-EA5E-11DE-9829-0013722F8DEC" />
+<objsur t="o" guid="BCAC9D02-EA5E-11DE-87CE-0013722F8DEC" />
+</SubPossibilities>
+</rt>
+<rt class="CmPossibility" guid="BC94C59C-EA5E-11DE-8252-0013722F8DEC" ownerguid="BC8B3C3E-EA5E-11DE-9A3F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Dry</AUni></Abbreviation>
+<Name><AUni ws="en">Dry</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCA0B14A-EA5E-11DE-9829-0013722F8DEC" ownerguid="BC8B3C3E-EA5E-11DE-9A3F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Hum</AUni></Abbreviation>
+<Name><AUni ws="en">Humid</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCAC9D02-EA5E-11DE-87CE-0013722F8DEC" ownerguid="BC8B3C3E-EA5E-11DE-9A3F-0013722F8DEC">
+<Abbreviation><AUni ws="en">Stm</AUni></Abbreviation>
+<Name><AUni ws="en">Steamy</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCB62660-EA5E-11DE-9037-0013722F8DEC" ownerguid="D7186B26-EA5E-11DE-9294-0013722F8DEC">
+<Abbreviation><AUni ws="en">Wnd</AUni></Abbreviation>
+<Name><AUni ws="en">Wind</AUni></Name>
+<SubPossibilities>
+<objsur t="o" guid="BCC2120E-EA5E-11DE-87C1-0013722F8DEC" />
+<objsur t="o" guid="BCCDFDC6-EA5E-11DE-8A18-0013722F8DEC" />
+<objsur t="o" guid="BCD78724-EA5E-11DE-8C5F-0013722F8DEC" />
+<objsur t="o" guid="BCE372D2-EA5E-11DE-9DD3-0013722F8DEC" />
+<objsur t="o" guid="BCEF5E8A-EA5E-11DE-8E28-0013722F8DEC" />
+<objsur t="o" guid="BCF8E7DE-EA5E-11DE-98E4-0013722F8DEC" />
+<objsur t="o" guid="BD04D396-EA5E-11DE-91A3-0013722F8DEC" />
+</SubPossibilities>
+</rt>
+<rt class="CmPossibility" guid="BCC2120E-EA5E-11DE-87C1-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Calm</AUni></Abbreviation>
+<Name><AUni ws="en">Calm</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCCDFDC6-EA5E-11DE-8A18-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Light</AUni></Abbreviation>
+<Name><AUni ws="en">Light Breeze</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCD78724-EA5E-11DE-8C5F-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Mod</AUni></Abbreviation>
+<Name><AUni ws="en">Moderate</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCE372D2-EA5E-11DE-9DD3-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Str</AUni></Abbreviation>
+<Name><AUni ws="en">Strong</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCEF5E8A-EA5E-11DE-8E28-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Gale</AUni></Abbreviation>
+<Name><AUni ws="en">Gale</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BCF8E7DE-EA5E-11DE-98E4-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Storm</AUni></Abbreviation>
+<Name><AUni ws="en">Storm</AUni></Name>
+</rt>
+<rt class="CmPossibility" guid="BD04D396-EA5E-11DE-91A3-0013722F8DEC" ownerguid="BCB62660-EA5E-11DE-9037-0013722F8DEC">
+<Abbreviation><AUni ws="en">Hur</AUni></Abbreviation>
+<Name><AUni ws="en">Hurricane</AUni></Name>
+</rt>
+</languageproject>

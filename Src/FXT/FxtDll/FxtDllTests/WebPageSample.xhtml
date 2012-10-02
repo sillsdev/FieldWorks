@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<body>
+		<template>
+			<class name="LangProject">
+				<h1>LangProject</h1>
+				<string simpleProperty="Name" ws="analysis" />
+				<h2>Parts Of Speech</h2>
+				<group objProperty="PartsOfSpeechOA">
+					<objVector objProperty="PossibilitiesOS" />
+				</group>
+			</class>
+			<class name="PartOfSpeech">
+				<ul>
+					<string simpleProperty="Name" ws="analysis" />
+						<objVector objProperty="SubPossibilitiesOS" itemLabel="poss" ordered="true" />
+				</ul>
+			</class>
+		</template>
+	</body>
+</html>

@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{DE6F45DA-35BD-469C-90D2-B7918D2BC01F}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.SharpViews</RootNamespace>
+	<AssemblyName>SharpViews</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701,1591,1573</NoWarn>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;UsingFdo</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<DocumentationFile>..\..\..\Output\Debug\SharpViews.XML</DocumentationFile>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=5.3.0.17734, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=5.3.0.36628, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl, Version=6.1.1.38983, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FDO, Version=5.3.0.34951, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=7.1.0.27342, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml.Linq">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data.DataSetExtensions">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+	<Reference Include="xCoreInterfaces, Version=7.1.0.40680, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssembledStyles.cs" />
+	<Compile Include="BlockBox.cs" />
+	<Compile Include="Box.cs" />
+	<Compile Include="Builders\Display.cs" />
+	<Compile Include="Builders\Div.cs" />
+	<Compile Include="Builders\Flow.cs" />
+	<Compile Include="Builders\MlsExpressionFlow.cs" />
+	<Compile Include="Builders\MultiAccessor.cs" />
+	<Compile Include="Builders\Row.cs" />
+	<Compile Include="Builders\TssExpressionFlow.cs" />
+	<Compile Include="Builders\ItemBuilder.cs" />
+	<Compile Include="Builders\LazyDisplay.cs" />
+	<Compile Include="Builders\Paragraph.cs" />
+	<Compile Include="Builders\Units.cs" />
+	<Compile Include="Builders\ViewBuilder.cs" />
+	<Compile Include="Builders\ViewBuilderFdo.cs" />
+	<Compile Include="Builders\Cell.cs" />
+	<Compile Include="CellBox.cs" />
+	<Compile Include="DivBox.cs" />
+	<Compile Include="FieldWorksReplacements\DefaultWritingSystemFactory.cs" />
+	<Compile Include="FixedColumnWidths.cs" />
+	<Compile Include="GraphicsHolder.cs" />
+	<Compile Include="GroupBox.cs" />
+	<Compile Include="Hookups\GroupHookup.cs" />
+	<Compile Include="Hookups\Hookup.cs" />
+	<Compile Include="Hookups\HookupInterfaces.cs" />
+	<Compile Include="Hookups\IndependentSequenceHookup.cs" />
+	<Compile Include="Hookups\IParagraphOperations.cs" />
+	<Compile Include="Hookups\ItemHookup.cs" />
+	<Compile Include="Hookups\LazyHookup.cs" />
+	<Compile Include="Hookups\MultiplePropChangedReceiver.cs" />
+	<Compile Include="Hookups\ObjectSequenceEventArgs.cs" />
+	<Compile Include="Hookups\ObjHookup.cs" />
+	<Compile Include="Hookups\ParagraphOperationsFdo.cs" />
+	<Compile Include="Hookups\SequenceHookup.cs" />
+	<Compile Include="Hookups\StTextParagraphOperations.cs" />
+	<Compile Include="IControlColumnWidths.cs" />
+	<Compile Include="ImageBox.cs" />
+	<Compile Include="IRendererFactory.cs" />
+	<Compile Include="ISharpViewSite.cs" />
+	<Compile Include="LayoutCallbacks.cs" />
+	<Compile Include="LayoutInfo.cs" />
+	<Compile Include="LayoutTransform.cs" />
+	<Compile Include="LazyBox.cs" />
+	<Compile Include="LeafBox.cs" />
+	<Compile Include="Hookups\MlsHookup.cs" />
+	<Compile Include="MultiLineInsertData.cs" />
+	<Compile Include="PaintTransform.cs" />
+	<Compile Include="Paragraphs\ParaBox.cs" />
+	<Compile Include="Paragraphs\ParaBuilder.cs" />
+	<Compile Include="Paragraphs\ParaComponents.cs" />
+	<Compile Include="Paragraphs\ParaItem.cs" />
+	<Compile Include="Paragraphs\ParaLine.cs" />
+	<Compile Include="Paragraphs\StringBox.cs" />
+	<Compile Include="PileBox.cs" />
+	<Compile Include="ProportionalColumnWidths.cs" />
+	<Compile Include="RendererFactory.cs" />
+	<Compile Include="RootBox.cs" />
+	<Compile Include="RootBoxFdo.cs" />
+	<Compile Include="RowBox.cs" />
+	<Compile Include="RunBox.cs" />
+	<Compile Include="Selections\InsertionPoint.cs" />
+	<Compile Include="Hookups\ParagraphOperations.cs" />
+	<Compile Include="Selections\RangeSelection.cs" />
+	<Compile Include="Selections\Selection.cs" />
+	<Compile Include="Builders\SelectionBuilder.cs" />
+	<Compile Include="Selections\SelectionRestoreData.cs" />
+	<Compile Include="Selections\TextSelection.cs" />
+	<Compile Include="SharpView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="SharpView.Designer.cs">
+	  <DependentUpon>SharpView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Hookups\StringParaHookup.cs" />
+	<Compile Include="SharpViewFdo.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="TextSource.cs" />
+	<Compile Include="Triple.cs" />
+	<None Include="ClassDiagram1.cd" />
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Hookups\TssHookup.cs" />
+	<Compile Include="Utilities\DragDropKeyStates.cs" />
+	<Compile Include="Utilities\ModifiedMonitoredList.cs" />
+	<Compile Include="Utilities\MonitoredList.cs" />
+	<Compile Include="Utilities\RtfStyle.cs" />
+	<Compile Include="Utilities\WindowDragState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="SharpView.resx">
+	  <DependentUpon>SharpView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\Common\SimpleRootSite\SimpleRootSite.csproj">
+	  <Project>{99898933-E3F3-45E0-82CA-3257805CDA69}</Project>
+	  <Name>SimpleRootSite</Name>
+	</ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

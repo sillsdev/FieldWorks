@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD for Etic Gloss List data
+	 A. Black 08 Nov 2002
+		  Revised 12 Sep 2005-->
+<!ELEMENT eticGlossList (item+)>
+<!ATTLIST eticGlossList
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT item (abbrev*, term+, def*, abbrev*, term*, citation*, fs?, item*)>
+<!ATTLIST item
+	id ID #IMPLIED
+	type (complex | feature | fsType | group | value | deriv | xref) #IMPLIED
+	status (hidden | proxy | visible) #IMPLIED
+	target IDREF #IMPLIED
+	append IDREF #IMPLIED
+	posid CDATA #IMPLIED
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT abbrev (#PCDATA)>
+<!ATTLIST abbrev
+	ws CDATA #REQUIRED
+>
+<!ELEMENT term (#PCDATA)>
+<!ATTLIST term
+	ws CDATA #REQUIRED
+>
+<!ELEMENT def (#PCDATA | English | ul | p)*>
+<!ATTLIST def
+	ws CDATA #REQUIRED
+>
+<!ELEMENT English (#PCDATA)>
+<!ELEMENT citation (#PCDATA)>
+<!ELEMENT li (#PCDATA | ul | English)*>
+<!ELEMENT p (#PCDATA | English)*>
+<!ELEMENT ul (li+)>
+<!ELEMENT fs (f?)>
+<!ATTLIST fs
+	id ID #IMPLIED
+	type CDATA #IMPLIED
+	status CDATA #IMPLIED
+	target IDREF #IMPLIED
+>
+<!ELEMENT f (sym | fs | unknown)>
+<!ATTLIST f
+	name CDATA #REQUIRED
+>
+<!ELEMENT sym EMPTY>
+<!ATTLIST sym
+	value CDATA #REQUIRED
+>
+<!ELEMENT unknown EMPTY>

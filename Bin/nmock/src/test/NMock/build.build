@@ -1,0 +1,30 @@
+<project name="NMock" default="all">
+	<fwroot test="bld\SetupInclude.xml"/>
+	<include buildfile="${fwroot}\Bld\SetupInclude.xml"/>
+	<!--
+-->
+	<target name="all" description="Builds all">
+		<csc target="library" output="${nant.project.basedir}/bin/${config}/NMockTests.dll" debug="true">
+			<sources>
+				<includes name="**.cs"/>
+			</sources>
+			<references>
+				<includes name="${fwroot}\bin\NMock\nmock.dll"/>
+				<includes name="${fwroot}\bin\Nunit\bin\nunit.framework.dll"/>
+				<!--<includes name="${fwroot}\Output\${config}\Interop\ECObjectsInterop.dll"/>-->
+				<includes name="${nant.project.basedir}/bin/${config}/Interop.*.dll"/>
+			</references>
+			<arg value="/nowarn:0679,1591"/>
+		</csc>
+		<copy todir="${nant.project.basedir}/bin/${config}">
+			<fileset>
+				<includes name="${fwroot}\bin\Nunit\bin\nunit.framework.dll"/>
+				<includes name="${fwroot}\bin\NMock\nmock.*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<property name="noIncludeSpecialTargets" value="true"/>
+	<include buildfile="${VSConvertBuildFile}"/>
+	<include buildfile="${fwroot}\Bld\SpecialTargets.xml"/> <!-- this has to be at the end -->
+</project>

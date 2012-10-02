@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PartInventory>
+	<bin>
+		<part id="LexEntry-Detail-Nested-Collapsed">
+			<slice label="Header">
+				<slice label="Citation form" editor="string" field="CitationForm" ws="vernacular"/>
+				<slice label="Bibliography" editor="string" field="Bibliography" ws="analysis"/>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-Nested-Expanded">
+			<slice label="Header" expansion="expanded">
+				<slice label="Citation form" editor="string" field="CitationForm" ws="vernacular"/>
+				<slice label="Bibliography" editor="string" field="Bibliography" ws="analysis"/>
+			</slice>
+		</part>
+	</bin>
+</PartInventory>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for glimpse instruction.
+-->
+
+<accil>
+ <on-application >
+
+  <!-- glimpse a bad path -->
+  <glimpse wait="2000" path="really:Bad" on-pass="assert">
+   The bogus path <data of="$.path"/> was found.
+  </glimpse>
+
+  <!-- glimpse a good path -->
+  <glimpse path="titlebar:NAMELESS" on-fail="assert">
+   The path <data of="$.path"/> was not found.
+  </glimpse>
+
+  <!-- glimpse a NAMELESS path -->
+
+  <!-- glimpse #ANY path -->
+
+  <!-- glimpse the first occurance of a path -->
+
+  <!-- glimpse the third occurance of a path -->
+
+  <!-- glimpse a variable path -->
+
+  <!-- glimpse a select path -->
+
+  <!-- glimpse a boolean property on a path -->
+
+  <!-- glimpse a property on a path that has an expected value -->
+
+  <!-- glimpse a property on a path that has the wrong expected value -->
+
+  <!-- glimpse a property in a dialog path that has an expected value -->
+  <on-dialog name="Import" title="Style" on-fail="assert">
+   <glimpse wait="5000" path="button:Cancel" prop="name" expect="Cancel" on-fail="assert">
+	The <data of="$.path"/> has name '<data of="$.value"/>' not '<data of="$.expect"/>'.
+   </glimpse>
+   <click wait="2000" path="button:Cancel" />
+  </on-dialog>
+
+  <!-- glimpse a first structured paragraph -->
+  <glimpse path="para:1" on-fail="assert">
+   Paragraph '<data of="$.path"/>' not found. Result = '<data/>'.
+  </glimpse>
+
+  <!-- glimpse a fifth structured paragraph -->
+  <glimpse path="para:5" on-fail="assert">
+   Paragraph '<data of="$.path"/>' not found. Result = '<data/>'.
+  </glimpse>
+
+  <!-- glimpse a line in a structured paragraph -->
+  <glimpse path="para:8/line:2" on-fail="assert">
+   Line '<data of="$.path"/>' not found. Result = '<data/>'.
+  </glimpse>
+
+</on-application>
+</accil>

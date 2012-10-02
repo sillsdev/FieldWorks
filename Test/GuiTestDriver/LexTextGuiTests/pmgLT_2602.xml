@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- Automates LT-2602 -->
+
+<accil on-fail="assert">
+
+   <goal>Exercises Export</goal>
+
+ <!--1. Open Kalaba -->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+  <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+ <!--2. Select File - export lexicon -->
+	<click select="menubar/file/export"/>
+
+ <!--3. Click the Export button on the Export dialog -->
+	 <on-dialog title="Export" name="ExportDialog" >
+		<click path="$NL;34:Full Lexicon (root-based)"/>
+		<click path="9:Export.../button:Export..."/>
+		<on-dialog title="Export to SFM">
+ <!--4. Name the file Kalaba -->
+		   <insert wait="1000">c:\temp\ExportTest</insert>
+		   <!--click path="9:File name:[2]/9:File name:/combobox:File name:"/-->
+		   <click path="9:Save/43:Save"/>
+		</on-dialog>
+	 </on-dialog>
+
+	 <insert>~</insert>
+
+  </on-application>
+</accil>

@@ -1,0 +1,18 @@
+<?xml-stylesheet type="text/xsl" href="..\XSL\HelpFile.xsl" ?>
+<fact file="nolink.xml">
+ <title tag="nlk">No Link Yet!</title>
+ <index>
+  <li>no link</li>
+ </index>
+ <label name="Why?">
+  <p>This manual is still under construction! Since HTML Help won't show you the link names (unless you know how to ask) you will likely step on a few more "landmine" links.</p>
+  <p name="Tip">Once you've seen this page, all the rest of the "nolink" links on the page will be highlighted.</p>
+  <p name="What to do">Simply click the "Back" button on your Help file viewer or browser. You will be returned to the page you came from.</p>
+  <p>Here are some areas that are still being worked on:</p>
+  <ul>
+   <li>Pages requiring policy decisions.</li>
+   <li>Pages that need process to be defined, like writing testscripts in XML and building this manual.</li>
+   <li>Pages that simply aren't ready for prime-time viewing.</li>
+  </ul>
+ </label>
+</fact>

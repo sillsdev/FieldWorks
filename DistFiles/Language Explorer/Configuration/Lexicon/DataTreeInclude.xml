@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+	<!--<include path="../CommonDataTreeInclude.xml"/> -->
+	<!--
+  ===========================================================
+  Commands
+  ===========================================================
+  -->
+	<commands>
+		<!--<include query="window/commands/*"/> -->
+		<!--
+	No-op - no operation makes sense here
+	-->
+		<!--    <command id="CmdDataTree-Help" label="Help..." icon="Help"/>
+
+	   Lexeme form
+		-->
+		<command id="CmdDataTree-Create-LexemeForm-StemAllomorph" label="Create Stem Form" message="DataTreeInsert">
+			<parameters field="LexemeForm" className="MoStemAllomorph"/>
+		</command>
+		<command id="CmdDataTree-Create-LexemeForm-AffixAllomorph" label="Create Affix Form" message="DataTreeInsert">
+			<parameters field="LexemeForm" className="MoAffixAllomorph"/>
+		</command>
+		<command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
+			<parameters field="LexemeForm" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Insert-VariantForm" label="Insert Variant" message="DataTreeInsert">
+			<parameters field="VariantFormEntryBackRefs" className="LexEntry" recomputeVirtual="LexEntry.VariantFormEntryBackRefs"/>
+		</command>
+		<command id="CmdDataTree-Convert-LexemeForm-AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm">
+			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
+		</command>
+		<command id="CmdDataTree-Convert-LexemeForm-AffixAllomorph" label="Convert to Affix Form" message="ConvertLexemeForm">
+			<parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
+		</command>
+		<!--
+	  Alternate Forms
+	   -->
+		<command id="CmdDataTree-MoveUp-Allomorph" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Allomorph" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Insert-StemAllomorph" label="Insert Stem Allomorph" message="DataTreeInsert">
+			<parameters field="AlternateForms" className="MoStemAllomorph"/>
+		</command>
+		<command id="CmdDataTree-Insert-AffixAllomorph" label="Insert Affix Allomorph" message="DataTreeInsert">
+			<parameters field="AlternateForms" className="MoAffixAllomorph"/>
+		</command>
+		<command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<!--CmPicture-->
+		<command id="CmdDataTree-Delete-Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
+			<parameters field="Pictures" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveUp-Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Pictures" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Pictures" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
+			<parameters field="Pictures" className="LexSense" />
+		</command>
+		<!--
+	  AlternateForms
+	   -->
+		<command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
+			<parameters field="AlternateForms" className="MoForm"/>
+		</command>
+		<command id="CmdDataTree-Insert-AffixProcess" label="Insert Affix Process" message="DataTreeInsert">
+			<parameters field="AlternateForms" className="MoAffixProcess"/>
+		</command>
+		<command id="CmdDataTree-Convert-Allomorph-AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
+			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
+		</command>
+		<command id="CmdDataTree-Convert-Allomorph-AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
+			<parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
+		</command>
+		<!--
+	MSAs
+	 -->
+		<command id="CmdDataTree-Insert-StemMsa" label="Insert Grammatical Info. for Stem" message="DataTreeInsert">
+			<parameters field="MorphoSyntaxAnalyses" className="MoStemMsa"/>
+		</command>
+		<command id="CmdDataTree-Insert-InflectionAffixMsa" label="Insert Grammatical Info. for Inflectional Affix" message="DataTreeInsert">
+			<parameters field="MorphoSyntaxAnalyses" className="MoInflAffMsa"/>
+		</command>
+		<command id="CmdDataTree-Insert-DerivationAffixMsa" label="Insert Grammatical Info. for Derivational Affix" message="DataTreeInsert">
+			<parameters field="MorphoSyntaxAnalyses" className="MoDerivAffMsa"/>
+		</command>
+		<command id="CmdDataTree-Insert-UnclassifiedAffixMsa" label="Insert Grammatical Info. for Affix" message="DataTreeInsert">
+			<parameters field="MorphoSyntaxAnalyses" className="MoUnclassifiedAffixMsa"/>
+		</command>
+		<command id="CmdDataTree-Delete-MSA" label="Delete Grammatical Info." message="DataTreeDelete" icon="Delete">
+			<parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
+		</command>
+		<command id="CmdDataTree-Merge-MSA" label="Merge Grammatical Info. into..." message="DataTreeMerge">
+			<parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
+		</command>
+		<!-- these don't work. Maybe 'cause it's not a sequence?
+	 <command id="CmdDataTree-MoveUp-MSA" label="↑ Move Grammatical Info. _Up" message="MoveUpObjectInSequence">
+	  <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
+	</command>
+	<command id="CmdDataTree-MoveDown-MSA" label="↓ Move Grammatical Info. _Down" message="MoveDownObjectInSequence">
+	  <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
+	</command>
+ -->
+		<!--
+	Senses
+	-->
+		<command id="CmdDataTree-Insert-SubSense" label="Insert Su_bsense" message="DataTreeInsert">
+			<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline"/>
+		</command>
+		<command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
+			<parameters field="Senses" className="LexSense" slice="owner" recomputeVirtual="LexSense.LexSenseOutline"/>
+		</command>
+		<command id="CmdDataTree-Insert-Entry-Sense" label="Insert _Top-Level Sense" message="DataTreeInsert">
+			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline"/>
+		</command>
+		<command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-Merge-Sense" label="Merge Sense into..." message="DataTreeMerge">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveUp-Sense" label="Move Sense _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Sense-Symbol" label="↓" message="MoveDownObjectInSequence">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveUp-Sense-Symbol" label="↑" message="MoveUpObjectInSequence">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-MakeSub-Sense" label="Demote" message="DemoteSense" icon="MoveRight">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-Promote-Sense" label="Promote" message="PromoteSense" icon="MoveLeft">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<command id="CmdDataTree-Split-Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
+			<parameters field="Senses" className="LexSense"/>
+		</command>
+		<!--
+	Examples
+	-->
+		<command id="CmdDataTree-MoveUp-Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Examples" className="LexExampleSentence"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Examples" className="LexExampleSentence"/>
+		</command>
+		<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
+			<parameters field="Examples" className="LexExampleSentence"/>
+		</command>
+		<command id="CmdDataTree-Delete-Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
+			<parameters field="Examples" className="LexExampleSentence"/>
+		</command>
+		<command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
+			<parameters field="Example" ownerClass="LexExampleSentence" guicontrol="findExampleSentences"/>
+		</command>
+		<!--
+	Translations
+	-->
+		<command id="CmdDataTree-Insert-Translation" label="Insert Translation" message="DataTreeInsert">
+			<parameters field="Translations" className="CmTranslation"/>
+		</command>
+		<command id="CmdDataTree-Delete-Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
+			<parameters field="Translations" className="CmTranslation"/>
+		</command>
+		<!--
+	Variants
+	-->
+		<command id="CmdDataTree-Insert-Variant" label="Insert Variant" message="DataTreeInsert">
+			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
+		</command>
+		<command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
+			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
+		</command>
+		<command id="CmdDataTree-Delete-VariantReference" label="Delete Reference" message="DataTreeDeleteReference" icon="Delete">
+			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
+		</command>
+		<!--
+	Pronunciations
+	-->
+		<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
+			<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry"/>
+		</command>
+		<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
+			<parameters field="Pronunciations" className="LexPronunciation"/>
+		</command>
+		<command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Pronunciations" className="LexPronunciation"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Pronunciations" className="LexPronunciation"/>
+		</command>
+		<command id="CmdDataTree-Pronunciation-WritingSystems" label="Writing Systems" message="PronunciationWritingSystems">
+			<parameters field="Pronunciations" className="LexPronunciation"/>
+		</command>
+
+		<!--
+			Etymology
+		-->
+		<command id="CmdDataTree-Insert-Etymology" label="Insert Etymology" message="DataTreeInsert">
+			<parameters field="Etymology" className="LexEtymology"/>
+		</command>
+		<command id="CmdDataTree-Delete-Etymology" label="Delete Etymology" message="DataTreeDelete" icon="Delete">
+			<parameters field="Etymology" className="LexEtymology"/>
+		</command>
+		<!--
+			Subentry Link
+		-->
+		<command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">
+			<parameters field="MainEntriesOrSenses" className="LexRefEntryOrSense"/>
+		</command>
+		<!--
+			LexReference
+		-->
+		<command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete"/>
+		<command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference"/>
+		<command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference"/>
+		<command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit"/>
+		<!--
+			ReversalIndexEntry
+		-->
+		<command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
+			<parameters field="Subentries" className="ReversalIndexEntry"/>
+		</command>
+		<command id="CmdDataTree-Move-MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
+		<command id="CmdDataTree-Promote-ProReversalIndexEntry" label="Promote" message="PromoteReversalindexEntry" icon="MoveLeft">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
+		<command id="CmdDataTree-Delete-Subentry" label="Delete this Entry and any Subentries" message="DataTreeDelete" icon="Delete">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
+		<command id="CmdDataTree-Merge-Subentry" label="Merge Entry into..." message="DataTreeMerge">
+			<parameters field="Subentries" className="ReversalindexEntry"/>
+		</command>
+		<!--
+			Environments
+		-->
+		<command id="CmdDataTree-Insert-Slash" label="Insert Environment slash" message="InsertSlash"/>
+		<command id="CmdDataTree-Insert-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
+		<command id="CmdDataTree-Insert-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
+		<command id="CmdDataTree-Insert-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
+		<command id="CmdDataTree-Insert-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
+		<!--
+			LexEntryRefs
+		-->
+		<command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
+		<command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
+		<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
+			<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" recomputeVirtual="LexEntry.VariantEntryRefs"/>
+		</command>
+		<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
+		<!--command id="CmdDataTree-MoveUp-ComplexFormSpec" label="Move Complex Form Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/-->
+		<!--command id="CmdDataTree-MoveDown-ComplexFormSpec" label="Move Complex Form Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/-->
+		<command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
+	</commands>
+	<!--
+  ===========================================================
+  Context Menus
+  ===========================================================
+  -->
+	<contextMenus>
+		<!--<include query="window/contextMenus/*"/> -->
+		<menu id="mnuDataTree-Help">
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-LexemeForm">
+			<item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/>
+			<item command="CmdDataTree-Swap-LexemeForm"/>
+			<item command="CmdDataTree-Convert-LexemeForm-AffixProcess"/>
+			<item command="CmdDataTree-Convert-LexemeForm-AffixAllomorph"/>
+		</menu>
+		<menu id="mnuDataTree-LexemeFormContext">
+			<item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
+			<item command="CmdLexemeFormJumpToConcordance"/>
+			<item command="CmdDataTree-Swap-LexemeForm"/>
+		</menu>
+		<menu id="mnuDataTree-CitationFormContext">
+			<item command="CmdEntryJumpToConcordance"/>
+		</menu>
+		<menu id="mnuDataTree-Allomorphs">
+			<item command="CmdDataTree-Insert-StemAllomorph"/>
+			<item command="CmdDataTree-Insert-AffixAllomorph"/>
+		</menu>
+		<menu id="mnuDataTree-AlternateForms">
+			<item command="CmdDataTree-Insert-AlternateForm"/>
+			<item command="CmdDataTree-Insert-AffixProcess"/>
+		</menu>
+		<menu id="mnuDataTree-Allomorphs-Hotlinks">
+			<item command="CmdDataTree-Insert-StemAllomorph"/>
+			<item command="CmdDataTree-Insert-AffixAllomorph"/>
+		</menu>
+		<menu id="mnuDataTree-AlternateForms-Hotlinks">
+			<item command="CmdDataTree-Insert-AlternateForm"/>
+		</menu>
+		<menu id="mnuDataTree-VariantForms">
+			<item command="CmdDataTree-Insert-VariantForm"/>
+		</menu>
+		<menu id="mnuDataTree-VariantForms-Hotlinks">
+			<item command="CmdDataTree-Insert-VariantForm"/>
+		</menu>
+		<menu id="mnuDataTree-VariantForm">
+			<item command="CmdEntryJumpToDefault"/>
+			<item command="CmdEntryJumpToConcordance"/>
+			<item command="CmdDataTree-Delete-VariantReference"/>
+			<item command="CmdDataTree-Delete-Variant"/>
+		</menu>
+		<menu id="mnuDataTree-VariantFormContext">
+			<item command="CmdEntryJumpToDefault"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdEntryJumpToConcordance"/>
+		</menu>
+		<menu id="mnuDataTree-Allomorph">
+			<item command="CmdDataTree-MoveUp-Allomorph"/>
+			<item command="CmdDataTree-MoveDown-Allomorph"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-Allomorph"/>
+			<item command="CmdDataTree-Delete-Allomorph"/>
+			<item command="CmdDataTree-Swap-Allomorph"/>
+			<item command="CmdDataTree-Convert-Allomorph-AffixProcess"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
+		</menu>
+		<menu id="mnuDataTree-AffixProcess">
+			<item command="CmdDataTree-MoveUp-Allomorph"/>
+			<item command="CmdDataTree-MoveDown-Allomorph"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Allomorph"/>
+			<item command="CmdDataTree-Swap-Allomorph"/>
+			<item command="CmdDataTree-Convert-Allomorph-AffixAllomorph"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
+		</menu>
+		<menu id="mnuDataTree-Picture">
+			<item command="CmdDataTree-Properties-Picture" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Picture"/>
+			<item command="CmdDataTree-MoveDown-Picture"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Picture"/>
+		</menu>
+		<menu id="mnuDataTree-AlternateForm">
+			<item command="CmdDataTree-MoveUp-AlternateForm"/>
+			<item command="CmdDataTree-MoveDown-AlternateForm"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-AlternateForm"/>
+			<item command="CmdDataTree-Delete-AlternateForm"/>
+		</menu>
+		<menu id="mnuDataTree-MSAs">
+			<item command="CmdDataTree-Insert-DerivationAffixMsa"/>
+			<item command="CmdDataTree-Insert-InflectionAffixMsa"/>
+			<item command="CmdDataTree-Insert-UnclassifiedAffixMsa"/>
+			<item command="CmdDataTree-Insert-StemMsa"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-MSA">
+			<item command="CmdDataTree-Help"/>
+			<item command="CmdDataTree-Merge-MSA"/>
+			<item command="CmdDataTree-Delete-MSA"/>
+		</menu>
+		<menu id="mnuDataTree-Variants">
+			<item command="CmdDataTree-Insert-Variant"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Variant">
+			<item command="CmdDataTree-Delete-Variant"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Senses">
+			<item command="CmdDataTree-Insert-SubSense"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Sense">
+			<item command="CmdDataTree-Insert-Example"/>
+			<item command="CmdFindExampleSentence"/>
+			<item command="CmdDataTree-Insert-SenseBelow"/>
+			<item command="CmdDataTree-Insert-SubSense"/>
+			<item command="CmdInsertPicture" label="Insert _Picture"  defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdSenseJumpToConcordance"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Sense"/>
+			<item command="CmdDataTree-MoveDown-Sense"/>
+			<item command="CmdDataTree-MakeSub-Sense"/>
+			<item command="CmdDataTree-Promote-Sense"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-Sense"/>
+			<item command="CmdDataTree-Split-Sense"/>
+			<item command="CmdDataTree-Delete-Sense"/>
+		</menu>
+		<menu id="mnuDataTree-Sense-Hotlinks">
+			<!--       <item command="CmdDataTree-MoveDown-Sense-Symbol"/>
+	  <item command="CmdDataTree-MoveUp-Sense-Symbol"/>
+-->
+			<item command="CmdDataTree-Insert-Example"/>
+			<item command="CmdDataTree-Insert-SenseBelow"/>
+		</menu>
+		<menu id="mnuDataTree-Examples">
+			<item command="CmdDataTree-Insert-Example"/>
+			<item command="CmdFindExampleSentence"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Example">
+			<item command="CmdDataTree-Insert-Translation"/>
+			<item command="CmdDataTree-Delete-Example"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Example"/>
+			<item command="CmdDataTree-MoveDown-Example"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdFindExampleSentence"/>
+		</menu>
+		<menu id="mnuDataTree-Translations">
+			<item command="CmdDataTree-Insert-Translation"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Translation">
+			<item command="CmdDataTree-Delete-Translation"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Pronunciation">
+			<item command="CmdDataTree-Insert-Pronunciation" label="Insert _Pronunciation"/>
+			<!-- item command="CmdInsertSoundFile" label="Insert _Sound File" defaultVisible="false"/ -->
+			<!-- item command="CmdInsertMovieFile" label="Insert _Movie File" defaultVisible="false"/ -->
+			<item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Pronunciation"/>
+			<item command="CmdDataTree-MoveDown-Pronunciation"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Pronunciation"/>
+			<item label="-" translate="do not translate"/>
+			<!-- item command="CmdDataTree-Pronunciation-WritingSystems"/ -->
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-DeletePronunciation">
+			<item command="CmdDataTree-Delete-Pronunciation"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-SubEntryLink">
+			<item command="CmdDataTree-Insert-SubEntryLink"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-Subsenses">
+			<item command="CmdDataTree-Insert-SubSense"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-InsertEtymology">
+			<item command="CmdDataTree-Insert-Etymology"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-DeleteEtymology">
+			<item command="CmdDataTree-Delete-Etymology"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+	<menu id="mnuDataTree-DeleteAddLexReference">
+	  <item command="CmdDataTree-Delete-LexReference"/>
+	  <item command="CmdDataTree-Add-ToLexReference"/>
+	  <item command="CmdDataTree-EditDetails-LexReference"/>
+	  <!-- <item command="CmdDataTree-Help"/> -->
+	</menu>
+	<menu id="mnuDataTree-DeleteReplaceLexReference">
+	  <item command="CmdDataTree-Delete-LexReference"/>
+	  <item command="CmdDataTree-Replace-LexReference"/>
+	  <item command="CmdDataTree-EditDetails-LexReference"/>
+	  <!-- <item command="CmdDataTree-Help"/> -->
+	</menu>
+		<menu id="mnuDataTree-InsertReversalSubentry">
+			<item command="CmdDataTree-Insert-ReversalSubentry"/>
+		</menu>
+		<menu id="mnuDataTree-InsertReversalSubentry-Hotlinks">
+			<item command="CmdDataTree-Insert-ReversalSubentry"/>
+		</menu>
+		<menu id="mnuDataTree-MoveReversalIndexEntry">
+			<item command="CmdDataTree-Move-MoveReversalIndexEntry"/>
+			<item command="CmdDataTree-Promote-ProReversalIndexEntry"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-Subentry"/>
+			<item command="CmdDataTree-Delete-Subentry"/>
+		</menu>
+		<menu id="mnuDataTree-Environments-Insert">
+			<item command="CmdDataTree-Insert-Slash"/>
+			<item command="CmdDataTree-Insert-Underscore"/>
+			<item command="CmdDataTree-Insert-NaturalClass"/>
+			<item command="CmdDataTree-Insert-OptionalItem"/>
+			<item command="CmdDataTree-Insert-HashMark"/>
+		</menu>
+		<menu id="mnuDataTree-CmMedia">
+			<item command="CmdDeleteMediaFile"/>
+			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-VariantSpec">
+			<item command="CmdDataTree-MoveUp-VariantSpec"/>
+			<item command="CmdDataTree-MoveDown-VariantSpec"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Insert-VariantSpec"/>
+			<item command="CmdDataTree-Delete-VariantSpec"/>
+		</menu>
+		<menu id="mnuDataTree-ComplexFormSpec">
+			<!--item command="CmdDataTree-MoveUp-ComplexFormSpec"/-->
+			<!--item command="CmdDataTree-MoveDown-ComplexFormSpec"/-->
+			<!--item label="-" translate="do not translate"/-->
+			<item command="CmdDataTree-Delete-ComplexFormSpec"/>
+		</menu>
+	</contextMenus>
+</window>

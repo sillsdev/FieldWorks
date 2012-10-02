@@ -1,0 +1,213 @@
+Comment * ITRANS IFM file for Unicode  Output
+Comment *===================================================================
+Comment * Copyright 2001 Avinash Chopde, All  Rights Reserved.
+Comment *
+Comment * Maintained: Avinash Chopde <avinash@acm.org> http://www.aczone.com/
+Comment * Created by: Shree <shree@yahoo.com>
+Comment ===================================================================
+% ------------- Instructions for Creating ITRANS IFM files for Unicode
+% The following page has Unicode ranges for all languages, and
+% includes both Decimal and Hexadecimal values:
+%           http://www.hclrss.demon.co.uk/unicode/devanagari.html
+% For ITRANS tables, visit the online documents at:
+%           http://www.aczone.com/itrans/#onlinedocs
+%
+% The PCC <charcode> ... statements below accept either Decimal or
+% Hexadecimal, so both of these are identical:
+% PCC 2309 0 0 ;
+% is same as:
+% PCC 0x0905 0 0 ;
+% [note: hex numbers must be preceed with "0x", decimal numbers must not
+%  have leading 0's - leading 0's imply that the number is octal]
+% -------------
+Comment ===================================================================
+
+itrans: StartINDIAN
+itrans: TEXT_UNICODE  tamil
+itrans: DEFAULTVOWEL a ;
+
+% These are in Unicode, but not  used by ITRANS:
+% 2317 090D DEVANAGARI LETTER CANDRA E
+% 2318 090E DEVANAGARI LETTER SHORT E
+% 2321 911 DEVANAGARI LETTER CANDRA O
+% 2322 912 DEVANAGARI LETTER SHORT O
+% 2356 934 DEVANAGARI LETTER LLLA (lda-dot)
+% 2399 -> YYA (ya-dot)
+% 2345 929 DEVANAGARI LETTER NNNA (na-dot)
+% danda, double danda, nukta, udatta, anudatta,  abbreviation sign
+% ----------------------------------------------------------------
+
+itrans: Comment The Vowels - Independent Vowels  in Unicode
+
+itrans: CC a 1 ; PCC 2949  0 0 ;
+itrans: CC aa 1 ; PCC 2950  0 0 ;
+itrans: CC i 1 ; PCC 2951  0 0 ;
+itrans: CC ii 1 ; PCC 2952  0 0 ;
+itrans: CC u 1 ; PCC 2953  0 0 ;
+itrans: CC uu 1 ; PCC 2954  0 0 ;
+itrans: CC ri 1 ; PCC 2955  0 0 ;
+itrans: CC rii 1 ; PCC 3040  0 0 ;
+itrans: CC li 1 ; PCC 2956  0 0 ;
+itrans: CC lii 1 ; PCC 3041  0 0 ;
+itrans: CC ay 1 ; PCC 2958  0 0 ;  % e
+itrans: CC aay 1 ; PCC 2959  0 0 ;  % E same as devanagari e
+itrans: CC ai 1 ; PCC 2960  0 0 ;  % ai
+itrans: CC o 1 ; PCC 2962  0 0 ;  % o
+itrans: CC oo 1 ; PCC 2963  0 0 ;  %O same as devanagari o
+itrans: CC au 1 ; PCC 2964  0 0 ;  %au
+itrans: CC am 2 ; PCC 2949  0 0 ; PCC  2946 0 0 ;
+itrans: CC aha 1 ; PCC 2947  0 0 ;  %visarga only
+
+itrans: Comment The Template - use Dependent  Vowels as defined in  Unicode
+
+itrans: CCADD tmplA ;
+itrans: CC tmplA-half 2 ; PCC implicit  0 0 ; PCC  3021 0 0 ;
+itrans: CC tmplA-conjunct 2 ; PCC implicit  0 0 ; PCC  3021 0 0 ;
+itrans: CC tmplA-a 1 ; PCC implicit  0 0 ;
+itrans: CC tmplA-aa 2 ; PCC implicit  0 0 ; PCC  3006 0 0 ;
+itrans: CC tmplA-i 2 ; PCC implicit  0 0 ; PCC  3007 0 0 ;
+itrans: CC tmplA-ii 2 ; PCC implicit  0 0 ; PCC  3008 0 0 ;
+itrans: CC tmplA-u 2 ; PCC implicit  0 0 ; PCC  3009 0 0 ;
+itrans: CC tmplA-uu 2 ; PCC implicit  0 0 ; PCC  3010 0 0 ;
+itrans: CC tmplA-ri 2 ; PCC implicit  0 0 ; PCC  3011 0 0 ;
+itrans: CC tmplA-rii 2 ; PCC implicit  0 0 ; PCC  3012 0 0 ;
+itrans: CC tmplA-li 2 ; PCC implicit  0 0 ; PCC  3042 0 0 ;
+itrans: CC tmplA-lii 2 ; PCC implicit  0 0 ; PCC  3043 0 0 ;
+itrans: CC tmplA-ay 2 ; PCC implicit  0 0 ; PCC  3014 0 0 ;
+itrans: CC tmplA-aay 2 ; PCC implicit  0 0 ; PCC  3015 0 0 ;
+itrans: CC tmplA-ai 2 ; PCC implicit  0 0 ; PCC  3016 0 0 ;
+itrans: CC tmplA-o 2 ; PCC implicit  0 0 ; PCC  3018 0 0 ;
+itrans: CC tmplA-oo 2 ; PCC implicit  0 0 ; PCC  3019 0 0 ;
+itrans: CC tmplA-au 2 ; PCC implicit  0 0 ; PCC  3020 0 0 ;   %au lenghth mark is 3031
+itrans: CC tmplA-am 2 ; PCC implicit  0 0 ; PCC  2946 0 0 ;
+itrans: CC tmplA-aha 2 ; PCC implicit  0 0 ; PCC  2947 0 0 ;
+
+itrans: Comment The Consonants - in Unicode,  all are full consonants
+
+itrans: CCS ka tmplA ;
+itrans: CC ka-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS kadot ka ;
+itrans: CC kadot-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS kha tmplA ;
+itrans: CC kha-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS khadot kha ;
+itrans: CC khadot-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS ga tmplA ;
+itrans: CC ga-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS gadot ga ;
+itrans: CC gadot-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS gha tmplA ;
+itrans: CC gha-implicit 1 ; PCC 2965  0 0 ;
+itrans: CCS nga tmplA ;
+itrans: CC nga-implicit 1 ; PCC 2969  0 0 ;
+itrans: CCS cha tmplA ;
+itrans: CC cha-implicit 1 ; PCC 2970  0 0 ;
+itrans: CCS chha tmplA ;
+itrans: CC chha-implicit 1 ; PCC 2970  0 0 ;
+itrans: CCS ja tmplA ;
+itrans: CC ja-implicit 1 ; PCC 2972  0 0 ;
+itrans: CCS jadot ja ;
+itrans: CC jadot-implicit 1 ; PCC 2972  0 0 ;
+itrans: CCS jha tmplA ;
+itrans: CC jha-implicit 1 ; PCC 2972  0 0 ;
+itrans: CCS jnh tmplA ;
+itrans: CC jnh-implicit 1 ; PCC 2974  0 0 ;
+itrans: CCS tta tmplA ;
+itrans: CC tta-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS ttha tmplA ;
+itrans: CC ttha-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS dda tmplA ;
+itrans: CC dda-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS ddadot tmplA ;
+itrans: CC ddadot-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS ddha tmplA ;
+itrans: CC ddha-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS ddhadot ddadot ;
+itrans: CC ddhadot-implicit 1 ; PCC 2975  0 0 ;
+itrans: CCS nna tmplA ;
+itrans: CC nna-implicit 1 ; PCC 2979  0 0 ;
+itrans: CCS ta tmplA ;
+itrans: CC ta-implicit 1 ; PCC 2980  0 0 ;
+itrans: CCS tha tmplA ;
+itrans: CC tha-implicit 1 ; PCC 2980  0 0 ;
+itrans: CCS da tmplA;
+itrans: CC da-implicit 1 ; PCC 2980  0 0 ;
+itrans: CCS dha tmplA ;
+itrans: CC dha-implicit 1 ; PCC 2980  0 0 ;
+itrans: CCS na tmplA ;
+itrans: CC na-implicit 1 ; PCC 2984  0 0 ;
+itrans: CCS nnx tmplA ; % Tamil, etc only? ( ^n )
+itrans: CC nnx-implicit 1 ; PCC  2985  0 0 ;
+itrans: CCS pa tmplA ;
+itrans: CC pa-implicit 1 ; PCC 2986  0 0 ;
+itrans: CCS pha tmplA ;
+itrans: CC pha-implicit 1 ; PCC 2986  0 0 ;
+itrans: CCS phadot pha ;
+itrans: CC phadot-implicit 1 ; PCC 2986  0 0 ;
+itrans: CCS ba tmplA ;
+itrans: CC ba-implicit 1 ; PCC 2986  0 0 ;
+itrans: CCS bha tmplA ;
+itrans: CC bha-implicit 1 ; PCC 2986  0 0 ;
+itrans: CCS ma tmplA ;
+itrans: CC ma-implicit 1 ; PCC 2990  0 0 ;
+itrans: CCS ya tmplA ;
+itrans: CC ya-implicit 1 ; PCC 2991  0 0 ;
+itrans: CCS yya tmplA ; % Devanagari: used as ya-dot
+itrans: CC yya-implicit 1 ; PCC  3039  0 0 ;
+itrans: CCS ra tmplA ;
+itrans: CC ra-implicit 1 ; PCC 2992  0 0 ;
+itrans: CCS rra tmplA ;
+itrans: CC rra-implicit 1 ; PCC 2993  0 0 ;
+itrans: CCS la tmplA ;
+itrans: CC la-implicit 1 ; PCC 2994  0 0 ;
+itrans: CCS lda tmplA ;
+itrans: CC lda-implicit 1 ; PCC 2995  0 0 ;
+
+
+itrans: CCS va tmplA ;
+itrans: CC va-implicit 1 ; PCC 2997  0 0 ;
+itrans: CCS sha tmplA ;
+itrans: CC sha-implicit 1 ; PCC 2998  0 0 ;  % not defined in unicode
+itrans: CCS shha tmplA ;
+itrans: CC shha-implicit 1 ; PCC 2999  0 0 ;
+itrans: CCS sa tmplA ;
+itrans: CC sa-implicit 1 ; PCC 3000  0 0 ;
+itrans: CCS ha tmplA ;
+itrans: CC ha-implicit 1 ; PCC 3001  0 0 ;
+
+
+itrans: CCS ksha tmplA ; % ka-shha
+itrans: CC ksha-implicit 3 ; PCC 2965  0 0 ; PCC  3021 0 0 ; PCC  2999  0 0;
+itrans: CCS gya tmplA ; % ja-jnh  Unicode JA-NYA (?)
+itrans: CC gya-implicit 3 ; PCC 2972  0 0 ; PCC  3021 0 0 ; PCC  2974  0 0;
+
+
+itrans: Comment The Specials (Incomplete support in  ITRANS)
+
+itrans: CC anusvara-implicit 1 ; PCC 2946  0 0 ;
+itrans: CC chandra-implicit 1 ; PCC 2946  0 0 ; %  2373=CANDRA E, 2374=SHORT E
+itrans: CC chandrabindu-implicit 1 ; PCC 2946  0 0 ;
+itrans: CC aum-implicit 1 ; PCC 3024  0 0 ;  % not defined in unicode
+itrans: CC viraam-implicit 1 ; PCC 3021  0 0 ;
+itrans: CC avagraha-implicit 1 ; PCC 3005  0 0 ;  % not defined in unicode
+% itrans: CC sri-implicit 1 ; PCC   244 0 0 ; % Tamil only?
+
+% rahalf ( ^r or .r ) is a hack that was used in ITRANS, for the
+% half-chandra-ra superscript, it would be very tricky to have it supported
+% here, the best option is to avoid rahalf in the input. Use normal ra instead,
+% i.e, instead of ga.r  use rga in the input.
+itrans: CC rahalf-implicit 2 ; PCC  2992 0 0 ; PCC  3021 0 0 ; % Devanagari only?
+
+itrans: Comment ----------- Digits
+itrans: CC zero 1 ; PCC 3046  0 0 ;
+itrans: CC one 1 ; PCC 3047  0 0 ;
+itrans: CC two 1 ; PCC 3048  0 0 ;
+itrans: CC three 1 ; PCC 3049  0 0 ;
+itrans: CC four 1 ; PCC 3050  0 0 ;
+itrans: CC five 1 ; PCC 3051  0 0 ;
+itrans: CC six 1 ; PCC 3052  0 0 ;
+itrans: CC seven 1 ; PCC 3053  0 0 ;
+itrans: CC eight 1 ; PCC 3054  0 0 ;
+itrans: CC nine 1 ; PCC 3055  0 0 ;
+
+itrans: EndINDIAN

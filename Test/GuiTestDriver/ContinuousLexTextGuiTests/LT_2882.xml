@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- LT-2882 -->
+<!-- User Interface / Menus / Data / "Data overview" -->
+<accil on-fail="assert">
+ <var id="title" set="Kalaba"/>
+ <var id="lexMenu" set="window:MenuBar/menu:Tools/menu:Lexicon/"/>
+ <var id="lPanel" set="window:xWindow.mainPanel/window:xWindow.leftPanel/"/>
+ <var id="Entries" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:lexentryList/window:lexentryList/window:NAMELESS/"/>
+
+ <on-application args="-db Kalaba" run="ok" on-fail="assert">
+  <!-- Go to Lexicon / Bulk-Edit -->
+	 <click wait="3000" path="$lexMenu;menu:Lexicon Edit"/>
+
+	 <!-- * Filter the Entries pane data to display only a few entries -->
+	<!--  Find 'intransitive verbs' -->
+		<var id="Filter" set="$Entries;window:FilterBar/window:FwComboBox" />
+		<click path="$Filter;[3]/window:NAMELESS/button:NAMELESS" />
+
+		<insert wait="1000">{DOWN 4}</insert>
+	<insert wait="1000">~</insert>
+
+<insert wait="1000">intransitive verb</insert>
+		<insert wait="1000">~</insert>
+
+	<glimpse log="all" id="leEntry1" path="$Entries;20:Root/24:Table[1]/28:Row/29:Cell[2]/para:0/line:0" prop="value" on-fail="skip"/>
+	<glimpse log="all" id="leEntry2" path="$Entries;20:Root/24:Table[2]/28:Row/29:Cell[2]/para:0/line:0" prop="value" on-fail="skip"/>
+	<glimpse log="all" id="leEntry3" path="$Entries;20:Root/24:Table[3]/28:Row/29:Cell[2]/para:0/line:0" prop="value" on-fail="skip"/>
+
+	<!-- Assert that we only have three 'intransitive' entries in this filter -->
+	<glimpse log="all" id="leBogus1" path="$Entries;20:Root/24:Table[4]/28:Row/29:Cell[2]/para:0/line:0" prop="value" on-pass="assert"/>
+
+
+	<!-- From '1st Record' -->
+	 <!-- Test 'First record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:First record"/>
+	<!-- Verify we're still on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Test 'Previous record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Previous record"/>
+	<!-- Verify we're still on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Test 'Last record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Last record"/>
+	<!-- Verify we're on the last record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Go Back to '1st Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Test 'Next record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Next record"/>
+	<!-- Verify we're on the next record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry2.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	<!-- From '2nd Record' -->
+	 <!-- Test 'First record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:First record"/>
+	<!-- Verify we're still on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry2.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Test 'Previous record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Previous record"/>
+	<!-- Verify we're on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry2.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Test 'Next record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Next record"/>
+	<!-- Verify we're on the next record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry2.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Test 'Last record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Last record"/>
+	<!-- Verify we're on the last record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	<!-- From 'Last Record' -->
+
+	 <!-- Test 'First record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:First record"/>
+	<!-- Verify we're on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry1.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Go Back to 'Last Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the 3rd record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Test 'Previous record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Previous record"/>
+	<!-- Verify we're on the first record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry2.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+	 <!-- Go Back to 'Last Entry' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Go Back"/>
+	<!-- Verify we're back on the 3rd record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Test 'Next record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Next record"/>
+	<!-- Verify we're on the last record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+
+	 <!-- Test 'Last record' -->
+	<click wait="1" path="window:ParentOfMenuBar/window:ParentOfMenuBar/toolbar:Standard/tray:Last record"/>
+	<!-- Verify we're on the last record -->
+	<glimpse log="all" path="20:Lexeme Form/42:Paragraph/42:String" prop="value" on-fail="skip"
+		expect="$leEntry3.value">
+		Found <data of="$.value"/> instead of <data of="$.expect" />
+	</glimpse>
+
+ <!-- UNDO Changes -->
+	 <!-- clear Filter -->
+		<click path="$Filter;[3]/window:NAMELESS/button:NAMELESS" />
+		<insert wait="1000">{DOWN 1}~</insert>   <!-- Show All -->
+
+ </on-application>
+</accil>

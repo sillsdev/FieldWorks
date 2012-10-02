@@ -1,0 +1,23 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Source\TcContent.xml">
+ <title tag="srctcon">What is test case content?</title>
+ <index>
+  <li>Manual: test case content</li>
+ </index>
+ <definition>
+  <p>Test case content consists of the test scripts for the products and foundations of the FieldWorks suite of programs. Each product's test scripts are kept in a subdirectory of the <b>TS directory</b>.</p>
+  <ul name="Each product subdirectory contains a library of test scripts">
+   <li><i>folder-name</i>.xml - top level XML list for the testscript files belonging to the library</li>
+   <li>*.xml - testscript files</li>
+   <li>*.htm - javascript in HTML that shows the list view of all testscripts in the library for validation</li>
+   <li>TestListGen.bat - A batch file that generates TestList.htm the title page for each library.</li>
+   <li>BugPatGen.bat - A batch file that generates the list of possible bugs (PatList.htm) for each library.</li>
+  </ul>
+  <p>A testscript file from one library is considered part of another library if it is associated by name in the other library's <i>folder-name</i>.xml file. That is, the testscript is "shared" by the other library.</p>
+ </definition>
+ <seeAlso>
+  <li><link uri="..\XML\XML.xml" type="module">What is XML?</link></li>
+  <li><link uri="..\XML\XSL.xml" type="module">What is XSL?</link></li>
+  <li><link uri="..\XML\MarkUp.xml" type="module">What is HTML?</link></li>
+ </seeAlso>
+</concept>

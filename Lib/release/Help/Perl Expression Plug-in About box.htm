@@ -1,0 +1,1075 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 11">
+<meta name=Originator content="Microsoft Word 11">
+<link rel=File-List
+href="Perl%20Expression%20Plug-in%20About%20box_files/filelist.xml">
+<link rel=Edit-Time-Data
+href="Perl%20Expression%20Plug-in%20About%20box_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Perl Expression Converter</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Bob Eaton</o:Author>
+  <o:LastAuthor>Bob Eaton</o:LastAuthor>
+  <o:Revision>17</o:Revision>
+  <o:TotalTime>16</o:TotalTime>
+  <o:Created>2007-05-16T13:45:00Z</o:Created>
+  <o:LastSaved>2009-08-29T16:39:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>947</o:Words>
+  <o:Characters>5398</o:Characters>
+  <o:Lines>44</o:Lines>
+  <o:Paragraphs>12</o:Paragraphs>
+  <o:CharactersWithSpaces>6333</o:CharactersWithSpaces>
+  <o:Version>11.9999</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>BestFit</w:Zoom>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Mangal;
+	panose-1:0 0 4 0 0 0 0 0 0 0;
+	mso-font-charset:1;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:32768 0 0 0 0 0;}
+@font-face
+	{font-family:"Arial Unicode MS";
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-alt:Arial;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:"MS Shell Dlg 2";
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+h1
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:0in;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:32.0pt;
+	font-family:"Times New Roman";}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:18.0pt;
+	font-family:"Times New Roman";}
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:14.0pt;
+	font-family:"Times New Roman";}
+h4
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{margin-top:3.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{mso-style-noshow:yes;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+span.MsoFootnoteReference
+	{mso-style-noshow:yes;
+	vertical-align:super;}
+span.MsoPageNumber
+	{font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoList, li.MsoList, div.MsoList
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l3 level1 lfo2;
+	tab-stops:list .5in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListBullet, li.MsoListBullet, div.MsoListBullet
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.25in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoList2, li.MsoList2, div.MsoList2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoList3, li.MsoList3, div.MsoList3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.75in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListBullet2, li.MsoListBullet2, div.MsoListBullet2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListBullet3, li.MsoListBullet3, div.MsoListBullet3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.75in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:48.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListContinue, li.MsoListContinue, div.MsoListContinue
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListContinue2, li.MsoListContinue2, div.MsoListContinue2
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoListContinue3, li.MsoListContinue3, div.MsoListContinue3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.75in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
+	{margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:24.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+strong
+	{font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+em
+	{font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:11.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Arial Unicode MS";}
+p.callout, li.callout, div.callout
+	{mso-style-name:callout;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.copyright, li.copyright, div.copyright
+	{mso-style-name:copyright;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.imagecentered, li.imagecentered, div.imagecentered
+	{mso-style-name:imagecentered;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.imageleft, li.imageleft, div.imageleft
+	{mso-style-name:imageleft;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.imageright, li.imageright, div.imageright
+	{mso-style-name:imageright;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:right;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.listprocedure, li.listprocedure, div.listprocedure
+	{mso-style-name:listprocedure;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.25in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.listprocedure2, li.listprocedure2, div.listprocedure2
+	{mso-style-name:listprocedure2;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.5in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.noteChar
+	{mso-style-name:"note Char";
+	mso-style-locked:yes;
+	mso-style-link:note;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:HI;}
+p.note, li.note, div.note
+	{mso-style-name:note;
+	mso-style-link:"note Char";
+	margin-top:0in;
+	margin-right:63.0pt;
+	margin-bottom:6.0pt;
+	margin-left:1.0in;
+	mso-pagination:widow-orphan;
+	border:none;
+	mso-border-alt:solid windowtext .5pt;
+	padding:0in;
+	mso-padding-alt:1.0pt 4.0pt 1.0pt 4.0pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.spacehalf, li.spacehalf, div.spacehalf
+	{mso-style-name:spacehalf;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-line-height-alt:6.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.spacesingle, li.spacesingle, div.spacesingle
+	{mso-style-name:spacesingle;
+	margin:0in;
+	margin-bottom:.0001pt;
+	line-height:12.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.spacezero, li.spacezero, div.spacezero
+	{mso-style-name:spacezero;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-line-height-alt:.7pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.tableheadingrow, li.tableheadingrow, div.tableheadingrow
+	{mso-style-name:tableheadingrow;
+	margin-top:3.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+p.tablerow, li.tablerow, div.tablerow
+	{mso-style-name:tablerow;
+	margin-top:3.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.booktitle
+	{mso-style-name:booktitle;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;}
+span.definedword
+	{mso-style-name:definedword;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;}
+span.filename
+	{mso-style-name:filename;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;}
+span.keyboard
+	{mso-style-name:keyboard;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+span.placeholder
+	{mso-style-name:placeholder;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;}
+span.style
+	{mso-style-name:style;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;}
+span.typedtext
+	{mso-style-name:typedtext;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+span.userinterface
+	{mso-style-name:userinterface;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	font-weight:bold;}
+span.vernacularword
+	{mso-style-name:vernacularword;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:bold;}
+span.plaintextchar
+	{mso-style-name:plaintextchar;
+	font-family:"Courier New";
+	mso-ascii-font-family:"Courier New";
+	mso-hansi-font-family:"Courier New";
+	mso-bidi-font-family:"Courier New";}
+ /* Page Definitions */
+ @page
+	{mso-footnote-separator:url("Perl%20Expression%20Plug-in%20About%20box_files/header.htm") fs;
+	mso-footnote-continuation-separator:url("Perl%20Expression%20Plug-in%20About%20box_files/header.htm") fcs;
+	mso-endnote-separator:url("Perl%20Expression%20Plug-in%20About%20box_files/header.htm") es;
+	mso-endnote-continuation-separator:url("Perl%20Expression%20Plug-in%20About%20box_files/header.htm") ecs;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:-126;
+	mso-list-type:simple;
+	mso-list-template-ids:1650107230;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 3";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l1
+	{mso-list-id:-125;
+	mso-list-type:simple;
+	mso-list-template-ids:-1895651832;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet 2";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l2
+	{mso-list-id:-119;
+	mso-list-type:simple;
+	mso-list-template-ids:2118270274;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"List Bullet";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:1180194806;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1573167828 -1915061282 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l3:level1
+	{mso-level-style-link:List;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="46082"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h3>Perl Expression Converter</h3>
+
+<p class=MsoBodyText>This converter allows you to write a Perl expression to do
+text processing. For example, you could have the following Perl expression to
+reverse a string of characters:</p>
+
+<p class=spacesingle>&nbsp;</p>
+
+<p class=MsoPlainText>$strOut = reverse($strIn);</p>
+
+<p class=spacesingle>&nbsp;</p>
+
+<p class=spacesingle>Or this expression to convert the input string to lower
+case:</p>
+
+<p class=spacesingle>&nbsp;</p>
+
+<p class=MsoPlainText>$strOut = lc($strIn);</p>
+
+<p class=spacesingle>&nbsp;</p>
+
+<p class=MsoBodyText>Notice that the input data to be converted come into the
+Perl expression via the <span class=userinterface>$strIn</span> variable. The
+output data must be assigned to the <span class=userinterface>$strOut</span>
+variable.</p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'>Alternately,
+you can use a single scalar variable for both input and output: <span
+class=userinterface>$strInOut</span>. This is useful for doing search and
+replace regular expressions. For example, the following expression can be used
+to convert the input string using the <span class=definedword>rot13</span>
+algorithm:<span style='font-size:8.5pt;font-family:"MS Shell Dlg 2"'><o:p></o:p></span></p>
+
+<p class=MsoBodyText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>$strInOut =~ y/A-Za-z/(N-ZA-Mn-za-m)/;</p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<div style='mso-element:para-border-div;border:solid windowtext 1.0pt;
+mso-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt;
+margin-left:1.0in;margin-right:63.0pt'>
+
+<p class=note style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:0in'>The SILConverters' Perl Expression converter requires a
+separately downloaded Perl distribution (currently, version 5.10.1) to be
+installed on your system to operate correctly. You can download a free Perl
+distribution, such as ActiveState&#8217;s Perl v5.10.1 from this website: <span
+class=MsoHyperlink><a href="http://www.activestate.com/activeperl/">Active State</a></span>
+(or perhaps in their previous downloads <a
+href="http://downloads.activestate.com/ActivePerl/Windows/5.10/">area</a>).</p>
+
+</div>
+
+<h3>Setup Tab</h3>
+
+<p class=MsoBodyText>Here is the configuration setup tab for the Perl
+Expression EncConverter:</p>
+
+<p class=imageright style='page-break-after:avoid'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:351pt;
+ height:314.25pt'>
+ <v:imagedata src="Perl%20Expression%20Plug-in%20About%20box_files/image001.png"
+  o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=468 height=419
+src="Perl%20Expression%20Plug-in%20About%20box_files/image007.jpg" v:shapes="_x0000_i1025"><![endif]></p>
+
+<p class=MsoCaption align=right style='text-align:right'>Figure <!--[if supportFields]><span
+style='mso-element:field-begin'></span><span
+style='mso-spacerun:yes'>&nbsp;</span>SEQ Figure \* ARABIC <span
+style='mso-element:field-separator'></span><![endif]--><span style='mso-no-proof:
+yes'>1</span><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]-->:
+Perl Expression Setup [<a href="#PerlExpression"
+title="Click here to jump to the description of this item"><!--[if supportFields]><span
+style='mso-element:field-begin'></span> REF _Ref133733167 \r \h <span
+style='mso-element:field-separator'></span><![endif]-->1<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330033003100360037000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--></a>],
+[<a href="#ConvType" title="Click here to jump to the description of this item"><!--[if supportFields]><span
+style='mso-element:field-begin'></span> REF _Ref133733169 \r \h <span
+style='mso-element:field-separator'></span><![endif]-->2<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330033003100360039000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--></a>],
+[<a href="#PrevExpressions"
+title="Click here to jump to the description of this item"><!--[if supportFields]><span
+style='mso-element:field-begin'></span> REF _Ref133733171 \r \h <span
+style='mso-element:field-separator'></span><![endif]-->3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330033003100370031000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--></a>],
+[<a href="#DistroConfig"
+title="Click here to jump to the description of this item"><!--[if supportFields]><span
+style='mso-element:field-begin'></span> REF _Ref133733172 \r \h <span
+style='mso-element:field-separator'></span><![endif]-->4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330033003100370032000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--></a>],
+[<a href="#SaveInRepository"
+title="Click here to jump to the description of this item"><!--[if supportFields]><span
+style='mso-element:field-begin'></span> REF _Ref133733174 \r \h <span
+style='mso-element:field-separator'></span><![endif]-->5<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330033003100370034000000</w:data>
+</xml><![endif]--><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--></a>],
+[<a href="#TestTab" title="Click here to jump to the description of this item"><span
+style='mso-field-code:" REF _Ref133732367 \\r \\h &#1; \\* MERGEFORMAT "'>6<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F005200650066003100330033003700330032003300360037000000</w:data>
+</xml><![endif]--></span></a>]</p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<p class=MsoList><a name="_Ref133733167"></a><a name=PerlExpression></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133733167'><span style='mso-list:Ignore'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133733167'>This area is for entering your Perl expression.</span></p>
+
+<p class=MsoList><a name="_Ref133733169"></a><a name=ConvType></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133733169'><span style='mso-list:Ignore'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133733169'>This area is for indicating which encoding
+type your expression expects and returns. If your data is Unicode-encoded, be
+sure to select that option or your data may be incorrectly converted. For </span><span
+style='mso-bookmark:_Ref133733169'><span class=userinterface>Non-Unicode (byte)</span>
+data, the default system code page will be used to convert your data when
+necessary.</span> </p>
+
+<p class=MsoListContinue2>After configuring these two items, you can click the <span
+class=userinterface>Apply</span> button to accept the expression.</p>
+
+<p class=MsoBodyText>The Setup tab also has the following options:</p>
+
+<p class=MsoList><a name="_Ref133733171"></a><a name=PrevExpressions></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133733171'><span style='mso-list:Ignore'>3.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133733171'>The </span><span style='mso-bookmark:_Ref133733171'><span
+class=userinterface>Previous Expressions</span> combo box includes a few
+example Perl expressions and remembers any new ones you add. The </span><span
+style='mso-bookmark:_Ref133733171'><span class=userinterface>Delete</span>
+button can be used to remove unwanted expressions.</span></p>
+
+<p class=MsoList><a name="_Ref133733172"></a><a name=DistroConfig></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133733172'><span style='mso-list:Ignore'>4.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133733172'>The </span><span style='mso-bookmark:_Ref133733172'><span
+class=userinterface>Distro Config</span> button allows you to set up the path
+to your Perl Distribution's library folders (e.g. </span><span
+style='mso-bookmark:_Ref133733172'><span class=filename>C:\Perl, C:\Perl\lib,
+C:\Perl\site\lib</span>) as well as to specify certain Perl modules to be
+automatically loaded for all expressions (e.g. </span><span style='mso-bookmark:
+_Ref133733172'><span class=filename>Win32, </span>or </span><span
+style='mso-bookmark:_Ref133733172'><span class=filename>SIL::RTF::Unicode</span>).</span>
+If you get an error message saying that some <span class=filename>*.pm</span>
+file can't be found, then you probably don't have the correct path to the file
+configured.</p>
+
+<p class=MsoList><a name="_Ref133733174"></a><a name=SaveInRepository></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133733174'><span style='mso-list:Ignore'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133733174'>If you want the expression to be permanently
+added to the System Repository, then you must click the </span><span
+style='mso-bookmark:_Ref133733174'><span class=userinterface>Save in System
+Repository</span> button (see below).</span></p>
+
+<p class=MsoList><a name="_Ref133732367"></a><a name=TestTab></a><![if !supportLists]><span
+style='mso-bookmark:_Ref133732367'><span style='mso-list:Ignore'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='mso-bookmark:_Ref133732367'>You can click on the </span><span
+style='mso-bookmark:_Ref133732367'><span class=userinterface>Test Area</span>
+tab in order to test the converter with some sample data.</span></p>
+
+<div style='mso-element:para-border-div;border:solid windowtext 1.0pt;
+mso-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt;
+margin-left:1.0in;margin-right:63.0pt'>
+
+<p class=note style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:0in'>You may not see script errors until you actually use the
+converter to convert some data. So for this converter type in particular, it is
+important to test it before trying it with real data.</p>
+
+</div>
+
+<h4><a name="_Saving_the_converter_in_the_System_"></a>Saving the converter in
+the System Repository:</h4>
+
+<p class=MsoBodyText>By default, if you click the <span class=userinterface>Apply</span>
+or <span class=userinterface>OK</span> buttons, the configured converter will
+be returned to the client application as a temporary converter for temporary
+use. Once the client application (e.g. <span class=definedword>FieldWorks</span>
+or <span class=definedword>Word</span>) is closed or releases the converter, it
+will no longer be available. If you want the converter to be permanently
+available to client applications, then you must explicitly add it to the <span
+class=definedword>System Repository</span> using the <span class=userinterface>Save
+in System Repository</span> button.</p>
+
+<p class=MsoBodyText>When you click this button, the following dialog box will
+be displayed to query for a <span class=definedword>friendly name</span> by
+which the converter will be known in client applications:</p>
+
+<p class=imageright><!--[if gte vml 1]><v:shape id="_x0000_i1026" type="#_x0000_t75"
+ style='width:280.5pt;height:138.75pt'>
+ <v:imagedata src="Perl%20Expression%20Plug-in%20About%20box_files/image003.png"
+  o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=374 height=185
+src="Perl%20Expression%20Plug-in%20About%20box_files/image004.jpg" v:shapes="_x0000_i1026"><![endif]></p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText>For the Perl Expression converter, the default name will
+be the Perl expression itself. However, it is a good idea to make it more
+meaningful (e.g. <span class=placeholder>Convert English consonants into 'C'
+and vowels into 'V'</span>).</p>
+
+<p class=MsoBodyText>The <span class=userinterface>Advanced...</span> button
+can be used to enter further, optional information about this converter which
+is also put into the <span class=definedword>System Repository</span> and can
+be used by various client applications. Click on this button to bring up the
+following dialog box:</p>
+
+<p class=imageright><!--[if gte vml 1]><v:shape id="_x0000_i1027" type="#_x0000_t75"
+ style='width:339.75pt;height:327.75pt'>
+ <v:imagedata src="Perl%20Expression%20Plug-in%20About%20box_files/image005.png"
+  o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=453 height=437
+src="Perl%20Expression%20Plug-in%20About%20box_files/image006.jpg" v:shapes="_x0000_i1027"><![endif]></p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText>Though these values are not necessary for the operation of
+the converter, they can be helpful to various client applications. For example,
+the <span class=definedword>Clipboard EncConverter</span> can be configured to
+filter the list of displayed converters based on the <span class=userinterface>Encoding
+Name</span> and/or the <span class=userinterface>Transduction Type</span>
+configured here.</p>
+
+<h3>More Sample Expressions</h3>
+
+<p class=MsoPlainText># turn all non-vowels into 'C' and vowels into 'V'</p>
+
+<p class=MsoPlainText>$strInOut =~ s/[^aeiou ]/C/g;</p>
+
+<p class=MsoPlainText>$strInOut =~ s/[aeiou]/V/g;</p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText># similar expression for Devanagari range of Unicode</p>
+
+<p class=MsoPlainText># first convert all vowel characters to &#8216;V&#8217;</p>
+
+<p class=MsoPlainText># then convert all consonants to &#8216;C&#8217;</p>
+
+<p class=MsoPlainText>$strInOut =~ s/[\x{<span lang=HI style='mso-bidi-font-size:
+10.0pt;font-family:"Arial Unicode MS";mso-hansi-font-family:"Courier New"'>0905</span>}-\x{<span
+lang=HI style='mso-bidi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>0914</span>}\x{<span lang=HI
+style='mso-bidi-font-size:10.0pt;font-family:"Arial Unicode MS";mso-hansi-font-family:
+"Courier New"'>093</span>E}-\x{<span lang=HI style='mso-bidi-font-size:10.0pt;
+font-family:"Arial Unicode MS";mso-hansi-font-family:"Courier New"'>094</span>c}]/V/g;</p>
+
+<p class=MsoPlainText>$strInOut =~ s/\p{Devanagari}/C/g;</p>
+
+<p class=MsoPlainText># NOTE: if your data is Unicode-encoded, then you </p>
+
+<p class=MsoPlainText># must indicate via the radio buttons on the Setup </p>
+
+<p class=MsoPlainText># tab that your Perl script expects and returns a </p>
+
+<p class=MsoPlainText># &quot;Unicode String&quot; (these options may not be
+visible </p>
+
+<p class=MsoPlainText># in all client applications)</p>
+
+<p class=spacesingle><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText># here&#8217;s an expression to turn a book/chapter/verse
+</p>
+
+<p class=MsoPlainText>#<span style='mso-spacerun:yes'>&nbsp; </span>reference
+into the &#8220;vref&#8221; SFM field syntax.</p>
+
+<p class=MsoPlainText># the input is something like &#8220;Rut 1:1&#8221;</p>
+
+<p class=MsoPlainText>#<span style='mso-spacerun:yes'>&nbsp; </span>the output
+will be &#8220;Rut01001&#8221;.</p>
+
+<p class=MsoPlainText># note that if the match is not found, you&#8217;ll want</p>
+
+<p class=MsoPlainText>#<span style='mso-spacerun:yes'>&nbsp; </span>the input
+string returned as the output variable.</p>
+
+<p class=MsoPlainText># also note that you can use &#8220;sprint&#8221; </p>
+
+<p class=MsoPlainText>#<span style='mso-spacerun:yes'>&nbsp; </span>to set the
+output variable.</p>
+
+<p class=MsoPlainText>if( $strIn =~ m/(.*?)(\D{3}) (\d):(\d+)(.*)/ )</p>
+
+<p class=MsoPlainText>{ </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>$strOut = sprintf &quot;$1$2%02d%03d$5&quot;, $3, $4;</p>
+
+<p class=MsoPlainText>}</p>
+
+<p class=MsoPlainText>else</p>
+
+<p class=MsoPlainText>{</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>$strOut = $strIn;</p>
+
+<p class=MsoPlainText>}</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText># here's an expression to fix bad comma placment</p>
+
+<p class=MsoPlainText># (e.g. /<span lang=HI style='font-size:11.0pt;
+mso-ansi-font-size:10.0pt;font-family:Mangal;mso-ascii-font-family:"Arial Unicode MS"'>&#2325;&#2361;&#2366;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'> ,&quot;</span><span lang=HI
+style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2350;&#2376;&#2306;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>&#8230;&quot;</span>/ becomes /<span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2325;&#2361;&#2366;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>, &quot;</span><span lang=HI
+style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2350;&#2376;&#2306;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>&#8230;&quot;</span>/<span lang=HI
+style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'> </span>and</p>
+
+<p class=MsoPlainText># /<span lang=HI style='font-size:11.0pt;mso-ansi-font-size:
+10.0pt;font-family:Mangal;mso-ascii-font-family:"Arial Unicode MS"'>&#2325;&#2361;&#2366;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'> , &quot;</span><span lang=HI
+style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2350;&#2376;&#2306;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>&#8230;&quot;</span>/ becomes /<span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2325;&#2361;&#2366;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>, &quot;</span><span lang=HI
+style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:Mangal;
+mso-ascii-font-family:"Arial Unicode MS"'>&#2350;&#2376;&#2306;</span><span
+lang=HI style='font-size:11.0pt;mso-ansi-font-size:10.0pt;font-family:"Arial Unicode MS";
+mso-hansi-font-family:"Courier New"'>&#8230;&quot;</span>/)</p>
+
+<p class=MsoPlainText>$strInOut =~ s/ ,([^ ])/, $1/g;</p>
+
+<p class=MsoPlainText>$strInOut =~ s/ , /, /g;</p>
+
+<p class=MsoBodyText><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

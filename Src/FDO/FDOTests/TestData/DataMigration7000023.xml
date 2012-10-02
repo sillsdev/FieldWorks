@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000021">
+  <rt class="LangProject" guid="c1ecaa73-e382-11de-8a39-0800200c9a66">
+	<LexDb>
+	  <objsur guid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC" t="o" />
+	</LexDb>
+  </rt>
+  <rt class="DsDiscourseData" guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" ownerguid="C1ecaa73-e382-11de-8a39-0800200c9a66">
+  </rt>
+  <rt guid="c1Ecaa74-e382-11de-8a39-0800200c9a66" class="RnResearchNbk">
+  </rt>
+  <rt class="LexDb" guid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC" ownerguid="c1ecaa73-e382-11de-8a39-0800200c9A66">
+  </rt>
+  <rt class="CmPossibilityList" guid="1FBDC211-32E4-4203-9B7F-9CAACBF31DBD">
+	  <ListVersion val="C1ECAA75-E382-11DE-8A39-0800200C9A66" />
+  </rt>
+	<rt class="CmFilter" guid="c1ecaa77-e382-11de-8a39-0800200c9a66">
+		<App val="C1ECAA75-E382-11DE-8A39-0800200C9A68" />
+	</rt>
+	<rt class="UserView" guid="c1ecaa78-e382-11de-8a39-0800200c9a66">
+		<App val="C1ECAA75-E382-11DE-8A39-0800200C9A69" />
+	</rt>
+	<rt class="UserAppFeatAct" guid="c1ecaa79-e382-11de-8a39-0800200c9a66">
+		<ApplicationId val="C1ECAA75-E382-11DE-8A39-0800200C9A70" />
+	</rt>
+	<rt class="CmResource" guid="c1ecaa7a-e382-11de-8a39-0800200c9a66">
+		<Version val="C1ECAA75-E382-11DE-8A39-0800200C9A71" />
+	</rt>
+	<rt class="ScrCheckRun" guid="c1ecd170-e382-11de-8a39-0800200c9a66">
+		<CheckId val="C1ECAA75-E382-11DE-8A39-0800200C9A72" />
+	</rt>
+</languageproject>

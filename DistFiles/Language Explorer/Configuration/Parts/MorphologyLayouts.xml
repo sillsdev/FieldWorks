@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted layouts for Morphology related classes. -->
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
+	<layout class="MoDerivAffMsa" type="detail" name="Normal">
+		<part ref="MainEdit" label="Category Info.">
+		<indent>
+			<part ref="FromInflectionClass" label="From Inflection Class" abbr="fic" visibility="ifdata" />
+			<part ref="FromMsFeatures" abbr="fif" visibility="ifdata" />
+			<part ref="FromProdRestrict" abbr="fef" visibility="ifdata" />
+			<part ref="FromStemName" abbr="fsn" visibility="ifdata" />
+			<part ref="ToInflectionClass" label="To Inflection Class" abbr="tic" visibility="ifdata" />
+			<part ref="ToMsFeatures" abbr="tif" visibility="ifdata" />
+			<part ref="ToProdRestrict" abbr="tef" visibility="ifdata" />
+		</indent>
+		</part>
+	</layout>
+
+	<layout class="MoInflAffMsa" type="detail" name="Normal">
+		<part ref="MainEdit" label="Category Info.">
+		<indent>
+			<part ref="Slots"/>
+			<part ref="InflFeats" abbr="if" visibility="ifdata"/>
+			<part ref="FromProdRestrict" abbr="fef" visibility="ifdata" />
+		</indent>
+		</part>
+	</layout>
+
+	<layout class="MoUnclassifiedAffixMsa" type="detail" name="Normal">
+		<part ref="MainEdit" label="Category Info."/>
+	</layout>
+
+	<layout class="MoStemMsa" type="detail" name="Normal">
+		<part ref="MainEdit" label="Category Info.">
+		<indent>
+			<part ref="InflectionClass" label="Inflection Class" abbr="ic" visibility="ifdata" />
+			<part ref="MsFeatures" abbr="if" visibility="ifdata" />
+			<part ref="ProdRestrict" abbr="ef" visibility="ifdata" />
+			<part ref="FromPartsOfSpeech" abbr="fc" visibility="always" />
+		</indent>
+		</part>
+	</layout>
+	<layout class="MoStemMsa" type="detail" name="Category">
+		<part ref="Category"/>
+	</layout>
+	<layout class="MoStemMsa" type="detail" name="Result">
+		<part ref="Category"/>
+		<part ref="InflectionClass"/>
+	</layout>
+
+
+	<layout class="MoStemAllomorph" type="detail" name="Normal">
+		<part ref="FormAllV" label="Stem Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
+			<indent>
+				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
+				<part ref="MorphType"/>
+				<part ref="PhoneEnv"/>
+				<part ref="StemName" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part customFields="here" />
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoAffixAllomorph" type="detail" name="Normal">
+		<part ref="FormAllVAffix" label="Affix Allomorph" expansion="expanded" menu="mnuDataTree-Allomorph">
+			<indent>
+				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
+				<part ref="MorphType"/>
+				<part ref="PhoneEnv"/>
+				<part ref="AsPosition" visibility="always"/>
+				<part ref="InflectionClasses" visibility="ifdata"/>
+				<part ref="MsEnvFeatures" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part customFields="here" />
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoAffixProcess" type="detail" name="Normal">
+		<part ref="FormAllVAffix" label="Affix Allomorph (Process)" expansion="expanded" menu="mnuDataTree-AffixProcess">
+			<indent>
+				<part ref="IsAbstract" label="Is Abstract Form" visibility="never" />
+				<part ref="MorphType"/>
+				<part ref="RuleFormula" expansion="expanded" label="Affix Process Rule"/>
+				<part ref="InflectionClasses" visibility="ifdata"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoAffixAllomorph" type="detail" name="AsLexemeFormBasic">
+		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
+			<indent>
+				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="MorphTypeBasic" visibility="ifdata"/>
+				<part ref="PhoneEnvBasic" visibility="ifdata"/>
+				<part ref="AsPosition" visibility="always"/>
+				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
+		<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
+	  </indent>
+		</part>
+	</layout>
+
+	<layout class="MoStemAllomorph" type="detail" name="AsLexemeFormBasic">
+		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
+			<indent>
+				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="MorphTypeBasic" visibility="ifdata"/>
+				<part ref="PhoneEnvBasic" visibility="ifdata"/>
+				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoAffixProcess" type="detail" name="AsLexemeFormBasic">
+		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
+			<indent>
+				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="MorphTypeBasic" visibility="ifdata"/>
+				<part ref="RuleFormulaBasic" expansion="expanded" label="Affix Process Rule"/>
+				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoAffixAllomorph" type="detail" name="AsVariantForm">
+		<part ref="AsVariantForm" label="Variant Form" expansion="expanded"/>
+	</layout>
+
+	<layout class="MoStemAllomorph" type="detail" name="AsVariantForm">
+		<part ref="AsVariantForm" label="Variant Form" expansion="expanded"/>
+	</layout>
+
+	<layout class="PartOfSpeech" type="detail" name="default">
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA"/>
+
+		<part ref="AffixTemplatesSection" expansion="expanded" label="Affix Templates" menu="mnuDataTree-POS-AffixTemplates">
+			<indent>
+				<part ref="AffixTemplates" expansion="expanded" label="Affix Templates" menu="mnuDataTree-POS-AffixTemplates"/>
+			</indent>
+		</part>
+
+		<part ref="AffixSlotsSection" expansion="expanded" label="Affix Slots" menu="mnuDataTree-POS-AffixSlots" >
+			<indent>
+				<part ref="AffixSlots" expansion="expanded" label="Affix Slots" menu="mnuDataTree-POS-AffixSlots"/>
+			</indent>
+		</part>
+
+		<part ref="InflectionClassesSection" label="Inflection Class Info" menu="mnuDataTree-POS-InflectionClasses">
+			<indent >
+				<part ref="InflectionClasses" expansion="expanded" label="Inflection Classes" menu="mnuDataTree-POS-InflectionClasses"/>
+				<part ref="DefaultInflectionClass" label="Default Inflection Class"/>
+			</indent>
+		</part>
+		<part ref="InflectableFeatsSection" label="Features" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="InflectableFeats" label="Inflectable Features" menu="mnuDataTree-Help"/>
+			</indent>
+		</part>
+
+		<part ref="StemNamesSection" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames" >
+			<indent>
+				<part ref="StemNames" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames"/>
+			</indent>
+		</part>
+
+		<part ref="SubCategoriesSection" label="Subcategories" menu="mnuDataTree-POS-SubPossibilities">
+			<indent>
+				<part ref="SubPossibilities" label="Subcategories"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="PartOfSpeech" type="detail" name="SubCategories">
+		<part ref="NameSubcategory" label="Subcategory" >
+		</part>
+
+	</layout>
+
+	<layout class="MoInflAffixSlot" type="detail" name="EditSlot">
+		<part ref="NameAllA" label="Slot Name" menu="mnuDataTree-POS-AffixSlot"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="Optional" label = "Optional" menu="mnuDataTree-Help"/>
+	</layout>
+
+	<layout class="MoInflAffixTemplate" type="detail" name="default">
+		<part ref="NameAllA" label="Template Name"   menu="mnuDataTree-POS-AffixTemplate"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="TemplateTable"/>
+		<part ref="Message" param="SpecialNote" label="Note"/>
+		<part ref="Final"/>
+	</layout>
+
+	<layout class="MoStemName" type="detail" name="EditStemName">
+		<part ref="NameAllA" label="Stem Name" menu="mnuDataTree-POS-StemName"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="StemNameRegionsSection" expansion="expanded" label="Feature Sets" menu="mnuDataTree-MoStemName-Regions" >
+			<indent>
+				<part ref="StemNameRegions" expansion="expanded" label="Regions" menu="mnuDataTree-MoStemName-Region"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="FsFeatStruc" type="detail" name="EditStemNameRegion">
+		<part ref="RegionFeatureSpecs" label="Feature Set" menu="mnuDataTree-MoStemName-Region"/>
+	</layout>
+
+	<layout class="FsFeatStruc" type="detail" name="FeatureSpecs">
+		<part ref="FeatureSpecs" label="Features" menu="mnuDataTree-FeatureStructure-Features" visibility="ifdata"/>
+	</layout>
+
+	<layout class="FsFeatStruc" type="detail" name="MsFeatures">
+		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+	</layout>
+  <layout class="FsFeatStruc" type="detail" name="MsEnvFeatures">
+	<part ref="FeatureSpecs" label="Required Features" menu="mnuDataTree-FeatureStructure-Features"/>
+  </layout>
+  <layout class="FsFeatStruc" type="detail" name="FromMsFeatures">
+		<part ref="FeatureSpecs" label="From Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+	</layout>
+	<layout class="FsFeatStruc" type="detail" name="ToMsFeatures">
+		<part ref="FeatureSpecs" label="To Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+	</layout>
+	<layout class="FsFeatStruc" type="detail" name="InflFeats">
+		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
+</layout>
+
+	<layout class="FsFeatStruc" type="detail" name="NestedInflFeats">
+		<part ref="Blank" label="Nested Inflection Features"  menu="mnuDataTree-Help">
+			<indent>
+				<part ref="FeatureSpecs" expansion="expanded" label="Features" menu="mnuDataTree-FeatureStructure-Features"/>
+			</indent>
+		</part>
+</layout>
+
+	<layout class="FsFeatStruc" type="detail" name="EditFeatureSpecs">
+		<part ref="FeatureSpecs" label="Features" expansion="expanded" menu="mnuDataTree-FeatureStructure-Features"/>
+	</layout>
+
+  <layout class="FsFeatStruc" type="jtview" name="PhonFeats">
+	<span>
+	  <string field="LongNameTSS"/>
+	</span>
+  </layout>
+
+  <layout class="FsFeatStrucType" type="detail" name="Edit">
+		<part ref="Message" label="Special Note" param="SpecialNote"/>
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="Features" label="Features" menu="mnuDataTree-Help"/>
+	</layout>
+
+	<layout class="FsFeatDefn" type="detail" name="Edit">
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="ShowInGloss" label="Use Abbreviation as label"  abbr="sig"/>
+	</layout>
+
+	<layout class="FsClosedFeature" type="detail" name="Edit">
+		<part ref="SpecialNote" label="Special Note" param="SpecialNote"/>
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="ShowInGloss" label="Use Abbreviation as label"/>
+		<part ref="InflectionFeaturesValuesSection" expansion="expanded" label="Values" menu="mnuDataTree-ClosedFeature-Values" >
+			<indent>
+				<part ref="Values" expansion="expanded" menu="mnuDataTree-ClosedFeature-Values"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="FsSymFeatVal" type="detail" name="EditValue">
+		<part ref="NameAllA" label="Value Name" menu="mnuDataTree-ClosedFeature-Value">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="ShowInGloss" label="Use Abbreviation as label" abbr="sig"/>
+	</layout>
+
+  <layout class="FsClosedFeature" type="detail" name="PhonEdit">
+	<part ref="NameAllA">
+	</part>
+	<part ref="AbbreviationAllA">
+	</part>
+	<part ref="DescriptionAllA">
+	</part>
+	<part ref="ValuesSection" expansion="expanded" label="Values" menu="mnuDataTree-ClosedFeature-Values" >
+	  <indent>
+		<part ref="PhonValues" expansion="expanded" menu="mnuDataTree-ClosedFeature-Values"/>
+	  </indent>
+	</part>
+  </layout>
+
+  <layout class="FsSymFeatVal" type="detail" name="PhonEditValue">
+	<part ref="NameAllA" label="Value Name" menu="mnuDataTree-ClosedFeature-Value">
+	</part>
+	<part ref="AbbreviationAllA">
+	</part>
+	<part ref="DescriptionAllA" visibility="ifdata" >
+	</part>
+  </layout>
+
+  <layout class="FsFeatureSpecification" type="detail" name="EditFeatureSpec">
+		<part ref="Summary" label="Feature" param="FeatureSummary">
+		<indent>
+		<part ref="Feature"/>
+		</indent>
+		</part>
+	</layout>
+
+	<layout class="FsClosedValue" type="detail" name="EditFeatureSpec">
+		<part ref="Summary" label="Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
+		<indent>
+		<part ref="Feature"/>
+		<part ref="Value"/>
+		</indent>
+		</part>
+	</layout>
+
+	<layout class="FsComplexValue" type="detail" name="EditFeatureSpec">
+		<part ref="Summary" label="Complex Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
+		<indent>
+		<part ref="Feature"/>
+		<part ref="Value"/>
+		</indent>
+		</part>
+	</layout>
+
+	<layout class="FsComplexFeature" type="detail" name="Edit">
+		<part ref="Message" label="Special Note" param="SpecialNote"/>
+		<part ref="NameAllA">
+		</part>
+		<part ref="AbbreviationAllA">
+		</part>
+		<part ref="DescriptionAllA">
+		</part>
+		<part ref="Type" label="Type" />
+		<part ref="ShowInGloss" label="Use Abbreviation as label"/>
+		<part ref="RightGlossSepAllA">
+		</part>
+	</layout>
+
+	<layout class="MoExoCompound" type="detail" name="default">
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="LeftMsa"/>
+		<part ref="RightMsa"/>
+		<part ref="ToMsa"/>
+		<part ref="ToProdRestrict" abbr="tef" visibility="ifdata" />
+	</layout>
+
+	<layout class="MoEndoCompound" type="detail" name="default">
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="LeftMsa"/>
+		<part ref="RightMsa"/>
+		<part ref="HeadLast"/>
+		<part ref="OverridingMsa"/>
+		<part ref="ToProdRestrict" abbr="tef" visibility="ifdata" />
+	</layout>
+
+	<layout class="MoInflAffixTemplate" type="jtview" name="TemplateTablex">
+		<part ref="TemplateTabley"/>
+	</layout>
+	<layout class="MoInflAffixTemplate" type="jtview" name="TemplateTablexRTL">
+		<part ref="TemplateTableyRTL"/>
+	</layout>
+	<layout class="MoInflAffixTemplate" type="jtview" name="TemplateTablexRTLinLTR">
+		<part ref="TemplateTableyRTLinLTR"/>
+	</layout>
+	<layout class="MoInflAffixTemplate" type="jtview" name="TemplateTablexLTRinRTL">
+		<part ref="TemplateTableyLTRinRTL"/>
+	</layout>
+
+	<!-- layouts for the Adhoc Coprohibitions -->
+	<layout class="MoAlloAdhocProhib" type="detail" name="Edit">
+		<part ref="Message" param="SpecialNote" label="Note"/>
+		<part ref="FirstAllomorph"/>
+		<part ref="Adjacency"/>
+		<part ref="RestOfAllos"/>
+	</layout>
+
+	<layout class="MoMorphAdhocProhib" type="detail" name="Edit">
+		<part ref="Message" param="SpecialNote" label="Note"/>
+		<part ref="FirstMorpheme"/>
+		<part ref="Adjacency"/>
+		<part ref="RestOfMorphs"/>
+	</layout>
+
+	<layout class="MoAdhocProhibGr" type="detail" name="Edit">
+		<part ref="Name"/>
+		<part ref="Description"/>
+		<part ref="MembersSection" expansion="expanded" label="Members" menu="mnuDataTree-Adhoc-Group-Members">
+			<indent>
+						<part ref="Members" expansion="expanded" />
+			</indent>
+		</part>
+
+	</layout>
+
+	<layout class="MoAlloAdhocProhib" type="detail" name="EditAdHocGroup">
+		<part ref="FirstAllomorph" menu="mnuDataTree-Delete-Adhoc-Allomorph"/>
+		<part ref="Adjacency"/>
+		<part ref="RestOfAllos"/>
+	</layout>
+
+	<layout class="MoMorphAdhocProhib" type="detail" name="EditAdHocGroup">
+		<part ref="FirstMorpheme" menu="mnuDataTree-Delete-Adhoc-Morpheme"/>
+		<part ref="Adjacency"/>
+		<part ref="RestOfMorphs"/>
+	</layout>
+
+	<layout class="MoAdhocProhibGr" type="detail" name="EditAdHocGroup">
+		<part ref="NestedGroupName" label="Nested Group Name" menu="mnuDataTree-Delete-Adhoc-Group">
+			<indent indent="true">
+				<part ref="Description" label="Nested Group Description"/>
+				<part ref="NestedMembersSection" expansion="expanded" label="Nested Group Members" menu="mnuDataTree-Adhoc-Group-Members">
+					<indent>
+						<part ref="IndentedMembers" expansion="expanded" />
+					</indent>
+				</part>
+			</indent>
+		</part>
+	</layout>
+
+   <layout class="MoInflClass" type="detail" name="SubClassesAllA">
+	  <part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
+	  <part ref="AbbreviationAllA"/>
+	  <part ref="DescriptionAllA"/>
+	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+		 <indent indent="true">
+			<part ref="SubClasses" label="Subclasses"/>
+		 </indent>
+	  </part>
+   </layout>
+
+   <layout class="MoInflClass" type="detail" name="EditInflectionClass">
+	  <part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
+	  <part ref="AbbreviationAllA"/>
+	  <part ref="DescriptionAllA"/>
+	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+		  <indent indent="true">
+			 <part ref="SubClasses" label="Subclasses"/>
+		  </indent>
+	 </part>
+  </layout>
+   <layout class="MoInflClass" type="detail" name="SubClasses">
+	  <part ref="SubclassesAllA" label="Subclass" >
+		 </part>
+   </layout>
+
+	<layout class="MoEndoCompound" type="detail" name="Edit">
+	 <part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="LeftMember"/>
+			</indent>
+		</part>
+		<part ref="BlankRightMember" label="Right Member" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="RightMember"/>
+			</indent>
+		</part>
+		<part ref="HeadLast" label="Right Headed" menu="mnuDataTree-Help"/>
+		<part ref="BlankOverrideHead" label="Override Head with:" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="OverridingMember"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="MoExoCompound" type="detail" name="Edit">
+		<part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="LeftMember"/>
+			</indent>
+		</part>
+		<part ref="BlankRightMember" label="Right Member" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="RightMember"/>
+			</indent>
+		</part>
+		<part ref="BlankResult" label="Result" expansion="expanded" menu="mnuDataTree-Help">
+			<indent>
+				<part ref="Result"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="PhPhoneme" type="detail" name="Edit">
+		<part ref="NameAllV"/>
+	<part ref="BasicIPASymbol"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+	<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
+		<part ref="RepresentationsSection" expansion="expanded" label="In Orthography as" menu="mnuDataTree-Phoneme-Codes" >
+			<indent>
+						<part ref="Codes" expansion="expanded" menu="mnuDataTree-Phoneme-Code"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="PhNCSegments" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
+		<part ref="Segments" label="Phonemes" menu="mnuDataTree-Help"/>
+	</layout>
+
+  <layout class="PhNCFeatures" type="detail" name="Edit">
+	<part ref="NameAllA" menu="mnuDataTree-Help"/>
+	<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+	<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
+	<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
+  </layout>
+
+  <layout class="PhEnvironment" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="StringRepresentation"/>
+	</layout>
+
+	<layout class="PhRegularRule" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
+		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
+			<indent>
+				<part ref="RuleFormula" expansion="expanded"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="PhSegRuleRHS" type="detail" name="Edit">
+		<part ref="RuleFormula"/>
+	</layout>
+
+	<layout class="PhMetathesisRule" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
+		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
+			<indent>
+				<part ref="RuleFormula" expansion="expanded"/>
+			</indent>
+		</part>
+	</layout>
+
+	<!-- STUFF ADDED FOR THE NEW CONFIGURATION -->
+
+	<!-- These use virtual properties to simplify configuration. -->
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStem">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStem" css="slots"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinor">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemMinor" css="slots-minor"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishRoot">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRoot" css="slots"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishRootMinor">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootMinor" css="slots-minor"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishRootSub">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-sub"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootSub" css="slots-sub"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishRootMinorSub">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootMinorSub" css="slots-minor"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+
+	<layout class="MoInflAffixSlot" type="jtview" name="publishStem">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishStemMinor">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-minor"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishRoot">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishRootMinor">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-minor"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishRootMinorSub">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-minor"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishRootSub">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-sub"/>
+	</layout>
+
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemComplexFormGramInfo">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-complexform"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemComplexFormGramInfo" css="slots-complexform"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinorComplexFormGramInfo">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-complexform"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemMinorComplexFormGramInfo" css="slots-complexform"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishRootMinorComplexFormGramInfo">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-complexform"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootMinorComplexFormGramInfo" css="slots-complexform"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishStemComplexFormGramInfo">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-complexform"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishStemMinorComplexFormGramInfo">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-complexform"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishRootMinorComplexFormGramInfo">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-complexform"/>
+	</layout>
+</LayoutInventory>

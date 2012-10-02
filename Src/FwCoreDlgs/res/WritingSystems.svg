@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg2168"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docbase="C:\fwTe\Src\FwCoreDlgs\res"
+   sodipodi:docname="WritingSystems.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\fwTe\Src\FwCoreDlgs\res\WritingSystems.png"
+   inkscape:export-xdpi="360"
+   inkscape:export-ydpi="360">
+  <defs
+	 id="defs2170" />
+  <sodipodi:namedview
+	 id="base"
+	 pagecolor="#ffffff"
+	 bordercolor="#666666"
+	 borderopacity="1.0"
+	 inkscape:pageopacity="0.0"
+	 inkscape:pageshadow="2"
+	 inkscape:zoom="5.5"
+	 inkscape:cx="32"
+	 inkscape:cy="32"
+	 inkscape:current-layer="layer1"
+	 showgrid="true"
+	 inkscape:document-units="px"
+	 inkscape:grid-bbox="true"
+	 inkscape:window-width="744"
+	 inkscape:window-height="573"
+	 inkscape:window-x="452"
+	 inkscape:window-y="265" />
+  <metadata
+	 id="metadata2173">
+	<rdf:RDF>
+	  <cc:Work
+		 rdf:about="">
+		<dc:format>image/svg+xml</dc:format>
+		<dc:type
+		   rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+	  </cc:Work>
+	</rdf:RDF>
+  </metadata>
+  <g
+	 id="layer1"
+	 inkscape:label="Layer 1"
+	 inkscape:groupmode="layer">
+	<text
+	   xml:space="preserve"
+	   style="font-size:30.2438488px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Doulos SIL"
+	   x="9.5580254"
+	   y="20.638052"
+	   id="text2188"
+	   sodipodi:linespacing="125%"
+	   transform="scale(0.8967995,1.1150764)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2190"
+		 x="9.5580254"
+		 y="20.638052">α </tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:37.11066818px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Doulos SIL"
+	   x="24.903955"
+	   y="21.834003"
+	   id="text2192"
+	   sodipodi:linespacing="125%"
+	   transform="scale(1.0498429,0.9525234)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2194"
+		 x="24.903955"
+		 y="21.834003"
+		 style="font-size:37.11066818px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Doulos SIL">γ</tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:27.94626462px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Code2001"
+	   x="49.690556"
+	   y="24.055946"
+	   id="text2196"
+	   sodipodi:linespacing="125%"
+	   transform="scale(0.9526621,1.0496901)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2198"
+		 x="49.690556"
+		 y="24.055946">β</tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:36.21891785px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Doulos SIL"
+	   x="4.4781089"
+	   y="51.238594"
+	   id="text2200"
+	   transform="scale(0.8774431,1.139675)"
+	   sodipodi:linespacing="125%"><tspan
+		 sodipodi:role="line"
+		 id="tspan2202"
+		 x="4.4781089"
+		 y="51.238594">δ</tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:26.31711769px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Code2001"
+	   x="33.956043"
+	   y="49.976921"
+	   id="text2208"
+	   sodipodi:linespacing="125%"
+	   transform="scale(0.9622485,1.0392326)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2210"
+		 x="33.956043"
+		 y="49.976921">ζ</tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:32.46749115px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Code2001"
+	   x="47.478683"
+	   y="47.942795"
+	   id="text2212"
+	   sodipodi:linespacing="125%"
+	   transform="scale(0.9231348,1.0832654)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2214"
+		 x="47.478683"
+		 y="47.942795">η</tspan></text>
+	<text
+	   xml:space="preserve"
+	   style="font-size:32.98437881px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Code2001"
+	   x="23.861191"
+	   y="35.431416"
+	   id="text2220"
+	   sodipodi:linespacing="100%"
+	   transform="scale(0.8178268,1.2227528)"><tspan
+		 sodipodi:role="line"
+		 id="tspan2222"
+		 x="23.861191"
+		 y="35.431416">ε</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="Converts FindPhone data to IPA93 encoding.">
+			<autoInstall mappingName="FindPhone&gt;SIL IPA93" converterSpec="MapsTables\FfIpa.cct" IsConverterSpecAFile="true" conversionType="LegacyToLegacy" implementType="SIL.cc" leftEncoding="FindPhone" rightEncoding="SIL-IPA93-2001" processType="Transliteration" sampleData="/t@&amp;s=u&lt;k.n&lt;a=/ is 'to pick up' in Kangri"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\FfIpa.cct"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="Converts FindPhone data to Unicode IPA encoding (using a two-step compound converter). This map requires the 'FindPhone&gt;SIL IPA93' and  + 'SIL IPA93&lt;&gt;UNICODE' maps.">
+			<scriptInstall filename="MapsTables\FindPhone.vbs" mappingName="FindPhone&gt;UNICODE" conversionType="LegacyToUnicode" implementType="SIL.comp" sampleData="/t@&amp;s=u&lt;k.n&lt;a=/ is 'to pick up' in Kangri"></scriptInstall>
+		</MapTable>
+		<MapTable description="Converts FindPhone data to Unicode IPA encoding (using a one-step CC table).">
+			<autoInstall mappingName="FindPhone&gt;UNICODE" converterSpec="MapsTables\FF2Uni.cct" IsConverterSpecAFile="true" conversionType="LegacyToUnicode" implementType="SIL.cc" leftEncoding="FindPhone" rightEncoding="Unicode IPA" processType="UnicodeEncodingConversion" sampleData="/t@&amp;s=u&lt;k.n&lt;a=/ is 'to pick up' in Kangri"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\FF2Uni.cct"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

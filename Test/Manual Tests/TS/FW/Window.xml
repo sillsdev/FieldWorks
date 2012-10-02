@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="windowm" num="2.8.1" abbr="wnm" file="FW\Window.xml">
+ <title tag="windowm">Window Menu Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Window Menu allows the user to manipulate the number and layout of application windows.</p>
+  </introduction>
+
+  <context>
+<p>The window layouts are exclusive, but they can be tested with split windows inside. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Window Menu".</p>
+  </context>
+ <case id="wnmBsc" num="0" order="any">
+  <title tag="wnmBsc">Basic Window Menu</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0" link="Bug">
+<link uri="../StdCtrls/MenuBtn.xml" type="module">menu Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;W&gt; to test this menu's basic functionality. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html" type="module">Definition of Window Menu</link> to compare appearance.
+   <r>Window menu items should be enabled. Report any failures as suggested using "Window Menu" as the name of the control.</r>
+   <p name="bug">Window Menu not working</p>
+   <p name="bug">Window Menu item not working</p>
+  </step>
+
+ </case>
+ <case id="wnmNew" num="1" order="any">
+  <title tag="wnmNew">New Window</title>
+  <context>
+<p>When the Window menu is displayed</p>
+</context>
+  <step name="1.1" link="Bug">With the application in various states (database open/closed, various views, text selected or not, various tags, filters, overlays, scrolling, split window) select Window | New.
+   <r>A second instance of the application opens, with the same database, view, selection, etc. as the original one was when Window | New was invoked. A new application button appears on the system taskbar.</r>
+   <p name="bug">Windows New fails to launch new window</p>
+  </step>
+  <step name="1.2" link="Bug">Select Window | New repeatedly.
+   <r>Successive new windows are placed slightly lower and to the right of the
+previous one. The new window's size is the same as its predecessor's, unless
+that would make it extend off the screen, in which case it is shrunk to fit
+the screen.  If that would make it too small (smaller than 400x400 pixels),
+the new window appears at the top-left of the screen.</r>
+   <p name="bug">Windows New fails to launch a reasonable number of new windows</p>
+  </step>
+
+ </case>
+ <case id="wnmSpl" num="2" order="any">
+  <title tag="wnmSpl">Split Window</title>
+  <context>
+<p>When the Window menu is displayed</p>
+</context>
+  <step name="2.1" link="Bug">With the application in various states, but not split, select Window | Split.
+   <r>The current window is split into an upper pane and a lower pane showing the same view and content by a thin, 3-D, horizontal line. The Split Window toolbutton on the Window toolbar becomes depressed, and its tooltip changes to Remove Split.
+The Window | Split Window menu item also changes to "Remove Split".</r>
+   <p name="bug">Windows Split fails to split window</p>
+  </step>
+  <step name="2.2" link="Bug">With the application window split, select Window | Remove Split.
+   <r>The current split window is restored to a single pane.
+Tooltip and menu item change back to "Split Window".  Toolbutton becomes
+undepressed.
+</r>
+   <p name="bug">Windows Split fails to restore split window</p>
+  </step>
+
+ </case>
+ <case id="wnmCas" num="3" order="any">
+  <title tag="wnmCas">Cascade Windows</title>
+  <context>
+<p>With one or more application windows displayed and/or minimized/maximized</p>
+</context>
+  <step name="3.1" link="Bug">With the application in various states select Window | Cascade.
+   <r>All the non-minimized windows are arranged in a cascade from the top-left corner:
+<ul>
+<li>The windows are arranged with the first one in the top-left corner,</li>
+<li>The windows move down approximately 20 pixels, and to the right the same number of pixels, so the title bar of each window is visible.</li>
+<li>The windows are all the same size, about two-thirds of the monitor's viewport.</li>
+<li>The window which was topmost (i.e., the one from which the Cascade command was issued) is the topmost and active after the cascade is complete. (That is, it is the final window to be arranged on the screen.)</li>
+</ul>
+
+If many windows are being cascaded so that the bottom of a window reaches the bottom of the viewport, then cascading resumes at the top-left corner again. If only one window is open, it is simply resized and moved to the top-left, in accordance with the above.</r>
+   <p name="bug">Windows Cascade fails to do anything</p>
+   <p name="bug">Windows Cascade fails to leave invoking window on top</p>
+   <p name="bug">Windows Cascade fails to order windows properly</p>
+  </step>
+  <step name="3.2" link="Bug">With many windows (e.g. a dozen) open, select Window | Cascade.
+   <r>Cascade works successfully with many windows.</r>
+  </step>
+
+ </case>
+ <case id="wnmTile" num="4" order="any">
+  <title tag="wnmTile">Tile Windows</title>
+  <context>
+<p>With one or more application windows displayed and/or minimized/maximized</p>
+</context>
+  <step name="4.1" link="Bug">With the application in various states select Window | Tile.
+   <r>All of the windows are arranged in order on the screen from top to bottom. Any minimized windows are left minimized. Each window is as wide as the screen; the height of the screen is divided equally among the windows. For all windows, the following is visible: title bar, menu bar, all toolbars, and some content.</r>
+   <p name="Notes">Depending on the height of the screen, only about 4 or 5 windows can be arranged.</p>
+   <p name="bug">Windows Tile fails to do anything</p>
+   <p name="bug">Windows Tile fails to place invoking window at top</p>
+   <p name="bug">Windows Tile fails to order windows properly</p>
+  </step>
+  <step name="4.2" link="Bug">With many windows (e.g. more than 4 or 5) open, select Window | Tile.
+   <r>An error dialog informs the user that there are too many windows open for tiling. The error dialog is modal.
+Pressing OK on the dialog returns focus to the main window.</r>
+  </step>
+
+ </case>
+ <case id="wnmSbs" num="5" order="any">
+  <title tag="wnmSbs">Side-by-Side Windows</title>
+  <context>
+<p>With one or more application windows displayed and/or minimized/maximized</p>
+</context>
+  <step name="5.1" link="Bug">With the application in various states select Window | Side-by-side.
+   <r>All of the windows are arranged in order on the screen from left to right. Any minimized windows are left minimized. Each window is as tall as the screen;
+the width of the screen is divided equally among the windows. For all windows, the following is visible: title bar, menu bar, all toolbars, and some content.</r>
+   <p name="Notes">Depending on the width of the screen, only about 4 or 5 windows can be arranged.</p>
+   <p name="bug">Windows Side-by-Side fails to do anything</p>
+   <p name="bug">Windows Side-by-Side fails to place invoking window at top</p>
+   <p name="bug">Windows Side-by-Side fails to order windows properly</p>
+  </step>
+  <step name="5.2" link="Bug">With many windows (e.g. more than 4 or 5) open, select Window | Tile Side-by-side.
+   <r>An error dialog informs the user that there are too many windows open for tiling. The error dialog is modal.
+Pressing OK on the dialog returns focus to the main window.</r>
+  </step>
+
+ </case>
+ <update date="Jan-05-00" author="MikeL">Test created.</update>
+ <update date="Sep-05-01" author="LarsH">Various changes and additions.</update>
+ <update date="Jun-14-02" author="JoelC">Updated.</update>
+
+</test>

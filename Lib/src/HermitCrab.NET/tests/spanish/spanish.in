@@ -1,0 +1,226 @@
+;Test case for Spanish
+(open_language  Spanish)
+
+;--------------------------------Feature system
+(morpher_set (*pfeatures*
+				('syllabic' ('+' '-' )
+				 'consonantal' ('+' '-' )
+				 'sonorant' ('+' '-' )
+				 'continuant' ('+' '-' )
+				 'nasal' ('+' '-' )
+				 'voiced' ('+' '-' )
+				 'coronal' ('+' '-' )
+				 'anterior' ('+' '-' )
+				 'high' ('+' '-' )
+				 'low' ('+' '-' )
+				 'back' ('+' '-' )
+				 'round' ('+' '-' )
+				 'strident' ('+' '-' )
+				 'distributed' ('+' '-' )
+				 'delayed release' ('+' '-' )
+				 'covered' ('+' '-' )
+				 'lateral' ('+' '-' )
+				 'tense' ('+' '-' )
+				 'stress' ('+' '-' )
+				 'tone' ('high' 'mid' 'low' 'rising' 'falling' )
+)))
+
+;--------------------------------Char def table
+;The modifications to the standard Spanish orthography consist of the following:
+; Omission of "h" (as a separate letter; it appears in "ch")
+; Omission of accent marks
+; Use of "b" for both "b" and "v"
+; Use of "y" for both "y" and "ll"
+; Does not distinguish "gu" from "g", using the latter for all voiced velar stops
+; Use of "j" for all voiceless velar fricatives
+; Use of "k" instead of "qu" and hard "c"
+; Use of "s" for "s", "z" and soft "c"
+(load_char_def_table <char_table name 'Modified Orthographic' encoding Spanish
+  seg_defs ((a ('syllabic' '+' 'consonantal' '-' 'continuant' '+' 'voiced' '+' 'high' '-' 'low' '+' 'back' '+' 'round' '-' ))
+			(e ('syllabic' '+' 'consonantal' '-' 'continuant' '+' 'voiced' '+' 'high' '-' 'low' '-' 'back' '-' 'round' '-' ))
+			(i ('syllabic' '+' 'consonantal' '-' 'continuant' '+' 'voiced' '+' 'high' '+' 'low' '-' 'back' '-' 'round' '-' ))
+			(o ('syllabic' '+' 'consonantal' '-' 'continuant' '+' 'voiced' '+' 'high' '-' 'low' '-' 'back' '+' 'round' '+' ))
+			(u ('syllabic' '+' 'consonantal' '-' 'continuant' '+' 'voiced' '+' 'high' '+' 'low' '-' 'back' '+' 'round' '+' ))
+			(b ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'nasal' '-' 'voiced' '+' 'coronal' '-' 'anterior' '+'))
+			(d ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'nasal' '-' 'voiced' '+' 'coronal' '+' 'anterior' '+'))
+			(g ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'nasal' '-' 'voiced' '+' 'coronal' '-' 'anterior' '-' 'back' '+' ))
+			(p ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '-' 'nasal' '-' 'voiced' '-' 'coronal' '-' 'anterior' '+' ))
+			(t ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '-' 'nasal' '-' 'voiced' '-' 'coronal' '+' 'anterior' '+' ))
+			(k ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '-' 'nasal' '-' 'voiced' '-' 'coronal' '-' 'anterior' '-' 'back' '+' ))
+			(f ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '+' 'nasal' '-' 'voiced' '-' 'coronal' '-' 'anterior' '+' ))
+			(ch ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '-' 'nasal' '-' 'voiced' '-' 'coronal' '+' 'anterior' '+' 'high' '+' 'strident' '+' 'delayed release' '+' ))
+			(s ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '+' 'nasal' '-' 'voiced' '-' 'coronal' '+' 'anterior' '+' 'strident' '+' ))
+			(j ('syllabic' '-' 'consonantal' '+' 'sonorant' '-' 'continuant' '+' 'nasal' '-' 'voiced' '-' 'coronal' '-' 'anterior' '-' 'back' '+' ))
+			(n ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'nasal' '+' 'voiced' '+' 'coronal' '+' 'anterior' '+'))
+			(m ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'nasal' '+' 'voiced' '+' 'coronal' '-' 'anterior' '+' ))
+			(l ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'nasal' '-' 'voiced' '+' 'coronal' '+' 'anterior' '+' 'lateral' '+' ))
+			(r ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'nasal' '-' 'voiced' '+' 'coronal' '+' 'anterior' '+' 'lateral' '-' ))
+			(w ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'continuant' '+' 'nasal' '-' 'voiced' '+' 'coronal' '-' 'anterior' '+' 'high' '+' 'back' '+' 'round' '+' ))
+			(y ('syllabic' '-' 'consonantal' '+' 'sonorant' '+' 'continuant' '+' 'nasal' '-' 'voiced' '+' 'coronal' '+' 'anterior' '+' 'high' '+' 'back' '-' 'round' '-' 'lateral' '-' ))
+		   )
+  bdry_defs ( ÷ )>)
+
+
+;--------------------------------Strata
+(morpher_set (*strata* ('Morphophonemic' )))
+(set_stratum <stratum_setting nm 'Morphophonemic' type ctable value 'Modified Orthographic'>)
+(set_stratum <stratum_setting nm '*surface*' type ctable value 'Modified Orthographic'>)
+(set_stratum <stratum_setting nm 'Morphophonemic' type cyclicity value noncyclic>)
+(set_stratum <stratum_setting nm 'Morphophonemic' type prule value linear >)
+
+;--------------------------------Dictionary file:
+(merge_in_dictionary_file message spanish.dic)
+
+;--------------------------------Natural Classes
+(load_nat_class <nat_class name 'null' features ()>)
+(load_nat_class <nat_class name 'Consonant' features ('consonantal' '+' )>)
+(load_nat_class <nat_class name 'Vowel' features ('syllabic' '+' )>)
+
+;Rule Features
+;(rule_features
+;  (<rf nm 'AR'>
+;   <rf nm 'ER'>
+;   <rf nm 'IR'>
+;  )
+;)
+
+;Morphosyntactic Features
+;(morpher_set
+;  (*mfeatures* nm 'Morphosyntactic Feature System'
+;              ('mood' ('subjunctive' 'indicative' 'imperative' )
+;               'tense' ('past' 'present' 'future' )
+;               'person' ('1' '2' '3' )
+;               'number' ('sg' 'pl' )
+;)))
+
+
+;--------------------------------MORPHOLOGICAL RULES
+(load_morpher_rule
+  <rz_rule nm '1sg. Pres Indic'
+		   str 'Morphophonemic'
+		   rz_f ( 'mood' ('indicative') 'tense' ('present') 'person' ('1') 'number' ('sg'))
+		   subrules (<msub
+						in <m_lhs pseq ( (<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>)
+										 (<simp_cntxt class 'Vowel'>  )
+									   )
+						   >
+						out <m_rhs p_out (1 (o 'Modified Orthographic')) mor '1sg. Pres Indic'>
+					 >
+					)
+  >
+)
+
+;Not accounted for in the ff. is the fact that the theme vowel for -ir verbs is "e" when unaccented,
+; and "i" when accented:
+(load_morpher_rule
+  <rz_rule nm 'THEME'
+		   str 'Morphophonemic'
+		   rz_f ( 'mood' ( 'indicative'  ) )
+		   mor 'THEME'
+		   subrules (<msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))
+								  r_rf ('AR' ) >
+						out <m_rhs p_out  ( 1 (a 'Modified Orthographic' ) ) >
+					 >
+					 <msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))
+								  r_rf ('ER' ) >
+						out <m_rhs p_out  ( 1 (e 'Modified Orthographic' ) ) >
+					 >
+					 <msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))
+								  r_rf ('IR' ) >
+						out <m_rhs p_out  ( 1 (i 'Modified Orthographic' ) ) >
+					 >
+					)
+  >
+)
+
+
+(load_morpher_rule
+  <rz_rule nm '-mos 1'
+		   str 'Morphophonemic'
+		   rz_f ( 'person' ( '1'  ) 'number' ( 'pl'  ) )
+		   mor '-mos 1'
+		   subrules (<msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+						out <m_rhs p_out  ( 1 (mos 'Modified Orthographic' ) )>
+					>)
+  >
+)
+
+
+(load_morpher_rule
+  <rz_rule nm '-n 1'
+		   str 'Morphophonemic'
+		   rz_f ( 'number' ( 'pl'  ) )
+		   mor '-n 1'
+		   subrules (<msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+						out <m_rhs p_out  ( 1 (n 'Modified Orthographic' ) ) >
+					 >
+					)
+  >
+)
+
+
+(load_morpher_rule
+  <rz_rule nm '-s 1'
+		   str 'Morphophonemic'
+		   rz_f ( 'person' ( '2'  ) 'number' ('sg'  ) )
+		   mor '-s 1'
+		   subrules (<msub
+						in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+						out <m_rhs p_out  ( 1 (s 'Modified Orthographic' ) ) >
+					 >
+					)
+  >
+)
+
+
+(load_morpher_rule
+  <mrule nm '-ndo 1'
+		 str '*surface*'
+		 r_pos (verb)
+		 pos noun hf ( )
+		 mor '-ndo 1'
+		 subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out  ( 1 (ndo 'Modified Orthographic' ) ) >
+				   >
+				  )
+  >
+)
+
+;Affix templates
+(set_stratum
+	<stratum_setting nm  'Morphophonemic'
+					 type templates
+					 value (<affix_template nm  'verb'
+											r_pos ( 'verb'  )
+											slots (name 'theme vowel' ('THEME')
+												   name 'person/ number'  ('-mos 1' '1sg. Pres Indic' '-s 1' '-n 1')
+												  )
+							>)
+	>
+)
+
+
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))
+
+;Tracing:
+;(trace_morpher_rule message (true true 'THEME'))
+;(trace_morpher_rule message (true true '-s 1'))
+;(trace_morpher_rule message (true true '1sg. Pres Indic'))
+
+
+;-----------------------TEST ITEMS----------------------------------
+
+(morph_and_lookup_word pretty_print ablo)
+(morph_and_lookup_word pretty_print ablas)
+(morph_and_lookup_word pretty_print abla)
+(morph_and_lookup_word pretty_print ablamos)
+(morph_and_lookup_word pretty_print ablan)
+(morph_and_lookup_word pretty_print bendo)
+(morph_and_lookup_word pretty_print bendes)

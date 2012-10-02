@@ -1,0 +1,10 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Source\DocControl.xml">
+ <title tag="srcdocc">What is the document control system?</title>
+ <index>
+  <li>Manual: document control</li>
+ </index>
+ <definition>
+  <p>Perforce!</p>
+ </definition>
+</concept>

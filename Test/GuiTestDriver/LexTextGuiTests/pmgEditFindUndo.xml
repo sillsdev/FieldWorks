@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<accil on-fail="assert">
+
+   <goal>Exercises Find Lexical Entry, Undo, Redo</goal>
+
+	<bug id="FWR-2075" desc="Alt keys do not drop menus"/>
+	<bug id="FWR-1039" desc="Crash undoing added text"/>
+   <bug id="FWR-726" desc="Crash Deleting Empty Text after Undo"/>
+   <bug id="lt-6809" desc="add a text, undo, redo, crash"/>
+   <bug id="lt-6809" desc="add a text, undo, redo, crash"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+<!-- 2. Go to View/Lexicon/Bulk Edit Entries-->
+  <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+<!--  Make sure Lexeme Forms are organized alphabetically -->
+  <click select="//toolbar/standard/first"/>
+  <glimpse id="top" select="entries/record/col" row="2" col="2" prop="value" on-fail="skip" on-pass="skip"/>
+  <if>
+   <condition of="$top.value" is="'ztestsub'"/>
+   <then><click select="entries/col/header" path="Lexeme Form"/></then>
+  </if>
+
+</model>
+
+<!-- Go to Edit/Find Lexical Entry...-->
+  <click select="menubar/edit/find-lexical-entry"/>
+
+<!-- search for "tu" using menu-->
+  <on-dialog select="find-entry[@role='dialog']" title="Find Lexical Entry">
+	<insert>tu</insert>
+	<!-- need the  lexeme form column, check it and add it if necessary -->
+	<glimpse id="fleCheck" select="entries/col/heading" path="Lexeme Form" prop="present" on-fail="skip"/>
+	<if><condition of="$fleCheck" is="false"/>
+	<then>
+	  <click select="entries/col/changer"/>
+	  <insert>l</insert><!-- lexeme form -->
+	</then>
+	</if>
+	<click select="entries/col/entry" path="/value:tu" row="*" col="2"/>
+	<click select="go-to"/>
+  </on-dialog>
+
+<!-- search for "ztestmain" using menu icon-->
+  <click select="//toolbar/insert/find-lexical-entry"/>
+
+  <on-dialog select="find-entry[@role='dialog']" title="Find Lexical Entry">
+	 <insert>ztestmain</insert>
+	 <click select="entries/col/entry" path="/value:underlying form"/>
+	 <click select="go-to"/>
+  </on-dialog>
+
+<!-- search for "ztestmain" using keyboard shortcut-->
+  <insert wait="1000">^f</insert>
+  <on-dialog select="find-entry[@role='dialog']" title="Find Lexical Entry">
+	 <insert>bi</insert>
+	 <click select="entries/col/entry" path="/value:bi"/>
+	 <click select="go-to"/>
+  </on-dialog>
+
+<!-- test "Undo"-->
+<!-- Go to View /Texts/Edit-->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+<!-- insert new text-->
+  <sound frequency="600" duration="300"/>
+  <click select="toolbar/insert/new-text"/>
+
+<model select="interlinear-texts[@role='view']">
+
+<!-- confirm text area empty-->
+  <click select="text/baseline/empty"/>
+  <glimpse id="NotBlank" select="text/baseline/line" prop="value" expect=""/>
+
+<!-- click Undo-->
+  <insert>%e</insert>
+  <insert wiat="500">~</insert>
+
+<!-- confirm text content-->
+  <click id="emptyFilled" select="text/baseline/empty"/>
+  <glimpse id="filled" select="text/baseline/line" prop="value" expect="" on-pass="assert"/>
+
+<!-- click Redo-->
+  <click select="//menubar/edit/redo"/>
+
+<!-- confirm text area empty-->
+  <click select="texts/col/header" path="Title"/>
+  <click select="//toolbar/standard/first"/>
+  <click id="emptyRedo" select="text/baseline/empty"/>
+  <glimpse id="blank" select="text/baseline/line" prop="value" expect="" on-fail="skip"/>
+  <if><condition of="$blank" is="false"/>
+  <then><!-- confirm Redo-->
+	<click select="//toolbar/standard/last"/>
+	<click id="emptyRedo2" select="text/baseline/empty"/>
+	<glimpse id="redo" select="text/baseline/line" prop="value" expect=""/>
+  </then>
+  </if>
+
+<!-- Delete shortcut-->
+  <insert>^{DEL}</insert>
+  <insert>d</insert>
+
+<!-- confirm Delete, the my green mat text is there -->
+  <click select="text/baseline/empty"/>
+  <glimpse id="del" select="text/baseline/line" prop="value" expect="" on-pass="assert"/>
+
+<!-- insert new text-->
+  <click select="//toolbar/insert/new-text"/>
+
+<!-- confirm text area empty-->
+  <click select="text/baseline/empty"/>
+  <glimpse id="blank2" select="text/baseline/line" prop="value" expect=""/>
+
+<!-- Undo shortcut-->
+  <insert>^z</insert>
+
+<!-- confirm text content-->
+  <click select="text/baseline/empty"/>
+  <glimpse id="full" select="text/baseline/line" prop="value" expect="" on-pass="assert"/>
+
+<!-- Redo shortcut-->
+  <insert>^y</insert>
+
+<!-- confirm Redo-->
+  <insert wait="500">{TAB}</insert>
+  <click select="//toolbar/standard/last"/>
+  <click select="text/baseline/empty"/>
+  <glimpse id="redo2" select="text/baseline/line" prop="value" expect="" on-fail="skip"/>
+  <if><condition of="$redo2" is="false"/>
+  <then><!-- confirm Redo-->
+	<click select="//toolbar/standard/first"/>
+	<click select="text/baseline/empty"/>
+	<glimpse id="redo2a" select="text/baseline/line" prop="value" expect=""/>
+  </then>
+  </if>
+
+<!-- Delete shortcut-->
+  <insert>^{DEL}</insert>
+  <insert>d</insert>
+
+<!-- confirm Delete-->
+  <click select="text/baseline/empty"/>
+  <glimpse id="del2" select="text/baseline/line" prop="value" expect="" on-pass="assert"/>
+
+  <click select="texts/col/header" path="Title"/><!-- reorder titles with My Green Mat on top -->
+</model>
+
+ </on-application>
+</accil>

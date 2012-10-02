@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="m_tcPane.AccessibleName" xml:space="preserve">
+	<value>RootSite</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_tcPane.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_tcPane.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_tcPane.Size" type="System.Drawing.Size, System.Drawing">
+	<value>752, 55</value>
+  </data>
+  <data name="m_tcPane.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_tcPane.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_tcPane.Name" xml:space="preserve">
+	<value>m_tcPane</value>
+  </data>
+  <data name="&gt;&gt;m_tcPane.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.TitleContentsPane, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_tcPane.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tcPane.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_tabCtrl.AccessibleDescription" xml:space="preserve">
+	<value>tab control for Text/Interlinear Text</value>
+  </data>
+  <data name="m_tabCtrl.AccessibleName" xml:space="preserve">
+	<value>m_tabCtrl.AccessibleName</value>
+  </data>
+  <data name="m_tpInfo.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Comments</value>
+  </data>
+  <data name="m_tpInfo.AccessibleName" xml:space="preserve">
+	<value>m_tpInfo.AccessibleName</value>
+  </data>
+  <data name="m_tpInfo.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_infoPane.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_infoPane.Size" type="System.Drawing.Size, System.Drawing">
+	<value>400, 536</value>
+  </data>
+  <data name="m_infoPane.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_infoPane.Name" xml:space="preserve">
+	<value>m_infoPane</value>
+  </data>
+  <data name="&gt;&gt;m_infoPane.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InfoPane, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_infoPane.Parent" xml:space="preserve">
+	<value>m_tpInfo</value>
+  </data>
+  <data name="&gt;&gt;m_infoPane.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpInfo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpInfo.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpInfo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpInfo.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_tpInfo.Text" xml:space="preserve">
+	<value>Info</value>
+  </data>
+  <data name="m_tpInfo.ToolTipText" xml:space="preserve">
+	<value>Add information about your text in this tab.</value>
+  </data>
+  <data name="&gt;&gt;m_tpInfo.Name" xml:space="preserve">
+	<value>m_tpInfo</value>
+  </data>
+  <data name="&gt;&gt;m_tpInfo.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpInfo.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpInfo.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpRawText.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Text</value>
+  </data>
+  <data name="m_tpRawText.AccessibleName" xml:space="preserve">
+	<value>m_tpRawText.AccessibleName</value>
+  </data>
+  <data name="m_tpRawText.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_rtPane.AccessibleName" xml:space="preserve">
+	<value>RootSite</value>
+  </data>
+  <data name="m_rtPane.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_rtPane.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_rtPane.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_rtPane.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_rtPane.Name" xml:space="preserve">
+	<value>m_rtPane</value>
+  </data>
+  <data name="&gt;&gt;m_rtPane.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.RawTextPane, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_rtPane.Parent" xml:space="preserve">
+	<value>m_tpRawText</value>
+  </data>
+  <data name="&gt;&gt;m_rtPane.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpRawText.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpRawText.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpRawText.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_tpRawText.Text" xml:space="preserve">
+	<value>Baseline</value>
+  </data>
+  <data name="m_tpRawText.ToolTipText" xml:space="preserve">
+	<value>Enter or paste your text in this tab, then choose the Gloss or Analyse tabs to interlinearize.</value>
+  </data>
+  <data name="&gt;&gt;m_tpRawText.Name" xml:space="preserve">
+	<value>m_tpRawText</value>
+  </data>
+  <data name="&gt;&gt;m_tpRawText.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpRawText.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpRawText.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_tpGloss.AccessibleDescription" xml:space="preserve">
+	<value>tab page for glossing texts</value>
+  </data>
+  <data name="m_tpGloss.AccessibleName" xml:space="preserve">
+	<value>m_tpGloss.AccessibleName</value>
+  </data>
+  <data name="m_tpGloss.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_idcGloss.AccessibleName" xml:space="preserve">
+	<value>m_idcGloss</value>
+  </data>
+  <data name="m_idcGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_idcGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_idcGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_idcGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_idcGloss.Name" xml:space="preserve">
+	<value>m_idcGloss</value>
+  </data>
+  <data name="&gt;&gt;m_idcGloss.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InterlinDocForAnalysis, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_idcGloss.Parent" xml:space="preserve">
+	<value>m_panelGloss</value>
+  </data>
+  <data name="&gt;&gt;m_idcGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_panelGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_panelGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="m_panelGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_panelGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_panelGloss.Name" xml:space="preserve">
+	<value>m_panelGloss</value>
+  </data>
+  <data name="&gt;&gt;m_panelGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_panelGloss.Parent" xml:space="preserve">
+	<value>m_tpGloss</value>
+  </data>
+  <data name="&gt;&gt;m_panelGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpGloss.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_tpGloss.Text" xml:space="preserve">
+	<value>Gloss</value>
+  </data>
+  <data name="m_tpGloss.ToolTipText" xml:space="preserve">
+	<value>Gloss the words in the text.</value>
+  </data>
+  <data name="&gt;&gt;m_tpGloss.Name" xml:space="preserve">
+	<value>m_tpGloss</value>
+  </data>
+  <data name="&gt;&gt;m_tpGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpGloss.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpGloss.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_tpInterlinear.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Interlinear Text</value>
+  </data>
+  <data name="m_tpInterlinear.AccessibleName" xml:space="preserve">
+	<value>m_tpInterlinear.AccessibleName</value>
+  </data>
+  <data name="m_tpInterlinear.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_panelAnalyzeView.AccessibleName" xml:space="preserve">
+	<value>m_panelAnalyzeView</value>
+  </data>
+  <data name="m_idcAnalyze.AccessibleName" xml:space="preserve">
+	<value>m_idcAnalyze</value>
+  </data>
+  <data name="m_idcAnalyze.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_idcAnalyze.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_idcAnalyze.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_idcAnalyze.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_idcAnalyze.Name" xml:space="preserve">
+	<value>m_idcAnalyze</value>
+  </data>
+  <data name="&gt;&gt;m_idcAnalyze.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InterlinDocForAnalysis, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_idcAnalyze.Parent" xml:space="preserve">
+	<value>m_panelAnalyzeView</value>
+  </data>
+  <data name="&gt;&gt;m_idcAnalyze.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_panelAnalyzeView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_panelAnalyzeView.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="m_panelAnalyzeView.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_panelAnalyzeView.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_panelAnalyzeView.Name" xml:space="preserve">
+	<value>m_panelAnalyzeView</value>
+  </data>
+  <data name="&gt;&gt;m_panelAnalyzeView.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_panelAnalyzeView.Parent" xml:space="preserve">
+	<value>m_tpInterlinear</value>
+  </data>
+  <data name="&gt;&gt;m_panelAnalyzeView.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpInterlinear.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpInterlinear.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpInterlinear.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpInterlinear.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_tpInterlinear.Text" xml:space="preserve">
+	<value>Analyze</value>
+  </data>
+  <data name="m_tpInterlinear.ToolTipText" xml:space="preserve">
+	<value>Analyze the morphemes in the words of the text.</value>
+  </data>
+  <data name="&gt;&gt;m_tpInterlinear.Name" xml:space="preserve">
+	<value>m_tpInterlinear</value>
+  </data>
+  <data name="&gt;&gt;m_tpInterlinear.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpInterlinear.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpInterlinear.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_tpTagging.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Tagging View</value>
+  </data>
+  <data name="m_tpTagging.AccessibleName" xml:space="preserve">
+	<value>m_tpTagging.AccessibleName</value>
+  </data>
+  <data name="m_tpTagging.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_panelTagging.AccessibleName" xml:space="preserve">
+	<value>m_panelTagging</value>
+  </data>
+  <data name="m_taggingPane.AccessibleName" xml:space="preserve">
+	<value>m_taggingPane</value>
+  </data>
+  <data name="m_taggingPane.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_taggingPane.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_taggingPane.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_taggingPane.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_taggingPane.Name" xml:space="preserve">
+	<value>m_taggingPane</value>
+  </data>
+  <data name="&gt;&gt;m_taggingPane.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InterlinTaggingChild, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_taggingPane.Parent" xml:space="preserve">
+	<value>m_panelTagging</value>
+  </data>
+  <data name="&gt;&gt;m_taggingPane.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_panelTagging.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_panelTagging.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="m_panelTagging.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_panelTagging.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_panelTagging.Name" xml:space="preserve">
+	<value>m_panelTagging</value>
+  </data>
+  <data name="&gt;&gt;m_panelTagging.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_panelTagging.Parent" xml:space="preserve">
+	<value>m_tpTagging</value>
+  </data>
+  <data name="&gt;&gt;m_panelTagging.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpTagging.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpTagging.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpTagging.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpTagging.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_tpTagging.Text" xml:space="preserve">
+	<value>Tagging</value>
+  </data>
+  <data name="m_tpTagging.ToolTipText" xml:space="preserve">
+	<value>Interlinear view for tagging multi-word phenomena.</value>
+  </data>
+  <data name="&gt;&gt;m_tpTagging.Name" xml:space="preserve">
+	<value>m_tpTagging</value>
+  </data>
+  <data name="&gt;&gt;m_tpTagging.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpTagging.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpTagging.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_tpPrintView.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Print View</value>
+  </data>
+  <data name="m_tpPrintView.AccessibleName" xml:space="preserve">
+	<value>m_tpPrintView.AccessibleName</value>
+  </data>
+  <data name="m_tpPrintView.AutoScroll" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_panelPrintView.AccessibleName" xml:space="preserve">
+	<value>m_panelPrintView</value>
+  </data>
+  <data name="m_printViewPane.AccessibleName" xml:space="preserve">
+	<value>m_printViewPane</value>
+  </data>
+  <data name="m_printViewPane.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_printViewPane.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_printViewPane.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_printViewPane.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_printViewPane.Name" xml:space="preserve">
+	<value>m_printViewPane</value>
+  </data>
+  <data name="&gt;&gt;m_printViewPane.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InterlinPrintChild, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_printViewPane.Parent" xml:space="preserve">
+	<value>m_panelPrintView</value>
+  </data>
+  <data name="&gt;&gt;m_printViewPane.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_panelPrintView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_panelPrintView.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="m_panelPrintView.Size" type="System.Drawing.Size, System.Drawing">
+	<value>738, 63</value>
+  </data>
+  <data name="m_panelPrintView.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_panelPrintView.Name" xml:space="preserve">
+	<value>m_panelPrintView</value>
+  </data>
+  <data name="&gt;&gt;m_panelPrintView.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_panelPrintView.Parent" xml:space="preserve">
+	<value>m_tpPrintView</value>
+  </data>
+  <data name="&gt;&gt;m_panelPrintView.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_tpPrintView.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpPrintView.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpPrintView.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpPrintView.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_tpPrintView.Text" xml:space="preserve">
+	<value>Print View</value>
+  </data>
+  <data name="m_tpPrintView.ToolTipText" xml:space="preserve">
+	<value>Read-only interlinear view for printing.</value>
+  </data>
+  <data name="&gt;&gt;m_tpPrintView.Name" xml:space="preserve">
+	<value>m_tpPrintView</value>
+  </data>
+  <data name="&gt;&gt;m_tpPrintView.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpPrintView.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpPrintView.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_tpCChart.AccessibleDescription" xml:space="preserve">
+	<value>tab page for Constituent Charts</value>
+  </data>
+  <data name="m_tpCChart.AccessibleName" xml:space="preserve">
+	<value>m_tpCChart.AccessibleName</value>
+  </data>
+  <data name="m_tpCChart.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpCChart.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tpCChart.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 69</value>
+  </data>
+  <data name="m_tpCChart.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_tpCChart.Text" xml:space="preserve">
+	<value>Text Chart</value>
+  </data>
+  <data name="m_tpCChart.ToolTipText" xml:space="preserve">
+	<value>After providing word glosses, you can chart your texts.</value>
+  </data>
+  <data name="&gt;&gt;m_tpCChart.Name" xml:space="preserve">
+	<value>m_tpCChart</value>
+  </data>
+  <data name="&gt;&gt;m_tpCChart.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpCChart.Parent" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tpCChart.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_tabCtrl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 55</value>
+  </data>
+  <data name="m_tabCtrl.ShowToolTips" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_tabCtrl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>752, 95</value>
+  </data>
+  <data name="m_tabCtrl.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tabCtrl.Name" xml:space="preserve">
+	<value>m_tabCtrl</value>
+  </data>
+  <data name="&gt;&gt;m_tabCtrl.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabCtrl.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tabCtrl.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>InterlinMaster</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.IText.InterlinMasterBase, ITextDll, Version=6.1.1.28449, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+</root>

@@ -1,0 +1,655 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{37C30AC6-66D3-4FFD-A50F-D9194FB9E33B}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>LexTextControls</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.LexText.Controls</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<Optimize>false</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningsAsErrors>0108</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<Optimize>true</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=5.3.0.27165, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl, Version=6.1.0.20425, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Filters">
+	  <Name>Filters</Name>
+	  <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
+	</Reference>
+	<Reference Include="FormLanguageSwitch, Version=1.2.2576.38961, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\FormLanguageSwitch.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgs, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FxtDll, Version=5.3.0.27483, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
+	</Reference>
+	<Reference Include="MessageBoxExLib">
+	  <Name>MessageBoxExLib</Name>
+	  <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
+	</Reference>
+	<Reference Include="MGA">
+	  <Name>MGA</Name>
+	  <HintPath>..\..\..\Output\Debug\MGA.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso, Version=1.7.43.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
+	</Reference>
+	<Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Palaso.Lift.dll</HintPath>
+	</Reference>
+	<Reference Include="ParserCore">
+	  <Name>ParserCore</Name>
+	  <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.3062.27184, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <Name>RootSite</Name>
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="Sfm2Xml">
+	  <Name>Sfm2Xml</Name>
+	  <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
+	</Reference>
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\SilEncConverters40.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=6.9.5.21586, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="SimpleRootSite">
+	  <Name>SimpleRootSite</Name>
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.ServiceProcess" />
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="System.Xml.Linq">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="Widgets">
+	  <Name>Widgets</Name>
+	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+	</Reference>
+	<Reference Include="xCore">
+	  <Name>xCore</Name>
+	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils">
+	  <Name>XMLUtils</Name>
+	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLViews">
+	  <Name>XMLViews</Name>
+	  <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AddAllomorphDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AddNewSenseDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AddWritingSystemButton.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="AddWritingSystemButton.Designer.cs">
+	  <DependentUpon>AddWritingSystemButton.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ConfigureHomographDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ConfigureHomographDlg.designer.cs">
+	  <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\AnthroFieldMappingDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\AnthroFieldMappingDlg.Designer.cs">
+	  <DependentUpon>AnthroFieldMappingDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\LinkFieldOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\LinkFieldOptions.Designer.cs">
+	  <DependentUpon>LinkFieldOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\DiscardOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\DiscardOptions.Designer.cs">
+	  <DependentUpon>DiscardOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\ImportCharMappingDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\ImportCharMappingDlg.Designer.cs">
+	  <DependentUpon>ImportCharMappingDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\ImportDateFormatDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\ImportDateFormatDlg.Designer.cs">
+	  <DependentUpon>ImportDateFormatDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\ImportEncCvtrDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\ImportEncCvtrDlg.Designer.cs">
+	  <DependentUpon>ImportEncCvtrDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\ImportMatchReplaceDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\ImportMatchReplaceDlg.Designer.cs">
+	  <DependentUpon>ImportMatchReplaceDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\ListRefFieldOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\ListRefFieldOptions.Designer.cs">
+	  <DependentUpon>ListRefFieldOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\StringFieldOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\StringFieldOptions.Designer.cs">
+	  <DependentUpon>StringFieldOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\NotebookImportWiz.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\NotebookImportWiz.Designer.cs">
+	  <DependentUpon>NotebookImportWiz.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\TextFieldOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\TextFieldOptions.Designer.cs">
+	  <DependentUpon>TextFieldOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DataNotebook\DateFieldOptions.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataNotebook\DateFieldOptions.Designer.cs">
+	  <DependentUpon>DateFieldOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="EntryGoDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="BaseGoDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="InsertRecordDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LiftExporter.cs" />
+	<Compile Include="LiftMergerRanges.cs" />
+	<Compile Include="LiftMergerSupportCodeAndClasses.cs" />
+	<Compile Include="RecordGoDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="EntryDlgListener.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="EntryObjects.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FeatureStructureTreeView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="LiftMerger.cs" />
+	<Compile Include="IFwExtension.cs" />
+	<Compile Include="LiftImportDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LiftImportDlg.Designer.cs">
+	  <DependentUpon>LiftImportDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="InflectionClassPopupTreeManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InflectionFeaturePopupTreeManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InsertEntryDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexImport.cs" />
+	<Compile Include="LexImportWizard.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexImportWizardCharMarkerDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexImportWizardHelpers.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LexImportWizardLanguage.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexImportWizardMarker.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexOptionsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexOptionsDlg.Designer.cs">
+	  <DependentUpon>LexOptionsDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="LexReferenceDetailsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LexTextControls.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>LexTextControls.resx</DependentUpon>
+	</Compile>
+	<None Include="LiftSynchronizeDlg.cs" />
+	<Compile Include="LiftSynchronizeDlg.Designer.cs">
+	  <DependentUpon>LiftSynchronizeDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="LinkAllomorphDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LinkEntryOrSenseDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LinkMSADlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LinkVariantToEntryOrSense.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="LinkVariantToEntryOrSense.Designer.cs">
+	  <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
+	</Compile>
+	<Compile Include="MasterCategoryListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MasterInflectionFeatureListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MasterListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MasterPhonologicalFeatureListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MergeEntryDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MsaCreatorDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MSAGroupBox.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MsaInflectionFeatureListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MSAPopupTreeManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PopupTreeManager.cs">
+	</Compile>
+	<Compile Include="POSPopupTreeManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RecordDlgListener.cs" />
+	<EmbeddedResource Include="AddAllomorphDlg.resx">
+	  <DependentUpon>AddAllomorphDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AddNewSenseDlg.resx">
+	  <DependentUpon>AddNewSenseDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="BaseGoDlg.resx">
+	  <DependentUpon>BaseGoDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ConfigureHomographDlg.resx">
+	  <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\AnthroFieldMappingDlg.resx">
+	  <DependentUpon>AnthroFieldMappingDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\LinkFieldOptions.resx">
+	  <DependentUpon>LinkFieldOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\DateFieldOptions.resx">
+	  <DependentUpon>DateFieldOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\DiscardOptions.resx">
+	  <DependentUpon>DiscardOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\ImportCharMappingDlg.resx">
+	  <DependentUpon>ImportCharMappingDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\ImportDateFormatDlg.resx">
+	  <DependentUpon>ImportDateFormatDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\ImportEncCvtrDlg.resx">
+	  <DependentUpon>ImportEncCvtrDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\ImportMatchReplaceDlg.resx">
+	  <DependentUpon>ImportMatchReplaceDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\ListRefFieldOptions.resx">
+	  <DependentUpon>ListRefFieldOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\StringFieldOptions.resx">
+	  <DependentUpon>StringFieldOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\NotebookImportWiz.resx">
+	  <DependentUpon>NotebookImportWiz.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataNotebook\TextFieldOptions.resx">
+	  <DependentUpon>TextFieldOptions.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FeatureStructureTreeView.resx">
+	  <DependentUpon>FeatureStructureTreeView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InsertRecordDlg.resx">
+	  <DependentUpon>InsertRecordDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LiftImportDlg.resx">
+	  <DependentUpon>LiftImportDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="InsertEntryDlg.resx">
+	  <DependentUpon>InsertEntryDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexImportWizard.resx">
+	  <DependentUpon>LexImportWizard.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexImportWizardCharMarkerDlg.resx">
+	  <DependentUpon>LexImportWizardCharMarkerDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexImportWizardLanguage.resx">
+	  <DependentUpon>LexImportWizardLanguage.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexImportWizardMarker.resx">
+	  <DependentUpon>LexImportWizardMarker.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexOptionsDlg.resx">
+	  <DependentUpon>LexOptionsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexReferenceDetailsDlg.resx">
+	  <DependentUpon>LexReferenceDetailsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexTextControls.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>LexTextControls.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LiftSynchronizeDlg.resx">
+	  <DependentUpon>LiftSynchronizeDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LinkAllomorphDlg.resx">
+	  <DependentUpon>LinkAllomorphDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LinkEntryOrSenseDlg.resx">
+	  <DependentUpon>LinkEntryOrSenseDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LinkMSADlg.resx">
+	  <DependentUpon>LinkMSADlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LinkVariantToEntryOrSense.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MasterCategoryListDlg.resx">
+	  <DependentUpon>MasterCategoryListDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MasterInflectionFeatureListDlg.resx">
+	  <DependentUpon>MasterInflectionFeatureListDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MasterListDlg.resx">
+	  <DependentUpon>MasterListDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MasterPhonologicalFeatureListDlg.resx">
+	  <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MergeEntryDlg.resx">
+	  <DependentUpon>MergeEntryDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MsaCreatorDlg.resx">
+	  <DependentUpon>MsaCreatorDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MSAGroupBox.resx">
+	  <DependentUpon>MSAGroupBox.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MsaInflectionFeatureListDlg.resx">
+	  <DependentUpon>MsaInflectionFeatureListDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="RecordGoDlg.resx">
+	  <DependentUpon>RecordGoDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="GeneratedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="Resources\Create Entry.ico" />
+	<Content Include="Resources\Find Lexical Entry.ico" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

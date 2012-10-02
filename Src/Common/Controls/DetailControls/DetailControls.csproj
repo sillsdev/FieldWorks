@@ -1,0 +1,433 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>DetailControls</AssemblyName>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Common.Framework.DetailControls</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	  <Name>Accessibility</Name>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="BasicUtils">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FdoUi">
+	  <HintPath>..\..\..\..\Output\Debug\FdoUi.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework">
+	  <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls">
+	  <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgs">
+	  <HintPath>..\..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources">
+	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="LexTextControls">
+	  <HintPath>..\..\..\..\Output\Debug\LexTextControls.dll</HintPath>
+	</Reference>
+	<Reference Include="MessageBoxExLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+	</Reference>
+	<Reference Include="PhonEnvValidator">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="SimpleRootSite">
+	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="Widgets">
+	  <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
+	</Reference>
+	<Reference Include="xCore">
+	  <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=7.0.0.40581, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="XMLUtils">
+	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\..\Output\Debug\XMLViews.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs" />
+	<Compile Include="AtomicReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AtomicReferencePOSSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AtomicReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AtomicReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AtomicRefTypeAheadSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AudioVisualSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AutoMenuHandler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BasicTypeSlices.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ButtonLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ChooserCommand.cs" />
+	<Compile Include="CommandSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ConfigureWritingSystemsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DataTree.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DataTreeImages.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="DerivMSAReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="EnumComboSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FieldSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="GenDateChooserDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="GenDateLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="GenDateSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="GhostReferenceVectorSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="GhostStringSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ImageSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="InflMSAReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MessageSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MorphTypeAtomicLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MorphTypeAtomicReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MorphTypeChooser.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MSAReferenceComboBoxSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MultiLevelConc.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MultiStringSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ObjSeqHashMap.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PhoneEnvReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PhoneEnvReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PhoneEnvReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PictureSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ReferenceComboBoxSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ReferenceSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ReferenceVectorSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ReferenceViewBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SimpleComparer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SimpleListChooser.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="Slice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SliceFactory.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SliceFilter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SliceTreeNode.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="Resources\DetailControlsStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>DetailControlsStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="StringSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="StTextSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SummaryCommandControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="SummarySlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="TreeEvents.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TwoLevelConc.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="VectorReferenceLauncher.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="VectorReferenceView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ViewPropertySlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ViewSlice.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<None Include="buildinclude.xml" />
+	<EmbeddedResource Include="AtomicReferenceLauncher.resx">
+	  <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AtomicReferenceView.resx">
+	  <DependentUpon>AtomicReferenceView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ButtonLauncher.resx">
+	  <DependentUpon>ButtonLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ConfigureWritingSystemsDlg.resx">
+	  <DependentUpon>ConfigureWritingSystemsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataTree.resx">
+	  <DependentUpon>DataTree.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DataTreeImages.resx">
+	  <DependentUpon>DataTreeImages.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="GenDateChooserDlg.resx">
+	  <DependentUpon>GenDateChooserDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="GenDateLauncher.resx">
+	  <DependentUpon>GenDateLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MorphTypeAtomicLauncher.resx">
+	  <DependentUpon>MorphTypeAtomicLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MorphTypeChooser.resx">
+	  <DependentUpon>MorphTypeChooser.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MultiLevelConc.resx">
+	  <DependentUpon>MultiLevelConc.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PhoneEnvReferenceLauncher.resx">
+	  <DependentUpon>PhoneEnvReferenceLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PhoneEnvReferenceView.resx">
+	  <DependentUpon>PhoneEnvReferenceView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ReferenceLauncher.resx">
+	  <DependentUpon>ReferenceLauncher.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SimpleListChooser.resx">
+	  <DependentUpon>SimpleListChooser.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SliceTreeNode.resx">
+	  <DependentUpon>SliceTreeNode.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Resources\DetailControlsStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>DetailControlsStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SummaryCommandControl.resx">
+	  <DependentUpon>SummaryCommandControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="VectorReferenceLauncher.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="VectorReferenceView.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,197 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{909C3757-EF5F-4639-B208-E1EE82570585}</ProjectGuid>
+	<OutputType>WinExe</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SILConvertersWordML</RootNamespace>
+	<AssemblyName>SILConvertersWordML</AssemblyName>
+	<StartupObject>SILConvertersWordML.Program</StartupObject>
+	<ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<ApplicationManifest>app.manifest</ApplicationManifest>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\..\debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+	<OutputPath>..\..\..\release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\ECInterfaces.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="Microsoft.Office.Interop.Word, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\Installer\SCOfficeMM\Microsoft.Office.Interop.Word.dll</HintPath>
+	</Reference>
+	<Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\SilEncConverters40.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Deployment" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AutoSearchOptions.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AutoSearchOptions.Designer.cs">
+	  <DependentUpon>AutoSearchOptions.cs</DependentUpon>
+	</Compile>
+	<Compile Include="BaseConverterForm.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="BaseConverterForm.designer.cs">
+	  <DependentUpon>BaseConverterForm.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FilesToOpenListDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FilesToOpenListDlg.Designer.cs">
+	  <DependentUpon>FilesToOpenListDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FontsStylesForm.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FontsStylesForm.Designer.cs">
+	  <DependentUpon>FontsStylesForm.cs</DependentUpon>
+	</Compile>
+	<Compile Include="IteratorMap.cs" />
+	<Compile Include="Program.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<EmbeddedResource Include="AutoSearchOptions.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>AutoSearchOptions.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="BaseConverterForm.resx">
+	  <DependentUpon>BaseConverterForm.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FilesToOpenListDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FilesToOpenListDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FontsStylesForm.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FontsStylesForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	</Compile>
+	<None Include="app.config" />
+	<None Include="app.manifest" />
+	<None Include="Properties\Settings.settings">
+	  <Generator>SettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	</None>
+	<Compile Include="Properties\Settings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Settings.settings</DependentUpon>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	</Compile>
+	<Compile Include="DocXmlDocument.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="ConvertAndSave.bmp" />
+	<Content Include="MergeSingleCharacterRunsWordML.xslt" />
+	<Content Include="Open.bmp" />
+	<Content Include="openHS.png" />
+	<Content Include="SaveAllHS.png" />
+	<Content Include="TRFFC17.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

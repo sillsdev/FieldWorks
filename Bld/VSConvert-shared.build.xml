@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This file is included in FieldWorks.build and in all generated build files. Add any targets that are needed by both types of build files.
+-->
+<project name="VSConvertShared" default="appendTargetName" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+
+	<target name="appendTargetName" description="Optionally add the name of what we are working on.">
+		<if test="${showTargetsRunInReport}">
+			<if test="${property::exists('fw-targets-run')}">
+				<property name="fw-targets-run" value="${fw-targets-run}; ${appTargName}"/>
+			</if>
+			<if test="${not property::exists('fw-targets-run')}">
+				<property name="fw-targets-run" value="${appTargName}"/>
+			</if>
+		</if>
+	</target>
+
+	<include buildfile="${fwroot}/Bld/Linux.build.xml"/>
+
+</project>

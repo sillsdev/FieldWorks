@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000007">
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+	<rt guid="155B8419-0A9B-44A4-A960-F78983C84768" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+	<rt guid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+
+	<rt guid="8E2BAE91-AF99-4A82-BDA0-D16CA49F56FB" class="ScrScriptureNote">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<objsur guid="7ffc4eab-856a-43cc-bc11-0db55738c15b" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+		<ScrScriptureNote />
+	</rt>
+
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be2b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be3b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be4b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be5b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Free translation -->
+				<objsur guid="9ac9637a-56b9-4f05-a0e1-4243fbfb57db" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+
+	<rt class="CmBaseAnnotation" guid="54E4A881-23D7-48FC-BD05-14DD0CA86D5B" ownerguid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A">
+		<CmObject />
+		<CmAnnotation>
+			<DateCreated val="2009-04-15 15:28:13.170" />
+			<DateModified val="2009-04-15 15:28:13.170" />
+			<AnnotationType>
+				<!-- Defective Consituent Chart Annotation. (Lacks a required BeginObject property in CmBaseAnnotation element.) -->
+				<objsur t="r" guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="565BE19E-4809-4C31-ABCA-EB6BEFDDD034" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+	<rt class="LangProject" guid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A">
+		<CmObject/>
+		<CmProject />
+		<LangProject>
+			<Annotations>
+				<objsur t="o" guid="54E4A881-23D7-48FC-BD05-14DD0CA86D5B" />
+			</Annotations>
+		</LangProject>
+	</rt>
+</languageproject>

@@ -1,0 +1,288 @@
+c	MC2se_2007.cct modified by cjs March 2007. Originally from
+c	db2se3.CCT BHS Encoding to Standard Encoding Document	4-26-96   tvw
+c
+c	July 16, 1999 added handling the \wc field for wordform without cants Verna Stutzman
+c   fixed shureq code, to handle morph mark and not just word init 4-25-96
+c more changes from SE ver2, as per Joan,  3-26-96 tvw
+c  to use with Ezra 5.6
+
+c   put in changes to encoding as per Joan Wardell, 1-16-95 tvw
+c   inverted nun moved to d78 'N', 1-29-96 tvw
+
+c	  designed to run on HEB DB files, with each word in a field, space before, nl after,
+c	 / (morpheme break) removed, 00 (end of verse) moved to \ep field.
+c  handles sureq/wav dagesh ambiguity as per Gesenius grammar, pg 55, note 2
+c added the tilde as an end of word character -vps 1/24/02
+
+c handling of cant 11 changed by cjs March 25, 2002
+
+c treatment of '_' for hidden article added cjs April 3, 2003
+
+c corrected handling of hatephs with metheg cjs April 2006
+c corrected upper punctum cjs April 2006
+c modified for a specific sfm set cjs April 2006
+
+c BHS	SE
+begin > store(white) ' ' nl
+	store(wdend) ' -?~]'  nl endstore
+	store(wdbeg) ' ' nl endstore  c should only be space or nl
+	store(num) '1234567890'
+	store(vowel) 'AFE"IOU:'  c BHS vowels
+	store(cons) ')BGDHWZX+YKLMNS(PCQR#&$T' endstore
+	write 'Converting BHS from MC to SE encoding' nl
+	use(main)
+
+c write spin definition (makes spining bar so we can see that something
+c                        is happening.)
+define(wr_spin) > incr(spin) write d8
+	 ifeq(spin) '1' write '|' endif
+	 ifeq(spin) '2' write '/' endif
+	 ifeq(spin) '3' write '-' endif
+	  ifeq(spin) '4' write '\'  store(spin) '0' endstore endif
+
+c  preprocessing to move cantillation marks from between to after some char pairs
+define(preproc) > dup back(3) store(temp) fwd(2) endstore   c output Char,char,cantilation num
+	fwd(1) out(temp) store(temp) endstore
+	back(4)	c put string back into to stream to reprocess.
+
+c ********* ( this part is to handle Hebrew Data Base sfm environment
+group(main)
+'\ws '	>	do(wr_spin) dup use(convert)
+'\wt '	>	dup use(convert)
+'\wc '	>	dup use(convert)
+'\ms'	>	next
+'\mt'	>	next
+'\ls'	>	next
+'\lt'	>	dup use(morfnum)
+'\txt '	>	dup use(convert)
+
+group(morfnum)
+any(num) ' '	>	dup use(convert) c pass on the morf num
+
+group(convert)
+nl	>	dup use(main)
+c ********* this part is to handle Hebrew Data Base sfm environment )
+
+c the following chars seem to be unused in BHS (Job, Zech)
+c    # % ' ; < = > @ V [ \ ] ^ _ ` d f g h j k m n p q r s t u v w z { | }
+c   though WHI uses N]8 for inverted nun and ^ for cant place holder in morfs
+c any lower case used is in book names in header line
+c no longer true '_' is used for the hidden article following a preposition cjs
+
+c punctuation/paragraph unit markers
+nl	>	' '  c replace nl's with space
+' ' nl	>	' '
+'  '	>	' ' back(1)  c reduce multiple spaces to 1 space
+
+c	took out the extra spaces before the wedge in the outpur - vps 1/22/02
+c	put the xtra space back - cjs Feb 4, 2002
+
+'S'  wd(white) 	>	' <'	c Sethuma
+'S?'  wd(white)	>	' <' nl
+'P'  wd(white)	>	' >'	c PethuHa
+'P?'  wd(white)	>	' >' nl
+
+'_'		>	''	c nulls hidden article cjs April 2003
+'_' any(num)	>	dup	c protects '_' before homonym number
+'_' nl		>	dup	c protects '_' in \ms# and \mt# lines
+'(' any(num) ')' >	dup	c protects homonym numbers
+
+"?"	>	nl	c end of line / line break in printed BHS.
+"/"	>	""	c morphological unit divider (to null)
+
+"*"	>	"*"	c ketiv
+"**"	>	"**"	c qere
+
+"-"	>	"-"	c maqqeph stay as dash 8-14-95
+"."	>	d208	c dagesh       c  from 'D'  1-16-96 tvw
+","	>	"&"	c rape
+
+'^'	>	''  back c eat out the cant place holder from WTS morfs and go back so
+			 c that if O^W occurs the OW change still works 7/22/99  vps
+
+
+c basic character changes
+")"	>	"'"	c apostrophe	alef, aleph
+"B"	>	"b"	c bet, beth
+"G"	>	"g"	c gimel
+"D"	>	"d"	c dalet, daleth
+"H"	>	"h"	c he
+"W"	>	"w"	c waw
+"Z"	>	"z"	c zayin
+"X"	>	"x"	c het, heth
+"+"	>	"X"	c tet, teth from T, 12-15-95
+"Y"	>	"y"	c yod
+"K"	>	"k"	c kaf
+"L"	>	"l"	c lamed
+"M"	>	"m"	c mem
+"N"	>	"n"	c nun
+c Inverted Nun  moved from 'U' 1-29-96 tvw
+'N]8'	>	"N"	c inverted nun, in WTS morfemes   3-26-96 tvw
+'N' wd(white) > "N"	c inverted nun in text without ]8 mark-up
+"S"	>	"s"	c samek
+"("	>	"v"	c ayin
+"P"	>	"p"	c pe
+"C"	>	"c"	c zade, tsade
+"Q"	>	"q"	c qof, qoph
+"R"	>	"r"	c resh
+"#"	>	"S"	c sin/shin, unp_sin
+"&"	>	"W"	c sin
+"$"	>	"H"	c shin
+"T"	>	"t"	c taw
+
+c vowels
+"A"	>	"a"	c patah
+"F"	>	"A"	c qametz, kamets
+"E"	>	"e"	c segol   c reversed with tsere 1-16-96 tvw
+'"'	>	"E"	c tsere   c reversed with segol 1-16-96 tvw
+"I"	>	"i"	c hireq
+"O"	>	"O"	c holam, holem   8/30/95  (was "o")
+"U"	>	"u"	c qibbutz, qibb   c reversed with inverted nun 1-16-96 tvw
+
+c shureq   4-25-96
+
+"W." fol(cons)	>	d251	c shureq not just wdbeg  8/30/95  (was "u")
+"W./" fol(cons)	>	d251	c with morph brk
+"W." any(num) any(num) fol(cons)	>	dup back(4) store(trash) fwd(2) endstore d251	c shureq   8/30/95  (was "u")
+"W." any(num) any(num) '/' fol(cons)	>	dup back(5) store(trash) fwd(2) endstore d251	c c with morph brk
+
+"W."  fol(wdend)	>	d251
+"W." any(num) any(num) fol(wdend)	>	dup back(4) store(trash) fwd(2) endstore d251 	c shureq   8/30/95  (was "u")
+
+c added by cjs for W.-cant-cant-wordend Sept 2003
+"W." any(num) any(num) any(num) any(num) fol(wdend)       >
+		dup back(6) store(trash) fwd(2) endstore d251
+
+c double W. with or without an intervening cant 9/26/03 cjs
+
+'W.W.'	>	d119 d208 d251  c this works because only 5 occs, all preceded by vowel 9/29/03 jw
+c next line also assumes preceded by vowel. jw
+'W.' any(num) any(num) 'W.'	>
+		dup back(6)		c replaces the whole string in input stream for reprocessing
+		store(trash) fwd(2) endstore	c trashes first original W.
+		d119 d208		c outputs waw + dagesh
+
+c schewa handling - environment
+":"	>	d252	c schwa, schewa   9/13/95  ( was "f")
+			c furtive schewa 9/13/95 will be at d248  for transliteration
+
+"OW"	>	d244	c holem waw   8/30/95  (was "O")
+
+c OW with one intervening cant, put cant before holem waw, as per Stephen Daley
+"O" any(num) any(num) "W"	>
+		dup back(4)
+		store(trash) fwd(1) endstore	c after trashing original O and W
+		store(ow) fwd(2) endstore	c holem waw after cant
+		store(trash) fwd(1) endstore	c vps cant should be put back into stream before the holem waw 8/21/98
+		out(ow) d244 back(3)		c put cant back into stream to process
+
+c OW with two intervening cant codes  9/26/03 cjs
+'O' any(num) any(num) any(num) any(num) 'W'	>
+		dup back(6)			c replaces the whole string in input stream for reprocessing
+		store(trash) fwd(1) endstore	c trashes original O
+		store(ow) fwd(4) d244		c puts d244 after the cant codes
+		store(trash) fwd(1) endstore	c trashes original W
+		out(ow) back(5)			c replaces d244 and cant codes in input stream for reprocessing
+						c d244 will pass unchanged, the cant codes will be converted
+
+c OW followed by a vowel cannot be vocalic so do not convert to d244
+"OW" fol(vowel)	>	"Ow"
+
+":A"	>	d225	c hateph-pathah  from  "Q" 8-14-95
+":E"	>	d233	c hateph-segol  from  "P" 8-14-95
+":F"	>	d243	c hateph-qametz  from  "R" 8-14-95
+
+
+c preprocessing: cantillation between the following characters:  (move to after the char group)
+c  for holem waw, changed to putting cant before holem
+c  'O' any(num) any(num) 'W'	>	do(preproc)
+
+c  for he dagesh - moves cant to after dagesh when word final
+'H' any(num) any(num) '.' fol(wdend) >   do(preproc)
+
+
+c HEBREW ACCENTS/CANTILLATION CODING
+c (named and cross referenced as in the TABULA ACCENTUM insert card in BHS)
+c   many changes in cants  3-26-96 tvw
+c BHS	SE
+"52"	>	d178	c  Puncta Extraordaria  shared with number (Gen 16:5) 53 times  1-11-96, tvw
+			c  corrected from '$' to d178 cjs April 2006
+"53"	>	d179	c  Puncta Extraordaria  (Pss 27:13) 3 times  3-26-96 tvw
+
+"00"	>	":"	c  sop pasuq [end of verse]
+
+c at end (to left) of word, above
+"01"	>	d130	c  segolta
+"02"	>	d144	c  zarqa, sinnor   3-26-96 tvw
+"03"	>	d143	c  pashta, azla legarmeh   3-26-96 tvw
+"04"	>	d131	c  telisha parvum
+"05"	>	d124	c  paseq
+
+c at start (to right) of word, below
+"10"	>	d152	c  yetib (yetiv)   3-26-96 tvw
+"13"	>	d155	c  dehi or tipha   3-26-96 tvw
+
+
+c at start (to right) of word, above c (vps reorder cant and consonant)
+c *** four line commented out by cjs
+c "11" any(cons) '.'  > dup back(4) store(11) fwd(2) endstore
+c				fwd(1) d208 d138 back(4)	c  (81 + ) mugrash  geresh
+c "11" any(cons) 	> dup back(3) store(11) fwd(2) endstore
+c				fwd(1)	d138 back(3)	c  (81 + ) mugrash  geresh
+"11"	>     d138 	c  (81 + ) mugrash  geresh
+"14"	>	d132	c  telisha magnum
+
+c above word
+"24"	>	d131	c  telisha qetannah (med)
+"33"	>	d143	c  (with 03, left of letter)   3-26-96 tvw
+"44"	>	d132	c  telisha magnum (med)
+"60"	>	d134	c  ole or mahpakatum       8/11/95  from 144
+"61"	>	d138	c  geresh or teres
+"62"	>	d139	c  gershayim
+"63"	>	d137	c  azla, azla or qadma
+"64"	>	d140	c  illuj
+"65"	>	d142	c shalshelet (magn,parv)
+"80"	>	d129	c  zaqep parvum
+"81"	>	d128	c  rebia (magnum=parvum)
+"82"	>	d141	c  sinnorit
+"83"	>	d135	c  pazer
+"84"	>	d133	c  pazer mag. or qarne para
+"85"	>	d136	c  zaqep magnum
+
+c below word
+"35"	>	d149	c  meteg (med)   3-26-96 tvw
+"70"	>	d152	c  mahpak or mehuppak   3-26-96 tvw
+"71"	>	d156	c  mereka   3-26-96 tvw
+"72"	>	d157	c  mereka kepulah (duplex)   3-26-96 tvw
+"73"	>	d155	c  tipha, tarha   3-26-96 tvw
+
+"74"	>	d158	c  munah   3-26-96 tvw
+"75"	>	d149	c  silluq [meteg (left)]   3-26-96 tvw
+"91"	>	d153	c  tebir   3-26-96 tvw
+"92"	>	d161	c  atnah   3-26-96 tvw
+"93"	>	d154	c  galgal or jerah   3-26-96 tvw
+"94"	>	d159	c  darga   3-26-96 tvw
+
+"95"	>	d149	c  meteg (right) [cf 35,75]   3-26-96 tvw
+c  meteg needs to be moved, to precede rather than follow any diacritic vowel   3-26-96 tvw
+c  so flip order and put back into stream to process regularly
+c commented out and replaced by the next section cjs
+c ":A95"	>	next
+c ":F95"	>	next
+c ":E95"	>	dup back(4)
+c		store(vm) fwd(2) endstore
+c		fwd(2) out(vm) back(4)
+any(vowel) "95" > dup back(3)
+		store(vm) fwd(1) endstore
+		fwd(2) out(vm) back(3)
+
+c section added by cjs to conform hateph+metheg to specifications
+':A35'	>	d254
+':E35'	>	d102
+':F35'	>	d243 d149
+':A75'	>	d225 d149
+':E75'	>	d233 d149
+':F75'	>	d243 d149
+':A95'	>	d149 d225
+':E95'	>	d149 d233
+':F95'	>	d149 d243

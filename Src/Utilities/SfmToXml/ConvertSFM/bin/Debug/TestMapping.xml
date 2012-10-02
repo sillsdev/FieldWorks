@@ -1,0 +1,80 @@
+<sfmMapping>
+<languages>
+<langDef id="eng" xml:lang="en" map="ISO-8859-1&lt;&gt;UNICODE"/>
+<langDef id="engUTF8" xml:lang="en" />
+<langDef id="vern" xml:lang ="xkal" map="ISO-8859-1&lt;&gt;UNICODE"/>
+<langDef id="reg" xml:lang ="fr" map="ISO-8859-1&lt;&gt;UNICODE"/>
+<langDef id="nat" xml:lang ="es" map="ISO-8859-1&lt;&gt;UNICODE"/>
+<langDef id="span" xml:lang ="es" map="ISO-8859-1&lt;&gt;UNICODE"/>
+</languages>
+<hierarchy>
+<level name="sense" partOf="entry subentry" beginFields="ps" additionalFields="cb de ge gn re ANSI UTF8" multiFields="ge gn re ANSI UTF8"/>
+<level name="examp" partOf="sense" beginFields="xv rf" additionalFields="xe xn"/>
+<level name="subentry" partOf="entry" beginFields="se" additionalFields="cb"/>
+<level name="entry" partOf="records" beginFields="lx" additionalFields="dt hm cb"/>
+<level name="func" partOf="sense" beginFields="lf" additionalFields="lv"/>
+</hierarchy>
+<fieldDescriptions>
+<field sfm="cb" name="Created By" type="string" lang="eng">
+<meaning app="fw.sil.org" id="cust" subtype="uni" name="CreatedBy"/>
+</field>
+<field sfm="de" name="English Definition" type="string" lang="eng">
+<meaning app="fw.sil.org" id="def" subtype="mstr" name="Definition"/>
+</field>
+<field sfm="dt" name="Date Modified" type="date" lang="eng">
+<meaning app="fw.sil.org" id="mod" subtype="time" name="DateModified"/>
+</field>
+<field sfm="ge" name="English Gloss" type="string" lang="eng">
+<meaning app="fw.sil.org" id="glos" subtype="muni" name="Gloss"/>
+</field>
+<field sfm="gn" name="National Gloss" type="string" lang="nat">
+<meaning app="fw.sil.org" id="glos" subtype="muni" name="Gloss"/>
+</field>
+<field sfm="hm" name="Homonym number" type="integer" lang="eng">
+<meaning app="fw.sil.org" id="hom" name="Homograph"/>
+</field>
+<field sfm="lf" name="Lexical Function" type="string" lang="eng">
+<meaning app="fw.sil.org" id="rel" subtype="muni" name="LexicalRelation"/>
+</field>
+<field sfm="lv" name="Vernacular entry for lexical function" type="string" lang="vern">
+<meaning app="fw.sil.org" id="rel" subtype="attr" name="LexicalRelation"/>
+</field>
+<field sfm="lx" name="Lexeme" type="date" lang="vern">
+<meaning app="fw.sil.org" id="lex" subtype="muni" name="Headword"/>
+</field>
+<field sfm="ps" name="Part of Speech" type="string" lang="eng">
+<meaning app="fw.sil.org" id="pos" subtype="muni" name="PartOfSpeech"/>
+</field>
+<field sfm="re" name="English Reversal" type="string" lang="eng">
+<meaning app="fw.sil.org" id="rev" subtype="muni" name="Reversal" />
+</field>
+<field sfm="rf" name="Reference of Example Sentence" type="string" lang="eng">
+<meaning app="fw.sil.org" id="ref" subtype="muni" name="Reference"/>
+</field>
+<field sfm="se" name="Subentry" type="string" lang="vern">
+<meaning app="fw.sil.org" id="sub" subtype="muni" name="Subentry"/>
+</field>
+<field sfm="xe" name="English Translation of Example Sentence" type="string" lang="eng">
+<meaning app="fw.sil.org" id="trans" subtype="muni" name="Translation"/>
+</field>
+<field sfm="xn" name="National Translation of Example Sentence" type="string" lang="nat">
+<meaning app="fw.sil.org" id="trans" subtype="muni" name="Translation"/>
+</field>
+<field sfm="xv" name="Example Sentence in Vernacular" type="string" lang="vern">
+<meaning app="fw.sil.org" id="sent" subtype="muni" name="Example"/>
+</field>
+
+<field sfm="ANSI" name="English Reversal" type="string" lang="eng">
+<meaning app="fw.sil.org" id="rev" subtype="muni" name="Reversal" />
+</field>
+<field sfm="UTF8" name="English Reversal" type="string" lang="engUTF8">
+<meaning app="fw.sil.org" id="rev" subtype="muni" name="Reversal" />
+</field>
+
+</fieldDescriptions>
+<inFieldMarkers>
+<ifm element="b" begin="|b" end="|r"/>
+<ifm element="vern" begin="|i" end="|r" lang="vern"/>
+<ifm element="es" begin="|f02{" end="}" lang="span"/>
+</inFieldMarkers>
+</sfmMapping>

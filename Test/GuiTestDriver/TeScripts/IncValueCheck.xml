@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+	<glimpse path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="assert">
+		<data of="$XmlFileName"/>: Value '<data of="$ExpectedValue"/>' expected, but found '<data of="$.value"/>'.
+	</glimpse>
+
+</include>

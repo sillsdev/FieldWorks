@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fmtstyle" num="2.6.7" abbr="fmst" file="FW\FmtStyle.xml">
+ <title tag="fmtstyle">Format-Style Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Format Style dialog allows the user to change the style characteristics of selected fields.</p>
+  </introduction>
+  <context>
+<p>Many style setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format Style".</p>
+  </context>
+ <case id="fmstAct" num="0" order="any">
+  <title tag="fmstAct">Activation</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.1" link="Bug">Click the Format-Style menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Styles" type="doc">Definition of Format Style Menu.</link>
+   <r>Format-Style menu item should ALWAYS be enabled; selecting it should bring up the Format Styles dialog.</r>
+   <p name="bug">Format Style item not working</p>
+  </step>
+
+  <step name="0.2" link="Bug">Place the cursor in text of a field that can be edited. click the Format-Style menu item.
+   <r>
+<ul>
+	<li>The Format-Style dialog appears.</li>
+	<li>The styles of the selected text are indicated by triangles to the left of items in the Styles list.</li>
+	<li>There should be triangles by one paragraph style and one character style. By default they are Normal and a Default Paragraph Characters style.</li>
+	<li>One style with a triangle by it is highlighted.</li>
+	<li>The Apply button is active to allow for changes to selected text (It is greyed out if cursor is not in selectable text).</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog of selected text is displayed wrong</p>
+  </step>
+  <step name="0.3" link="Bug">Place the cursor in editable text. Invoke the Format-Style dialog. Change controls and click OK.
+   <r>The changes are made in the selected text or when typing in new text. The changes persist in other views of the same data.</r>
+   <p name="bug">Format Style changes not applied</p>
+   <p name="bug">Format Style changes not saved</p>
+  </step>
+  <step name="0.4" link="Bug">While the Format Style dialog is open, select any factory paragraph style (e.g. Normal) in the Styles listbox. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#FactoryStyles" type="doc">Factory style settings</link>.
+   <r>
+<ul>
+	<li>On the right side of the dialog, all five tabs are visible.</li>
+	<li>The Delete button below the listbox is disabled.</li>
+	<li>On the General tab, the following controls are disabled: Name, Based on, and Style for following paragraph.</li>
+	<li>The Style type label says "Paragraph".</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog delete button not disabled for paragraph</p>
+   <p name="bug">Format Style dialog General tab controls not disabled for paragraph</p>
+  </step>
+  <step name="0.5" link="Bug">While the Format Style dialog is open, select any user-defined paragraph style in the Styles listbox (you may have to create one).
+   <r>
+<ul>
+	<li>On the right side of the dialog, all five tabs are visible.</li>
+	<li>The Delete button below the listbox is enabled.</li>
+	<li>On the General tab, all controls are enabled.</li>
+	<li>The Style type label says "Paragraph".</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog delete button enabled for paragraph</p>
+   <p name="bug">Format Style dialog General tab controls not enabled for paragraph</p>
+  </step>
+  <step name="0.6" link="Bug">While the Format Style dialog is open, select any factory character style (e.g. Default Paragraph Characters) in the Styles listbox. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#FactoryStyles" type="doc">Factory style settings</link>.
+   <r>
+<ul>
+	<li>On the right side of the dialog, only two tabs are visible: General and Font.</li>
+	<li>The Delete button below the listbox is disabled.</li>
+	<li>On the General tab, the following controls are disabled: Name, Based on, and Style for following paragraph.</li>
+	<li>The Style type label says "Character".</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog delete button not disabled for character</p>
+   <p name="bug">Format Style dialog General tab controls not disabled for character</p>
+  </step>
+  <step name="0.7" link="Bug">While the Format Style dialog is open, select any user-defined character style in the Styles listbox (you may have to create one).
+   <r>
+<ul>
+	<li>On the right side of the dialog, only two tabs are visible: General and Font.</li>
+	<li>The Delete button below the listbox is enabled.</li>
+	<li>On the General tab, only the "Style for following paragraph" combobox is disabled.</li>
+	<li>The Style type label says "Character".</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog delete button enabled for character</p>
+   <p name="bug">Format Style dialog General tab controls not enabled for character</p>
+  </step>
+ </case>
+
+ <case id="fmstDiab" num="1" order="any">
+  <title tag="fmstDiab">Exercise dialog buttons</title>
+  <context>
+<p>When the Format-Style Dialog is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html" type="doc">Use the Format Style Dialog specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons. The preview window should be pretty close.</r>
+   <p name="bug">Format Style dialog layout incorrect</p>
+  </step>
+  <step name="1.2">
+<link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Format Style" as the name of the dialog.</r>
+  </step>
+  <step name="1.3">
+<link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;p&gt; to test the Apply button.
+   <r>
+<ul>
+	<li>Changes should be evident in parts of the selected text that are visible.</li>
+	<li>The dialog closes.</li>
+	<li>Report any failures as suggested using "Format Style apply button" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+ </case>
+
+ <case id="fmstlst" num="2" order="any">
+  <title tag="fmstlst">Format-Style Styles List</title>
+  <context>
+<p>When the Format-Style dialog is visible</p>
+</context>
+  <step name="2.1">
+<link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;a&gt; to test the Add button.
+   <r>Report any failures as suggested using "Format styles add button" as the name of the control.</r>
+  </step>
+  <step name="2.2" link="Bug">When the dropdown menu of style types appears, select Paragraph Style.
+   <r>
+<ul>
+	<li>A new style appears in the list, with the name "New Paragraph Style" selected for editing.</li>
+	<li>It has a paragraph symbol to the left of it.</li>
+	<li>On the General tab, the "Based on" and "Style for following paragraph" fields both say Normal.</li>
+   </ul>
+</r>
+   <p name="bug">Format styles add New Paragraph Style action incorrect</p>
+  </step>
+  <step name="2.3" link="Bug">When the dropdown menu of sytle types appears, select Character Style.
+   <r>
+<ul>
+	<li>A new style appears in the list, with the name "New Character Style" selected for editing.</li>
+	<li>It has an 'a' to the left of it.</li>
+	<li>On the General tab, the "Based on" field says Default Paragraph Characters, and the "Style for following paragraph" field is disabled.</li>
+   </ul>
+</r>
+   <p name="bug">Format styles add New Character Style action incorrect</p>
+  </step>
+
+  <step name="2.4" link="Bug">Add new Paragraph and Character Styles with the same names as some on the list.
+   <r>
+<ul>
+	 <li>A message box warns, "Each style must have an unique name".</li>
+	 <li>Upon clicking "OK", the list item name returns to the default "New Paragraph Stlye" or "New Character Stlye".</li>
+	</ul>
+</r>
+   <p name="bug">Format styles add new style action allows duplicate names</p>
+  </step>
+
+  <step name="2.5">
+<link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;c&gt; to test the Copy button.
+   <r>Report any failures as suggested using "Format styles copy button" as the name of the control.</r>
+  </step>
+  <step name="2.6" link="Bug">Select a style from the list and click Copy.
+   <r>
+<ul>
+	<li>A new style appears in the list, with the same name as the selected style with a "Copy X of " prefix. where X is 2,3,4 etc. depending on how many copies have been made</li>
+	<li>The newly created style is selected for editing.</li>
+	<li>The fields in the various tab dialogs have the same values as the originally selected one.</li>
+   </ul>
+</r>
+   <p name="bug">Format styles copy style allows duplicate names</p>
+   <p name="bug">Format styles copy style does not copy some values</p>
+  </step>
+  <step name="2.7" link="Bug">Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;d&gt; to test the Delete button. You must also select a style from the styles list.
+   <r>
+<ul>
+	<li>The delete button is enabled when the style is selected from the list.</li>
+	<li>If the style was just created, the style is just removed from the list. </li>
+	<li>If ther style already existed, nothing happens until the user serlects OK or Apply. A confirmation dialog appears, verifying that user wants to delete the selected style.</li>
+	<li>If user selects Yes, the style(s) are deleted permanently from the database. Text with the style(s) revert to Normal or Default Characters.</li>
+	<li>Styles based on the deleted style will have settings updated to maintain the deleted style's settings.</li>
+	<li>Report any failures as suggested using "Format styles delete button" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="bug">Format styles delete style button is not enabled</p>
+  </step>
+  <step name="2.8" link="Bug">When the style deletion confirmation dialog is displayed, click "Yes".
+   <r>
+<ul>
+	<li>The selected style is removed from the styles list.</li>
+	<li>If text is selected, it reverts to the preceding or surrounding style.</li>
+   </ul>
+</r>
+   <p name="bug">Format styles delete style does not remove the style from the list</p>
+  </step>
+  <step name="2.9" link="Bug">When the style deletion confirmation dialog is displayed, click "No".
+   <r>The selected style is not removed from the styles list.</r>
+   <p name="bug">Format styles delete style removes the style from the list</p>
+  </step>
+  <step name="2.10" link="Bug">Click in or select some text that was of a deleted style.
+   <r>The Style combobox on the Format bar shows the correct style for the text - not the deleted style.</r>
+   <p name="bug">Format styles delete style effects not removed</p>
+  </step>
+ </case>
+
+ <case id="fmstTab" num="3" order="any">
+  <title tag="fmstTab">Tabs</title>
+  <context>
+<p>When the dialog is open</p>
+</context>
+
+   <p name="Notes">Each tab is tested as if it were a separate dialog. The data for each tab is from the style currently selected in the styles list. To bring a specific tab dialog to the front, click its tab.</p>
+
+  <step name="3.1" link="Bug">When the "Paragraph" tab is in front, test it via the <link uri="FmtPara.xml">Format-Paragraph Dialog Tests</link>, but the "OK" button is replaced by the "Apply" button. Use "Format Style paragraph tab" as the interface object name in the bug pattern titles.
+   <r>
+<ul>
+	<li>The changes are applied to the style selected in the Styles listbox.</li>
+	<li>All paragraphs of the selected style are immediately updated according to the changes just made.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style paragraph tab changes not applied to style</p>
+   <p name="bug">Format Style paragraph tab changes not applied to text</p>
+  </step>
+  <step name="3.2" link="Bug">When the "Bullets and Numbering" tab is in front, test it via the <link uri="FmtBnN.xml">Format-Bullets and Numbering Dialog Tests</link>, but the "OK" button is replaced by the "Apply" button. Use "Format Styles bullets and numbering tab" as the interface object name in the bug pattern titles.
+   <r>
+<ul>
+	<li>The changes are applied to the style selected in the Styles listbox.</li>
+	<li>All paragraphs of the selected style are immediately updated according to the changes just made.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style bullets and numbering tab changes not applied to style</p>
+   <p name="bug">Format Style bullets and numbering tab changes not applied to text</p>
+  </step>
+  <step name="3.3" link="Bug">When the "Border" tab is in front, test it via the <link uri="FmtBrdr.xml">Format-Border Dialog Tests</link>, but the "OK" button is replaced by the "Apply" button. Use "Format Styles border tab" as the interface object name in the bug pattern titles.
+   <r>
+<ul>
+	<li>The changes are applied to the style selected in the Styles listbox.</li>
+	<li>All paragraphs of the selected style are immediately updated according to the changes just made.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style border tab changes not applied to style</p>
+   <p name="bug">Format Style border tab changes not applied to text</p>
+  </step>
+  <step name="3.4" link="Bug">When the "Font" tab is in front, test it via the <link uri="FmtFont.xml">Format-Font Dialog Tests</link>, but the "OK" button is replaced by the "Apply" button. Use "Format Styles font tab" as the interface object name in the bug pattern titles.
+   <r>
+<ul>
+	<li>The changes are applied to the style selected in the Styles listbox.</li>
+	<li>All paragraphs of the selected style are immediately updated according to the changes just made.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style font tab changes not applied to style</p>
+   <p name="bug">Format Style font tab changes not applied to text</p>
+  </step>
+ </case>
+
+ <case id="fmstApp" num="4" order="any">
+  <title tag="fmstApp">Applying and Editing Styles</title>
+  <context>
+<p>When the dialog is open</p>
+</context>
+  <step name="4.1" link="Bug">Select a user-defined character or paragraph style. Change its name in either the styles list or the Name field of the General tab.
+   <r>Changing the name in one place affects its name in the other.</r>
+   <p name="bug">Format Style rename fails for user-defined style</p>
+  </step>
+  <step name="4.2" link="Bug">Select a user-defined character or paragraph style. Change its name in either the styles list or the Name field of the General tab to a name that is already used for another style.
+   <r>
+<ul>
+	<li>An error dialog tells you that the style name already exists.</li>
+	<li>The name returns to what it was previously.</li>
+	<li>The name is selected for editing.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style rename allows duplicate style name</p>
+  </step>
+  <step name="4.3" link="Bug">Select a user-defined character or paragraph style. Change its name in either the styles list or the Name field of the General tab to an empty string or all blanks.
+   <r>
+<ul>
+	<li>An error dialog tells you that you must enter a name.</li>
+	<li>The name returns to what it was previously.</li>
+	<li>The name is selected for editing.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style rename allows duplicate style name</p>
+  </step>
+  <step name="4.4" link="Bug">Assign various character and paragraph styles to ranges of editable text. Modify various attributes of the styles, including a style that another is based on, via the Format Styles dialog and press the Apply button.
+   <r>
+<ul>
+	<li>Verify that all ranges of text of the modified style reflect the changes.</li>
+	<li>All text of derived styles should reflect changes in the parent style.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog changes not effective in range</p>
+   <p name="bug">Format Style dialog parent changes not effective in derivatives</p>
+  </step>
+  <step name="4.5" link="Bug">Modify a paragraph style so that it has a "Style for following paragraph" other than itself. Apply this style to a paragraph. Go to the end of the paragraph and press Enter.
+   <r>The newly created, empty paragraph should be of the style specified for the following paragraph.</r>
+   <p name="bug">Format Style dialog following paragraph has wrong style</p>
+  </step>
+  <step name="4.6" link="Bug">Create a new character and paragraph style and apply them to some text. Go back to the Styles dialog and change the name of the new styles.
+   <r>Verify that all text of the affected styles retain the same attributes, but also reflect the new names of the styles.(Currently this is not what the Specification describes. The following is what happens now. eg. If syle B is created and applied to text, then style. )B is renamed to Bc, the Style dropdown box in the Formatting Toolbar still shows style B 'attached' to that text. The non-existanct Style B now behaves like the Normal (default) style. </r>
+   <p name="bug">Format Style dialog style name change not propagated</p>
+  </step>
+ </case>
+
+ <case id="fmstInh" num="5" order="123">
+  <title tag="fmstInh">Inheritance</title>
+  <context>
+<p>When the dialog is open, do the following for both paragraph and character styles</p>
+</context>
+  <step name="5.1">Create a style 'A' based on Normal or Default Paragraph Characters.
+   <r>The new style appears in the styles list.</r>
+  </step>
+  <step name="5.2">Create a style 'B' based on 'A'.
+   <r>Style 'B' appears in the styles list.</r>
+  </step>
+  <step name="5.3">Give style 'A' some visually confirmable settings such as Left indentation 1" and Background = Red. Give style 'B' an independent setting such as Line spacing Double, and an overriding setting such as Background = Blue. (Better to think up your own settings.) Press Apply to exit the dialog.
+   <r>The two new styles appear in the Styles combobox on the Formatting toolbar.</r>
+  </step>
+  <step name="5.4" link="Bug">Apply style 'A' to one paragraph, and style 'B' to another one.
+   <r>
+<ul>
+	<li>The first paragraph displays the settings of style 'A'.</li>
+	<li>The second displays the settings of both style 'A' and style 'B'. With the above settings, 'B' has left indentation 1", background blue, and double line spacing.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog derivated style is incorrect</p>
+  </step>
+  <step name="5.5" link="Bug">Now modify both the settings given for 'A'.
+   <r>
+<ul>
+	<li>The first paragraph is updated to reflect both the changed settings.</li>
+	<li>The second paragraph is updated to reflect the settings that aren't overridden by 'B's settings.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog parent changes not effective in derivatives</p>
+  </step>
+  <step name="5.6" link="Bug">Now modify some settings that are not defaults (they were set different from the Normal style settings). Change one in style 'A'. One in style 'B'. One that's in both 'A' and 'B'. One that's still a default.
+   <r>
+<ul>
+	<li>The first paragraph is updated to reflect the changed settings in style 'A'.</li>
+	<li>The second paragraph is updated to reflect the settings in style 'B'.</li>
+   </ul>
+</r>
+   <p name="bug">Format Style dialog parent changes not effective in derivatives</p>
+  </step>
+ </case>
+
+ <update date="Apr-25-01" author="MikeL">Created</update>
+ <update date="Mar-15-02" author="RickM">modified step for testing renaming of Style (4.6). </update>
+ <update date="May-24-02" author="RussD">Several minor changes to conform with specs.</update>
+
+</test>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="barside" num="4.1" abbr="basd" file="FW\BarSide.xml">
+<title tag="barside">Side Bar Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Central to the FieldWorks philosophy is the implementation of views; we closely associate views with tasks, and feel that for as many tasks that are defined for a data model, there should be as many views (and in some cases, even full-blown tools). Thus we want views to be central in our end-user's experience, so that he can get a grasp of the ways that the tools should be used, and thereby use them to maximum effectiveness. In a database type of application, other types of user-definable items are also very important, especially filters, sort methods and overlays. We similarly want to make these convenient to the user interface. To this end, we are implementing a Side Bar and Information Bar on those applications which offer these types of settings. The Side Bar and Information Bar offer convenient ways to see the possible views, filters, sort methods, etc., and to activate them as the user wishes.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/SideBar/SideBar.html" type="doc">Side Bar and Information Bar</link>
+</p>
+</introduction>
+<context>
+<p>Tests for hiding and showing the side bar are found in <link uri="VwSideBar.xml">View Side Bar Tests</link>. The test cases should be tried on each Side Bar icon group as appropriate. The first words of the bug report title should be a noun phrase containing the words "Side Bar"</p>
+</context>
+
+<case id="basdIn" num="1" order="any">
+<title tag="basdIn">Inspection</title>
+<context>
+<p>When the Side Bar is visible</p>
+</context>
+
+<step name="1.1" link="Bug">Visually compare the Side Bar to the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/SideBar/SideBar.html" type="doc">specification</link>.
+   <r>
+<ul>
+<li>Upto small differences, they are the same.</li>
+<li>Some applications will not have all of the groupings.</li>
+</ul>
+</r>
+<p name="bug">Side Bar doesn't look like the spec</p>
+<p name="bug">Side Bar is missing a group of icons</p>
+</step>
+<step name="1.2" link="Bug">Move mouse over icons on the Side Bar.
+   <r>
+<ul>
+<li>The selected icon is sunken.</li>
+<li>Otherwise, icons are raised when and only when the mouse is over them.</li>
+</ul>
+</r>
+<p name="bug">Side Bar selection is not indented</p>
+<p name="bug">Side Bar hovering does not raise icon</p>
+</step>
+
+</case>
+
+<case id="basdEx" num="2" order="any">
+<title tag="basdEx">Exercise icons</title>
+<context>
+<p>When the Side Bar is visible</p>
+</context>
+
+<step name="2.1" link="Bug">Click the left mouse button on an icon on the Side Bar and release.
+   <r>
+<ul>
+<li>The clicked Side Bar icon is sunken.</li>
+<li>The View Information Bar changes title and icon to indicate the new view-type</li>
+<li>The View Contents Area may change to display the new view type.</li>
+</ul>
+</r>
+<p name="bug">Side Bar selection is not indented</p>
+<p name="bug">Side Bar changes ill affect View Information Bar</p>
+<p name="bug">Side Bar changes ill affect View Contents Area</p>
+</step>
+<step name="2.2" link="Bug">Click the left mouse button on an icon on the Side Bar and drag the mouse off of the icon.
+   <r>
+<ul>
+<li>The Side Bar icon is sunken while and only while mouse is over that icon.</li>
+<li>After the mouse is released, other Side Bar icons continue to work properly.</li>
+</ul>
+</r>
+<p name="bug">Side Bar selection is not indented</p>
+<p name="bug">Side Bar off-icon drag disrupts fucntioning</p>
+</step>
+<step name="2.3" link="Bug">While the Side Bar is showing large icons, right-click the Side Bar.
+   <r>
+<ul>
+<li>A menu appears with items "Large Icons", "Small Icons", "Configure..." and "Hide Side Bar".</li>
+<li>Only "Large Icons" is checked.</li>
+<li>The Configure... item has an icon appropriate to the active section of the Side Bar, e.g. a filter icon when in the filters section, etc.</li>
+</ul>
+</r>
+<p name="bug">Side Bar right-click menu not right</p>
+<p name="bug">Side Bar Icon style incorrectly indicated on right-click menu</p>
+<p name="bug">Side Bar Configure item icon incorrect</p>
+</step>
+<step name="2.4" link="Bug">While the Side Bar is showing large icons, select "Small Icons" from the right-click menu.
+   <r>
+<ul>
+<li>The Side Bar switches to small icons (only the one category - view, filter, etc.), with the name of the icon to the right of it.</li>
+<li>The category (filter, etc..) does not change.</li>
+<li>The view information bar and content area do not change.</li>
+<li>The Side Bar icons for only the open category are sunken.</li>
+</ul>
+</r>
+<p name="bug">Side Bar does not change to small icons</p>
+<p name="bug">Side Bar changes ill affect View Information Bar</p>
+<p name="bug">Side Bar changes ill affect View Contents Area</p>
+<p name="bug">Side Bar selection is not indented</p>
+</step>
+<step name="2.5" link="Bug">While the Side Bar is showing small icons, right-click the Side Bar.
+   <r>
+<ul>
+<li>A menu appears with items "Large Icons", "Small Icons" and "Hide Side Bar".</li>
+<li>Only "Small Icons" is checked.</li>
+</ul>
+</r>
+<p name="bug">Side Bar right-click menu not right</p>
+<p name="bug">Side Bar Icon style incorrectly indicated on right-click menu</p>
+</step>
+<step name="2.6" link="Bug">While the Side Bar is showing small icons, select "Large Icons" from the right-mouse-button menu.
+   <r>
+<ul>
+<li>The Side Bar switches to large icons, with the name of the view type to the right of each icon.</li>
+<li>The type of view (filter, etc..) does not change.</li>
+<li>The view information bar and content area do not change.</li>
+<li>The appropriate Side Bar icon is sunken.</li>
+</ul>
+</r>
+<p name="bug">Side Bar does not change to large icons</p>
+<p name="bug">Side Bar changes ill affect View Information Bar</p>
+<p name="bug">Side Bar changes ill affect View Contents Area</p>
+<p name="bug">Side Bar selection is not indented</p>
+</step>
+<step name="2.7" link="Bug">Select Configure... from the right-click menu.
+   <r>
+<ul>
+<li>The Tools - Options dialog appears, with the appropriate tab (Views, Overlays, Filters, or Sort Methods) activated.</li>
+<li>On that tab, the selected item, if any, should be highlighted in the list and that item's settings should be shown on the right.  E.g. If you right-clicked the Education overlay and selected Configure, the Options dialog should show the Overlays tab, and the Education overlay should be selected in the Overlays list.</li>
+</ul>
+</r>
+<p name="bug">Side Bar Configure dialog not launched</p>
+<p name="bug">Side Bar Configure dialog launched with unexpected content</p>
+</step>
+<step name="2.8" link="Bug">While the Side Bar is in a "custom" state, e.g. with small icons or with the Side Bar turned off, exit the app and restart the application.
+   <r>
+<ul>
+<li>The App should start with the same Side Bar configuration as when it exited.</li>
+</ul>
+</r>
+<p name="bug">Side Bar custom settings don't persist</p>
+</step>
+
+</case>
+
+<case id="basdEg" num="3" order="any">
+<title tag="basdEg">Exercise groups</title>
+<context>
+<p>When the Side Bar is visible</p>
+</context>
+
+<step name="3.1" link="Bug">Resize the app window to various sizes, including too big and too small. Look for the pager controls (black arrows at top and bottom of Side Bar).
+   <r>
+<ul>
+<li>The pager controls appear when and only when the window is too small to show all icons.</li>
+</ul>
+</r>
+<p name="bug">Side Bar Resizing messes up pager controls</p>
+</step>
+<step name="3.2" link="Bug">While the app window is too small for the icons in the Side Bar, use the pager controls to scroll around.
+   <r>
+<ul>
+<li>They move the Side Bar area one page per click.</li>
+<li>Each pager control disappears when there are no more icons to be found in that direction.</li>
+</ul>
+</r>
+<p name="bug">Side Bar Pager controls don't work well when squeezed</p>
+</step>
+<step name="3.3" link="Bug">Click on the buttons in the SideBar labeled Views, Sort Orders, Filters, and Overlays.
+   <r>
+<ul>
+<li>These buttons cause the SideBar to switch to display sort order icons, filter icons, or whatever.</li>
+<li>The buttons move so that the button for the currently selected pane sits directly above the pane. E.g. when showing filters, the Filters button should appear directly above the filter icons.</li>
+</ul>
+</r>
+<p name="bug">Side Bar group button fails to show its icons</p>
+<p name="bug">Side Bar group buttons don't move to fill in closed icon group</p>
+</step>
+</case>
+
+<case id="basdFw" num="4" order="any">
+<title tag="basdFw">View-Full Window</title>
+<context>
+<p>When the Side Bar is visible</p>
+</context>
+
+<step name="4.1" link="Bug">Click View-Full Window
+   <r>
+<ul>
+<li>The sidebar disapears and the main window content takes over its place.</li>
+<li>The View-Side Bar checkbox is disabled.</li>
+<li>The toolbar icons disapear and the main window content moves up to close the gap.</li>
+<li>The View-Full Window checkbox is checked in the View menu which has retracted.</li>
+</ul>
+</r>
+<p name="bug">View-Full Window fails to make room</p>
+</step>
+<step name="4.2" link="Bug">When the side bar is hidden, click View-Full Window
+   <r>
+<ul>
+<li>The sidebar appears and the main window content retreats.</li>
+<li>The View-Side Bar checkbox is enabled.</li>
+<li>The toolbar icons appear and the main window content retreats.</li>
+<li>The View-Full Window checkbox is no longer checked in the View menu which has retracted.</li>
+</ul>
+</r>
+<p name="bug">View-Full Window fails to restore controls</p>
+</step>
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-27-01" author="RickM">Updated the test as part of 2.3.6 View Side Bar</update>
+<update date="May-24-02" author="JoelC">Checked up to spec</update>
+<update date="Sep-06-02" author="MikeL">Added case 4</update>
+
+</test>

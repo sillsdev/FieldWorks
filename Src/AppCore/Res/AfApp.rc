@@ -1,0 +1,838 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: AfApp.rc
+Responsibility:
+Last reviewed: never
+
+Description:
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+#include "AfAppRes.h"
+#include "../AfDef.h"
+// Version: bldinc.h holds the current copyright and it is created by executing
+// bin\mkverrsc.exe from within the bin\mkcle.bat file. The major and minor version
+// numbers are hard-coded in mkcle.bat.
+#if WIN32
+#include "../../../Output/Common/bldinc.h"
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+kridTBarMove            CURSOR  DISCARDABLE     "../../AppCore/Res/TBarMove.cur"
+kridTBarCopy            CURSOR  DISCARDABLE     "../../AppCore/Res/TBarCopy.cur"
+kridTBarNoDrop          CURSOR  DISCARDABLE     "../../AppCore/Res/TBarNoDrop.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridTBarFmtg           BITMAP  DISCARDABLE     "../../AppCore/Res/ToolbarFormatting.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+kridTBarFmtg TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      kcidFmttbStyle
+	BUTTON      kcidFmttbWrtgSys
+	BUTTON      kcidFmttbFnt
+	BUTTON      kcidFmttbFntSize
+	SEPARATOR
+	BUTTON      kcidFmttbBold
+	BUTTON      kcidFmttbItal
+	SEPARATOR
+	BUTTON      kcidFmttbAlignLeft
+	BUTTON      kcidFmttbAlignCntr
+	BUTTON      kcidFmttbAlignRight
+	SEPARATOR
+	BUTTON      kcidFmttbLstNum
+	BUTTON      kcidFmttbLstBullet
+	BUTTON      kcidFmttbUnind
+	BUTTON      kcidFmttbInd
+	SEPARATOR
+	BUTTON      kcidFmttbApplyBdr
+	BUTTON      kcidFmttbApplyBgrndColor
+	BUTTON      kcidFmttbApplyFgrndColor
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridHelpAboutDlg DIALOG DISCARDABLE  0, 0, 320, 180
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,263,159,50,14
+	CONTROL         kridHelpAbout,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,60,55
+	LTEXT           "SIL FieldWorks Family Member",kctidSuiteName,99,26,220,20
+	LTEXT           "Default Fieldworks Application",kctidName,99,55,220,30
+	LTEXT           "Version:",kctidVersion,99,83,220,9
+//  LTEXT           "Registration Number:  ",IDC_STATIC,99,97,220,22
+//  LTEXT           "Unregistered",kctidRegistrationNumber,176,97,120,10
+	LTEXT           COPYRIGHTRESERVED,IDC_STATIC,99,105,220,22
+	LTEXT           "Available memory:",IDC_STATIC,99,128,58,9
+	LTEXT           "0 KB",kctidMemory,176,128,137,10,SS_SUNKEN
+	LTEXT           "Available disk space:",IDC_STATIC,99,141,77,9
+	LTEXT           "0 KB Free on C:",kctidDiskSpace,176,141,137,9,SS_SUNKEN
+	LTEXT           "This program will not work after ",kctidExpiration,7,157,208,13
+END
+
+kridPrintCancelDlg DIALOG DISCARDABLE  33, 32, 160, 70
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "View printing"
+BEGIN
+// Cancel button won't work unless dialog is in separated thread
+	DEFPUSHBUTTON   "Cancel",kctidCancel,60,45,45,15
+	CTEXT           "",kctidPrintProgress,10,20,140,15
+END
+
+kridDatePickDlg DIALOGEX 0, 0, 177, 118
+STYLE DS_CONTEXTHELP | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	COMBOBOX        kctidDpkPrecision,5,7,43,60,CBS_DROPDOWNLIST |
+					WS_TABSTOP
+	COMBOBOX        kctidDpkMonth,49,7,37,125,CBS_DROPDOWNLIST | WS_TABSTOP
+	COMBOBOX        kctidDpkDay,88,7,37,289,CBS_DROPDOWNLIST | WS_VSCROLL |
+					WS_TABSTOP
+	EDITTEXT        kctidDpkYear,127,7,43,13,ES_AUTOHSCROLL
+	CONTROL         "Spin1",kctidDpkYearSpin,"msctls_updown32",
+					UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,162,17,8,
+					10
+	CONTROL         "MonthCalendar1",kctidDpkCalendar,"SysMonthCal32",
+					MCS_NOTODAY | WS_TABSTOP,27,24,125,87
+	GROUPBOX        "",kctidDpkGroup,27,24,125,87
+	LTEXT           "No Calendar Available",kctidDpkNoCal,50,60,80,9
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog -- Dummy dialog for DialogShell with a Help button.
+//
+
+kridShellDlg DIALOG DISCARDABLE  0, 0, 349, 292
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION ""
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,126,271,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,181,271,50,14
+	PUSHBUTTON      "Help...",kctidHelp,236,271,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog -- Dummy dialog for DialogShell without a Help button.
+//
+
+kridNoHelpShellDlg DIALOG DISCARDABLE  0, 0, 292, 292
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION ""
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,126,271,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,181,271,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridHelpAboutDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 276
+		VERTGUIDE, 99
+		VERTGUIDE, 176
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 155
+		HORZGUIDE, 62
+		HORZGUIDE, 116
+		HORZGUIDE, 128
+	END
+
+	kridDatePickDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 170
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 111
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog - progress dialog for DB crawler
+//
+kridDbCrawlerProgress DIALOGEX 0, 0, 250, 50
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Searching Project"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT       "", kctidDbCrawlProgAction, 10, 12, 230, 8
+	CONTROL     "progress", kctidDbCrawlProgProgress, "msctls_progress32", PBS_SMOOTH,
+				10, 30, 230, 12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridHelpAbout           BITMAP  DISCARDABLE     "../../AppCore/Res/HelpAbout.bmp"
+kridStdBtns             BITMAP  DISCARDABLE     "../../AppCore/Res/StdBtns.bmp"
+kridFmtBorderBtns       BITMAP  DISCARDABLE     "../../AppCore/Res/FmtBdrComboData.bmp"
+kridSplashImage         BITMAP  DISCARDABLE     "../../AppCore/Res/SplashPictureBase.bmp"
+kridOpenProjImagesSmall BITMAP  DISCARDABLE     "../../AppCore/Res/ImagesSmall.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+kridDatePickDlg DLGINIT
+BEGIN
+	kctidDpkPrecision, 0x403, 3, 0
+0x6e4f, "\000"
+	kctidDpkPrecision, 0x403, 7, 0
+0x7241, 0x756f, 0x646e, "\000"
+	kctidDpkPrecision, 0x403, 7, 0
+0x6542, 0x6f66, 0x6572, "\000"
+	kctidDpkPrecision, 0x403, 6, 0
+0x6641, 0x6574, 0x0072,
+	kctidDpkPrecision, 0x403, 8, 0
+0x6e55, 0x6e6b, 0x776f, 0x006e,
+	kctidDpkMonth, 0x403, 4, 0
+0x614a, 0x006e,
+	kctidDpkMonth, 0x403, 4, 0
+0x6546, 0x0062,
+	kctidDpkMonth, 0x403, 4, 0
+0x614d, 0x0072,
+	kctidDpkMonth, 0x403, 4, 0
+0x7041, 0x0072,
+	kctidDpkMonth, 0x403, 4, 0
+0x614d, 0x0079,
+	kctidDpkMonth, 0x403, 4, 0
+0x754a, 0x006e,
+	kctidDpkMonth, 0x403, 4, 0
+0x754a, 0x006c,
+	kctidDpkMonth, 0x403, 4, 0
+0x7541, 0x0067,
+	kctidDpkMonth, 0x403, 4, 0
+0x6553, 0x0070,
+	kctidDpkMonth, 0x403, 4, 0
+0x634f, 0x0074,
+	kctidDpkMonth, 0x403, 4, 0
+0x6f4e, 0x0076,
+	kctidDpkMonth, 0x403, 4, 0
+0x6544, 0x0063,
+	kctidDpkMonth, 0x403, 8, 0
+0x6e55, 0x6e6b, 0x776f, 0x006e,
+	kctidDpkDay, 0x403, 2, 0
+0x0031,
+	kctidDpkDay, 0x403, 2, 0
+0x0032,
+	kctidDpkDay, 0x403, 2, 0
+0x0033,
+	kctidDpkDay, 0x403, 2, 0
+0x0034,
+	kctidDpkDay, 0x403, 2, 0
+0x0035,
+	kctidDpkDay, 0x403, 2, 0
+0x0036,
+	kctidDpkDay, 0x403, 2, 0
+0x0037,
+	kctidDpkDay, 0x403, 2, 0
+0x0038,
+	kctidDpkDay, 0x403, 2, 0
+0x0039,
+	kctidDpkDay, 0x403, 3, 0
+0x3031, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3131, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3231, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3331, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3431, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3531, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3631, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3731, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3831, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3931, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3032, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3132, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3232, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3332, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3432, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3532, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3632, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3732, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3832, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3932, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3033, "\000"
+	kctidDpkDay, 0x403, 3, 0
+0x3133, "\000"
+	kctidDpkDay, 0x403, 8, 0
+0x6e55, 0x6e6b, 0x776f, 0x006e,
+	0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidWSVernWs       "First Vernacular Writing System"
+	kstidWSAnalWs		"First Analysis Writing System"
+	kstidWSVernWss      "Multiple Vernacular Writing Systems"
+	kstidWSAnalWss      "Multiple Analysis Writing Systems"
+	kstidWSAnalVernWss  "Multiple Analysis-Vernacular Writing Systems"
+	kstidWSVernAnalWss  "Multiple Vernacular-Analysis Writing Systems"
+	kstidWSVerns		"Vernacular Writing Systems"
+	kstidWSAnals		"Analysis Writing Systems"
+	kstidWSAnalVerns    "Analysis-Vernacular Writing Systems"
+	kstidWSVernAnals    "Vernacular-Analysis Writing Systems"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidProgError			"A programming error has occurred."
+	kstidMailInstructions	"\nA message with instructions on how to send it to the developers has been copied to the clipboard.\nPaste the contents of the clipboard into a new email message or text file."
+	kstidOutOfResources		"Cannot create new window. The operating system is low on resources. Please close one or more windows immediately to avoid further problems."
+	kstidSaveWarnReplace	"Disk space is low.\n\nDo you want to save your work and continue without the ability to Undo the changes, or cancel further replacements?"
+	kstidSaveWork			"Save Work"
+	kstidSaveWarnTyping		"Disk space is low.\n\nSaving your work will free up needed space, but will disable the ability to Undo your changes.\n\nDo you want to save now?"
+	END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidLayingOutPage      "Laying out pages..."
+	kstidCalculatingPages	"Counting pages..."
+	kstidPrintingPage       "Printing pages: %<0>d%% complete."
+	kstidMaxIntMsg          "Integer field values must be between -2147483648 and 2147483647."
+	kstidMaxIntTitle        "Value Exceeds Limit"
+	kstidFatalError		"\n\nIn order to protect your data, the FieldWorks program needs to close.\n\nYou should be able to restart it normally."
+	kstidNoExtLink			"An external link cannot be made using this selection (e.g., across paragraph boundaries)."
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidShowBody           "Show the blank field: "
+	kstidContextPromote     "P&romote"
+	kcidContextPromote      "Promote this subitem to a higher subitem or a main item"
+	kstridRecLockDeleted    "This entry has been deleted by another user since you opened the project.\nYour changes to this entry will be discarded when you exit the project."
+	kstridRecLockDeletedTitle "Entry Deleted"
+	kstridRecLockModified   "This entry has been changed by another user since you opened the project.\nDo you want to overwrite the other user's changes?"
+	kstridRecLockModifiedTitle "Data Changed"
+	kstridBadDate			"Unable to recognize a date.  Please enter a date in the form "
+	kstridInvalidDate		"Invalid Date"
+	kstidRequiredMsg		"You are required to enter data in the %<0>s field before you can leave this entry."
+	kstidRequiredTitle		"Missing Required Data"
+	kstidRequiredFldMsg		"You are required to enter data in this field before you can leave the field."
+	kstidEncouragedMsg		"You should enter data in the %<0>s field.\nDo you want to do this now?"
+	kstidEncouragedTitle	"Missing Data"
+	kstidOverflowText       "This text is too large to be saved. The allowed limit is %<0>d characters."
+	kstidRequiredHiddenTitle    "Required Data is Hidden"
+	kstidRequiredHiddenMsg      "Data previously displayed in the %<0>s field is now hidden due to your current writing system configuration.\n\nYou are required to enter data in the %<0>s field using the current writing system(s) before you can leave this entry."
+	kstidEncouragedHiddenTitle  "Hidden Data"
+	kstidEncouragedHiddenMsg    "Data previously displayed in the %<0>s field is now hidden due to your current writing system configuration.\n\nYou should enter data in the %<0>s field using the current writing system(s).\nDo you want to do this now?"
+
+END
+
+// Viewbar and listbar
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidListBarSelect				"Error: help string not defined for this application."
+	kstidViewBarShellChooseList		"Error: help string not defined for this application."
+	kstidOverlaysGenWhatsThisHelp	"Shows overlays you can use."
+	kstidOverlaysItemWhatsThisHelp	"Shows/hides this overlay in multiparagraph fields."
+	kstidOverlaysNoneWhatsThisHelp	"Hides all overlays."
+	kstidListGenWhatsThisHelp		"Shows the items in the current list you can select."
+	kstidListItemWhatsThisHelp		"Shows the items in the current list you can select."
+	kstidEllipsisButtonWhatsThisHelp	"Ellipsis button.  Opens the Chooser dialog [Alt+down-arrow]."
+	kstidEllipsisBtnDateWhatsThisHelp	"Ellipsis button.  Opens a dialog [Alt+down-arrow]."
+	kstidEllipsisCrossRefWhatsThisHelp	"Ellipsis button.  Opens a dialog [Alt+down-arrow]."
+	kstidDownarrowButtonWhatsThisHelp	"Down-arrow button.  Opens a drop-down list [Alt+down-arrow]."
+	kstidViewsGenWhatsThisHelp		"Shows views you can use."
+	kstidFiltersGenWhatsThisHelp	"Shows filters you can use."
+	kstidSortGenWhatsThisHelp		"Shows sort methods you can use."
+	kstidViewsItemWhatsThisHelp		"Displays the current list using this view."
+	kstidFiltersNoneWhatsThisHelp	"Turns off all filters."
+	kstidFiltersItemWhatsThisHelp	"Displays your data using this filter."
+	kstidSortItemWhatsThisHelp		"Displays your data using this sort method."
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidUndoFrame			        "&Undo %<0>s"
+	kstidRedoFrame					"&Redo %<0>s"
+	kstidUndoUnknown				""
+	kstidUndoTyping					"Typing"
+	kstidUndoDelete					"Delete"
+	kstidUndoFormatting				"Formatting"
+	kstidUndoFontFormatting			"Font Formatting"
+	kstidUndoParaFormatting			"Paragraph Formatting"
+	kstidUndoBulAndNum				"Bullets and Numbering"
+	kstidUndoBorder					"Border"
+	kstidUndoStyleChanges			"Style Changes"
+	kstidUndoApplyStyle				"Apply Style"
+	kstidUndoWritingSys				"Writing System"
+	kstidUndoFontSize				"Font Size Select"
+	kstidUndoFont					"Font"
+	kstidUndoBold					"Bold"
+	kstidUndoItalic					"Italic"
+	kstidUndoBackColor				"Background Color"
+	kstidUndoForeColor				"Color"
+	kstidUndoParaAlign				"Paragraph Alignment"
+	kstidUndoNumber					"Numbering"
+	kstidUndoBullet					"Bullets"
+	kstidUndoDecIndent				"Decrease Indent"
+	kstidUndoIncIndent				"Increase Indent"
+	kstidUndoCut					"Cut"
+	kstidUndoPaste					"Paste"
+	kstidUndoChangesTo				"Changes To %<0>s"
+	kstidUndoRefDropTo				"Drop Reference In %<0>s"
+	kstidUndoRefDel					"Delete Reference In %<0>s"
+	kstidUndoMoveX					"Move %<0>s"
+	kstidUndoPromoteX				"Promote %<0>s"
+	kstidUndoDeleteX				"Delete %<0>s"
+	kstidUndoInsertX				"Insert %<0>s"
+	kstidUndoExtLink				"External Link"
+	kstidUndoFieldDisabled			"Undo Disabled In This Field"
+	kstidRedoFieldDisabled			"Redo Disabled In This Field"
+	kstidListsProperties			"Topoic List Properties"
+	// Used when a user clicks on an integer picture (i.e. it changes to a new picture and
+	// updates the field in the cache/DB with the new picture)
+	kstidUndoChangeField			"Undo Change %<0>s"
+	kstidRedoChangeField			"Redo Change %<0>s"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidOk                 "Applies and saves changes you have made and closes this dialog box."
+	kctidCancel             "Closes this dialog box without saving any changes you have made."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidNoFilter           "No Filter"
+	kctidHelp               "Displays a description of the parts and functions of this dialog box."
+	kcidVBarLargeIcons      "Displays large icons in the side bar.\n&Large Icons"
+	kcidVBarSmallIcons      "Displays small icons in the side bar.\n&Small Icons"
+	kcidHideVBar            "Hides the side bar.\n&Hide Side Bar"
+	kstidMore               "&More >>"
+	kstidLess               "<< &Less"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidHelp               "What's This help"
+	kstidIdle               "For Help, press F1"
+	kstidInherit            "<inherit>"
+	kstidNoLabel            "<no label>"
+//    kstidNormal             "Normal" // (Replaced by constant string)
+	kstidNoStyle			"<no style>"	// Used in Find/Replace dialog.
+	kstidDefParaCharacters  "Default Paragraph Characters"
+	kstidUserWs             "en"
+	// The following is used primarily by WorldPad.
+	kstidUserWsXml          "<LgWritingSystem id=""en""><Name24><AUni ws=""en"">English</AUni></Name24><RightToLeft24><Boolean val=""false""/></RightToLeft24><DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24><DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24><DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24><KeyboardType24><Uni>standard</Uni></KeyboardType24><ICULocale24><Uni>en</Uni></ICULocale24></LgWritingSystem>"
+	kstidNewItem            "New Item"
+	kstidNew                "New"
+	kstidShowHide           "Shows/hides the %<0>s toolbar."
+	kstidDate				"Date"
+
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidEditSrchQuick      "(Quick Find)"
+	kstidCannotLaunchListEditor "Cannot launch the List Editor"
+	kstidCannotInsertListItem "Cannot insert a new list item"
+	kstidCannotDeleteListItem "Cannot delete a list item"
+	kstidInvalidMergeT		"Invalid Merge"
+	kstidInvalidMergeMsg	"You are attempting to merge:\n-a list item with itself, or\n-a parent list item with one of it's children.\n\nNeither of these is allowed."
+	kstidFmtBdrAll          "Border all sides"
+	kstidFmtBdrTop          "Border above"
+	kstidFmtBdrBottom       "Border below"
+	kstidFmtBdrLeft         "Border on left"
+	kstidFmtBdrRight        "Border on right"
+	kstidFmtBdrNone         "No borders"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidDpkPrecision		"Specifies the precision of the date."
+	kctidDpkMonth			"Specifies the month portion of the date."
+	kctidDpkDay				"Specifies the day portion of the date."
+	kctidDpkYear			"Specifies the year portion of the date."
+	kctidDpkCalendar		"Allows you to specify the date by clicking a box on the calendar. Today's date, if visible, is circled in red."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidInchesTxt          "Inches"
+	kstidInches             """"
+	kstidIn		            "in"
+	kstidMmTxt		    "Millimeters"
+	kstidMm                 "mm"
+	kstidCmTxt              "Centimeters"
+	kstidCm                 "cm"
+	kstidPtTxt              "Points"
+	kstidPt                 "pt"
+	kstidMinimize           "Reduces the window to an icon on the Windows task bar."
+	kstidMaximize           "Enlarges the window to fill the computer screen."
+	kstidClose              "Closes the window."
+	kstidVScroll            "Scrolls the window up and down. Click and drag the gray box or click the arrow button at either end of the scroll bar."
+	kstidHScroll            "Scrolls the window right and left. Click and drag the gray box or click the arrow button at either end of the scroll bar."
+	kstidSizeBorder         "This is the edge of the window. When the pointer changes to an arrow, drag to resize the window."
+	kstidTitleBar           "Drag the title bar to move a window or dialog box. To maximize a window or restore it to its previous size and location, double-click the title bar."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidStBarFiltered      "Filtered"
+	kstidStBarSorted        "Sorted"
+	kstidStBarHelpMsg       "Context sensitive help"
+	kstidStBarDateFmt       "%<0>s:"
+	kstidStBarRecordFmt     "%<0>s: %<1>s"
+	kstidStBarDefaultSort   "Default Sort"
+	kstidLocationToolTip    "Entry number and total number of entries in the view"
+	kstidCannotPrint        "This printer lacks required capabilities for FieldWorks printing."
+	kstidMsgCannotTile      "With the current screen area (resolution) setting,\nthere is insufficient space to tile more windows."
+	kstidStBar_LoadingProject "Loading the %<0>s project ..."
+	kstidDbError            "Fatal error while opening database."
+	kstiddbeNoAppCompTbl    "The table containing Compatibility information was not found in the database."
+	kstiddbeNoCompAppVer    "Either the Earliest or the Last Known Application Version was missing."
+	kstiddbeNoDbVer         "The Database Version was missing."
+	kstiddbeNoVerTbl        "The table containing database version information was not found in the database."
+	kstidNoLogging          "Log file not available."
+	// The following string is duplicated in MigrateData/resource.h.
+	kstidCannotGetMasterDb	"Cannot connect to the master database!"
+	//kstiddbeOldDb	        "The %<0>s database needs to be updated from version %<1>d to version %<2>d.%n%nPerforming this update could take a while. Do you want to continue with the update?"
+	//kstiddbeOldDbTtl        "Upgrade Project"  //Not in use.
+	kstiddbeOldApp	        "You are trying to open the project '%<0>s', which was\ncreated using a newer version of FieldWorks. This cannot be done.\n\nYou need to install the newer version of FieldWorks in order to open this project."
+	kstiddbeOldAppTtl       "Outdated Version of FieldWorks"
+	kstidStBar_LoadingData	"Loading data ..."
+	kstidTlsOptEDateCreated "Date Created"
+	kstidTlsOptETitle       "Title"
+	kstidUnknownClass       "Unknown"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidVwNormalWindow     "Normal Window"
+	kstidVwFullWindow       "Full Window"
+	kstidLaunchRefChooser   "To insert a cross reference in this field, open the entry\nyou want to reference in a new window. From that window,\nclick and drag any field label across into the cross-reference field.\nA link to the entry is created in the field.\n"
+	kstidLaunchRefHeader    "Insert Cross Reference"
+	kstidDupItemName        "The %s name you specified for the list item already exists.%nPlease specify a different name."
+	kstidDupItemAbbr        "The %s abbrevation you specified for the list item already exists.%nPlease specify a different abbrevation."
+	kstidDupItemTitle       "Duplicate List Item"
+	kstidFixedStr			"One or more characters you typed are not permitted in the Name or Abbrevation fields (colon "":""or space hyphen space "" - "").\n\nFieldWorks automatically replaced the invalid character(s) with a hyphen."
+	kstidFixedStrTitle		"Invalid Characters Changed"
+	END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidContextCut         "Cu&t"
+	kstidContextCopy        "&Copy"
+	kstidContextPaste       "&Paste"
+	kstidContextWritingSystem    "&Writing system"
+	kstidContextInsert      "&Insert"
+	kstidContextHelp        "&Help"
+	kstidContextShow        "&Show"
+	kstidContextDelete      "&Delete"
+	kcidContextWritingSystem     "You can change the writing system of selected text"
+	kcidContextInsert       "Inserts a new item"
+	kcidContextHelp         "Provides help on the current field"
+	kcidContextShow         "Unhides fields that are hidden due to no data"
+END
+
+// Caption Bar (aka Information Bar)
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCaptionBarViews	"Click to change the view or to configure views."
+	kstidCaptionBarFilters	"Click to turn on a filter, to turn off a filter, or to configure filters."
+	kstidCaptionBarSort		"Click to turn on a sort method, to turn off a custom sort method, or to configure sort methods."
+	kstidCaptionBarOverlay	"Click to turn on an overlay, to turn off an overlay or all overlays, or to configure overlays."
+	// List Editor Only ...
+	kstidCaptionBarTree		"Click to change what is displayed in the side bar for the List Items tab."
+END
+
+// TODO PM (RandyR): Review next string table.
+// This is used for displaying the command line options for all FW apps.
+// The various apps add the %s information.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCmdLineUsage       "FieldWorks %<0>s, Version (%<1>d.%<2>d.%<3>d.%<4>d)\n\nUsage: %<5>s [%<6>s] [options]\n\nOptions:\n%<7>s"
+END
+
+// Common Splash Window texts.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kridSplashLoadMessage       "Loading project: %<0>s..."
+	kstidSuiteName              "FieldWorks"
+	kstidCopyright              COPYRIGHTRESERVED
+END
+
+// Color definitions
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidNinch              ""
+	kstidBlack              "Black"
+	kstidBrown              "Brown"
+	kstidDarkOliveGreen     "Dark Olive Green"
+	kstidDarkGreen          "Dark Green"
+	kstidDarkTeal           "Dark Teal"
+	kstidDarkBlue           "Dark Blue"
+	kstidIndigo             "Indigo"
+	kstidDarkGray           "Very Dark Gray"
+	kstidDarkRed            "Dark Red"
+	kstidOrange             "Orange"
+	kstidDarkYellow         "Dark Yellow"
+	kstidGreen              "Green"
+	kstidTeal               "Teal"
+	kstidBlue               "Blue"
+	kstidBlueGray           "Blue-Gray"
+	kstidGray40             "Dark Gray"
+	kstidRed                "Red"
+	kstidLightOrange        "Light Orange"
+	kstidLime               "Lime"
+	kstidSeaGreen           "Sea-Green"
+	kstidAqua               "Aqua"
+	kstidLightBlue          "Light Blue"
+	kstidViolet             "Violet"
+	kstidGray50             "Gray"
+	kstidPink               "Pink"
+	kstidGold               "Gold"
+	kstidYellow             "Yellow"
+	kstidBrightGreen        "Bright Green"
+	kstidTurquoise          "Turquoise"
+	kstidSkyBlue            "Sky-Blue"
+	kstidPlum               "Plum"
+	kstidLightGray          "Light Gray"
+	kstidRose               "Rose"
+	kstidTan                "Tan"
+	kstidLightYellow        "Light Yellow"
+	kstidPaleGreen          "Pale Green"
+	kstidPaleTurquoise      "Pale Turquoise"
+	kstidPaleBlue           "Pale Blue"
+	kstidLavender           "Lavender"
+	kstidWhite              "White"
+	kstidUnspecified        "Unspecified"
+	kstidUnknownColor       "Unknown"
+END
+
+
+// Miscellaneous error and message strings:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidInitAppError	"Unable to initialize the application and database."
+	kstidUnknExcnError	"Unknown exception"
+	kstidCghtExcnError	"caught ""..."" exception"
+	kstidMiscError		"Error"
+	kstidErrorEmail		"Please email this bug report to %<0>s.\r\n\r\nPlease insert here your description of how the problem occurred.\r\nIf possible give detailed instructions for making it happen.\r\nIf relevant please attach any files required for making it happen.\r\n\r\n------Generated error details follow------\r\n\r\n"
+	kstidUnknErrorEmail "An unknown error has occurred. Please report the circumstances to %<0>s"
+	kstidInvalidDatabaseName	"Database \'%<0>s\' not found."
+	kstidNoCompError	"Computer \'%<0>s\' not found."
+	kstidNoDataError	"No FieldWorks data on computer '%<0>s'."
+	kstidNoProjError	"Project '%<0>s' not found on computer '%<1>s'."
+	kstidMissObjError	"'%<0>s' not in project '%<1>s' on computer '%<2>s'."
+	kstidNoObjError		"'%<0>s' not found in project '%<1>s' on computer '%<2>s'."
+	kstidMissDataError	"Data not found in project '%<0>s' on computer '%<1>s'."
+	kstidSqlError		"Unknown SQL problem."
+	kstidUnknError		"Unknown problem."
+	kstidInitRetry		"\r\n\r\nPress 'Retry' button to try to start application using default settings.\r\nPress 'Cancel' button to quit application."
+	kstidNoHelpError	"There is currently no context help for this item."
+	kstidHelpAbout		"About" // E.g. About SIL FieldWorks Data Notebook
+	kstidDiskSpace		"%<0>d KB out of %<1>d KB" // Available disk space out of total disk space
+	kstidFreeSpace		"%<0>d KB Free on %<1>s" // space free on given disk
+	kstidAboutVersion	"Version: %<0>d, %<1>d, %<2>d, %<3>d" // File version
+	kstidAppVersion		"%<0>d.%<1>d.%<2>d.%<3>d"
+	kstidFwVersion		"%<0>d.%<1>d"
+	kstidFwVersionWithRev	"%<0>d.%<1>d.%<2>d"
+	kstidKeyCtrl		"Ctrl+" // Control key combintation
+	kstidKeyAlt			"Alt+" // Alt key combintation
+	kstidKeyShift		"Shift+" // Shift key combintation
+	kstidKeyDelete		"Delete" // Delete key
+	kstidLangUnknown	"Unknown Language"
+	kstidOverlayNone	"(None)" // No overlays
+	kstidChoicesFail	"The available Choices Lists could not be loaded from the database"
+	kstidTagTextDemo	"This is some tagged text."
+	kstidDrawError		"Drawing error: %<0>s."
+	kstidInvalKybd		"There is no writing system that uses the indicated keyboard. You must define one in order to use it."
+	kstidInvalKybdCaption "Error"
+	kstidSvrCnctError	"Failed to connect to selected Server"
+	kstidFntHdrFtrWarn	"Font changes in headers and footers are not supported at this time."
+	kstidUnspec			"(unspecified)"
+	kstidOk				"OK"
+	kstidCls			"Close"
+	kstidTrainErrorTitle "Training file not found"
+	kstidTrainErrorMsg	"The file '%s' could not be opened."
+	kstidHLInvalidTitle	"Invalid External Link"
+	kstidHLInvalidMsg	"Because you are editing a project on someone else's computer, you cannot create an external link directly to a file on your own computer.  If your file is in a shared folder, you can make an external link to the file through Network Neighborhood."
+	kstidHLErrorTitle	"Broken External Link"
+	kstidExtLinkFileAssociation "Unassociated External File Extension"
+	kstidHLErrorMsg		"An error was encountered in opening the file referenced by this external link.\nFile: ""%s""\nFolder: ""%s""\n\nError:  ""%s""\n\nDo you want to update this link now?"
+	kstidHLErrorMsg2	"The file referenced by this external link was not found.\nFile: ""%s""\nFolder: ""%s""\n\nThis can happen if the file\n- was renamed, moved, or deleted\n- is on a drive that is not available, or\n- is on a networked computer and there is a network problem.\n\nDo you want to update this link now?"
+	kstidHLErrorMsg3	"The file referenced by this external link has an extension that is not associated\nwith a Windows application.\n\nFile: ""%s""\nFolder: ""%s""\n\nRight-click on the link and select 'Open With' to change the association or\nselect Yes below to change the filename and update the link.\n\nDo you want to update this link now?"
+	kstidExtLinkOpen         "&Open..."
+	kstidExtLinkOpenWith     "Open &With..."
+	kstidExtLink             "External &Link..."
+	kstidExtLinkRemove       "&Remove Link..."
+	kstidExtLinkTitle		 "External Link"
+	kstidExtLinkRemovePrompt "Do you want to remove the external link from the selected text?"
+
+	kstidUnprintableText    "Text Outside Printable Area"
+	kstidLeftMarginError    "The left margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?"
+	kstidRightMarginError   "The right margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?"
+	kstidTopMarginError     "The top margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?"
+	kstidBottomMarginError  "The bottom margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?"
+
+	kstidUnprintableHeader  "Header Outside Printable Area"
+	kstidHeaderMarginError  "The header is set outside the printer's printable area and will be cut off.\nDo you want to continue printing?"
+	kstidUnprintableFooter  "Footer Outside Printable Area"
+	kstidFooterMarginError  "The footer is set outside the printer's printable area and will be cut off.\nDo you want to continue printing?"
+	kstidPromoteWarning		"In order to promote the subentry, filters and sorting will be turned off."
+	kstidPromoteCaption		"Promote"
+
+	kstidCannotMoveFile		"Error trying to move %<0>s to %<1>s: %<2>s"
+	kstidCannotCopyFile		"Error trying to copy %<0>s to %<1>s: %<2>s"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCantDeleteItem				"This item is required by the program, so it can't be deleted."
+	kstidCantMergeItem				"This item is required by the program, so it can't be merged into another item."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidMergeItemPhaseOne			"Phase One: Merging Item"
+	kstidMergeItemPhaseTwo			"Phase Two: Merging Item"
+	kstidDeleteItemPhaseOne			"Phase One: Deleting Item"
+	kstidDeleteItemPhaseTwo			"Phase Two: Deleting Item"
+	kstidMergePos					"Merge"
+	kstidConfirmUndoableActionMsg	"This action can NOT be undone.\r\n\r\nAre you sure you want to continue?"
+	kstidConfirmUndoableActionCpt	"Confirm Undoable Action"
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+// A basic table of accelerators that should work even in TssEdit controls
+// in dialogs.
+kridAccelBasic ACCELERATORS DISCARDABLE
+BEGIN
+	"A",            kcidEditSelAll,         VIRTKEY, CONTROL, NOINVERT
+	"C",            kcidEditCopy,           VIRTKEY, CONTROL, NOINVERT
+	"V",            kcidEditPaste,          VIRTKEY, CONTROL, NOINVERT
+	"X",            kcidEditCut,            VIRTKEY, CONTROL, NOINVERT
+	"Y",            kcidEditRedo,           VIRTKEY, CONTROL, NOINVERT
+	"Z",            kcidEditUndo,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidWndSplit	"Divides the main view pane into two panes.\nSplit Window\nDivides the main view pane into two panes with the same content. When the main view pane is split, this button returns it to a single pane.\n"
+	kcidWndSplitOn	"&Split Window"
+	kcidWndSplitOff	"&Remove Split"
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidErrorOutOfMemOrResource "The operating system is out of memory or resources."
+	kstidErrorFileNotFound       "The specified file was not found."
+	kstidErrorPathNotFound       "The specified path was not found."
+	kstidErrorBadFormatExe       "The .exe file is invalid."
+	kstidErrorAccessDenied       "The operating system denied access to the specified file."
+	kstidErrorAssocIncomplete    "The file name association is incomplete or invalid."
+	kstidErrorDDEBusy            "The DDE transaction could not be completed because other DDE transactions were being processed."
+	kstidErrorDDEFail            "The DDE transaction failed."
+	kstidErrorDDETimeOut         "The DDE transaction could not be completed because the request timed out."
+	kstidErrorDLLNotFound        "The specified dynamic-link library was not found."
+//	kstidErrorFNF                "The specified file was not found."
+	kstidErrorNoAssoc            "There is no application associated with the given file name extension."
+	kstidErrorOutOfMemory        "There was not enough memory to complete the operation."
+//	kstidErrorPNF                "The specified path was not found."
+	kstidErrorShare              "A sharing violation occurred."
+	kstidErrorSqlSvrOutOfMemTtl	 "SQL Server low on memory"
+	kstidErrorSqlSvrOutOfMemLcl	 "The SQL Server program has run out of memory. The FieldWorks program will shut down.\n\nPlease close all other open applications and restart FieldWorks. If the problem persists, reboot the computer to clear memory.\n\nThe ReadMe.rtf file in the FieldWorks folder contains additional information."
+	kstidErrorSqlSvrOutOfMemNtw	 "The computer where the project is located has run out of memory. Please close all applications on that computer. If the problem persists, reboot the computer to clear memory.\n\nThe ReadMe.rtf file in the FieldWorks folder contains additional information."
+	kstidErrorUnrecognized       "Unrecognized Error."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidReasonDisconnectStrCrawl	"Do you want to disconnect them in order to update the database?"
+	kstidRemoteReasonStrCrawl		"%<0>s is doing major database alteration."
+	kstidReasonDisconnectImport	"Do you want to disconnect them in order to continue with the import?"
+	kstidRemoteReasonImport			"%<0>s is importing new data."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidMenu              "Menu"
+	kstidTBarStd           "&Standard"
+	kstidTBarFmtg          "&Formatting"
+	kstidTBarIns           "&Insert"
+	kstidTBarWnd           "&Window"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidMissingStyleTitle  "Undefined Style"
+	kstidMissingStyleMsg    "The requested style ""%<0>b"" is not defined, probably due to a Copy/Paste from another application.  The ""%<1>s"" style will be used instead."
+	kstidWizProjMsgCaption  "New Language Project"
+END

@@ -1,0 +1,142 @@
+﻿<LayoutInventory>
+  <layout class="LexEntryRef" type="jtview" name="publishStemVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForStemVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForStemVariantRef" visibility="never" before=" " after="" sep=", " />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemEntryRefs" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemEntryType" before="" after=" " sep=", " visibility="ifdata" css="entryref-type" />
+	<part ref="ComponentHeadwordsConfig" label="Components" param="publishStemComponentTarget" before="" after="" sep=", " visibility="ifdata" css="entryref-component" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary" sep=" " />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemSenseVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForStemSenseVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForStemSenseVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemSenseVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemSenseComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type" />
+	<part ref="ComplexFormHeadwordConfig" param="publishStemSenseComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemSenseComplexFormExample" visibility="never" css="sense-complexform-examples" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type" />
+	<part ref="ComplexFormHeadwordConfig" param="publishStemComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before="" after=" " sep=", " param="publishStemComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemComplexFormExample" visibility="never" css="complexform-examples" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemMinorVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemMinorVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForStemMinorVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForStemMinorVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-minor" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemMinorVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemMinorEntryRefs" version="9">
+	<part ref="EntryTypesConfig" label="Type" param="publishStemMinorEntryType" before="" after=" " sep=", " visibility="ifdata" css="entryref-type-minor" />
+	<part ref="PrimaryHeadwordsConfig" label="Primary Entry(s)" param="publishStemMinorPrimaryTarget" before=" " after="" sep=", " visibility="ifdata" css="entryref-primary-minor" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary-minor" sep=" " />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemMinorSenseVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemMinorSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-minor" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForStemMinorSenseVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForStemMinorSenseVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-minor" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemMinorSenseVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemMinorSenseComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor" />
+	<part ref="ComplexFormHeadwordConfig" param="publishStemMinorSenseComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishStemMinorComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor" />
+	<part ref="ComplexFormHeadwordConfig" param="publishStemMinorComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemMinorComplexFormExample" visibility="never" css="complexform-examples-minor" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootSenseVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSenseVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootSenseVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSenseVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootSenseComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type" />
+	<part ref="ComplexFormHeadwordConfig" param="publishRootSenseComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootSenseComplexFormExample" visibility="never" css="sense-complexform-examples" />
+	<part ref="PrimaryHeadwordsConfig" label="Subentry Under Reference" param="publishRootSenseSubUnderTarget" before="(see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootSubVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSubVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-sub" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSubVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootSubVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-sub" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSubVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootSubSenseVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootSubSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-sub" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootSubSenseVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootSubSenseVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-sub" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootSubSenseVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootSubSenseComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootSubSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-sub" />
+	<part ref="ComplexFormHeadwordConfig" param="publishRootSubSenseComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-sub" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootSubSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootSubSenseComplexFormExample" visibility="never" css="sense-complexform-examples-sub" />
+	<part ref="PrimaryHeadwordsConfig" label="Subentry Under Reference" param="publishRootSubSenseSubUnderTarget" before="(see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-sub" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootMinorVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootMinorVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary-minor" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootMinorSenseVariantRef" version="9">
+	<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishRootMinorSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type-minor" />
+	<part ref="VariantHeadwordConfig" param="publishHeadwordForRootMinorSenseVariantRef" hideConfig="true" />
+	<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishPronunForRootMinorSenseVariantRef" before=" " after="" sep=", " visibility="never" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary-minor" sep=" " />
+	<part ref="SummaryDefinitionConfig" param="publishSummaryDefForRootMinorSenseVariantRef" hideConfig="true" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootMinorSenseComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type-minor" />
+	<part ref="ComplexFormHeadwordConfig" param="publishRootMinorSenseComplexFormHeadword" visibility="ifdata" hideConfig="true" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary-minor" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorSenseComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorSenseComplexFormExample" visibility="never" css="sense-complexform-examples-minor" />
+	<part ref="PrimaryHeadwordsConfig" label="Subentry Under Reference" param="publishRootMinorSenseSubUnderTarget" before="(see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="sense-subentryref-minor" />
+  </layout>
+  <layout class="LexEntryRef" type="jtview" name="publishRootMinorComplexFormRef" version="9">
+	<part ref="EntryTypesConfig" label="Complex Form Type" param="publishRootMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor" />
+	<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor" sep=" " />
+	<part ref="ComplexFormSummaryDefinitionConfig" param="publishRootMinorComplexFormSummaryDef" visibility="ifdata" hideConfig="true" />
+	<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishRootMinorComplexFormExample" visibility="never" css="complexform-examples-minor" />
+	<part ref="PrimaryHeadwordsConfig" label="Subentry Under Reference" param="publishRootMinorSubUnderTarget" before="(see under " after=") " sep=", " visibility="ifdata" style="Dictionary-CrossReferences" css="subentryref-minor" />
+  </layout>
+</LayoutInventory>

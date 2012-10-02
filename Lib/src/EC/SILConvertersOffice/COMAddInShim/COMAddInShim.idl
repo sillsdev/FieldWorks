@@ -1,0 +1,26 @@
+// COMAddInShim.idl : IDL source for stshim
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (COMAddInShim.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(8C7824DC-6834-476e-9DD7-E39A472008EE),
+	version(1.0),
+	helpstring("SEC_COMAddInShim 1.0 Type Library")
+]
+library SEC_COMAddInShimLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(3C86D6AE-C692-4b31-A384-5C7C0BAB7029),
+		helpstring("ConnectProxy Class")
+	]
+	coclass ConnectProxy
+	{
+		[default] interface IUnknown;
+	};
+};

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<dictionary role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+
+  <!-- the document pane -->
+  <entries role="pane">
+	<title name="Entries" path="9:XCore.PaneBar/9:$name"/>
+	<entry path="9:Dict/20:Root/20:Div[$ind;]"><!-- [index] -->
+	   <para path="/$Text;[$row;]"><!-- [index] -->
+		  <string path="/42:String[$col;]"/><!-- [index] -->
+	   </para>
+	</entry>
+  </entries>
+
+</dictionary>

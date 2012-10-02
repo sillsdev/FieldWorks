@@ -1,0 +1,9 @@
+; SILGraphiteControl.def : Declares the module parameters.
+
+LIBRARY      "SILGraphiteControl.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

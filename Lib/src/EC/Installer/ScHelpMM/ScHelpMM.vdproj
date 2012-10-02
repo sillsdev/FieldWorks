@@ -1,0 +1,294 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:ScHelpMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_55FE0ABD5AEB42019D7B194473C414F3"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_A259018C7581456D8CBB550D2051B375"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\ScHelpMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\ScHelpMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_55FE0ABD5AEB42019D7B194473C414F3"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Help for SIL Converters.pdf"
+			"TargetName" = "8:Help for SIL Converters.pdf"
+			"Tag" = "8:"
+			"Folder" = "8:_4C55331D13E6474C89C710CA3510A5DB"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A259018C7581456D8CBB550D2051B375"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\SILConverters Installation Help.pdf"
+			"TargetName" = "8:SILConverters Installation Help.pdf"
+			"Tag" = "8:"
+			"Folder" = "8:_4C55331D13E6474C89C710CA3510A5DB"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{1525181F-901A-416C-8A58-119130FE478E}:_029C4BE75EDC4B84BA51C415BB8CB13B"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_E86A07320C0B4E76BFAF8557F8DD6682"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_59AE05BFB19F4ACF9CA3C870EF117681"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_F614A0276B40486888B5728E1312119E"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_5FF61CB89B1D41438EFF2D5E25E515D6"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_1E64E526B8BD4F00B7C0C06E82476FF6"
+			{
+			"DefaultLocation" = "8:[CommonFilesFolder]SIL"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_4C55331D13E6474C89C710CA3510A5DB"
+					{
+					"Name" = "8:Help"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_0ECA39B59664448A8F7F10E713ECC838"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:ScHelpMergeModule.F4685C93716742D8B8AFCA83FA6BA99E"
+		"Version" = "8:3.0.0.0"
+		"Title" = "8:ScHelpMM"
+		"Subject" = "8:Help files for SILConverters' client applications, transduction engines, and installation process"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SIL; EncConverters; Help"
+		"Comments" = "8:Merge module for the SILConverters Help files"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A1938BCA8B18426EA9D80700BFE05F39"
+			{
+			"Name" = "8:Help for SIL Converters"
+			"Arguments" = "8:"
+			"Description" = "8:Help files for SILConverters' client apps and transduction engines"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_55FE0ABD5AEB42019D7B194473C414F3"
+			"Folder" = "8:_F614A0276B40486888B5728E1312119E"
+			"WorkingFolder" = "8:_4C55331D13E6474C89C710CA3510A5DB"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D317546685AB4912B58711C633D6EF76"
+			{
+			"Name" = "8:Help for SILConverters Installation"
+			"Arguments" = "8:"
+			"Description" = "8:Help files for SILConverters' installation process"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_A259018C7581456D8CBB550D2051B375"
+			"Folder" = "8:_F614A0276B40486888B5728E1312119E"
+			"WorkingFolder" = "8:_4C55331D13E6474C89C710CA3510A5DB"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

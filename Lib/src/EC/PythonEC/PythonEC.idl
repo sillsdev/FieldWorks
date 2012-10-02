@@ -1,0 +1,39 @@
+// PythonEC.idl : IDL source for PythonEC
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (PythonEC.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(640AC7A0-77F8-479b-B963-1A5D243E4059),
+	version(3.1),
+	helpstring("Python IEncConverter implementation 3.1 Type Library")
+]
+library PythonECLib
+{
+	importlib("stdole2.tlb");
+	importlib("ECInterfaces.tlb");
+
+	[
+		uuid(50E53D69-3187-4169-B26F-83258995FE56)
+		, helpstring("Python Script IEncConverter implementation class")
+		, hidden
+	]
+	coclass PyScriptEncConverter
+	{
+		[default] interface IEncConverter;
+	};
+
+	[
+		uuid(7920A4A3-40F7-401d-AA9D-BCF46DF99557)
+		, helpstring("Python Script IEncConverterConfig implementation class")
+		, hidden
+	]
+	coclass PyScriptEncConverterConfig
+	{
+		[default] interface IEncConverterConfig;
+	};
+};

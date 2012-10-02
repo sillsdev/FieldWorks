@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="ParserObject"
+	ProjectGUID="{58A74608-5780-4654-8F19-30282CC352DF}"
+	SccProjectName="Perforce Project"
+	SccAuxPath=""
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake /f &quot;ParserObject.mak&quot; CFG=Release"
+				ReBuildCommandLine="nmake /f &quot;ParserObject.mak&quot; CFG=Release /a"
+				Output="ParserObject.exe"/>
+		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\ParserObject___Win32_Debug"
+			IntermediateDirectory=".\ParserObject___Win32_Debug"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake /f &quot;ParserObject.mak&quot;"
+				ReBuildCommandLine="nmake /f &quot;ParserObject.mak&quot; /a"
+				Output="ParserObject.exe"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="CExPat.cpp">
+			</File>
+			<File
+				RelativePath="CXMLDefRec.cpp">
+			</File>
+			<File
+				RelativePath="StdAfx.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath=".\CExPat.h">
+			</File>
+			<File
+				RelativePath=".\common.h">
+			</File>
+			<File
+				RelativePath=".\CXMLDataRec.h">
+			</File>
+			<File
+				RelativePath=".\debug.h">
+			</File>
+			<File
+				RelativePath=".\main.h">
+			</File>
+			<File
+				RelativePath=".\StdAfx.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+		<File
+			RelativePath="ParserObject.mak">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="Microsoft Word XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="applySingleTransform" transform="Discourse2Word.xsl">
+Export to an XML format which can be read directly by Microsoft Word
+</FxtDocumentDescription>

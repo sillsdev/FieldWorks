@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!-- the script including these instructions must also include :
+  <include from="IncKalaba.xml"/>
+	   or something like
+  <var id="projectName" set="Sena 3"/>
+   -->
+
+  <var id="FlexSig" set=" - FieldWorks Language Explorer"/>
+
+  <on-startup>
+
+	<!--  Force the email dlg not to show up -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<!-- allow 20 seconds for startup dialog group processing -->
+	<do-once until="60000" waiting-for="$projectName;$FlexSig" on-fail="skip">
+	  <!-- Email dialog -->
+	  <on-dialog until="1000" title="Field Usage Report System" on-fail="skip">
+		  <click path="9:I'm unable to send this information./41:I'm unable to send this information./30:I'm unable to send this information."/>
+		  <insert>{ESC}</insert>
+	  </on-dialog>
+
+	  <!-- Something went wrong the last time... dialog -->
+	  <on-dialog until="1000" title="Language Explorer" on-fail="skip">
+		<click path="button:Yes" />
+	  </on-dialog>
+
+	  <!-- Select a project dlg -->
+	  <on-dialog until="1000" title="Welcome to FieldWorks" on-fail="skip">
+		<click path="button:Open" />
+		<on-dialog title="Open Project" on-fail="assert">
+		  <click path="outline:Choose a Project:/olitem:Kalaba" />
+		  <click path="button:Open" />
+		</on-dialog>
+	  </on-dialog>
+
+	  <!-- Backup Reminder dlg -->
+	  <on-dialog until="1000" title="Backup Reminder" on-fail="skip">
+		<click path="9:No/43:No"/>
+	  </on-dialog>
+
+
+	  <!-- Update data dlg -->
+	  <on-dialog until="1000" title="Upgrade Project" on-fail="skip">
+		<click path="button:Yes" />
+	  </on-dialog>
+
+	  <!-- Outdated version of fieldworks dlg - SHOULDN'T SEE THIS -->
+	  <on-dialog until="1000" title="Outdated Version of FieldWorks" on-pass="assert">
+		<click path="button:OK" />
+	  </on-dialog>
+
+	</do-once>
+
+	<sound frequency="800" duration="500"/>
+  </on-startup>
+
+  <var id="nl" set="9:NAMELESS"/>
+  <var id="NL" set="$nl;/"/>
+  <var id="NL2" set="$NL;$NL"/>
+  <var id="NL22" set="$NL;$nl;[2]/"/>
+  <var id="NL32" set="$NL;$NL22"/>
+  <var id="NL4" set="$NL2;$NL2"/>
+
+  <var id="MENU" set="9:ParentOfMenuBar/9:MenuBar/"/>
+  <var id="menuFILE" set="$MENU;menu:File/"/>
+  <var id="menuEDIT" set="$MENU;menu:Edit/"/>
+  <var id="menuVIEW" set="$MENU;menu:View/"/>
+  <var id="menuDATA" set="$MENU;menu:Data/"/>
+  <var id="menuINSERT" set="$MENU;menu:Insert/"/>
+  <var id="menuFORMAT" set="$MENU;menu:Format/"/>
+  <var id="menuTOOLS" set="$MENU;menu:Tools/"/>
+  <var id="menuPARSER" set="$MENU;menu:Parser/"/>
+  <var id="menuWINDOW" set="$MENU;menu:Window/"/>
+  <var id="menuHELP" set="$MENU;menu:Help/"/>
+  <var id="vwLexEdit" set="$menuVIEW;menu:Lexicon/menu:Lexicon Edit"/>
+
+  <var id="INSERT" set="9:ParentOfMenuBar/22:Insert/"/>
+  <var id="EDIT" set="9:ParentOfMenuBar/22:Edit/"/>
+
+  <var id="tbSTANDARD" set="9:ParentOfMenuBar/9:ParentOfMenuBar/22:Standard/"/>
+  <var id="firstRec"  set="$tbSTANDARD;43:First record"/>
+  <var id="lastRec"  set="$tbSTANDARD;43:Last record"/>
+  <var id="nextRec"  set="$tbSTANDARD;43:Next record"/>
+  <var id="prevRec"  set="$tbSTANDARD;43:Previous record"/>
+  <var id="goBack"  set="$tbSTANDARD;43:Go Back"/>
+  <var id="deleteRec" set="$tbSTANDARD;43:Delete Record..."/>
+  <var id="NoFilters" set="9:ParentOfMenuBar/9:ParentOfMenuBar/22:View/43:Turn off all filters"/>
+  <var id="refresh" set="$tbSTANDARD;43:Refresh"/>
+  <var id="WsCombo" set="9:ParentOfMenuBar/9:ParentOfMenuBar/22:Format/0:_Writing System"/>
+
+  <var id="APP" set="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/"/>
+
+  <var id="Col" set="28:Row/29:Cell"/>
+  <var id="Text" set="42:Paragraph"/>
+  <!-- Navigation or Area side bar (on far left)  Append with item:toolName (item = 34) -->
+  <var id="SideBAR" set="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.One/9:SideBar/35:SideBar/"/>
+  <!-- path="$SideBAR;9:Lexicon" the "Lexicon" Area title -->
+  <!-- path="$SideBAR;9:navBar" the sidebar bottom area navigation buttons container -->
+  <var id="NAV" set="$SideBAR;$NL2;33:NAMELESS/"/>
+  <var id="navLexEdit" set="$NAV;item:Lexicon Edit"/>
+
+  <var id="RecTree" set="$APP;9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.One/9:XCore.RecordBar/$nl"/>
+  <!-- Lex Categorized Entry.Rec: $RecTree;/36:2 - Person -->
+
+  <var id="AreaROOT" set="$APP;9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/"/>
+  <var id="singlePANE" set="$AreaROOT;9:XCore.PaneBarContainer/"/>
+<!-- Lex Browse: $singlePANE;9:EntriesList/9:EntriesList/ etc.. -->
+<!-- Lex Dictionary: $singlePANE;9:Dict/20:Root/ etc.. -->
+<!-- Lex Classified Dictionary: $singlePANE;9:ClassDict/20:Root/ etc.. -->
+<!-- Lex BEE: $singlePANE;9:EntryBulkEdit/9:EntryBulkEdit/ etc.. -->
+<!-- Lex BES: $singlePANE;9:SenseBulkEdit/9:SenseBulkEdit/ etc.. -->
+<!-- Lex BRE: $singlePANE;9:ReversalEntriesEdit/9:ReversalEntriesEdit/ etc.. -->
+<!-- Lex Cat Browse: $singlePANE;9:POSList/9:POSList/ etc.. -->
+
+  <var id="multiBROWSE" set="$AreaROOT;9:XCore.MultiPane/9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/"/>
+  <var id="multiBrTITLE" set="$multiBROWSE;9:XCore.PaneBar/"/>
+  <!-- Lex Edit.Browse $multiBrTITLE;9:Entries -->
+  <var id="multiBrPane" set="$multiBROWSE;9:lexentryList/9:lexentryList/$nl"/>
+  <var id="multiBrPANE" set="$multiBrPane;/"/>
+  <var id="multiBrColChange" set="$multiBrPane;[3]/43:NAMELESS"/>
+  <var id="EditRecHEAD" set="$multiBrPANE;9:HeaderListView/33:HeaderListView/$NL"/>
+  <!-- any Edit.Browse.Header $EditRecHEAD -->
+  <var id="EditRecFilter" set="$multiBrPANE;9:FilterBar/9:FwComboBox"/>
+  <!-- any Edit.Browse.Filter $EditRecFilter[*] -->
+  <var id="EditRec" set="$multiBrPANE;20:RootSite/24:Table"/>
+  <!-- any Edit.Browse.Rec $EditRec[*] -->
+
+  <var id="multiEDIT" set="$AreaROOT;9:XCore.MultiPane/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/"/>
+  <var id="multiEdTITLE" set="$multiEDIT;9:XCore.PaneBar/"/>
+  <!-- Lex Edit.Edit $multiEdTITLE;9:Entry -->
+  <var id="multiEdHidden" set="$multiEdTITLE;9:Show Hidden Fields/$NL;44:NAMELESS"/>
+  <var id="multiEdPANE" set="$multiEDIT;9:CollapsingSplitContainer/"/>
+  <var id="multiEdUPPER" set="$multiEdPANE;9:CSC.SplitContainer.One/"/>
+  <!-- lex edit dict preview $multiEdUPPER;9:DictionaryPubPreview/20:Root/20:Div/$Text -->
+  <var id="multiEdFIELD" set="$multiEdPANE;9:CSC.SplitContainer.Two/9:normalEdit/9:RecordEditView.DataTree/"/>
+  <!-- Lex Edit.Edit $multiEdFIELD;9:multistring/9:SplitContainer/9:Panel1/9:Lexeme Form -->
+  <var id="multiSection" set="$multiEdFIELD;9:summary[*]/9:SplitContainer/9:Panel2/9:Slice_unknown/20:Root/$Text;/value:"/>
+  <!-- $multiSection;Section Name -->
+  <var id="multiEdStr" set="$multiEdFIELD;9:multistring[*]/9:SplitContainer/9:Panel2/20:"/>
+
+  <var id="RapidENTRY" set="$AreaROOT;9:XCore.PaneBarContainer/9:PaneBarContainer.SplitContainer/"/>
+  <var id="RapidTITLE" set="$RapidENTRY;9:PaneBarContainer.Panel1/9:XCore.PaneBar/9:Semantic Domain/"/>
+  <!-- Lex Categorized Entry.Title: $RapidTITLE -->
+  <!-- Lex Categorized Entry.Show HF: $RapidTITLE;9:Show Hidden Fields/$NL;44:NAMELESS -->
+  <var id="RapidPAGE" set="$RapidENTRY;9:PaneBarContainer.Panel2/9:CollapsingSplitContainer/"/>
+  <var id="RapidPageDATA" set="$RapidPAGE;9:CSC.SplitContainer.One/9:SemanticDomainList/9:RecordEditView.DataTree/"/>
+  <!-- Lex Categorized Entry.Data: $RapidPageDATA;9:jtview[3]/9:SplitContainer/9:Panel1/9:Question -->
+  <var id="RapidPageINPUT" set="$RapidPAGE;9:CSC.SplitContainer.Two/9:wordList/9:wordList/$NL"/>
+  <var id="RapidPageInHEAD" set="$RapidPageINPUT;9:HeaderListView/33:HeaderListView/$NL"/>
+  <!-- Lex Categorized Entry.InputHead: $RapidPageInHEAD;25:Word -->
+  <var id="RapidPageIn" set="$RapidPageINPUT;20:RootSite/24:Table"/>
+  <!-- Lex Categorized Entry.Input: $RapidPageIn;[2]/$Col;[3] -->
+
+  <var id="leftPANEL" set="$APP;9:xWindow.m_secondarySplitContainer/$NL"/>
+
+  <var id="ok" set="9:OK/43:OK"/>
+  <var id="more" set="9:More/43:More"/>
+  <var id="cancel" set="9:Cancel/43:Cancel"/>
+  <var id="close" set="9:Close/43:Close"/>
+  <var id="add" set="9:Add/43:Add"/>
+  <var id="delete" set="9:Delete/43:Delete"/>
+  <var id="yes" set="9:Yes/43:Yes"/>
+  <var id="no" set="9:No/43:No"/>
+  <var id="next" set="9:Next &gt;/43:Next &gt;"/>
+
+  <var id="longT" set="1000"/>
+  <var id="medT" set="500"/>
+  <var id="shorT" set="200"/>
+
+  <!-- The index * in the base changes from 1 to 2 from run to run :-( -->
+  <var id="lxBase" set="$APP;9:xWindow.m_secondarySplitContainer/$nl;[*]/9:XCore.MultiPane/$nl"/>
+  <var id="lxRecPane" set="$APP;9:xWindow.m_secondarySplitContainer/$NL;9:XCore.MultiPane/$NL22;$NL22;9:lexentryList/9:lexentryList/$NL"/>
+
+  <!-- Goes on a column view base variable -->
+  <var id="HEADER" set="9:HeaderListView/33:HeaderListView/$NL"/>
+  <var id="HeadWord" set="$HEADER;25:Headword"/>
+
+  <!-- Lexicon Edit -->  <var id="lxEditRecFRAME" set="$lxBase;/$nl;[2]/$NL22;9:lexentryList/9:lexentryList/$NL"/>
+  <!-- $EditRecHEAD;25:Lexeme Form -->
+  <var id="lxHeadword" set="$EditRecHEAD;25:Headword"/>
+  <var id="LexEditRec" set="$EditRecFRAME;20:RootSite/24:Table"/>
+  <var id="sp" set="9:SplitContainer/9:Panel"/>
+  <var id="msp" set="9:multistring[*]/$sp"/><!-- a multistring field -->
+
+<!--skip--><!-- Skip script prep when debugging with skip instructions -->
+
+<!-- Prepare to run a script by retreating to a safe, consistant state -->
+
+  <click path="$NoFilters"/><!-- Turn off all filters -->
+  <click path="$vwLexEdit"/><!-- Set the view back to Lexicon:Lexicon Edit -->
+  <!-- click path="$navLexEdit"/--><!-- Alternate -->
+  <click path="$firstRec"/><!-- Select the first record -->
+  <!--click path="$LexEditRec;/$Col"/--><!-- the first record may be selected, but off page? -->
+
+  <if><condition of="$projectName" is="'Kalaba'"/>
+  <then>
+	<!-- * Sort the Senses on Headword (in ascending Order) -->
+	<click path="$lxHeadword"/>
+	<click path="$firstRec"/>
+	<glimpse id="topHword" path="$LexEditRec;/$Col;/$Text" prop="value" expect="ztestsub" on-fail="skip"/>
+	<if><condition of="$topHword" is="true"/>
+	<then>
+		<click path="$lxHeadword"/>
+		<click path="$firstRec"/>
+		<!--click path="$LexEditRec;/$Col"/-->
+	</then>
+	</if>
+	<!--glimpse id="HeadwordNotSorted" path="$LexEditRec;/$Col;/$Text" prop="value" expect="-bi"/-->
+  </then>
+  </if>
+
+<!--/skip-->
+
+</include>

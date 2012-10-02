@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<toolbar path="9:ParentOfMenuBar/9:ParentOfMenuBar/22:" root="yes">
+
+  <go-back name="Go Back" ak="{LEFT}" path="Standard/43:$name"/>
+  <go-forward name="Go Forward" ak="{RIGHT}" path="Standard/43:$name"/>
+  <save name="Save" ck="S" path="Standard/43:$name"/>
+  <delete name="Delete Record" ck="{DELETE}" path="Standard/43:$name;..."/>
+  <undo name="Undo" ck="Z" path="Standard/43:$name"/>
+  <redo name="Redo" ck="Y" path="Standard/43:$name"/>
+  <refresh name="Refresh" k="{F5}" path="Standard/43:$name"/>
+  <first-record name="First record" path="Standard/43:$name"/>
+  <previous-record name="Previous record" ak="P" path="Standard/43:$name"/>
+  <next-record name="Next record" ak="N" path="Standard/43:$name"/>
+  <last-record name="Last record" path="Standard/43:$name"/>
+  <no-filters name="Turn off all filters" path="View/43:$name"/>
+
+  <find-lexical-entry name="Find lexical entry" ck="F" path="Insert/43:Find lexical entry...">
+	<dialog title="Find Lexical Entry"/>
+  </find-lexical-entry>
+  <new-entry name="Entry" ck="E" path="Insert/43:Entry...">
+	<dialog title="New Entry"/>
+  </new-entry>
+  <writing-system name="Writing System" path="Format/0:_$name"/>
+
+  <find-wordform name="Find wordform" path="Edit/43:Find wordform..."/>
+  <find-in-dictionary name="Find in Dictionary" path="Insert/43:Find in Dictionary"/>
+
+  <insert-category name="Category (or Part of Speech)" ck="I" path="Insert/43:$name">
+	<dialog title="Add from Catalog"/>
+  </insert-category>
+  <insert-subcategory name="Subcategory" path="Insert/43:$name;...">
+	<dialog title="Add from Catalog"/>
+  </insert-subcategory>
+  <exception-feature name="Exception &quot;Feature&quot;" path="Insert/43:$name"/>
+  <new-phoneme name="Phoneme" ck="I" path="Insert/43:$name"/>
+  <new-natural-class name="Natural Class" ck="I" path="Insert/43:$name"/>
+  <new-feature name="Feature" path="Insert/43:$name"/>
+  <new-complex-feature name="Complex Feature" path="Insert/43:$name"/>
+
+  <new-text name="New Text" path="Insert/43:$name"/>
+  <new-note name="Note" path="Insert/43:$name"/>
+  <literal-translation name="Literal Translation" path="Insert/43:$name"/>
+  <free-translation name="Free Translation" path="Insert/43:$name"/>
+
+  <new-feature-type name="Feature Type" path="Insert/43:$name"/>
+  <new-confidence-level name="Confidence Level" path="Insert/43:$name"/>
+  <new-lexical-relation name="Lexical Relation" path="Insert/43:$name"/>
+
+</toolbar>

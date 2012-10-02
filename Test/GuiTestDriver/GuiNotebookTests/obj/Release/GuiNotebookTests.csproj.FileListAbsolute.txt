@@ -1,0 +1,13 @@
+C:\fwd\Test\GuiTestDriver\GuiNotebookTests\obj\Release\ResolveAssemblyReference.cache
+C:\fwd\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.dll
+C:\fwd\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.pdb
+C:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\ResolveAssemblyReference.cache
+C:\fwr\Output\Release\GuiNotebookTests.dll
+C:\fwr\Output\Release\GuiNotebookTests.pdb
+C:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.dll
+C:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.pdb
+D:\fwr\Output\Release\GuiNotebookTests.dll
+D:\fwr\Output\Release\GuiNotebookTests.pdb
+D:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\ResolveAssemblyReference.cache
+D:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.dll
+D:\fwr\Test\GuiTestDriver\GuiNotebookTests\obj\Release\GuiNotebookTests.pdb

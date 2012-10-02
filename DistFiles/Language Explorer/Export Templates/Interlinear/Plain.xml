@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="FLExText Format" formatLabel="FLEXTEXT" defaultExtension="flextext" filter="FLExText files (*.flextext)|*.flextext|XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="elan">
+Export to the FLExText Interlinear XML format suitable for importing baseline and translations back into FieldWorks.
+</FxtDocumentDescription>

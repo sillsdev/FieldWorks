@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks/>
+	<tools>
+		<tool label="Word Analyses" value="Analyses" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="textsWords" id="WordsAndAnalysesMultiPane" splitterBarOrientation="vertical" firstLabel="WordList" secondLabel="SingleWord">
+					<!-- Control 1: Left, browse view of (filtered) wordforms. -->
+					<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']">
+						<!-- NOTE Overrides syntax: childless override nodes just modify specified attributes, or create them in the included node -->
+						<overrides>
+							<column label="Form" width="25%"/>
+							<column label="Word Glosses" width="25%"/>
+							<!-- LT-8373. The point of these overrides: By default, enable User Analyses for "Word Analyses" -->
+							<column label="User Analyses" visibility="always" width="15%"/>
+						</overrides>
+					</include>
+					<!-- Control 2: Right, Detail view of wordform selected in Control 1.  PaneBarGroupId="PaneBar-WordsDetail" -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="EntriesList" collapse="180000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters area="textsWords" clerk="concordanceWords" persistContext="normalEdit" suppressInfoBar="false" layout="Normal" treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100">
+									<menuHandler>
+										<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.WordsEditToolMenuHandler"/>
+									</menuHandler>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+			<defaultProperties>
+				<property name="AllowInsertLinkToFile" bool="false" persist="false"/>
+			</defaultProperties>
+		</tool>
+	</tools>
+</root>

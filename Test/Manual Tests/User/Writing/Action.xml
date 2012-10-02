@@ -1,0 +1,51 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\Action.xml">
+ <title tag="wrtact">Writing an action</title>
+ <index>
+  <li>test cases: writing Actions</li>
+ </index>
+ <prerequisites>
+  <p>Before attempting to write an action, you should be in the process of</p>
+  <ul>
+   <li>writing test steps for a specific test case.</li>
+   <li>reviewing <link uri="..\TCL\CaseStep.xml" type="module">test step structure</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for writing actions:</p>
+  <ul>
+   <li>
+	<p name="General"/>
+	<ul>
+	 <li>If each step depends on the preceding step, be sure the test case order is "in sequence", otherwise "any order".</li>
+	 <li>Keep "atomic"; one action, one result. When not possible, find the minimal set of actions that minimize the number of results.</li>
+	 <li>Begin an action statement with an action verb when possible (active voice).</li>
+	 <li>The action must result in a detectible change or potential change that is a bug
+	  <p name="Example of potential">When tool tips are turned off, hovering the pointer over a control should not activate a help bubble.</p></li>
+	 <li>If there is more than one action that yields the same result, each must be written in a separate step so they can be tracked separately.</li>
+	 <li>Use the names of controls as they appear in the application.</li>
+	 <li>Qualify the names of controls by prefixing with the name of its frame, container or control group followed by a dash.
+	  <p name="Examples">Indent-Space after, File-Views-Document</p></li>
+	</ul>
+   </li>
+   <li>
+	<p name="In sequence"/>
+	<ul>
+	 <li>The sequence of steps is either one that must work for the program to be a success (critical path) or</li>
+	 <li>It must be one that users are most likely to use (scenario).</li>
+	</ul>
+   </li>
+   <li>
+	<p name="Any order"/>
+	<ul>
+	 <li>Each step must be independent but can be qualified with context for that step.</li>
+	 <li>Steps are sorted according to some logical rule you devise.</li>
+	 <li>You may provide context by writing "when" statements that describe the required state of the system prior to step execution. If the system is not in that state, the tester may execute this step after other test steps result in the required state or the tester may perform substeps to get it there. These are called implicit contextual <i>substeps</i>.
+	  <p name="Example">When the check mark is NOT displayed, left click over the label or in the check box.</p></li>
+	 <li>If implicit contextual substeps need instructions or explanation, write this in the step discussion.</li>
+	 <li>If you make substeps explicit in the action, put them in a list for easier reading.</li>
+	</ul>
+   </li>
+  </ul>
+ </guidelines>
+</task>

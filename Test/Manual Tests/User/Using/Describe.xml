@@ -1,0 +1,25 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Describe.xml">
+ <title tag="useDes">Describing bugs</title>
+ <index>
+  <li>report: description of bug</li>
+  <li>description of bug</li>
+  <li>bug description</li>
+ </index>
+ <introduction>
+  <p>A good bug description often leads a software developer straight to the cause of the bug. Unlike the <link uri="Name.xml" type="module">name of the bug</link> which gives a one-line description of the bug, the description includes a great deal of detail. The <link uri="..\Bugs\Pattern.xml" type="module">bug pattern</link> for each listed bug usually has a fairly well fleshed out description. Use the guidelines below to fill in blank sections or add to it.</p>
+ </introduction>
+ <warning>
+  <p>It is the developer's job to debug - avoid the temptation to dig too deeply!</p>
+ </warning>
+ <guidelines>
+  <p>Here are some guidelines for describing bugs:</p>
+  <ul>
+	<li>Tell about any extra steps you performed.</li>
+	<li>Tell about any steps you omitted.</li>
+	<li>Write about the order in which you executed steps leading to the failure<p name="Tip">To see if the order of steps is significant, execute the steps in different orders.</p></li>
+	<li>Write about any behaviors not listed in the result.</li>
+	<li>If you know something about programming, it's OK to guess at a general cause by phrases such as, "acts like a pointer is not initialized", but don't fail to tell why you feel that way.</li>
+  </ul>
+ </guidelines>
+</task>

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Environment settings for packaging FW
+#
+# Source this file in a shell and then run make
+
+export PATH=/usr/lib/fieldworks/mono/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib/fieldworks/mono/lib:$LD_LIBRARY_PATH

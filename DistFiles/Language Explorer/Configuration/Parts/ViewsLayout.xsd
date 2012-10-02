@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="LayoutInventory">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="layout">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:choice maxOccurs="unbounded">
+								<xs:element name="sublayout">
+									<xs:complexType>
+										<xs:attribute name="name" type="xs:string" use="required" />
+										<xs:attribute name="group" type="xs:string" use="optional" />
+										<xs:attribute name="style" type="xs:string" use="optional" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element maxOccurs="unbounded" name="part">
+									<xs:complexType mixed="true">
+										<xs:sequence minOccurs="0">
+											<xs:element name="indent">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element minOccurs="0" name="sublayout">
+															<xs:complexType>
+																<xs:attribute name="name" type="xs:string" use="required" />
+																<xs:attribute name="layoutChoiceField" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" maxOccurs="unbounded" name="part">
+															<xs:complexType>
+																<xs:sequence minOccurs="0">
+																	<xs:element name="indent">
+																		<xs:complexType>
+																			<xs:sequence>
+																				<xs:element name="part">
+																					<xs:complexType>
+																						<xs:attribute name="ref" type="xs:string" use="required" />
+																						<xs:attribute name="expansion" type="xs:string" use="required" />
+																					</xs:complexType>
+																				</xs:element>
+																			</xs:sequence>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+																<xs:attribute name="ref" type="xs:string" use="optional" />
+																<xs:attribute name="visibility" type="xs:string" use="optional" />
+																<xs:attribute name="param" type="xs:string" use="optional" />
+																<xs:attribute name="label" type="xs:string" use="optional" />
+																<xs:attribute name="customFields" type="xs:string" use="optional" />
+																<xs:attribute name="menu" type="xs:string" use="optional" />
+																<xs:attribute name="expansion" type="xs:string" use="optional" />
+																<xs:attribute name="abbr" type="xs:string" use="optional" />
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="indent" type="xs:boolean" use="optional" />
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attribute name="ref" type="xs:string" use="optional" />
+										<xs:attribute name="ws" type="xs:string" use="optional" />
+										<xs:attribute name="before" type="xs:string" use="optional" />
+										<xs:attribute name="after" type="xs:string" use="optional" />
+										<xs:attribute name="visibility" type="xs:string" use="optional" />
+										<xs:attribute name="label" type="xs:string" use="optional" />
+										<xs:attribute name="sep" type="xs:string" use="optional" />
+										<xs:attribute name="showLabels" type="xs:boolean" use="optional" />
+										<xs:attribute name="style" type="xs:string" use="optional" />
+										<xs:attribute name="flowType" type="xs:string" use="optional" />
+										<xs:attribute name="param" type="xs:string" use="optional" />
+										<xs:attribute name="collapsedLayout" type="xs:string" use="optional" />
+										<xs:attribute name="expansion" type="xs:string" use="optional" />
+										<xs:attribute name="menu" type="xs:string" use="optional" />
+										<xs:attribute name="hotlinks" type="xs:string" use="optional" />
+										<xs:attribute name="notifyVirtual" type="xs:string" use="optional" />
+										<xs:attribute name="singlegraminfofirst" type="xs:string" use="optional" />
+										<xs:attribute name="css" type="xs:string" use="optional" />
+										<xs:attribute name="wsType" type="xs:string" use="optional" />
+										<xs:attribute name="lexreltype" type="xs:string" use="optional" />
+										<xs:attribute name="showasindentedpara" type="xs:string" use="optional" />
+										<xs:attribute name="number" type="xs:string" use="optional" />
+										<xs:attribute name="numstyle" type="xs:string" use="optional" />
+										<xs:attribute name="numsingle" type="xs:string" use="optional" />
+										<xs:attribute name="recurseConfig" type="xs:boolean" use="optional" >
+											<xs:annotation>
+												<xs:documentation>
+													If this attribute is set to false then the configuration for this element will
+													be controlled by the layout part that is referenced. The configuration dialog will
+													not have any visible options at this node.
+											</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+										<xs:attribute name="recurseConfigLabel" type="xs:string" use="optional">
+											<xs:annotation>
+												<xs:documentation>
+													When recurseConfig is false this option will be used to provide the user information
+													about where the configuration for this node is handled.
+												</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+										<xs:attribute name="parastyle" type="xs:string" use="optional" />
+										<xs:attribute name="indent" type="xs:boolean" use="optional" />
+										<xs:attribute name="forceSubentryDisplay" type="xs:boolean" use="optional">
+											<xs:annotation>
+												<xs:documentation>
+													This flag will be read during the display of a fragment to force the display of this
+													node when it would otherwise be suppressed. i.e. Senses are generally not to be displayed
+													if there is a sense as the parent, but when a LexEntry is marked as minor in a RootBased
+													dictionary and it is a component of the sense of another entry, the senses of the minor entry
+													should be displayed.
+												</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+										<xs:attribute name="preventnullstyle" type="xs:boolean" use="optional" />
+										<xs:attribute name="customFields" type="xs:string" use="optional" />
+										<xs:attribute name="hideConfig" type="xs:boolean" use="optional" />
+										<xs:attribute name="comment" type="xs:string" use="optional" />
+										<xs:attribute name="entrytype" type="xs:string" use="optional" />
+										<xs:attribute name="field" type="xs:string" use="optional" />
+										<xs:attribute name="cssNumber" type="xs:string" use="optional" />
+										<xs:attribute name="disallowCharStyle" type="xs:boolean" use="optional" />
+										<xs:attribute name="commandVisible" type="xs:boolean" use="optional" />
+										<xs:attribute name="beforeStyle" type="xs:string" use="optional" />
+										<xs:attribute name="abbr" type="xs:string" use="optional" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element maxOccurs="unbounded" name="generate">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="part">
+												<xs:complexType>
+													<xs:sequence minOccurs="0">
+														<xs:element minOccurs="0" name="if">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="obj">
+																		<xs:complexType>
+																			<xs:attribute name="field" type="xs:string" use="required" />
+																			<xs:attribute name="layout" type="xs:string" use="required" />
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+																<xs:attribute name="target" type="xs:string" use="required" />
+																<xs:attribute name="is" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="ifnot">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="obj">
+																		<xs:complexType>
+																			<xs:attribute name="field" type="xs:string" use="required" />
+																			<xs:attribute name="layout" type="xs:string" use="required" />
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+																<xs:attribute name="target" type="xs:string" use="required" />
+																<xs:attribute name="is" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="gendate">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+																<xs:attribute name="format" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="int">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="seq">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+																<xs:attribute name="layout" type="xs:string" use="required" />
+																<xs:attribute name="inheritSeps" type="xs:boolean" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="obj">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+																<xs:attribute name="layout" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="string">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element minOccurs="0" name="configureMlString">
+															<xs:complexType>
+																<xs:attribute name="field" type="xs:string" use="required" />
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="ref" type="xs:string" use="required" />
+													<xs:attribute name="label" type="xs:string" use="optional" />
+													<xs:attribute name="before" type="xs:string" use="optional" />
+													<xs:attribute name="after" type="xs:string" use="optional" />
+													<xs:attribute name="visibility" type="xs:string" use="optional" />
+													<xs:attribute name="ws" type="xs:string" use="optional" />
+													<xs:attribute name="sep" type="xs:string" use="optional" />
+													<xs:attribute name="showLabels" type="xs:boolean" use="optional" />
+													<xs:attribute name="flowType" type="xs:string" use="optional" />
+													<xs:attribute name="wsType" type="xs:string" use="optional" />
+													<xs:attribute name="hideConfig" type="xs:boolean" use="optional" />
+													<xs:attribute name="param" type="xs:string" use="optional" />
+													<xs:attribute name="beforeStyle" type="xs:string" use="optional" />
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attribute name="class" type="xs:string" use="required" />
+										<xs:attribute name="fieldType" type="xs:string" use="required" />
+										<xs:attribute name="restrictions" type="xs:string" use="required" />
+										<xs:attribute name="destClass" type="xs:string" use="optional" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="span">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="string">
+												<xs:complexType>
+													<xs:attribute name="field" type="xs:string" use="required" />
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+						</xs:sequence>
+						<xs:attribute name="class" type="xs:string" use="required" />
+						<xs:attribute name="type" type="xs:string" use="required" />
+						<xs:attribute name="name" type="xs:string" use="required" />
+						<xs:attribute name="label" type="xs:string" use="optional" />
+						<xs:attribute name="css" type="xs:string" use="optional" />
+						<xs:attribute name="tagForWs" type="xs:boolean" use="optional" />
+						<xs:attribute name="choiceGuid" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

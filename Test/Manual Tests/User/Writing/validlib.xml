@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\validlib.xml">
+ <title tag="wrtval">Validating your XML test script - Did I get it right?</title>
+ <index>
+  <li>XML: validation</li>
+ </index>
+ <prerequisites>
+  <p>Before validating an XML test script, you should:</p>
+  <ul>
+   <li>Have or <link uri="xlibrary.xml" type="module">create a library <i>folder-name</i>.xml and *.htm file</link>.</li>
+   <li>Set up the <link uri="..\Writing\XML.xml" type="module">XML authoring tools</link>.</li>
+   <li>Review the structure of a <link uri="..\TCL\TestCaseLib.xml" type="module">test case library</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for validating an XML test script:</p>
+  <ul>
+   <li>Make sure the <i>folder-name</i>.xml has an &lt;insert-test> element for the test script to be validated.</li>
+   <li>Double click the library *.htm file to launch the browser. All of the test scripts in the library should appear in the browser. At least one is needed for a valid test script library.</li>
+   <li><link uri="trouble.xml" type="module">Trouble-shoot</link> the library if errors are issued or if you get an indented list with "-" signs in front of some lines or if nothing shows up on the screen.</li>
+  </ul>
+ </guidelines>
+</task>

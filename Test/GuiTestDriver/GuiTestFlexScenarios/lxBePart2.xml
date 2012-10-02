@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 2 -->
+<!-- Morph Type must be the 6th column -->
+<!-- All check boxes Unchecked -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+   <var id="arrow" set="  "/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Morph Type filtered by [^root|stem]  to remove all roots and stems -->
+   <click path="$beeFilter;[6]"/><!-- Morph Type filter -->
+   <insert>f~</insert>
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <click wait="500" path="$NL;20:RootSite/42:Paragraph"/>
+	 <insert wait="200">[{^}root|stem]</insert>
+	 <insert>%r</insert>
+	 <click path="$ok"/>
+   </on-dialog>
+   <glimpse id="not76" path="9:StatusBar/41:1//84"/>
+
+<!-- check irir it's currently a suffix -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>irir</insert>
+	 <click path="$fleListItem;/$Col;/$Text;/value:irir"/>
+	 <click path="$goto"/>
+   </on-dialog>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <click path="$beeRec;[$irir;]/$Col;/40:Picture"/>
+
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <click path="$beeRec;[$im;]/$Col;/40:Picture"/>
+
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <click path="$beeRec;[$imba;]/$Col;/40:Picture"/>
+
+<!-- change Morph Type to enclitic -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Target Field[2]/43:Open"/>
+   <insert>m~</insert>
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Change To:[*]/$NL;43:NAMELESS"/>
+   <insert>e~</insert>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/> <!-- this reorders the record indices -->
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre" path="$beeRec;[$im;]/$Col;[7]/$Text" prop="value" expect="prefix $arrow; enclitic"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr" path="$beeRec;[$imba;]/$Col;[7]/$Text" prop="value" expect="discontiguous phrase $arrow; enclitic"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf" path="$beeRec;[$irir;]/$Col;[7]/$Text" prop="value" expect="suffix $arrow; enclitic"/>
+
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+   <on-dialog title="Changing fundamental type">
+	 <click path="$ok"/>
+   </on-dialog>
+
+<!-- find im since apply scrolled it and the others off screen -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>im</insert>
+	 <click path="$fleListItem;/$Col;/$Text;/value:im"/>
+	 <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{UP 3}</insert>
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre2" path="$beeRec;[$im;]/$Col;[7]/$Text" prop="value" expect="enclitic"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr2" path="$beeRec;[$imba;]/$Col;[7]/$Text" prop="value" expect="enclitic"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf2" path="$beeRec;[$irir;]/$Col;[7]/$Text" prop="value" expect="enclitic"/>
+
+   <!-- click path="$menuEDIT;menu:Undo Bulk Edit"/-->
+   <insert>^z</insert><!-- undo --> <bug id="LT-5811"/>
+<!-- Uncheck all -->
+   <click path="$beeChecks"/>
+   <insert>{DOWN 2}~</insert>
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre3" path="$beeRec;[$im;]/$Col;[7]/$Text" prop="value" expect="prefix"/>
+   <click path="$beeRec;[$im;]/$Col;/40:Picture"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr3" path="$beeRec;[$imba;]/$Col;[7]/$Text" prop="value" expect="discontiguous phrase"/>
+   <click path="$beeRec;[$imba;]/$Col;/40:Picture"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf3" path="$beeRec;[$irir;]/$Col;[7]/$Text" prop="value" expect="suffix"/>
+   <click path="$beeRec;[$irir;]/$Col;/40:Picture"/>
+
+<!-- change Morph Type to infix -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Target Field[2]/43:Open"/>
+   <insert>m~</insert>
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Change To:[*]/$NL;43:NAMELESS"/>
+   <insert>i~</insert>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre4" path="$beeRec;[$im;]/$Col;[7]/$Text" prop="value" expect="prefix $arrow; infix"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr4" path="$beeRec;[$imba;]/$Col;[7]/$Text" prop="value" expect="discontiguous phrase $arrow; infix"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf4" path="$beeRec;[$irir;]/$Col;[7]/$Text" prop="value" expect="suffix $arrow; infix"/>
+
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+   <on-dialog title="Changing fundamental type">
+	 <click path="$ok"/>
+   </on-dialog>
+
+<!-- find im since apply scrolled it and the others off screen -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>imba ciruzwi</insert>
+	 <!--click path="$fleListItem;/$Col;/value:im"/-->
+	 <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{UP 3}</insert>
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre5" path="$beeRec;[$im;]/$Col;[7]/$Text" prop="value" expect="infix"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr5" path="$beeRec;[$imba;]/$Col;[7]/$Text" prop="value" expect="infix"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf5" path="$beeRec;[$irir;]/$Col;[7]/$Text" prop="value" expect="infix"/>
+
+<!-- change Morph Type to prefix -->
+   <!--click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Target Field[2]/43:Open"/-->
+   <!--insert>m~</insert-->
+   <!-- click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:infix/$NL;43:NAMELESS"/-->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/$NL;43:NAMELESS"/>
+   <insert>ppp~</insert>
+   <click path="$tbSTANDARD;43:Save"/>
+   <!--glimpse id="undoDisabled" path="$menuEDIT;menu:Undo Ctrl+Z" prop="unavailable"/>
+   <glimpse id="redoDisabled" path="$menuEDIT;menu:Redo Ctrl+Y" prop="unavailable"/-->
+
+<!-- Display "Is a Headword" column -->
+   <click path="$beeConfigCol"/>
+   <insert>i~</insert>
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:List Choice"/><!-- this solves some control issues -->
+
+<!-- change "Is a Headword" to no -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Target Field[2]/43:Open"/>
+   <insert wait="200">i~</insert>
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Change To:[*]/43:Open"/>
+   <insert wait="200">n~</insert>
+
+<!-- find im since the new column scrolled it and the others off screen -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>im</insert>
+	 <click path="$fleListItem;/$Col;/$Text;/value:im"/>
+	 <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{UP 3}</insert>
+
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre6" path="$beeRec;[$im;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr6" path="$beeRec;[$imba;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf6" path="$beeRec;[$irir;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+
+<sound frequency="1000" duration="500"/>
+<sound frequency="500" duration="500"/>
+
+<skip>
+
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:List Choice"/><!-- this solves some control issues -->
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:List Choice"/><!-- this solves some control issues -->
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:List Choice"/><!-- this solves some control issues -->
+
+<!-- find im since apply scrolled it and the others off screen -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>im</insert>
+	 <click path="$fleListItem;/$Col;/$Text;/value:im"/>
+	 <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{DOWN 3}</insert>
+
+<!-- Shows blanks until refreshed, but then undo is unavailable, so check for blank now -->
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse wait="3000" id="imPre7" path="$beeRec;[$im;]/$Col;[8]/$Text" prop="value" expect=""/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr7" path="$beeRec;[$imba;]/$Col;[8]/$Text" prop="value" expect=""/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf7" path="$beeRec;[$irir;]/$Col;[8]/$Text" prop="value" expect=""/>
+
+   <!-- click path="$menuEDIT;menu:Undo Bulk Edit"/-->
+   <insert>^z</insert><!-- undo -->
+
+<!-- find im since apply scrolled it and the others off screen -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	 <insert>im</insert>
+	 <click path="$fleListItem;/$Col;/$Text;/value:im"/>
+	 <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{UP 3}</insert>
+
+   <click path="$beeRec;[*im]/$Col;[2]/$Text;/value:im"/>
+   <glimpse id="imPre8" path="$beeRec;[$im;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+   <click path="$beeRec;[*imba]/$Col;[2]/$Text;/value:imba ciruzwi"/>
+   <glimpse id="imbAr8" path="$beeRec;[$imba;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+   <click path="$beeRec;[*irir]/$Col;[2]/$Text;/value:irir"/>
+   <glimpse id="irSuf8" path="$beeRec;[$irir;]/$Col;[8]/$Text" prop="value" expect="yes"/>
+
+</skip>
+
+ </on-application>
+</accil>

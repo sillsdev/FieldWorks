@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?><!DOCTYPE BookNamesAndAbbrevs SYSTEM "ScrBookRef.dtd">
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this resource must be accompanied by the generation of a new version using
+	guidgen. Be sure to validate any changes against ScrBookRef.dtd.
+	*********************************************************************************************
+-->
+<ScrBookRef date="2010-06-16" DTDver="6CFDEBDD-FF59-4b4d-8E58-9228B8319E0C" version ="A85A5B94-4DA9-4e73-83B3-2508CDBB7959">
+  <writingsystem xml:lang="en">
+	<book SILBookId="GEN" Name="Genesis" Abbreviation="Gen" AlternateName=""/>
+	<book SILBookId="EXO" Name="Exodus" Abbreviation="Ex" AlternateName=""/>
+	<book SILBookId="LEV" Name="Leviticus" Abbreviation="Lev" AlternateName=""/>
+	<book SILBookId="NUM" Name="Numbers" Abbreviation="Num" AlternateName=""/>
+	<book SILBookId="DEU" Name="Deuteronomy" Abbreviation="Dt" AlternateName=""/>
+	<book SILBookId="JOS" Name="Joshua" Abbreviation="Jos" AlternateName=""/>
+	<book SILBookId="JDG" Name="Judges" Abbreviation="Jdg" AlternateName=""/>
+	<book SILBookId="RUT" Name="Ruth" Abbreviation="Ru" AlternateName=""/>
+	<book SILBookId="1SA" Name="1 Samuel" Abbreviation="1Sa" AlternateName="I Samuel"/>
+	<book SILBookId="2SA" Name="2 Samuel" Abbreviation="2Sa" AlternateName="II Samuel"/>
+	<book SILBookId="1KI" Name="1 Kings" Abbreviation="1Ki" AlternateName="I Kings"/>
+	<book SILBookId="2KI" Name="2 Kings" Abbreviation="2Ki" AlternateName="II Kings"/>
+	<book SILBookId="1CH" Name="1 Chronicles" Abbreviation="1Ch" AlternateName="I Chronicles"/>
+	<book SILBookId="2CH" Name="2 Chronicles" Abbreviation="2Ch" AlternateName="II Chronicles"/>
+	<book SILBookId="EZR" Name="Ezra" Abbreviation="Ezr" AlternateName=""/>
+	<book SILBookId="NEH" Name="Nehemiah" Abbreviation="Neh" AlternateName=""/>
+	<book SILBookId="EST" Name="Esther" Abbreviation="Est" AlternateName=""/>
+	<book SILBookId="JOB" Name="Job" Abbreviation="Job" AlternateName=""/>
+	<book SILBookId="PSA" Name="Psalms" Abbreviation="Ps" AlternateName=""/>
+	<book SILBookId="PRO" Name="Proverbs" Abbreviation="Prv" AlternateName=""/>
+	<book SILBookId="ECC" Name="Ecclesiastes" Abbreviation="Ecc" AlternateName=""/>
+	<book SILBookId="SNG" Name="Song of Solomon" Abbreviation="Sng" AlternateName="Song of Songs"/>
+	<book SILBookId="ISA" Name="Isaiah" Abbreviation="Isa" AlternateName=""/>
+	<book SILBookId="JER" Name="Jeremiah" Abbreviation="Jer" AlternateName=""/>
+	<book SILBookId="LAM" Name="Lamentations" Abbreviation="Lam" AlternateName=""/>
+	<book SILBookId="EZK" Name="Ezekiel" Abbreviation="Eze" AlternateName=""/>
+	<book SILBookId="DAN" Name="Daniel" Abbreviation="Dan" AlternateName=""/>
+	<book SILBookId="HOS" Name="Hosea" Abbreviation="Hos" AlternateName=""/>
+	<book SILBookId="JOL" Name="Joel" Abbreviation="Joel" AlternateName=""/>
+	<book SILBookId="AMO" Name="Amos" Abbreviation="Am" AlternateName=""/>
+	<book SILBookId="OBA" Name="Obadiah" Abbreviation="Ob" AlternateName=""/>
+	<book SILBookId="JON" Name="Jonah" Abbreviation="Jon" AlternateName=""/>
+	<book SILBookId="MIC" Name="Micah" Abbreviation="Mic" AlternateName=""/>
+	<book SILBookId="NAM" Name="Nahum" Abbreviation="Na" AlternateName=""/>
+	<book SILBookId="HAB" Name="Habakkuk" Abbreviation="Hab" AlternateName=""/>
+	<book SILBookId="ZEP" Name="Zephaniah" Abbreviation="Zep" AlternateName=""/>
+	<book SILBookId="HAG" Name="Haggai" Abbreviation="Hag" AlternateName=""/>
+	<book SILBookId="ZEC" Name="Zechariah" Abbreviation="Zec" AlternateName=""/>
+	<book SILBookId="MAL" Name="Malachi" Abbreviation="Mal" AlternateName=""/>
+	<book SILBookId="MAT" Name="Matthew" Abbreviation="Mt" AlternateName=""/>
+	<book SILBookId="MRK" Name="Mark" Abbreviation="Mk" AlternateName=""/>
+	<book SILBookId="LUK" Name="Luke" Abbreviation="Lk" AlternateName=""/>
+	<book SILBookId="JHN" Name="John" Abbreviation="Jn" AlternateName=""/>
+	<book SILBookId="ACT" Name="Acts" Abbreviation="Acts" AlternateName=""/>
+	<book SILBookId="ROM" Name="Romans" Abbreviation="Rom" AlternateName=""/>
+	<book SILBookId="1CO" Name="1 Corinthians" Abbreviation="1Cor" AlternateName="I Corinthians"/>
+	<book SILBookId="2CO" Name="2 Corinthians" Abbreviation="2Cor" AlternateName="II Corinthians"/>
+	<book SILBookId="GAL" Name="Galatians" Abbreviation="Gal" AlternateName=""/>
+	<book SILBookId="EPH" Name="Ephesians" Abbreviation="Eph" AlternateName=""/>
+	<book SILBookId="PHP" Name="Philippians" Abbreviation="Php" AlternateName=""/>
+	<book SILBookId="COL" Name="Colossians" Abbreviation="Col" AlternateName=""/>
+	<book SILBookId="1TH" Name="1 Thessalonians" Abbreviation="1Th" AlternateName="I Thessalonians"/>
+	<book SILBookId="2TH" Name="2 Thessalonians" Abbreviation="2Th" AlternateName="II Thessalonians"/>
+	<book SILBookId="1TI" Name="1 Timothy" Abbreviation="1Tim" AlternateName="I Timothy"/>
+	<book SILBookId="2TI" Name="2 Timothy" Abbreviation="2Tim" AlternateName="II Timothy"/>
+	<book SILBookId="TIT" Name="Titus" Abbreviation="Tit" AlternateName=""/>
+	<book SILBookId="PHM" Name="Philemon" Abbreviation="Phm" AlternateName=""/>
+	<book SILBookId="HEB" Name="Hebrews" Abbreviation="Heb" AlternateName=""/>
+	<book SILBookId="JAS" Name="James" Abbreviation="Jas" AlternateName=""/>
+	<book SILBookId="1PE" Name="1 Peter" Abbreviation="1Pet" AlternateName="I Peter"/>
+	<book SILBookId="2PE" Name="2 Peter" Abbreviation="2Pet" AlternateName="II Peter"/>
+	<book SILBookId="1JN" Name="1 John" Abbreviation="1Jn" AlternateName="I John"/>
+	<book SILBookId="2JN" Name="2 John" Abbreviation="2Jn" AlternateName="II John"/>
+	<book SILBookId="3JN" Name="3 John" Abbreviation="3Jn" AlternateName="III John"/>
+	<book SILBookId="JUD" Name="Jude" Abbreviation="Jude" AlternateName=""/>
+	<book SILBookId="REV" Name="Revelation" Abbreviation="Rev" AlternateName="Apocalypse"/>
+  </writingsystem>
+  <writingsystem xml:lang="es">
+	<book SILBookId="GEN" Name="Génesis" Abbreviation="Gén" AlternateName=""/>
+	<book SILBookId="EXO" Name="Éxodo" Abbreviation="Ex" AlternateName=""/>
+	<book SILBookId="LEV" Name="Levítico" Abbreviation="Lev" AlternateName=""/>
+	<book SILBookId="NUM" Name="Números" Abbreviation="Núm" AlternateName=""/>
+	<book SILBookId="DEU" Name="Deuteronomio" Abbreviation="Dt" AlternateName=""/>
+	<book SILBookId="JOS" Name="Josué" Abbreviation="Jos" AlternateName=""/>
+	<book SILBookId="JDG" Name="Jueces" Abbreviation="Jue" AlternateName=""/>
+	<book SILBookId="RUT" Name="Rut" Abbreviation="Rt" AlternateName=""/>
+	<book SILBookId="1SA" Name="1 Samuel" Abbreviation="1 Sam" AlternateName=""/>
+	<book SILBookId="2SA" Name="2 Samuel" Abbreviation="2 Sam" AlternateName=""/>
+	<book SILBookId="1KI" Name="1 Reyes" Abbreviation="1 Re" AlternateName=""/>
+	<book SILBookId="2KI" Name="2 Reyes" Abbreviation="2 Re" AlternateName=""/>
+	<book SILBookId="1CH" Name="1 Crónicas" Abbreviation="1 Cro" AlternateName=""/>
+	<book SILBookId="2CH" Name="2 Crónicas" Abbreviation="2 Cro" AlternateName=""/>
+	<book SILBookId="EZR" Name="Esdras" Abbreviation="Esd" AlternateName=""/>
+	<book SILBookId="NEH" Name="Nehemías" Abbreviation="Neh" AlternateName=""/>
+	<book SILBookId="EST" Name="Ester" Abbreviation="Est" AlternateName=""/>
+	<book SILBookId="JOB" Name="Job" Abbreviation="Job" AlternateName=""/>
+	<book SILBookId="PSA" Name="Salmos" Abbreviation="Sal" AlternateName=""/>
+	<book SILBookId="PRO" Name="Proverbios" Abbreviation="Prov" AlternateName=""/>
+	<book SILBookId="ECC" Name="Eclesiastés" Abbreviation="Ecl" AlternateName=""/>
+	<book SILBookId="SNG" Name="Cantares" Abbreviation="Cant" AlternateName=""/>
+	<book SILBookId="ISA" Name="Isaías" Abbreviation="Is" AlternateName=""/>
+	<book SILBookId="JER" Name="Jeremías" Abbreviation="Jer" AlternateName=""/>
+	<book SILBookId="LAM" Name="Lamentaciones" Abbreviation="Lam" AlternateName=""/>
+	<book SILBookId="EZK" Name="Ezequiel" Abbreviation="Ez" AlternateName=""/>
+	<book SILBookId="DAN" Name="Daniel" Abbreviation="Dan" AlternateName=""/>
+	<book SILBookId="HOS" Name="Oseas" Abbreviation="Os" AlternateName=""/>
+	<book SILBookId="JOL" Name="Joel" Abbreviation="Jl" AlternateName=""/>
+	<book SILBookId="AMO" Name="Amós" Abbreviation="Am" AlternateName=""/>
+	<book SILBookId="OBA" Name="Abdías" Abbreviation="Abd" AlternateName=""/>
+	<book SILBookId="JON" Name="Jonás" Abbreviation="Jon" AlternateName=""/>
+	<book SILBookId="MIC" Name="Miqueas" Abbreviation="Miq" AlternateName=""/>
+	<book SILBookId="NAM" Name="Nahúm" Abbreviation="Nah" AlternateName=""/>
+	<book SILBookId="HAB" Name="Habacuc" Abbreviation="Hab" AlternateName=""/>
+	<book SILBookId="ZEP" Name="Sofonías" Abbreviation="Sof" AlternateName=""/>
+	<book SILBookId="HAG" Name="Hageo" Abbreviation="Hag" AlternateName=""/>
+	<book SILBookId="ZEC" Name="Zacarías" Abbreviation="Zac" AlternateName=""/>
+	<book SILBookId="MAL" Name="Malaquías" Abbreviation="Mal" AlternateName=""/>
+	<book SILBookId="MAT" Name="Mateo" Abbreviation="Mt" AlternateName=""/>
+	<book SILBookId="MRK" Name="Marcos" Abbreviation="Mc" AlternateName=""/>
+	<book SILBookId="LUK" Name="Lucas" Abbreviation="Lc" AlternateName=""/>
+	<book SILBookId="JHN" Name="Juan" Abbreviation="Jn" AlternateName=""/>
+	<book SILBookId="ACT" Name="Hechos" Abbreviation="Hch" AlternateName=""/>
+	<book SILBookId="ROM" Name="Romanos" Abbreviation="Rom" AlternateName=""/>
+	<book SILBookId="1CO" Name="1 Corintios" Abbreviation="1 Cor" AlternateName=""/>
+	<book SILBookId="2CO" Name="2 Corintios" Abbreviation="2 Cor" AlternateName=""/>
+	<book SILBookId="GAL" Name="Gálatas" Abbreviation="Gál" AlternateName=""/>
+	<book SILBookId="EPH" Name="Efesios" Abbreviation="Ef" AlternateName=""/>
+	<book SILBookId="PHP" Name="Filipenses" Abbreviation="Flp" AlternateName=""/>
+	<book SILBookId="COL" Name="Colosenses" Abbreviation="Col" AlternateName=""/>
+	<book SILBookId="1TH" Name="1 Tesalonicenses" Abbreviation="1 Tes" AlternateName=""/>
+	<book SILBookId="2TH" Name="2 Tesalonicenses" Abbreviation="2 Tes" AlternateName=""/>
+	<book SILBookId="1TI" Name="1 Timoteo" Abbreviation="1 Tim" AlternateName=""/>
+	<book SILBookId="2TI" Name="2 Timoteo" Abbreviation="2 Tim" AlternateName=""/>
+	<book SILBookId="TIT" Name="Tito" Abbreviation="Tit" AlternateName=""/>
+	<book SILBookId="PHM" Name="Filemón" Abbreviation="Flm" AlternateName=""/>
+	<book SILBookId="HEB" Name="Hebreos" Abbreviation="Heb" AlternateName=""/>
+	<book SILBookId="JAS" Name="Santiago" Abbreviation="Sant" AlternateName=""/>
+	<book SILBookId="1PE" Name="1 Pedro" Abbreviation="1 Pe" AlternateName=""/>
+	<book SILBookId="2PE" Name="2 Pedro" Abbreviation="2 Pe" AlternateName=""/>
+	<book SILBookId="1JN" Name="1 Juan" Abbreviation="1 Jn" AlternateName=""/>
+	<book SILBookId="2JN" Name="2 Juan" Abbreviation="2 Jn" AlternateName=""/>
+	<book SILBookId="3JN" Name="3 Juan" Abbreviation="3 Jn" AlternateName=""/>
+	<book SILBookId="JUD" Name="Judas" Abbreviation="Jds" AlternateName=""/>
+	<book SILBookId="REV" Name="Apocalipsis" Abbreviation="Ap" AlternateName=""/>
+  </writingsystem>
+  <writingsystem xml:lang="fr">
+	<book SILBookId="GEN" Name="Genèse" Abbreviation="Gn" AlternateName=""/>
+	<book SILBookId="EXO" Name="Exode" Abbreviation="Ex" AlternateName=""/>
+	<book SILBookId="LEV" Name="Lévitique" Abbreviation="Lv" AlternateName=""/>
+	<book SILBookId="NUM" Name="Nombres" Abbreviation="Nb" AlternateName=""/>
+	<book SILBookId="DEU" Name="Deutéronome" Abbreviation="Dt" AlternateName=""/>
+	<book SILBookId="JOS" Name="Josué" Abbreviation="Jos" AlternateName=""/>
+	<book SILBookId="JDG" Name="Juges" Abbreviation="Jg" AlternateName=""/>
+	<book SILBookId="RUT" Name="Ruth" Abbreviation="Rt" AlternateName=""/>
+	<book SILBookId="1SA" Name="1 Samuel" Abbreviation="1 S" AlternateName=""/>
+	<book SILBookId="2SA" Name="2 Samuel" Abbreviation="2 S" AlternateName=""/>
+	<book SILBookId="1KI" Name="1 Rois" Abbreviation="1 R" AlternateName=""/>
+	<book SILBookId="2KI" Name="2 Rois" Abbreviation="2 R" AlternateName=""/>
+	<book SILBookId="1CH" Name="1 Chroniques" Abbreviation="1 Ch" AlternateName=""/>
+	<book SILBookId="2CH" Name="2 Chroniques" Abbreviation="2 Ch" AlternateName=""/>
+	<book SILBookId="EZR" Name="Esdras" Abbreviation="Esd" AlternateName=""/>
+	<book SILBookId="NEH" Name="Néhémie" Abbreviation="Ne" AlternateName=""/>
+	<book SILBookId="EST" Name="Esther" Abbreviation="Est" AlternateName=""/>
+	<book SILBookId="JOB" Name="Job" Abbreviation="Jb" AlternateName=""/>
+	<book SILBookId="PSA" Name="Psaumes" Abbreviation="Ps" AlternateName=""/>
+	<book SILBookId="PRO" Name="Proverbes" Abbreviation="Pr" AlternateName=""/>
+	<book SILBookId="ECC" Name="Ecclésiaste" Abbreviation="Eccl" AlternateName="Quohéleth"/>
+	<book SILBookId="SNG" Name="Cantique des Cantiques" Abbreviation="Cant" AlternateName=""/>
+	<book SILBookId="ISA" Name="Ésaïe" Abbreviation="Es" AlternateName=""/>
+	<book SILBookId="JER" Name="Jérémie" Abbreviation="Jr" AlternateName=""/>
+	<book SILBookId="LAM" Name="Lamentations" Abbreviation="Lm" AlternateName=""/>
+	<book SILBookId="EZK" Name="Ézéchiel" Abbreviation="Ez" AlternateName=""/>
+	<book SILBookId="DAN" Name="Daniel" Abbreviation="Dn" AlternateName=""/>
+	<book SILBookId="HOS" Name="Osée" Abbreviation="Os" AlternateName=""/>
+	<book SILBookId="JOL" Name="Joël" Abbreviation="Jl" AlternateName=""/>
+	<book SILBookId="AMO" Name="Amos" Abbreviation="Am" AlternateName=""/>
+	<book SILBookId="OBA" Name="Abdias" Abbreviation="Ab" AlternateName=""/>
+	<book SILBookId="JON" Name="Jonas" Abbreviation="Jon" AlternateName=""/>
+	<book SILBookId="MIC" Name="Michée" Abbreviation="Mi" AlternateName=""/>
+	<book SILBookId="NAM" Name="Nahoum" Abbreviation="Na" AlternateName="Nahum"/>
+	<book SILBookId="HAB" Name="Habacuc" Abbreviation="Ha" AlternateName="Habaquq"/>
+	<book SILBookId="ZEP" Name="Sophonie" Abbreviation="So" AlternateName=""/>
+	<book SILBookId="HAG" Name="Aggée" Abbreviation="Ag" AlternateName=""/>
+	<book SILBookId="ZEC" Name="Zacharie" Abbreviation="Za" AlternateName=""/>
+	<book SILBookId="MAL" Name="Malachie" Abbreviation="Ml" AlternateName=""/>
+	<book SILBookId="MAT" Name="Matthieu" Abbreviation="Mt" AlternateName=""/>
+	<book SILBookId="MRK" Name="Marc" Abbreviation="Mc" AlternateName=""/>
+	<book SILBookId="LUK" Name="Luc" Abbreviation="Lc" AlternateName=""/>
+	<book SILBookId="JHN" Name="Jean" Abbreviation="Jn" AlternateName=""/>
+	<book SILBookId="ACT" Name="Actes" Abbreviation="Ac" AlternateName=""/>
+	<book SILBookId="ROM" Name="Romains" Abbreviation="Rm" AlternateName=""/>
+	<book SILBookId="1CO" Name="1 Corinthiens" Abbreviation="1 Co" AlternateName=""/>
+	<book SILBookId="2CO" Name="2 Corinthiens" Abbreviation="2 Co" AlternateName=""/>
+	<book SILBookId="GAL" Name="Galates" Abbreviation="Ga" AlternateName=""/>
+	<book SILBookId="EPH" Name="Éphésiens" Abbreviation="Ep" AlternateName=""/>
+	<book SILBookId="PHP" Name="Philippiens" Abbreviation="Ph" AlternateName=""/>
+	<book SILBookId="COL" Name="Colossiens" Abbreviation="Col" AlternateName=""/>
+	<book SILBookId="1TH" Name="1 Thessaloniciens" Abbreviation="1 Th" AlternateName=""/>
+	<book SILBookId="2TH" Name="2 Thessaloniciens" Abbreviation="2 Th" AlternateName=""/>
+	<book SILBookId="1TI" Name="1 Timothée" Abbreviation="1 Tim" AlternateName=""/>
+	<book SILBookId="2TI" Name="2 Timothée" Abbreviation="2 Tim" AlternateName=""/>
+	<book SILBookId="TIT" Name="Tite" Abbreviation="Tt" AlternateName=""/>
+	<book SILBookId="PHM" Name="Philémon" Abbreviation="Phm" AlternateName=""/>
+	<book SILBookId="HEB" Name="Hébreux" Abbreviation="He" AlternateName=""/>
+	<book SILBookId="JAS" Name="Jacques" Abbreviation="Jc" AlternateName=""/>
+	<book SILBookId="1PE" Name="1 Pierre" Abbreviation="1 P" AlternateName=""/>
+	<book SILBookId="2PE" Name="2 Pierre" Abbreviation="2 P" AlternateName=""/>
+	<book SILBookId="1JN" Name="1 Jean" Abbreviation="1 Jn" AlternateName=""/>
+	<book SILBookId="2JN" Name="2 Jean" Abbreviation="2 Jn" AlternateName=""/>
+	<book SILBookId="3JN" Name="3 Jean" Abbreviation="3 Jn" AlternateName=""/>
+	<book SILBookId="JUD" Name="Jude" Abbreviation="Jude" AlternateName=""/>
+	<book SILBookId="REV" Name="Apocalypse" Abbreviation="Ap" AlternateName=""/>
+  </writingsystem>
+  <writingsystem xml:lang="pt">
+	<book SILBookId="GEN" Name="Génesis" Abbreviation="Gn" AlternateName=""/>
+	<book SILBookId="EXO" Name="Éxodo" Abbreviation="Ex" AlternateName=""/>
+	<book SILBookId="LEV" Name="Levítico" Abbreviation="Lv" AlternateName=""/>
+	<book SILBookId="NUM" Name="Números" Abbreviation="Nm" AlternateName=""/>
+	<book SILBookId="DEU" Name="Deuteronômio" Abbreviation="Dt" AlternateName=""/>
+	<book SILBookId="JOS" Name="Josué" Abbreviation="Js" AlternateName=""/>
+	<book SILBookId="JDG" Name="Juízes" Abbreviation="Jz" AlternateName=""/>
+	<book SILBookId="RUT" Name="Rute" Abbreviation="Rt" AlternateName=""/>
+	<book SILBookId="1SA" Name="1 Samuel" Abbreviation="1 Sm" AlternateName=""/>
+	<book SILBookId="2SA" Name="2 Samuel" Abbreviation="2 Sm" AlternateName=""/>
+	<book SILBookId="1KI" Name="1 Reis" Abbreviation="1 Rs" AlternateName=""/>
+	<book SILBookId="2KI" Name="2 Reis" Abbreviation="2 Rs" AlternateName=""/>
+	<book SILBookId="1CH" Name="1 Crônicas" Abbreviation="1 Cr" AlternateName=""/>
+	<book SILBookId="2CH" Name="2 Crônicas" Abbreviation="2 Cr" AlternateName=""/>
+	<book SILBookId="EZR" Name="Esdras" Abbreviation="Ed" AlternateName=""/>
+	<book SILBookId="NEH" Name="Neemias" Abbreviation="Ne" AlternateName=""/>
+	<book SILBookId="EST" Name="Ester" Abbreviation="Et" AlternateName=""/>
+	<book SILBookId="JOB" Name="Jó" Abbreviation="Jó" AlternateName=""/>
+	<book SILBookId="PSA" Name="Salmos" Abbreviation="Sl" AlternateName=""/>
+	<book SILBookId="PRO" Name="Provérbios" Abbreviation="Pv" AlternateName=""/>
+	<book SILBookId="ECC" Name="Eclesiastes" Abbreviation="Ec" AlternateName=""/>
+	<book SILBookId="SNG" Name="Cantares" Abbreviation="Ct" AlternateName=""/>
+	<book SILBookId="ISA" Name="Isaías" Abbreviation="Is" AlternateName=""/>
+	<book SILBookId="JER" Name="Jeremias" Abbreviation="Jr" AlternateName=""/>
+	<book SILBookId="LAM" Name="Lamentações" Abbreviation="Lm" AlternateName="Lamentações de Jeremias"/>
+	<book SILBookId="EZK" Name="Ezequiel" Abbreviation="Ez" AlternateName=""/>
+	<book SILBookId="DAN" Name="Daniel" Abbreviation="Dn" AlternateName=""/>
+	<book SILBookId="HOS" Name="Oséias" Abbreviation="Os" AlternateName=""/>
+	<book SILBookId="JOL" Name="Joel" Abbreviation="Jl" AlternateName=""/>
+	<book SILBookId="AMO" Name="Amós" Abbreviation="Am" AlternateName=""/>
+	<book SILBookId="OBA" Name="Obadias" Abbreviation="Ob" AlternateName=""/>
+	<book SILBookId="JON" Name="Jonas" Abbreviation="Jn" AlternateName=""/>
+	<book SILBookId="MIC" Name="Miquéias" Abbreviation="Mq" AlternateName=""/>
+	<book SILBookId="NAM" Name="Naum" Abbreviation="Na" AlternateName=""/>
+	<book SILBookId="HAB" Name="Habacuque" Abbreviation="Hc" AlternateName=""/>
+	<book SILBookId="ZEP" Name="Sofonias" Abbreviation="Sf" AlternateName=""/>
+	<book SILBookId="HAG" Name="Ageu" Abbreviation="Ag" AlternateName=""/>
+	<book SILBookId="ZEC" Name="Zacarias" Abbreviation="Zc" AlternateName=""/>
+	<book SILBookId="MAL" Name="Malaquias" Abbreviation="Ml" AlternateName=""/>
+	<book SILBookId="MAT" Name="Mateus" Abbreviation="Mt" AlternateName=""/>
+	<book SILBookId="MRK" Name="Marcos" Abbreviation="Mc" AlternateName=""/>
+	<book SILBookId="LUK" Name="Lucas" Abbreviation="Lc" AlternateName=""/>
+	<book SILBookId="JHN" Name="João" Abbreviation="Jo" AlternateName=""/>
+	<book SILBookId="ACT" Name="Atos" Abbreviation="At" AlternateName=""/>
+	<book SILBookId="ROM" Name="Romanos" Abbreviation="Rm" AlternateName=""/>
+	<book SILBookId="1CO" Name="1 Coríntios" Abbreviation="1 Co" AlternateName=""/>
+	<book SILBookId="2CO" Name="2 Coríntios" Abbreviation="2 Co" AlternateName=""/>
+	<book SILBookId="GAL" Name="Gálatas" Abbreviation="Gl" AlternateName=""/>
+	<book SILBookId="EPH" Name="Efésios" Abbreviation="Ef" AlternateName=""/>
+	<book SILBookId="PHP" Name="Filipenses" Abbreviation="Fp" AlternateName=""/>
+	<book SILBookId="COL" Name="Colossenses" Abbreviation="Cl" AlternateName=""/>
+	<book SILBookId="1TH" Name="1 Tessalonicenses" Abbreviation="1 Ts" AlternateName=""/>
+	<book SILBookId="2TH" Name="2 Tessalonicenses" Abbreviation="2 Ts" AlternateName=""/>
+	<book SILBookId="1TI" Name="1 Timóteo" Abbreviation="1 Tm" AlternateName=""/>
+	<book SILBookId="2TI" Name="2 Timóteo" Abbreviation="2 Tm" AlternateName=""/>
+	<book SILBookId="TIT" Name="Tito" Abbreviation="Tt" AlternateName=""/>
+	<book SILBookId="PHM" Name="Filemom" Abbreviation="Fm" AlternateName=""/>
+	<book SILBookId="HEB" Name="Hebreus" Abbreviation="Hb" AlternateName=""/>
+	<book SILBookId="JAS" Name="Tiago" Abbreviation="Tg" AlternateName=""/>
+	<book SILBookId="1PE" Name="1 Pedro" Abbreviation="1 Pe" AlternateName=""/>
+	<book SILBookId="2PE" Name="2 Pedro" Abbreviation="2 Pe" AlternateName=""/>
+	<book SILBookId="1JN" Name="1 João" Abbreviation="1 Jo" AlternateName=""/>
+	<book SILBookId="2JN" Name="2 João" Abbreviation="2 Jo" AlternateName=""/>
+	<book SILBookId="3JN" Name="3 João" Abbreviation="3 Jo" AlternateName=""/>
+	<book SILBookId="JUD" Name="Judas" Abbreviation="Jd" AlternateName=""/>
+	<book SILBookId="REV" Name="Apocalipse" Abbreviation="Ap" AlternateName=""/>
+  </writingsystem>
+  <writingsystem xml:lang="de">
+	<book SILBookId="GEN" Name="1 Mose" Abbreviation="1 Mos" AlternateName=""/>
+	<book SILBookId="EXO" Name="2 Mose" Abbreviation="2 Mos" AlternateName=""/>
+	<book SILBookId="LEV" Name="3 Mose" Abbreviation="3 Mos" AlternateName=""/>
+	<book SILBookId="NUM" Name="4 Mose" Abbreviation="4 Mos" AlternateName=""/>
+	<book SILBookId="DEU" Name="5 Mose" Abbreviation="5 Mos" AlternateName=""/>
+	<book SILBookId="JOS" Name="Josua" Abbreviation="Jos" AlternateName=""/>
+	<book SILBookId="JDG" Name="Richter" Abbreviation="Ri" AlternateName=""/>
+	<book SILBookId="RUT" Name="Rut" Abbreviation="Rut" AlternateName=""/>
+	<book SILBookId="1SA" Name="1 Samuel" Abbreviation="1 Sam" AlternateName="I Samuel"/>
+	<book SILBookId="2SA" Name="2 Samuel" Abbreviation="2 Sam" AlternateName="II Samuel"/>
+	<book SILBookId="1KI" Name="1 Könige" Abbreviation="1 Kön" AlternateName="I Könige"/>
+	<book SILBookId="2KI" Name="2 Könige" Abbreviation="2 Kön" AlternateName="II Könige"/>
+	<book SILBookId="1CH" Name="1 Chronik" Abbreviation="1 Chr" AlternateName="I Chronik"/>
+	<book SILBookId="2CH" Name="2 Chronik" Abbreviation="2 Chr" AlternateName="II Chronik"/>
+	<book SILBookId="EZR" Name="Esra" Abbreviation="Esra" AlternateName=""/>
+	<book SILBookId="NEH" Name="Nehemia" Abbreviation="Neh" AlternateName=""/>
+	<book SILBookId="EST" Name="Ester" Abbreviation="Est" AlternateName=""/>
+	<book SILBookId="JOB" Name="Ijob" Abbreviation="Ijob" AlternateName="Job"/>
+	<book SILBookId="PSA" Name="Psalmen" Abbreviation="Ps" AlternateName=""/>
+	<book SILBookId="PRO" Name="Sprichwörter" Abbreviation="Spr" AlternateName="Sprüche Salomos"/>
+	<book SILBookId="ECC" Name="Kohelet" Abbreviation="Koh" AlternateName="Ecclesiastes"/>
+	<book SILBookId="SNG" Name="Hohes Lied" Abbreviation="Hld" AlternateName="Hohelied Salomos"/>
+	<book SILBookId="ISA" Name="Jesaja" Abbreviation="Jes" AlternateName=""/>
+	<book SILBookId="JER" Name="Jeremia" Abbreviation="Jer" AlternateName=""/>
+	<book SILBookId="LAM" Name="Klagelieder" Abbreviation="Klgl" AlternateName=""/>
+	<book SILBookId="EZK" Name="Ezechiel" Abbreviation="Ez" AlternateName=""/>
+	<book SILBookId="DAN" Name="Daniel" Abbreviation="Dan" AlternateName=""/>
+	<book SILBookId="HOS" Name="Hosea" Abbreviation="Hos" AlternateName=""/>
+	<book SILBookId="JOL" Name="Joel" Abbreviation="Joel" AlternateName=""/>
+	<book SILBookId="AMO" Name="Amos" Abbreviation="Am" AlternateName=""/>
+	<book SILBookId="OBA" Name="Obadja" Abbreviation="Obj" AlternateName=""/>
+	<book SILBookId="JON" Name="Jona" Abbreviation="Jona" AlternateName=""/>
+	<book SILBookId="MIC" Name="Micha" Abbreviation="Mi" AlternateName=""/>
+	<book SILBookId="NAM" Name="Nahum" Abbreviation="Nah" AlternateName=""/>
+	<book SILBookId="HAB" Name="Habakuk" Abbreviation="Hab" AlternateName=""/>
+	<book SILBookId="ZEP" Name="Zefanja" Abbreviation="Zef" AlternateName=""/>
+	<book SILBookId="HAG" Name="Haggai" Abbreviation="Hag" AlternateName=""/>
+	<book SILBookId="ZEC" Name="Sacharja" Abbreviation="Sach" AlternateName=""/>
+	<book SILBookId="MAL" Name="Maleachi" Abbreviation="Mal" AlternateName=""/>
+	<book SILBookId="MAT" Name="Matthaeus" Abbreviation="Mt" AlternateName=""/>
+	<book SILBookId="MRK" Name="Markus" Abbreviation="Mk" AlternateName=""/>
+	<book SILBookId="LUK" Name="Lukas" Abbreviation="Lk" AlternateName=""/>
+	<book SILBookId="JHN" Name="Johannes" Abbreviation="Joh" AlternateName=""/>
+	<book SILBookId="ACT" Name="Apostelgeschichte" Abbreviation="Apg" AlternateName=""/>
+	<book SILBookId="ROM" Name="Roemer" Abbreviation="Röm" AlternateName=""/>
+	<book SILBookId="1CO" Name="1 Korinther" Abbreviation="1 Kor" AlternateName="I Korinther"/>
+	<book SILBookId="2CO" Name="2 Korinther" Abbreviation="2 Kor" AlternateName="II Korinther"/>
+	<book SILBookId="GAL" Name="Galater" Abbreviation="Gal" AlternateName=""/>
+	<book SILBookId="EPH" Name="Epheser" Abbreviation="Eph" AlternateName=""/>
+	<book SILBookId="PHP" Name="Philipper" Abbreviation="Phil" AlternateName=""/>
+	<book SILBookId="COL" Name="Kolosser" Abbreviation="Kol" AlternateName=""/>
+	<book SILBookId="1TH" Name="1 Thessalonicher" Abbreviation="1 Thess" AlternateName="I Thessalonicher"/>
+	<book SILBookId="2TH" Name="2 Thessalonicher" Abbreviation="2 Thess" AlternateName="II Thessalonicher"/>
+	<book SILBookId="1TI" Name="1 Timotheus" Abbreviation="1 Tim" AlternateName="I Timotheus"/>
+	<book SILBookId="2TI" Name="2 Timotheus" Abbreviation="2 Tim" AlternateName="II Timotheus"/>
+	<book SILBookId="TIT" Name="Titus" Abbreviation="Tit" AlternateName=""/>
+	<book SILBookId="PHM" Name="Philemon" Abbreviation="Phlm" AlternateName=""/>
+	<book SILBookId="HEB" Name="Hebraeer" Abbreviation="Hebr" AlternateName=""/>
+	<book SILBookId="JAS" Name="Jakobus" Abbreviation="Jak" AlternateName=""/>
+	<book SILBookId="1PE" Name="1 Petrus" Abbreviation="1 Petr" AlternateName="I Petrus"/>
+	<book SILBookId="2PE" Name="2 Petrus" Abbreviation="2 Petr" AlternateName="II Petrus"/>
+	<book SILBookId="1JN" Name="1 Johannes" Abbreviation="1 Joh" AlternateName="I Johannes"/>
+	<book SILBookId="2JN" Name="2 Johannes" Abbreviation="2 Joh" AlternateName="II Johannes"/>
+	<book SILBookId="3JN" Name="3 Johannes" Abbreviation="3 Joh" AlternateName="III Johannes"/>
+	<book SILBookId="JUD" Name="Judas" Abbreviation="Jud" AlternateName=""/>
+	<book SILBookId="REV" Name="Offenbarung" Abbreviation="Offb" AlternateName=""/>
+  </writingsystem>
+</ScrBookRef>

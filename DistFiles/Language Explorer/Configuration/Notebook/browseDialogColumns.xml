@@ -1,0 +1,61 @@
+<doc>
+<!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
+ so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
+<browseColumns>
+	<!-- These columns typically appear installed in records browse type tools in this order. -->
+	<column layout="DateOfEvent" label="Date of Event" width="72000" sortType="genDate" visibility="always"/>
+	<column layout="Title" label="Title" width="72000" cansortbylength="true" visibility="always" editable="true"/>
+  <column layout="Subrecords" label="Subrecords" multipara="true" ws="$ws=best analorvern" width="72000" visibility="always"/>
+  <column layout="AnthroCodes" label="Anthropology Categories" multipara="true" ws="$ws=best analorvern" width="72000" visibility="always" chooserFilter="complexListMultiple" list="AnthroList"/>
+	<column layout="Locations" label="Locations" multipara="true"  ws="$ws=best analorvern" width="72000" visibility="always" chooserFilter="complexListMultiple" list="Locations"/>
+	<column layout="Sources" label="Sources" multipara="true" ws="$ws=best analorvern" width="72000" visibility="always" chooserFilter="complexListMultiple" list="People"/>
+	<column layout="SeeAlso" label="See Also" multipara="true" width="72000" visibility="always"/>
+	<column layout="FurtherQuestions" label="Further Questions" multipara="true" width="72000" cansortbylength="true" visibility="always" editable="true"/>
+
+  <column layout="Confidence" label="Confidence" ws="$ws=best analorvern" width="72000" cansortbylength="true" visibility="dialog"/>
+	<column layout="CounterEvidence" label="Counter Evidence" multipara="true" width="72000" cansortbylength="true" visibility="dialog"/>
+	<column layout="DateCreated" label="Date Created" width="72000" sortType="date" visibility="dialog"/>
+	<column layout="DateModified" label="Date Modified" width="72000" sortType="date" visibility="dialog"/>
+	<column layout="Type" label="Record Type" width="72000" visibility="dialog" chooserFilter="atomicFlatListItem" list="RnResearchNbk.RecTypes"/>
+  <column layout="Participants" label="Participants" multipara="true" ws="$ws=best analorvern" width="72000" visibility="dialog"/>
+
+  <column layout="Description" label="Description" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="Hypothesis" label="Hypothesis" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="Discussion" label="Discussion" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="Conclusions" label="Conclusions" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="ExternalMaterials" label="External Materials" multipara="true" width="72000" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="ResearchPlan" label="Research Plan" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+  <column layout="PersonalNotes" label="Personal Notes" width="72000" multipara="true" cansortbylength="true" visibility="dialog" editable="true"/>
+
+  <column layout="Researchers" label="Researchers" multipara="true" ws="$ws=best analorvern" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="People"/>
+	<column layout="Restrictions" label="Restrictions" multipara="true" ws="$ws=best analorvern" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="Restrictions"/>
+	<column layout="Status" label="Status" width="72000" visibility="dialog" ws="$ws=best analorvern" chooserFilter="atomicFlatListItem" list="Status"/>
+	<column layout="SupersededBy" label="Superseded By" multipara="true" width="72000" visibility="dialog"/>
+	<column layout="SupportingEvidence" label="Supporting Evidence" multipara="true" width="72000" cansortbylength="true" visibility="dialog"/>
+	<column layout="TimeOfEvent" label="Time of Event" multipara="true" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="TimeOfDay"/>
+  <column layout="SubrecordOf" label="Subrecord of" width="72000" visibility="dialog" editable="false" sortmethod="SubrecordOfKey"/>
+
+  <!-- custom fields (generated) -->
+	<generate class="RnGenericRec" fieldType="mlstring" restrictions="customOnly">
+		<column layout="CustomMultiStringForRecord_$fieldName" label="$label" common="true" ws="$wsName" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="simplestring" restrictions="customOnly">
+		<column layout="CustomSimpleStringForRecord_$fieldName" label="$label" common="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="integer" restrictions="customOnly">
+		<column layout="CustomIntegerForRecord_$fieldName" label="$label" visibility="menu" sortType="integer"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="gendate" restrictions="customOnly">
+		<column layout="CustomGenDateForRecord_$fieldName" label="$label" visibility="menu"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="atom" destClass="StText" restrictions="customOnly">
+		<column layout="CustomStTextForRecord_$fieldName" label="$label" multipara="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="vector" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossVectorForRecord_$fieldName" label="$label" multipara="true" visibility="menu"/>
+	</generate>
+	<generate class="RnGenericRec" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossAtomForRecord_$fieldName" label="$label" visibility="menu"/>
+	</generate>
+</browseColumns>
+</doc>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbinsertDN" num="3.5" abbr="tbinDN" file="DN\TbInsertDN.xml">
+<title tag="tbinsertDN">Insert Toolbar Tests (DN)</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>These tests are used to test the Data Notebook specific Insert Toolbar buttons. </p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#InsertToolbar" type="doc">Insert Toolbar</link>
+</p>
+<p name="Note">To test the other generic Insert Item buttons, use the generic <link uri="../FW/TbInsert.xml" type="module">Insert Toolbar Tests</link> script</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "DN: Insert Toolbar"</p>
+</context>
+
+<case id="tbinDN" num="2" order="any">
+<title tag="tbinDN">Data Notebook Specific Toolbar Buttons</title>
+<context>
+<p>When the Insert Toolbar is displayed in Data Notebook</p>
+</context>
+
+<step name="1.1">Use <link uri="../StdCtrls/TlbButton.xml">Toolbar Button Tests</link> to test the Insert Entry toolbar button(s)
+<r>File any errors using the words "DN: Insert Toolbar" in the bug report</r>
+</step>
+
+
+<step name="1.2">Use <link uri="InsertEvent.xml" type="module">Insert Event tests</link> to test the Insert Event toolbar button functionality.
+<r>File any errors using the words "DN: Insert Toolbar" in the bug report</r>
+</step>
+
+<step name="1.3">Use <link uri="InsertAnalysis.xml" type="module">Insert Analysis tests</link> to test the Insert Analysis toolbar button functionality.
+<r>File any errors using the words "DN: Insert Toolbar" in the bug report</r>
+</step>
+
+<step name="1.4">Use <link uri="InsertSubentry.xml" type="module">Insert Subentry tests</link> to test the Insert Subevent and Subanalysis buttons functionality.
+<r>File any errors using the words "DN: Insert Toolbar" in the bug report</r>
+</step>
+
+</case>
+
+
+<update date="Jul-11-02" author="RussD">Test Script Created.</update>
+
+</test>

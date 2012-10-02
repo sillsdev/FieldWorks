@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <!-- Click all parent menu items so the children become accessible to glimpse -->
+  <click select="//menubar[@id='mainMenu']/button//item[item]"/>
+  <!-- Check all menu items with hot keys -->
+  <glimpse select="//menubar[@id='mainMenu']/button//item" prop="hotkey" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+ </on-application>
+</accil>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="dialog" num="0.13" abbr="dlg" file="StdCtrls\Dialog.xml">
+ <title tag="dialog">Dialog Basic Tests</title>
+ <index>
+<li>test</li>
+</index>
+  <introduction>
+<p>Most dialogs in a FieldWorks application have a few standard widgets and buttons. The behavior of these widgets and buttons is similar in every dialog. Standard widgets include the question (?) and close (X) frame buttons. Standard buttons include "Ok", "Cancel" and "Help". Usually, only the "Ok" button has side-effects that affect other windows and applications.</p>
+  </introduction>
+  <context>
+<p>Each widget and button is tested separately. When possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the word "dialog" or the dialog's title.</p>
+  </context>
+  <warning>
+<p>There is no project specification for dialogs in general, however, all FieldWorks dialogs have specifications.</p>
+  </warning>
+ <case id="dlgInsp" num="1" order="any">
+  <title tag="dlgInsp">Dialog Inspection</title>
+  <context>
+<p>When the dialog is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of the standard widgets and buttons is to match the specification up to minor variations caused by the drawing tool or textual description of this dialog.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the standard "widgets" in this dialog's title bar.
+   <r>
+<ul>
+	<li>The widgets must have the styles, colors and sizes indicated in the specification.</li>
+	<li>The widgets appear in the upper right corner of the title bar in this order: Question (?) and close (X).</li>
+	</ul>
+</r>
+   <p name="bug">Dialog widget has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the appearance of the standard buttons on this dialog.
+   <r>
+<ul>
+	<li>The buttons must have the styles, colors and sizes indicated in the specification.</li>
+	<li>The buttons appear at the bottom, often right corner of the dialog in this order: Ok, Cancel and Help.</li>
+	<li>The Help button has a question mark icon on it.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog button has incorrect appearance</p>
+  </step>
+  <step name="1.3" link="Bug">Press &lt;tab&gt; several times to cycle through all the dialog controls.
+   <r>
+<ul>
+	<li>A different dialog control is highlighted or "ringed" and thus receiving focus each time the &lt;tab&gt; key is pressed.</li>
+	<li>Only the dotted radio button in a radio group gets tab focus.</li>
+	<li>Lists of List controls won't get the focus but their text boxes do.</li>
+	<li>Every control receives focus before any one gets it twice.</li>
+	</ul>
+</r>
+   <p name="bug">&lt;dialog>: Control missed by tabbing</p>
+   <p name="bug">&lt;dialog>: Control not in tab order</p>
+  </step>
+  <step name="1.4" link="Bug">Tab to each button so it is "ringed" and press the space bar.
+   <r>
+	<ul>The button action executes.</ul>
+   </r>
+   <p name="bug">&lt;dialog>: space bar fails to execute button action</p>
+  </step>
+ </case>
+ <case id="dlgQst" num="2" order="any">
+  <title tag="dlgQst">Question button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button displays an arrow cursor with a question mark to the right of it. This cursor may be used to obtain help about any control on the dialog.</p>
+ <p name="Specification">See the specification for <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/HelpSystem/BalloonHelp.html" type="doc">Balloon Help</link>
+</p>
+  <step name="2.1" link="Bug">When the dialog is displayed, left click the question (?) button.
+   <r>
+<ul>
+	<li>The button depresses.</li>
+	<li>The cursor changes to a shape consisting of a pointer and a question mark.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog queston button does not depress</p>
+  </step>
+  <step name="2.2" link="Bug">When the arrow cursor with a question mark to the right of it is displayed, click an area of the dialog covered by a control.
+   <r>
+<ul>
+	<li>The cursor returns to normal.</li>
+	<li>The question widget button pops up again.</li>
+	<li>A small balloon appears with help information giving a brief description of the control.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog queston help does not work for control</p>
+  </step>
+  <step name="2.3" link="Bug">When the arrow cursor with a question mark to the right of it is displayed, click an area of the dialog NOT covered by a control.
+   <r>
+<ul>
+	<li>The cursor returns to normal.</li>
+	<li>No help balloon appears.</li>
+	<li>The click does not take effect.</li>
+	</ul>
+</r>
+   <p>This behavior helps in case someone misses the object they wanted to click on.</p>
+   <p name="bug">Dialog question cursor missed click does not deactivate it</p>
+   <p name="bug">Dialog question cursor missed click shows balloon help</p>
+   <p name="bug">Dialog question cursor missed click activates control</p>
+  </step>
+  <step name="2.4" link="Bug">While the help balloon is displayed, type a keystroke.
+   <r>
+<ul>
+	<li>Balloon help disappears.</li>
+	<li>Keystroke does not take effect.</li>
+	</ul>[Currently this is not happening. But the spec is not clear on it.
+Raid #2941 asks whether this is really a bug.]</r>
+   <p name="bug">Dialog question help balloon remains after keystroke</p>
+   <p name="bug">Dialog question help balloon keystroke takes effect</p>
+  </step>
+  <step name="2.5" link="Bug">While the help balloon is displayed, click on anywhere on the display screen
+   <r>
+<ul>
+	<li>Balloon help disappears.</li>
+	<li>The click does not take effect.</li>
+	</ul>
+[Currently the click does take effect. But the spec is not clear on whether
+this is actually a bug.
+JohnW once said this was a bug but not an urgent one.]
+</r>
+   <p name="bug">Dialog question help balloon remains after click</p>
+   <p name="bug">Dialog question help balloon click takes effect</p>
+  </step>
+ </case>
+
+ <case id="dlgCls" num="3" order="any">
+  <title tag="dlgCls">Close (X) button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button closes the dialog without any side-effects to other views or windows.</p>
+
+  <step name="3.1" link="Bug">Left click the close (X) button.
+   <r>
+<ul>
+	<li>The button depresses momentarily and closes the dialog.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog close button does not depress</p>
+   <p name="bug">Dialog close button does not work</p>
+  </step>
+  <step name="3.2" link="Bug">Press the short-cut &lt;alt&gt;&lt;F4&gt;.
+   <r>
+<ul>
+	<li>The button depresses momentarily and closes the dialog.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog close shortcut does not work</p>
+  </step>
+ </case>
+
+ <case id="dlgOk" num="4" order="any">
+  <title tag="dlgOk">Ok button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button closes the dialog and executes the delayed actions of the dialog controls and internal states.</p>
+
+  <step name="4.1" link="Bug">Left click the Ok button.
+   <r>
+<ul>
+	<li>The button depresses momentarily.</li>
+	<li>The dialog closes.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	<li>Actions match those in the specification.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog Ok button does not depress</p>
+   <p name="bug">Dialog Ok button action is wrong</p>
+  </step>
+  <step name="4.2" link="Bug">Press the short-cut &lt;Enter&gt;.
+   <r>
+<ul>
+	<li>The button depresses momentarily.</li>
+	<li>The dialog closes.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	<li>Actions match those in the specification.</li>
+	</ul>
+</r>
+   <p name="bug">Shorted dialog Ok button does not depress</p>
+   <p name="bug">Shorted dialog Ok button action is wrong</p>
+  </step>
+ </case>
+
+ <case id="dlgCan" num="5" order="any">
+  <title tag="dlgCan">Cancel button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button closes the dialog without any side-effects to other views or windows.</p>
+
+  <step name="5.1" link="Bug">Left click the cancel button.
+   <r>
+<ul>
+	<li>The button depresses momentarily</li>
+	<li>The dialog closes.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog cancel button does not depress</p>
+   <p name="bug">Dialog cancel button does not work</p>
+  </step>
+  <step name="5.2" link="Bug">Press the short-cut &lt;Esc&gt;.
+   <r>
+<ul>
+	<li>The button depresses momentarily</li>
+	<li>The dialog closes.</li>
+	<li>Control returns to the application window that invoked it.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog cancel shortcut does not work</p>
+  </step>
+ </case>
+
+ <case id="dlgHlp" num="6" order="any">
+  <title tag="dlgHlp">Help button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button launches the dialog help dialog.</p>
+
+  <step name="6.1" link="Bug">Left click the help button.
+   <r>
+<ul>
+	<li>The button depresses momentarily.</li>
+	<li>The help dialog launches with help for this dialog.</li>
+	<li>The help dialog has the focus.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog help button does not depress</p>
+   <p name="bug">Dialog help button doesn't work</p>
+  </step>
+  <step name="6.2" link="Bug">Press the &lt;F1&gt; key.
+   <r>
+<ul>
+	<li>The help dialog launches with help for this dialog.</li>
+	<li>The help dialog has the focus.</li>
+	</ul>
+</r>
+   <p name="bug">Dialog F1 button does not bring up Help app</p>
+   <p name="bug">Dialog F1 button gets wrong help topic</p>
+  </step>
+ </case>
+
+ <case id="dlgPre" num="7" order="any">
+  <title tag="dlgPre">Preview Window</title>
+  <context>
+<p>When the preview window is enabled</p>
+</context>
+
+   <p name="Principle">Many dialog controls may affect the preview window. There may even be controls in the preview window.</p>
+
+  <step name="7.1" link="Bug">Exercise individual controls using each valid setting if possible.
+   <r>The preview window should change only for the control tested in some smooth but perhaps scaled-down way.</r>
+   <p name="bug">Dialog preview window not updated by control</p>
+   <p name="bug">Dialog preview window update by control not acceptable</p>
+  </step>
+  <step name="7.2" link="Bug">Exercise a control sequence or random succession of settings.
+   <r>The preview window should change as if each control was set independently unless stated explicitly otherwise in the specification.</r>
+   <p name="bug">Dialog preview window not updated correctly</p>
+  </step>
+ </case>
+ <case id="dlgTabs" num="8" order="any">
+  <title tag="dlgTabs">Tabs</title>
+  <context>
+<p>When the dialog has tabs</p>
+</context>
+
+   <p name="Principle">Tabs allow a dialog to organize a set of related dialogs as one. Tab operation is simply a display function of the dialog that generally creates no side-effects.</p>
+
+  <step name="8.1" link="Bug">Click on each tab or press &lt;Ctrl>&lt;Tab> to cycle through all content tabs.
+   <r>The tab's dialog controls should be displayed as shown in the specification.</r>
+   <p name="bug">Dialog tab doesn't change dialog display</p>
+   <p name="bug">Dialog tab shows no controls</p>
+   <p name="bug">Dialog tab shows wrong controls</p>
+  </step>
+  <step name="8.2">Test each tab/dialog using the test cases above as if each were a separate dialog.
+   <r>Report any failures as suggested using "Dialog tab" as the name of the control.</r>
+  </step>
+ </case>
+ <update date="Mar-13-02" author="LarsH">Minor updates</update>
+ <update date="Mar-13-02" author="RickM">Balloon Help Hovering is not in the spec for title bar widgets in dialogs</update>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+ <update date="Mar-26-00" author="MikeL">formatted result lists, changed steps in Question button test case</update>
+
+</test>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+	<goal>Exercises Text tool shortcuts</goal>
+
+	<bug id="FWR-1963" desc="Nav key strokes eaten by Analyze/Word dropdown"/>
+	<bug id="FWR-1298" desc="Crash going to Texts &amp; Words/Concordance"/>
+	<bug id="FWR-604" desc="No view Text &amp; Words/IT/Text Chart"/>
+	<bug id="FWR-313" desc="IT Tab navigaton changed"/>
+	<bug id="LT-2602"/>
+	<bug id="LT-6000"/>
+
+<!--to run wdShortcuts.xml immediately after this, word "contains" must deleted in words or lexicon view-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+	<var id="Mat" set="pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+	<var id="Plan" set="This text contains my plan for world domination."/>
+
+   <!--Go to Texts/Edit-->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+<model select="interlinear-texts[@role='view']">
+
+  <!--Move between tabs-->
+  <click select="text/analyze/tab"/>
+  <insert wait="1000">^{TAB}</insert><!-- tab to the tab on the right, Tagging View-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right, Print View-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right, Text Chart-->
+  <insert wait="500">~</insert> <!-- blow away the info dialog -->
+  <insert wait="1000">^{TAB}</insert><!-- tab to the tab on the right, Info-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right,  baseline-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right , Gloss-->
+  <skip>
+  <on-dialog select="//add-words-to-lexicon[@role='dialog']" on-fail="skip">
+	 <click select="ok"/><!-- blow away the dialog -->
+  </on-dialog>
+  </skip>
+  <glimpse id="noWord" select="text/gloss/labels/label/heading" prop="value" expect="Word"/>
+
+  <!--Move between tabs backward -->
+  <click select="text/baseline/tab"/>
+  <insert wait="1000">^+{TAB}</insert><!-- tab to the tab on the left, Info-->
+  <insert wait="1000">^+{TAB}</insert><!-- tab to the tab on the left, Text Chart-->
+  <on-dialog title="Information" name="MessageBoxExForm">
+	 <click path="$ok"/><!-- blow away the info dialog -->
+  </on-dialog>
+  <insert wait="1000">^+{TAB}</insert><!-- tab to the tab on the left, Print View-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the left,  Tagging-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the left,  Analyze-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the left , Gloss-->
+  <glimpse id="moveLeft" select="text/gloss/labels/label/heading" prop="value" expect="Word"/>
+
+
+  <!--New Text-->
+  <insert wait="2000">^t</insert>
+  <click select="text/Title/data" row="2" />
+  <insert wait="1000">Plans</insert>
+  <click select="text/baseline/tab"/>
+  <click select="text/baseline/empty"/>
+  <insert wait="1000">$Plan</insert>
+  <glimpse wait="1000" id="new" select="text/baseline/line" prop="value" expect="$Plan"/>
+   <click wait="500" select="//toolbar/standard/first"/>
+   <glimpse wait="500" id="sort2" select="text/Title/data" prop="value" expect="My Green Mat"/>
+
+  <!--Move between texts-->
+   <insert wait="1000">%n</insert>
+  <glimpse id="moveDown" select="text/baseline/line"  prop="value" expect="$Plan"/>
+
+  <!--Move between texts-->
+  <insert wait="1000">%p</insert>
+  <glimpse id="moveUp" select="text/baseline/line"  prop="value" expect="$Mat"/>
+
+ <!--Interlinear and dialog shortcuts tested in abPres7.xml -->
+
+  <insert wait="1000">%n</insert>
+  <!--Literal translation-->
+  <click select="text/analyze/tab"/>
+  <var id="takeOver" set="I'm going to take over the world."/>
+   <click select="//menubar/tools/configure/configure-interlinear"/>
+
+	<on-dialog select="//configure-interlinear[@role='dialog']" title="Configure Interlinear Lines">
+<!-- Add a Literal Translation -->
+		<click id="lt" select="available/line" path="Literal Translation"/>
+		<click id="show" select="show"/>
+		<click select="ok"/>
+	</on-dialog>
+	<click select="text/analyze/line/trans-note/label" row="1" col="1"/><!-- puts cursor in text field that wasn't there before-->
+  <insert wait="1000">$takeOver</insert>
+  <glimpse id="noLit" select="text/analyze/trans-line/label" path="/value:Lit. " ind="*ind"/>
+  <glimpse id="noTakeOver" select="text/analyze/trans-line/text" prop="value" expect="‎$takeOver"/>
+
+<!-- Delete the lit trans -->
+	<click select="text/analyze/line/trans-note/label" col="1"/>
+	<!-- select line and delete it -->
+	<insert wait="300">{END}+{HOME}</insert>
+	<insert wait="300">{DELETE}</insert>
+
+   <click select="//menubar/tools/configure/configure-interlinear"/>
+
+	<on-dialog select="//configure-interlinear[@role='dialog']" title="Configure Interlinear Lines">
+<!-- Hide the Literal Translation -->
+		<click id="ltHide" select="displayed/line" path="Literal Translation"/>
+		<click id="hide" select="hide"/>
+		<click select="ok"/>
+	</on-dialog>
+
+  <glimpse id="noPlan" select="text/Title/data" prop="value" expect="Plans" row="2"/>
+	<insert wait="300">^{DELETE}</insert>
+	<insert wait="300">d</insert>
+
+  <click select="text/baseline/tab"/>
+  <click select="text/baseline/line"/>
+
+</model>
+
+<!--Delete word "contains" in Words view -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+  <click select="wordforms/record/col" path="/value:contains" row="*row" col="1"/>
+  <click select="//toolbar/standard/delete"/>
+  <insert wait="500">d</insert>
+  <glimpse id="contains" select="wordforms/record/col" path="/value:contains" on-pass="assert"/>
+  <click select="wordforms/record/col"/> <!-- get the cursor off the toolbar where it hangs the next test. -->
+</model>
+
+  </on-application>
+</accil>

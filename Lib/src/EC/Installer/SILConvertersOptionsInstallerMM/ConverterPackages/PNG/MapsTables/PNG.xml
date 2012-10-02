@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="Conversion between SIL PNG legacy fonts (PNG SILDoulos, PNG SILCharis, etc.) and Unicode - both ways">
+			<scriptInstall filename="MapsTables\pngsil.tec.vbs" mappingName="SIL PNG&lt;&gt;UNICODE" converterSpec="MapsTables\SIL-PNG.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" ></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\SIL-PNG.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\SIL-PNG.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

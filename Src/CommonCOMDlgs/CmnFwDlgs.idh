@@ -1,0 +1,128 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2002, 2004 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: CmnFwDlgs.idh
+Responsibility: Randy Regnier
+Last reviewed:
+
+	This file will be processed by the MIDL tool to produce the type library
+	(CmnFwDlgsTlb.tlb), C++ headers (CmnFwDlgsTlb.h) and marshalling code.
+
+	******************************************* NOTE *******************************************
+	Rebuild the views dll when you change or add any interfaces in this file -- the views idl
+	file includes this file to resolve the circular dependencies that would otherwise result.
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+/*******************************************************************************************
+	Interface IFwDbMergeStyles
+	This interface is implemented to delete and rename styles in the database.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwDbMergeStyles or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: op}
+*******************************************************************************************/
+DeclareInterface(FwDbMergeStyles, Unknown, 452B9EFE-BF3A-42f7-A92A-B5C0B06C465F)
+{
+	// Initialize the string crawler / database fixup process.
+	//
+	// @param bstrServer Name of the database server.
+	// @param bstrDatabase Name of the database.
+	// @param pstrmLog Optional output stream for logging (may be NULL).
+	// @param hvoRootObj Database id of the program's root object.
+	// @param pclsidApp Class ID of the application
+	HRESULT Initialize(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoRootObj,
+		[in] const GUID * pclsidApp);
+
+	// Add a pair of styles to the list of replacements to be made when Process is called.
+	HRESULT AddStyleReplacement(
+		[in] BSTR bstrOldStyleName,
+		[in] BSTR bstrNewStyleName);
+
+	// Add a style to the list of deletions (actually replacements with the default style or
+	// "Default Paragraph Characters") to be made when Process is called.
+	HRESULT AddStyleDeletion(
+		[in] BSTR bstrDeleteStyleName);
+
+	// Crawl through the database (established by calling Initialize earlier), deleting
+	// occurrences of deleted styles and renaming instances of renamed styles.
+	// @param hWnd	Window handle of the parent window. Used to center the progress dialog over
+	//				parent dialog.
+	HRESULT Process([in] DWORD hWnd);
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwDbMergeStyles, 217874B4-90FE-469d-BF80-3D2306F3BB06)
+{
+	interface IFwDbMergeStyles;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IFwDbMergeWrtSys
+	This interface is implemented by objects that provide an end-user the means to merge two
+	writing systems.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever you need to update one writing system id to another.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_OpenProjectDlg or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: op}
+*******************************************************************************************/
+DeclareInterface(FwDbMergeWrtSys, Unknown, DE96B989-91A5-4104-9764-69ABE0BF0B9A)
+{
+	// Initialize the string crawler / database fixup process.
+	//
+	// @param pfwt Pointer to the application's IFwTool interface.
+	// @param bstrServer Name of the database server.
+	// @param bstrDatabase Name of the database.
+	// @param pstrmLog Optional output stream for logging (may be NULL).
+	// @param hvoProj Database id of the FieldWorks project.
+	// @param hvoRootObj Database id of the program's root object.
+	// @param wsUser User interface writing system id.
+	HRESULT Initialize(
+		[in] IFwTool * pfwt,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoProj,
+		[in] int hvoRootObj,
+		[in] int wsUser);
+
+	// Crawl through the database (established by calling Initialize earlier), changing every
+	// occurrence of wsOld to wsNew.  This updates various writing system lists and sort
+	// specifications as well as the formatted string binary format fields.
+	//
+	// @param wsOld Obsolete writing system id.
+	// @param bstrOldName Name of the obsolete writing system.
+	// @param wsNew Desired writing system id.
+	// @param bstrNewName Name of the desired writing system.
+	HRESULT Process(
+		[in] int wsOld,
+		[in] BSTR bstrOldName,
+		[in] int wsNew,
+		[in] BSTR bstrNewName);
+}
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwDbMergeWrtSys, 40E4B757-4B7F-4B7C-A498-3EB942E7C6D6)
+{
+	interface IFwDbMergeWrtSys;
+};
+#endif // !NO_COCLASSES

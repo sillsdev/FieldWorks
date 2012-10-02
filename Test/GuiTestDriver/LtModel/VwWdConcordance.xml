@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<concordance role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <!-- the browse pane -->
+  <criteria role="pane" path="9:CSC.SplitContainer.One/9:CollapsingSplitContainer.First/">
+	<label name="Specify Concordance Criteria" path="9:XCore.PaneBar/9:Specify Concordance Criteria"/>
+	<var id="howTo" set="To specify a Concordance, select a line in which to search and enter the text to search for." />
+	<label name="$howTo" path="9:NAMELESS/9:$howTo;/41:$howTo"/>
+
+	<var id="OPTIONS" set="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/$NL"/>
+
+	<var id="sil" set="Search in the line:" />
+	<search-in name="$sil" path="$OPTIONS">
+	   <label name="$sil" path="9:$sil;/41:$sil"/>
+	   <value path="$NL;41:NAMELESS"/>
+	   <drop name="Open" path="$NL;43:$name"/>
+	</search-in>
+
+	<var id="ws" set="Writing System:" />
+	<writing-system name="$ws" path="$OPTIONS">
+	   <label name="$ws" path="9:$ws;/41:$ws"/>
+	   <value path="$NL;41:NAMELESS"/>
+	   <drop name="Open" path="$NL;43:$name"/>
+	</writing-system>
+
+	<var id="ftt" set="For the text:" />
+	<for-the-text name="$ftt" path="$OPTIONS">
+	   <label name="$ftt" path="9:$ftt;/41:$ftt"/>
+	   <value path="20:RootSite/42:Paragraph"/>
+	   <drop name=">" path="9:$name;/43:$name"/>
+	</for-the-text>
+
+	<match-case  name="Match case" ak="c" path="$OPTIONS;9:$name;/44:$name" />
+	<match-diacritics name="Match diacritics" ak="d" path="$OPTIONS;9:$name;/44:$name" />
+
+	<var id="RADIO" set="$OPTIONS;$nl;[3]/20:NAMELESS/"/>
+	<anywhere name="Anywhere" ak="a" path="$RADIO;9:$name;/45:$name" />
+	<whole-item name="Whole item" path="$RADIO;9:$name;/45:$name" />
+	<use-regular-expressions name="Use regular expressions" path="$RADIO;9:$name;/45:$name" />
+	<at-end name="At end" path="$RADIO;9:$name;/45:$name" />
+	<at-start name="At start" path="$RADIO;9:$name;/45:$name" />
+
+	<search name="Search" path="$OPTIONS;9:$name;/43:$name" />
+	<help name="Help" path="$OPTIONS;9:$name;/43:$name" />
+
+  </criteria>
+
+  <results name="Concordance Results" role="pane" path="9:CSC.SplitContainer.One/9:CollapsingSplitContainer.First/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<label name="Concordance Results" path="9:XCore.PaneBar/9:Concordance Results"/>
+	<var id="wordList" set="9:wordOccurrenceList/9:wordOccurrenceList/$nl"/>
+	<title path="9:XCore.PaneBar/9:Wordforms"/>
+	<col path="$wordList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox[">
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$wordList;/20:RootSite/24:Table[$row;]/"> <!-- index -->
+	   <col path="$Col;[$col;]/$Text"/> <!-- index -->
+	</record>
+	<scroll path="$wordList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </results>
+
+  <full-context role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<label path="9:XCore.PaneBar/9:Full Context"/>
+
+	<interlinear role="pane" path="9:ITextControl/9:m_tabCtrl.AccessibleName/">
+
+
+	 <info name="Info">
+	   <tab name="Info" path="37:Info"/>
+	   <var id="field" set="60:m_tabCtrl.AccessibleName/9:m_tpInfo.AccessibleName/9:NAMELESS/9:RecordEditView/9:RecordEditView.DataTree/" />
+	   <title name="Title" path="$field;9:multistring/9:SplitContainer/">
+		 <label name="Title" path="9:Panel1/9:Title"/>
+		 <value path="9:Panel2/20:Title/42:Paragraph" />
+	   </title>
+	   <abbreviation name="Abbreviation" path="$field;9:multistring/9:SplitContainer/">
+		 <label name="Abbreviation" path="9:Panel1/9:Abbreviation"/>
+		 <value path="9:Panel2/20:Abbreviation/42:Paragraph" />
+	   </abbreviation>
+	   <source name="Source" path="$field;9:multistring/9:SplitContainer/">
+		 <label name="Source" path="9:Panel1/9:Source"/>
+		 <value path="9:Panel2/20:Source/42:Paragraph" />
+	   </source>
+	   <is-translation name="Text is a translation" path="$field;9:checkbox/9:SplitContainer/">
+		 <label name="Text is a translation" path="9:Panel1/9:Text is a translation"/>
+		 <value path="9:Panel2/20:Text is a translation/42:Paragraph" />
+	   </is-translation>
+	   <genres name="Genres" path="$field;9:multistring/9:SplitContainer/">
+		 <label name="Genres" path="9:Panel1/9:Genres"/>
+		 <value path="9:Panel2/20:Genres/42:Paragraph" />
+	   </genres>
+	   <comment name="Comment" path="$field;9:multistring/9:SplitContainer/">
+		 <label name="Comment" path="9:Panel1/9:Comment"/>
+		 <value path="9:Panel2/20:Comment/42:Paragraph" />
+	   </comment>
+	 </info>
+
+	 <baseline name="Baseline">
+	   <tab name="Baseline" path="37:Baseline"/>
+	   <text path="60:m_tabCtrl.AccessibleName/9:m_tpRawText.AccessibleName/20:m_rtPane/42:Paragraph"/>
+	 </baseline>
+
+	 <gloss name="Gloss">
+	   <tab name="Gloss" path="37:$name"/>
+	   <text path="60:m_tabCtrl.AccessibleName/9:m_tpGloss.AccessibleName/9:NAMELESS/20:m_idcPane/20:Div[3]/42:Paragraph/20:InnerPile/42:Paragraph"/>
+	 </gloss>
+
+	 <analyze name="Analyze">
+	   <tab name="Analyze" path="37:$name"/>
+	   <text path="60:m_tabCtrl.AccessibleName/9:m_tpAnalyze.AccessibleName/9:NAMELESS/20:m_idcPane/20:Div[3]/42:Paragraph/20:InnerPile/42:Paragraph"/>
+	 </analyze>
+
+	<print-view path="$txtTABS;">
+	   <tab path="37:Print View"/>
+	   <var id="LINE" set="60:m_tabCtrl.AccessibleName/9:m_tpPrintView.AccessibleName/9:NAMELESS/20:m_printViewPane/20:Div/"/>
+
+	   <title path="$LINE;42:Paragraph"/> <!-- index for different language titles -->
+	   <info-comment path="$LINE;42:Paragraph[3]"/>
+
+	   <labels path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <label path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 1 is for labels -->
+			<number path="/42:Paragraph"/>
+			<heading path="[2]/42:Paragraph[$row;]"/> <!-- row of a heading -->
+		 </label>
+	   </labels>
+
+	  <line path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <pile path="/42:Paragraph/20:InnerPile[$col;]"> <!-- index for a pile, 3 + is for data -->
+			<word path="/42:Paragraph"/> <!-- index 1 for the word -->
+			<lex-data path="/42:Paragraph[2]"> <!-- index 2 for lex data -->
+			   <morpheme path="/20:InnerPile[$ind;]"/> <!-- index for a morpheme of this word -->
+			   <field path="/42:Paragraph[$row;]"/> <!-- index for specific lex data field -->
+			</lex-data>
+			<gloss path="/42:Paragraph[3]"/> <!-- index 3 for word gloss -->
+			<category path="/42:Paragraph[4]"/> <!-- index 4 for a word category -->
+		 </pile>
+		 <trans-note path="[$row;]]/20:Div/42:Paragraph/"> <!-- index 2 +  for free translation, literal trans and notes -->
+		   <label path="42:String[2]"/>
+		   <text path="42:String[4]"/>
+		 </trans-note>
+	   </line>
+
+	</print-view>
+
+	 <text-chart path="$txtTABS;">
+	   <tab path="37:Text Chart"/>
+	   <dialog name="New Feature" dismiss="$ok" on="show"/>
+	 </text-chart>
+
+	</interlinear>
+  </full-context>
+
+</concordance>

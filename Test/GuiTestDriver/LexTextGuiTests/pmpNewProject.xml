@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+   <goal>Creates a new FieldWorks project</goal>
+
+  <!--1.  Open the existing Kalaba db -->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+   <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok" close ="no" on-fail="assert">
+
+  <!--1.  Delete the Lesser-Marti&#x263A;n project if it exists -->
+	<click select="menubar/file/project-management/delete"/>
+	<on-dialog title="Delete Fieldworks Project">
+	  <var id="LM" set="$NL;34:rexp#Lesser-Marti"/>
+	  <glimpse id="LmExists" path="$LM" on-fail="skip"/>
+	  <if><condition of="$LmExists" is="true"/>
+		<then>
+		  <click path="$LM"/>
+		  <click path="button:Delete"/>
+		  <on-dialog title="Delete Fieldworks Project">
+			<click path="button:Yes"/>
+		  </on-dialog>
+		</then>
+	  </if>
+	  <click path="button:Close"/>
+	</on-dialog>
+
+  <!--1.  Create a new FW project -->
+	<click select="menubar/file/new-fieldworks-project"/>
+
+ <model select="new-fieldworks-project[@role='dialog']">
+
+	<on-dialog title="New FieldWorks Project">
+	  <insert wait="1000">Lesser-Marti&#x263A;n</insert>
+  <!--1.  Define a New Writing System  -->
+	  <click select="vernacular-ws/define-new"/>
+
+  <!--1.  New Writing System  Wizard -->
+	  <on-dialog select="//writing-system-wizard[@role='dialog']">
+		<click dx="1" select="lang-id/search-for/data"/>
+		<insert>+{END}mar</insert>
+		<click select="lang-id/search"/>
+		<!-- The preferred code is down a page. Marathi - Israel -->
+		<click select="lang-id/pane/data" path="Mar"/>
+		<insert wait="100">Marathi</insert>
+		<insert wait="100">{DOWN 2}</insert>
+		<click select="next"/>
+
+  <!--1.  Step 2 of 4: Writing System -->
+		<click select="next"/>
+
+  <!--1.  Step 3 of 4: Appearance -->
+		<on-dialog id="dnWs" wait="5000" title="Distinguish New Writing System" on-fail="skip">
+		   <click path="button:OK"/>
+		</on-dialog>
+		<var id="isOld" set="false"/>
+		<on-dialog wait="2000" until="5000" title="Writing System Already Exists" on-fail="skip">
+		   <var id="isOld" set="true"/>
+		   <click path="$yes"/>
+		</on-dialog>
+		<if><condition of="$dnWs.found" is="false"/>
+		   <then>
+			  <click select="next"/>
+			  <click select="finish"/>
+		   </then>
+		   <else>
+			  <if><condition of="$isOld" is="false"/>
+				 <then>
+					<click select="next"/>
+					<click select="finish"/>
+				 </then>
+			  </if>
+		   </else>
+		</if>
+		<if><condition of="$dnWs.found" is="true"/>
+		   <then><click select="cancel"/></then>
+		</if>
+
+	  </on-dialog>
+	  <click path="$ok"/>
+	</on-dialog>
+
+</model>
+
+	<!-- Shouldn't come up. -->
+	<on-dialog until="2000" title="InstallLanguage Message" on-pass="assert">
+	  <click path="button:Cancel"/>
+	</on-dialog>
+	<on-dialog until="2000" title="InstallLanguage Message" on-pass="assert">
+	  <click path="button:Cancel"/>
+	</on-dialog>
+
+	<!-- Shouldn't come up. It forces to rename -->
+	<on-dialog until="2000" title="Project Already Exists" on-pass="assert">
+	  <click path="button:Open"/>
+	</on-dialog>
+
+<sound frequency="1000" duration="300"/>
+<sound frequency="900" duration="200"/>
+
+	<on-dialog until="9999999" title="Choose a List of Anthropology Categories">
+	  <click path="$ok"/>
+	</on-dialog>
+
+	<!-- no guarantee that the new window will be on top, so close whatever is there and both will close. -->
+	  <insert wait="1000">%F</insert>
+	  <insert wait="300">x</insert>
+
+	  <!-- close="no", but already exited here. It's needed so on-application doesn't try to close again and assert -->
+  </on-application>
+
+   <sound wait="10000" frequency="500" duration="300"/>
+   <sound frequency="1000" duration="200"/>
+
+  <on-application args="-db Lesser-Marti&#x263A;n" title="Lesser-Marti&#x263A;n$FlexSig" run="yes" on-fail="assert" close="yes">
+  <!--1.  Invoke and cancel the dialog-->
+	<click select="menubar/file/new-fieldworks-project"/>
+	<on-dialog until="9999999" title="New FieldWorks Project">
+	  <click path="$cancel"/>
+	</on-dialog>
+  </on-application>
+
+</accil>

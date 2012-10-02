@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filelang" num="2.1.7.2b" abbr="flnp" file="FW\WritSysProp.xml">
+<title tag="filelang">Writing System Properties Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Writing System Properties dialog shows the properties of a Writing System. It is accessed through the Modify... button on the Writing System tab of the Project Properties dialog (see <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Properties/LangProjProperties.html" type="doc">Language Project Properties -- Writing System</link> and <link uri="FilePropsProj.xml">File - Project Properties Tests</link>). Through this dialog the user can modify different settings for the writing system such as font and language.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Properties/LangDefnProps.html" type="doc">Language Defnition Properties</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Writing System Properties"</p>
+</context>
+
+<case id="fllangAct" num="1" order="any">
+<title tag="fllangAct">Activation</title>
+<context>
+<p>When the Writing Systems Tab is selected on the File - Language Project Properties dialog</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke the Writing System Properties dialog by clicking on the Modify... button.
+<r>The Writing System Properties dialog is displayed.</r>
+<p name="bug">Writing System Properties cannot be activated.</p>
+</step>
+
+<step name="1.2" link="Bug">Invoke Writing System Properties. Use the image at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Properties/LangDefnProps.html" type="doc">Writing System Properties</link> to visually inspect dialog.
+<r>Up to approximate size and position the two should be the same. The information contained should be the same; there will be some variation in layout. Moreover there is no General tab or Keyman Setup button.</r>
+<p name="bug">Writing System Properties layout incorrect.</p>
+</step>
+
+</case>
+
+<case id="fllangDiac" num="2" order="any">
+<title tag="fllangDiac">Exercise dialog controls</title>
+<context>
+<p>When the dialog is displayed</p>
+</context>
+
+<step name="2.1">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test the dialog's basic functionality.
+<r>Report any failures as suggested using "Writing System Properties" as the name of the dialog.</r>
+</step>
+
+<step name="2.2">Use <link uri="../StdCtrls/button.xml" type="module">Button Tests</link> to test the buttons on the dialog.
+<r>Report any failures as suggested using "Writing System Properties" as the name of the dialog.</r>
+</step>
+
+<step name="2.3">Use <link uri="../StdCtrls/listbox.xml" type="module">List Box / Combo Box tests</link> to test the combo boxes.
+<r>Report any failures as suggested using "Writing System Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="fllangtxt" num="3" order="any">
+<title tag="fllangtxt">Text Box Tests</title>
+<context>
+<p>When the dialog is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Delete the entry in the Language Name text box and click okay. (The current name for the language will be in this box by default.)
+<r>The error message is displayed: "Please enter a Language Name" and focus is placed back into this control.</r>
+<p name="bug">Writing System Properties: Language Name box is not working.</p>
+</step>
+
+<step name="3.2" link="Bug">Change the current Language Code and click OK.
+<r>
+<ul>
+<li>A Yes/No warning message is displayed: "Changing the Language Code will require a several minute delay as the data in updated. Are you sure you wish to change this code?"</li>
+<li>Clicking No restores the code to its prior value and focus is placed back on the control.</li>
+<li>Clicking Yes displays a progress indicator as the data is updated.</li>
+</ul>
+</r>
+<p name="bug">Writing System Properties: Language Code control not working.</p>
+</step>
+
+<step name="3.3" link="Bug">Enter in a two letters into the Language Code text box and click OK.
+<r>An error message is displayed: "Please enter a three-letter language code" and focus is placed back in the control.</r>
+<p name="bug">Writing System Properties: Language Code control not working.</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Sep-04-01" author="ShalomA">Test created.</update>
+<update date="Jan-26-02" author="LarsH">Changed "Language Definition" to "Writing System".</update>
+<update date="Jun-03-02" author="RussD">Updated link for filename change.</update>
+<update date="Jun-17-02" author="RussD">Changed filename from FileProjLangProp.xml to WritSysProp.xml</update>
+</test>

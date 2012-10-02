@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+ <on-application path="C:\fw\output\debug" exe="FwNotebook.exe" run="yes" close="yes" on-fail="assert">
+  <insert wait="3000">^O</insert> <!-- ctrl O File-Open dialog -->
+  <insert>%C</insert> <!-- alt C to Choose a Project: -->
+  <click side="right" path="olitem:A New Name"/>
+  <!--click path="button:Remove this project..."/-->
+  <insert>{DOWN}{ENTER}</insert> <!-- down arrow, enter to select the remove action-->
+  <click path="button:Remove"/>
+ </on-application>
+</accil>

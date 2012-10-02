@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project name="BuildMachine" default="ci-installer" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<target name="ci-installer" depends="installer"
+			description="Builds an installer and copies it to archive directory">
+		<!-- This target is used on the Waxhaw continous build machine -->
+		<tstamp verbose="${verbose}">
+			<formatter property="build.date" pattern="yyyy-MM-dd"/>
+			<formatter property="build.time" pattern="HHmm"/>
+		</tstamp>
+		<copy file="${fwroot}/Installer/SetupFw.msi" todir="${dir.buildarchive}/FW_${build.date}/${build.time}/${config}"/>
+		<copy file="${fwroot}/Installer/SetupFw.msi" todir="${dir.buildarchive}/LatestFwBuild"/>
+	</target>
+	<target name="sandcastle-VS2005"
+		description="Builds VS2005-style C# class documentation of whole project producing 38.6Mb .chm file in output\docs">
+		<property name="sandcastledoctype" value="vs2005"/>
+		<call target="sandcastle" cascade="true"/>
+	</target>
+	<target name="sandcastle-Hana"
+		description="Builds Hana-style C# class documentation of whole project producing 42.8Mb .chm file in output\docs">
+		<property name="sandcastledoctype" value="Hana"/>
+		<call target="sandcastle" cascade="true"/>
+	</target>
+	<target name="sandcastle-Prototype"
+		description="Builds prototype C# class documentation of whole project producing 25.8Mb .chm file in output\docs">
+		<property name="sandcastledoctype" value="Prototype"/>
+		<call target="sandcastle" cascade="true"/>
+	</target>
+	<target name="sandcastle">
+		<fwsandcastle
+			verbose="${verbose}"
+			documenttype="${sandcastledoctype}"
+			sandcastlepath="${fwroot}/bin/Sandcastle"
+			hhpath="C:/Program Files/HTML Help Workshop"
+			outputpath="${dir.fwoutput}/docs/FieldWorks_Classes">
+			<assemblies basedir="${dir.outputBase}">
+				<include name="*.exe"/>
+				<include name="*.dll"/>
+				<exclude name="AT*.dll"/>
+				<exclude name="AxInterop.SHDocVw.dll"/>
+				<exclude name="DevComponents.DotNetBar.dll"/>
+				<exclude name="ICSharpCode.SharpZipLib.dll"/>
+				<exclude name="MsHtmHstInterop.dll"/>
+				<exclude name="nmock.dll"/>
+				<exclude name="nunit.*.dll"/>
+				<exclude name="NUnitForms.dll"/>
+				<exclude name="skybound.visualstyles.dll"/>
+				<exclude name="Interop.*.dll"/>
+				<exclude name="*Interop.dll"/>
+				<exclude name="SilEncConverters40.dll"/>
+				<exclude name="ECInterfaces.dll"/>
+				<exclude name="AIGuesserEC.dll"/>
+				<exclude name="*Tests.dll"/>
+				<exclude name="Test*.dll"/>
+				<exclude name="DummyTestExe.exe"/>
+			</assemblies>
+		</fwsandcastle>
+		<move
+			file="${dir.fwoutput}/docs/FieldWorks_Classes/Chm/FieldWorks_Classes.chm"
+			todir="${dir.fwoutput}/docs"
+			overwrite="true"
+			failonerror="false"/>
+	</target>
+</project>

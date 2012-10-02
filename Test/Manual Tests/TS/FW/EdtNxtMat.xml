@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtnxtmat" num="2.2.9" abbr="ednm" file="FW\EdtNxtMat.xml">
+<title tag="edtnxtmat">Edit-Next Match Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Repeats the find operation as specified by the most recent search, which may have been via the Find Tab on the Find and Replace dialog or by the Quick Find toolbar command. The search begins at the current text cursor position, and moves forward through the data. If the Find Dialog is currently not displayed, the Next Match operation still works according to the last specified search; but without displaying the dialog.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-NextMatch" type="doc">Edit-Next Match</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible in connection with the Edit-Find dialog. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Edit-Next Match"</p>
+</context>
+
+<case id="ednmAct" num="1" order="any">
+<title tag="ednmAct">Action</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Click Edit or &lt;Alt&gt;&lt;E&gt; to bring up the Edit menu.
+   <r>
+<ul>
+<li>If there was no previous search via the Edit-Find, Edit-Replace dialogs or the Quick Find control, this button is disabled</li>
+<li>Otherwise, it is available</li>
+</ul>
+</r>
+<p name="bug">Edit-Next Match menu item enabled/disabled incorrectly</p>
+</step>
+
+<step name="1.2" link="Bug">Use <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection and Operation Tests</link> and the shortcut &lt;Ctrl&gt;&lt;g&gt;. to test this menu item's basic functionality.
+   <r>
+<ul>
+<li>If there is a Quick Find combo box on a visible toolbar, it is updated, if necessary, to display the current search text from the Edit-Find dialog</li>
+<li>The main window status bar shows the progress, e.g., "Searching entry 45 of 3540..." until a match is found or there is nothing left to search</li>
+<li>If the search hasn't started, the first instance after the original cursor position, even in a writing system different from the search text, that has matching underlying text is highlighted</li>
+<li>The main window changes/scrolls to show the first matched text after the original cursor position</li>
+<li>If there is no match, nothing is highlighted and a window displays indicating no matching text was found.</li>
+</ul>
+</r>
+<p name="bug">Edit-Next Match fails to update Quick Find</p>
+<p name="bug">Edit-Next Match does not show status</p>
+<p name="bug">Edit-Next Match fails to highlight</p>
+<p name="bug">Edit-Next Match fails to match</p>
+<p name="bug">Edit-Next Match text not same as that highlighted</p>
+<p name="bug">Edit-Next Match matching text not brought in view</p>
+</step>
+
+<step name="1.3" link="Bug">Repeat step 1.2 for different views, and also changing views between the searches.
+<r>
+Results for different views:
+<ul>
+ <li>In browse view, if match found inside a partially visible field with the match not visible, the cursor is placed at the beginning of the field with the match (or the nearest field in that entry that the cursor can be placed in).</li>
+ <li>In document or browse view and in a non-editable field, selection is still drawn on the matching text. However, text still cannot be edited.</li>
+ <li>Switching views after a match has been found should retain the cursor location.</li>
+ <li>If find is set to look in a particular field and the current view does not have that field showing, the user is notified and  given the opportunity to Cancel or Modify the find, or change the view and continue. (Not in v1)</li>
+</ul>
+</r>
+<p name="bug">Edit-Next Match does not place cursor in nearest field with the match</p>
+<p name="bug">Edit-Next Match does not draw selection on matching text in non-editable field</p>
+<p name="bug">Edit-Next Match allows editing of non-editable match</p>
+<p name="bug">Edit-Next Match does not retain cursor position when changing views</p>
+<p name="bug">Edit-Next Match does not show/has problem with error dialog when searching in a field that is not in the current view</p>
+</step>
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-24-01" author="MikeL">Brought up to spec</update>
+<update date="May-24-02" author="JoelC">Added step for different views.</update>
+
+</test>

@@ -1,0 +1,285 @@
+<doc>
+<!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
+ so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
+<browseColumns>
+	<!-- These columns typically appear installed in entries browse type tools in this order. -->
+	<column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always"/>
+	<column layout="LexemeFormForEntry" label="Lexeme Form" common="true" width="72000" ws="$ws=vernacular" sortmethod="MorphSortKey" cansortbylength="true" visibility="always"
+			transduce="LexEntry.LexemeForm.Form" transduceCreateClass="MoStemAllomorph"/>
+	<column layout="CitationFormForEntry" label="Citation Form" width="72000" ws="$ws=vernacular" sortmethod="CitationFormSortKey" cansortbylength="true" visibility="always"
+			transduce="LexEntry.CitationForm"/>
+	<column layout="MorphTypeForEntry" label="Morph Type" visibility="dialog"
+			bulkEdit="morphTypeListItem" field="LexEntry.LexemeForm" subfield="MoForm.MorphType" bulkDelete="false" list="LexDb.MorphTypes"/>
+	<column layout="PublishAsHeadword" multipara="true" label="Show As Headword In" width="72000"
+			bulkEdit="complexListMultiple" field="LexEntry.ShowMainEntryIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
+			displayWs="best analysis" visibility="dialog"/>
+	<column layout="GlossesForSense" label="Glosses" multipara="true" width="72000" ws="$ws=analysis"
+			transduce="LexSense.Gloss" cansortbylength="true" visibility="always"/>
+	<column layout="DefinitionsForSense" label="Definition" multipara="true" ws="$ws=analysis" transduce="LexSense.Definition" cansortbylength="true" visibility="always" width="96000"/>
+	<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always">
+		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter"/>
+	</column>
+	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog">
+		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter"/>
+	</column>
+	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000"
+		bulkEdit="external">
+		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.BulkPosEditor"/>
+	</column>
+	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
+		  ws="$ws=analysis" visibility="dialog"/>
+	<column layout="IsAbstractFormForEntry" label="Is Abstract Form" visibility="dialog"
+			bulkEdit="booleanOnSubfield" bulkDelete="false" field="LexEntry.LexemeForm" subfield="MoForm.IsAbstract" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
+	<column layout="InflectionClassForStem" label="Inflection Classes (Stem)" multipara="true" editable="false"
+		bulkEdit="external" field="LexEntry.Senses" subfield="LexSense.MorphoSyntaxAnalysis" visibility="dialog" displayWs="best analysis">
+		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionClassEditor">
+		  <args>
+			<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+		  </args>
+		</dynamicloaderinfo>
+	</column>
+	<column layout="InflectionFeaturesForSense" label="Inflection Features" multipara="true" width="25%"
+		bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis">
+	<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionFeatureEditor">
+	  <args>
+		<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+	  </args>
+	</dynamicloaderinfo>
+	</column>
+	<column layout="ExceptionFeatures" label="Exception 'Features'" multipara="true" width="25%"
+		editable="false" visibility="dialog" displayWs="best analysis">
+	</column>
+	<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
+		chooserFilter="complexListMultiple"
+		bulkEdit="complexListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
+	<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
+	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+	<column layout="EtymologySource" label="Etymology - Source"  multipara="true" editable="false" visibility="dialog" />
+	<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" editable="false" visibility="dialog" />
+	<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+
+	<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
+	<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
+	<column layout="NoteForEntry" label="Note" transduce="LexEntry.Comment" ws="$ws=analysis" visibility="dialog"/>
+	<column layout="RestrictionsForEntry" label="Restrictions (Entry)" transduce="LexEntry.Restrictions" ws="$ws=analysis" visibility="dialog"/>
+	<column layout="DateCreatedForEntry" label="Date Created"  sortType="date" blankPossible="false" visibility="dialog"/>
+	<column layout="DateModifiedForEntry" label="Date Modified" sortType="date" blankPossible="false" visibility="dialog"/>
+	<column layout="Pronunciation" label="Pronunciations" multipara="true" editable="false" ws="$ws=vernacular"
+			transduce="LexPronunciation.Form" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
+	<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="$ws=pronunciation"
+			transduce="LexPronunciation.CVPattern" ghostListField="LexDb.AllPossiblePronunciations"  cansortbylength="true" visibility="dialog"/>
+	<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
+			transduce="LexPronunciation.Tone" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
+	<column layout="Location" label="Locations" multipara="true" visibility="dialog"
+			bulkEdit="atomicFlatListItem" field="LexPronunciation.Location" ghostListField="LexDb.AllPossiblePronunciations" list="LangProject.Locations"/>
+	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
+	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
+	<column layout="PictureFileNameForSense" label="Picture-FileName"  multipara="true" editable="false" visibility="dialog" />
+	<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
+	<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
+	<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />
+	<column layout="BibliographyForSense" label="Bibliography (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Bibliography" visibility="dialog" />
+	<column layout="EncyclopedicInfoForSense" label="Encyclopedic Info" multipara="true" ws="$ws=analysis" transduce="LexSense.EncyclopedicInfo" visibility="dialog" />
+	<column layout="GeneralNoteForSense" label="General Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.GeneralNote" visibility="dialog" />
+	<column layout="GrammarNoteForSense" label="Grammar Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.GrammarNote" visibility="dialog" />
+	<column layout="PhonologyNoteForSense" label="Phonology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.PhonologyNote" visibility="dialog" />
+	<column layout="RestrictionsForSense" label="Restrictions (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Restrictions" visibility="dialog" />
+	<column layout="SemanticsNoteForSense"  label="Semantics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SemanticsNote" visibility="dialog" />
+	<column layout="SociolinguisticsNoteForSense"  label="Sociolinguistics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SocioLinguisticsNote" visibility="dialog" />
+	<column layout="SourceForSense"  label="Sources" ws="$ws=analysis" multipara="true" transduce="LexSense.Source" visibility="dialog" />
+	<column layout="UsagesForSense" label="Usages" multipara="true"
+			bulkEdit="complexListMultiple" field="LexSense.UsageTypes" list="LexDb.UsageTypes" displayWs="best analysis" displayNameProperty="ShortNameTSS"
+			visibility="dialog" />
+	<column layout="SenseTypeForSense" label="Sense Type" multipara="true" editable="false"
+			bulkEdit="atomicFlatListItem" field="LexSense.SenseType" list="LexDb.SenseTypes"
+			visibility="dialog" />
+	<column layout="AcademicDomainsForSense" label="Academic Domains" multipara="true"
+			bulkEdit="complexListMultiple" field="LexSense.DomainTypes" list="LexDb.DomainTypes" displayNameProperty="ShortNameTSS" displayWs="best analysis"
+			visibility="dialog" />
+	<column layout="AnthropologyCategoriesForSense" label="Anthropology Categories" multipara="true"
+			bulkEdit="complexListMultiple" field="LexSense.AnthroCodes" list="AnthroList" displayNameProperty="AbbrAndNameTSS"
+			visibility="dialog" />
+	<column layout="StatusForSense" label="Status" multipara="true"
+			bulkEdit="atomicFlatListItem" field="LexSense.Status" list="LangProject.Status"
+			editable="false" visibility="dialog"/>
+	<!--ws here is arbitrary, but we need to give it some idea so BE doesn't crash -->
+	<column layout="ImportResidueEntry" label="Import Residue (Entry)" ws="$ws=analysis" transduce="LexEntry.ImportResidue" visibility="dialog" />
+	<column layout="ImportResidueSense" label="Import Residue (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.ImportResidue" visibility="dialog"/>
+	<column layout="Allomorph" ws="$ws=vernacular" multipara="true" label="Allomorphs" sortmethod="MorphSortKey"
+			ghostListField="LexDb.AllPossibleAllomorphs"
+			transduce="MoForm.Form" cansortbylength="true" visibility="dialog"/>
+	<column layout="IsAbstractFormForAllomorph" multipara="true" label="Is Abstract Form (Allomorph)" visibility="dialog" bulkDelete="false" sortType="YesNo"
+			ghostListField="LexDb.AllPossibleAllomorphs"
+			bulkEdit="boolean" field="MoForm.IsAbstract" items="0:no;1:yes"/>
+	<column layout="MorphTypeForAllomorph" multipara="true" label="Morph Type (Allomorph)" visibility="dialog"/>
+			<!--bulkEdit="morphTypeListItemForVectorOwner" field="MoForm.MorphType" bulkDelete="false" list="LexDb.MorphTypes"/>-->
+	<column layout="EnvironmentsForLexemeForm" multipara="true" label="Environments" visibility="dialog"/>
+	<column layout="EnvironmentsForAllomorphs" multipara="true" label="Environments (Allomorph)" visibility="dialog"/>
+			<!--bulkEdit="customCollection" field="MoForm.PhoneEnv(isnot="MoAffixProcess")"  list="PhPhonData.Environments"
+				displayWs="best analysis" displayNameProperty="ShortNameTSS" /> -->
+	<column layout="PublishInForEntries" multipara="true" label="Publish In (Entry)" width="72000"
+			bulkEdit="complexListMultiple" field="LexEntry.PublishIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
+			displayWs="best analysis" visibility="dialog"/>
+	<column layout="PublishInForSenses" multipara="true" label="Publish In (Sense)" width="72000"
+			bulkEdit="complexListMultiple" field="LexSense.PublishIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
+			displayWs="best analysis" visibility="dialog"/>
+	<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
+			bulkEdit="complexListMultiple" field="LexExampleSentence.PublishIn" list="LexDb.PublicationTypes"
+			displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
+	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
+			chooserFilter="external" visibility="dialog" displayWs="best analysis">
+		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionClassEditor">
+			<args>
+				<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+			</args>
+		</dynamicloaderinfo>
+	</column>
+			<!--bulkEdit="customCollection" field="MoAffixForm.InflectionClasses" list="" -->
+	<column layout="RequiredFeatures" multipara="true" label="Required Features (Allomorph)" visibility="dialog"/>
+	<column layout="HomographNumberForEntry" label="Homograph number" visibility="dialog" editable="true" sortType="integer" blankPossible="false" /><!-- editable requested by LT-4688 -->
+	<column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="PrimaryLexemesBrowse" label="Subentry under" multipara="true" editable="false"  visibility="dialog" />
+	<!-- until we enable identifying theses by RefType enum, disallow bulk editing on complex entry types via bulkDelete="false" -->
+	<column layout="ComplexEntryTypesBrowse" ws="$ws=analysis" label="Complex Form Types" multipara="true" editable="false"  visibility="dialog"
+			chooserFilter="complexListMultiple" canChooseEmpty="true"
+			ghostListField="LexDb.AllComplexEntryRefPropertyTargets"
+			bulkEdit="complexEntryTypes" field="LexEntryRef.ComplexEntryTypes" bulkDelete="false" list="LexDb.ComplexEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis"/>
+	<column layout="ShowMinorEntryBrowse" label="Show Minor Entry" bulkDelete="false" visibility="dialog" sortType="YesNo" multipara="true"
+			bulkEdit="booleanOnSubfield" field="LexEntry.EntryRefs" subfield="LexEntryRef.HideMinorEntry" items="0:no;1:yes" blankPossible="yes"/>
+	<column layout="ComplexFormsBrowse" label="Complex Forms" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="ComponentLexemesBrowse" label="Variant of" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="VariantEntryTypesBrowse" ws="$ws=analysis" label="Variant Types" multipara="true" editable="false" visibility="dialog"
+			chooserFilter="complexListMultiple" canChooseEmpty="true"
+			ghostListField="LexDb.AllVariantEntryRefPropertyTargets"
+			bulkEdit="variantEntryTypes" field="LexEntryRef.VariantEntryTypes" list="LexDb.VariantEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis"/>
+	<column layout="VariantsBrowse" label="Variants" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="CrossReferencesForEntry"  label="Cross References" multipara="true" editable="false" visibility="dialog"/>
+	<column layout="LexicalRelationsForSense" label="Lexical Relations" multipara="true" editable="false" visibility="dialog"/>
+	<column layout="Example" ws="$ws=vernacular" label="Example Sentences" multipara="true" editable="true" visibility="dialog"
+			ghostListField="LexDb.AllExampleSentenceTargets"
+			transduce="LexExampleSentence.Example" />
+	<column layout="ExampleReference" ws="$ws=analysis" label="Example References" multipara="true" editable="true" visibility="dialog"
+		ghostListField="LexDb.AllExampleSentenceTargets"
+		transduce="LexExampleSentence.Reference" />
+	<column layout="ExampleTranslation" ws="$ws=analysis" label="Example Translations" multipara="true" editable="true" visibility="dialog"
+		ghostListField="LexDb.AllExampleTranslationTargets"
+		transduce="CmTranslation.Translation" />
+	<column layout="ExampleTranslationType" label="Example Translation Types" multipara="true" visibility="dialog"
+		ghostListField="LexDb.AllExampleTranslationTargets"
+		field="CmTranslation.Type" bulkEdit="atomicFlatListItem" bulkDelete="false" list="LangProject.TranslationTags"/>
+	<column layout="StemNameForEntry" label="Stem Name" visibility="dialog"/>
+	<!-- removed as per LT-9899
+	<column layout="InflectionClassForEntry" label="Inflection Classes (Entry)" visibility="dialog"/>
+	-->
+
+	<!-- custom fields (generated) -->
+	<!-- LexEntry customs -->
+	<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+		<column layout="CustomMultiStringForEntry_$fieldName" label="$label" common="true" ws="$wsName" cansortbylength="true" visibility="menu"
+				transduce="LexEntry.$fieldName"/>
+	</generate>
+	<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+		<column layout="CustomSimpleStringForEntry_$fieldName" label="$label" common="true" cansortbylength="true" visibility="menu"
+				transduce="LexEntry.$fieldName"/>
+	</generate>
+	<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+		<column layout="CustomIntegerForEntry_$fieldName" label="$label" visibility="menu" sortType="integer"/>
+	</generate>
+	<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+		<column layout="CustomGenDateForEntry_$fieldName" label="$label" visibility="menu" sortType="genDate"/>
+	</generate>
+	<generate class="LexEntry" fieldType="atom" destClass="StText" restrictions="customOnly">
+		<column layout="CustomStTextForEntry_$fieldName" label="$label" multipara="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="LexEntry" fieldType="vector" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossVectorForEntry_$fieldName" label="$label" multipara="true" visibility="menu"
+				bulkEdit="complexListMultiple" field="LexEntry.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
+	</generate>
+	<generate class="LexEntry" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossAtomForEntry_$fieldName" label="$label" visibility="menu"
+				bulkEdit="atomicFlatListItem" field="LexEntry.$fieldName" list="$targetList"/>
+	</generate>
+	<!-- LexSense customs -->
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+		<column layout="CustomMultiStringForSense_$fieldName" label="$label" multipara="true" common="true" ws="$wsName" cansortbylength="true" visibility="menu"
+				transduce="LexSense.$fieldName"/>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+		<column layout="CustomSimpleStringForSense_$fieldName" label="$label" multipara="true" common="true" cansortbylength="true" visibility="menu"
+				transduce="LexSense.$fieldName" />
+	</generate>
+	<generate class="LexSense" fieldType="integer" restrictions="customOnly">
+		<column layout="CustomIntegerForSense_$fieldName" label="$label" visibility="menu" sortType="integer"/>
+	</generate>
+	<generate class="LexSense" fieldType="gendate" restrictions="customOnly">
+		<column layout="CustomGenDateForSense_$fieldName" label="$label" visibility="menu" sortType="genDate"/>
+	</generate>
+	<generate class="LexSense" fieldType="atom" destClass="StText" restrictions="customOnly">
+		<column layout="CustomStTextForSense_$fieldName" label="$label" multipara="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="LexSense" fieldType="vector" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossVectorForSense_$fieldName" label="$label" multipara="true" visibility="menu"
+				bulkEdit="complexListMultiple" field="LexSense.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
+	</generate>
+	<generate class="LexSense" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossAtomForSense_$fieldName" label="$label" visibility="menu"
+				bulkEdit="atomicFlatListItem" field="LexSense.$fieldName" list="$targetList"/>
+	</generate>
+	<!-- MoForm customs -->
+	<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
+		<column layout="CustomMultiStringForAllomorph_$fieldName" label="$label" multipara="true" editable="true" ws="$wsName" visibility="menu"
+				ghostListField="LexDb.AllPossibleAllomorphs"
+				transduce="MoForm.$fieldName"/>
+	</generate>
+	<generate class="MoForm" fieldType="simplestring" restrictions="customOnly">
+		<column layout="CustomSimpleStringForAllomorph_$fieldName" label="$label" multipara="true" editable="true" visibility="menu"
+				ghostListField="LexDb.AllPossibleAllomorphs"
+				transduce="MoForm.$fieldName"/>
+	</generate>
+	<generate class="MoForm" fieldType="integer" restrictions="customOnly">
+		<column layout="CustomIntegerForAllomorph_$fieldName" label="$label" visibility="menu" sortType="integer"/>
+	</generate>
+	<generate class="MoForm" fieldType="gendate" restrictions="customOnly">
+		<column layout="CustomGenDateForAllomorph_$fieldName" label="$label" visibility="menu" sortType="genDate"/>
+	</generate>
+	<generate class="MoForm" fieldType="atom" destClass="StText" restrictions="customOnly">
+		<column layout="CustomStTextForAllomorph_$fieldName" label="$label" multipara="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="MoForm" fieldType="vector" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossVectorForAllomorph_$fieldName" label="$label" multipara="true" visibility="menu"
+				bulkEdit="complexListMultiple" field="MoForm.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
+	</generate>
+	<generate class="MoForm" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossAtomForAllomorph_$fieldName" label="$label" visibility="menu"
+				bulkEdit="atomicFlatListItem" field="MoForm.$fieldName" list="$targetList"/>
+	</generate>
+	<!-- LexExampleSentence customs -->
+	<generate class="LexExampleSentence" fieldType="mlstring" restrictions="customOnly">
+		<column layout="CustomMultiStringForExample_$fieldName" label="$label" multipara="true" editable="true" ws="$wsName" visibility="menu"
+				ghostListField="LexDb.AllExampleSentenceTargets"
+				transduce="LexExampleSentence.$fieldName"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="simplestring" restrictions="customOnly">
+		<column layout="CustomSimpleStringForExample_$fieldName" label="$label" multipara="true" editable="true" visibility="menu"
+				ghostListField="LexDb.AllExampleSentenceTargets"
+				transduce="LexExampleSentence.$fieldName"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="integer" restrictions="customOnly">
+		<column layout="CustomIntegerForExample_$fieldName" label="$label" visibility="menu" sortType="integer"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="gendate" restrictions="customOnly">
+		<column layout="CustomGenDateForExample_$fieldName" label="$label" visibility="menu" sortType="genDate"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="atom" destClass="StText" restrictions="customOnly">
+		<column layout="CustomStTextForExample_$fieldName" label="$label" multipara="true" cansortbylength="true" visibility="menu"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="vector" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossVectorForExample_$fieldName" label="$label" multipara="true" visibility="menu"
+				bulkEdit="complexListMultiple" field="LexExampleSentence.$fieldName" list="$targetList" displayNameProperty="ShortNameTSS"/>
+	</generate>
+	<generate class="LexExampleSentence" fieldType="atom" destClass="CmPossibility" restrictions="customOnly">
+		<column layout="CustomPossAtomForExample_$fieldName" label="$label" visibility="menu"
+				bulkEdit="atomicFlatListItem" field="LexExampleSentence.$fieldName" list="$targetList"/>
+	</generate>
+</browseColumns>
+</doc>

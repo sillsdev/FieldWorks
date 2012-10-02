@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 6 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<click select="menubar/insert/book/new-testament"/>
+		<insert>{TAB}</insert>
+		<insert>{ENTER}</insert>
+		<click select="menubar/insert/verse-number"/>
+		<click select="menubar/insert/scripture-section"/>
+		<insert>HELLO WORLD</insert>
+
+	</on-application>
+</accil>

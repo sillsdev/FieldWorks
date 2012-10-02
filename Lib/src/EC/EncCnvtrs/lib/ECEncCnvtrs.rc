@@ -1,0 +1,303 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "ECResource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"ECResource.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""winres.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+	IDD_DLG_CONVERTER_NAME, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 238
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 87
+	END
+
+	IDD_DLG_ADV_EC_CONFIG, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 291
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 242
+	END
+
+	IDD_DLG_AUTO_CONFIG_ABOUT, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 353
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 243
+	END
+
+	IDD_DLG_AUTO_CONFIG_TEST, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 353
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 243
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DLG_CONVERTER_NAME DIALOGEX 0, 0, 245, 94
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+	WS_SYSMENU
+CAPTION "Enter Converter Name"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+	LTEXT           "Enter a user-friendly name for this converter\n(e.g. ""SIL IPA93<>UNICODE"")",
+					IDC_STATIC,7,7,223,21
+	EDITTEXT        IDC_ED_CONVERTER_NAME,20,33,205,14,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "OK",IDOK,130,73,50,14
+	PUSHBUTTON      "&Advanced...",IDC_BTN_ADVANCED,7,73,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,188,73,50,14
+END
+
+IDD_DLG_ADV_EC_CONFIG DIALOGEX 0, 0, 298, 249
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+	WS_SYSMENU
+CAPTION "Advanced EncConverter Configuration"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+	LTEXT           "&Left Encoding Name:",IDC_STATIC,7,9,67,8
+	COMBOBOX        IDC_CB_LHS_ENCODING_ID,80,7,211,101,CBS_DROPDOWN |
+					CBS_SORT | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Right Encoding Name:",IDC_STATIC,7,29,71,8
+	COMBOBOX        IDC_CB_RHS_ENCODING_ID,80,26,211,106,CBS_DROPDOWN |
+					CBS_SORT | WS_VSCROLL | WS_TABSTOP
+	GROUPBOX        "Transduction Type",IDC_STATIC,80,47,148,174
+	CONTROL         "Unicode Encoding Conversion",IDC_CHK_PT_UNI_ENC_CONV,
+					"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,61,
+					118,10
+	CONTROL         "Transliteration",IDC_CHK_PT_TRANSLITERATION,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,73,122,10
+	CONTROL         "ICU Transliteration",IDC_CHK_PT_ICU_TRANSLITERATION2,
+					"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,85,
+					122,10
+	CONTROL         "ICU Regular Expression",IDC_CHK_PT_ICU_REGEX,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,97,119,10
+	CONTROL         "ICU Converter",IDC_CHK_PT_ICU_CONVERTER,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,109,121,10
+	CONTROL         "Code Page",IDC_CHK_PT_CODE_PAGE,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,121,126,10
+	CONTROL         "Non-Unicode Encoding Conversion",
+					IDC_CHK_PT_NON_UNI_ENC_CONV,"Button",BS_AUTOCHECKBOX |
+					WS_GROUP | WS_TABSTOP,92,133,126,10
+	CONTROL         "Spelling Fixer Project",IDC_CHK_PT_SPELLFIXER,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,145,120,10
+	CONTROL         "Python script",IDC_CHK_PT_PYTHON_SCRIPT,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,157,115,10
+	CONTROL         "Perl Expression",IDC_CHK_PT_PERL_EXPRESSION,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,169,115,10
+	CONTROL         "Spare 1 (user-definable)",IDC_CHK_PT_SPARE_1,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,181,115,10
+	CONTROL         "Spare 2 (user-definable)",IDC_CHK_PT_SPARE_2,"Button",
+					BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,92,193,115,10
+	DEFPUSHBUTTON   "OK",IDOK,182,228,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,241,228,50,14
+END
+
+IDD_DLG_AUTO_CONFIG_ABOUT DIALOGEX 0, 0, 360, 250
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+	WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+	CONTROL         "",IDC_WEB_BROWSER,
+					"{8856F961-340A-11D0-A96B-00C04FD705A2}",WS_TABSTOP,7,7,
+					346,236
+END
+
+IDD_DLG_AUTO_CONFIG_TEST DIALOGEX 0, 0, 360, 250
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
+	WS_SYSMENU
+CAPTION "Test Area"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+	LTEXT           "To try out this processor, type something below and click Test.",
+					IDC_STATIC,7,7,333,15
+	LTEXT           "Input:",IDC_STATIC,7,28,21,8
+	EDITTEXT        IDC_ED_INPUT,44,26,290,14,ES_AUTOHSCROLL
+	LTEXT           "Output:",IDC_STATIC,7,142,26,8
+	EDITTEXT        IDC_ED_OUTPUT,44,141,290,14,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "Test",IDC_BTN_TEST,155,119,50,14
+	CONTROL         "Reverse direction",IDC_CHK_REVERSE,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,255,121,76,
+					10
+	EDITTEXT        IDC_ED_INPUT_HEX,44,49,290,61,ES_MULTILINE |
+					ES_AUTOVSCROLL | ES_READONLY
+	EDITTEXT        IDC_ED_OUTPUT_HEX,44,165,290,78,ES_MULTILINE |
+					ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON                    "TRFFC17.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DLG_AUTO_CONFIG_ABOUT DLGINIT
+BEGIN
+	IDC_WEB_BROWSER, 0x376, 160, 0
+0x0000, 0x0000, 0x004c, 0x0000, 0x35a4, 0x0000, 0x27b0, 0x0000, 0x0000,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+0x0000, 0x0000, 0x004c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001,
+0x0000, 0xd0e0, 0x0057, 0x3573, 0x11cf, 0x69ae, 0x0008, 0x2e2b, 0x6212,
+0x0008, 0x0000, 0x0000, 0x0000, 0x004c, 0x0000, 0x1401, 0x0002, 0x0000,
+0x0000, 0x00c0, 0x0000, 0x0000, 0x4600, 0x0080, 0x0000, 0x0000, 0x0000,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+	0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS
+BEGIN
+	"C",            ID_COPY,                VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	IDS_CantOpenReadMap     "Unable to open or read the map file."
+	IDS_kStatus_OutOfMemory "Unable to allocate required memory."
+	IDS_InEncodingFormNotSupported
+							"the input data format is not supported by this EncConverter"
+	IDS_OutEncodingFormNotSupported
+							"the output data format is not supported by this EncConverter."
+	IDS_kStatus_InvalidMapping
+							"The compiled mapping data is not recognizable."
+	IDS_kStatus_InvalidForm "inForm or outForm parameter doesn't match mapping (bytes/Unicode mismatch)"
+	IDS_NoConverterName     "No encoding converter by that name."
+	IDS_NoAvailableConverters
+							"No installed converter supports the extension of the given converterSpec"
+	IDS_SyntaxErrorInTable  "syntax error in the CC table"
+	IDS_NoErrorCode         "Oops, this error is not being handled; contact the vendor"
+	IDS_NotEnoughBuffer     "Not a large enough buffer was provided; contact the vendor"
+	IDS_kStatus_CompilationFailed
+							"mapping compilation failed (syntax errors, etc)"
+	IDS_kStatus_IncompleteChar
+							"bad input data (lone surrogate, incomplete UTF8 sequence)"
+	IDS_kStatus_NameNotFound
+							"couldn't find the requested name in the compiled mapping"
+	IDS_kStatus_Exception   "an internal error has occurred in the TECkit DLL"
+	IDS_kStatus_BadMappingVersion
+							"compiled mapping is not a version we can handle"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_kStatus_InvalidConverter
+							"converter object is corrupted (or not really a TECkit_Converter at all)"
+	IDS_kStatus_ConverterBusy
+							"can't initiate a conversion, as the converter is already in the midst of an operation"
+	IDS_RegistryCorrupt     "The registry appears to be corrupted. You should reinstall or use the repository interface to add converters"
+	IDS_MissingConverter    "One or more of the converters in this virtual converter are missing."
+	IDS_NoConverter         "No converter exists with the given ConverterName"
+	IDS_InvalidConversionType
+							"The requested conversion is invalid for this converter"
+	IDS_EncodingConvTypeNotSpecified
+							"Either the ConversionType or the EncodingForm must be specified"
+	IDS_ConverterPluginUninstall
+							"This converter is a plug-in and must be uninstalled rather than removed."
+	IDS_Exception           "an internal error has occurred in EncConverters and/or the converter DLLs (TECkit or CC)"
+	IDS_IncompleteChar      "bad input data (lone surrogate, incomplete UTF8 sequence)"
+	IDS_InvalidCharFound    "No mapping was found from the source to the target encoding"
+	IDS_TruncatedCharFound  "All of the source data was read, and a character sequence was incomplete"
+	IDS_IllegalCharFound    "A character sequence was found in the source which is disallowed in the source encoding scheme"
+	IDS_InvalidTableFormat  "An error occurred trying to read the backing data for the converter"
+	IDS_NoReturnData        "The converter DLL returned no data! Is the table/map correct?"
+	IDS_NoReturnDataBadOutForm
+							"No data to return! Perhaps bad output encoding form."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

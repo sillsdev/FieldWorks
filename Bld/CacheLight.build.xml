@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- This file is included in WordWorks_xWroks.build.xml -->
+<project name="CacheLight" default="CacheLight" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<target name="remakecl" description="Completely rebuilds the CacheLight projects.">
+		<property name="remakeSfx" value="cl"/>
+		<call target="remakeFOO" cascade="false"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- CacheLight tests depend on FwUtils. -->
+	<target name="CacheLight" description="Build DB-less cache project." depends="mkfwk,mkvw,
+		COMInterfaces,CoreImpl,XMLUtils,BasicUtils,TestUtils,FwUtils">
+		<call target="CacheLight-nodep"/>
+	</target>
+	<target name="CacheLight-nodep">
+		<property name="dir.srcProj" value="${fwroot}/Src/CacheLight"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakecl-internal" description="Completely rebuilds CacheLight - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakecl-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<target name="remakecl-internal-core" description="Allows for replacing two 'call' task with one 'depends'." depends="skipLelaDBs"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+	<!-- -->
+</project>

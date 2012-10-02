@@ -1,0 +1,4281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="..\XLingPap1.xsl"?>
+<!DOCTYPE lingPaper SYSTEM "..\XLingPap.dtd">
+<lingPaper css="ZapNum.css">
+	<language id="lFree">FreeTranslation</language>
+	<language id="lGloss">GlossLanguage</language>
+	<language id="lZap">vernacular</language>
+	<language id="lRef">TextReference</language>
+	<language id="lIPA">IPA</language>
+	<frontMatter>
+		<title>Number Marking Innovations in Zapotec</title>
+		<author>Cheryl A. Black</author>
+		<affiliation>SIL International - Mexico Branch</affiliation>
+		<affiliation>University of North Dakota
+</affiliation>
+		<presentedAt>Presented at <object class="italic">The Indigenous Voice of Oaxaca</object> conference in UCLA</presentedAt>
+		<date>May 19-20, 2000
+</date>
+		<contents showLevel="4"/>
+		<abstract>
+			<p>In Colonial Zapotec, only quantifiers were used to mark number on nominals (if it was marked at all), and all Zapotecan languages still allow this normal quantifier construction.  In addition, there were plural forms of the pronouns.  Since that time, four types of innovations have emerged.  The first three include: a plural proclitic or plural demonstrative with nominals, a verbal prefix which pluralizes the subject, and floating of the plural clitic to directly follow the verb.  None of those innovations appear in the southern group of Zapotecan languages.  Instead, a more exotic and elaborate quantifier construction is used.  The full distribution of this special number marking construction is analyzed and shown to have similar characteristics, both semantically and syntactically, to the Plural Pronoun Construction  used in other languages.
+</p>
+		</abstract>
+	</frontMatter>
+	<section1 id="sQuant">
+		<secTitle>The Basic Quantifier Construction</secTitle>
+		<p>The oldest available grammars and vocabularies of Zapotec (including <citation ref="rCordovaArte" paren="none" author="yes"/>, <citation ref="rCordovaVocab" author="no" paren="none"/>  and <citation ref="rAnonymous" paren="none" author="yes"/>) state that there is no distinction between singular and plural on nouns or adjectives.  The only way to clearly state that a noun is plural is to add a quantifier, either a number or other quantifier, such as all, some, or many.   I assume that Colonial Zapotec did not require the presence of a quantifier in a plural situation, since many Zapotecan languages allow an unmarked noun to refer to either singular or plural.</p>
+		<p>Colonial Zapotec examples of this basic quantifier construction include those in <exampleRef num="xQuant.1a" equal="no" letterOnly="no"/>.</p>
+		<example num="xQuant.1">
+			<listInterlinear letter="xQuant.1a">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">ziani	pichina</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">many	deer</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘many deer’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">(<citation ref="rCordovaArte" paren="none" author="yes"/>)</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xQuant.1b">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">chóna	yza</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">three	year</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘three years’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">(<citation ref="rCordovaVocab" paren="none" page="411" author="yes"/>)</gloss>
+				</free>
+			</listInterlinear>
+		</example>
+		<p>
+To my knowledge, all Zapotec languages spoken today still utilize this basic quantifier construction.  Many also allow the quantifiers to carry an aspect marker, as described in the next subsection.</p>
+		<section2 id="sQuantSem">
+			<secTitle>The semantics of the aspect marking on the quantifier</secTitle>
+			<p>The Colonial manuscripts state that the numbers standing alone indicated present time, while the addition of the completive aspect prefix indicated past time or the addition of the potential or future aspect prefix indicated future time.  For example, in Valley Zapotec, the number <langData lang="lGloss">'one'</langData> is <langData lang="lZap">toobi</langData>.  To indicate past time, it is <langData lang="lZap">cotoobi</langData> and for future time, either <langData lang="lZap">zetoobi</langData> or <langData lang="lZap">huetobi</langData> is used ( <citation ref="rAnonymous" page="61" paren="none" author="yes"/>; similar forms are noted in <citation ref="rCordovaArte" page="186-187" paren="none" author="yes"/>).  Examples of the quantifier constructions with aspect markers taken from the ‘Confessions’ (<citation ref="rAnonymous" page="97" paren="none" author="yes"/>) are given in <exampleRef num="xQuant.2" equal="no" letterOnly="no"/>.</p>
+			<example num="xQuant.2">
+				<listInterlinear letter="xQuant.2a">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">co-toobi	yza</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-one		year</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘last year’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.2b">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">co-roopa	beo</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-two		month</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘two months ago’</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>
+De Cordova’s Zapotec dictionary <citation ref="rCordovaVocab" author="no"/> verifies that other quantifiers also distinguished between past, present and future time:</p>
+			<example num="xQuant.3">
+				<table border="1">
+					<headerRow>
+						<headerCol align="left" valign="top">Time</headerCol>
+						<headerCol align="left" valign="top">Form</headerCol>
+						<headerCol align="left" valign="top">Gloss</headerCol>
+						<headerCol align="left" valign="top">Reference</headerCol>
+					</headerRow>
+					<row>
+						<col align="left" valign="top">present</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">ti-tòbi</langData> or <langData lang="lZap">le-tòbi</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">H-all</langData>
+						</col>
+						<col rowspan="3" align="left" valign="top">
+							<langData lang="lRef">
+								<citation ref="rCordovaVocab" paren="none" page="404" author="yes"/>
+							</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top">past</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">pi-tòbi</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">C-all</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top">future</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">qui-tòbi</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">F-all</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top">present</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">ti-chij</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">H-much.time</langData>
+						</col>
+						<col rowspan="3" align="left" valign="top">
+							<langData lang="lRef">
+								<citation ref="rCordovaVocab" paren="none" page="276" author="yes"/>
+							</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top">past</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">pi-chij</langData> or <langData lang="lZap">co-chij</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">C-much.time</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top">future</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">ci-chij</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lGloss">F-much.timel</langData>
+						</col>
+					</row>
+				</table>
+			</example>
+			<p>At least some of the Zapotecan languages still use aspect marking on the quantifiers today, though its meaning has altered slightly.    For example, in Isthmus Zapotec, the ordinal numbers for second, third, and fourth are formed by adding either the potential aspect marker for future situations or the completive aspect marker for past situations.</p>
+			<example>
+				<listInterlinear letter="xQuant.4a">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">ra	gui-ropa	gubidxa	</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">LOC	P-two	day</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘the second day (in the future)’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.4b">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">ra	bi-ropa	gubidxa	</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">LOC	C-two	day</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘the second day (in the past)’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">(<citation ref="rPickettGrammar" page="42-43" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>The future aspect marker <langData lang="lZap">x-</langData>  is used on all numbers to indicate another of that many:</p>
+			<example>
+				<listInterlinear letter="xQuant.5a">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">x-honna	bi'cu'</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">F-three dog</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘another three dogs’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.5b">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">x-cande	bere</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">F-twenty chicken</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘another twenty chickens’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">(<citation ref="rPickettGrammar" page="42" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>The potential aspect marker also has another use with numbers and the quantifiers meaning <gloss lang="lGloss">'all'</gloss> in Isthmus Zapotec: it indicates that the number specified is the total group.  (There is a tone change and the final vowel is laryngealized to distinguish this form from the future ordinal form illustrated in <exampleRef letter="xQuant.4a" equal="no" letterOnly="no"/>.)</p>
+			<example>
+				<listInterlinear letter="xQuant.6a">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">gui-ropa'	ba'du'</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">P-two child</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘(just) those two children’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.6b">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">gui-onna' bi'cu'</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">P-three dog</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘(just) those three dogs’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.6c">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">gui-rá'	ba'du'</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">P-all	child</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘all of those children’</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.6d">
+					<lineGroup>
+						<line>
+							<langData lang="lZap">gui-dubi	beela</langData>
+						</line>
+						<line>
+							<gloss lang="lGloss">P-all	meat</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘all of that meat’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">(<citation ref="rPickettGrammar" page="43-44" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>
+In Quiegolani Zapotec, part of the southern group, similar meanings are given to the three aspect markers. The completive aspect marker <langData lang="lZap">w-</langData> can be used to indicate a finished period of time, as in <exampleRef letter="xQuant.7a" paren="initial" punct="-" equal="no" letterOnly="no"/>
+				<exampleRef letter="xQuant.7b" letterOnly="yes" paren="final" equal="no"/>, or to form an ordinal number as in <exampleRef letter="xQuant.7b" equal="no" letterOnly="no"/>.</p>
+			<example>
+				<listInterlinear letter="xQuant.7a">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">
+								<object class="emphasized">W-ra</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">gyëël</object>
+							</wrd>
+							<wrd lang="lZap">w-a-xee</wrd>
+							<wrd lang="lZap">noo.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-all	night	C-go-rise	1EX</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘The next day (after all night) we got up.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="MTLEMON 37" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.7b">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">
+								<object class="emphasized">W-deb</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">iz</object>
+							</wrd>
+							<wrd lang="lZap">w-ya</wrd>
+							<wrd lang="lZap">x-mig</wrd>
+							<wrd lang="lZap">noo</wrd>
+							<wrd lang="lZap">lgyëz.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-one	year	C-go	POS-friend	1EX	town</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘Last year my friend went to the village.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="MARTIN 1" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.7c">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">Per</wrd>
+							<wrd lang="lZap">chene</wrd>
+							<wrd lang="lZap">w-ya</wrd>
+							<wrd lang="lZap">Jose</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">w-rup</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">tir</object>
+							</wrd>
+							<wrd lang="lZap">w-za-no</wrd>
+							<wrd lang="lZap">Jose</wrd>
+							<wrd lang="lZap">Juan.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">but	when	C-go	José	C-two	time C-walk-take	José	Juan</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘But when José went the second time, he took Juan.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="AGOSTO 20" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>Likewise, the future marker <langData lang="lZap">s-</langData> may be used to indicate <gloss lang="lGloss">'another'</gloss>
+				<exampleRef letter="xQuant.8a" paren="initial" punct="-" equal="no" letterOnly="no"/>
+				<exampleRef letter="xQuant.8b" letterOnly="yes" paren="final" equal="no"/> or <gloss lang="lGloss">'again'</gloss>
+				<exampleRef letter="xQuant.8c" equal="no" letterOnly="no"/>.</p>
+			<example>
+				<listInterlinear letter="xQuant.8a">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">Por</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">s-teb</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">koo</object>
+							</wrd>
+							<wrd lang="lZap">zob</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">s-te</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">giblew</object>
+							</wrd>
+							<wrd lang="lZap">ne</wrd>
+							<wrd lang="lZap">r-naa</wrd>
+							<wrd lang="lZap">men.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">on	F-one	side	PR/sit	F-one	faucet that	H-wash.hands 3RD
+</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘On the other side sits another faucet at which they wash their hands.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="BATHROOM 31A" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.8b">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">Nes</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">s-yon</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">iz</object>
+							</wrd>
+							<wrd lang="lZap">y-tsoow</wrd>
+							<wrd lang="lZap">men</wrd>
+							<wrd lang="lZap">te</wrd>
+							<wrd lang="lZap">Biblya</wrd>
+							<wrd lang="lZap">na</wrd>
+							<wrd lang="lZap">disa.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">inside	F-three	year P-make	3RD	one	Bible	which	language</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘Within another three years, they will make a Bible in Zapotec.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="HORTENS 48A" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.8c">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">Xiid</wrd>
+							<wrd lang="lZap">noo</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">s-te</object>
+							</wrd>
+							<wrd lang="lZap">x-yuu</wrd>
+							<wrd lang="lZap">de.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">F/come	1EX	F-one	POS-house	2</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘I will come again to your house.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="MARTIN 47" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>
+The third aspect marker that can appear on these quantifiers is the potential <langData lang="lZap">y-</langData> or <langData lang="lZap">gy-</langData>.  Its use indicates that the number expressed by the quantifier is that of the whole group, whereas a number by itself gives a partitive reading.  For example, the use of the potential marking on the number in <exampleRef letter="xQuant.9a" equal="no" letterOnly="no"/> indicates that the three rifles were all the rifles that the thieves had.  In <exampleRef letter="xQuant.9b" equal="no" letterOnly="no"/>, the reading is that the man carried three out of a larger group of rifles that the thieves had.</p>
+			<example>
+				<listInterlinear letter="xQuant.9a">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">W-eey</wrd>
+							<wrd lang="lZap">men</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">gy-on</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">x-kwiib</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">ngbaan.</object>
+							</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-take	3RD	P-three	POS-rifle	thief
+</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘He carried the thieves’ three rifles.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="CWENT 41A" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+				<listInterlinear letter="xQuant.9b">
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">W-eey</wrd>
+							<wrd lang="lZap">men</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">tson</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">x-kwiib</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">ngbaan.</object>
+							</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">C-take	3RD	three	POS-rifle	thief
+</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘He carried three of the thieves’ rifles.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rRegnierTexts" page="CWENT 41B" paren="none" author="yes"/>)</gloss>
+					</free>
+				</listInterlinear>
+			</example>
+			<p>Only the potential aspect marking occurs on the special quantifier constructions presented in section <sectionRef sec="sSpecial"/>, and it has exactly the same holistic meaning as in the basic quantifier constructions illustrated here <exampleRef letter="xQuant.9a" equal="no" letterOnly="no"/>.  Likewise, when the special quantifier constructions occur without the potential aspect marker, the partitive meaning is conveyed (<citation ref="rBlackDiss" page="329-30" paren="none" author="yes"/>, <citation ref="rBlackQZBook" author="no" page="267-8" paren="none"/>).</p>
+		</section2>
+		<section2 id="sQuantPl">
+			<secTitle>Plural forms of pronouns</secTitle>
+			<p>
+Both singular and plural forms for at least some of the personal pronouns are documented in the Colonial sources.  The following charts give the various pronoun forms in early Valley Zapotec, taken from information in <citation ref="rAnonymous" page="17-18" author="yes"/>.</p>
+			<table border="0">
+				<caption align="center" valign="top">Free Pronouns</caption>
+				<row>
+					<col align="left" valign="top">
+						<table border="1">
+							<headerRow>
+								<headerCol align="center" valign="top">Person</headerCol>
+								<headerCol align="center" valign="top">Singular</headerCol>
+								<headerCol align="center" valign="top">Plural</headerCol>
+							</headerRow>
+							<row>
+								<col align="left" valign="top">first</col>
+								<col align="left" valign="top">
+									<table border="0">
+										<row>
+											<col align="left" valign="top">
+												<langData lang="lZap">naa</langData>
+											</col>
+											<col align="left" valign="top">
+												<gloss lang="lGloss">'I / me'</gloss>
+											</col>
+										</row>
+									</table>
+								</col>
+								<col align="left" valign="top">
+									<table border="0">
+										<row>
+											<col align="left" valign="top">
+												<langData lang="lZap">tonoo</langData>
+											</col>
+											<col align="left" valign="top">
+												<gloss lang="lGloss">‘we / us’</gloss>
+											</col>
+										</row>
+									</table>
+								</col>
+							</row>
+							<row>
+								<col align="left" valign="top">second</col>
+								<col align="left" valign="top">
+									<table border="0">
+										<row>
+											<col align="left" valign="top">
+												<langData lang="lZap">luy</langData>
+											</col>
+											<col align="left" valign="top">
+												<gloss lang="lGloss">'you'</gloss>
+											</col>
+										</row>
+									</table>
+								</col>
+								<col align="left" valign="top">
+									<table border="0">
+										<row>
+											<col align="left" valign="top">
+												<langData lang="lZap">latoo</langData>
+											</col>
+											<col align="left" valign="top">
+												<gloss lang="lGloss">‘you (pl)’</gloss>
+											</col>
+										</row>
+									</table>
+								</col>
+							</row>
+							<row>
+								<col align="left" valign="top">third</col>
+								<col colspan="2" align="center" valign="top">
+									<table border="0">
+										<row>
+											<col align="left" valign="top">
+												<langData lang="lZap">niquee</langData>
+											</col>
+											<col align="left" valign="top">
+												<gloss lang="lGloss">‘he / she / they / him / her / them’</gloss>
+											</col>
+										</row>
+									</table>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+			</table>
+			<p/>
+			<p/>
+			<table border="1">
+				<caption align="center" valign="top">Bound Pronouns as Possessors</caption>
+				<headerRow>
+					<headerCol align="center" valign="top">Person</headerCol>
+					<headerCol align="center" valign="top">Singular</headerCol>
+					<headerCol align="center" valign="top">Plural</headerCol>
+				</headerRow>
+				<row>
+					<col align="left" valign="top">first</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">pizaana<object class="emphasized">ya</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘my sister’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">pizaana<object class="emphasized">noo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘our sister’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">second</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">pizaana<object class="emphasized">lo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘your sister’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">pizaana<object class="emphasized">too</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘your sister’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">third</col>
+					<col colspan="2" align="center" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">pizaana<object class="emphasized">ni</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘his / her / their sister’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+			</table>
+			<p/>
+			<p/>
+			<table border="1">
+				<caption align="center" valign="top">Bound Pronouns as Subjects</caption>
+				<headerRow>
+					<headerCol align="left" valign="top">Person</headerCol>
+					<headerCol align="left" valign="top">Singular</headerCol>
+					<headerCol align="left" valign="top">Plural</headerCol>
+				</headerRow>
+				<row>
+					<col align="left" valign="top">first</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">rácá<object class="emphasized">ya</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘I am’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">rácato<object class="emphasized">noo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘we are’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">second</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">rácá<object class="emphasized">lo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘you are’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">ráca<object class="emphasized">too</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘you (pl) are’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">third</col>
+					<col colspan="2" align="center" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">ráca<object class="emphasized">ni</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘he / she / they are’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+			</table>
+			<p/>
+			<p/>
+			<table border="1">
+				<caption align="center" valign="top">Reflexive Pronouns</caption>
+				<headerRow>
+					<headerCol align="left" valign="top">Person</headerCol>
+					<headerCol align="left" valign="top">Singular</headerCol>
+					<headerCol align="left" valign="top">Plural</headerCol>
+				</headerRow>
+				<row>
+					<col align="left" valign="top">first</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">yoobi<object class="emphasized">a</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘myself’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">yoobi<object class="emphasized">noo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘ourselves’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">second</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">yoobi<object class="emphasized">lo</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘yourself’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+					<col align="left" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">yoobi<object class="emphasized">too</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘yourselves’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+				<row>
+					<col align="left" valign="top">third</col>
+					<col colspan="2" align="center" valign="top">
+						<table border="0">
+							<row>
+								<col align="left" valign="top">
+									<langData lang="lZap">yoobi<object class="emphasized">ni</object></langData>
+								</col>
+								<col align="left" valign="top">
+									<gloss lang="lGloss">‘himself / herself / themselves’</gloss>
+								</col>
+							</row>
+						</table>
+					</col>
+				</row>
+			</table>
+		</section2>
+	</section1>
+	<section1 id="sPlural">
+		<secTitle>The Plural Marking Innovations</secTitle>
+		<p>
+			<citation ref="rMarlettPickettPlural" paren="initial" author="yes"/>, <citation ref="rMarlettPickettPluralWeb" paren="final" author="no"/> document three additional methods of pluralization for noun phrases and third person pronouns available in the Zapotecan languages of today.  Since there is no record of their existence in the Colonial documents, I label them as innovations.  A particular language may have none, all, or any combination of the following characteristics:</p>
+		<ul>
+			<li>A plural proclitic;</li>
+			<li>A prefix on the verb to pluralize the subject;</li>
+			<li>Floating of the plural clitic to directly follow the verb.</li>
+		</ul>
+		<p>The most common innovation is the plural proclitic, as illustrated by the Isthmus Zapotec data in <exampleRef num="xPlural.1" equal="no" letterOnly="no"/>.  The examples in <exampleRef num="xPlural.2" equal="no" letterOnly="no"/> verify that the plural clitic fills the same position as numbers or other quantifiers, since they may not co-occur.</p>
+		<example num="xPlural.1">
+			<listInterlinear letter="xPlural.1a">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">ca 	yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">PL	house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘houses’</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.1b">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">ca 	ba'du'</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">PL	child</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘children’</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.1c">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">ca 	guie'</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">PL	flower</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘flowers’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">(<citation ref="rPickettGrammar" page="19" paren="none" author="yes"/>)</gloss>
+				</free>
+			</listInterlinear>
+		</example>
+		<example num="xPlural.2">
+			<listInterlinear letter="xPlural.2a">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">chupa 	yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">two	house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘two houses’</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.2b">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">*chupa ca 	yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">two PL	house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">(two houses)</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.2c">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">*ca chupa yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">PL	two house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">(two houses)</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.2d">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">stale 	yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">many	house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘many houses’</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.2e">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">*stale ca 	yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">many PL	house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">(many houses)</gloss>
+				</free>
+			</listInterlinear>
+			<listInterlinear letter="xPlural.2f">
+				<lineGroup>
+					<line>
+						<langData lang="lZap">*ca stale yoo</langData>
+					</line>
+					<line>
+						<gloss lang="lGloss">PL	many house</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">(many houses)</gloss>
+				</free>
+			</listInterlinear>
+		</example>
+		<p>This same plural proclitic is also used to pluralize both the free and dependent forms of the third person pronouns.
+The verbal prefix which indicates that the subject is plural is illustrated in <exampleRef num="xPlural.3" equal="no" letterOnly="no"/> for Yatzachi Zapotec.</p>
+		<example num="xPlural.3">
+			<interlinear>
+				<lineGroup>
+					<line>
+						<wrd lang="lZap">Ch-<object class="emphasized"><object class="IPA">«</object>s<object class="IPA">«</object>'<object class="IPA">«</object>-</object>sed</wrd>
+						<wrd lang="lZap">guey<object class="IPA">«</object>'</wrd>
+						<wrd lang="lZap">bidao'.</wrd>
+					</line>
+					<line>
+						<gloss lang="lGloss">CONT-PL-study	five	child</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘Five children are studying.’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">(<citation ref="rButlerGrammar" page="148" paren="none" author="yes"/>)</gloss>
+				</free>
+			</interlinear>
+		</example>
+		<p>Related forms of this verbal prefix are used to pluralize a third person pronominal subject.
+Floating of the plural clitic from the direct object nominal phrase to a position directly following the verb is illustrated in <exampleRef num="xPlural.4" equal="no" letterOnly="no"/> from Chichicapan Zapotec.</p>
+		<example num="xPlural.4">
+			<interlinear>
+				<lineGroup>
+					<line>
+						<wrd lang="lZap">G-akane'e</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">ra'-</object>lu'h</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">___</object>
+						</wrd>
+						<wrd lang="lZap">lasa'a'-lu'h.</wrd>
+					</line>
+					<line>
+						<gloss lang="lGloss">P-help	PL-2SG	 	relative-2SG</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘You should help your relatives.’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">(<citation ref="rMarlettPickettPlural" page="252" paren="none" author="yes"/>)</gloss>
+				</free>
+			</interlinear>
+		</example>
+		<p>
+Some of the other Zapotecan languages allow the plural clitic from third person pronominal direct objects to move to attach to the verb.
+</p>
+	</section1>
+	<section1 id="sSpecial">
+		<secTitle>The Special Quantifier Construction</secTitle>
+		<p>
+None of the innovations for pluralization discussed in section <sectionRef sec="sPlural"/> are attested in the southern group of Zapotecan languages, nor are there plural forms for the pronouns.  Indeed, these languages seem to be the most unmarked, since they also lack any marker for reflexives or reciprocals.  It is somewhat surprising, then, that when the speaker wishes to make the number explicit (instead of ambiguous), it is marked via a quite elaborate quantifier construction, illustrated in <exampleRef num="xSpecial.1" equal="no" letterOnly="no"/> from Quiegolani Zapotec, where the parts of the construction are highlighted.<endnote id="eDataQZ">
+				<p> All the Zapotec examples in this section are from Quiegolani Zapotec.  All examples with a text reference are from <citation ref="rRegnierTexts" author="yes"/>.  Those with a letter following the text reference number are slight variations of the written text checked during my field work and any examples without a text reference are from my own field work with Martín Hernández Antonio in 1991 and 1993.  See <citation ref="rBlackDiss" page="Ch.13" paren="initial" author="yes"/>, <citation ref="rBlackQZBook" author="no" page="Ch.12" paren="final"/> for a more complete account of this special construction and an analysis within the Principles and Parameters framework.</p>
+			</endnote>   The entire construction occupies the subject position in <exampleRef num="xSpecial.1" equal="no" letterOnly="no"/>, since Zapotecan languages have VSO word order.</p>
+		<example num="xSpecial.1">
+			<interlinear>
+				<lineGroup>
+					<line>
+						<wrd lang="lZap">R-oo</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">men</object>
+						</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">y-rup</object>
+						</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">men</object>
+						</wrd>
+						<wrd lang="lZap">
+							<object class="emphasized">Biki</object>
+						</wrd>
+						<wrd lang="lZap">nisgaal.</wrd>
+					</line>
+					<line>
+						<gloss lang="lGloss">H-drink	3RD	P-two	3RD	Virginia	soda</gloss>
+					</line>
+				</lineGroup>
+				<free>
+					<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+				</free>
+				<free>
+					<gloss lang="lRef">AGOSTO 8A</gloss>
+				</free>
+			</interlinear>
+		</example>
+		<p>
+Since the pronouns are not specified for number, gender, or case, the third person pronoun <langData lang="lZap">men</langData> can mean <gloss lang="lGloss">'he/she/they'</gloss> or <gloss lang="lGloss">'him/her/them'</gloss> or <gloss lang="lGloss">'himself/herself/themselves'</gloss> or <gloss lang="lGloss">'his/her/their'</gloss> depending upon its position in the sentence.  Therefore the full meaning conveyed by the construction in <exampleRef num="xSpecial.1" equal="no" letterOnly="no"/> might be expressed in English as <gloss lang="lFree">'they, she and Virginia, just the two of them...'</gloss>
+		</p>
+		<p>The special number marking constructions are more referential than quantificational, with the quantifier specifying the number feature of the construction (as will be shown in section <sectionRef sec="sSpecialSemQuant"/>.  These constructions abound in both texts and speech.  In each case, a nominal phrase is followed by a quantifier (only those meaning <gloss lang="lGloss">'all', 'one', 'two', three',</gloss> or <gloss lang="lGloss">'four'</gloss>), which is in turn followed by (usually) two nominal phrases, and the whole construction fills an argument position.</p>
+		<p>The basic form of these constructions is diagrammed in <exampleRef num="xSpecial.2" equal="no" letterOnly="no"/>, where the subscripts indicate required coindexing.</p>
+		<example num="xSpecial.2">
+			<table>
+				<row>
+					<col align="center">DP<object class="sub">1</object>
+					</col>
+					<col>&nbsp;</col>
+					<col align="center">(aspect-)quantifier DP<object class="sub">1</object> DP<object class="sub">2</object>
+					</col>
+				</row>
+				<row>
+					<col align="center">
+						<img src="ShortDownWardBrace.png"/>
+					</col>
+					<col>&nbsp;</col>
+					<col align="center">
+						<img src="LongDownWardBrace.png"/>
+					</col>
+				</row>
+				<row>
+					<col align="center">Head</col>
+					<col>&nbsp;</col>
+					<col align="center">Adjunct</col>
+				</row>
+			</table>
+		</example>
+		<section2 id="sSpecialPPC">
+			<secTitle>Similarities to the Plural Pronoun Construction</secTitle>
+			<p>
+I claim that these constructions can be seen as exotic versions of the Plural Pronoun Construction (PPC) analyzed by  <citation ref="rSchwartzPPC" author="yes"/>.  A PPC is composed of a plural pronoun followed by either a nominal phrase or a prepositional phrase, depending upon the language.  The plurality of the pronoun may or must be taken to express the number of the entire construction, rather than the number of only the pronoun itself. An example from Mokilese is given in <exampleRef num="xSpecialPPC.1" equal="no" letterOnly="no"/>.</p>
+			<example num="xSpecialPPC.1">
+				<interlinear>
+					<lineGroup>
+						<line>
+							<wrd lang="lZap">
+								<object class="emphasized">Kamwa</object>
+							</wrd>
+							<wrd lang="lZap">
+								<object class="emphasized">Davy</object>
+							</wrd>
+							<wrd lang="lZap">inla</wrd>
+							<wrd lang="lZap">duhdu.</wrd>
+						</line>
+						<line>
+							<gloss lang="lGloss">2DUAL	Davy	go	swim</gloss>
+						</line>
+					</lineGroup>
+					<free>
+						<gloss lang="lFree">‘You (sg.) and Davy went swimming.’</gloss>
+					</free>
+					<free>
+						<gloss lang="lRef">=(<citation ref="rSchwartzPPC" page="4C" paren="none" author="yes"/>)</gloss>
+					</free>
+				</interlinear>
+			</example>
+			<p>In English we might say the two of you, you and Davy... to convey the same information.  Schwartz analyzes these constructions as asymmetric single-headed complex nominal phrases with the constituent structure diagrammed in <exampleRef num="xSpecialPPC.2" equal="no" letterOnly="no"/>.</p>
+			<example num="xSpecialPPC.2">
+				<tree>
+					<img src="PPC.png"/>
+				</tree>
+			</example>
+			<p>
+				<citation ref="rLadusawPPC" author="yes"/> gives a semantic interpretation for the PPC which requires that the referent of the adjunct be properly included in the reference of the head pronoun.  This is in contrast to a regular coordination relationship, where the conjuncts must be disjoint in reference.  Ladusaw’s interpretation entails the properties noted by Schwartz as universals for the PPC, including the plurality of the head pronoun and the Person Hierarchy Effect.  The latter says that the person feature of the head must be greater or equal to the person feature of the referent of the adjunct on a hierarchy of 1 &gt; 2 &gt; 3.  In order for the referent of the adjunct to be properly included in the reference of the head pronoun, two things must be true.  First, the number of the pronoun must be large enough to include the referent of the adjunct as well as the reference of the head, so it must be minimally dual in number.  Second, the person feature of the head pronoun must also be high enough to include the referent of the adjunct.  For example, a second or third person pronoun head cannot include a first person adjunct in its reference.  The inclusion requirement thus entails these two properties of the PPC.</p>
+			<p>Since the Person Hierarchy Effect is also a strong constraint in the southern Zapotec constructions, the semantic interpretation for the PPC provides a starting point for understanding them.  Section <sectionRef sec="sSpecialSem"/>  looks further at the semantics of these special number marking constructions, then section <sectionRef sec="sSpecialSyntax"/> expands on the basic insight of a Head-Adjunct structure for their syntax.
+</p>
+		</section2>
+		<section2 id="sSpecialSem">
+			<secTitle>Semantic interpretation</secTitle>
+			<p>
+For the PPC, the requirement that the referent of the adjunct be included in the reference of the plural pronoun head entailed the Person Hierarchy Effect (<citation ref="rLadusawPPC" paren="none" author="yes"/>).  In that construction, both the number feature and the person feature are determined by the head plural pronoun.  Quiegolani Zapotec does not have plural pronouns, so the relevant features are found separately.  We begin with the number feature.
+</p>
+			<section3 id="sSpecialSemQuant">
+				<secTitle>The quantifier contribution</secTitle>
+				<p>
+The number marking role of the quantifier in the special constructions is crucial to the correct interpretation of the construction.  There is substantial evidence that the quantifier marks the number of the entire constituent.  For example, while <exampleRef letter="xSpecialSem.1a" equal="no" letterOnly="no"/> can have either of the first three readings given (with the first one being correct from the context), the last reading is impossible.  In contrast, only that reading is possible if the quantifier is changed to <langData lang="lZap">y-rup</langData>
+					<gloss lang="lGloss"> ‘P-two’</gloss>  as in <exampleRef letter="xSpecialSem.1b" equal="no" letterOnly="no"/>.  What is crucial to understanding this is that <langData lang="lZap">y-ra</langData>
+					<gloss lang="lGloss"> ‘P-all’</gloss>  cannot be used in contexts where there are only two participants, since <langData lang="lZap">y-rup</langData> provides an alternative way of expressing that.  Instead, the plurality expressed by <langData lang="lZap">y-ra</langData> entails that there are at least three participants.</p>
+				<example>
+					<listInterlinear letter="xSpecialSem.1a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Sabt</wrd>
+								<wrd lang="lZap">w-a-xee</wrd>
+								<wrd lang="lZap">noo,</wrd>
+								<wrd lang="lZap">w-xa-ndxen</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-ra</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">x-patron</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">Saturday	C-go-rise	1EX C-eat-breakfast	1EX P-all	POS-patron	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Saturday I got up and ate breakfast with all my patrons.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lFree">‘Saturday we got up and ate breakfast with our patron.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lFree">‘Saturday we got up and ate breakfast with all our patrons.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lFree">
+								<object class="not-italic">*(</object>Saturday I got up and ate breakfast with my patron.<object class="not-italic">)</object>
+							</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">MTLEMON 6
+</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.1b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Sabt</wrd>
+								<wrd lang="lZap">w-a-xee</wrd>
+								<wrd lang="lZap">noo,</wrd>
+								<wrd lang="lZap">w-xa-ndxen</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">x-patron</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">Saturday	C-go-rise	1EX C-eat-breakfast	1EX P-two	POS-patron	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Saturday I got up and ate breakfast with my patron.’
+</gloss>
+						</free>
+					</listInterlinear>
+				</example>
+				<p>Though normally the distinction is made only between dual and plural, using the quantifiers meaning <gloss lang="lGloss">'two'</gloss> and <gloss lang="lGloss">'all'</gloss> respectively, these structures may also be found where the number marking is singular, as well as where a group of three or four is indicated.  Singular marking is used to indicate that the action was done alone, as shown in <exampleRef num="xSpecialSem.2" equal="no" letterOnly="no"/>.</p>
+				<example num="xSpecialSem.2">
+					<interlinear>
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Teb</wrd>
+								<wrd lang="lZap">tir</wrd>
+								<wrd lang="lZap">te</wrd>
+								<wrd lang="lZap">mër</wrd>
+								<wrd lang="lZap">zob</wrd>
+								<wrd lang="lZap">lo</wrd>
+								<wrd lang="lZap">yag,</wrd>
+								<wrd lang="lZap">r-oolbaan</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">maa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">te-tee</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">maa.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">one	time	one	pigeon	PR/sit	face	tree H-sing	3A	one-one	3A</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘One time a pigeon was sitting in a tree singing all by himself.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">MARTRIST 1</gloss>
+						</free>
+					</interlinear>
+				</example>
+				<p>
+					<exampleRef num="xSpecialSem.3" equal="no" letterOnly="no"/> shows that while the quantifiers <gloss lang="lGloss">'two'</gloss> and <gloss lang="lGloss">'all'</gloss>  may be thought of as selecting two DP arguments (and <gloss lang="lGloss">'one'</gloss> only one), the quantifiers <gloss lang="lGloss">'three'</gloss> and <gloss lang="lGloss">'four'</gloss> have three and four DP argument positions, respectively (see section <sectionRef sec="sSpecialSyntaxDist"/> and <citation ref="rBlackDiss" page="367-370" paren="none" author="yes"/>, <citation ref="rBlackQZBook" page="296-299" author="no" paren="none"/> for the analysis).  It is ungrammatical to have more DPs following the quantifier than the quantifier selects: <langData lang="lZap">gy-on</langData>
+					<gloss lang="lGloss"> 'P-three'</gloss> only selects three DP arguments, so four DPs cannot be present <exampleRef letter="xSpecialSem.3c" equal="no" letterOnly="no"/>.  Further, having less arguments filled than are selected by the quantifier is highly unnatural <exampleRef letter="xSpecialSem.3c" equal="no" letterOnly="no"/>, and can only be understood to mean there were four people including Susan and myself who came if the two missing arguments are accounted for by the Redundancy Condition, (discussed in the next paragraph).</p>
+				<example num="xSpecialSem.3">
+					<listInterlinear letter="xSpecialSem.3a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">gy-on</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Dolf</object>
+								</wrd>
+								<wrd lang="lZap">lee.</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-three	1EX	Susan	Rodolfo	also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Susan, Rodolfo, and I came (the three of us).’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">TEXAS 29</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.3b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-tap</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Dolf</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Biki</object>
+								</wrd>
+								<wrd lang="lZap">lee.</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-four	1EX	Susan	Rodolfo	 Virginia also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Susan, Rodolfo, Virginia, and I came (the four of us).’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">TEXAS 29A</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.3c">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">gy-on</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Dolf</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Biki</object>
+								</wrd>
+								<wrd lang="lZap">lee.</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-three	1EX	Susan	Rodolfo	Virginia also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">(Three of us came, including Susan, Rodolfo, Virginia and I.)
+</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.3d">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">
+									<object class="not-italic">??</object>Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-tap</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="not-italic">(</object>lee<object class="not-italic">).</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-four	1EX	Susan	also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">(Four of us came, including ‘Susan and I.)
+</gloss>
+						</free>
+					</listInterlinear>
+				</example>
+				<p>There is also a simpler construction which is fully grammatical that acts like a plural (or dual, triple, etc.) pronoun would in other languages.  I analyze this as a special case of the full construction which is subject to a Redundancy Condition.  The Redundancy Condition says that if DP<object class="sub">2</object>  (and/or DP<object class="sub">3</object> and/or DP<object class="sub">4</object> when the quantifiers meaning <gloss lang="lGloss">'three'</gloss> and <gloss lang="lGloss">'four'</gloss> are used) is the same pronoun as DP<object class="sub">1</object> then DP<object class="sub">2</object> is not realized phonetically, since it adds no new information.  Constructions illustrating this Redundancy Condition are given in <exampleRef letter="xSpecialSem.4a" equal="no" letterOnly="no"/> and <exampleRef letter="xSpecialSem.5a" equal="no" letterOnly="no"/>; the (b) examples show that repetition of the pronoun is ungrammatical.</p>
+				<example>
+					<listInterlinear letter="xSpecialSem.4a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">S-ya</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR-go	3RD	P-two	3RD</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘They both were going.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">SAMUEL 13</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.4b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*S-ya</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men.</object>
+								</wrd>
+							</line>
+						</lineGroup>
+					</listInterlinear>
+				</example>
+				<example>
+					<listInterlinear letter="xSpecialSem.5a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">G-u-sëë</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-ra</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">P-eat-dinner	1EX	P-all	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘We all will eat dinner.’
+</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">LIFEINQ 20</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.5b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*G-u-sëë</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-ra</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+						</lineGroup>
+					</listInterlinear>
+				</example>
+				<p>This simpler construction can also be used appositively, as in <exampleRef num="xSpecialSem.6" equal="no" letterOnly="no"/>, where the number feature of the quantifier must match the number of persons referred to in the appositive construction (bracketed), further confirming that the quantifier specifies the number of the entire structure.</p>
+				<example num="xSpecialSem.6">
+					<listInterlinear letter="xSpecialSem.6a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">gy-on</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo,</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="not-italic">[</object>txup</wrd>
+								<wrd lang="lZap">bech</wrd>
+								<wrd lang="lZap">Dolf</wrd>
+								<wrd lang="lZap">noo</wrd>
+								<wrd lang="lZap">lee<object class="not-italic">].</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-three	1EX	 two	brother	Rodolfo	1EX	also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘The three of us came, Rodolfo’s two brothers and I.’
+</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.6b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*Xiid</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">gy-on</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo,</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="not-italic">[</object>Susan</wrd>
+								<wrd lang="lZap">no</wrd>
+								<wrd lang="lZap">txup</wrd>
+								<wrd lang="lZap">bech</wrd>
+								<wrd lang="lZap">Dolf</wrd>
+								<wrd lang="lZap">noo</wrd>
+								<wrd lang="lZap">lee<object class="not-italic">].</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">PR/come	1EX	P-three	1EX	 Susan and two	brother	Rodolfo	1EX	also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree"> (The three of us came, Susan, Rodolfo’s two brothers and I.)
+</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.6c">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">W-a</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-tap</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men,</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="not-italic">[</object>tson</wrd>
+								<wrd lang="lZap">bech</wrd>
+								<wrd lang="lZap">Dolf</wrd>
+								<wrd lang="lZap">no</wrd>
+								<wrd lang="lZap">Susan</wrd>
+								<wrd lang="lZap">lee<object class="not-italic">].</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-go	3RD	P-four	3RD	 three	brother	Rodolfo	and	Susan	also</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘They four went, Rodolfo’s three brothers and Susan.’
+</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSem.6d">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*W-a</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-tap</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men,</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="not-italic">[</object>tson</wrd>
+								<wrd lang="lZap">bech</wrd>
+								<wrd lang="lZap">Dolf<object class="not-italic">].</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-go	3RD	P-four	3RD	 three	brother	Rodolfo</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree"> (They four went, Rodolfo’s three brothers.)
+</gloss>
+						</free>
+					</listInterlinear>
+				</example>
+			</section3>
+			<section3 id="sSpecialSemHead">
+				<secTitle>Head type and inclusion</secTitle>
+				<p>
+In these special number marking constructions, the head DP<object class="sub">1</object> can be filled by any referential nominal phrase, including proper names, common noun phrases, and quantified noun phrases, as well as by pronouns.  Some examples of each type are given in (24).</p>
+				<example num="xSpecialSemHead.1">
+					<listInterlinear letter="xSpecialSemHead.1a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">W-zhoon</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-ra</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">x-pëëd</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-run	3RD	P-all	3RD	POS-baby	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘She and my children ran away.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">MARTRIST 6</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemHead.1b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">
+								W-ya
+							</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">maa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">maa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">x-mig</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">mër</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">gos.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-dance	3A	P-two	3A	POS-friend	pigeon	female</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘He danced with the female pigeon’s friend.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">MARTRIST 35</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemHead.1c">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">
+								W-guu
+							</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Jose</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Jose</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">xuz</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+								 leen</wrd>
+								<wrd lang="lZap">
+								x-yuu
+							</wrd>
+								<wrd lang="lZap">
+								xuz
+							</wrd>
+								<wrd lang="lZap">
+								noo.
+							</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-sow	José	P-two	José	father	1EX	inside	POS-house	father	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Jose and my father put it inside my father’s house.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">AGOSTO 44A</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemHead.1d">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">
+								W-nëëz
+							</wrd>
+								<wrd lang="lZap">
+								mëëk
+							</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">ngyed</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">ngyed</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">konej.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">C-catch	dog	chicken	P-two	chicken	rabbit</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘The dog caught a chicken and a rabbit.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">AGOSTO 49</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemHead.1e">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">
+									<object class="emphasized">Te</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">x-pëëk</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">men</object>
+								</wrd>
+								<wrd lang="lZap">
+								z-a
+							</wrd>
+								<wrd lang="lZap">
+								x-ten
+							</wrd>
+								<wrd lang="lZap">
+								men.
+							</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">one	3RD	P-two	POS-dog	3RD	PR-go	POS-ranch	3RD</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘A man and his dog were going to his ranch.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">MENMAAC 1A</gloss>
+						</free>
+					</listInterlinear>
+				</example>
+				<p>
+Looking first at the examples with pronominal heads <exampleRef letter="xSpecialSemHead.1a" paren="initial" punct="-" equal="no" letterOnly="no"/>
+					<exampleRef letter="xSpecialSemHead.1b" letterOnly="yes" paren="final" equal="no"/>, the similarities to the PPC are clear.  By superimposing the number marked by the quantifier on the head pronoun, we have the same effect as a plural pronoun.  Then, the referents of the pronoun and second DP in the adjunct can be seen as included in the reference of the ‘plural pronoun’ head, as shown in the readings given in <exampleRef num="xSpecialPersonHE.1" equal="no" letterOnly="no"/> for <exampleRef letter="xSpecialSemHead.1a" paren="initial" punct="-" equal="no" letterOnly="no"/>
+					<exampleRef letter="xSpecialSemHead.1b" letterOnly="yes" paren="final" equal="no"/>.</p>
+				<example num="xSpecialPersonHE.1">
+					<listSingle letter="xSpecialPersonHE.1a">
+						<langData lang="lFree">'They all, she and my children, ran away.' <exampleRef letter="xSpecialSemHead.1a" equal="yes" letterOnly="no"/>
+						</langData>
+					</listSingle>
+					<listSingle letter="xSpecialPersonHE.1b">
+						<langData lang="lFree">'The two animals, he and the female pigeon’s friend, danced.' <exampleRef letter="xSpecialSemHead.1b" equal="yes" letterOnly="no"/>
+						</langData>
+					</listSingle>
+				</example>
+				<p>The notion of inclusion within the reference of a pronoun can be formalized as Set-theoretic inclusion, which forms the lattice shown in (26).<endnote id="eLattice">
+						<p>Bill Ladusaw pointed out the lattice properties of pronominal systems.  See <citation ref="rParteeMath" page="Ch.11" author="yes"/> for the mathematical properties of lattices.</p>
+					</endnote>   Combining a first person exclusive pronoun and a second person pronoun yields a first person inclusive pronoun.  A first person exclusive pronoun may add a third person referent and still remain first person exclusive.  Likewise, a second person pronoun may add a third person referent and remain second person.  Finally, the combination of a first person exclusive pronoun, a second person pronoun, and a third person pronoun requires the use of first person inclusive.  First person inclusive is thus the top or upper-bound of the lattice, while the empty set is the bottom or lower-bound.</p>
+				<example>
+					<chart>
+						<img src="Lattice.png"/>
+					</chart>
+					<!--
+								1I={1EX,2,3}
+
+
+
+{1EX,2}=11						1EX={1EX,3}		2={2,3}
+
+
+
+		1EX				      2						3
+
+
+
+							   Ø-->
+				</example>
+				<p>
+Looked at from the point of view of the semantic interpretation for the PPC given by <citation ref="rLadusawPPC" author="yes"/>, the requirement that the referent(s) of the adjunct be included in the reference of the pronoun head entails the Person Hierarchy Effect, due to the meaning of the person features of the pronouns.  For example, since a second person pronoun refers to a group which includes the hearer but excludes the speaker, a construction with a second person pronoun as head could not have a first person adjunct.  Likewise, a third person pronoun refers to a group which excludes both the speaker and the hearer, so neither a first person nor a second person adjunct is allowed.  The inclusion interpretation thus accounts for the Person Hierarchy Effect without a separate stipulation that the person feature of the head must be greater or equal to the person feature of the adjunct on a scale of 1 &gt; 2 &gt; 3.
+Once we move to non-pronominal heads, however, the inclusion interpretation seems more problematic.  Giving a reading similar to those in <exampleRef num="xSpecialPersonHE.1" equal="no" letterOnly="no"/> for <exampleRef letter="xSpecialSemHead.1c" paren="initial" punct="-" equal="no" letterOnly="no"/>
+					<exampleRef letter="xSpecialSemHead.1e" letterOnly="yes" paren="final" equal="no"/> yields the bizarre results shown in <exampleRef num="xSpecialPersonHE.2" equal="no" letterOnly="no"/>.  In each of these examples, the reference of head and of the adjunct seem to be disjoint.</p>
+				<example num="xSpecialPersonHE.2">
+					<listSingle letter="xSpecialPersonHE.2c">
+						<langData lang="lFree">??'The two Josés, José and my father, put it inside my father’s house.' <exampleRef letter="xSpecialSemHead.1c" equal="yes" letterOnly="no"/>
+						</langData>
+					</listSingle>
+					<listSingle letter="xSpecialPersonHE.2d">
+						<langData lang="lFree">??'The dog caught two chickens, a chicken and a rabbit.' <exampleRef letter="xSpecialSemHead.1d" equal="yes" letterOnly="no"/>
+						</langData>
+					</listSingle>
+					<listSingle letter="xSpecialPersonHE.2e">
+						<langData lang="lFree">??'Two one mans, including a man and his dog, were going to his ranch.' <exampleRef letter="xSpecialSemHead.1e" equal="yes" letterOnly="no"/>
+						</langData>
+					</listSingle>
+				</example>
+				<p>
+Surprisingly, in Meso-American languages the inclusion relationship may still be workable.  Judith Aissen (p.c.) found that PPC-type constructions in Tzotzil which have proper names rather than plural pronouns as the head are also grammatical and receive basically the same interpretation as regular PPCs.  This is possible since, in both Tzotzil and Zapotec, a proper name may denote not only that individual, but also his family or close associates.
+Following up on this reasoning, we could assume that the correct extension of Ladusaw’s semantic analysis of the PPC would be that the referent(s) in the adjunct must be included in the reference of the head, with the number feature of the group being given by the quantifier.  Under this analysis, proper names and common noun phrases become simply special types of third person pronouns.  Therefore, just as the third person animate (but nonhuman) pronoun maa could not include reference to a person, John could not include reference to someone, say, in his enemy’s family.  This analysis might be made to work for <exampleRef letter="xSpecialSemHead.1c" equal="no" letterOnly="no"/>, since José and my father could be close associates, and for <exampleRef letter="xSpecialSemHead.1e" equal="no" letterOnly="no"/>, since a man’s dog certainly belongs to him.  It does not seem workable for <exampleRef letter="xSpecialSemHead.1d" equal="no" letterOnly="no"/>, however, since the reference of chicken does not seem in any way to include the reference of rabbit.  Therefore, more needs to be said to entail the Person Hierarchy Effect for non-pronominal heads; inclusion alone is not sufficient.
+</p>
+			</section3>
+			<section3 id="sSpecialSemPerson">
+				<secTitle>The Person Hierarchy Effect and group reference</secTitle>
+				<p>
+In addition to the case of <exampleRef letter="xSpecialSemHead.1d" equal="no" letterOnly="no"/>, where the inclusion relation does not hold between the reference of the head and the reference of the adjunct, there are problematic cases where inclusion does hold.  Examples <exampleRef num="xSpecialSemPerson.1" equal="no" letterOnly="no"/>-<exampleRef num="xSpecialSemPerson.2" equal="no" letterOnly="no"/> show that the inclusion analysis does not entail the Person Hierarchy Effect for non-pronominal heads.  If the person referred to by the second person pronoun is a member of Susan’s family, the inclusion interpretation would predict that <exampleRef letter="xSpecialSemPerson.1b" equal="no" letterOnly="no"/> is grammatical, but it is not, since it violates the Person Hierarchy Effect.</p>
+				<example num="xSpecialSemPerson.1">
+					<listInterlinear letter="xSpecialSemPerson.1a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Ts-a</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">de</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">de</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">P-go	2	P-two	2	Susan</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘You can go with Susan.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">TRIPTOQ 80</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemPerson.1b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*Ts-a</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">Susan</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">de.</object>
+								</wrd>
+							</line>
+						</lineGroup>
+					</listInterlinear>
+				</example>
+				<p>Similarly, xnaa noo ‘my mother’ should be able to head a construction which includes me, but as <exampleRef letter="xSpecialSemPerson.2b" equal="no" letterOnly="no"/> shows, the Person Hierarchy Effect again rules this out.</p>
+				<example num="xSpecialSemPerson.2">
+					<listInterlinear letter="xSpecialSemPerson.2a">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">Tempran</wrd>
+								<wrd lang="lZap">r-a-xee</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">xnaa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+							<line>
+								<gloss lang="lGloss">early	H-go-rise	1EX	P-two	1EX	mother	1EX</gloss>
+							</line>
+						</lineGroup>
+						<free>
+							<gloss lang="lFree">‘Early my mother and I would get up.’</gloss>
+						</free>
+						<free>
+							<gloss lang="lRef">LIFEINQ 1</gloss>
+						</free>
+					</listInterlinear>
+					<listInterlinear letter="xSpecialSemPerson.2b">
+						<lineGroup>
+							<line>
+								<wrd lang="lZap">*Tempran</wrd>
+								<wrd lang="lZap">r-a-xee</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">xnaa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">y-rup</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">xnaa</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo</object>
+								</wrd>
+								<wrd lang="lZap">
+									<object class="emphasized">noo.</object>
+								</wrd>
+							</line>
+						</lineGroup>
+					</listInterlinear>
+				</example>
+				<p>Clearly, it is the person feature of the head that is crucial.  In order to ensure that the Person Hierarchy Effect is met we need the person feature of the head to be the person feature for the entire structure.  Also, the quantifier marks the number for the construction.  I capture both of these properties in the semantic interpretation given in <exampleRef num="xSpecialSemInterp" equal="no" letterOnly="no"/>, where the phrase the mother DP signifies the whole construction.</p>
+				<example num="xSpecialSemInterp">
+					<table border="0">
+						<caption align="left" valign="top">Proposed Semantic Interpretation</caption>
+						<row>
+							<col align="left" valign="top">The mother DP defines a group which has the person feature of the head DP<object class="sub">1</object> and the number feature of the quantifier.  The referents of all the arguments of (i.e. DPs following) the quantifier must be included in the defined group.</col>
+						</row>
+					</table>
+				</example>
+				<p>This means that, as before, a first person exclusive head would require that the hearer (second person) could not be part of the group, whereas a first person inclusive head would require that both the speaker and the hearer be included.  A second person head would mean that the speaker (first person) could not be included, and a third person head would exclude both the speaker and the hearer.  For example, the makeup of the group X referred to by <langData lang="lZap">Susan y-rup Maria</langData>
+					<gloss lang="lGloss">  ‘Susan P-two Mary’</gloss> would be calculated as follows:</p>
+				<table>
+					<row>
+						<col align="left" valign="top">Susan <object class="symbol"> Î </object> X ; person = 3 <object class="symbol"> Þ </object>   1 <object class="symbol"> Ï </object> X, 2<object class="symbol"> Ï </object> X</col>
+					</row>
+					<row>
+						<col align="left" valign="top">Mary <object class="symbol"> Î </object> X</col>
+					</row>
+					<row>
+						<col align="left" valign="top">| X |   =  2</col>
+					</row>
+				</table>
+				<p>
+The proposed interpretation thus entails both the Person Hierarchy Effect and the number resolution for the structure.  It covers both pronominal and non-pronominal heads, thus clarifying and extending Ladusaw’s analysis beyond the limited domain of the PPC.  However, there is one problem remaining: pronominal heads are preferred over non-pronominal heads.  Thus, even when a third person pronoun is used, it cannot be in DP<object class="sub">2</object> while a non-pronominal is the head.<endnote id="eChamorro">
+						<p>
+							<citation ref="rChungPropGovt" author="yes"/> reports that there is a similar hierarchical ranking of pronouns over non-pronominals in Chamorro.  The subject of a transitive irrealis clause is required to be equal or superior to the object on this hierarchy.  If a non-pronominal subject (like the DP<object class="sub">1</object> head) is present, the object (comparable to DP<object class="sub">2</object>) cannot be a pronoun.</p>
+					</endnote>   If non-pronominals are treated as lower than third person pronouns (i.e. as if they have ‘fourth’ person feature rather than third person on an appropriately expanded lattice), then the above account will assure that a pronominal head is always chosen over a non-pronominal head.
+</p>
+			</section3>
+		</section2>
+		<section2 id="sSpecialSyntax">
+			<secTitle>Syntactic analysis</secTitle>
+			<p>
+More of the forms of the special number marking construction are illustrated in section <sectionRef sec="sSpecialSyntaxForms"/>, then section <sectionRef sec="sSpecialSyntaxDist"/> gives the full distribution of both the contiguous and separated versions of the construction, leading to the syntactic structure I propose.
+</p>
+			<section3 id="sSpecialSyntaxForms">
+				<secTitle>Various forms of the constructions and their conditions</secTitle>
+				<p>
+Section <sectionRef sec="sSpecialSemQuant"/> introduced the Redundancy Condition, which allows for a simplified version of the construction in which DP<object class="sub">2...n</object> are not expressed when they are identical to DP<object class="sub">1</object>.  There are two other conditions under which the DP<object class="sub">1</object> following the quantifier can be optionally omitted.  These two conditions, which are part of the grammar of Quiegolani Zapotec rather than being specific to the special number marking constructions, will be covered in the next two sections.  Section <sectionRef sec="sSpecialSyntaxFormsOrder"/> then demonstrates the ordering restrictions on the DPs following the quantifier.  Besides giving a better understanding of the construction descriptively, these conditions combine with the fact that the quantifiers select a certain number of arguments to point to a clausal analysis of the quantifier and the DPs following it.
+</p>
+				<section4 id="sSpecialSyntaxFormsSPO">
+					<secTitle>The Subject = Possessor of Object Condition</secTitle>
+					<p>
+In addition to the examples of the full construction we have seen where all the DPs are overt, there are many examples where there is no repeated DP<object class="sub">1</object> after the quantifier.  One condition allowing this repeated DP<object class="sub">1</object> to be phonetically silent is the Subject = Possessor of Object Condition, which says that DP<object class="sub">1</object> may be absent after the quantifier if it is also the possessor of DP<object class="sub">2</object>.  <exampleRef num="xSpecialSyntaxFormsSPO.1" equal="no" letterOnly="no"/> shows this optionality when DP<object class="sub">1</object> and the possessor of DP<object class="sub">2</object> are a proper name and <exampleRef num="xSpecialSyntaxFormsSPO.2" equal="no" letterOnly="no"/> gives an example where both are pronominal.<endnote id="ePrincC">
+							<p>Principle C of the Binding Theory (<citation ref="rChomskyGB" paren="none" author="yes"/>) must be parameterized for Quiegolani Zapotec; proper names may be repeated throughout the sentence rather than changing all references after the first to pronouns.  Further, there is no marking on the pronouns to indicate reflexivity (<citation ref="rBlackDiss" page="Ch.5" paren="none" author="yes"/>, <citation ref="rBlackQZBook" page="Ch.4" author="no" paren="none"/>).</p>
+						</endnote>
+						<exampleRef num="xSpecialSyntaxFormsSPO.3" equal="no" letterOnly="no"/> verifies that this optionality is not possible when the possessor of DP<object class="sub">2</object> is different from DP<object class="sub">1</object>.</p>
+					<example num="xSpecialSyntaxFormsSPO.1">
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.1a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Biki</wrd>
+									<wrd lang="lZap">z-a</wrd>
+									<wrd lang="lZap">g-un</wrd>
+									<wrd lang="lZap">kompanyar</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëd</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">Virginia	PR-go	P-LM	accompany Lucrecia	P-two	POS-baby	Lucrecia</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Virginia went to accompany Lucrecia<object class="sub">i</object> and her<object class="sub">i</object> baby.’
+</gloss>
+							</free>
+							<free>
+								<object class="TextReference">GRING 6</object>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.1b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëd</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsSPO.2">
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Tempran</wrd>
+									<wrd lang="lZap">r-a-xee</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xnaa</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">early	H-go-rise	1EX	P-two	1EX	mother	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Early my<object class="sub">i</object> mother and I<object class="sub">i</object> would get up.’
+</gloss>
+							</free>
+							<free>
+								<object class="TextReference">LIFEINQ 1</object>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xnaa</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsSPO.3">
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.3a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-zhoon</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëd</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-run	3RD	P-all	3RD	POS-baby	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and my children ran away.’
+</gloss>
+							</free>
+							<free>
+								<object class="TextReference">MARTRIST 6</object>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.3b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëd</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<p>This optionality is the same phenomenon seen in regular transitive sentences when the subject and the possessor of the object are coreferent.  Some examples are given in <exampleRef num="xSpecialSyntaxFormsSPO.4" equal="no" letterOnly="no"/>, where the subject position is empty in each case.  In <exampleRef letter="xSpecialSyntaxFormsSPO.4a" equal="no" letterOnly="no"/> both expressed possessors are pronominal, and in <exampleRef letter="xSpecialSyntaxFormsSPO.4b" equal="no" letterOnly="no"/> a full nominal phrase fills that position.</p>
+					<example num="xSpecialSyntaxFormsSPO.4">
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.4a">
+								<lineGroup>
+								<line>
+									<langData lang="lZap">Dxe	w-dxiin	__	x-ten	men</langData>
+								</line>
+								<line>
+									<gloss lang="lGloss">already	C-arrive	   POS-ranch	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<object class="FreeTranslation">‘When he<object class="sub">i</object> arrived at his<object class="sub">i</object> ranch</object>
+							</free>
+<interlinear>
+						<lineGroup>
+								<line>
+									<langData lang="lZap">w-kaa	__	x-kix	men	chu	yag.</langData>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-put	 	POS-bag	3RD	belly	tree</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<object class="FreeTranslation">he<object class="sub">i</object> put his<object class="sub">i</object> bag on a tree.’</object>
+							</free>
+							<free>
+								<object class="TextReference">MENMAAC 3</object>
+							</free>
+					</interlinear>
+	</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsSPO.4b">
+							<lineGroup>
+								<line>
+									<langData lang="lZap">S-ya	__	ru	x-yuu	mër	gol.</langData>
+								</line>
+								<line>
+									<gloss lang="lGloss">PR-go	 	mouth	POS-house	pigeon	male</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<object class="FreeTranslation">‘The male pigeon<object class="sub">i</object> went to his<object class="sub">i</object> house.’</object>
+							</free>
+							<free>
+								<object class="TextReference"> MARTRIST 42</object>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+There is clearly a special relationship between the subject and the possessor of the object in many Zapotecan languages.  In Yatzachi Zapotec, for example, all reflexive and reciprocal relationships are expressed by this type of portmanteau relationship where only the possessor of the object is overt (<citation ref="rButlerReflexive" paren="none" author="yes"/>).  This condition is therefore part of a general constraint in Zapotec grammar.<endnote id="eSubjPossObj">
+							<p>See <citation ref="rBlackDiss" page="341-349" paren="initial" author="yes"/>, <citation ref="rBlackBinding" paren="none" author="no"/>, <citation ref="rBlackQZBook" author="no" page="276-281" paren="final"/> for further details and a proposal towards an analysis of this phenomenon.</p>
+						</endnote>   Most importantly, it gives evidence for a clausal analysis of the quantifier and following DPs, since the relationship between the DP<object class="sub">1</object> and the possessor of DP<object class="sub">2</object> is exactly the same as that between the subject and the possessor of the object in a clause.
+</p>
+				</section4>
+				<section4 id="sSpecialSyntaxFormsNonPn">
+					<secTitle>The Non-Pronominal Head Condition</secTitle>
+					<p>
+The final condition which allows the repeated DP<object class="sub">1</object> following the Quantifier to be omitted distinguishes between pronouns and non-pronominals.  If DP<object class="sub">1</object> is a pronoun not meeting either the Subject = Possessor of Object Condition or the Redundancy Condition then it must be overt after the quantifier.  In the case of a non-pronominal head DP<object class="sub">1</object>, the repeated DP<object class="sub">1</object> may be optionally omitted.  With proper name or common noun heads, the overt realization of the repeated DP<object class="sub">1</object> appears to be truly optional, whereas the preference is clearly not to repeat the DP<object class="sub">1</object> in constructions with more complex heads (see <exampleRef num="xSpecialSyntaxFormsNonPn.6" equal="no" letterOnly="no"/>).  Since it is also possible to replace the second instance of DP<object class="sub">1</object> with a coreferent pronoun, I claim that the Non-Pronominal Head Condition is simply an instantiation of the hierarchy of DP-types <exampleRef num="xSpecialSyntaxFormsNonPn.1" equal="no" letterOnly="no"/> and the null third person pronoun (which can only have a non-pronominal antecedent), both of which are otherwise at work in Quiegolani Zapotec grammar (<citation ref="rBlackDiss" page="101-108" paren="none" author="yes"/>, <citation ref="rBlackQZBook" author="no" page="79-86" paren="none"/>).</p>
+					<example num="xSpecialSyntaxFormsNonPn.1">
+						<table border="0">
+							<caption align="left" valign="top">Hierarchy of DP-types</caption>
+							<row>
+								<col align="left" valign="top">quantified nominal phrases</col>
+								<col align="left" valign="top">                   </col>
+								<col align="center" valign="top">free</col>
+							</row>
+							<row>
+								<col align="left" valign="top">possessed or modified nominal phrases</col>
+								<col align="left" valign="top">                   </col>
+								<col rowspan="2" align="center" valign="middle">
+									<object class="symbol">¯</object>
+								</col>
+							</row>
+							<row>
+								<col align="left" valign="top">proper names or common nouns</col>
+								<col align="left" valign="top">                   </col>
+							</row>
+							<row>
+								<col align="left" valign="top">pronouns</col>
+								<col align="left" valign="top">                   </col>
+								<col align="center" valign="top">bound</col>
+							</row>
+						</table>
+					</example>
+					<p>
+Examples <exampleRef num="xSpecialSyntaxFormsNonPn.2" equal="no" letterOnly="no"/>-<exampleRef num="xSpecialSyntaxFormsNonPn.6" equal="no" letterOnly="no"/>  illustrate this Non-Pronominal Head Condition (or Hierarchy of DP-types).  When the head DP<object class="sub">1</object> is a pronoun <exampleRef num="xSpecialSyntaxFormsNonPn.2" equal="no" letterOnly="no"/>-<exampleRef num="xSpecialSyntaxFormsNonPn.3" equal="no" letterOnly="no"/>, DP<object class="sub">1</object> must be repeated after the quantifier, as verified by the (b) examples.  In <exampleRef num="xSpecialSyntaxFormsNonPn.3" equal="no" letterOnly="no"/> the two different pronouns used indicate two groups being combined, giving a reading of <gloss lang="lGloss"> 'we all, I with them,...'</gloss>
+					</p>
+					<example num="xSpecialSyntaxFormsNonPn.2">
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-drink	3RD	P-two	3RD	Virginia	soda</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 8</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal.</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsNonPn.3">
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.3a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">N-ga</wrd>
+									<wrd lang="lZap">w-u-gwe</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">there	C-eat-lunch	1EX	P-all	1EX	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘There we all ate lunch.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef"> MTLEMON2 45</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.3b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*N-ga</wrd>
+									<wrd lang="lZap">w-u-gwe</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<p>
+The repeated DP<object class="sub">1</object> may be omitted, however, when both DP positions are filled by non-pronominals.  <exampleRef num="xSpecialSyntaxFormsNonPn.4" equal="no" letterOnly="no"/> illustrates this optionality when DP<object class="sub">1</object> is filled by a proper name and <exampleRef num="xSpecialSyntaxFormsNonPn.5" equal="no" letterOnly="no"/> verifies that it also holds for common nouns.</p>
+					<example num="xSpecialSyntaxFormsNonPn.4">
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.4a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Xna-ydoo</wrd>
+									<wrd lang="lZap">x-pee</wrd>
+									<wrd lang="lZap">Manwel</wrd>
+									<wrd lang="lZap">n-ak</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Tomas.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">mother-church	POS-son	Manuel	S-become Catherine	P-two	Thomas</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘The godparents of Manuel’s son are Catherine and Thomas.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 12</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.4b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Tomas.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsNonPn.5">
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.5a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-catch	dog	chicken	P-two	chicken	rabbit</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘The dog caught a chicken and a rabbit.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 49</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.5b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<p>
+With more complex nominal phrases, the preference is clearly not to repeat the full DP<object class="sub">1 </object>
+						<exampleRef letter="xSpecialSyntaxFormsNonPn.6a" equal="no" letterOnly="no"/>, but instead to use the common noun only <exampleRef letter="xSpecialSyntaxFormsNonPn.6b" equal="no" letterOnly="no"/>, a coreferent pronoun <exampleRef letter="xSpecialSyntaxFormsNonPn.6c" equal="no" letterOnly="no"/>, or the null third person pronoun <exampleRef letter="xSpecialSyntaxFormsNonPn.6d" equal="no" letterOnly="no"/> (i.e. omitting the second DP<object class="sub">1</object>).</p>
+					<example num="xSpecialSyntaxFormsNonPn.6">
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.6a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">
+										<object class="not-italic">??</object>W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">win</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">win</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-catch	dog	one	chicken	small	P-two	one	chicken	small	rabbit</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree"> ‘The dog caught a small chicken and a rabbit.’</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.6b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">win</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.6c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed<object class="sub">i</object>
+										</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">win</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">maa<object class="sub">i</object>
+										</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsNonPn.6d">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">win</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+				</section4>
+				<section4 id="sSpecialSyntaxFormsOrder">
+					<secTitle>Ordering restrictions on the DPs following the quantifier</secTitle>
+					<p>
+Coindexation of the head DP and the first DP after the quantifier (the two DP<object class="sub">1</object>s) is required. DP<object class="sub">1</object> and DP<object class="sub">2</object> may not be in reverse order after the quantifier, as shown in <exampleRef num="xSpecialSyntaxFormsOrder.1" equal="no" letterOnly="no"/>-<exampleRef num="xSpecialSyntaxFormsOrder.2" equal="no" letterOnly="no"/>, nor may the DP<object class="sub">1</object> after the quantifier add new information, as <exampleRef letter="xSpecialSyntaxFormsOrder.3c" equal="no" letterOnly="no"/> verifies.</p>
+					<example num="xSpecialSyntaxFormsOrder.1">
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.1a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Nga</wrd>
+									<wrd lang="lZap">ts-uu</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">de</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">de</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Susan.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">there	P-be	2	P-two	2	Susan</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘There you’ll be with Susan.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">TRIPTOQ 6</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.1b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*Nga</wrd>
+									<wrd lang="lZap">ts-uu</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">de</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Susan</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">de.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsOrder.2">
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Xna-ydoo</wrd>
+									<wrd lang="lZap">x-pee</wrd>
+									<wrd lang="lZap">Manwel</wrd>
+									<wrd lang="lZap">n-ak</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Tomas.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">mother-church	POS-son	Manuel	S-become Catherine	P-two	Thomas</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘The godparents of Manuel’s son are Catherine and Thomas.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 12</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Tomas</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.2c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">...</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Katalina<object class="sub">i</object>
+										</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men<object class="sub">i</object>
+										</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Tomas.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxFormsOrder.3">
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.3a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Lex</wrd>
+									<wrd lang="lZap">bweree-ke</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">later	C/return-ASSOC	3RD	P-all	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Then they all returned also.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">MTLEMON2 57B</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.3b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Lex</wrd>
+									<wrd lang="lZap">bweree-ke</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Susan.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxFormsOrder.3c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">*Lex</wrd>
+									<wrd lang="lZap">bweree-ke</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Dolf</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Susan.</object>
+									</wrd>
+								</line>
+							</lineGroup>
+						</listInterlinear>
+					</example>
+					<p>
+The unattested examples above where the first DP following the quantifier is not coindexed with the head DP<object class="sub">1</object> are simply uninterpretable.  The reason for this restriction ties in with the need for assuring correct semantic construal of the adjunct,<endnote id="eConstrual">
+							<p>Informally, the correct construal is assured by requiring that a quantifier phrase may only adjoin at D-structure to a D’ which is coindexed with the external argument of the quantifier.</p>
+						</endnote>  especially in the separated version of the structure, presented in the next section.
+</p>
+				</section4>
+			</section3>
+			<section3 id="sSpecialSyntaxDist">
+				<secTitle>Distribution and syntactic structure</secTitle>
+				<p>
+This section presents the full distribution of the special number marking constructions. Section <sectionRef sec="sSpecialSyntaxDistContinguous"/> shows that the construction as a whole fills all the normal DP positions.  This distribution, coupled with the fact that the whole construction can be focused as a unit, argues for its constituency as a DP.  Section <sectionRef sec="sSpecialSyntaxDistStructure"/>  then presents the proposed internal structure.  Data for the separated version is given in section <sectionRef sec="sSpecialSyntaxDistSeparated"/>, and section <sectionRef sec="sSpecialSyntaxDistDeriv"/> shows that the distribution of the separated version can be easily accounted for via Extraposition and/or Focusing movement.
+</p>
+				<section4 id="sSpecialSyntaxDistContinguous">
+					<secTitle>The contiguous version</secTitle>
+					<p>
+These constructions are found in subject position in the vast majority of cases, as in almost all of the examples seen so far.  The examples in <exampleRef num="xSpecialSyntaxDistCont.1" equal="no" letterOnly="no"/> show that the structure can also be focused.</p>
+					<example num="xSpecialSyntaxDistCont.1">
+						<listInterlinear letter="xSpecialSyntaxDistCont.1a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Laa</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xnaa</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xuz</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">r-laa-w.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">FM	mother	1EX	P-two	father	1EX	H-do-3I</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘My mother and my father did it.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 21</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistCont.1b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Noze</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">s-ya</wrd>
+									<wrd lang="lZap">den.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">only	1EX	P-all	1EX	PR-go	ranch</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Just the rest of us go to the ranch.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">SYANODEN 8</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+These structures can also be the object of a regular declarative sentence.</p>
+					<example>
+						<listInterlinear letter="xSpecialSyntaxDistCont.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nëëz</wrd>
+									<wrd lang="lZap">mëëk</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">ngyed</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">konej.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-catch	dog	chicken	P-two	chicken	rabbit</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘The dog caught a chicken and a rabbit.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 49</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistCont.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-nache</wrd>
+									<wrd lang="lZap">meedx</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-frighten	lion	3RD	P-all	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘The lion frightened everyone.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">ANIMAL 49</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+						<exampleRef num="xSpecialSyntaxDistCont.3" equal="no" letterOnly="no"/> gives various examples where the special number marking construction is acting as the object of a preposition.</p>
+					<example num="xSpecialSyntaxDistCont.3">
+						<listInterlinear letter="xSpecialSyntaxDistCont.3a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-e</wrd>
+									<wrd lang="lZap">Jasint</wrd>
+									<wrd lang="lZap">lo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Rafayel</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Lawer:</object>
+									</wrd>
+									<wrd lang="lZap">... </wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-say	Jacinto	face	Ralph	P-two	Larry  </gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Jacinto said to Ralph and Larry ...’</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistCont.3b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-e</wrd>
+									<wrd lang="lZap">Jasint</wrd>
+									<wrd lang="lZap">lo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki:</object>
+									</wrd>
+									<wrd lang="lZap">... </wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-say	Jacinto	face	3RD	P-two	3RD	Virginia  </gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Jacinto said to her and Virginia ...’</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistCont.3c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-gwed</wrd>
+									<wrd lang="lZap">Benit</wrd>
+									<wrd lang="lZap">mëlbyuu</wrd>
+									<wrd lang="lZap">lo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-give	Benito	fish	face	3RD	P-all	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Benit gave fish to all of them.’</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistCont.3d">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-eey</wrd>
+									<wrd lang="lZap">Danyel</wrd>
+									<wrd lang="lZap">gyët</wrd>
+									<wrd lang="lZap">por</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-take	Daniel	tortillas	for	1EX	P-all	1EX	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Daniel took tortillas for all of us.’</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+Finally, the contiguous structure can be a possessor, as shown in <exampleRef num="xSpecialSyntaxDistCont.4" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDistCont.4">
+						<interlinear>
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-dxiin</wrd>
+									<wrd lang="lZap">men</wrd>
+									<wrd lang="lZap">led-ne</wrd>
+									<wrd lang="lZap">ts-oo</wrd>
+									<wrd lang="lZap">men</wrd>
+									<wrd lang="lZap">x-kiich</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Gecha</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Karmita.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-arrive	3RD	body-that	P-extract	3RD POS-paper	Lucrecia	P-two	Carmita</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘They arrived at the place where they get Lucrecia’s and Carmita’s visas.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">GRING 8</gloss>
+							</free>
+						</interlinear>
+					</example>
+					<p>
+The distribution of the contiguous version of the construction leads to the conclusion that the head, at least, is a DP, since it may fill all the normal DP positions.  The fact that the whole construction can be focused <exampleRef num="xSpecialSyntaxDistCont.1" equal="no" letterOnly="no"/> argues for its constituency as a DP.  The alternative account which assumes that the quantifier clause is actually embedded under the main verb, rather than being a DP adjunct, cannot account for this focusing.
+</p>
+				</section4>
+				<section4 id="sSpecialSyntaxDistStructure">
+					<secTitle>Proposed syntactic structure</secTitle>
+					<p>
+We have established so far that the quantifier and following DPs form an adjunct clause and that the head DP<object class="sub">1</object> and this adjunct clause together comprise a single constituent.  The questions remaining are where the quantifier clause attaches within the DP and what the internal structure of the quantifier clause is.  Instead of positing that the adjunct attaches to the head DP itself (as assumed by <citation ref="rSchwartzPPC" paren="none" author="yes"/> for the PPC), I propose that the adjunct clause attaches within the DP, most likely adjoined to D', in the same position as relative clauses do.<endnote id="eAdjunction">
+							<p>This base-generated adjunction within DP has the advantage of not violating Chomsky’s <citation ref="rChomskyBarriers" author="no"/> prohibition against adjunction to arguments even when it is applied to base generated structures.</p>
+						</endnote>
+As for the internal structure of the adjunct, I assume that it is an IP which is headed by the Potential marker on the quantifier, just as normal clauses are headed by the aspect marking in I<object class="super">0</object>.  This quantifier head has its specifiers on the left and undergoes movement to I<object class="super">0</object>. In addition, the quantifier subcategorizes for a certain number and type of arguments, just as verbs do.  Therefore, the Quantifiers meaning <gloss lang="lGloss">'two'</gloss> and <gloss lang="lGloss">'all'</gloss> are like transitive verbs, whereas the quantifier meaning <gloss lang="lGloss">'one'</gloss> is like an intransitive verb in its subcategorization requirements, and the quantifiers meaning <gloss lang="lGloss">'three'</gloss> and <gloss lang="lGloss">'four'</gloss> take that number of arguments, respectively.  I further assume that the first argument after the quantifier is the external argument (or subject) in each case, which accords with the ordering restrictions among the DPs and the Subject = Possessor of Object Condition.</p>
+					<p>The D-structure I propose for the special number marking construction in
+<exampleRef num="xSpecialSyntaxStructure.1" equal="no" letterOnly="no"/> is given in <exampleRef num="xSpecialSyntaxStructure.DTree" equal="no" letterOnly="no"/>.  This whole structure would then occupy the subject position (left specifier of VP) in the sentence.  It could also undergo Focusing movement as a constituent to adjoin to IP.</p>
+					<example num="xSpecialSyntaxStructure.1">
+						<interlinear>
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-a</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Jose</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Jose</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xuz</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-go	José	P-two	José	father	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Jose went together with my father.’</gloss>
+							</free>
+						</interlinear>
+					</example>
+					<example num="xSpecialSyntaxStructure.DTree">
+						<tree>
+							<p>D-structure for <exampleRef num="xSpecialSyntaxStructure.1" equal="no" letterOnly="no"/>
+							</p>
+							<img src="contDP.png"/>
+						</tree>
+					</example>
+				</section4>
+				<section4 id="sSpecialSyntaxDistSeparated">
+					<secTitle>The separated version</secTitle>
+					<p>
+In addition to the contiguous structure we have been considering (as in <exampleRef letter="xSpecialSyntaxDistSep.1a" equal="no" letterOnly="no"/>), there is a completely synonymous version where only the head DP<object class="sub">1</object> is in subject position and the adjunct portion appears at the end <exampleRef letter="xSpecialSyntaxDistSep.1b" equal="no" letterOnly="no"/>.</p>
+					<example>
+						<listInterlinear letter="xSpecialSyntaxDistSep.1a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-drink	3RD	P-two	3RD	Virginia	soda</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 8A</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistSep.1b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-drink	3RD soda	P-two	3RD	Virginia</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 8B</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+The separated construction is identical to the contiguous construction, both in its interpretation, the restrictions on the optionality of the DPs, and the fact that the Person Hierarchy Effect is a strict requirement.</p>
+					<p>Data illustrating these separated constructions are given in <exampleRef num="xSpecialSyntaxDistSep.2" equal="no" letterOnly="no"/>-<exampleRef num="xSpecialSyntaxDistSep.5" equal="no" letterOnly="no"/>.  There are numerous examples where the head is in the subject position, immediately following the verb, but the quantifier phrase comes after the direct object or locative phrase, as shown in <exampleRef num="xSpecialSyntaxDistSep.2" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDistSep.2">
+						<listInterlinear letter="xSpecialSyntaxDistSep.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-tsoow</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Rafayel</object>
+									</wrd>
+									<wrd lang="lZap">te</wrd>
+									<wrd lang="lZap">mezh</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Rafayel</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Lawer.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-make	Ralph	one	table	P-two	Ralph	Larry</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Ralph and Larry made a table.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 43</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistSep.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-ya</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xuz</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">den</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">xnaa</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo,</object>
+									</wrd>
+									<wrd lang="lZap">r-boo</wrd>
+									<wrd lang="lZap">me</wrd>
+									<wrd lang="lZap">gyezh.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-go father 1EX rancho P-all mother 1EX H-extract	3F	cheese</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘My father and mother go to the ranch, and she makes cheese.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">QUESO 3</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistSep.2c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">W-a</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">wii</wrd>
+									<wrd lang="lZap">lo</wrd>
+									<wrd lang="lZap">gyëël</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">C-go	1EX	see	face	lake	P-all	1EX	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘We all went to see the lake.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">MTLEMON 50</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>Example <exampleRef num="xSpecialSyntaxDistSep.3" equal="no" letterOnly="no"/> shows that the separated construction may also have its head in the subject position of a deeply embedded clause, with the adjunct following the object.</p>
+					<example num="xSpecialSyntaxDistSep.3">
+						<interlinear>
+							<lineGroup>
+								<line>
+									<langData lang="lZap">Dxe-bel	r-laan	de	ts-a	de	g-e	noo	lo	men</langData>
+								</line>
+								<line>
+									<gloss lang="lGloss">already-if	H-want	2	P-go	2	P-say	1EX	face	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘If you want to go, I will tell him</gloss>
+							</free>
+							<interlinear>
+								<lineGroup>
+									<line>
+										<wrd lang="lZap">xiid</wrd>
+										<wrd lang="lZap">men</wrd>
+										<wrd lang="lZap">g-u</wrd>
+										<wrd lang="lZap">
+											<object class="emphasized">de</object>
+										</wrd>
+										<wrd lang="lZap">diiz</wrd>
+										<wrd lang="lZap">
+											<object class="emphasized">y-rup</object>
+										</wrd>
+										<wrd lang="lZap">
+											<object class="emphasized">de</object>
+										</wrd>
+										<wrd lang="lZap">
+											<object class="emphasized">men.</object>
+										</wrd>
+									</line>
+									<line>
+										<gloss lang="lGloss">F/come	3RD	P-chat	2	word	P-two	2	3RD</gloss>
+									</line>
+								</lineGroup>
+								<free>
+									<gloss lang="lFree">to come, so that you can talk with him.’</gloss>
+								</free>
+								<free>
+									<gloss lang="lGloss">HORTENS 5</gloss>
+								</free>
+							</interlinear>
+						</interlinear>
+					</example>
+					<p>There are also many cases where only the head is in focus position and the adjunct is clause final, as shown in <exampleRef num="xSpecialSyntaxDistSep.4" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDistSep.4">
+						<listInterlinear letter="xSpecialSyntaxDistSep.4a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">
+										<object class="emphasized">Te</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">z-a</wrd>
+									<wrd lang="lZap">x-ten</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëk</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">one	3RD	PR-go	POS-ranch	P-two	POS-dog	3RD</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘A man<object class="sub">i</object> was going to his<object class="sub">i</object> ranch with his<object class="sub">i</object> dog.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">MENMAAC 1</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistSep.4b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Le</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Jose</object>
+									</wrd>
+									<wrd lang="lZap">w-zhoon</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-unaa</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Jose.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">FM	José	C-run	P-two	POS-woman	José</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘José<object class="sub">i</object> ran away with his<object class="sub">i</object> wife.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 69</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistSep.4c">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Le</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">zux</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">w-guu</wrd>
+									<wrd lang="lZap">bni</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">mee</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">bzaan</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">FM	father	1EX	C-sow	seed	P-all	boy	sibling.opp.sex	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘My father planted seed with all my brothers.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef"> SYANODEN 19</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+						<exampleRef num="xSpecialSyntaxDistSep.5" equal="no" letterOnly="no"/> gives an example of the separated construction where the head is in object position.  In this case a locative phrase intervenes between the head and the adjunct.</p>
+					<example num="xSpecialSyntaxDistSep.5">
+						<interlinear>
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Lex</wrd>
+									<wrd lang="lZap">w-a-ron</wrd>
+									<wrd lang="lZap">men</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">x-yuu</wrd>
+									<wrd lang="lZap">x-mig</wrd>
+									<wrd lang="lZap">men</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">x-pëëd</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">later	C-go-leave	3RD	1EX	POS-house	POS-friend 3RD p-two	POS-baby	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘Then they took me and my baby to their friend’s house.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">MTLEMON 8</gloss>
+							</free>
+						</interlinear>
+					</example>
+				</section4>
+				<section4 id="sSpecialSyntaxDistDeriv">
+					<secTitle>Derivational account for separated version</secTitle>
+					<p>
+All of these variations in the position of the head and the adjunct in the separated construction can be accounted for straightforwardly with a derivational syntax.  The D-structure for the separated construction can be the same as proposed for the contiguous structure.  The only movements necessary are Extraposition from DP of the adjunct quantifier clause (relative clauses may also undergo this movement) and the independently needed fronting for focus. The derivational analysis provides a natural account for the fact that the Person Hierarchy Effect and other properties of the construction hold for the separated structure as well as for the contiguous structure.</p>
+					<p>The contiguous structure in <exampleRef letter="xSpecialSyntaxDistDeriv.1a" equal="no" letterOnly="no"/> and separated structure <exampleRef letter="xSpecialSyntaxDistDeriv.1b" equal="no" letterOnly="no"/> (repeated from earlier) both begin with the same D-structure (shown in <exampleRef num="xSpecialSyntaxDist.DTree" equal="no" letterOnly="no"/>), thus accounting naturally for their synonymy.</p>
+					<example>
+						<listInterlinear letter="xSpecialSyntaxDistDeriv.1a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal. <exampleRef letter="xSpecialSyntaxDistSep.1a" equal="yes" letterOnly="no"/>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-drink	3RD	P-two	3RD	Virginia	soda</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 8A</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistDeriv.1b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">R-oo</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">nisgaal</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-rup</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">men</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">Biki.</object>
+										<exampleRef letter="xSpecialSyntaxDistSep.1b" equal="yes" letterOnly="no"/>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">H-drink	3RD soda	P-two	3RD	Virginia</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘She and Virginia drink soda pop.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef">AGOSTO 8B</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<example num="xSpecialSyntaxDist.DTree">
+						<tree><p>D-structure for <exampleRef letter="xSpecialSyntaxDistSep.1a" letterOnly="no" paren="initial" punct="-"/><exampleRef letter="xSpecialSyntaxDistSep.1b" letterOnly="yes" paren="final"/></p>
+							<img src="Dstruct.png"/>
+						</tree>
+					</example>
+					<p>
+All that is necessary to obtain the S-structure for <exampleRef letter="xSpecialSyntaxDistDeriv.1a" equal="no" letterOnly="no"/> is for V<object class="super">0</object> to move to I<object class="super">0</object> in the main clause and for Q<object class="super">0</object> to move to I<object class="super">0</object> in the adjunct, as shown in <exampleRef num="xSpecialSyntaxDist.STree" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDist.STree">
+						<tree><p>S-structure for <exampleRef letter="xSpecialSyntaxDistSep.1a"/></p>
+							<img src="Sstruct.png"/>
+						</tree>
+					</example>
+					<p>
+Both of these same head movements also take place in <exampleRef letter="xSpecialSyntaxDistDeriv.1b" equal="no" letterOnly="no"/>.  In addition, the IP adjunct undergoes Extraposition from DP movement to obtain the S-structure. Similar Extraposition from DP will also account for the cases where the head is in object position and the adjunct is clause final, as in <exampleRef num="xSpecialSyntaxDistSep.5" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDist.ExtraTree">
+						<tree><p>S-structure for <exampleRef letter="xSpecialSyntaxDistSep.1b"/></p>
+							<img src="extra.png"/>
+						</tree>
+					</example>
+					<p>
+We still need an account for the separated structures where the head is in focus position, such as <exampleRef letter="xSpecialSyntaxDistDeriv.2b" equal="no" letterOnly="no"/>.  Again, the separated structure can be compared with the contiguous structure, which has been focused as a constituent <exampleRef letter="xSpecialSyntaxDistDeriv.2a" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDistDeriv.2">
+						<listInterlinear letter="xSpecialSyntaxDistDeriv.2a">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Le</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">zux</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">mee</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">bzaan</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">w-guu</wrd>
+									<wrd lang="lZap">bni.</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">FM	father	1EX 	P-all	boy	sibling.opp.sex 1EX  C-sow seed</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘My father planted seed with all my brothers.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef"> SYANODEN 19A</gloss>
+							</free>
+						</listInterlinear>
+						<listInterlinear letter="xSpecialSyntaxDistDeriv.2b">
+							<lineGroup>
+								<line>
+									<wrd lang="lZap">Le</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">zux</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo</object>
+									</wrd>
+									<wrd lang="lZap">w-guu</wrd>
+									<wrd lang="lZap">bni</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">y-ra</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">mee</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">bzaan</object>
+									</wrd>
+									<wrd lang="lZap">
+										<object class="emphasized">noo.</object>
+									</wrd>
+								</line>
+								<line>
+									<gloss lang="lGloss">FM	father	1EX	C-sow	seed	P-all	boy	sibling.opp.sex	1EX</gloss>
+								</line>
+							</lineGroup>
+							<free>
+								<gloss lang="lFree">‘My father planted seed with all my brothers.’</gloss>
+							</free>
+							<free>
+								<gloss lang="lRef"> SYANODEN 19</gloss>
+							</free>
+						</listInterlinear>
+					</example>
+					<p>
+Both of the examples in <exampleRef num="xSpecialSyntaxDistDeriv.2" equal="no" letterOnly="no"/> begin with the D-structure shown in <exampleRef num="xSpecialSyntaxDist.DFocTree" equal="no" letterOnly="no"/>.</p>
+					<example num="xSpecialSyntaxDist.DFocTree">
+						<tree><p>D-structure for <exampleRef letter="xSpecialSyntaxDistDeriv.2a" letterOnly="no" paren="initial" punct="-"/><exampleRef letter="xSpecialSyntaxDistDeriv.2b" letterOnly="yes" paren="final"/></p>
+							<img src="Dfocus.png"/>
+						</tree>
+					</example>
+					<p>
+In <exampleRef letter="xSpecialSyntaxDistDeriv.2a" equal="no" letterOnly="no"/>, the focusing operation moves the entire subject DP to adjoin to IP,<endnote id="eFocus">
+							<p>This is a somewhat simplified account of focus movement.  See <citation ref="rBlackDiss" paren="initial" author="yes"/>, <citation ref="rBlackQZBook" author="no" paren="final"/> for the exact position for constituents fronted by focusing.</p>
+						</endnote> with the other head movements also occurring as before.</p>
+					<example num="xSpecialSyntaxDist.ConFocTree">
+						<tree><p>S-structure for <exampleRef letter="xSpecialSyntaxDistDeriv.2a"/></p>
+							<img src="confocus.png"/>
+						</tree>
+					</example>
+					<p>To obtain the S-structure for (59b) instead, we must first apply Extraposition from DP to the adjunct clause, and then focus the head, which is all that remains overtly in the subject DP.<endnote id="eExtraposition">
+							<p>This separation involving Extraposition from DP and then focusing is also found with relative clauses.</p>
+						</endnote>
+					</p>
+					<example num="xSpecialSyntaxDist.SepFocTree">
+						<tree><p>S-structure for <exampleRef letter="xSpecialSyntaxDistDeriv.2b"/></p>
+							<img src="sepfocus.png"/>
+						</tree>
+					</example>
+					<p>In combination, the syntactic and semantic analyses given for the special number marking constructions thus account for all the properties and requirements of both the contiguous and separated structures.
+</p>
+				</section4>
+			</section3>
+		</section2>
+	</section1>
+	<section1 id="sConclusion">
+		<secTitle>Conclusion</secTitle>
+		<p>The Zapotec documents from colonial times verify the presence of plural pronouns and quantifier constructions which include aspect marking.  There is no evidence of a plural marker, either as a nominal proclitic or a verbal affix.  Based upon the chart in <citation ref="rMarlettPickettPlural" paren="initial" author="yes"/>, <citation ref="rMarlettPickettPluralWeb" author="no" paren="final"/>, the colonial documents are from areas expected to have at least the plural proclitic, so we can conclude that these plural markers are more recent innovations, probably influenced by Spanish.</p>
+		<p>The evidence is less clear with respect to the special number marking constructions, since they are only found in the southern group, and these languages were not included among the languages documented in colonial times.  We therefore do not know how far back the special number marking constructions were attested, but there is clear evidence of aspect marking on the quantifier in the regular quantified nominal phrases.  Further, these special constructions cannot be innovations from Spanish.  Similar semantic constructions with similar syntactic distributions are found in the more normal versions of the Plural Pronoun Construction found in Tzotzil (<citation ref="rAissenComitative" paren="none" author="yes"/>) and in Nochixtlán Sur Mixtec (McKendry p.c.).
+</p>
+	</section1>
+	<backMatter>
+		<appendix id="aAbbrev">
+			<secTitle>Abbreviations
+</secTitle>
+				 <table border="0"><headerRow>
+	<headerCol colspan="3">Pronouns</headerCol>
+</headerRow>
+					<row>
+						<col align="left" valign="top">1EX</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">first person exclusive</col>
+					</row>
+					<row>
+						<col align="left" valign="top">1I</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">first person inclusive</col>
+					</row>
+					<row>
+						<col align="left" valign="top">2</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">second person</col>
+					</row>
+					<row>
+						<col align="left" valign="top">2DUAL</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">second person dual</col>
+					</row>
+					<row>
+						<col align="left" valign="top">2SG</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">second person singular</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3A</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person animate</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3D</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person deity/baby</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3F</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person feminine</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3I</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person inanimate</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3M</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person masculine</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3R</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person respectful</col>
+					</row>
+					<row>
+						<col align="left" valign="top">3RD</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">third person general</col>
+					</row>
+				</table>
+	 <p></p>
+				<table border="0">              <headerRow><headerCol colspan="3">Aspect or Mood Markers</headerCol></headerRow>
+					  <row>
+						<col align="left" valign="top">C</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">completive</col>
+					</row>
+					<row>
+						<col align="left" valign="top">CONT</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">continuative</col>
+					</row>
+					<row>
+						<col align="left" valign="top">F</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">future</col>
+					</row>
+					<row>
+						<col align="left" valign="top">H</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">habitual</col>
+					</row>
+					<row>
+						<col align="left" valign="top">IMP</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">imperative</col>
+					</row>
+					<row>
+						<col align="left" valign="top">P</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">potential</col>
+					</row>
+					<row>
+						<col align="left" valign="top">PR</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">progressive</col>
+					</row>
+					<row>
+						<col align="left" valign="top">S</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">stative</col>
+					</row>
+					<row>
+						<col align="left" valign="top">U</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">unreal</col>
+					</row>
+				</table>
+	 <p></p>
+				<table border="0">              <headerRow><headerCol colspan="3">Miscellaneous</headerCol></headerRow>
+					<row>
+						<col align="left" valign="top">ASSOC</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">verbal suffix used to relate two events</col>
+					</row>
+					<row>
+						<col align="left" valign="top">FM</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">focus marker</col>
+					</row>
+					<row>
+						<col align="left" valign="top">LM</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">loan marker</col>
+					</row>
+					<row>
+						<col align="left" valign="top">LOC</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">locative</col>
+					</row>
+					<row>
+						<col align="left" valign="top">PL</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">plural</col>
+					</row>
+					<row>
+						<col align="left" valign="top">POS</col>
+						<col align="left" valign="top">=</col>
+						<col align="left" valign="top">possessive prefix used on alienably possessed nouns</col>
+					</row>
+				</table>
+		</appendix>
+		<appendix id="aOrtho">
+			<secTitle>Quiegolani Zapotec Orthography</secTitle>
+			<p>The practical orthography used in the examples from Quiegolani Zapotec is shown in the following charts according to its place of articulation.  For clarification, the phonetic symbol is given in parenthesis when it is different from the orthographic symbol.
+</p>
+			<section1 id="aOrthoC">
+				<secTitle>Consonant Chart</secTitle>
+				<table border="0">
+					<headerRow>
+						<headerCol align="left" valign="top"/>
+						<headerCol align="left" valign="top">Bilabial</headerCol>
+						<headerCol align="left" valign="top">Alveolar</headerCol>
+						<headerCol align="left" valign="top">Palato-Alveolar</headerCol>
+						<headerCol align="left" valign="top">Retro-flexed</headerCol>
+						<headerCol align="left" valign="top">Velar</headerCol>
+						<headerCol align="left" valign="top">Palatalized Velar</headerCol>
+						<headerCol align="left" valign="top">Labialized Velar</headerCol>
+					</headerRow>
+					<row>
+						<col class="bold" align="left" valign="top">Stops</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">p</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">t</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">k</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">ky <object class="not-italic">(</object>k<object class="super">y</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">kw <object class="not-italic">(</object>k<object class="super">w</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+					</row>
+					<row>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">d</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">g</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">gy <object class="not-italic">(</object>g<object class="super">y</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">gw <object class="not-italic">(</object>g<object class="super">w</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Affricates</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">ts <object class="not-italic">(</object>c<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">ch <object class="not-italic">(</object>
+								<object class="IPA">tS</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">tx <object class="not-italic">(</object>
+								<object class="IPA">tS¥</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">dx <object class="not-italic">(</object>
+								<object class="IPA">Z</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Fricatives</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">s</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">x <object class="not-italic">(</object>
+								<object class="IPA">S¥</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">z</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">zh <object class="not-italic">(</object>
+								<object class="IPA">Z¥</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Nasals</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">m</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">n</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Laterals</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">l</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Approxi-mants</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">b <object class="not-italic">(</object>
+								<object class="IPA">B</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">y</langData>
+						</col>
+						<col align="left" valign="top">
+							<langData lang="lZap">r</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top"/>
+						<col align="left" valign="top">
+							<langData lang="lZap">w</langData>
+						</col>
+					</row>
+				</table>
+				<p>In addition to the consonants listed in the chart, <langData lang="lZap">f</langData> and <langData lang="lZap"> j <object class="not-italic">(</object>h<object class="not-italic">)</object>
+					</langData> are used in Spanish loan words.</p>
+			</section1>
+			<section1 id="aOrthoV">
+				<secTitle>Vowel Chart</secTitle>
+				<table border="0">
+					<caption align="center" valign="top">Vowel chart for Quiegolani Zapotec</caption>
+					<headerRow>
+						<headerCol align="left" valign="top"/>
+						<headerCol valign="top" align="left">Front</headerCol>
+						<headerCol valign="top" align="left">
+							<table border="0">
+								<row>
+									<col align="center" class="bold" valign="top">Back</col>
+								</row>
+								<row>
+									<col align="center" class="bold" valign="top">Unrounded</col>
+								</row>
+							</table>
+						</headerCol>
+						<headerCol valign="top" align="left">
+							<table border="0">
+								<row>
+									<col align="center" class="bold" valign="top">Back</col>
+								</row>
+								<row>
+									<col align="center" class="bold" valign="top">Rounded</col>
+								</row>
+							</table>
+						</headerCol>
+					</headerRow>
+					<row>
+						<col class="bold" align="left" valign="top">High</col>
+						<col align="center" valign="top">
+							<langData lang="lZap">i</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="center" valign="top">
+							<langData lang="lZap">u</langData>
+						</col>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Mid</col>
+						<col align="center" valign="top">
+							<langData lang="lZap">e</langData>
+						</col>
+						<col align="left" valign="top"/>
+						<col align="center" valign="top">
+							<langData lang="lZap">o</langData>
+						</col>
+					</row>
+					<row>
+						<col class="bold" align="left" valign="top">Low</col>
+						<col align="center" valign="top">
+							<langData lang="lZap">ë <object class="not-italic">(</object>
+								<object class="IPA">Q</object>
+								<object class="not-italic">)</object>
+							</langData>
+						</col>
+						<col align="center" valign="top">
+							<langData lang="lZap">a</langData>
+						</col>
+						<col align="left" valign="top"/>
+					</row>
+				</table>
+				<p>
+Each vowel can also occur in a laryngealized (or glottalized) form, written as /VV/ in the orthography since there are no vowel clusters.
+</p>
+			</section1>
+		</appendix>
+<endnotes/>
+		<references>
+			<refAuthor name="Aissen, Judith" citeName="Aissen">
+				<refWork id="rAissenComitative">
+					<refDate>1989</refDate>
+					<refTitle>Comitative Agreement in Tzotzil</refTitle>
+					<article>
+						<jTitle>SRC Working Papers</jTitle>
+						<jVol>89-102</jVol>
+						<jPages>1-20</jPages>
+						<publisher>University of California</publisher>
+						<location>Santa Cruz</location>
+					</article>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Anonymous" citeName="Anonymous">
+				<refWork id="rAnonymous">
+					<refDate>1823</refDate>
+					<refTitle>Gramática de la Lengua Zapoteca</refTitle>
+					<book>
+						<series>Edición preparada por Antonio Peñafiel 1981</series>
+						<publisher>Editorial Innovación, S.A.</publisher>
+						<location>México</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Black, Cheryl A." citeName="Black">
+				<refWork id="rBlackDiss">
+					<refDate>1994</refDate>
+					<refTitle>Quiegolani Zapotec Syntax</refTitle>
+					<dissertation>
+						<institution>University of California at Santa Cruz</institution>
+						<location>Santa Cruz, CA</location>
+					</dissertation>
+				</refWork>
+				<refWork id="rBlackBinding">
+					<refDate>1996</refDate>
+					<refTitle>A backwards binding construction in Zapotec</refTitle>
+					<article>
+						<jTitle> Workpapers of the Summer Institute of Linguistics, University of North Dakota Session</jTitle>
+						<jVol>40</jVol>
+						<jPages>75-87</jPages>
+					</article>
+				</refWork>
+				<refWork id="rBlackQZBook">
+					<refDate>2000</refDate>
+					<refTitle>Quiegolani Zapotec syntax: A principles and parameters account</refTitle>
+					<book>
+						<series>Publications in Linguistics 136</series>
+						<publisher>SIL International and the University of Texas at Arlington</publisher>
+						<location>Dallas, TX</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Butler, Inez M." citeName="Butler">
+				<refWork id="rButlerReflexive">
+					<refDate>1976</refDate>
+					<refTitle>Reflexive constructions of Yatzachi Zapotec</refTitle>
+					<article>
+						<jTitle>International Journal of American Linguistics</jTitle>
+						<jVol>42</jVol>
+						<jPages>331-337</jPages>
+					</article>
+				</refWork>
+				<refWork id="rButlerGrammar">
+					<refDate>1988</refDate>
+					<refTitle>Gramática Zapoteca: Zapoteco de Yatzachi El Bajo</refTitle>
+					<book>
+						<series>Serie Gramática de Linguas Indígenas de México</series>
+						<publisher>Instituto Lingüístico de Verano</publisher>
+						<location>México D.F.</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Chomsky, Noam" citeName="Chomsky">
+				<refWork id="rChomskyGB">
+					<refDate>1981</refDate>
+					<refTitle> Lectures on Government and Binding</refTitle>
+					<book>
+						<publisher>Foris</publisher>
+						<location>Dordrecht</location>
+					</book>
+				</refWork>
+				<refWork id="rChomskyBarriers">
+					<refDate>1986</refDate>
+					<refTitle> Barriers</refTitle>
+					<book>
+						<publisher>MIT Press</publisher>
+						<location>Cambridge</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Chung, Sandra" citeName="Chung">
+				<refWork id="rChungPropGovt">
+					<refDate>1991</refDate>
+					<refTitle>Functional heads and proper government in Chamorro</refTitle>
+					<collection>
+						<collEd plural="yes">J.McCloskey</collEd>
+						<collTitle>The Syntax of Verb-Initial Languages</collTitle>
+						<collVol>Lingua 85</collVol>
+						<collPage>85-134</collPage>
+						<publisher>Elsevier Science Publishers B.V.</publisher>
+						<location>Amsterdam</location>
+					</collection>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="de Cordova, Juan" citeName="de Cordova">
+				<refWork id="rCordovaArte">
+					<refDate>1578</refDate>
+					<refTitle>Arte del Idioma Zapoteco</refTitle>
+					<book>
+						<series>Edición facsimilar 1886</series>
+						<publisher>Imprenta del Gobierno en la Escuela de Artes</publisher>
+						<location>México</location>
+					</book>
+				</refWork>
+				<refWork id="rCordovaVocab">
+					<refDate>1578</refDate>
+					<refTitle>Vocabulario Castellano - Zapoteco</refTitle>
+					<book>
+						<series>Edición facsimilar 1942</series>
+						<publisher>Instituto Nacional de Antropologia e Historia</publisher>
+						<location>México</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Ladusaw, William A" citeName="Ladusaw">
+				<refWork id="rLadusawPPC">
+					<refDate>1989</refDate>
+					<refTitle>Group reference and the plural pronoun construction</refTitle>
+					<article>
+						<jTitle>SRC Working Papers</jTitle>
+						<jVol>89-02</jVol>
+						<jPages>1-20</jPages>
+						<publisher>University of California</publisher>
+						<location>Santa Cruz</location>
+					</article>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Marlett, Stephen A. and Velma B. Pickett" citeName="Marlett &amp; Pickett">
+				<refWork id="rMarlettPickettPlural">
+					<refDate>1986</refDate>
+					<refTitle>‘Pluralization in Zapotec languages</refTitle>
+					<proceedings>
+						<procEd plural="yes">Mary C. Marino and Luis A. Pérez</procEd>
+						<procTitle>Proceedings of the 1985 meeting of the Linguistic Association of Canada and the United States</procTitle>
+						<procPage>246-255</procPage>
+						<publisher>Linguistic Association of Canada and the United States</publisher>
+						<location>Lake Bluff, IL</location>
+					</proceedings>
+				</refWork>
+				<refWork id="rMarlettPickettPluralWeb">
+					<refDate>2001</refDate>
+					<refTitle>Pluralization in Zapotec languages</refTitle>
+					<webPage>
+						<institution>Summer Institute of Linguistics</institution>
+						<location>Mexico Branch</location>
+						<url>http://www.sil.org/mexico/zapoteca/G025a-ZapotecPlurals.htm</url>
+					</webPage>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Partee, Barbara H., Alice ter Meulen, and Robert E. Wall" citeName="Partee, ter Meulen &amp; Wall">
+				<refWork id="rParteeMath">
+					<refDate>1990</refDate>
+					<refTitle>Mathematical Methods in Linguistics</refTitle>
+					<book>
+						<publisher>Kluwer</publisher>
+						<location>Dordrecht</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Pickett, Velma B., Cheryl Black, and Vicente Marcial Cerqueda" citeName="Pickett, Black &amp;Marcial">
+				<refWork id="rPickettGrammar">
+					<refDate>1998</refDate>
+					<refTitle>Gramática Popular del Zapoteco del Istmo</refTitle>
+					<book>
+						<publisher>Centro de Investigación y Desarrollo Binnizá A.C. y Instituto Lingüístico de Verano A.C.</publisher>
+						<location>Juchitán, Oaxaca, México</location>
+					</book>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Regnier, Randy" citeName="Regnier">
+				<refWork id="rRegnierTexts">
+					<refDate>1989</refDate>
+					<refTitle>Collection of unpublished Quiegolani Zapotec glossed texts</refTitle>
+					<ms>
+						<institution>Summer Institute of Linguistics, Mexico Branch</institution>
+					</ms>
+				</refWork>
+			</refAuthor>
+			<refAuthor name="Schwartz, Linda" citeName="Schwartz">
+				<refWork id="rSchwartzPPC">
+					<refDate>1988</refDate>
+					<refTitle>Asymmetric feature distribution in pronominal ‘coordinations</refTitle>
+					<collection>
+						<collEd plural="yes">M. Barlow and J. Greenberg</collEd>
+						<collTitle>Agreement in Natural Language: Approaches, Theories, Descriptions</collTitle>
+						<collPage>237-249</collPage>
+						<publisher>CSLI</publisher>
+						<location>Stanford</location>
+					</collection>
+				</refWork>
+			</refAuthor>
+		</references>
+	</backMatter>
+</lingPaper>

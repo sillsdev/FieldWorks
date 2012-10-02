@@ -1,0 +1,13 @@
+;iso-8859-1.map
+;Copyright (c) 2002 SIL International.
+
+EncodingName		"ISO-8859-1"
+DescriptiveName		"ISO-8859-1"
+
+ByteDefault			'?'
+UniDefault			replacement_character
+
+ByteClass [x] = (0..255)
+UniClass [x] = (0..255)
+
+[x] <> [x]

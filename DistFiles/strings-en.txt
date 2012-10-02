@@ -1,0 +1,1208 @@
+1	TYPELIB LanguageTlb.tlb
+VS_VERSION_INFO	VERSIONINFO
+FILEVERSION	MAJOR_VERSION,MINOR_VERSION,YEAR,DAY_MONTH_BUILDLVL
+PRODUCTVERSION	1,0,0,5
+FILEFLAGSMASK	0x3fL
+FILEFLAGS	0x0L
+FILEOS	0x40004L
+FILETYPE	VFT_DLL
+FILESUBTYPE	0x0L
+BLOCK	StringFileInfo
+BLOCK	040904b0
+VALUE	Comments", "\0
+VALUE	CompanyName", "SIL\0
+VALUE	FileDescription", "Fieldworks Language support\0
+VALUE	FileVersion", STR_PRODUCT
+VALUE	InternalName", "Language\0
+VALUE	LegalCopyright", COPYRIGHT
+VALUE	LegalTrademarks", "\0
+VALUE	OriginalFilename", "Language.dll\0
+VALUE	PrivateBuild", "\0
+VALUE	ProductName", "FieldWorks\0
+VALUE	ProductVersion", "1,0,0,5\0
+VALUE	SpecialBuild", "\0
+BLOCK	VarFileInfo
+VALUE	Translation", 0x409, 1200
+1501	The buffer passed to this method was too small to hold the result.
+1502	Can't report a fractional numeric value
+1503	Unicode does not define a numeric value for this character
+1504	Found an invalid Unicode character or sequence
+1505	The ICU code retrieving the Unicode character name found an error.
+1506	The ICU code finding the Unicode decomposition encountered an error.
+1507	The ICU code normalizing the text found an error.
+1508	The ICU function for changing the case found an error.
+1509	The ICU function to initialize the BreakIterator returned an error.
+1510	The line break asked for was out of range of the given text.
+1511	DefaultCollation
+1512	en
+1513	Keyman initialization failed
+1514	Unexpected Keyman failure
+1515	No known version of Keyman is registered.
+1516	Keyman program is not registered correctly.
+1517	Failed to load Keyman32.dll
+1019	en
+1001	    %<0>d %<1>s processed, %<2>d successful, %<3>d attempted\n
+1201	Parameter
+1202	Parameters
+1002	%<0>d custom %<1>s have been added to the database schema.\n
+1203	field
+1204	fields
+1003	First pass of reading the XML file took %<0>d %<1>s.\n
+1007	Creating %<0>d objects after the first pass took %<1>d %<2>s.\n
+1009	Second pass of reading the XML file took %d %s.\n
+1004	Storing data after the second pass took %<0>d %<1>s.\n
+1006	Loading the XML file into the database took %<0>d %<1>s.\n
+1205	second
+1206	seconds
+1005	Storing the data into the database took %<0>d SQL %<1>s.\n
+1207	command
+1208	commands
+1008	Creating %<0>d empty structured text paragraphs.\n
+1010	<FwDatabase version=""%<0>d""> does not match the database version (%<1>d).\n
+1011	No version number given with <FwDatabase>.\n
+1020	<%<0>s> elements cannot be nested inside either <Str> or <AStr>!\n
+1021	<%<0>s> is improperly nested!\n
+1022	<%<0>s> must be nested inside <%<1>s> or an object attribute element!\n
+1023	<%<0>s> must be nested inside <%<1>s>...</%<1>s>!\n
+1024	<%<0>s> must be nested inside an object attribute element!\n
+1025	<%<0>s> must be nested inside an object element!\n
+1026	<%<0>s> not recognized nested within either <Str> or <AStr>!\n
+1027	<AdditionalFields> must be a toplevel element inside <FwDatabase>!?\n
+1028	<CustomField> must be a toplevel element inside <AdditionalFields>!?\n
+1029	<%<0>s> must be the outermost XML element!?\n
+1030	Cannot convert ""%<0>s"" into a Language Writing system code.\n
+1031	Cannot create GUID for object identifier!\n
+1032	Cannot get buffer from the XML parser [pass 1]!  (Out of memory?)\n
+1033	Cannot get buffer from the XML parser [pass 2]!  (Out of memory?)\n
+1034	Cannot have some ord attribute values missing and some present!\n
+1035	Cannot read the CmObject table in the database!\n
+1036	Invalid list root id '%<0>s' in custom field definition [%<1>S]??\n
+1037	ERROR %<0>s executing SQL command:\n    %<1>s\n
+1038	ERROR %<0>s executing SQL function on line %<1>d of %<2>s:\n    %<3>s\n
+1039	ERROR creating %<0>S (%<1>d, %<2>g)\n
+1040	ERROR in SetMultiBigStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1041	ERROR in SetMultiBigTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1042	ERROR in SetMultiStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1043	ERROR in SetMultiTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1044	ERROR in UPDATE [%<0>S] SET [%<1>S]=? WHERE [Id]=%<2>d\n
+1045	ERROR in UPDATE [%<0>S] SET [%<1>S]=?,%<2>S_Fmt=? WHERE [Id]=%<3>d\n
+1046	ERROR with INSERT %<0>S_%<1>S (Src, Dst) VALUES (%<2>d, %<3>d)\n
+1047	ERROR with INSERT %<0>S_%<1>S (Src, Dst, Ord) VALUES (%<2>d, %<3>d, %<4>d)\n
+1048	ERROR with UPDATE [%<0>S] SET [%<1>S]=%<2>d WHERE [Id]=%<3>d\n
+1049	ERROR! BUG! Invalid field data type storing data?? (%<0>d)\n
+1050	Empty <%<0>s> element?\n
+1052	Empty <Run type=""picture""> element?\n
+1054	Empty MultiString element? (cbtext = 0)\n
+1055	Empty String element? (cbtext = 0)\n
+1056	Error detected while parsing XML file [pass 1]!\n
+1057	Error detected while parsing XML file [pass 2]!\n
+1058	Found a <Run> with identical properties to preceding <Run>: these have been merged.\n
+1059	INTERNAL DATA CORRUPTION: unable to get class for field!\n
+1060	INTERNAL XML ELEMENT STACK CORRUPTED!?\n
+1061	Ignoring <Run %<0>s=""%<1>s""> in the absence of a %<2>s attribute.\n
+1063	Ignoring <Run ows=""%<0>s""> in the absence of a ws attribute.\n
+1064	Ignoring <Run owsBase=""%<0>s""> in the absence of a wsBase attribute.\n
+1065	Improperly nested <%<0>s name=""%<1>s""> element!\n
+1066	Improperly nested <%<0>s> element!\n
+1067	Invalid Boolean value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1068	Invalid GUID value in <Run %<0>s=""%<1>s""> element!\n
+1069	Invalid GenDate value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1070	Invalid Integer value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1071	Invalid Numeric value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1072	Invalid XML Element: unknown class ""%<0>s""\n
+1073	Invalid XML Element: unknown field ""%<0>s""\n
+1074	Invalid bin attribute in Float element: ""%<0>s"".\n
+1075	Invalid character data found between runs: ""
+1076	Invalid class attribute for CustomField element: %<0>s\n
+1077	Invalid writing system in <AStr ws=""%<0>s"">!\n
+1078	Invalid writing system in <AUni ws=""%<0>s"">!\n
+1079	Invalid field type containing <%<0>s> element: %<1>d.\n
+1080	Invalid ord attribute in Link element: ""%<0>s"".\n
+1081	Invalid ord attribute value: ""%<0>s""\n
+1082	Invalid target attribute for CustomField element: %<0>s\n
+1083	Invalid type attribute for CustomField element: %<0>s\n
+1084	Invalid Float value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1085	Invalid value in <Run %<0>s=""%<1>s"">: need on, off or invert\n
+1086	Invalid value in <Run %<0>s=""%<1>s"">.\n
+1087	Invalid value in <Run %<0>s=""%<1>s"">.\n
+1091	Invalid value in <Run superscript=""%<0>s"">: need off, super, or sub\n
+1092	Invalid value in <Run type=""%<0>s"">: need chars or picture\n
+1093	Invalid value in <Run underline=""%<0>s"">: need none, single, double, dotted, dashed, or strikethrough\n
+1094	Invalid Guid value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1095	Invalid Time value for the %<0>S field of a %<1>S object: ""%<2>s"".\n
+1096	Missing Link target: ""%<0>s""\n
+1097	Missing both bin and val attributes in Float element.\n
+1098	Missing %<0>s attribute for %<1>s element.\n
+1099	Missing writing system for <AStr> element!\n
+1100	Missing writing system for <AUni> element!\n
+1108	Missing val attribute in GenDate element.\n
+1109	Missing val attribute in Guid element.\n
+1110	Missing val attribute in Integer element.\n
+1111	Missing val attribute in Numeric element.\n
+1112	Missing val attribute in Time element.\n
+1113	Out of memory after first pass through XML file!\n
+1114	Out of memory before parsing anything!\n
+1115	Out of memory!\n
+1116	Repeated object GUID\n
+1117	Repeated object ID\n
+1118	SQL_PARAM_DIAG_UNAVAILABLE INFO creating %<0>S (%<1>d, %<2>g, %<3>d, %<4>d, %<5>d)\n
+1119	SQL_PARAM_ERROR creating %<0>S (%<1>d, %<2>g, %<3>d, %<4>d, %<5>d)\n
+1120	SQL_PARAM_UNUSED creating %<0>S (%<1>d, %<2>g, %<3>d, %<4>d, %<5>d)\n
+1121	The database is not empty!\n
+1122	UNAVAIL INFO in SetMultiBigStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1123	UNAVAIL INFO in SetMultiBigTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1124	UNAVAIL INFO in SetMultiStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1125	UNAVAIL INFO in SetMultiTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1126	UNAVAIL INFO in UPDATE [%<0>S] SET [%<1>S]=? WHERE [Id]=%<2>d\n
+1127	UNAVAIL INFO in UPDATE [%<0>S] SET [%<1>S]=?,%<2>S_Fmt=? WHERE [Id]=%<3>d\n
+1128	UNAVAILABLE INFO creating %<0>S (%<1>d, %<2>g)\n
+1129	UNAVAILABLE INFO for INSERT %<0>S_%<1>S (Src, Dst) VALUES (%<2>d, %<3>d)\n
+1130	UNAVAILABLE INFO for INSERT (Src, Dst, Ord) %<0>S_%<1>S VALUES (%<2>d, %<3>d, %<4>d)\n
+1131	UNAVAILABLE INFO for UPDATE [%<0>S] SET [%<1>S]=%<2>d WHERE [Id]=%<3>d\n
+1132	UNUSED creating %<0>S (%<1>d, %<2>g)\n
+1133	UNUSED data INSERT %<0>S_%<1>S (Src, Dst) VALUES (%<2>d, %<3>d)\n
+1134	UNUSED data INSERT %<0>S_%<1>S (Src, Dst, Ord) VALUES (%<2>d, %<3>d, %<4>d)\n
+1135	UNUSED data UPDATE [%<0>S] SET [%<1>S]=%<2>d WHERE [Id]=%<3>d\n
+1136	UNUSED in SetMultiBigStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1137	UNUSED in SetMultiBigTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1138	UNUSED in SetMultiStr$ %<0>d,%<1>d,%<2>d,'...',0x...\n
+1139	UNUSED in SetMultiTxt$ %<0>d,%<1>d,%<2>d,'...'\n
+1140	UNUSED in UPDATE [%<0>S] SET [%<1>S]=? WHERE [Id]=%<2>d\n
+1141	UNUSED in UPDATE [%<0>S] SET [%<1>S]=?,%<2>S_Fmt=? WHERE [Id]=%<3>d\n
+1142	Unbalanced XML element stack!?\n
+1143	Unbalanced element stack!?\n
+1144	Unbalanced object id stack!?\n
+1145	Unbalanced property name stack!?\n
+1146	Unknown XML end tag: ""%<0>s""\n
+1147	Unknown XML start tag: ""%<0>s""\n
+1148	WARNING: GUID-based id strings do not all begin with the same letter!\n
+1149	WARNING: You've got to be kidding: string property length > 1 gigabyte!!!\n
+1150	WARNING: the ownership hierarchy is not properly nested!\n
+1151	Warning: String does not have a writing system!\n
+1152	Warning: ignoring extra character at the end of %<0>s data.\n
+1153	Wrong field type for Link element: %<0>d\n
+1154	XML parser detected an XML syntax error [pass 1]!\n
+1155	XML parser detected an XML syntax error [pass 2]!\n
+1156	<%<0>s> not recognized nested within <WsStyles9999>!\n
+1157	<%<0>s> not recognized nested within <Prop>!\n
+1158	Invalid value in <%<0>s bold=""%<1>s"">: need on, off or invert\n
+1159	Ignoring <%<0>s fontsizeUnit=""%<1>s""> in the absence of a fontsize attribute.\n
+1160	Invalid value in <%<0>s fontsize=""%<1>s"">.\n
+1161	Invalid value in <%<0>s fontsizeUnit=""%<1>s"">.\n
+1162	Invalid value in <%<0>s align=""%<1>s"">: need leading, left, center, right, trailing, or justify\n
+1163	Ignoring <%<0>s ows=""%<1>s""> in the absence of a ws attribute.\n
+1164	Ignoring <%<0>s owsBase=""%<1>s""> in the absence of a wsBase attribute.\n
+1165	Invalid value in <%<0>s italic=""%<1>s"">: need on, off or invert\n
+1166	Invalid value in <%<0>s lineHeight=""%<1>s"">.\n
+1167	Invalid value in <%<0>s lineHeightUnit=""%<1>s"">.\n
+1168	Ignoring <%<0>s lineHeightUnit=""%<1>s""> in the absence of a lineHeight attribute.\n
+1169	Invalid value in <%<0>s offset=""%<1>s"">.\n
+1170	Invalid value in <%<0>s offsetUnit=""%<1>s"">.\n
+1171	Ignoring <%<0>s offsetUnit=""%<1>s""> in the absence of a offset attribute.\n
+1172	Invalid value in <%<0>s superscript=""%<1>s"">: need off, super, or sub.\n
+1173	Invalid value in <%<0>s underline=""%<1>s"">: need none, single, double, dotted, dashed, or strikethrough.\n
+1175	Warning: Invalid GUID-based id string for importing object.\n
+1176	Warning: Invalid writing system in <Link ws=""%<0>s"" .../>.\n
+1177	Warning: Invalid field for implicit target in a Link element: %<0>S.\n
+1178	Warning: Implicit MoInflAffixSlot target in a Link element is missing the name attribute.\n
+1179	Warning: Implicit %<0>s target in a Link element cannot access the PartOfSpeech list.\n
+1180	Warning: Implicit %<0>s target in Link element cannot find/create a needed PartOfSpeech.\n
+1181	Warning: Implicit %<0>s target in Link element is missing one or more required attributes.\n
+1182	Warning: Implicit ReversalIndexEntry target in a Link element is missing the form attribute.\n
+1183	Warning: Implicit ReversalIndexEntry target in a Link element cannot find/create the ReversalIndex.\n
+1184	Warning: Implicit ReversalIndexEntry target in a Link element has an invalid form attribute.\n
+1185	Error obtaining LexDb id from the database!?\n
+1186	Info: Implicit %<0>s target in a Link element has abbr attribute ""%<1>S"" which matches a Name value.\n
+1187	Info: Implicit %<0>s target in a Link element has name attribute ""%<1>S"" which matches an Abbreviation value.\n
+1188	Implicit MoInflAffixSlot target in a Link element has neither the nameOwner nor the abbrOwner attribute.\n
+1189	Implicit %<0>s target in a Link element is missing the sense or entry attribute.\n
+1190	Implicit %<0>s target in a Link element is missing the name or abbr attribute.\n
+1191	Invalid class for implicit target in Link element: %<0>S.\n
+1192	Warning: Invalid writing system in <Link wsv=""%<0>s"" .../>.\n
+1193	Warning: empty ws attribute found: substituting analysis writing system.\n
+1194	Invalid value in <%<0>s spellcheck=""%<1>s"">: need normal, doNotCheck, or forceCheck.\n
+1300	DEBUG: External Link target: db=""%<0>s"", target=""%<1>s""\n
+1301	DEBUG: Repeated run properties found: ibProp = %<0>d, Top()->ibProp = %<1>d\n
+1302	ERROR CAUGHT on line %<0>d of %<1>s: %<2>s\n
+1303	SUCCESSFULLY CREATED %<0>S (%<1>d, %<2>g, %<3>d, %<4>d, %<5>d)\n
+1304	UNKNOWN ERROR CAUGHT on line %<0>d of %<1>s\n
+1305	m_vetiOpen[%<0>d].m_elty = %<1>s, m_icls = %<2>d\n
+1306	rpi[%<0>d] = %<1>d, %<2>d, 0x
+1307	run[%<0>d]: ichMin = %<1>d, ibProp = %<2>d; distinct = %<3>d, fMerge = %<4>s\n
+1299	Info: Creating new inflection class with ws=""%<0>S"", abbr=""%<1>s"", and name=""%<2>s"".\n
+1298	Info: Creating new inflectional affix slot with ws=""%<0>S"" and name=""%<1>s"", for POS with abbr=""%<2>s"" and name=""%<3>s"".\n
+1297	Info: Creating new object with ws=""%<0>S"", abbr=""%<1>s"", and name=""%<2>s"" in the %<3>S list.\n
+1296	Warning: The %<0>S list is not supposed to be extensible!\n
+1295	Info: Creating ReversalIndex for the %<0>S (""%<1>S"") language.\n
+1294	Info: Creating ReversalIndexEntry ""%<0>S"" (""%<1>S"") for the %<2>S (""%<3>S"") language.\n
+1293	%<0>s  [repeated %<1>d more times in the XML file]\n
+1292	Warning: Truncating string from %<0>d characters to %<1>d characters for the %<2>S field of a %<3>S object.\n
+2001	%<0>u custom field %<1>s written.\n
+1209	definition
+1210	definitions
+2002	Dumping the XML file from the database took %<0>d %<1>s.\n
+2003	Loading %<0>u %<1>s of Object Ownership Hierarchy data took %<2>d %<3>s.\n
+1211	row
+1212	rows
+2004	Loading %<0>u %<1>s of ""BigString"" data took %<2>d %<3>s.\n
+2005	Loading %<0>u %<1>s of ""BigUnicode"" data took %<2>d %<3>s.\n
+2006	Loading %<0>u %<1>s of ""Binary"" data took %<2>d %<3>s.\n
+2007	Loading %<0>u %<1>s of ""Image"" data took %<2>d %<3>s.\n
+2008	Loading %<0>u %<1>s of ""MultiBigString"" data took %<2>d %<3>s.\n
+2009	Loading %<0>u %<1>s of ""MultiBigUnicode"" data took %<2>d %<3>s.\n
+2010	Loading %<0>u %<1>s of ""MultiString"" data took %<2>d %<3>s.\n
+2011	Loading %<0>u %<1>s of ""MultiUnicode"" data took %<2>d %<3>s.\n
+2012	Loading %<0>u %<1>s of ""ReferenceAtom"" data took %<2>d %<3>s.\n
+2013	Loading %<0>u %<1>s of ""ReferenceCollection/Sequence"" data took %<2>d %<3>s.\n
+2014	Loading %<0>u %<1>s of ""String"" data took %<2>d %<3>s.\n
+2015	Loading %<0>u %<1>s of ""Unicode"" data took %<2>d %<3>s.\n
+2016	Loading %<0>u %<1>s of basic attribute data took %<2>d %<3>s.\n
+2017	Loading the data from the database took %<0>d SQL %<1>s.\n
+2018	Rebuilding the object hierarchy table took %<0>d %<1>s.\n
+2019	SQL[%<0>d]: %<1>s\n
+2020	Writing the XML file took %<0>d %<1>s.\n
+2021	    Reading %<0>d additional characters of string data.\n
+2022	    Reading %<0>d additional bytes of format data.\n
+2024	Owner of object %<0>d does not have a name in the default analysis language.\n
+2025	Owner of object %<0>d does not have an abbreviation in the default analysis language.\n
+2100	    %<0>s - %<1>s\n
+2101	BUG/FEATURE - cannot handle Run scalar property code ""%<0>s""\n
+2102	ERROR %<0>s executing SQL command:\n    %<1>s\n
+2103	ERROR %<0>s executing SQL function on line %<1>d of %<2>s:\n    %<3>s\n
+2104	ERROR - invalid Run scalar property length (%<0>d)\n
+2105	ERROR - invalid Run string property length\n
+2106	ERROR - invalid binary format data for a string: %<0>d run%<1>s, %<2>d byte%<3>s.
+1213	run
+1214	runs
+1215	byte
+1216	bytes
+2107	ERROR - invalid binary format data for a string: %<0>d run%<1>s.
+2108	ERROR - invalid binary format data for a string: only %<0>d byte%<1>s.
+2109	ERROR - invalid binary format data for a string: run %<0>d does not start after\nrun %<1>d (min %<2>d <= min %<3>d).\n
+2110	ERROR - invalid binary format data for a string: run %<0>d has invalid internal\noffset (%<1>d).
+2111	ERROR - invalid binary format data for a string: run %<0>d starts after end of\nstring (length = %<1>d <= min = %<2>d).
+2112	ERROR - invalid binary format data for a string: run %<0>d starts before the\nstring (min = %<1>d).
+2113	ERROR - invalid embedded object type in Run string property (%<0>d)\n
+2114	ERROR - invalid writing system of Run string property length\n
+2115	ERROR - invalid internal writing system of Run scalar property code\n
+2116	ERROR - invalid internal writing system of Run string property code\n
+2117	ERROR - unknown Run scalar property code (%<0>d)\n
+2118	ERROR - unknown Run string property code (%<0>d)\n
+2119	ERROR [%<0>d]: Constructed Query overflowed its buffer!\n""%<1>s""\n
+2120	WARNING - invalid binary format data for a string: 0 runs, %<0>d byte%<1>s.
+2190	ERROR decoding the properties: check the log file for details.
+2121	WARNING: no writing system
+2122	Cannot get version number from the database!?\n
+2123	Corrupted database: missing %<0>S object (hobj = %<1>d) for %<2>S (hobj = %<3>d)\n
+2124	Corrupted database: missing integer property for %<1>S style.%n
+2125	Corrupted database: missing %<0>d integer properties for %<1>S style.%n
+2126	Corrupted database: missing integer property in paragraph's style.%n
+2127	Corrupted database: missing %<0>d integer properties in paragraph's style.%n
+2128	Corrupted database: missing string property for %<1>S style.%n
+2129	Corrupted database: missing %<0>d string properties for %<1>S style.%n
+2130	Corrupted database: missing string property in paragraph's style.%n
+2131	Corrupted database: missing %<0>d string properties in paragraph's style.%n
+1221	UNKNOWN
+2301	Invalid hvoOwner passed to ImportXmlObject method: %<0>d\n
+2302	Unknown clid (%<0>d) retrieved for hvoOwner: SOMETHING IS VERY WRONG!\n
+2303	Unknown flid passed to ImportXmlObject method: %<0>d\n
+2304	Invalid flid passed to ImportXmlObject method: flid = %<0>d, but class = %<1>d\n
+2305	Empty database: THIS SHOULD NEVER HAPPEN!\n
+2306	<%<0>s> must be nested inside <%<1>s>...</%<1>s>!\n
+2307	DEBUG: Unknown flid for list: %<0>d\n
+2023	Info: Creating new writing system for code ""%<0>s"".\n
+2308	Warning: Picture file ""%<0>s"" does not exist.\n
+2309	Warning: Cannot copy picture file ""%<0>s"" to ""%<1>s"".\n
+2310	DEBUG: Unknown flid for folders: %<0>d
+2311	ERROR - Invalid start tag <%<0>s> for XML file: expected <%<1>s>.\n
+2312	Warning: Media file ""%<0>s"" does not exist.\n
+2313	Warning: Cannot copy media file ""%<0>s"" to ""%<1>s"".\n
+2314	ERROR - Cannot create directory ""%<0>s"".\n
+2315	Invalid %<0>s attribute value for %<1>s element: not GUID based.\n
+2316	Invalid %<0>s attribute value for %<1>s element: bad GUID value.\n
+2317	Object id being merged (%<0>g) should not appear in the updated list.\n
+2318	Object id being deleted (%<0>g) should not appear in the updated list.\n
+2319	A list update XML file must begin with a field tag, not a class tag!\n
+2320	ERROR in ""%s"" [param=%d].\n
+2321	UNUSED in ""%s"" [param=%d].\n
+2322	UNAVAIL INFO in ""%s"" [param=%d].\n
+2323	Warning: Storing only the first %<0>d of %<1>d characters for this string: ""%<2>s"".\n
+2399	Initializing from the database before reading the XML file took %<0>d %<1>s.\n
+2398	Processing the update information took %<0>d %<1>s.\n
+2397	Creating new objects took %<0>d %<1>s.\n
+2396	Updating owners and sequence positions took %<0>d %<1>s.\n
+2395	Fixing links to merged or deleted list items took %<0>d %<1>s.\n
+2394	Deleting obsolete database objects took %<0>d %<1>s.\n
+2393	Removing possibly obsolete data from list items took %<0>d %<1>s.\n
+2392	Collecting obsolete database objects to delete took %<0>d %<1>s.\n
+2391	Need to delete %<0>d obsolete database %<1>s.\n
+1217	object
+1218	objects
+2390	(Special initializing for update alone took %<0>d %<1>s.)\n
+2389	Info: Creating %<0>s Pair Lexical Reference Type with name=""%<1>S"" and abbr=""%<2>S"".\n
+1219	Sense
+1220	Entry
+1550	Missing CharDef code attribute value.\n
+1551	Missing CharDef data attribute value.\n
+1552	Invalid CharDef code attribute value: ""%<0>s"".\n
+1553	Missing Font file attribute value.\n
+1554	Missing LgWritingSystem definition!?\n
+1555	Unbalanced object stack!?\n
+1556	Unbalanced property value stack!?\n
+1557	Cannot put multiple objects in an atomic property.\n
+1558	Cannot open language definition file ""%<0>s""!?\n
+1559	Error accessing language definition file ""%<0>s""!?\n
+1560	XML parser detected an XML syntax error!\n
+1561	Error detected while parsing XML file!\n
+1562	Missing EncodingConverter install attribute value.\n
+1563	Problem while opening project
+1564	The %<0>s writing system could not be installed, possibly due to insufficient user privileges.%nThis may affect sorting, special character definitions, and other aspects of the writing system.%n
+25900	A programming error (%<0>s) has been detected in module %<1>s.\n Please report this to the developers.
+25903	Out of memory. To attempt Save, close other apps and click OK. To quit without saving click Cancel.
+24200	Before
+24201	On
+24202	About
+24203	After
+24204	Abt
+24205	BC
+24206	AD
+24207	No date
+24208	Unknown
+24209	Unknown
+25920	An unknown failure occurred.
+25921	The system cannot find the file specified.
+25922	The system cannot find the path specified.
+25923	The system cannot open the file.
+25924	Access is denied.
+25925	The handle is invalid.
+25926	The system cannot find the drive specified.
+25927	The media is write protected.
+25928	The system cannot find the device specified.
+25929	The device is not ready.
+25930	The drive cannot locate the specific area or track on the disk.
+25931	The specified disk or diskette cannot be accessed.
+25932	The drive cannot find the sector requested.
+25933	The system cannot write to the specified device.
+25934	The system cannot read from the specified device.
+25935	A device attached to the system is not functioning.
+25936	The process cannot access the file because it is being used by another process.
+25937	The process cannot access the file because another process has locked a portion of the file.
+25938	Reached the end of the file.
+25939	The disk is full.
+25940	The network path was not found.
+25941	The network is busy.
+25942	The specified network resource or device is not available.
+25943	Network access is denied.
+25944	The network resource type is not correct.
+25945	The network name cannot be found.
+25946	The file exists.
+25947	The directory or file cannot be created.
+25948	The specified network password is not correct.
+25949	A write fault occurred on the network.
+25950	The disk is in use or locked by another process.
+25951	The system cannot open the device or file specified.
+25952	The file name is too long.
+25953	There is not enough space on the disk.
+25954	The filename, directory name, or volume label syntax is incorrect.
+25955	The disk has no volume label.
+25956	Cannot create a file when that file already exists.
+25957	&OK
+25958	&Open
+26000	The zip module issued the following unrecognized error code: %<0>d.
+26001	The zip file (%s) cannot be accessed. It may have been deleted, it may be in use by another application, or there may be an error on the drive or its connection.
+26002	The zip module cannot write to disk. The disk may have been removed, it may be full, or the drive may have been disconnected.
+26003	The zip file (%s) cannot be understood. It may be corrupt.
+26004	The zip operation was aborted by user.
+26005	The zip file (%s) was empty.
+26006	The zip file (%s) cannot be opened. The path or file name generated by FieldWorks may be invalid, the zip file may not have the right access permissions, or it may have been opened by another application.
+26007	The zip module could not create a temporary work file.
+26008	There was nothing for the zip module to do.
+26009	The system is out of memory.
+26010	The zip module issued one or more warnings.
+26011	At least one file in the zip archive was skipped due to errors.
+26012	The zip module is not licensed on this machine.
+26013	Zip/Unzip has failed.
+26014	Zip/Unzip may fail.
+26015	Zip/Unzip Module
+26026	This disk is not valid. It may be full, unformatted, write-protected, or faulty in some other way. Please insert a different disk.
+26025	Abort backup
+26021	This disk is not disk %<0>d. Please insert correct disk. If you are certain that this is disk %<1>d, then it is faulty in some way.
+26023	This disk is not the last disk. Please insert correct disk. If you are certain that this is the last disk, then it is faulty in some way.
+26029	Are you sure you wish to abort the backup operation?
+26020	Abort restore
+26024	Are you sure you wish to abort the restore operation?
+26027	Cannot write to disk. Check that a disk is in drive %<0>s, and is writable.
+26022	Insert last disk of backup set into Drive %<0>s
+26028	Insert backup disk #%<0>d into Drive %<1>s
+26030	<default font>
+26031	<default heading font>
+26033	<default monospace>
+26032	<default publication font>
+1	TYPELIB FwKernelTlb.tlb
+25900	A programming error (%<0>s) has been detected in module %<1>s.\n Please report this to the developers.
+25903	Out of memory. To attempt Save, close other apps and click OK. To quit without saving click Cancel.
+24200	Before
+24201	On
+24202	About
+24203	After
+24204	Abt
+24205	BC
+24206	AD
+24207	No date
+24208	Unknown
+24209	Unknown
+25920	An unknown failure occurred.
+25921	The system cannot find the file specified.
+25922	The system cannot find the path specified.
+25923	The system cannot open the file.
+25924	Access is denied.
+25925	The handle is invalid.
+25926	The system cannot find the drive specified.
+25927	The media is write protected.
+25928	The system cannot find the device specified.
+25929	The device is not ready.
+25930	The drive cannot locate the specific area or track on the disk.
+25931	The specified disk or diskette cannot be accessed.
+25932	The drive cannot find the sector requested.
+25933	The system cannot write to the specified device.
+25934	The system cannot read from the specified device.
+25935	A device attached to the system is not functioning.
+25936	The process cannot access the file because it is being used by another process.
+25937	The process cannot access the file because another process has locked a portion of the file.
+25938	Reached the end of the file.
+25939	The disk is full.
+25940	The network path was not found.
+25941	The network is busy.
+25942	The specified network resource or device is not available.
+25943	Network access is denied.
+25944	The network resource type is not correct.
+25945	The network name cannot be found.
+25946	The file exists.
+25947	The directory or file cannot be created.
+25948	The specified network password is not correct.
+25949	A write fault occurred on the network.
+25950	The disk is in use or locked by another process.
+25951	The system cannot open the device or file specified.
+25952	The file name is too long.
+25953	There is not enough space on the disk.
+25954	The filename, directory name, or volume label syntax is incorrect.
+25955	The disk has no volume label.
+25956	Cannot create a file when that file already exists.
+25957	&OK
+25958	&Open
+26000	The zip module issued the following unrecognized error code: %<0>d.
+26001	The zip file (%s) cannot be accessed. It may have been deleted, it may be in use by another application, or there may be an error on the drive or its connection.
+26002	The zip module cannot write to disk. The disk may have been removed, it may be full, or the drive may have been disconnected.
+26003	The zip file (%s) cannot be understood. It may be corrupt.
+26004	The zip operation was aborted by user.
+26005	The zip file (%s) was empty.
+26006	The zip file (%s) cannot be opened. The path or file name generated by FieldWorks may be invalid, the zip file may not have the right access permissions, or it may have been opened by another application.
+26007	The zip module could not create a temporary work file.
+26008	There was nothing for the zip module to do.
+26009	The system is out of memory.
+26010	The zip module issued one or more warnings.
+26011	At least one file in the zip archive was skipped due to errors.
+26012	The zip module is not licensed on this machine.
+26013	Zip/Unzip has failed.
+26014	Zip/Unzip may fail.
+26015	Zip/Unzip Module
+26026	This disk is not valid. It may be full, unformatted, write-protected, or faulty in some other way. Please insert a different disk.
+26025	Abort backup
+26021	This disk is not disk %<0>d. Please insert correct disk. If you are certain that this is disk %<1>d, then it is faulty in some way.
+26023	This disk is not the last disk. Please insert correct disk. If you are certain that this is the last disk, then it is faulty in some way.
+26029	Are you sure you wish to abort the backup operation?
+26020	Abort restore
+26024	Are you sure you wish to abort the restore operation?
+26027	Cannot write to disk. Check that a disk is in drive %<0>s, and is writable.
+26022	Insert last disk of backup set into Drive %<0>s
+26028	Insert backup disk #%<0>d into Drive %<1>s
+26030	<default font>
+26031	<default heading font>
+26033	<default monospace>
+26032	<default publication font>
+VS_VERSION_INFO	VERSIONINFO
+FILEVERSION	MAJOR_VERSION,MINOR_VERSION,YEAR,DAY_MONTH_BUILDLVL
+PRODUCTVERSION	1,0,0,5
+FILEFLAGSMASK	0x3fL
+FILEFLAGS	0x0L
+FILEOS	0x40004L
+FILETYPE	VFT_DLL
+FILESUBTYPE	0x0L
+BLOCK	StringFileInfo
+BLOCK	040904b0
+VALUE	Comments", "\0
+VALUE	CompanyName", "SIL International\0
+VALUE	FileDescription", "Fieldworks Kernel support\0
+VALUE	FileVersion", STR_PRODUCT
+VALUE	InternalName", "FwKernel\0
+VALUE	LegalCopyright", COPYRIGHT
+VALUE	LegalTrademarks", "\0
+VALUE	OriginalFilename", "FwKernel.dll\0
+VALUE	PrivateBuild", "\0
+VALUE	ProductName", "SIL FieldWorks\0
+VALUE	ProductVersion", "1,0,0,5\0
+VALUE	SpecialBuild", "\0
+BLOCK	VarFileInfo
+VALUE	Translation", 0x409, 1200
+1	TYPELIB ViewsTlb.tlb
+25900	A programming error (%<0>s) has been detected in module %<1>s.\n Please report this to the developers.
+25903	Out of memory. To attempt Save, close other apps and click OK. To quit without saving click Cancel.
+24200	Before
+24201	On
+24202	About
+24203	After
+24204	Abt
+24205	BC
+24206	AD
+24207	No date
+24208	Unknown
+24209	Unknown
+25920	An unknown failure occurred.
+25921	The system cannot find the file specified.
+25922	The system cannot find the path specified.
+25923	The system cannot open the file.
+25924	Access is denied.
+25925	The handle is invalid.
+25926	The system cannot find the drive specified.
+25927	The media is write protected.
+25928	The system cannot find the device specified.
+25929	The device is not ready.
+25930	The drive cannot locate the specific area or track on the disk.
+25931	The specified disk or diskette cannot be accessed.
+25932	The drive cannot find the sector requested.
+25933	The system cannot write to the specified device.
+25934	The system cannot read from the specified device.
+25935	A device attached to the system is not functioning.
+25936	The process cannot access the file because it is being used by another process.
+25937	The process cannot access the file because another process has locked a portion of the file.
+25938	Reached the end of the file.
+25939	The disk is full.
+25940	The network path was not found.
+25941	The network is busy.
+25942	The specified network resource or device is not available.
+25943	Network access is denied.
+25944	The network resource type is not correct.
+25945	The network name cannot be found.
+25946	The file exists.
+25947	The directory or file cannot be created.
+25948	The specified network password is not correct.
+25949	A write fault occurred on the network.
+25950	The disk is in use or locked by another process.
+25951	The system cannot open the device or file specified.
+25952	The file name is too long.
+25953	There is not enough space on the disk.
+25954	The filename, directory name, or volume label syntax is incorrect.
+25955	The disk has no volume label.
+25956	Cannot create a file when that file already exists.
+25957	&OK
+25958	&Open
+26000	The zip module issued the following unrecognized error code: %<0>d.
+26001	The zip file (%s) cannot be accessed. It may have been deleted, it may be in use by another application, or there may be an error on the drive or its connection.
+26002	The zip module cannot write to disk. The disk may have been removed, it may be full, or the drive may have been disconnected.
+26003	The zip file (%s) cannot be understood. It may be corrupt.
+26004	The zip operation was aborted by user.
+26005	The zip file (%s) was empty.
+26006	The zip file (%s) cannot be opened. The path or file name generated by FieldWorks may be invalid, the zip file may not have the right access permissions, or it may have been opened by another application.
+26007	The zip module could not create a temporary work file.
+26008	There was nothing for the zip module to do.
+26009	The system is out of memory.
+26010	The zip module issued one or more warnings.
+26011	At least one file in the zip archive was skipped due to errors.
+26012	The zip module is not licensed on this machine.
+26013	Zip/Unzip has failed.
+26014	Zip/Unzip may fail.
+26015	Zip/Unzip Module
+26026	This disk is not valid. It may be full, unformatted, write-protected, or faulty in some other way. Please insert a different disk.
+26025	Abort backup
+26021	This disk is not disk %<0>d. Please insert correct disk. If you are certain that this is disk %<1>d, then it is faulty in some way.
+26023	This disk is not the last disk. Please insert correct disk. If you are certain that this is the last disk, then it is faulty in some way.
+26029	Are you sure you wish to abort the backup operation?
+26020	Abort restore
+26024	Are you sure you wish to abort the restore operation?
+26027	Cannot write to disk. Check that a disk is in drive %<0>s, and is writable.
+26022	Insert last disk of backup set into Drive %<0>s
+26028	Insert backup disk #%<0>d into Drive %<1>s
+26030	<default font>
+26031	<default heading font>
+26033	<default monospace>
+26032	<default publication font>
+VS_VERSION_INFO	VERSIONINFO
+FILEVERSION	MAJOR_VERSION,MINOR_VERSION,YEAR,DAY_MONTH_BUILDLVL
+PRODUCTVERSION	1,0,0,6
+FILEFLAGSMASK	0x3fL
+FILEFLAGS	0x0L
+FILEOS	0x40004L
+FILETYPE	VFT_DLL
+FILESUBTYPE	0x0L
+BLOCK	StringFileInfo
+BLOCK	040904b0
+VALUE	Comments", "\0
+VALUE	CompanyName", "SIL International\0
+VALUE	FileDescription", "Fieldworks View support\0
+VALUE	FileVersion", STR_PRODUCT
+VALUE	InternalName", "Views\0
+VALUE	LegalCopyright", COPYRIGHT
+VALUE	LegalTrademarks", "\0
+VALUE	OriginalFilename", "Views.dll\0
+VALUE	PrivateBuild", "\0
+VALUE	ProductName", "SIL FieldWorks\0
+VALUE	ProductVersion", "1,0,0,6\0
+VALUE	SpecialBuild", "\0
+BLOCK	VarFileInfo
+VALUE	Translation", 0x409, 1200
+31607	CURSOR "../../AppCore/Res/TBarMove.cur
+31608	CURSOR "../../AppCore/Res/TBarCopy.cur
+31609	CURSOR "../../AppCore/Res/TBarNoDrop.cur
+154	BITMAP "../../AppCore/Res/ToolbarFormatting.bmp
+154	TOOLBAR 16, 15
+BUTTON	132
+BUTTON	133
+BUTTON	134
+BUTTON	135
+SEPARATOR
+BUTTON	136
+BUTTON	137
+SEPARATOR
+BUTTON	138
+BUTTON	139
+BUTTON	140
+SEPARATOR
+BUTTON	141
+BUTTON	142
+BUTTON	143
+BUTTON	144
+SEPARATOR
+BUTTON	145
+BUTTON	146
+BUTTON	147
+31600	DIALOG 0, 0, 320, 180
+STYLE	DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION	About
+FONT	8, "MS Sans Serif
+DEFPUSHBUTTON	OK",IDOK,263,159,50,14
+CONTROL	31601,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,60,55
+LTEXT	SIL FieldWorks Family Member",31669,99,26,220,20
+LTEXT	Default Fieldworks Application",31604,99,55,220,30
+LTEXT	Version:",31603,99,83,220,9
+LTEXT	COPYRIGHTRESERVED,IDC_STATIC,99,105,220,22
+LTEXT	Available memory:",IDC_STATIC,99,128,58,9
+LTEXT	0 KB",31605,176,128,137,10,SS_SUNKEN
+LTEXT	Available disk space:",IDC_STATIC,99,141,77,9
+LTEXT	0 KB Free on C:",31606,176,141,137,9,SS_SUNKEN
+LTEXT	This program will not work after ",28001,7,157,208,13
+31641	DIALOG 33, 32, 160, 70
+STYLE	WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION	View printing
+DEFPUSHBUTTON	Cancel",IDCANCEL,60,45,45,15
+CTEXT	",25428,10,20,140,15
+28000	DIALOGEX 0, 0, 177, 118
+STYLE	DS_CONTEXTHELP | WS_CHILD
+EXSTYLE	WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT	8, "MS Sans Serif", 0, 0, 0x1
+COMBOBOX	28002,5,7,43,60,CBS_DROPDOWNLIST |
+WS_TABSTOP
+COMBOBOX	28003,49,7,37,125,CBS_DROPDOWNLIST | WS_TABSTOP
+COMBOBOX	28004,88,7,37,289,CBS_DROPDOWNLIST | WS_VSCROLL |
+WS_TABSTOP
+EDITTEXT	28007,127,7,43,13,ES_AUTOHSCROLL
+CONTROL	Spin1",28006,"msctls_updown32",
+UDS_ALIGNRIGHT	| UDS_AUTOBUDDY | UDS_ARROWKEYS,162,17,8,
+10
+CONTROL	MonthCalendar1",28005,"SysMonthCal32",
+MCS_NOTODAY	| WS_TABSTOP,27,24,125,87
+GROUPBOX	",28010,27,24,125,87
+LTEXT	No Calendar Available",28011,50,60,80,9
+153	DIALOG 0, 0, 349, 292
+STYLE	DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE	WS_EX_CONTEXTHELP
+CAPTION
+FONT	8, "MS Sans Serif
+DEFPUSHBUTTON	OK",IDOK,126,271,50,14
+PUSHBUTTON	Cancel",IDCANCEL,181,271,50,14
+PUSHBUTTON	Help...",31602,236,271,50,14
+238	DIALOG 0, 0, 292, 292
+STYLE	DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE	WS_EX_CONTEXTHELP
+CAPTION
+FONT	8, "MS Sans Serif
+DEFPUSHBUTTON	OK",IDOK,126,271,50,14
+PUSHBUTTON	Cancel",IDCANCEL,181,271,50,14
+24000	DIALOGEX 0, 0, 250, 50
+STYLE	DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION	Searching Project
+FONT	8, "MS Sans Serif
+LTEXT	", 24002, 10, 12, 230, 8
+CONTROL	progress", 24001, "msctls_progress32", PBS_SMOOTH,
+10,	30, 230, 12
+31601	BITMAP "../../AppCore/Res/HelpAbout.bmp
+31634	BITMAP "../../AppCore/Res/StdBtns.bmp
+31670	BITMAP "../../AppCore/Res/FmtBdrComboData.bmp
+31900	BITMAP "../../AppCore/Res/SplashPictureBase.bmp
+24363	BITMAP "../../AppCore/Res/ImagesSmall.bmp
+28000	DLGINIT
+28002,	0x403, 3, 0
+0x6e4f,	\000
+28002,	0x403, 7, 0
+0x7241,	0x756f, 0x646e, "\000
+28002,	0x403, 7, 0
+0x6542,	0x6f66, 0x6572, "\000
+28002,	0x403, 6, 0
+0x6641,	0x6574, 0x0072,
+28002,	0x403, 8, 0
+0x6e55,	0x6e6b, 0x776f, 0x006e,
+28003,	0x403, 4, 0
+0x614a,	0x006e,
+28003,	0x403, 4, 0
+0x6546,	0x0062,
+28003,	0x403, 4, 0
+0x614d,	0x0072,
+28003,	0x403, 4, 0
+0x7041,	0x0072,
+28003,	0x403, 4, 0
+0x614d,	0x0079,
+28003,	0x403, 4, 0
+0x754a,	0x006e,
+28003,	0x403, 4, 0
+0x754a,	0x006c,
+28003,	0x403, 4, 0
+0x7541,	0x0067,
+28003,	0x403, 4, 0
+0x6553,	0x0070,
+28003,	0x403, 4, 0
+0x634f,	0x0074,
+28003,	0x403, 4, 0
+0x6f4e,	0x0076,
+28003,	0x403, 4, 0
+0x6544,	0x0063,
+28003,	0x403, 8, 0
+0x6e55,	0x6e6b, 0x776f, 0x006e,
+28004,	0x403, 2, 0
+0x0031,
+28004,	0x403, 2, 0
+0x0032,
+28004,	0x403, 2, 0
+0x0033,
+28004,	0x403, 2, 0
+0x0034,
+28004,	0x403, 2, 0
+0x0035,
+28004,	0x403, 2, 0
+0x0036,
+28004,	0x403, 2, 0
+0x0037,
+28004,	0x403, 2, 0
+0x0038,
+28004,	0x403, 2, 0
+0x0039,
+28004,	0x403, 3, 0
+0x3031,	\000
+28004,	0x403, 3, 0
+0x3131,	\000
+28004,	0x403, 3, 0
+0x3231,	\000
+28004,	0x403, 3, 0
+0x3331,	\000
+28004,	0x403, 3, 0
+0x3431,	\000
+28004,	0x403, 3, 0
+0x3531,	\000
+28004,	0x403, 3, 0
+0x3631,	\000
+28004,	0x403, 3, 0
+0x3731,	\000
+28004,	0x403, 3, 0
+0x3831,	\000
+28004,	0x403, 3, 0
+0x3931,	\000
+28004,	0x403, 3, 0
+0x3032,	\000
+28004,	0x403, 3, 0
+0x3132,	\000
+28004,	0x403, 3, 0
+0x3232,	\000
+28004,	0x403, 3, 0
+0x3332,	\000
+28004,	0x403, 3, 0
+0x3432,	\000
+28004,	0x403, 3, 0
+0x3532,	\000
+28004,	0x403, 3, 0
+0x3632,	\000
+28004,	0x403, 3, 0
+0x3732,	\000
+28004,	0x403, 3, 0
+0x3832,	\000
+28004,	0x403, 3, 0
+0x3932,	\000
+28004,	0x403, 3, 0
+0x3033,	\000
+28004,	0x403, 3, 0
+0x3133,	\000
+28004,	0x403, 8, 0
+0x6e55,	0x6e6b, 0x776f, 0x006e,
+0
+22824	First Vernacular Writing System
+22825	First Analysis Writing System
+22826	Multiple Vernacular Writing Systems
+22827	Multiple Analysis Writing Systems
+22828	Multiple Analysis-Vernacular Writing Systems
+22829	Multiple Vernacular-Analysis Writing Systems
+22831	Vernacular Writing Systems
+22830	Analysis Writing Systems
+22832	Analysis-Vernacular Writing Systems
+22833	Vernacular-Analysis Writing Systems
+28051	A programming error has occurred.
+28052	\nA message with instructions on how to send it to the developers has been copied to the clipboard.\nPaste the contents of the clipboard into a new email message or text file.
+25906	Cannot create new window. The operating system is low on resources. Please close one or more windows immediately to avoid further problems.
+25907	Disk space is low.\n\nDo you want to save your work and continue without the ability to Undo the changes, or cancel further replacements?
+25908	Save Work
+25909	Disk space is low.\n\nSaving your work will free up needed space, but will disable the ability to Undo your changes.\n\nDo you want to save now?
+25429	Laying out pages...
+25430	Counting pages...
+25431	Printing pages: %<0>d%% complete.
+24357	Integer field values must be between -2147483648 and 2147483647.
+24358	Value Exceeds Limit
+24361	\n\nIn order to protect your data, the FieldWorks program needs to close.\n\nYou should be able to restart it normally.
+24362	An external link cannot be made using this selection (e.g., across paragraph boundaries).
+27312	Show the blank field:
+27313	P&romote
+27314	Promote this subitem to a higher subitem or a main item
+27315	This entry has been deleted by another user since you opened the project.\nYour changes to this entry will be discarded when you exit the project.
+27316	Entry Deleted
+27317	This entry has been changed by another user since you opened the project.\nDo you want to overwrite the other user's changes?
+27318	Data Changed
+28014	Unable to recognize a date.  Please enter a date in the form
+28015	Invalid Date
+27319	You are required to enter data in the %<0>s field before you can leave this entry.
+27321	Missing Required Data
+27324	You are required to enter data in this field before you can leave the field.
+27320	You should enter data in the %<0>s field.\nDo you want to do this now?
+27322	Missing Data
+27323	This text is too large to be saved. The allowed limit is %<0>d characters.
+27325	Required Data is Hidden
+27326	Data previously displayed in the %<0>s field is now hidden due to your current writing system configuration.\n\nYou are required to enter data in the %<0>s field using the current writing system(s) before you can leave this entry.
+27327	Hidden Data
+27328	Data previously displayed in the %<0>s field is now hidden due to your current writing system configuration.\n\nYou should enter data in the %<0>s field using the current writing system(s).\nDo you want to do this now?
+27350	Error: help string not defined for this application.
+27351	Error: help string not defined for this application.
+27352	Shows overlays you can use.
+27353	Shows/hides this overlay in multiparagraph fields.
+27354	Hides all overlays.
+27355	Shows the items in the current list you can select.
+27356	Shows the items in the current list you can select.
+27357	Ellipsis button.  Opens the Chooser dialog [Alt+down-arrow].
+27358	Ellipsis button.  Opens a dialog [Alt+down-arrow].
+27359	Ellipsis button.  Opens a dialog [Alt+down-arrow].
+27360	Down-arrow button.  Opens a drop-down list [Alt+down-arrow].
+27364	Shows views you can use.
+27365	Shows filters you can use.
+27366	Shows sort methods you can use.
+27367	Displays the current list using this view.
+27368	Turns off all filters.
+27369	Displays your data using this filter.
+27370	Displays your data using this sort method.
+25904	&Undo %<0>s
+25905	&Redo %<0>s
+25400
+25402	Typing
+25403	Delete
+25404	Formatting
+25405	Font Formatting
+25406	Paragraph Formatting
+25407	Bullets and Numbering
+25408	Border
+25409	Style Changes
+25410	Apply Style
+25411	Writing System
+25412	Font Size Select
+25413	Font
+25414	Bold
+25415	Italic
+25416	Background Color
+25417	Color
+25418	Paragraph Alignment
+25419	Numbering
+25420	Bullets
+25421	Decrease Indent
+25422	Increase Indent
+25423	Cut
+25424	Paste
+25425	Changes To %<0>s
+25426	Drop Reference In %<0>s
+25427	Delete Reference In %<0>s
+25432	Move %<0>s
+25433	Promote %<0>s
+25434	Delete %<0>s
+25435	Insert %<0>s
+25436	External Link
+25437	Undo Disabled In This Field
+25438	Redo Disabled In This Field
+25439	Topoic List Properties
+25440	Undo Change %<0>s
+25441	Redo Change %<0>s
+IDOK	Applies and saves changes you have made and closes this dialog box.
+IDCANCEL	Closes this dialog box without saving any changes you have made.
+31244	No Filter
+31602	Displays a description of the parts and functions of this dialog box.
+31611	Displays large icons in the side bar.\n&Large Icons
+31612	Displays small icons in the side bar.\n&Small Icons
+31613	Hides the side bar.\n&Hide Side Bar
+31614	&More >>
+31615	<< &Less
+31632	What's This help
+31633	For Help, press F1
+31636	<inherit>
+31637	<no label>
+31639	<no style>
+31640	Default Paragraph Characters
+31644	en
+31677	<LgWritingSystem id=""en""><Name24><AUni ws=""en"">English</AUni></Name24><RightToLeft24><Boolean val=""false""/></RightToLeft24><DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24><DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24><DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24><KeyboardType24><Uni>standard</Uni></KeyboardType24><ICULocale24><Uni>en</Uni></ICULocale24></LgWritingSystem>
+31645	New Item
+31646	New
+31647	Shows/hides the %<0>s toolbar.
+31699	Date
+31664	(Quick Find)
+31666	Cannot launch the List Editor
+31667	Cannot insert a new list item
+31668	Cannot delete a list item
+31907	Invalid Merge
+31906	You are attempting to merge:\n-a list item with itself, or\n-a parent list item with one of it's children.\n\nNeither of these is allowed.
+31671	Border all sides
+31672	Border above
+31673	Border below
+31674	Border on left
+31675	Border on right
+31676	No borders
+28002	Specifies the precision of the date.
+28003	Specifies the month portion of the date.
+28004	Specifies the day portion of the date.
+28007	Specifies the year portion of the date.
+28005	Allows you to specify the date by clicking a box on the calendar. Today's date, if visible, is circled in red.
+31620	Inches
+31621	""
+31642	in
+31930	Millimeters
+31622	mm
+31931	Centimeters
+31623	cm
+31932	Points
+31624	pt
+31625	Reduces the window to an icon on the Windows task bar.
+31626	Enlarges the window to fill the computer screen.
+31627	Closes the window.
+31628	Scrolls the window up and down. Click and drag the gray box or click the arrow button at either end of the scroll bar.
+31629	Scrolls the window right and left. Click and drag the gray box or click the arrow button at either end of the scroll bar.
+31630	This is the edge of the window. When the pointer changes to an arrow, drag to resize the window.
+31631	Drag the title bar to move a window or dialog box. To maximize a window or restore it to its previous size and location, double-click the title bar.
+31648	Filtered
+31649	Sorted
+31650	Context sensitive help
+31651	%<0>s:
+31652	%<0>s: %<1>s
+31653	Default Sort
+31638	Entry number and total number of entries in the view
+31655	This printer lacks required capabilities for FieldWorks printing.
+31656	With the current screen area (resolution) setting,\nthere is insufficient space to tile more windows.
+31657	Loading the %<0>s project ...
+31658	Fatal error while opening database.
+31659	The table containing Compatibility information was not found in the database.
+31660	Either the Earliest or the Last Known Application Version was missing.
+31661	The Database Version was missing.
+31662	The table containing database version information was not found in the database.
+28012	Log file not available.
+29006	Cannot connect to the master database!
+31912	You are trying to open the project '%<0>s', which was\ncreated using a newer version of FieldWorks. This cannot be done.\n\nYou need to install the newer version of FieldWorks in order to open this project.
+31913	Outdated Version of FieldWorks
+31915	Loading data ...
+31916	Date Created
+31917	Title
+31918	Unknown
+31689	Normal Window
+31690	Full Window
+31691	To insert a cross reference in this field, open the entry\nyou want to reference in a new window. From that window,\nclick and drag any field label across into the cross-reference field.\nA link to the entry is created in the field.\n
+31692	Insert Cross Reference
+31693	The %s name you specified for the list item already exists.%nPlease specify a different name.
+31694	The %s abbrevation you specified for the list item already exists.%nPlease specify a different abbrevation.
+31695	Duplicate List Item
+31908	One or more characters you typed are not permitted in the Name or Abbrevation fields (colon "":""or space hyphen space "" - "").\n\nFieldWorks automatically replaced the invalid character(s) with a hyphen.
+31909	Invalid Characters Changed
+27300	Cu&t
+27301	&Copy
+27302	&Paste
+27303	&Writing system
+27304	&Insert
+27305	&Help
+27306	&Show
+27307	&Delete
+27308	You can change the writing system of selected text
+27309	Inserts a new item
+27310	Provides help on the current field
+27311	Unhides fields that are hidden due to no data
+25300	Click to change the view or to configure views.
+25301	Click to turn on a filter, to turn off a filter, or to configure filters.
+25302	Click to turn on a sort method, to turn off a custom sort method, or to configure sort methods.
+25303	Click to turn on an overlay, to turn off an overlay or all overlays, or to configure overlays.
+25304	Click to change what is displayed in the side bar for the List Items tab.
+31696	FieldWorks %<0>s, Version (%<1>d.%<2>d.%<3>d.%<4>d)\n\nUsage: %<5>s [%<6>s] [options]\n\nOptions:\n%<7>s
+31901	Loading project: %<0>s...
+31902	FieldWorks
+31903	COPYRIGHTRESERVED
+1095
+155	Black
+156	Brown
+157	Dark Olive Green
+158	Dark Green
+159	Dark Teal
+160	Dark Blue
+161	Indigo
+162	Very Dark Gray
+163	Dark Red
+164	Orange
+165	Dark Yellow
+166	Green
+167	Teal
+168	Blue
+169	Blue-Gray
+170	Dark Gray
+171	Red
+172	Light Orange
+173	Lime
+174	Sea-Green
+175	Aqua
+176	Light Blue
+177	Violet
+178	Gray
+179	Pink
+180	Gold
+181	Yellow
+182	Bright Green
+183	Turquoise
+184	Sky-Blue
+185	Plum
+186	Light Gray
+187	Rose
+188	Tan
+189	Light Yellow
+190	Pale Green
+191	Pale Turquoise
+192	Pale Blue
+193	Lavender
+194	White
+195	Unspecified
+196	Unknown
+24300	Unable to initialize the application and database.
+24301	Unknown exception
+24302	caught ""..."" exception
+24303	Error
+24304	Please email this bug report to %<0>s.\r\n\r\nPlease insert here your description of how the problem occurred.\r\nIf possible give detailed instructions for making it happen.\r\nIf relevant please attach any files required for making it happen.\r\n\r\n------Generated error details follow------\r\n\r\n
+24305	An unknown error has occurred. Please report the circumstances to %<0>s
+24342	Database \'%<0>s\' not found.
+24306	Computer \'%<0>s\' not found.
+24307	No FieldWorks data on computer '%<0>s'.
+24308	Project '%<0>s' not found on computer '%<1>s'.
+24309	'%<0>s' not in project '%<1>s' on computer '%<2>s'.
+24310	'%<0>s' not found in project '%<1>s' on computer '%<2>s'.
+24311	Data not found in project '%<0>s' on computer '%<1>s'.
+24312	Unknown SQL problem.
+24313	Unknown problem.
+24314	\r\n\r\nPress 'Retry' button to try to start application using default settings.\r\nPress 'Cancel' button to quit application.
+24315	There is currently no context help for this item.
+24316	About
+24317	%<0>d KB out of %<1>d KB
+24318	%<0>d KB Free on %<1>s
+24319	Version: %<0>d, %<1>d, %<2>d, %<3>d
+24320	%<0>d.%<1>d.%<2>d.%<3>d
+24367	%<0>d.%<1>d
+24368	%<0>d.%<1>d.%<2>d
+24321	Ctrl+
+24322	Alt+
+24323	Shift+
+24324	Delete
+24325	Unknown Language
+24326	(None)
+24327	The available Choices Lists could not be loaded from the database
+24328	This is some tagged text.
+24329	Drawing error: %<0>s.
+24330	There is no writing system that uses the indicated keyboard. You must define one in order to use it.
+24331	Error
+24332	Failed to connect to selected Server
+24333	Font changes in headers and footers are not supported at this time.
+24334	(unspecified)
+24335	OK
+24336	Close
+24337	Training file not found
+24338	The file '%s' could not be opened.
+24353	Invalid External Link
+24354	Because you are editing a project on someone else's computer, you cannot create an external link directly to a file on your own computer.  If your file is in a shared folder, you can make an external link to the file through Network Neighborhood.
+24339	Broken External Link
+24355	Unassociated External File Extension
+24340	An error was encountered in opening the file referenced by this external link.\nFile: ""%s""\nFolder: ""%s""\n\nError:  ""%s""\n\nDo you want to update this link now?
+24341	The file referenced by this external link was not found.\nFile: ""%s""\nFolder: ""%s""\n\nThis can happen if the file\n- was renamed, moved, or deleted\n- is on a drive that is not available, or\n- is on a networked computer and there is a network problem.\n\nDo you want to update this link now?
+24356	The file referenced by this external link has an extension that is not associated\nwith a Windows application.\n\nFile: ""%s""\nFolder: ""%s""\n\nRight-click on the link and select 'Open With' to change the association or\nselect Yes below to change the filename and update the link.\n\nDo you want to update this link now?
+24343	&Open...
+24345	Open &With...
+24347	External &Link...
+24349	&Remove Link...
+24351	External Link
+24352	Do you want to remove the external link from the selected text?
+25311	Text Outside Printable Area
+25305	The left margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?
+25306	The right margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?
+25307	The top margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?
+25308	The bottom margin is set outside the printer's printable area.  Text will be cut off.\nDo you want to continue printing?
+25312	Header Outside Printable Area
+25309	The header is set outside the printer's printable area and will be cut off.\nDo you want to continue printing?
+25313	Footer Outside Printable Area
+25310	The footer is set outside the printer's printable area and will be cut off.\nDo you want to continue printing?
+24359	In order to promote the subentry, filters and sorting will be turned off.
+24360	Promote
+24369	Error trying to move %<0>s to %<1>s: %<2>s
+24370	Error trying to copy %<0>s to %<1>s: %<2>s
+31920	This item is required by the program, so it can't be deleted.
+31921	This item is required by the program, so it can't be merged into another item.
+24005	Phase One: Merging Item
+24006	Phase Two: Merging Item
+24007	Phase One: Deleting Item
+24008	Phase Two: Deleting Item
+24009	Merge
+24010	This action can NOT be undone.\r\n\r\nAre you sure you want to continue?
+24011	Confirm Undoable Action
+28013	ACCELERATORS
+"A",	126, VIRTKEY, CONTROL, NOINVERT
+"C",	110, VIRTKEY, CONTROL, NOINVERT
+"V",	111, VIRTKEY, CONTROL, NOINVERT
+"X",	109, VIRTKEY, CONTROL, NOINVERT
+"Y",	115, VIRTKEY, CONTROL, NOINVERT
+"Z",	114, VIRTKEY, CONTROL, NOINVERT
+23999	Divides the main view pane into two panes.\nSplit Window\nDivides the main view pane into two panes with the same content. When the main view pane is split, this button returns it to a single pane.\n
+23998	&Split Window
+23997	&Remove Split
+22800	The operating system is out of memory or resources.
+22801	The specified file was not found.
+22802	The specified path was not found.
+22803	The .exe file is invalid.
+22804	The operating system denied access to the specified file.
+22805	The file name association is incomplete or invalid.
+22806	The DDE transaction could not be completed because other DDE transactions were being processed.
+22807	The DDE transaction failed.
+22808	The DDE transaction could not be completed because the request timed out.
+22809	The specified dynamic-link library was not found.
+22811	There is no application associated with the given file name extension.
+22812	There was not enough memory to complete the operation.
+22814	A sharing violation occurred.
+22815	SQL Server low on memory
+22816	The SQL Server program has run out of memory. The FieldWorks program will shut down.\n\nPlease close all other open applications and restart FieldWorks. If the problem persists, reboot the computer to clear memory.\n\nThe ReadMe.rtf file in the FieldWorks folder contains additional information.
+22817	The computer where the project is located has run out of memory. Please close all applications on that computer. If the problem persists, reboot the computer to clear memory.\n\nThe ReadMe.rtf file in the FieldWorks folder contains additional information.
+22818	Unrecognized Error.
+22820	Do you want to disconnect them in order to update the database?
+22821	%<0>s is doing major database alteration.
+22822	Do you want to disconnect them in order to continue with the import?
+22823	%<0>s is importing new data.
+202	Menu
+203	&Standard
+204	&Formatting
+205	&Insert
+206	&Window
+24364	Undefined Style
+24365	The requested style ""%<0>b"" is not defined, probably due to a Copy/Paste from another application.  The ""%<1>s"" style will be used instead.
+22840	New Language Project

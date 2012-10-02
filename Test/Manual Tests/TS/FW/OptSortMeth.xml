@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="tlsoptsrtm" num="2.7.9.3" abbr="tlosm" file="FW\OptSortMeth.xml">
+<title tag="tlsoptsrtm">Tools-Options-Sort Methods Tab Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>The user adds, selects, deletes, copies and modifies various sort method specifications.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="doc">Tools-Options-Sort Methods Tab</link>
+</p>
+</introduction>
+
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Options-Sort Methods"</p>
+</context>
+
+
+<!-- Activation -->
+<case id="tlosmAct" num="0" order="any">
+<title tag="tlosmAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="0.1" link="Bug">Invoke Tools-Options-Sort Methods Tab. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="doc">Tools-Options-Sort Methods Tab specification</link> to visually inspect the layout of the dialog controls.
+ <r>
+<ul>
+  <li>The dialog opens.</li>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+  <li>Default values are tested in the control cases below.</li>
+  <li>Shortcuts are as tested in the control cases below.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab dialog fails to open</p>
+<p name="bug">Tools-Options-Sort Methods Tab dialog layout incorrect</p>
+</step>
+
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+ <r>
+<ul>
+  <li>When invoked from a sort method button right-click, associated sort method is selected.</li>
+  <li>The Method settings fields are filled with data of the selected sort method.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods TabTools-Options-Sort Methods Tab associated sort method is selected failed</p>
+<p name="bug">Tools-Options-Sort Methods TabTools-Options-Sort Methods Tab Method settings fields are filled with data of the selected sort method failed</p>
+</step>
+
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+ <r>
+<ul>
+  <li>On OK, the dialog disappears.</li>
+  <li>Any change to the active sort method is rerun on the current view.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab dialog remains after OK</p>
+<p name="bug">Tools-Options-Sort Methods Tab active sort method not rerun on the current view</p>
+</step>
+</case>
+
+
+<!-- Sort Methods List Box -->
+<case id="tlosmsm" num="1" order="any">
+<title tag="tlosmsm">Sort Methods List Box</title>
+<context>
+<p>When the Sort Methods tab is displayed</p>
+</context>
+
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;S&gt; to test the Sort Methods list box.<r>
+<ul>
+<li>The shortcut "S" is underlined.</li>
+<li>There is a list below the text "Sort Methods:".</li>
+<li>Report any failures using the first words, "Tools-Options-Sort Methods".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Sort Methods shortcut is not &lt;S&gt;</p>
+<p name="bug">Tools-Options-Sort Methods Tab Sort Methods has list problems</p>
+</step>
+
+<step name="1.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	 <li>The list does not contain <i>Default Sort</i> (although it exists).</li>
+	 <li>The list contains sort methods in the project.</li>
+	 <li>The list is sorted in descending alphabetical order.</li>
+	</ul>
+</r>
+	 <p name="bug">Tools-Options-Sort Methods TabSort Methods list items not highlighted</p>
+	 <p name="bug">Tools-Options-Sort Methods TabSort Methods drop list contains &lt;Default Sort&gt;</p>
+	 <p name="bug">Tools-Options-Sort Methods TabSort Methods drop list missing &lt;sort methods in the project&gt;</p>
+	 <p name="bug">Tools-Options-Sort Methods TabSort Methods drop list not sorted right</p>
+	</step>
+<step name="1.3" link="Bug">Slow double-click the Sort Methods listbox.<r>Opens up an in-place edit box on selected item.</r>
+<p name="bug">Tools-Options-Sort Methods Tab Slow double-click  failed</p>
+</step>
+
+<step name="1.4" link="Bug">Right-click rename the Sort Methods listbox.<r>Opens up an in-place edit box on selected item.</r>
+<p name="bug">Tools-Options-Sort Methods Tab Right-click rename  failed</p>
+<p name="note">Not v1</p>
+</step>
+</case>
+
+
+<!-- Sort Methods Left Panel Tests -->
+<case id="tlosmleftb" num="2" order="any">
+<title tag="tlosmleftb">Sort Methods Left Panel Buttons</title>
+<context>
+<p>When the Sort Methods tab is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the <b>Add</b> button.
+ <r>
+<ul>
+  <li>The shortcut "A" is underlined.</li>
+  <li>Inserts a new Sort Method in the list.</li>
+  <li>Names it "New sort method".</li>
+  <li>Opens up an in-place edit box.</li>
+  <li>Method settings are unset.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Add shortcut is not &lt;A&gt;</p>
+<p name="bug">Tools-Options-Sort Methods Tab Add failed</p>
+</step>
+
+<step name="2.2" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;C&gt; to test the <b>Copy</b> button.
+ <r>
+<ul>
+  <li>The shortcut "C" is underlined.</li>
+  <li>Copies the selected sort method.</li>
+  <li>Assigns name 'Copy(i) of X'. (i is the copy number, no number is given the first copy)</li>
+  <li>In-place edit box opens.</li>
+  <li>Method settings show the same settings as the method originally copied from.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Copy shortcut is not &lt;C&gt;</p>
+</step>
+
+<step name="2.3" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;D&gt; to test the <b>Delete</b> button.
+ <r>
+<ul>
+  <li>The shortcut "D" is underlined.</li>
+  <li>Brings up confirmation dialog.</li>
+  <li>Deletes the selected sort method.</li>
+  <li>Selects previous sort method, or the next if at the top.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Delete shortcut is not &lt;D&gt;</p>
+</step>
+</case>
+
+
+<!-- Sort By Combo Boxes -->
+<case id="tlosmscb" num="3" order="any">
+<title tag="tlosmscb">Sort By Combo Boxes</title>
+<context>
+<p>When the combo boxes are available.</p>
+</context>
+
+<step name="3.1" link="Bug">For each combo box, use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcuts &lt;Alt&gt;&lt;b&gt;, &lt;Alt&gt;&lt;T&gt;, and &lt;Alt&gt;&lt;h&gt; to test the <b>Sort by</b> and the 2 <b>Then by</b> combo boxes.
+ <r>
+<ul>
+  <li>The shortcuts "b", "t", and "h" are underlined.</li>
+  <li>The shortcuts have no effect if the controls are greyed out</li>
+  <li>There is a drop-down list widget to the side of the textbox.</li>
+  <li>The default is "Choose".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Sort by shortcuts incorrect</p>
+<p name="bug">Tools-Options-Sort Methods Tab Sort by missing drop-down</p>
+<p name="bug">Tools-Options-Sort Methods Tab Sort by default is not "Choose"</p>
+</step>
+
+<step name="3.2" link="Bug">Click the each drop-down widget.
+ <r>
+<ul>
+  <li>The list appears.</li>
+  <li>The list contains application specific field names.</li>
+  <li>The list is sorted descending alphabetical order.</li>
+  <li>Only the Then by fields have the list item <i>None</i>
+</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods TabSort by drop-down not showing</p>
+<p name="bug">Tools-Options-Sort Methods TabSort by drop list missing &lt;application specific field names&gt;</p>
+<p name="bug">Tools-Options-Sort Methods TabSort by drop list not sorted right</p>
+</step>
+
+
+<step name="3.3" link="Bug">Click outside the list of combo boxes without making a selection.
+<r>List closes and the previous selection remains as the text for the combo box.</r>
+<p name="bug">Tools-Options-Sort Methods Tab Click  failed</p>
+</step>
+<step name="3.4" link="Bug">Choose one of the fields in the drop down list from the combo box.
+<r>
+<ul>
+<li>The selected field name replaces combo box text.</li>
+   <li>The selection is used as the field to sort on (or secondary or tertiary field to sort on).</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab selection failed</p>
+</step>
+</case>
+
+
+<!-- Normal and Reversed Radio buttons -->
+<case id="tlosmnorm1" num="4" order="any">
+<title tag="tlosmnorm1">Include Subentries and Reversed Check Boxes</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+
+<step name="4.1" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;I&gt; to test the Include Subentries check box.
+ <r>
+<ul>
+  <li>The shortcut "I" is underlined.</li>
+  <li>The Include Subentries box is checked when it has been turned on</li>
+  <li>Report any failures using the first words, "Tools-Options-Sort Methods Include subentries".</li>
+ </ul> </r>
+<p name="bug">Tools-Options-Sort Methods include subentries check box not working correctly</p>
+</step>
+<step name="4.2" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;R&gt;, &lt;Alt&gt;&lt;v&gt;, and &lt;Alt&gt;&lt;s&gt; to test the Reversed check boxes.
+ <r>
+<ul>
+  <li>The shortcuts "R", "v", and "s" are underlined.</li>
+  <li>The shortcuts have no effect if the options are greyed out</li>
+  <li>The boxes are checked in when reversed has been selected.</li>
+  <li>Report any failures using the first words, "Tools-Options-Sort Methods Reversed".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods Tab Reversed check boxes not working</p>
+</step>
+</case>
+
+
+<!-- Sort Behavior -->
+<case id="tlosmbe" num="5" order="any">
+<title tag="tlosmbe">Sort Behavior</title>
+<context>
+<p>When the Sort Methods tab is displayed</p>
+</context>
+
+<step name="5.1" link="Bug">Apply a sort to the data.
+ <r>
+<ul>
+  <li>The data is sorted according to the sort applied.</li>
+  <li>The <b>Next</b> and <b>Previous</b> buttons display the next and previous sorted record and position the cursor are the relevant sort key (the primary key).</li>
+  <li>If sort key is deep in embedded structure, the entire structure should open up and scroll down to display that sort key.</li>
+  <li>For fields with multiple items, the sort index will create an index for each item in the sort field. This results in the same record appearing the the sorted database in several places.</li>
+  <li>Entries that contain the selected sort field but are empty will be placed at the top of the database.</li>
+  <li>Entries that do not contain the selected sort field will be placed at the bottom of the database.</li>
+  <li>If the sort field is a reference field, the displayed contents will be treated as a string.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Sort Methods unexpected sort behavior</p>
+</step>
+</case>
+
+<case id="tlosmDef" num="6" order="any">
+<title tag="tlosmDef">Standard Sort Methods</title>
+<context>
+<p>When a new project has been created or the sample DN is displayed</p>
+</context>
+
+<step name="6.1" link="Bug">
+Make sure the following standard sort methods are present in a newly created Data Notebook or the Default Data Notebook (Lela-Teli Sample) that comes with Fieldworks.
+<r>Sort Name (Definition of Sort)
+<ul>
+<li>Default Sort (Date created)</li>
+<li>Date of Event (Event: Date of Event)</li>
+<li>Source (Event: Source: Full Name)</li>
+<li>Location (Event: Location: Location Name)</li>
+<li>Anthro Category (Any Entry Type: Anthropology Categories: Abbreviation)</li>
+<li>Source and Anthro Category (Event: Source: Full Name
+then by Any Entry Type: Anthropology Categories: Abbreviation)</li>
+</ul>
+All standard sort methods (except Default Sort) have Include subentries checked, and use English: Default Collation. The user has the option to modify or delete any of these sort methods (except Default Sort).
+</r>
+<p name="bug">Tools-Options-Sort Methods standard sort missing</p>
+<p name="bug">Tools-Options-Sort Methods standard sort incorrect settings</p>
+</step>
+
+
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="May-31-02" author="JoelC">Updated.</update>
+<update date="Jul-26-02" author="RussD">Updated to conform with specs.</update>
+
+
+</test>

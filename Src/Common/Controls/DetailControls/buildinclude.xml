@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+<!-- generate Parts file -->
+	<echo>dir.xmiOutput = ${dir.xmiOutput}</echo>
+	<echo>fwroot = ${fwroot}</echo>
+	<echo>dir.srcProj = ${dir.srcProj}</echo>
+	<echo>in="${fwroot}\Src\FDO\MasterFieldWorksModel.xml"</echo>
+	<echo>out="GeneratedParts.xml"</echo>
+	<echo>destdir="${fwroot}\DistFiles\Parts"</echo>
+	<echo>extension="xml"</echo>
+	<echo>style="${dir.srcProj}\PartGenerator\PartGenerate.xslt"</echo>
+	<style in="${fwroot}/Src/FDO/MasterFieldWorksModel.xml" out="${fwroot}/DistFiles/Parts/GeneratedParts.xml"
+		   extension="xml" style="${dir.srcProj}/PartGenerator/PartGenerate.xslt" verbose="true"/>
+<!-- generate Layouts file -->
+	<style in="${fwroot}/Src/FDO/MasterFieldWorksModel.xml" out="${fwroot}/DistFiles/Parts/GeneratedLayouts.xml"
+		   extension="xml" style="${dir.srcProj}/PartGenerator/LayoutGenerate.xslt" verbose="true"/>
+  </pre-build>
+  <post-clean>
+	<delete file="${fwroot}/DistFiles/Parts/GeneratedParts.xml" verbose="false" failonerror="false"/>
+	<delete file="${fwroot}/DistFiles/Parts/GeneratedLayouts.xml" verbose="false" failonerror="false"/>
+  </post-clean>
+</include>

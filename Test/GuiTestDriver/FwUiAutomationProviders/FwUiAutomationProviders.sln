@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FwUiAutomationProviders", "FwUiAutomationProviders\FwUiAutomationProviders.csproj", "{B234382E-0E89-4E27-A409-409C8E0FE41B}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..\\..\\..
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection0 = Test\\GuiTestDriver\\FwUiAutomationProviders\\
+		SccProjectUniqueName1 = FwUiAutomationProviders\\FwUiAutomationProviders.csproj
+		SccLocalPath1 = ..\\..\\..
+		SccProjectFilePathRelativizedFromConnection1 = Test\\GuiTestDriver\\FwUiAutomationProviders\\FwUiAutomationProviders\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Bounds|Any CPU = Bounds|Any CPU
+		Bounds|Mixed Platforms = Bounds|Mixed Platforms
+		Bounds|Win32 = Bounds|Win32
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Bounds|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Bounds|Mixed Platforms.Build.0 = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Bounds|Win32.ActiveCfg = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B234382E-0E89-4E27-A409-409C8E0FE41B}.Release|Win32.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

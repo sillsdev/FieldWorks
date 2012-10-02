@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtfind" num="2.2.8" abbr="edfd" file="FW\EdtFind.xml">
+<title tag="edtfind">Edit-Find Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The dialog supports the kind of searching that the majority of folk will want to do. The user types in a word or phrase, and then the dialog finds the fields and entries that contain that phrase. This dialog is intended to be extremely simple and straightforward, so that the user is not confused with too many options.</p>
+<p name="Note">This test is only for the "Find" tab. The "Replace" tab comes up first when Edit-Replace is invoked.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Find" type="doc">Edit-Find</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Find%20Tab" type="doc">Find Tab</link>
+</p>
+</introduction>
+<context>
+<p>A few setting combinations are possible via the "More" button. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Edit-Find"</p>
+</context>
+
+<case id="edfdAct" num="1" order="any">
+<title tag="edfdAct">Activate</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Edit-Find. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Find%20Tab" type="doc">Edit-Find specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Edit-Find layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+ <r>There is no "OK" button.</r>
+</step>
+
+<step name="1.3" link="Bug">Invoke Edit-Find with and without selecting text before-hand.
+   <r>
+<ul>
+<li>With no text selected, the Find What text box is empty or shows the last search text.</li>
+<li>With text selected, the Find What text box shows the selected text.</li>
+</ul>
+</r>
+<p name="bug">Edit-Find Find What text initialization error</p>
+</step>
+</case>
+
+<case id="edfdEx" num="2" order="any">
+<title tag="edfdEx">Exercise dialog controls</title>
+<context>
+<p>When the Edit-Find is displayed and there is text in the text window</p>
+</context>
+
+<step name="2.1">Use the <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> and the shortcut &lt;Alt&gt;&lt;h&gt; to test the Find What control.
+   <r>Report any failures as suggested using "Edit-Find Find What" as the name of the control.</r>
+</step>
+<step name="2.2" link="Bug">Use the <link uri="EdtNxtMat.xml">Edit-Find Next Tests</link> and use the shortcut &lt;Alt&gt;&lt;F&gt; to test the Find Next button.
+ <r>If there is no Find What text, this button is disabled</r>
+<p name="bug">Edit-Find Find Next is enabled but Find what is empty</p>
+</step>
+<step name="2.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;M&gt; with the More button. (Click on "Less" if not visible)
+ <r>
+<ul>
+  <li>The dialog extends from the bottom showing more controls.</li>
+  <li>The name of the button changes to "Less".</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find More fails to extend dialog</p>
+<p name="bug">Edit-Find More fails to become "Less"</p>
+</step>
+<step name="2.4" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;L&gt; with the Less button. (Click on "More" if not visible)
+ <r>
+<ul>
+  <li>The dialog shortens from the bottom showing fewer controls.</li>
+  <li>The name of the button changes to "More".</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Less fails to shorten dialog</p>
+<p name="bug">Edit-Find Less fails to become "More"</p>
+</step>
+</case>
+
+<case id="edfdMr" num="3" order="any">
+<title tag="edfdMr">More controls</title>
+<context>
+<p>When the Edit-Find dialog is displayed with More controls ("Less" is displayed)</p>
+</context>
+
+<step name="3.1" link="Bug">Test the Match case check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;c&gt;.
+ <r>
+<ul>
+  <li>Match case restricts matches to the case entered in the Find What text</li>
+  <li>If a writing system in use does not support case, it is grayed out.</li>
+  <li>Default is unchecked.</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Match case has wrong default</p>
+<p name="bug">Edit-Find fails to recognize case</p>
+<p name="bug">Edit-Find fails to gray out</p>
+</step>
+<step name="3.2" link="Bug">Test Match diacritics check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;t&gt;.
+ <r>
+<ul>
+  <li>Match diacritics requires the text have the diacritics entered in the Find What text</li>
+  <li>Default is unchecked.</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Match diacritics has wrong default</p>
+<p name="bug">Edit-Find fails to match diacritics</p>
+<p name="bug">Edit-Find fails to ignore diacritics</p>
+</step>
+<step name="3.3" link="Bug">Test Match as a whole word check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;w&gt;.
+ <r>
+<ul>
+  <li>Match as a whole word matches only if the matching text is a word</li>
+  <li>Default is unchecked.</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Match as a whole word has wrong default</p>
+<p name="bug">Edit-Find fails to recognize whole words</p>
+</step>
+<step name="3.4" link="Bug">Test Match writing system check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;y&gt;.
+ <r>
+<ul>
+  <li>Match writing system matches only text having the writing system specified.</li>
+  <li>Default is unchecked.</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Match writing system has wrong default</p>
+<p name="bug">Edit-Find fails to recognize writing systems</p>
+</step>
+<step name="3.5" link="Bug">Test the Format button using the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;o&gt;.
+ <r>Displays a Writing System list title button</r>
+<p name="bug">Edit-Find Format does not produce a list</p>
+</step>
+<step name="3.6" link="Bug">Test the Writing System list title button using the <link uri="../StdCtrls/Button.xml">Button Tests</link>.
+ <r>Displays a Writing System list</r>
+<p name="bug">Edit-Find Writing System list does not appear</p>
+</step>
+<step name="3.7">Test the Writing System list using the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link>.
+ <r>
+<ul>
+  <li>When an item is selected, the <i>Match writing system check box</i> is checked</li>
+  <li>There is no text box associated with this list</li>
+  <li>Report any failures as suggested using "Edit-Find Writing System list item" as the name of the button</li>
+ </ul>
+</r>
+<p name="bug">Edit-Find Match writing system not checked after choosing a WS</p>
+</step>
+
+</case>
+
+<case id="edfdym" num="4" order="any">
+<title tag="edfdym">Yet More controls</title>
+<context>
+<p>When the Edit-Find dialog is displayed</p>
+</context>
+<p name="Note">Some applications do not have these controls.</p>
+<step name="4.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and the shortcut &lt;Alt&gt;&lt;E&gt; to test the Search in-Which Entries control.
+   <r>
+<ul>
+<li>With "All (Filtered) Entries" selected, it looks through all entries passing the current filter</li>
+<li>With "Current Entry Only" selected, it looks through the current entry or subentry; this includes any subentries, if they are displayed as part of it. <i>Current</i> means where the cursor is.</li>
+</ul>
+</r>
+<p name="bug">Edit-Find Which Entries matches outside of filter</p>
+<p name="bug">Edit-Find Which Entries matches outside of current entry</p>
+</step>
+<step name="4.2" link="Bug">Test Search in-Field check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;i&gt;.
+   <r>
+<ul>
+<li>When checked, it constrains the search to the field specified in the combo box</li>
+<li>The same field in subentries is searched also</li>
+<li>When the list box is clicked, the check is set automatically</li>
+<li>When the list box is cleared, the check is cleared automatically</li>
+</ul>
+</r>
+<p name="bug">Edit-Find Field includes nondisplay fields</p>
+<p name="bug">Edit-Find Field does not search subentries</p>
+<p name="bug">Edit-Find Field is not set automatically</p>
+<p name="bug">Edit-Find Field is not cleared automatically</p>
+</step>
+<step name="4.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">list Box Tests</link> and the shortcut &lt;Alt&gt;&lt;i&gt; to test the Search in-Field list box.
+   <r>
+<ul>
+<li>Lists only fields that are displayed</li>
+<li>When Overlay Tags is selected, only overlay tags are searched</li>
+<li>When Participants is selected, the whole complex field is searched</li>
+</ul>
+</r>
+<p name="bug">Edit-Find </p>
+</step>
+<step name="4.4" link="Bug">Test the Special button using the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;S&gt;.
+   <r>
+<ul>
+<li>Expands a drop-down menu that contains the same wildcard labels that are found in the Filters dialog</li>
+<li>
+<img uri="SpecialButton.gif" alt="special codes">
+</img>
+</li>
+<li>These codes also work by direrctly typing them into the Find what text box</li>
+</ul>
+</r>
+<p name="bug">Edit-Find Special is missing codes</p>
+<p name="bug">Edit-Find Special code doesn't work</p>
+<p name="bug">Edit-Find Special does not work by direct typing</p>
+</step>
+<step name="4.5" link="Bug">Test the No Formatting button using the <link uri="../StdCtrls/Button.xml">Button Tests</link>.
+   <r>
+<ul>
+<li>There is no shortcut.</li>
+<li>Removes all specified attributes from the text string (including the Writing System).</li>
+</ul>
+</r>
+<p name="bug">Edit-Find </p>
+</step>
+<step name="4.6" link="Bug">Test Show a list of matches check box using the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;l&gt;.
+   <r>
+<li>When checked, the Find and Replace dialog box expands to show a list of matches</li>
+</r>
+<p>Not version 1</p>
+<p name="bug">Edit-Find Show a list of matches doesn't show a list</p>
+</step>
+
+</case>
+
+<case id="edfdSe" num="5" order="any">
+<title tag="edfdSe">Side effects</title>
+<context>
+<p>When the Edit-Find dialog is displayed:</p>
+</context>
+
+<step name="5.1" link="Bug">Enter a Find What text that has a match in the main window. Click on the main window to move the cursor position. Click Find Next.
+   <r>
+<ul>
+<li>The matching text below the "new" cursor position is highlighted in view.</li>
+<li>If there is no match below the cursor, nothing happens.</li>
+</ul>
+</r>
+<p name="bug">Edit-Find fails to recognize reset cursor position</p>
+</step>
+<step name="5.2" link="Bug">Use Edit-Find with different More settings. Exit the dialog, restart it and verify that the settings persist by bringing up Edit-Find More again.
+   <r>The settings persist after leaving and re-entering the dialog.</r>
+<p name="bug">Edit-Find &lt;checkboxname&gt; does not persist</p>
+</step>
+<step name="5.3" link="Bug">Invoke Edit-Find by selecting text with different character and paragraph settings.
+   <r>The text appears in the Find What text box but does not take on the paragraph or character settings of the source text</r>
+<p name="bug">Edit-Find Find What text has paragraph settings of source</p>
+<p name="bug">Edit-Find Find What text has character settings of source</p>
+</step>
+<step name="5.4" link="Bug">After setting Edit-Find with a search and canceling, click in the upper left of the text window. Use &lt;ctrl&gt;&lt;g&gt; and &lt;ctrl&gt;&lt;d&gt; to find next and previous in the following patterns: random, linearly to the end, linearly to the beginning.
+   <r>
+<ul>
+<li>The instances of the search should be discovered in the order tested without skipping, ending too soon or matching other text.</li>
+</ul>
+</r>
+<p name="bug">Edit-Find next, previous sequence does not find all matches</p>
+</step>
+
+</case>
+
+<case id="edfdOvl" num="6" order="any">
+<title tag="edfdOvl">Find using Overlays</title>
+<context>
+<p>When the Edit-Find dialog is displayed and an Overlay is turned on</p>
+</context>
+
+<step name="6.1" link="Bug">
+Use Find to search for an overlay. Click in the find what box and choose an Overlay using the Overlay chooser. Then click find.
+<r>Find should look inside the field (if DE) or document (if Browse or Doc) for the overlay tag selected.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="6.2" link="Bug">
+Search for a particular string of text within a particular overlay. Type in the text to search for in the find box, highlight it and then select an overlay for that text.
+<r>Find should only find matches for that text with the selected overlay.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="6.3" link="Bug">
+Try searching with multiple overlay tags selected.
+<r>Find should only find a match if it meets all the criteria of the find (it has all the overlay tags).</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="6.4" link="Bug">
+Try searching with an overlay that doesn't exist (no text is tagged with that overlay) and try one where the overlay does exist but the text being searched for doesn't exist with that overlay.
+<r>No matches should be found in either case.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="6.5" link="Bug">
+Try searching with an overlay using some of the More settings.
+<r>Find should apply any additional settings to refine the search with the overlay</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Jul-31-01" author="MikeL">Put in the guts of the test</update>
+<update date="Aug-23-01" author="MikeL">Brought up to spec</update>
+<update date="May-24-02" author="JoelC">Checked up to spec</update>
+<update date="Jul-12-02" author="RussD">Added Case 6 for testing find with overlays</update>
+
+</test>

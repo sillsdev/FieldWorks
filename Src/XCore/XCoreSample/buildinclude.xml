@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+<!-- Copy configuration XML file, so we can avoid using FW's Utils. -->
+	<copy file="${fwroot}\Src\XCore\xCoreSample\itinerary.xml" todir="${fwroot}\Output\${config}"/>
+  </pre-build>
+</include>

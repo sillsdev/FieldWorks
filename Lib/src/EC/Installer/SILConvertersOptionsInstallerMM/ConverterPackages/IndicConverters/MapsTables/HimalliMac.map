@@ -1,0 +1,408 @@
+;HimalliMac.map
+;Copyright (c) 2006 SIL International.
+
+; Mapping table for files that use the Macintosh version of the Himalli font.
+
+; *** NO GUARANTEES IF USED WITH ANY OTHER VERSIONS OF HIMALI / HIMALLI / HIMALLILL FONTS!! ***
+
+; NB: There are mulitple versions of the Himalli font floating around. If this table doesn't work
+; with your data, try one of the following mappings:
+
+; HimalliLLMac.map - for use with files using the Mac Himallill font.
+; HimalliPC-1998.map for use with PC files using the PC Himalli font with filename himalli.ttf,
+;                    dated 12-May-1998.
+; HimalliPC-2002.map for use with PC files using the PC Himalli font with filename himalli_.ttf
+;                    (note underscore), dated 18-Dec-2002.
+; HimalliLLPC.map - for use with PC files using the Himallill font named Himallil.ttf, dated 11-Dec-2001
+
+; Note that this table is not completely reversible: some consonant clusters (eg. ka+lower r, and
+; nGa+halant+ga) come back as a conjunct or stack character. If you want the sequence, you will
+; need to use search and replace to restore it.
+
+EncodingName			"SAG-HimalliMac-1999"
+DescriptiveName			"Himalli Devanagari (Mac)"
+Version				"0.2"
+Contact				"mailto:steve_smith@sall.com"
+RegistrationAuthority		"SIL International"
+RegistrationName		"Devanagari-HimalliMac-1999"
+
+RHSFlags			(ExpectsNFD)
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 1a: get the composed consonants apart, e.g. phe = p + e + hook
+;          reorder diacritics for some specific characters
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+pass(Byte)
+class [hook_cons] = (107 81 113 101 112)  ; pha kta kra jha uu
+class [cmpltr_cons] = (48 105 73)	  ; Na sHa ksHa
+
+; diacritics that can come between the 1st half of a hook_cons and its hook
+; vowels uu u ri e ai, and anusvara nukta halant reph lowr candrabindu
+class [diac] = (34 241 39 194 91 93 125 43 179 92 123 124 210 )
+
+[hook_cons]=hc ([diac]*)=diacs 109 <> @hc 109 @diacs
+
+[cmpltr_cons]=cc ([diac]*)=diacs 70  <> @cc 70 @diacs
+[cmpltr_cons]=cc ([diac]*)=diacs 102  > @cc 70 @diacs	; 102 aakar wrongly used as cmpltr
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 1b: simplify the compounded consonants, and do some tidying up
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+pass(Byte)
+class [tentr_char] = ( 53 54 55 56 57 )
+class [ld_char] = ( 115 234 251 )
+
+105 70   > 233      ; SHa      SHa, kta and ksha have full forms, so don't revert to compltr on return
+81  109  > 234      ; kta
+73  70   > 239      ; ksha
+112 109  > 185      ; full UU  also UU and pha (hook characters)
+107 109  > 251      ; pha
+101 109  > 171      ; jha      bha+hook jha gets mapped to I-jha since Unicode doesn't distinguish
+
+; Use unused codes 249-255 for temporary storage of constructed characters
+48 70   <> 249      ; Na
+113 109 <> 250      ; kra
+
+70   93  > 252      ; o	; 70=completer wrongly used, don't restore on way back
+102  93 <> 252      ; o
+70  125  > 253      ; au
+102 125 <> 253      ; au
+79 123		<> 255      ; full long II
+79 43 123	<> 255 43   ; II-nasal
+
+70  43 93    > 252 43	; o-nasal
+102 43 93   <> 252 43	; o-nasal
+70  210 93   > 252 210	; o-candrabindu
+102 210 93  <> 252 210	; o-candrabindu
+70  43 125   > 253 43	; au-nasal
+102 43 125  <> 253 43	; au-nasal
+70  210 125  > 253 210	; au-candrabindu
+102 210 125 <> 253 210	; au-candrabindu
+
+112 43  109  > 185 43	; full UU-nasal
+112 210 109  > 185 210	; full UU-candrabindu
+
+199	<>  124 / [tentr_char] _ ; replace tent-r with normal lowr
+194	<>  39  / [ld_char] _	 ; replace left u with normal u
+241	<>  34  / [ld_char] _    ; replace left uu with normal uu
+63	<>  47 39	; decompose ru
+192	<>  47 34	; decompose ruu
+
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 1c puts the diacritics into the right order, which is:
+; 1. ldot 61
+; 2. lowr 124
+; 3. halant 92
+; 4. vowel 34,39,91,93,125
+; 5. reph 123
+; 6. nasal 43,210
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+pass(Byte)
+class[vwl] = (34 39 91 93 125)
+class[nas] = (43 210)
+(61=ld1 | 124=lor1 | 92=hal1 | [vwl]=v1 | 123=reph1 | [nas]=n1) \
+(61=ld2 | 124=lor2 | 92=hal2 | [vwl]=v2 | 123=reph2 | [nas]=n2)? \
+(61=ld3 | 124=lor3 | 92=hal3 | [vwl]=v3 | 123=reph3 | [nas]=n3)? \
+(61=ld4 | 124=lor4 | 92=hal4 | [vwl]=v4 | 123=reph4 | [nas]=n4)? \
+(61=ld5 | 124=lor5 | 92=hal5 | [vwl]=v5 | 123=reph5 | [nas]=n5)? \
+(61=ld6 | 124=lor6 | 92=hal6 | [vwl]=v6 | 123=reph6 | [nas]=n6)? \
+ <> @ld1 @ld2 @ld3 @ld4 @ld5 @ld6 \
+   @lor1 @lor2 @lor3 @lor4 @lor5 @lor6 \
+   @hal1 @hal2 @hal3 @hal4 @hal5 @hal6 \
+   @v1 @v2 @v3 @v4 @v5 @v6 \
+   @reph1 @reph2 @reph3 @reph4 @reph5 @reph6 \
+   @n1 @n2 @n3 @n4 @n5 @n6
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 3: rearrange syllable into Unicode order
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Byte order:
+;	ikar?
+;	(cons nukta? virama)*
+;	cons nukta? lowr?
+;	vowel?
+;	reph?
+;	nasal?
+;
+; Unicode order:
+;	reph?
+;	(cons nukta? virama)*
+;	cons nukta? lowr?
+;	(vowel | ikar)?
+;	nasal?
+
+pass(Byte)
+;Classes for syllable reordering:
+;basic full consonant codes
+		; ka kha ga gha nga
+		; ca cha ja jha nya
+		; Ta Tha Da Dha Na
+		; ta tha da dha na
+		; pa pha ba bha ma
+		; ya join-y ra  la wa
+		; sha Sha sa ha
+class[FC] = 	(115 118 117 51 187  \
+		 114 53 104 171 96 \
+		 54 55 56 57 249 \
+		 116 121 98 119 103 \
+		 107 251 97 101 100 \
+		 111 175 47 110 106 \
+		 122 233 59 120)
+
+; half consonant codes
+	; k- k+sh- kh- g- jny- gh-
+	; c- j- jh- ny- N-
+	; t- tt- tr1- tr2- th- dh- n-
+	; p- b- bh- m-
+	; y- join-y- -r- l- w-
+	; sh- Sh- s-
+class[HC] = (83  73  86  85 193 163 \
+	 82  72 228  126 48 \
+	 84  206 207 230 89  87  71 \
+	 75  65 69 68 \
+	 191 181 180 78 74 \
+	 90  105 58)
+
+; stacks and conjuncts
+; k+ta k+ra k+sha jnya
+; ng+ka ng+ga TTa ThTha
+; tta tra(1) tra(2) dda ddha dma dya dwa
+; hri
+class[SC] = (    234  250 239 49   \
+		 161  225 164 166  \
+		 81   113 160 50  52 167 66 140 \
+		 88)
+
+;nasalization (anusvara, candrabindu)
+class[N] = (43 210)
+
+;vowel matras that follow the consonant (all except ikar)
+;aakar, iikar, ukar, uukar, rikar, ekar, aikar, okar, aukar
+class[V] = (70 102 76 39 34 91 93 125 252 253)
+
+; 'C' can go immediately before vowels (thus, full-consonants and full-stacks)
+class[C] = ([FC] [SC])
+
+; the rule:
+; The tricky part here is 'cons': It should include all full-consonants and other consonant clusters.
+108?=ikar ((([FC] 179? 92)|([HC] 179?))* [C])=cons 179?=ldot 124?=lowr [V]?=vwl 123?=reph [N]?=nas \
+		<> @reph @cons @ldot @lowr @ikar @vwl @nas
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 4: map byte codes to Unicodes
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; This pass deals with "basic" byte codes; it never sees the "presentation form"
+; byte codes for half forms/conjuncts/positional variants
+
+pass(Byte_Unicode)
+
+ByteClass[CTL] = ( 0 .. 31 127 )
+UniClass[CTL]  = ( 0 .. 31 127 )
+
+ByteDefault '<'	  	; Question mark in Himalli
+UniDefault U+FFFD	; replacement character
+
+; half consonant codes
+; k- kh- g- gh-
+; c- j- jh- ny-
+; N- t- th- dh-
+; n- p- ph- b-
+; bh- m- y- l-
+; w- sh- Sh- s-
+ByteClass[HC] = \
+	 (  83                      86                      85  	        163 \
+		82                      72                      228                 126 \
+			48                      84                      89                  87  \
+			71                      75                      240                 65  \
+			69                      68		            191                 78  \
+			74    	            90                      105                 58 )
+
+
+UniClass[FC]   = \
+	 (  devanagari_letter_ka    devanagari_letter_kha   devanagari_letter_ga    devanagari_letter_gha \
+	devanagari_letter_ca  	devanagari_letter_ja    devanagari_letter_jha   devanagari_letter_nya \
+	devanagari_letter_nna   devanagari_letter_ta    devanagari_letter_tha   devanagari_letter_dha \
+	devanagari_letter_na  	devanagari_letter_pa    devanagari_letter_pha   devanagari_letter_ba  \
+	devanagari_letter_bha 	devanagari_letter_ma 	devanagari_letter_ya    devanagari_letter_la  \
+	devanagari_letter_va  	devanagari_letter_sha   devanagari_letter_ssa   devanagari_letter_sa )
+
+[CTL] <> [CTL]
+
+; all half-chars get the corresponding full char + virama + ZWJ
+[HC]	<>	[FC] devanagari_sign_virama 0x200d
+[HC] 179 <>	[FC] devanagari_sign_nukta devanagari_sign_virama 0x200d
+
+32	<>	space
+33	<>	devanagari_digit_one
+34	<>	devanagari_vowel_sign_uu
+35	<>	devanagari_digit_three
+36	<>	devanagari_digit_four
+37	<>	devanagari_digit_five
+38	<>	devanagari_digit_seven
+39	<>	devanagari_vowel_sign_u
+40	<>	devanagari_digit_nine
+41	<>	devanagari_digit_zero
+42	<>	devanagari_digit_eight
+43	<>	devanagari_sign_anusvara
+44	<>	comma
+45	<>	left_parenthesis
+46	<>	devanagari_danda
+47	<>	devanagari_letter_ra
+47 92	<>	devanagari_letter_ra devanagari_sign_virama 0x200C	; ZWNJ so don't come back as reph
+; 48	<>	; half nna
+49	<>	devanagari_letter_ja devanagari_sign_virama devanagari_letter_nya ; jnya / gya
+50	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_da
+51	<>	devanagari_letter_gha
+52	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_dha
+53	<>	devanagari_letter_cha
+54	<>	devanagari_letter_tta
+55	<>	devanagari_letter_ttha
+56	<>	devanagari_letter_dda
+57	<>	devanagari_letter_ddha
+; 58	<>	; half sa
+59	<>	devanagari_letter_sa
+60	<>	question_mark
+61	<>	full_stop	; this is a spacing dot d149 is nukta
+62	<>	devanagari_letter_sha devanagari_sign_virama devanagari_letter_ra
+63	<>	devanagari_letter_ra devanagari_vowel_sign_u	; won't occur - decomposed in pass 1b
+64	<>	devanagari_digit_two
+; 65	<>	; half ba
+66	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ya
+67	<>	devanagari_letter_vocalic_r
+; 68	<>	; half ma
+; 69	<>	; half bha
+70	 >	devanagari_vowel_sign_aa	; compltr wrongly keyed for aakar
+; 71	<>	; half na
+; 72	<>	; half ja
+73	<>	devanagari_letter_ka devanagari_sign_virama devanagari_letter_ssa devanagari_sign_virama 0x200D
+; 74	<>	; half va
+; 75	<>	; half pa
+76	<>	devanagari_vowel_sign_ii
+77	<>	devanagari_sign_visarga		; sometimes used as colon
+; 78	<>	; half la
+79	<>	devanagari_letter_i
+;79 43	<>	devanagari_letter_ii ; i + reph causes problems reversing -- changed to 255 in pass 1b
+80	<>	devanagari_letter_e
+80 93	<>	devanagari_letter_ai
+81	<>	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ta
+; 82    <>	; half ca
+; 83	<>	; half ka
+; 84	<>	; half ta
+; 85	<>	; half ga
+; 86	<>	; half kha
+; 87	<>	; half dha
+
+88	<>	devanagari_letter_ha devanagari_vowel_sign_vocalic_r
+;89	<>	half tha
+; 90  <>  ; half sha
+91	<>	devanagari_vowel_sign_vocalic_r
+92	<>	devanagari_sign_virama
+93	<>	devanagari_vowel_sign_e
+94	<>	devanagari_digit_six
+95	<>	right_parenthesis
+96	<>	devanagari_letter_nya
+97  	<>  devanagari_letter_ba
+98 	<>  devanagari_letter_da
+99  	<>  devanagari_letter_a
+99 70	 >  devanagari_letter_aa
+99 102	<>  devanagari_letter_aa
+99 252  <> devanagari_letter_o
+99 253  <> devanagari_letter_au
+
+100 <>  devanagari_letter_ma
+101 <>  devanagari_letter_bha
+102 <>  devanagari_vowel_sign_aa
+103	<>  devanagari_letter_na
+104	<>  devanagari_letter_ja
+; 105 <>  ; half ssa
+106	<>	devanagari_letter_va
+107	<>	devanagari_letter_pa
+108	<>	devanagari_vowel_sign_i
+; 109 <>  ; hook - trapped in pass 1a
+110	<>	devanagari_letter_la
+111	<>	devanagari_letter_ya
+112	<>	devanagari_letter_u
+113   <>    	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ra
+114   <>  	devanagari_letter_ca
+115   <>  	devanagari_letter_ka
+116   <>  	devanagari_letter_ta
+117   <>  	devanagari_letter_ga
+118   <>  	devanagari_letter_kha
+119   <>  	devanagari_letter_dha
+120   <>  	devanagari_letter_ha
+121   <>  	devanagari_letter_tha
+122   <>  	devanagari_letter_sha
+123	<>	devanagari_letter_ra devanagari_sign_virama	; reph
+124	<>	devanagari_sign_virama devanagari_letter_ra 	; low-r
+125	<>	devanagari_vowel_sign_ai
+; 126	<> ; half nya
+; 127	<>	; notdef -- included in CTL class
+
+140	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_va
+141	<>	devanagari_om
+160	 >	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ra ; 1-way map, returns as 113
+161	<>	devanagari_letter_dda devanagari_sign_virama devanagari_letter_ka
+162	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_gha
+; 163 <> ; half gha
+164	<>	devanagari_letter_tta devanagari_sign_virama devanagari_letter_tta
+166	<>	devanagari_letter_ttha devanagari_sign_virama devanagari_letter_ttha
+167	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ma  ; dma
+171	<>	devanagari_letter_jha
+173	<>	equals_sign
+174	<>	right_double_quotation_mark
+175	<>	devanagari_sign_virama devanagari_letter_ya
+176	<>	percent_sign
+177	<>	plus_sign
+178	<>	semicolon
+179	<>	devanagari_sign_nukta
+180	<>	devanagari_letter_ra devanagari_sign_virama 0x200D	; eyelash ra
+181	<>	devanagari_sign_virama devanagari_letter_ya devanagari_sign_virama 0x200D
+185	<>	devanagari_letter_uu
+186	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_bha
+187	<>	devanagari_letter_nga
+190	<>	left_double_quotation_mark
+; 191 ; half ya
+; 192 ; ruu handled in pass 1b
+193	<>	devanagari_letter_ja devanagari_sign_virama devanagari_letter_nya devanagari_sign_virama 0x200D
+; 194 ; left ukar handled in pass 1b
+197	<>	devanagari_letter_ha devanagari_sign_virama
+; 199 ; tent-r handled in pass 1b
+200	<>	U+E100 U+E100 U+E100	; top-line ellipsis - use 3 high spacing dots (PUA)
+201	<>	horizontal_ellipsis
+202	<>	U+00A0	; no-break space
+206	<>	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ta devanagari_sign_virama 0x200D
+207	<>	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+208	<>	en_dash
+209	<>	em_dash
+210	<>	devanagari_sign_candrabindu
+212	<>	left_single_quotation_mark
+213	<>	right_single_quotation_mark
+214	<>	solidus
+218	<>	exclamation_mark
+224	<>	devanagari_letter_ttha devanagari_sign_virama devanagari_letter_tta
+225	<>	devanagari_letter_nga devanagari_sign_virama devanagari_letter_ga
+; 228 <> ; half jha
+; 230 -- 1-way map, returns as 207
+230	 >	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+233	<>	devanagari_letter_ssa
+234	<>	devanagari_letter_ka devanagari_sign_virama devanagari_letter_ta
+239	<>	devanagari_letter_ka devanagari_sign_virama devanagari_letter_ssa ; ksha
+240	<>	devanagari_letter_pha devanagari_sign_virama 0x200D
+; 241 ; left uukar, handled in pass 1b
+244	 >	devanagari_letter_ha  ; 1-way map, return gets mapped to 120
+245	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ra  ; dra
+251	<>	devanagari_letter_pha  ; pha
+
+; now the intermediate characters we invented for transfer purposes
+249	<>	devanagari_letter_nna  ; Na
+250	<>	devanagari_letter_ka devanagari_sign_virama devanagari_letter_ra ; kra
+252	<>	devanagari_vowel_sign_o
+253	<>	devanagari_vowel_sign_au
+255	<>	devanagari_letter_ii

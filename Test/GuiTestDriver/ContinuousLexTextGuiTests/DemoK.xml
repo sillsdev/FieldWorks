@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo section K -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+<!-- K.	Residue -->
+<!-- 1.	Go to Grammar Sketch and go to the Residue section. -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <click wait="2000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1" />
+  <insert>{PGDN 45}</insert>
+
+<!-- 2.	This section is where -->
+<!-- a.	the user is saying "I don't know how to correctly model this part of my language yet"; or -->
+<!-- b.	the current implementation of our parsing mechanism (i.e. Stage 1) does not have any way to deal with some issue; or -->
+<!-- c.	our WordWorks grammar model actually does not have a disciplined way to deal with some issue (e.g. Zapotec person hierarchy and the ordering of pronominal clitics). -->
+<!-- 3.	Unmarked affixes (or unknown affixes) -->
+<!-- a.	These are the affixes which the user labeled as neither inflectional nor as derivational. -->
+<!-- b.	The parser treats these in a special way: -->
+<!-- 1.	 basically they can appear anywhere (modulo the morpheme type) -->
+<!-- 2.	Most likely this way they will show up as Predicted Analyses when the user knows that this analysis is incorrect.  Hopefully, this will motivate the user to say what the conditions are for when one of these affixes can legitimately appear. -->
+<!-- 4.	Ad hoc constraints -->
+<!-- a.	Talk about why these are here. -->
+<!-- b.	Note the groups, allomorphs and morpheme varieties.  Discuss/ask why there might be these three types. -->
+<!-- c.	Note that a given constraint involves a non-empty set of X which cannot occur "location" a given X. -->
+<!-- d.	Go to Grammar / Adhoc Coprohibitions -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Ad hoc Co-prohibitions" />
+
+<!-- 1.	Add a new morpheme one.  Show the possibilities. -->
+  <click wait="1500" path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Morpheme Co-prohibition"/>
+  <click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Other Morpheme(s)"/>
+  <click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Other Morpheme(s)/window:.../window:.../button:..."/>
+
+<!-- insert an "n" in the Find box, and click the OK button.-->
+	 <on-dialog title="Choose Function">
+	   <insert>n</insert>
+	   <click wait="1000" path="window:OK/button:OK"/>
+	 </on-dialog>
+
+   <!--click wait="1500" path="window:RecordEditView.DataTree/window:custom/client:custom/window:Key Morpheme/client:Key Morpheme"/-->
+   <!--click wait="1500" path="window:RecordEditView.DataTree/window:custom/client:custom/window:Key Morpheme/client:Key Morpheme/window:.../client:.../window:.../button:..."/-->
+
+	<!--on-dialog wait="1000" title="Choose Function"-->
+	 <!--insert>m</insert-->
+	 <!--click wait="2000" path="window:OK/button:OK"/-->
+		<!--/on-dialog-->
+
+<!-- 2.	Add a new allomorph one.  Show the possibilities. -->
+  <click path="window:Insert/toolbar:Insert/button:Allomorph Co-prohibition"/>
+
+  <click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Other Allomorph(s)"/>
+  <click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Other Allomorph(s)/window:.../window:.../button:..."/>
+
+<on-dialog title="Choose Allomorph">
+	 <insert>b</insert>
+	 <click wait="1000" path="window:OK/button:OK"/>
+</on-dialog>
+
+<!-- click wait="1" path="9:RecordEditView/10:RecordEditView/9:RecordEditView.DataTree/10:RecordEditView.DataTree/9:custom/10:custom/9:Key Allomorph/10:Key Allomorph/9:.../10:.../9:.../43:..."/!-->
+
+
+ <!-- click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Key Allomorph/window:Key Allomorph"/-->
+  <!-- click wait="1500" path="window:RecordEditView.DataTree/window:custom/window:Key Allomorph/window:Key Allomorph/window:.../client:.../window:.../button:..."/-->
+
+<!--on-dialog wait="1000" title="Choose Allomorph"-->
+	 <!--insert>l</insert-->
+	 <!--click wait="2000" path="window:OK/button:OK"/-->
+		<!--/on-dialog-->
+
+<!-- 3.	Go to the co-index group and type "First and second person, co-indexed subject and object agreement markers never can co-occur.  One must use a reflexive marker instead." In the description. -->
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:AdhocCoprohibItemsAndDetailMultiPane/window:AdhocCoprohibList/window:AdhocCoprohibList/none:AdhocCoprohibList/window:NAMELESS/group:Root/table:Table/row:Row/cell:Cell[3]/text:Paragraph/value:Co-indexed subject and object prefixes[-4]"/>
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:RecordEditView/window:RecordEditView.DataTree/window:multistring[2]/view:Description"/>
+  <insert wait="500" >^a</insert>
+  <hover-over wait="1000" path="window:RecordEditView.DataTree/window:multistring"/>
+  <insert>{DELETE}</insert>
+  <insert>First and second person, co-indexed subject and object agreement markers never can co-occur.  One must use a reflexive marker instead.</insert>
+
+<!-- 4.	Back to grammar sketch and regenerate.  Note how the description now shows up. -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+  <click wait="2000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1" />
+  <insert>{PGDN 45}</insert>
+
+ </on-application>
+</accil>

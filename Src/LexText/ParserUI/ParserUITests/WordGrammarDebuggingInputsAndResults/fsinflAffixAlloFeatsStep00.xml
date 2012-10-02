@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>fsinfl</form>
+  <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+	  <fs id="15022">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <morph alloid="15023" morphname="15022" type="root" wordType="root">
+		<shortName>fs (fem.sing): fs</shortName>
+		<alloform>fs</alloform>
+		<gloss>fem.sing</gloss>
+		<citationForm>fs</citationForm>
+		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+		  <fs id="15022">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</stemMsa>
+	  </morph>
+	</stem>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+	<morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
+	  <shortName>-0 (ForWGD): 0</shortName>
+	  <alloform>-0</alloform>
+	  <gloss>ForWGD</gloss>
+	  <citationForm>0</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<partial syncat="259" syncatAbbr="n">
+	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+	  <morph alloid="15023" morphname="15022" type="root" wordType="root">
+		<shortName>fs (fem.sing): fs</shortName>
+		<alloform>fs</alloform>
+		<gloss>fem.sing</gloss>
+		<citationForm>fs</citationForm>
+		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+		  <fs id="15022">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</stemMsa>
+	  </morph>
+	</partial>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+	<morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
+	  <shortName>-0 (ForWGD): 0</shortName>
+	  <alloform>-0</alloform>
+	  <gloss>ForWGD</gloss>
+	  <citationForm>0</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+</word>

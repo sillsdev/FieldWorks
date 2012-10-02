@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+	<!-- Common data for both kinds of tests (basic and pathological). -->
+	<rt class="LangProject" guid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmProject />
+		<LangProject>
+			<AnnotationDefs>
+				<objsur t="o" guid="EA346C01-022F-4F34-B938-219CE7B65B73" />
+			</AnnotationDefs>
+			<Annotations>
+				<objsur t="o" guid="3A423141-E352-4FCF-9030-24AF0AF75539" />
+				<objsur t="o" guid="22a8431f-f974-412f-a261-8bd1a4e1be5c" />
+				<objsur t="o" guid="22a8431f-f974-412f-a261-8bd1a4e1be5d" />
+				<objsur t="o" guid="22a8432f-f974-412f-a261-8bd1a4e1be5d" />
+				<objsur t="o" guid="22a8433f-f974-412f-a261-8bd1a4e1be5d" />
+				<objsur t="o" guid="c1ec5c49-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec5c4a-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec8357-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec8358-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec835b-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec8359-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec835a-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ecaa6b-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ecaa66-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ecaa67-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ecaa68-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec8361-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ecaa71-e382-11de-8a39-0800200c9a66" />
+			</Annotations>
+			<DiscourseData>
+				<objsur guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" t="o" />
+			</DiscourseData>
+		</LangProject>
+	</rt>
+	<rt class="WfiGloss" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" ownerguid="18F880B5-4F9A-4687-A66C-0923F1AD29A9" >
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<rt class="WfiGloss" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" ownerguid="18F880B5-4F9A-4687-A66C-0923F1AD29A9" >
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<rt class="CmPossibility" guid="c1ec835f-e382-11de-8a39-0800200c9a66" >
+		<!-- Use for InstanceOf -->
+		<CmObject />
+		<CmPossibility />
+	</rt>
+	<rt class="CmPossibility" guid="c1ec8360-e382-11de-8a39-0800200c9a66" >
+		<!-- Use for BeginObject -->
+		<CmObject />
+		<CmPossibility />
+	</rt>
+</languageproject>

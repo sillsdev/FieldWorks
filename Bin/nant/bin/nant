@@ -1,0 +1,2 @@
+#!/bin/sh
+exec mono --debug ${0%/*}/NAnt.exe "$@"

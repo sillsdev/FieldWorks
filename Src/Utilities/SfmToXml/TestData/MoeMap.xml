@@ -1,0 +1,92 @@
+<sfmMapping>
+<languages>
+<langDef id="eng" xml:lang="en" map="ISO-8859-1&lt;&gt;UNICODE"/>
+<langDef id="vern" xml:lang ="xron" map="ISO-8859-1&lt;&gt;UNICODE"/>
+</languages>
+<hierarchy>
+<level name="sense" partOf="entry subentry" beginFields="ps de" additionalFields="cb bb ge sc ee is re nt" multiFields=""/>
+<level name="examp" partOf="sense" beginFields="xv" additionalFields="xe"/>
+<level name="subentry" partOf="entry" beginFields="se" additionalFields="cb"/>
+<level name="entry" partOf="records" beginFields="lx" additionalFields="dt hm lc cb ft"/>
+<level name="func" partOf="sense" beginFields="lf" additionalFields="lv"/>
+</hierarchy>
+<fieldDescriptions>
+<field sfm="bb" name="Bibliographic Information" type="string" lang="eng">
+<meaning app="fw.sil.org" id="sbib" subtype="mstr" name="Bibliography"/>
+</field>
+<field sfm="cb" name="Created By" type="string" lang="eng">
+<meaning app="fw.sil.org" id="cust" subtype="uni" name="CreatedBy"/>
+</field>
+<field sfm="de" name="English Definition" type="string" lang="eng">
+<meaning app="fw.sil.org" id="def" subtype="mstr" name="Definition"/>
+</field>
+<field sfm="dt" name="Date Modified" type="date" lang="eng">
+<meaning app="fw.sil.org" id="mod" subtype="time" name="DateModified"/>
+</field>
+<field sfm="ee" name="Encyclopedic Information" type="string" lang="eng">
+<meaning app="fw.sil.org" id="enc" subtype="mstr" name="EncyclopedicInfo"/>
+</field>
+<field sfm="ft" name="Date Created" type="date" lang="eng">
+<meaning app="fw.sil.org" id="creat" subtype="time" name="DateCreated"/>
+</field>
+<field sfm="ge" name="English Gloss" type="string" lang="eng">
+<meaning app="fw.sil.org" id="glos" subtype="muni" name="Gloss"/>
+</field>
+<field sfm="hm" name="Homonym number" type="integer" lang="eng">
+<meaning app="fw.sil.org" id="hom" name="Homograph"/>
+</field>
+<field sfm="is" name="Semantic Domain" type="string" lang="eng" abbr="true">
+<meaning app="fw.sil.org" id="sem" subtype="muni" name="SemanticDomains"/>
+</field>
+<field sfm="lc" name="Citation Form" type="unknown" lang="vern">
+<meaning app="fw.sil.org" id="cit" subtype="muni" name="Headword"/>
+</field>
+<field sfm="lf" name="Lexical Function" type="string" lang="eng">
+<meaning app="fw.sil.org" id="rel" subtype="muni" name="LexicalRelation"/>
+</field>
+<field sfm="lv" name="Vernacular entry for lexical function" type="string" lang="vern">
+<meaning app="fw.sil.org" id="rel" subtype="attr" name="LexicalRelation"/>
+</field>
+<field sfm="lx" name="Lexeme" type="unknown" lang="vern">
+<meaning app="fw.sil.org" id="lex" subtype="muni" name="Headword"/>
+</field>
+<field sfm="nt" name="General Note" type="string" lang="eng">
+<meaning app="fw.sil.org" id="gnote" subtype="mstr" name="GeneralNote"/>
+</field>
+<field sfm="ps" name="Part of Speech" type="string" lang="eng" abbr="true">
+<meaning app="fw.sil.org" id="pos" subtype="muni" name="PartOfSpeech"/>
+</field>
+<field sfm="re" name="English Reversal" type="string" lang="eng">
+<meaning app="fw.sil.org" id="rev" subtype="muni" name="Reversal" />
+</field>
+<field sfm="sc" name="Scientific Name" type="string" lang="eng">
+<meaning app="fw.sil.org" id="sci" subtype="str" name="ScientificName"/>
+</field>
+<field sfm="se" name="Subentry" type="string" lang="vern">
+<meaning app="fw.sil.org" id="sub" subtype="muni" name="Subentry"/>
+</field>
+<field sfm="xe" name="English Translation of Example Sentence" type="string" lang="eng">
+<meaning app="fw.sil.org" id="trans" subtype="muni" name="Translation"/>
+</field>
+<field sfm="xv" name="Example Sentence in Vernacular" type="string" lang="vern">
+<meaning app="fw.sil.org" id="sent" subtype="muni" name="Example"/>
+</field>
+</fieldDescriptions>
+
+<!--
+=====================================================================
+inFieldMarkers - section
+Rev History:
+3/17/05 - dlh - adding meaning element for downstream processing.
+=====================================================================
+-->
+<inFieldMarkers>
+<ifm element="b" begin="|b" end="|r">
+<meaning app="fw.sil.org" id="bold" subtype="uni" name="CreatedBy"/>
+</ifm>
+<ifm element="vern" begin="|i" end="|r" lang="vern">
+<meaning app="fw.sil.org" id="lang" subtype="uni" name="CreatedBy"/>
+</ifm>
+</inFieldMarkers>
+
+</sfmMapping>

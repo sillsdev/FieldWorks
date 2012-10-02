@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileexit" num="2.1.11" abbr="fx" file="FW\FileExit.xml">
+ <title tag="fileexit">File-Exit Tests</title>
+ <index>
+<li>exit</li>
+</index>
+
+  <introduction>
+  <p>Specs for these tests are based on the following link: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Exit" type="module">File: Exit</link>.</p>
+  </introduction>
+  <context>
+<p>These tests may be run with the application in any state. They will normally be run after most other testing has been completed since the application will likely be terminated. Many side-effects are possible, like leaky memory, but for the time being, only the first-order effects are tested for.</p>
+  </context>
+
+ <case id="fxFilex" num="1" order="any">
+  <title tag="fxFilex">File-Exit tests</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="1.1" link="Bug">Click File - Exit.
+   <r>
+<ul>
+<li>The application's main window disappears from the screen.</li>
+	<li>Its taskbar button is removed from the taskbar.</li>
+	<li>All windows spawned from this application are also closed.</li>
+</ul>
+</r>
+   <p name="bug">File-Exit does not close main window</p>
+   <p name="bug">File-Exit does not close child windows</p>
+   <p name="bug">File-Exit does not remove taskbar button</p>
+  </step>
+  <step name="1.2" link="Bug">Launch two instances of the application (e.g. from FW Explorer) on different databases, e.g. French and German.  Open multiple windows for each (using Window - New Window) database. In one of the windows, click File - Exit.
+   <r>
+<ul>
+<li>All the windows using the exited window's database disappear from the screen.</li>
+	<li>Their taskbar buttons are removed from the taskbar;</li>
+	<li>but the other database's windows are unaffected.</li>
+</ul>
+</r>
+   <p name="bug">File-Exit doesn't close all windows</p>
+   <p name="bug">File-Exit closes windows for all databases running</p>
+   <p name="bug">File-Exit does not remove taskbar buttons</p>
+  </step>
+  <step name="1.3" link="Bug">Make some changes to the database: e.g. changing some field data, or resizing parts of the window, or setting options, etc. Then click File - Exit, and then restart the application.
+   <r>The changes made before exiting persist.</r>
+   <p name="bug">File-Exit does not persist changes</p>
+  </step>
+</case>
+
+ <update date="May-08-01" author="JanetW">Generalized for FW.</update>
+ <update date="Apr-24-01" author="JanetW">Deleted steps not pertaining to File-Exit menu item.</update>
+ <update date="Apr-19-01" author="JanetW">Test created.</update>
+ <update date="Jul-16-01" author="MikeL">Added a context and expanded on the bugs.</update>
+
+</test>

@@ -1,0 +1,9 @@
+<word>
+  <form>kat</form>
+  <seq>
+	<morph wordType="root">
+	  <shortName>kat (feline): kat</shortName>
+	  <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+</word>

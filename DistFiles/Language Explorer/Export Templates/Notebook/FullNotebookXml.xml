@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<FxtDocumentDescription dataLabel="Full Notebook" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" xslt="">Export to a generic XML format. This format may be useful for further transforms.</FxtDocumentDescription>
+</template>

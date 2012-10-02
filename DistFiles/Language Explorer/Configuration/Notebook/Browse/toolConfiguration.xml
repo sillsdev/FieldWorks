@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks/>
+	<tools>
+		<tool id="NbkBrowse" label="Browse" value="notebookBrowse" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="RecordsList">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="notebook" id="RecordsList" clerk="records" field="Records" filterBar="true" altTitleId="RnGenericRec-Plural">
+							<columns>
+								<include path="../browseDialogColumns.xml" query="doc/browseColumns/column"/>
+								<!-- include common custom field definitions -->
+								<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

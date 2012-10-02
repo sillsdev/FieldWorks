@@ -1,0 +1,300 @@
+%parser phonenv.lexer PhonEnvParser
+%namespace SIL.FieldWorks.FDO.Validation
+%declare{
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2003, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2006' company='SIL International'>
+//		Copyright (c) 2003, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Common Public License or the
+//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// </copyright>
+#endregion
+//
+// File: phonenv.parser.cs
+// Responsibility: AndyBlack
+// Last reviewed:
+//
+// <remarks>
+// "yacc" grammar for recognizing phonological environments
+// </remarks>
+// --------------------------------------------------------------------------------------------
+
+bool m_fSuccess;
+System.Collections.SortedList m_NaturalClasses;
+System.Collections.SortedList m_Segments;
+string m_sErrorMessage;
+string m_sInput;
+int m_pos;
+	public enum SyntaxErrType
+	{
+		unknown,
+		missingOpeningParen,
+		missingClosingParen,
+		missingOpeningSquareBracket,
+		missingClosingSquareBracket,
+	}
+SyntaxErrType m_syntaxErrType;
+		public void ResetNaturalClasses(string[] saSegments)
+		{
+			ResetSortedList(ref m_NaturalClasses, saSegments);
+		}
+		public void ResetSegments(string[] saSegments)
+		{
+			ResetSortedList(ref m_Segments, saSegments);
+		}
+		public void ResetSortedList(ref System.Collections.SortedList list, string[] saContents)
+		{
+			list = new System.Collections.SortedList();
+			foreach (string s in saContents)
+				if (!list.ContainsKey(s))
+					list.Add(s, s);
+
+#if TestingOnly
+			Console.WriteLine("sorted list contains:");
+			for ( int i = 0; i < list.Count; i++ )
+			{
+				Console.WriteLine( "  {0}:{1}", list.GetKey(i), list.GetByIndex(i) );
+			}
+#endif
+		}
+		public bool IsValidClass(string sClass)
+		{
+			char[] digit = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+			string sClassLookUp = sClass;
+			int i = sClass.LastIndexOf("^");
+			if (i > 0)
+			{
+				if (i+2 == sClass.Length)
+				{
+					int j = sClass.LastIndexOfAny(digit);
+					if (j > 0)
+						sClassLookUp = sClass.Substring(0, sClass.Length - 2);
+				}
+
+			}
+			return m_NaturalClasses.Contains(sClassLookUp);
+		}
+		public bool IsValidSegment(string sSegment, ref int iPos)
+		{
+			if (m_Segments.Contains(sSegment))
+				return true;
+			else
+				return HasAValidSequenceOfSegments(sSegment, ref iPos);
+		}
+
+		private bool HasAValidSequenceOfSegments(string sSequence, ref int iPos)
+		{
+			if (sSequence.Length == 0)
+				return true;
+			for (int len = 1; len < sSequence.Length + 1; len++)
+			{
+				if (m_Segments.Contains(sSequence.Substring(0, len)))
+				{
+					iPos += len;
+					if (HasAValidSequenceOfSegments(sSequence.Substring(len), ref iPos))
+						return true;
+				}
+			}
+			return false;
+		}
+		public void CreateErrorMessage(string sType, string sItem, int pos)
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("<phonEnv status=");
+			sb.Append('"');			// the pg parser turns "...\"...." into "...92"..." so we use this to insert a quote
+			sb.Append(sType);
+			sb.Append('"');
+			sb.Append(" pos=");
+			sb.Append('"');
+			sb.Append(pos.ToString());
+			sb.Append('"');
+			sb.Append(">");
+			sb.Append(m_sInput);
+			sb.Append("</phonEnv>");
+			m_sErrorMessage = sb.ToString();
+			m_fSuccess = false;
+#if TestingOnly
+			Console.WriteLine(m_sErrorMessage);
+#endif
+		}
+		public void ThrowError(int iPos)
+		{
+			m_pos = iPos;
+			CSToolsException exc = new CSToolsException(iPos, "");
+			throw (exc);
+		}
+
+	public string Input
+	{
+		get
+		{
+			return m_sInput;
+		}
+		set
+		{
+			this.m_sInput = value;
+		}
+	}
+
+	public bool Success
+	{
+		get
+		{
+			return m_fSuccess;
+		}
+		set
+		{
+			m_fSuccess = value;
+		}
+	}
+	public string ErrorMessage
+	{
+		get
+		{
+			return m_sErrorMessage;
+		}
+	}
+	public int Position
+	{
+		get
+		{
+			return m_pos;
+		}
+		set
+		{
+			m_pos = value;
+		}
+	}
+	public SyntaxErrType SyntaxErrorType
+	{
+		get
+		{
+			return m_syntaxErrType;
+		}
+		set
+		{
+			m_syntaxErrType = value;
+		}
+	}
+}
+
+
+Environment : '/' '_' RightContext
+			| '/' LeftContext '_'
+			| '/' LeftContext '_' RightContext
+			;
+
+LeftContext : '#'
+			| TermSequence
+			| '#' TermSequence
+			;
+
+RightContext : '#'
+			 | TermSequence
+			 | TermSequence '#'
+			 ;
+
+TermSequence : Term
+			 |  Term TermSequence
+			 ;
+
+Term : OptionalSegment
+	 |  Segment
+;
+
+OptionalSegment : '(' Segment ')'
+				| '(' Segment error {
+				yyp.CreateErrorMessage(PhonEnvParser.SyntaxErrType.missingClosingParen.ToString(), $1.yytext, $3.pos);
+					yyp.SyntaxErrorType = PhonEnvParser.SyntaxErrType.missingClosingParen;
+					yyp.Position = $3.pos;
+					}
+				| Segment ')' error {
+					yyp.CreateErrorMessage(PhonEnvParser.SyntaxErrType.missingOpeningParen.ToString(), $2.yytext, $1.pos);
+					yyp.SyntaxErrorType = PhonEnvParser.SyntaxErrType.missingOpeningParen;
+					yyp.Position = $1.pos;
+					}
+				;
+
+Segment : Class
+		| Literal
+		;
+
+Class : '[' Ident   error {
+				yyp.CreateErrorMessage(PhonEnvParser.SyntaxErrType.missingClosingSquareBracket.ToString(), $1.yytext, $3.pos);
+		   yyp.SyntaxErrorType = PhonEnvParser.SyntaxErrType.missingClosingSquareBracket;
+		   yyp.Position = $3.pos;
+		   }
+	  | Ident ']'   error {
+		   yyp.CreateErrorMessage(PhonEnvParser.SyntaxErrType.missingOpeningSquareBracket.ToString(), $2.yytext, $1.pos);
+		   yyp.SyntaxErrorType = PhonEnvParser.SyntaxErrType.missingOpeningSquareBracket;
+		   yyp.Position = $1.pos;
+		   }
+	  | '[' Ident ']' {
+  // $2.yytext is the value of the item
+  // $2.pos is it's beginning position
+			if (!yyp.IsValidClass($2.yytext))
+			{
+				// NB: need to determine correct form of error messages and also allow for internationalization
+				yyp.CreateErrorMessage("class", $2.yytext, $2.pos);
+				yyp.ThrowError($2.pos);
+			}
+			}
+	  | '[' Ident Ident ']' {
+  // $2.yytext is the value of the item
+  // $2.pos is it's beginning position
+			StringBuilder sb = new StringBuilder();
+			sb.Append($2.yytext);
+			sb.Append(" ");
+			sb.Append($3.yytext);
+			if (!yyp.IsValidClass(sb.ToString()))
+			{
+				// NB: need to determine correct form of error messages and also allow for internationalization
+				yyp.CreateErrorMessage("class", sb.ToString(), $2.pos);
+				yyp.ThrowError($2.pos);
+			}
+			}
+	  | '[' Ident Ident Ident ']' {
+			StringBuilder sb = new StringBuilder();
+			sb.Append($2.yytext);
+			sb.Append(" ");
+			sb.Append($3.yytext);
+			sb.Append(" ");
+			sb.Append($4.yytext);
+			if (!yyp.IsValidClass(sb.ToString()))
+			{
+				// NB: need to determine correct form of error messages and also allow for internationalization
+				yyp.CreateErrorMessage("class", sb.ToString(), $2.pos);
+				yyp.ThrowError($2.pos);
+			}
+			}
+	  | '[' Ident Ident Ident Ident ']' {
+  // $2.yytext is the value of the item
+  // $2.pos is it's beginning position
+			StringBuilder sb = new StringBuilder();
+			sb.Append($2.yytext);
+			sb.Append(" ");
+			sb.Append($3.yytext);
+			sb.Append(" ");
+			sb.Append($4.yytext);
+			sb.Append(" ");
+			sb.Append($5.yytext);
+			if (!yyp.IsValidClass(sb.ToString()))
+			{
+				// NB: need to determine correct form of error messages and also allow for internationalization
+				yyp.CreateErrorMessage("class", sb.ToString(), $2.pos);
+				yyp.ThrowError($2.pos);
+			}
+			}
+	  ;
+
+Literal : Ident {
+			int iPos = $1.pos;
+			if (!yyp.IsValidSegment($1.yytext, ref iPos))
+			{
+				// NB: need to determine correct form of error messages and also allow for internationalization
+				yyp.CreateErrorMessage("segment", $1.yytext, iPos);
+				yyp.ThrowError(iPos);
+			}
+			}
+		;

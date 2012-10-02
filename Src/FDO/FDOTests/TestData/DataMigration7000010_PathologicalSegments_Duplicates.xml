@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+
+	<!-- This data allows for testing 'duplicate' xfics where the BeginOffsets are the same. -->
+	<!-- This data has two twfics that are essentially the same,
+		which means just pick one. So, we jsut leave the first one we found. -->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1c">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C024" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C84769">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C024" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8476A">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- Second gloss which should lose.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C024" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-5486-A32F-944490F0C024" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 3.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!--
+		This data set has two twfic, one refs an analysis and the second a gloss.
+		The second should win.
+	-->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1d">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C025" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8477A">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- analysis, which should 'lose'. -->
+				<objsur t="r" guid="FC5E167A-203B-4A86-BCBA-45E8643ACC0A" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C025" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8476B">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- gloss, which should 'win', even in second place. -->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C025" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-5486-A32F-944490F0C025" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 4.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!--
+		This data set has two twfics, one refs a wordform and the second an analysis.
+		The second should win.
+	-->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1e">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C026" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8477B">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- wordform which should 'lose'. -->
+				<objsur t="r" guid="88304983-CDB2-460B-B3D5-5F95C66F27FF" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C026" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8476C">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- analysis, which should 'win', even in second place. -->
+				<objsur t="r" guid="FC5E167A-203B-4A86-BCBA-45E8643ACC0A" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C026" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-5486-A32F-944490F0C026" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 4.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!--
+		This data set has three twfics, one refs a wordform, the second an analysis,
+		and the third a gloss
+		The third should win.
+	-->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1f">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C027" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8477C">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- wordform which should 'lose'. -->
+				<objsur t="r" guid="88304983-CDB2-460B-B3D5-5F95C66F27FF" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C027" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8476D">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- analysis, which should 'lose'. -->
+				<objsur t="r" guid="FC5E167A-203B-4A86-BCBA-45E8643ACC0A" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C027" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C8476E">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- gloss, which should 'win', even in third place. -->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C027" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-5486-A32F-944490F0C027" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 4.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Test case where there are two gloss twfics,
+		but where the second (which would normally lose) has inbound refs from a text tag,
+		which means the second gloss wins. -->
+	<rt class="CmBaseAnnotation" guid="c1ecaa6c-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa65-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ecaa6d-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should lose.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa65-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ecaa6e-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- Second gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa65-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Text Tag -->
+	<rt class="CmIndirectAnnotation" guid="c1ecaa70-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Text Tag -->
+				<objsur t="r" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- XP -->
+				<objsur t="r" guid="c1ec5c43-e382-11de-8a39-0800200c9a66" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Second twfic -->
+				<objsur t="r" guid="c1ecaa6e-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="StText" guid="c1ecaa6f-e382-11de-8a39-0800200c9a66" ownerguid="B63F0702-32F7-4ABB-B005-C1D2265636AD">
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="c1ecaa65-e382-11de-8a39-0800200c9a66" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="c1ecaa65-e382-11de-8a39-0800200c9a66" ownerguid="c1ecaa6f-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 4.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+
+
+
+	<!-- common data -->
+	<rt class="WfiAnalysis" guid="FC5E167A-203B-4A86-BCBA-45E8643ACC0A" ownerguid="88304983-CDB2-460B-B3D5-5F95C66F27FF" >
+		<CmObject />
+		<WfiAnalysis />
+	</rt>
+	<rt class="WfiWordform" guid="88304983-CDB2-460B-B3D5-5F95C66F27FF">
+		<CmObject />
+		<WfiWordform />
+	</rt>
+</languageproject>

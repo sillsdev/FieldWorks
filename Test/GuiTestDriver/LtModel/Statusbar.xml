@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<statusbar name="Statusbar" root="yes">
+  <date path="rexp#2008"/> <!-- change when year changes-->
+  <queue name="Queue" path="rexp#Queue:"/>
+  <no-parser name="Queue" path="41:Queue: (-//-//-) No Parser Loaded"/>
+  <filtered name="Filtered" path="41:StatusBar"/>
+  <no-records path="41:No Records"/>
+  <one-of path="41:rexp#//55"/>
+</statusbar>

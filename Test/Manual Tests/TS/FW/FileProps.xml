@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="props" num="2.1.7" abbr="prp" file="FW\FileProps.xml">
+<title tag="props">General Properties Test</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Properties Dialog is a standard FieldWorks dialog, which is available for every data object that can be displayed in the FieldWorks Explorer. We provide access to it from the application's File-Properties menu item, as well as from the FieldWorks Explorer. The purpose of the Properties dialog is to show top-level characteristics of the object including the name, dates created and modified, etc. The Name and the Description can be modified through this dialog; the other items are informational.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" type="doc">File Menu -&gt; Properties</link>
+</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">Properties Dialog</link>
+</p>
+<p name="note">For additional information on the properties dialog for Language Project Properties see Raid #2373</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Properties"</p>
+</context>
+<case id="prpAct" num="0" order="any">
+<title tag="prpAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Properties. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">Properties specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Properties dialog fails to open</p>
+<p name="bug">Properties dialog layout incorrect</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>Report any failures as suggested using "Properties" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Properties dialog remains after OK</p>
+</step>
+</case>
+<case id="prpstatic" num="1" order="any">
+<title tag="prpstatic">Check static data and icons</title>
+<context>
+<p>When the  dialog is displayed</p>
+</context>
+<step name="1.1" link="Bug">Verify that the Type data complies with expectations.
+  <r>
+<ul>
+   <li>The value is type of data object. For example, Data Notebook, Text, Lexical Database.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not type of data object</p>
+  </step>
+<step name="1.2" link="Bug">Verify that the Location data complies with expectations.
+  <r>
+<ul>
+   <li>The value is location of the open object. For example, a notebook may be located in the LelaTeli language project.</li>
+   <li>If not Local, the Server name.</li>
+   <li>The value is not the operating system's file path.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not location of the open object</p>
+   <p name="bug">Properties value is not the Server name</p>
+   <p name="bug">Properties value is not not the operating system's file path</p>
+  </step>
+<step name="1.3" link="Bug">Verify that the Size data complies with expectations.
+  <r>
+<ul>
+   <li>The value is an indication of how large the object is. For example, how much data has been entered.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not an indication of how large the object is</p>
+  </step>
+<step name="1.4" link="Bug">Verify that the Date Created data complies with expectations.
+  <r>
+<ul>
+   <li>The value is date the object was created.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not date the object was created</p>
+  </step>
+<step name="1.5" link="Bug">Verify that the Last Modified data complies with expectations.
+  <r>
+<ul>
+   <li>The value is date when changes were last saved to disk.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not date when changes were last saved to disk</p>
+   <p name="note">Details on Last Modified field Raid #1331</p>
+  </step>
+
+<step name="1.5.1" link="Bug">View the current Last Modified date. In any view, make some changes in the application and save (either explicitly, or by switching to a different record, or in some
+other way such as exiting and restarting DN). View the Last Modified date again.
+<r>
+<ul>
+<li>The Last Modified date should be updated to the last save.</li>
+</ul>
+</r>
+<p name="bug">Properties Last Modified value for application not updated on save</p>
+</step>
+
+<step name="1.5.2" link="Bug">View the current Last Modified date. In DE view, make some changes in the application, then note the time and press Tab or click in another field to move focus. View the Last Modified date again.
+<r>
+<ul>
+<li>The Last Modified date should be updated to the time you moved off the modified field.</li>
+</ul>
+</r>
+<p name="bug">Properties Last Modified value for application not updated on edit</p>
+</step>
+
+<step name="1.6" link="Bug">Verify that the preview object bitmap complies with expectations.
+  <r>
+<ul>
+   <li>The value is the appropriate icon for this object.</li>
+   <li>For a server, an icon with a connection bar below it.</li>
+  </ul>
+</r>
+   <p name="bug">Properties value is not the appropriate icon for this object</p>
+   <p name="bug">Properties value is not an icon with a connection bar below it</p>
+  </step>
+</case>
+<case id="prpnam" num="2" order="any">
+<title tag="prpnam">Name Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Name text box clicking both manually and using the shortcut key &lt;Alt&gt;&lt;n&gt;.<r>
+<ul>
+<li>Report any failures using the first words, "Properties Name".</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is the name of the item.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Properties default vaule is not the name of the item</p>
+	<p name="bug">PropertiesName value is not editable text that persists</p>
+   </step>
+</case>
+<case id="prpdsc" num="3" order="any">
+<title tag="prpdsc">Description Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Description text box clicking both manually and using the shortcut key &lt;Alt&gt;&lt;d&gt;.<r>
+<ul>
+<li>Report any failures using the first words, "Properties Description".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is an optional comment or description about the object.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Properties default vaule is not an optional comment or description about the object</p>
+	<p name="bug">PropertiesDescription value is not editable text that persists</p>
+   </step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="May-22-02" author="RussD">Fixed ambiguous links.</update>
+<update date="Jun-13-02" author="RussD">Minor changes.</update>
+<update date="Jun-21-02" author="RussD">More minor changes. Added 1.5.1.</update>
+<update date="Jun-21-02" author="LarsH">Second pair of eyes. Added 1.5.2.</update>
+
+</test>

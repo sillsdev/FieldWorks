@@ -1,0 +1,85 @@
+HKCR
+{
+	SILConvertersOffice07Shim.Connect.1 = s 'Connect Class'
+	{
+		CLSID = s '{0BD7FC7E-BA42-481f-87E2-28AE943EE9B1}'
+	}
+	SILConvertersOffice07Shim.Connect = s 'Connect Class'
+	{
+		CLSID = s '{0BD7FC7E-BA42-481f-87E2-28AE943EE9B1}'
+		CurVer = s 'SILConvertersOffice07Shim.Connect.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove '{0BD7FC7E-BA42-481f-87E2-28AE943EE9B1}' = s 'Connect Class'
+		{
+			ProgID = s 'SILConvertersOffice07Shim.Connect.1'
+			VersionIndependentProgID = s 'SILConvertersOffice07Shim.Connect'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+		}
+	}
+}
+
+HKCU
+{
+	NoRemove Software
+	{
+		NoRemove Microsoft
+		{
+			NoRemove Office
+			{
+				NoRemove Word
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOffice07Shim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office 07/10 applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office 07/10'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Publisher
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOffice07Shim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office 07/10 applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office 07/10'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Excel
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOffice07Shim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office 07/10 applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office 07/10'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Access
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOffice07Shim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office 07/10 applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office 07/10'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+			}
+		}
+	}
+}

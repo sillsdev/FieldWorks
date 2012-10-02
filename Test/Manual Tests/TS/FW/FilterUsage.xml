@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="filtuse" num="5.5" abbr="filtuse" file="FW\FilterUsage.xml">
+<title tag="filtuse">Filter Usage Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>Using Filters under various conditions in Fieldworks applications.
+</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/Toolsmenu/Options/Filters/Filters.html" type="doc">Tools-Options-Filters Tab</link>
+</p>
+<p name="todo">Think of more test cases for filter usage.</p>
+
+</introduction>
+
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Filter Usage"</p>
+</context>
+
+
+<case id="filtuseBas" num="0" order="any">
+<title tag="filtuseBas">Basic Filter Usage</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">
+ Create a basic filter for an existing field and entry type (can be done under Tools-Options-Filters). Set up a condition that will yield several matches. Apply the filter using the buttons on the side bar or the commands under View-Filters menu.
+ <r>
+<ul>
+<li>The filter makes "visible" only the entries that match the criteria defined by the filter.</li>
+	<li>The yellow filtered light and the number of filtered entries should appear in the status bar</li>
+ </ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="0.2" link="Bug">
+  Turn off the filter using the "No Filter" filter.
+  <r>All the entries are displayed normally by the default settings and the status bar displays the total number of entries and has removed the yellow filtered light.</r>
+  <p name="bug">
+</p>
+</step>
+
+<step name="0.3" link="Bug">
+ Experiment with using the filter in different views (Document, Browse, Data Entry, etc.) that are available.
+ <r>The filter should be available from all views and the particular filter should display the same entries in all views.</r>
+ <p name="bug">
+</p>
+</step>
+
+<step name="0.4" link="Bug">
+ Create an advanced filter. Apply it to the current view.
+ <r>The view should be filtered based on the settings of the advanced filter.</r>
+ <p name="bug">
+</p>
+</step>
+
+<step name="0.5" link="Bug">
+ Try applying a second filter to test layered filtering.
+ <r>The second filter should be And'ed with the first selected so the entries "visible" are a combination of the two filters</r>
+ <p name="bug">
+</p>
+ <p name="note">Not implemented for version 1</p>
+</step>
+
+<step name="0.6" link="Bug">
+ Try several other fields and conditions with filters. Try to exercise the different types (text, lists, links, etc). Apply the filter and verify.
+ <r>The filter should only display the entries that match the criteria.</r>
+ <p name="bug">
+</p>
+</step>
+
+</case>
+
+<case id="filtuseOvl" num="1" order="any">
+<title tag="filtuseOvl">Filters with Overlays</title>
+<context>
+<p>When the application is running</p>
+</context>
+<p name="note">Overlays are only available in Data Notebook</p>
+
+<step name="1.1" link="Bug">
+Create a basic filter using an overlay (create an overlay if none exist) as the field criteria. Choose a list item and condition that should return some matches. This can be done under Tools-Options-Filters.
+<r>A filter is created that can be used to filter entries based on the selected overlay.</r>
+<p name="bug">
+</p>
+</step>
+
+
+<step name="1.2" link="Bug">
+Apply the newly created filter.
+<r>The view should be filtered based on the condition and item for the selected overlay.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.3" link="Bug">
+Try creating an advanced filter using overlays. Apply it to the current view.
+<r>The view should filter correctly based on the settings for the advanced filter.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.4" link="Bug">
+Exercise the filter by turning it on and off under different views. Switch from one view to another while the filter is on.
+<r>
+<ul>
+<li>The filter should work in all views.</li>
+   <li>The cursor should stay in the same entry (position if possible) when switching from view to view.</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+
+
+
+</case>
+
+<update date="Jul-02-02" author="RussD">Test script created.</update>
+
+</test>

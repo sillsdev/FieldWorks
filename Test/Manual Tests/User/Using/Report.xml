@@ -1,0 +1,28 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Report.xml">
+ <title tag="useRep">Creating a bug report</title>
+ <index>
+  <li>test script: reporting</li>
+  <li>bugs: reporting</li>
+  <li>reporting bugs</li>
+  <li>making bug reports</li>
+ </index>
+ <introduction>
+  <p>Each test case step that can result in a reportable bug has a pattern for reporting that bug. More than one bug pattern may be associated with a step. For most bugs, you will find and use one of the anticipated <link uri="..\Bugs\Pattern.xml" type="module">bug patterns</link> when reporting.</p>
+ </introduction>
+ <prerequisites>
+  <p>Before you begin, make sure you have:</p>
+  <ul>
+   <li>A second copy of this manual open to the test case step that failed.</li>
+   <li>A text editor open, ready for entering a bug report.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to follow when reporting a software bug to the <link uri="..\Milestone\LSTD.xml" type="module">Language Software Test Department</link>:</p>
+  <step>On the test case step which failed, click the link to its bug patterns.</step>
+  <step link="Related bugs" uri="Related.xml">If you have access to the bug tracking system, find a similar bug using the information in the bug pattern action or category. You may be able to add your new information to that bug.</step>
+  <step>Cut-and-paste the appropriate bug pattern from the manual to the top of the document in your editor.<p>Bugs will appear in reverse order, but you won't lose your place as easily.</p></step>
+  <step link="Details" uri="Fields.xml">For many bugs, the fields in the pattern are already filled in. For lower-level or more general bugs, you may have to supply this data.</step>
+  <step link="Submit" uri="Submit.xml">When you have finished testing, save your document for submission.</step>
+ </steps>
+</task>

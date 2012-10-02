@@ -1,0 +1,14 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Bugs\Bug.xml">
+ <title tag="bugBug">What is a bug?</title>
+ <index>
+  <li>bug: definition</li>
+  <li>test failure</li>
+  <li>software failure</li>
+  <li>infelicity</li>
+ </index>
+ <definition>
+  <p>A "bug" is a name for a software failure. In particular, a bug is identified by the execution of a test step that fails to produce the expected result. Bugs can be anticipated by identifying <i>quality risks</i>. When testing focuses on parts of a program with higher risk factors, more significant bugs can be found with less effort.</p>
+ </definition>
+
+</concept>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="ISCII-91 converter for Devanagari">
+			<autoInstall mappingName="ISCII Devanagari&lt;&gt;UNICODE" converterSpec="57002" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-dev" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion" sampleData="³ÛÂÚÊ means 'book' in Hindi"></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Bengali">
+			<autoInstall mappingName="ISCII Bengali&lt;&gt;UNICODE" converterSpec="57003" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-be" rightEncoding="Unicode Bengali" processType="UnicodeEncodingConversion" sampleData="¥ÌÛ ³Ú¡¸ ´àÂà ÈÚÏÛ, ÂÚÂà ¥ÌÚÏ ³äÆä ³èÖÂÛ ØÎ ÆÚïBê"></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Gurmukhi">
+			<autoInstall mappingName="ISCII Gurmukhi&lt;&gt;UNICODE" converterSpec="57011" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-pa" rightEncoding="Unicode Punjabi" processType="UnicodeEncodingConversion" sampleData="ÅÏÌÕÚÑÚ"></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Gujarati">
+			<autoInstall mappingName="ISCII Gujarati&lt;&gt;UNICODE" converterSpec="57010" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-gu" rightEncoding="Unicode Gujarati" processType="UnicodeEncodingConversion" sampleData="µÝºÏÚÂÜ"></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Oriya">
+			<autoInstall mappingName="ISCII Oriya&lt;&gt;UNICODE" converterSpec="57007" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-or" rightEncoding="Unicode Oriya" processType="UnicodeEncodingConversion" sampleData="°¿éÛ¥"></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Tamil">
+			<autoInstall mappingName="ISCII Tamil&lt;&gt;UNICODE" converterSpec="57004" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-ta" rightEncoding="Unicode Tamil" processType="UnicodeEncodingConversion" sampleData="ÔàÒèÒÈè ÈàÏÝ³è³Ý³è³ÝÈè ÈÛÐ³Ý ÌÝÓÝ ¨Ñ³ÌÝÌè ¯Ïá ÌäÓÛÍâÈè Èá¸ÛÍÂÝ."></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Kannada">
+			<autoInstall mappingName="ISCII Kannada&lt;&gt;UNICODE" converterSpec="57008" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-ka" rightEncoding="Unicode Kannada" processType="UnicodeEncodingConversion" sampleData="¦¿Ü ÈèÏÈ¢¸Ä ºÆÏÝ ¯¢Äá ËÚÖàÍÆèÆÝ ÌÚÂÚ¿ÝÂèÂÛ ÄèÄÏÝ."></autoInstall>
+		</MapTable>
+		<MapTable description="ISCII-91 converters for Malayalam">
+			<autoInstall mappingName="ISCII Malayalam&lt;&gt;UNICODE" converterSpec="57009" conversionType="LegacyToFromUnicode" implementType="cp" leftEncoding="iscii-ma" rightEncoding="Unicode Malayalam" processType="UnicodeEncodingConversion" sampleData="ËÞÌÛÍÛÑèè ¯³è³àÍÝ¢ ¯Ïá ËÚÖÍÝ¢ ¯Ïá ÔÚ³è³Ý¢ ¥ÍÛÏÝÆèÆÝ."></autoInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

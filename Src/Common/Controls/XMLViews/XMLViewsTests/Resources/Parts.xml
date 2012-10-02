@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PartInventory>
+	<bin class="Entry">
+		<part id="Entry-Jt-Headword" type="jtview">
+			<configureMlString field="Form"/>
+		</part>
+		<part id="Entry-Jt-Summary" type="jtview">
+			<string field="Summary"/>
+		</part>
+	</bin>
+	<bin class="LexDb">
+		<part id="LexDb-Jt-Entries" type="jtview">
+			<seq field="Entries"/>
+		</part>
+	</bin>
+</PartInventory>

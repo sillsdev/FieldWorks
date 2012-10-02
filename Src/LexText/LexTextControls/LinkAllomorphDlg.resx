@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="m_helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="&gt;&gt;m_searchAnimation.Name" xml:space="preserve">
+	<value>m_searchAnimation</value>
+  </data>
+  <data name="&gt;&gt;m_searchAnimation.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Resources.SearchingAnimation, FwResources, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_btnClose.Location" type="System.Drawing.Point, System.Drawing">
+	<value>300, 376</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Name" xml:space="preserve">
+	<value>m_btnClose</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
+	<value>212, 376</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Name" xml:space="preserve">
+	<value>m_btnOK</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_btnInsert.Location" type="System.Drawing.Point, System.Drawing">
+	<value>-4, 384</value>
+  </data>
+  <data name="m_btnInsert.Size" type="System.Drawing.Size, System.Drawing">
+	<value>56, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnInsert.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_btnInsert.Name" xml:space="preserve">
+	<value>m_btnInsert</value>
+  </data>
+  <data name="&gt;&gt;m_btnInsert.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnInsert.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnInsert.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>388, 376</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_panel1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>102, 32</value>
+  </data>
+  <data name="&gt;&gt;m_panel1.Name" xml:space="preserve">
+	<value>m_panel1</value>
+  </data>
+  <data name="&gt;&gt;m_panel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_panel1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_panel1.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_matchingObjectsBrowser.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 112</value>
+  </data>
+  <data name="m_matchingObjectsBrowser.Size" type="System.Drawing.Size, System.Drawing">
+	<value>431, 168</value>
+  </data>
+  <data name="&gt;&gt;m_matchingObjectsBrowser.Name" xml:space="preserve">
+	<value>m_matchingObjectsBrowser</value>
+  </data>
+  <data name="&gt;&gt;m_matchingObjectsBrowser.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Linguistics.Common.MatchingEntries, LexTextControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_matchingObjectsBrowser.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_matchingObjectsBrowser.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_formLabel.Name" xml:space="preserve">
+	<value>m_formLabel</value>
+  </data>
+  <data name="&gt;&gt;m_formLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_formLabel.Parent" xml:space="preserve">
+	<value>m_panel1</value>
+  </data>
+  <data name="&gt;&gt;m_formLabel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tbForm.Name" xml:space="preserve">
+	<value>m_tbForm</value>
+  </data>
+  <data name="&gt;&gt;m_tbForm.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_tbForm.Parent" xml:space="preserve">
+	<value>m_panel1</value>
+  </data>
+  <data name="&gt;&gt;m_tbForm.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystems.Name" xml:space="preserve">
+	<value>m_cbWritingSystems</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystems.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystems.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystems.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_fwTextBoxBottomMsg.Location" type="System.Drawing.Point, System.Drawing">
+	<value>36, 376</value>
+  </data>
+  <data name="m_fwTextBoxBottomMsg.Size" type="System.Drawing.Size, System.Drawing">
+	<value>40, 32</value>
+  </data>
+  <data name="m_fwTextBoxBottomMsg.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxBottomMsg.Name" xml:space="preserve">
+	<value>m_fwTextBoxBottomMsg</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxBottomMsg.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxBottomMsg.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_fwTextBoxBottomMsg.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>14, 328</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>&amp;Allomorph:</value>
+  </data>
+  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_fwcbAllomorphs.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_fwcbAllomorphs.Location" type="System.Drawing.Point, System.Drawing">
+	<value>89, 328</value>
+  </data>
+  <data name="m_fwcbAllomorphs.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 21</value>
+  </data>
+  <data name="m_fwcbAllomorphs.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="&gt;&gt;m_fwcbAllomorphs.Name" xml:space="preserve">
+	<value>m_fwcbAllomorphs</value>
+  </data>
+  <data name="&gt;&gt;m_fwcbAllomorphs.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwComboBox, Widgets, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_fwcbAllomorphs.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_fwcbAllomorphs.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="groupBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>454, 280</value>
+  </data>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+	<value>Step 1: Find the Lexical Entry</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="grplbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="grplbl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 296</value>
+  </data>
+  <data name="grplbl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>454, 70</value>
+  </data>
+  <data name="grplbl.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="grplbl.Text" xml:space="preserve">
+	<value>Step 2: Select the Allomorph (Lexeme or Alternate form)</value>
+  </data>
+  <data name="&gt;&gt;grplbl.Name" xml:space="preserve">
+	<value>grplbl</value>
+  </data>
+  <data name="&gt;&gt;grplbl.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grplbl.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;grplbl.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>472, 406</value>
+  </data>
+  <data name="$this.HelpNavigator" type="System.Windows.Forms.HelpNavigator, System.Windows.Forms">
+	<value>Topic</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>480, 416</value>
+  </data>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Link To Allomorph</value>
+  </data>
+  <data name="&gt;&gt;m_helpProvider.Name" xml:space="preserve">
+	<value>m_helpProvider</value>
+  </data>
+  <data name="&gt;&gt;m_helpProvider.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>LinkAllomorphDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Linguistics.Common.BaseGoDlg, LexTextControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+</root>

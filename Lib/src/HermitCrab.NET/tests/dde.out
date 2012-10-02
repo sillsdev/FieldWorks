@@ -1,0 +1,65 @@
+
+Help:	DDE Help for the Hermit Crab Server, System Topic.
+	Commands are issued in the format described in the Hermit Crab Specification.
+	These commands are not designed to be issued directly by the user, but rather by Lingualinks.
+Topics:	Phonology	System
+SysItems:	Protocols	Status	Help	SysItems	Topics	Formats	TopicItemList
+Formats:	TEXT
+TopicItemList:	Protocols	Status	Help	SysItems	Topics	Formats	TopicItemList
+Status:	Ready
+Protocols:	CELLAR-friendly
+
+Help:	DDE Help for the Hermit Crab Server, Phonology Topic.
+	Commands are issued in the format described in the Hermit Crab Specification.
+	These commands are not designed to be issued directly by the user, but rather by Lingualinks.
+TopicItemList:	Help	CloseTopicOnTerminate	ExitOnTerminate	Progress	CellarError	Result
+	Formats	TopicItemList
+Formats:	TEXT
+Expect error msg 6036:
+ERROR:hc6036 --- <hc6036  >
+Expect error msg 6046:
+ERROR:hc6046 --- <hc6046 lname main >
+Expect error msg 6058:
+ERROR:hc6058 --- <hc6058 cmd (open_language message 'lang1a) >
+Opening language, msg 6510:
+(message (
+ <hc6510 lname lang1a > ) )
+Opening 2nd language, msg 6510:
+(message (
+ <hc6510 lname lang1b > ) )
+(message (
+ <hc6514 fname c:\data\hc\morpher\messages.ari > ) )
+
+There should be no chars between the following vertical bars: ||
+Trying to open first channel's language on second channel, should get error msg 6045.
+Full text of error msg =
+ERROR:hc6045 --- Morpher error: Language lang1a has already been opened.
+
+Short version of error msg = hc6045	lang1a
+Trying to switch to the language on a different channel, should get error msg 6310:
+ERROR:hc6310 --- Morpher error: Language lang1a is open on a different DDE channel; unable to access
+it on this channel.
+Opening a language on 2nd channel, msg 6510:
+(message (
+ <hc6510 lname lang2 > ) )
+Trying to close 1st ch's language on second channel, should get error msg 6310:
+ERROR:hc6310 --- Morpher error: Language lang1a is open on a different DDE channel; unable to access
+it on this channel.
+Switching to the language on the first channel, should get msg 6502:
+(message (
+ <hc6502 var_name '*cur_lang*' > ) )
+Verifying language on first channel, should be lang1a:
+(message (
+ <hc6503 var_name '*cur_lang*' var_value lang1a > ) )
+Checking ability to keep output separate on separate channels
+Language in 2nd channel should be lang2:
+(message (
+ <hc6503 var_name '*cur_lang*' var_value lang2 > ) )
+Language in 2nd channel should be lang1a:
+(message (
+ <hc6503 var_name '*cur_lang*' var_value lang1a > ) )
+CloseTopicOnTerminate should be FALSE: FALSE
+CloseTopicOnTerminate should still be False: FALSE
+HC correctly failed to start a conversation on something it doesn't know anything about.
+ExitOnTerminate should be FALSE: FALSE
+Now ExitOnTerminate should be True: TRUE

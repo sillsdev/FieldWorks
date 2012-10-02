@@ -1,0 +1,26 @@
+Memory freed which was not alloc'd:
+free(186058124,788,'c:\data\hc\morpher\chcwin.c')
+free(186058508,801,'c:\data\hc\morpher\chcwin.c')
+Number of calls to alloc = 1016
+Average memory allocated = 3133
+Maximum memory allocated at any one time = 5025
+Memory alloc'd but not freed:
+alloc(186062858,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186062888,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186062838,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063356,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063366,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063202,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063680,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186062848,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063346,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063486,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186062878,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063476,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063700,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063212,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063466,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063690,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186064692,65,790,'c:\data\hc\morpher\chcwin.c')
+alloc(186062868,8,69,'c:\data\hc\morpher\cchartbl.c')
+alloc(186063376,8,69,'c:\data\hc\morpher\cchartbl.c')

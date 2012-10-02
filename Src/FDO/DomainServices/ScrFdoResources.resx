@@ -1,0 +1,653 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="metadata">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" />
+							</xsd:sequence>
+							<xsd:attribute name="name" use="required" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="assembly">
+						<xsd:complexType>
+							<xsd:attribute name="alias" type="xsd:string" />
+							<xsd:attribute name="name" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="kstidBookName1" xml:space="preserve">
+	<value>Genesis</value>
+	<comment>UI Book name for scripture book 1</comment>
+  </data>
+	<data name="kstidBookName2" xml:space="preserve">
+	<value>Exodus</value>
+	<comment>UI Book name for scripture book 2</comment>
+  </data>
+	<data name="kstidBookName3" xml:space="preserve">
+	<value>Leviticus</value>
+	<comment>UI Book name for scripture book 3</comment>
+  </data>
+	<data name="kstidBookName4" xml:space="preserve">
+	<value>Numbers</value>
+	<comment>UI Book name for scripture book 4</comment>
+  </data>
+	<data name="kstidBookName5" xml:space="preserve">
+	<value>Deuteronomy</value>
+	<comment>UI Book name for scripture book 5</comment>
+  </data>
+	<data name="kstidBookName6" xml:space="preserve">
+	<value>Joshua</value>
+	<comment>UI Book name for scripture book 6</comment>
+  </data>
+	<data name="kstidBookName7" xml:space="preserve">
+	<value>Judges</value>
+	<comment>UI Book name for scripture book 7</comment>
+  </data>
+	<data name="kstidBookName8" xml:space="preserve">
+	<value>Ruth</value>
+	<comment>UI Book name for scripture book 8</comment>
+  </data>
+	<data name="kstidBookName9" xml:space="preserve">
+	<value>1 Samuel</value>
+	<comment>UI Book name for scripture book 9</comment>
+  </data>
+	<data name="kstidBookName10" xml:space="preserve">
+	<value>2 Samuel</value>
+	<comment>UI Book name for scripture book 10</comment>
+  </data>
+	<data name="kstidBookName11" xml:space="preserve">
+	<value>1 Kings</value>
+	<comment>UI Book name for scripture book 11</comment>
+  </data>
+	<data name="kstidBookName12" xml:space="preserve">
+	<value>2 Kings</value>
+	<comment>UI Book name for scripture book 12</comment>
+  </data>
+	<data name="kstidBookName13" xml:space="preserve">
+	<value>1 Chronicles</value>
+	<comment>UI Book name for scripture book 13</comment>
+  </data>
+	<data name="kstidBookName14" xml:space="preserve">
+	<value>2 Chronicles</value>
+	<comment>UI Book name for scripture book 14</comment>
+  </data>
+	<data name="kstidBookName15" xml:space="preserve">
+	<value>Ezra</value>
+	<comment>UI Book name for scripture book 15</comment>
+  </data>
+	<data name="kstidBookName16" xml:space="preserve">
+	<value>Nehemiah</value>
+	<comment>UI Book name for scripture book 16</comment>
+  </data>
+	<data name="kstidBookName17" xml:space="preserve">
+	<value>Esther</value>
+	<comment>UI Book name for scripture book 17</comment>
+  </data>
+	<data name="kstidBookName18" xml:space="preserve">
+	<value>Job</value>
+	<comment>UI Book name for scripture book 18</comment>
+  </data>
+	<data name="kstidBookName19" xml:space="preserve">
+	<value>Psalms</value>
+	<comment>UI Book name for scripture book 19</comment>
+  </data>
+	<data name="kstidBookName20" xml:space="preserve">
+	<value>Proverbs</value>
+	<comment>UI Book name for scripture book 20</comment>
+  </data>
+	<data name="kstidBookName21" xml:space="preserve">
+	<value>Ecclesiastes</value>
+	<comment>UI Book name for scripture book 21</comment>
+  </data>
+	<data name="kstidBookName22" xml:space="preserve">
+	<value>Song of Solomon</value>
+	<comment>UI Book name for scripture book 22</comment>
+  </data>
+	<data name="kstidBookName23" xml:space="preserve">
+	<value>Isaiah</value>
+	<comment>UI Book name for scripture book 23</comment>
+  </data>
+	<data name="kstidBookName24" xml:space="preserve">
+	<value>Jeremiah</value>
+	<comment>UI Book name for scripture book 24</comment>
+  </data>
+	<data name="kstidBookName25" xml:space="preserve">
+	<value>Lamentations</value>
+	<comment>UI Book name for scripture book 25</comment>
+  </data>
+	<data name="kstidBookName26" xml:space="preserve">
+	<value>Ezekiel</value>
+	<comment>UI Book name for scripture book 26</comment>
+  </data>
+	<data name="kstidBookName27" xml:space="preserve">
+	<value>Daniel</value>
+	<comment>UI Book name for scripture book 27</comment>
+  </data>
+	<data name="kstidBookName28" xml:space="preserve">
+	<value>Hosea</value>
+	<comment>UI Book name for scripture book 28</comment>
+  </data>
+	<data name="kstidBookName29" xml:space="preserve">
+	<value>Joel</value>
+	<comment>UI Book name for scripture book 29</comment>
+  </data>
+	<data name="kstidBookName30" xml:space="preserve">
+	<value>Amos</value>
+	<comment>UI Book name for scripture book 30</comment>
+  </data>
+	<data name="kstidBookName31" xml:space="preserve">
+	<value>Obadiah</value>
+	<comment>UI Book name for scripture book 31</comment>
+  </data>
+	<data name="kstidBookName32" xml:space="preserve">
+	<value>Jonah</value>
+	<comment>UI Book name for scripture book 32</comment>
+  </data>
+	<data name="kstidBookName33" xml:space="preserve">
+	<value>Micah</value>
+	<comment>UI Book name for scripture book 33</comment>
+  </data>
+	<data name="kstidBookName34" xml:space="preserve">
+	<value>Nahum</value>
+	<comment>UI Book name for scripture book 34</comment>
+  </data>
+	<data name="kstidBookName35" xml:space="preserve">
+	<value>Habakkuk</value>
+	<comment>UI Book name for scripture book 35</comment>
+  </data>
+	<data name="kstidBookName36" xml:space="preserve">
+	<value>Zephaniah</value>
+	<comment>UI Book name for scripture book 36</comment>
+  </data>
+	<data name="kstidBookName37" xml:space="preserve">
+	<value>Haggai</value>
+	<comment>UI Book name for scripture book 37</comment>
+  </data>
+	<data name="kstidBookName38" xml:space="preserve">
+	<value>Zechariah</value>
+	<comment>UI Book name for scripture book 38</comment>
+  </data>
+	<data name="kstidBookName39" xml:space="preserve">
+	<value>Malachi</value>
+	<comment>UI Book name for scripture book 39</comment>
+  </data>
+	<data name="kstidBookName40" xml:space="preserve">
+	<value>Matthew</value>
+	<comment>UI Book name for scripture book 40</comment>
+  </data>
+	<data name="kstidBookName41" xml:space="preserve">
+	<value>Mark</value>
+	<comment>UI Book name for scripture book 41</comment>
+  </data>
+	<data name="kstidBookName42" xml:space="preserve">
+	<value>Luke</value>
+	<comment>UI Book name for scripture book 42</comment>
+  </data>
+	<data name="kstidBookName43" xml:space="preserve">
+	<value>John</value>
+	<comment>UI Book name for scripture book 43</comment>
+  </data>
+	<data name="kstidBookName44" xml:space="preserve">
+	<value>Acts</value>
+	<comment>UI Book name for scripture book 44</comment>
+  </data>
+	<data name="kstidBookName45" xml:space="preserve">
+	<value>Romans</value>
+	<comment>UI Book name for scripture book 45</comment>
+  </data>
+	<data name="kstidBookName46" xml:space="preserve">
+	<value>1 Corinthians</value>
+	<comment>UI Book name for scripture book 46</comment>
+  </data>
+	<data name="kstidBookName47" xml:space="preserve">
+	<value>2 Corinthians</value>
+	<comment>UI Book name for scripture book 47</comment>
+  </data>
+	<data name="kstidBookName48" xml:space="preserve">
+	<value>Galatians</value>
+	<comment>UI Book name for scripture book 48</comment>
+  </data>
+	<data name="kstidBookName49" xml:space="preserve">
+	<value>Ephesians</value>
+	<comment>UI Book name for scripture book 49</comment>
+  </data>
+	<data name="kstidBookName50" xml:space="preserve">
+	<value>Philippians</value>
+	<comment>UI Book name for scripture book 50</comment>
+  </data>
+	<data name="kstidBookName51" xml:space="preserve">
+	<value>Colossians</value>
+	<comment>UI Book name for scripture book 51</comment>
+  </data>
+	<data name="kstidBookName52" xml:space="preserve">
+	<value>1 Thessalonians</value>
+	<comment>UI Book name for scripture book 52</comment>
+  </data>
+	<data name="kstidBookName53" xml:space="preserve">
+	<value>2 Thessalonians</value>
+	<comment>UI Book name for scripture book 53</comment>
+  </data>
+	<data name="kstidBookName54" xml:space="preserve">
+	<value>1 Timothy</value>
+	<comment>UI Book name for scripture book 54</comment>
+  </data>
+	<data name="kstidBookName55" xml:space="preserve">
+	<value>2 Timothy</value>
+	<comment>UI Book name for scripture book 55</comment>
+  </data>
+	<data name="kstidBookName56" xml:space="preserve">
+	<value>Titus</value>
+	<comment>UI Book name for scripture book 56</comment>
+  </data>
+	<data name="kstidBookName57" xml:space="preserve">
+	<value>Philemon</value>
+	<comment>UI Book name for scripture book 57</comment>
+  </data>
+	<data name="kstidBookName58" xml:space="preserve">
+	<value>Hebrews</value>
+	<comment>UI Book name for scripture book 58</comment>
+  </data>
+	<data name="kstidBookName59" xml:space="preserve">
+	<value>James</value>
+	<comment>UI Book name for scripture book 59</comment>
+  </data>
+	<data name="kstidBookName60" xml:space="preserve">
+	<value>1 Peter</value>
+	<comment>UI Book name for scripture book 60</comment>
+  </data>
+	<data name="kstidBookName61" xml:space="preserve">
+	<value>2 Peter</value>
+	<comment>UI Book name for scripture book 61</comment>
+  </data>
+	<data name="kstidBookName62" xml:space="preserve">
+	<value>1 John</value>
+	<comment>UI Book name for scripture book 62</comment>
+  </data>
+	<data name="kstidBookName63" xml:space="preserve">
+	<value>2 John</value>
+	<comment>UI Book name for scripture book 63</comment>
+  </data>
+	<data name="kstidBookName64" xml:space="preserve">
+	<value>3 John</value>
+	<comment>UI Book name for scripture book 64</comment>
+  </data>
+	<data name="kstidBookName65" xml:space="preserve">
+	<value>Jude</value>
+	<comment>UI Book name for scripture book 65</comment>
+  </data>
+	<data name="kstidBookName66" xml:space="preserve">
+	<value>Revelation</value>
+	<comment>UI Book name for scripture book 66</comment>
+  </data>
+	<data name="kstidImportBadFile" xml:space="preserve">
+	<value>"{0}
+This file will be removed from the import project"</value>
+  </data>
+	<data name="kstidPtBtAlreadyUsed" xml:space="preserve">
+	<value>The Paratext project selected for Back Translation is already in use. The projects must be unique.</value>
+  </data>
+	<data name="kstidPtNotesAlreadyUsed" xml:space="preserve">
+	<value>The Paratext project selected for notes is already in use. The projects must be unique.</value>
+  </data>
+	<data name="kstidPtScrAlreadyUsed" xml:space="preserve">
+	<value>The Paratext project selected for Scripture is already in use. The projects must be unique.</value>
+  </data>
+	<data name="kstidName_F17A054BD21E4298A1A50D79C4AF6F0F" xml:space="preserve">
+	<value>Chapter and Verse Numbers</value>
+	<comment>Scripture check name: Chapter and Verse Numbers</comment>
+  </data>
+	<data name="kstidName_6558A579B9C44EFD8728F994D0561293" xml:space="preserve">
+	<value>Characters</value>
+	<comment>Scripture check name: Characters</comment>
+  </data>
+	<data name="kstidName_DCC8D4D213B246E48FB329C166D189EA" xml:space="preserve">
+	<value>Punctuation Patterns</value>
+	<comment>Scripture check name: Punctuation Patterns</comment>
+  </data>
+	<data name="kstidName_72ABB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Repeated Words</value>
+	<comment>Scripture check name: Repeated Words</comment>
+  </data>
+	<data name="Basic" xml:space="preserve">
+	<value>Basic</value>
+	<comment>Scripture check group name</comment>
+  </data>
+	<data name="Other" xml:space="preserve">
+	<value>Other</value>
+	<comment>Scripture check group name</comment>
+  </data>
+	<data name="Invalid_or_unknown_character" xml:space="preserve">
+	<value>Invalid or unknown character</value>
+	<comment>Error message from the Characters check</comment>
+  </data>
+	<data name="Invalid_or_unknown_character_diacritic_combination" xml:space="preserve">
+	<value>Invalid or unknown character diacritic combination</value>
+	<comment>Error message from the Characters check</comment>
+  </data>
+	<data name="Invalid_punctuation_pattern" xml:space="preserve">
+	<value>Invalid punctuation pattern</value>
+	<comment>Error message from the Punctuation check</comment>
+  </data>
+	<data name="Unspecified_use_of_punctuation_pattern" xml:space="preserve">
+	<value>Unspecified use of punctuation pattern</value>
+	<comment>Punctuation check message</comment>
+  </data>
+	<data name="kstidDescription_F17A054BD21E4298A1A50D79C4AF6F0F" xml:space="preserve">
+	<value>Checks for potential inconsistencies in chapter and verse numbers.</value>
+	<comment>Scripture check description: Chapter and Verse Numbers</comment>
+  </data>
+	<data name="kstidDescription_6558A579B9C44EFD8728F994D0561293" xml:space="preserve">
+	<value>Checks for potentially invalid characters.</value>
+	<comment>Scripture check description: Characters</comment>
+  </data>
+	<data name="kstidDescription_72ABB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Checks for repeated words.</value>
+	<comment>Scripture check description: Repeated Words</comment>
+  </data>
+	<data name="Repeated_word" xml:space="preserve">
+	<value>Repeated word</value>
+	<comment>Repeated Words check message</comment>
+  </data>
+	<data name="kstidExceededMaxNumberIdenticalChecks" xml:space="preserve">
+	<value>Maximum number of {0} errors exceeded.</value>
+	<comment>Displayed in an annotation when the editorial checks return an identical error.</comment>
+  </data>
+	<data name="kstidDescription_BABCB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Checks for potential inconsistencies in capitalization.</value>
+	<comment>Scripture check description: Capitalization</comment>
+  </data>
+	<data name="kstidDescription_BABCB400F274449892C577E99C90F75D" xml:space="preserve">
+	<value>Checks for words with a potentially invalid mix of uppercase and lowercase letters.</value>
+	<comment>Scripture check description: Mixed Capitalization</comment>
+  </data>
+	<data name="kstidDescription_DCC8D4D213B246E48FB329C166D189EA" xml:space="preserve">
+	<value>Checks for potential inconsistencies in the use of punctuation.</value>
+	<comment>Scripture check description: Punctuation Patterns</comment>
+  </data>
+	<data name="kstidDescription_DDCCB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Checks for unmatched parentheses or other punctuation that normally occurs in pairs.</value>
+	<comment>Scripture check description: Matching Punctuation Pairs</comment>
+  </data>
+	<data name="kstidDescription_DDCCB400F274449892C577E99C90F75C" xml:space="preserve">
+	<value>Checks for potential inconsistencies in the markup of quotations.</value>
+	<comment>Scripture check description: Quotation Marks</comment>
+  </data>
+	<data name="kstidName_BABCB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Capitalization</value>
+	<comment>Scripture check name: Capitalization</comment>
+  </data>
+	<data name="kstidName_BABCB400F274449892C577E99C90F75D" xml:space="preserve">
+	<value>Mixed Capitalization</value>
+	<comment>Scripture check name: Mixed Capitalization</comment>
+  </data>
+	<data name="kstidName_DDCCB400F274449892C577E99C90F75B" xml:space="preserve">
+	<value>Matching Punctuation Pairs</value>
+	<comment>Scripture check name: Matching Punctuation Pairs</comment>
+  </data>
+	<data name="kstidName_DDCCB400F274449892C577E99C90F75C" xml:space="preserve">
+	<value>Quotation Marks</value>
+	<comment>Scripture check name: Quotation Marks</comment>
+  </data>
+	<data name="Chapter_number_out_of_range" xml:space="preserve">
+	<value>Chapter number out of range</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Chapter_out_of_order__expected_chapter__0_" xml:space="preserve">
+	<value>Chapter out of order; expected chapter {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Duplicate_chapter_number" xml:space="preserve">
+	<value>Duplicate chapter number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Duplicate_verse_number" xml:space="preserve">
+	<value>Duplicate verse number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Duplicate_verse_numbers" xml:space="preserve">
+	<value>Duplicate verse numbers</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Invalid_chapter_number" xml:space="preserve">
+	<value>Invalid chapter number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Invalid_verse_number" xml:space="preserve">
+	<value>Invalid verse number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Missing_chapter_number__0_" xml:space="preserve">
+	<value>Missing chapter number {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Missing_chapter_numbers__0___1_" xml:space="preserve">
+	<value>Missing chapter numbers {0}-{1}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Missing_verse_number__0_" xml:space="preserve">
+	<value>Missing verse number {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Missing_verse_numbers__0___1_" xml:space="preserve">
+	<value>Missing verse numbers {0}-{1}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Space_found_in_verse_bridge" xml:space="preserve">
+	<value>Space found in verse bridge</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Space_found_in_verse_number" xml:space="preserve">
+	<value>Space found in verse number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Unexpected_verse_number" xml:space="preserve">
+	<value>Unexpected verse number</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Unexpected_verse_numbers" xml:space="preserve">
+	<value>Unexpected verse numbers</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verse_number_out_of_order" xml:space="preserve">
+	<value>Verse number out of order</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verse_number_out_of_order__expected_verse__0_" xml:space="preserve">
+	<value>Verse number out of order; expected verse {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verse_number_out_of_range" xml:space="preserve">
+	<value>Verse number out of range</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verse_numbers_out_of_order" xml:space="preserve">
+	<value>Verse numbers out of order</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verse_numbers_out_of_range" xml:space="preserve">
+	<value>Verse numbers out of range</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Verses_numbers_out_of_order__expected_verse__0_" xml:space="preserve">
+	<value>Verses numbers out of order; expected verse {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="kstidBookIntroduction" xml:space="preserve">
+	<value>{0} Introduction</value>
+	<comment>Line in details of Confirm Overwrite message</comment>
+  </data>
+	<data name="Expected" xml:space="preserve">
+	<value>Expected</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Overlapping_pair" xml:space="preserve">
+	<value>Overlapping pair</value>
+	<comment>Matching Punctuation Pairs check message</comment>
+  </data>
+	<data name="Unmatched_punctuation" xml:space="preserve">
+	<value>Unmatched punctuation</value>
+	<comment>Matching Punctuation Pairs check message</comment>
+  </data>
+	<data name="Heading_should_begin_with_a_capital_letter" xml:space="preserve">
+	<value>Heading should begin with a capital letter</value>
+	<comment>Capitalization check message</comment>
+  </data>
+	<data name="Missing_verse_text_in_verse__0_" xml:space="preserve">
+	<value>Missing verse text in verse {0}</value>
+	<comment>Chapter/Verse check message</comment>
+  </data>
+	<data name="Proper_nouns_should_begin_with_a_capital_letter" xml:space="preserve">
+	<value>Proper nouns should begin with a capital letter</value>
+	<comment>Capitalization check message</comment>
+  </data>
+	<data name="Sentence_should_begin_with_a_capital_letter" xml:space="preserve">
+	<value>Sentence should begin with a capital letter</value>
+	<comment>Capitalization check message</comment>
+  </data>
+	<data name="Text_in_the__0__style_should_begin_with_a_capital_letter" xml:space="preserve">
+	<value>Text in the {0} style should begin with a capital letter</value>
+	<comment>Capitalization check message</comment>
+  </data>
+	<data name="Title_should_begin_with_a_capital_letter" xml:space="preserve">
+	<value>Title should begin with a capital letter</value>
+	<comment>Capitalization check message</comment>
+  </data>
+	<data name="Word_has_mixed_capitalization" xml:space="preserve">
+	<value>Word has mixed capitalization</value>
+	<comment>Mixed Capitalization check message</comment>
+  </data>
+	<data name="Missing_continuation_marks__levels_1__0_" xml:space="preserve">
+	<value>Missing continuation marks: levels 1-{0}</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Missing_continuation_mark__level__0_" xml:space="preserve">
+	<value>Missing continuation mark: level {0}</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Unexpected_opening_mark__level__0_" xml:space="preserve">
+	<value>Unexpected opening mark: level {0}</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Unmatched_opening_mark__level__0_" xml:space="preserve">
+	<value>Unmatched opening mark: level {0}</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Unmatched_closing_mark__level__0_" xml:space="preserve">
+	<value>Unmatched closing mark: level {0}</value>
+	<comment>Quotation Marks check message</comment>
+  </data>
+	<data name="Level__0__quote_closed" xml:space="preserve">
+	<value>Level {0} quote closed</value>
+	<comment>Quotation Marks check verbose-mode trace message</comment>
+  </data>
+	<data name="Level__0__quote_continuer" xml:space="preserve">
+	<value>Level {0} quote continuer</value>
+	<comment>Quotation Marks check verbose-mode trace message</comment>
+  </data>
+	<data name="Level__0__quote_opened" xml:space="preserve">
+	<value>Level {0} quote opened</value>
+	<comment>Quotation Marks check verbose-mode trace message</comment>
+  </data>
+</root>

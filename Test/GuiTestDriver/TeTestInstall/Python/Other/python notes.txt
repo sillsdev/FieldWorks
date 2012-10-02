@@ -1,0 +1,19 @@
+IN A CMD WINDOW:
+
+cd python26
+
+python "C:\Documents and Settings\JonesT\Application Data\ActiveState\KomodoEdit\5.1\samples\python_sample.py"
+
+python python_sample.py
+
+CALL DOS COMMANDS
+os.system("time /t")
+
+#   Private functions and variables start with 2 underscores -> "__private"
+
+# Catch all errors that could possibly be generated
+try:
+	do_some_stuff()
+except: # catch *all* exceptions
+	e = sys.exc_info()[1]
+	print( "<p>Error: %s</p>" % e )

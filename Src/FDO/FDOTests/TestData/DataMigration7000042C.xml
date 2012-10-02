@@ -1,0 +1,1349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000040">
+<rt guid="ecbee05c-a260-4feb-a8ba-f67459623ca6" class="LangProject">
+<DateCreated val="2009-1-29 17:34:28.537" />
+<DateModified val="2011-5-16 17:47:17.203" />
+<AnalysisWss>
+<Uni>es en</Uni>
+</AnalysisWss>
+<CurVernWss>
+<Uni>en</Uni>
+</CurVernWss>
+<CurAnalysisWss>
+<Uni>es</Uni>
+</CurAnalysisWss>
+<CurPronunWss>
+<Uni>stp</Uni>
+</CurPronunWss>
+<VernWss>
+<Uni>en</Uni>
+</VernWss>
+<LexDb>
+<objsur guid="6e27ea83-c8a6-4a7f-a311-78827b6de890" t="o" />
+</LexDb>
+</rt>
+<rt guid="6e27ea83-c8a6-4a7f-a311-78827b6de890" class="LexDb" ownerguid="ecbee05c-a260-4feb-a8ba-f67459623ca6">
+<Name>
+<AUni ws="en">Dictionary</AUni>
+</Name>
+<DateCreated val="2009-1-29 17:34:29.180" />
+<DateModified val="2011-2-9 4:0:8.547" />
+<IsHeadwordCitationForm val="False" />
+<VariantEntryTypes>
+<objsur guid="e063634b-d96e-4e42-a9a2-dffdc933cf4c" t="o" />
+</VariantEntryTypes>
+<ComplexEntryTypes>
+<objsur guid="555c81cc-ec77-4645-a6e5-6f8bd96170e8" t="o" />
+</ComplexEntryTypes>
+</rt>
+<rt class="CmPossibilityList" guid="555c81cc-ec77-4645-a6e5-6f8bd96170e8" ownerguid="6e27ea83-c8a6-4a7f-a311-78827b6de890">
+<DateCreated val="2009-5-6 5:7:48.560" />
+<DateModified val="2010-3-9 16:44:41.97" />
+<Name>
+<AUni ws="en">Complex Form Types</AUni>
+<AUni ws="es">Tipos de forma compleja</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Complex entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">ComEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" />
+<objsur t="o" guid="c5c0eb04-811d-4c19-854f-94ffe54d635e" />
+<objsur t="o" guid="98c273c4-f723-4fb0-80df-eede2204dfca" />
+<objsur t="o" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" />
+<objsur t="o" guid="cce519d8-a9c5-4f28-9c7d-5370788bfbd5" />
+<objsur t="o" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" />
+<objsur t="o" guid="9466d126-246e-400b-8bba-0703e09bc567" />
+</Possibilities>
+</rt>
+<rt class="CmPossibilityList" guid="e063634b-d96e-4e42-a9a2-dffdc933cf4c" ownerguid="6e27ea83-c8a6-4a7f-a311-78827b6de890">
+<DateCreated val="2009-5-6 5:7:47.790" />
+<DateModified val="2010-12-21 23:21:28.243" />
+<Name>
+<AUni ws="en">Variant Types</AUni>
+<AUni ws="es">Tipos de variante</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Variant entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">VarEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="024b62c9-93b3-41a0-ab19-587a0030219a" />
+<objsur t="o" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" />
+<objsur t="o" guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" />
+<objsur t="o" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" />
+</Possibilities>
+</rt>
+<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a" ownerguid="e063634b-d96e-4e42-a9a2-dffdc933cf4c">
+<DateCreated val="2009-1-29 17:34:31.930" />
+<DateModified val="2009-11-19 17:44:13.287" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Dialectal Variant</AUni>
+<AUni ws="es">Variante dialectal</AUni>
+<AUni ws="zh-CN">方言变体</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">dial. var. of</AUni>
+<AUni ws="es">Dial. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme characteristic of a specific demographic subset of the language.</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="0068c5fa-0d6f-4721-84e0-e300d6659706" />
+<objsur t="o" guid="5001c10b-7f71-4011-8e15-f23fa3d097cb" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="en">dial. var.</AUni>
+<AUni ws="es">Dial. de</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="0068c5fa-0d6f-4721-84e0-e300d6659706" ownerguid="024b62c9-93b3-41a0-ab19-587a0030219a">
+<DateCreated val="2009-11-19 17:44:13.200" />
+<DateModified val="2009-11-19 22:56:2.823" />
+<Name>
+<AUni ws="es">Dialect A</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">Dial-A. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Variante dialectal A.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">Dial-A.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="5001c10b-7f71-4011-8e15-f23fa3d097cb" ownerguid="024b62c9-93b3-41a0-ab19-587a0030219a">
+<DateCreated val="2009-11-19 17:44:41.507" />
+<DateModified val="2009-11-19 22:56:26.50" />
+<Name>
+<AUni ws="es">Dialect B</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">Dial-B. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Variante dialectal B.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">Dial-B.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" ownerguid="e063634b-d96e-4e42-a9a2-dffdc933cf4c">
+<DateCreated val="2009-1-29 17:34:31.930" />
+<DateModified val="2009-5-14 1:35:7.667" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Free Variant</AUni>
+<AUni ws="es">Variante de proununciación</AUni>
+<AUni ws="zh-CN">自由变体</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">fr. var. of</AUni>
+<AUni ws="es">var. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant which may substitute for a major entry lexeme in the same environment without causing a change in meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">fr. var.</AUni>
+<AUni ws="es">Var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" class="LexEntryType" ownerguid="e063634b-d96e-4e42-a9a2-dffdc933cf4c">
+<Name>
+<AUni ws="en">Irregularly Inflected Form</AUni>
+<AUni ws="es">Forma flexiva irregular</AUni>
+<AUni ws="zh-CN">屈折变体</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">inf. var. of</AUni>
+<AUni ws="es">flex. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme that expresses a grammatical contrast which is obligatory for the stem's word class in some given grammatical context.</Run>
+</AStr>
+</Description>
+<SortSpec val="0" />
+<DateCreated val="2009-1-29 17:34:31.933" />
+<DateModified val="2011-4-26 21:37:30.714" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="True" />
+<SubPossibilities>
+<objsur guid="48e8dab7-5a53-4df9-9579-924a6ff50809" t="o" />
+<objsur guid="789cddd6-eef7-4397-becb-d643f3d68c86" t="o" />
+<objsur guid="b8f76060-f20b-4c00-80e2-9d325146cc4f" t="o" />
+<objsur guid="4f28785a-114a-450c-a6bd-1b5955ce74f6" t="o" />
+<objsur guid="4f62ee69-7eb8-4215-9012-1957402327aa" t="o" />
+<objsur guid="ee9b8f56-9592-48b9-b544-a7740daee675" t="o" />
+<objsur guid="9b05c08d-5a28-4024-8202-de9fe96ce33c" t="o" />
+<objsur guid="d5e6a008-eb7f-405a-ba84-b8f72811196f" t="o" />
+<objsur guid="2911bc7d-f1e3-427d-8999-fdd463f57858" t="o" />
+<objsur guid="9f6e86e7-7f89-42ef-b33b-2725bc5fa977" t="o" />
+<objsur guid="71a0216a-8cf6-4357-a3ce-914160f2ecdd" t="o" />
+<objsur guid="e4322a6c-edae-4b33-b364-a8f07af4f785" t="o" />
+<objsur guid="da9c31f3-e1d9-4706-9771-cb4402e6c75d" t="o" />
+<objsur guid="5d304674-f44d-44f7-aaea-f3c34f897eb9" t="o" />
+<objsur guid="eb7f65ba-39f5-4c94-b23d-0b7e663360ee" t="o" />
+<objsur guid="3d1f0892-babd-48a1-8930-cc8813a8e62c" t="o" />
+<objsur guid="00acf9a4-5c4e-4375-a222-f561fe0f6cbd" t="o" />
+<objsur guid="2008a742-cad3-4355-9f47-419e5c45332e" t="o" />
+<objsur guid="975e8319-4158-4445-b2dc-980bfa0a60b1" t="o" />
+<objsur guid="6e07c186-4d49-4a9a-b533-43a7d0da4347" t="o" />
+<objsur guid="bd6f2b3b-c959-4c64-844f-37a8295117a3" t="o" />
+<objsur guid="f404e78f-abb1-43b6-af2b-004083e9bd2c" t="o" />
+<objsur guid="f4dedd95-72b8-49e4-8da1-1481791da3bb" t="o" />
+<objsur guid="10588c47-b87a-4f56-b9b3-0312aef0daff" t="o" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="en">inf. var.</AUni>
+<AUni ws="es">flex. de</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="48e8dab7-5a53-4df9-9579-924a6ff50809" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-6-3 21:34:57.240" />
+<DateModified val="2010-6-3 21:35:0.697" />
+<Name>
+<AUni ws="es">(número)</AUni>
+</Name>
+<SubPossibilities>
+<objsur t="o" guid="d65a5008-4296-4a1c-bdbb-ee6256351a09" />
+<objsur t="o" guid="9d5482e7-9120-4c75-95ec-e1c582aee7d8" />
+</SubPossibilities>
+</rt>
+<rt class="LexEntryType" guid="d65a5008-4296-4a1c-bdbb-ee6256351a09" ownerguid="48e8dab7-5a53-4df9-9579-924a6ff50809">
+<DateCreated val="2009-1-29 17:59:40.583" />
+<DateModified val="2010-6-3 21:35:56.260" />
+<Name>
+<AUni ws="es">plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pl. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Plural</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9d5482e7-9120-4c75-95ec-e1c582aee7d8" ownerguid="48e8dab7-5a53-4df9-9579-924a6ff50809">
+<DateCreated val="2010-6-3 21:35:19.283" />
+<DateModified val="2010-6-3 21:35:19.283" />
+<Name>
+<AUni ws="es">singular</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">sing. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Singular</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">sing.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="789cddd6-eef7-4397-becb-d643f3d68c86" class="LexEntryType" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<Name>
+<AUni ws="es">pretérito</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pret. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Pretérito (tiempo/aspecto)</Run>
+</AStr>
+</Description>
+<SortSpec val="0" />
+<DateCreated val="2009-11-19 17:33:4.43" />
+<DateModified val="2011-4-27 18:34:0.599" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">pret.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="b8f76060-f20b-4c00-80e2-9d325146cc4f" class="LexEntryType" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<Name>
+<AUni ws="es">presente</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pres. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Presente (tiempo)</Run>
+</AStr>
+</Description>
+<SortSpec val="0" />
+<DateCreated val="2010-1-13 17:39:15.220" />
+<DateModified val="2011-4-27 18:41:22.555" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<SubPossibilities>
+<objsur guid="d65a3854-2f9b-4040-8f4a-50cb6c601d46" t="o" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">pres.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4f28785a-114a-450c-a6bd-1b5955ce74f6" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:46:4.363" />
+<DateModified val="2010-12-21 23:30:11.997" />
+<Name>
+<AUni ws="es">continuativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">cont. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Continuative (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">cont.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4f62ee69-7eb8-4215-9012-1957402327aa" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:46:29.753" />
+<DateModified val="2010-12-21 23:31:32.237" />
+<Name>
+<AUni ws="es">repetitivo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">rep. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Repetitivo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">rep.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="ee9b8f56-9592-48b9-b544-a7740daee675" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:46:55.313" />
+<DateModified val="2010-3-9 16:47:3.780" />
+<Name>
+<AUni ws="es">imperativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">imper. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Imperativo (modo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">imper.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9b05c08d-5a28-4024-8202-de9fe96ce33c" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:50:23.993" />
+<DateModified val="2010-12-21 23:31:44.407" />
+<Name>
+<AUni ws="es">desiderativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">desid. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Desiderativo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">desid.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="d5e6a008-eb7f-405a-ba84-b8f72811196f" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:51:52.430" />
+<DateModified val="2010-6-24 18:56:53.510" />
+<Name>
+<AUni ws="es">posesión</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pos. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Posesión (sustantivo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">pos.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="2911bc7d-f1e3-427d-8999-fdd463f57858" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-6-11 21:58:3.167" />
+<DateModified val="2010-6-11 21:58:3.167" />
+<Name>
+<AUni ws="es">(participio)</AUni>
+</Name>
+<SubPossibilities>
+<objsur t="o" guid="6e283278-54a3-47ca-86a9-184b5b142ad1" />
+<objsur t="o" guid="5b3e1a36-464d-4dfd-945e-1f8c9bf3220b" />
+</SubPossibilities>
+</rt>
+<rt guid="6e283278-54a3-47ca-86a9-184b5b142ad1" class="LexEntryType" ownerguid="2911bc7d-f1e3-427d-8999-fdd463f57858">
+<Name>
+<AUni ws="es">participio presente</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">part. pres. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es"></Run>
+</AStr>
+</Description>
+<SortSpec val="0" />
+<DateCreated val="2010-6-11 21:58:32.157" />
+<DateModified val="2011-4-27 18:36:40.721" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">part. pres.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="5b3e1a36-464d-4dfd-945e-1f8c9bf3220b" class="LexEntryType" ownerguid="2911bc7d-f1e3-427d-8999-fdd463f57858">
+<Name>
+<AUni ws="es">participio pasado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">part. pas. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es"></Run>
+</AStr>
+</Description>
+<SortSpec val="0" />
+<DateCreated val="2010-6-11 21:58:49.927" />
+<DateModified val="2011-4-27 18:36:53.598" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">part. pas.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9f6e86e7-7f89-42ef-b33b-2725bc5fa977" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:54:17.993" />
+<DateModified val="2010-3-9 16:54:17.993" />
+<Name>
+<AUni ws="es">copretérito</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">copret. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Copretérito (tiempo/aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">copret.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="71a0216a-8cf6-4357-a3ce-914160f2ecdd" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:54:47.490" />
+<DateModified val="2010-12-21 23:32:10.813" />
+<Name>
+<AUni ws="es">resultativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">res. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Resultativo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">res.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="e4322a6c-edae-4b33-b364-a8f07af4f785" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:55:53.477" />
+<DateModified val="2010-12-21 23:32:18.377" />
+<Name>
+<AUni ws="es">progresivo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">progr. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Progresivo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">progr.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="da9c31f3-e1d9-4706-9771-cb4402e6c75d" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:56:36.860" />
+<DateModified val="2010-3-9 16:57:3.263" />
+<Name>
+<AUni ws="es">copulativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">cop. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Copulativo (verbo estático)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">cop.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="5d304674-f44d-44f7-aaea-f3c34f897eb9" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:57:50.983" />
+<DateModified val="2010-3-9 16:58:0.690" />
+<Name>
+<AUni ws="es">propósito</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">prop. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Propósito (modo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">prop.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="eb7f65ba-39f5-4c94-b23d-0b7e663360ee" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:58:24.500" />
+<DateModified val="2010-3-9 16:58:24.500" />
+<Name>
+<AUni ws="es">futuro</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">fut. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Futuro (tiempo/aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">fut.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="3d1f0892-babd-48a1-8930-cc8813a8e62c" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 16:59:43.437" />
+<DateModified val="2010-6-24 18:57:51.173" />
+<Name>
+<AUni ws="es">(sujeto)</AUni>
+</Name>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto (verbo)</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="f893d66e-689e-4817-be4a-cf528abb8906" />
+<objsur t="o" guid="a6e4e5c2-245a-4d27-bbbd-2db8bb2ef22f" />
+<objsur t="o" guid="7fe5b30d-82db-4f14-9dcf-f51ad88fb667" />
+</SubPossibilities>
+</rt>
+<rt class="LexEntryType" guid="f893d66e-689e-4817-be4a-cf528abb8906" ownerguid="3d1f0892-babd-48a1-8930-cc8813a8e62c">
+<DateCreated val="2010-3-9 17:0:11.737" />
+<DateModified val="2010-6-24 18:57:51.187" />
+<Name>
+<AUni ws="es">sujeto plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">suj. pl. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto plural (verbo)</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="09fcf29b-6dba-4a73-8425-22b80d68f0c7" />
+<objsur t="o" guid="cc85b8b7-cca7-4b22-ab14-1157219f4faf" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">suj. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="09fcf29b-6dba-4a73-8425-22b80d68f0c7" ownerguid="f893d66e-689e-4817-be4a-cf528abb8906">
+<DateCreated val="2010-3-9 17:5:52.83" />
+<DateModified val="2010-3-9 17:6:0.90" />
+<Name>
+<AUni ws="es">sujero plural animado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">suj. pl. anim. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto plural animado (verb)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">suj. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="cc85b8b7-cca7-4b22-ab14-1157219f4faf" ownerguid="f893d66e-689e-4817-be4a-cf528abb8906">
+<DateCreated val="2010-3-9 17:6:33.680" />
+<DateModified val="2010-3-9 17:7:12.600" />
+<Name>
+<AUni ws="es">sujeto plural inanimado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">suj. pl. inan. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto plural inanimado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">suj. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="a6e4e5c2-245a-4d27-bbbd-2db8bb2ef22f" ownerguid="3d1f0892-babd-48a1-8930-cc8813a8e62c">
+<DateCreated val="2010-3-9 17:1:5.983" />
+<DateModified val="2010-3-9 17:1:5.983" />
+<Name>
+<AUni ws="es">sujeto animado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">suj. anim. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto animado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">suj. anim.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="7fe5b30d-82db-4f14-9dcf-f51ad88fb667" ownerguid="3d1f0892-babd-48a1-8930-cc8813a8e62c">
+<DateCreated val="2010-3-9 17:1:35.690" />
+<DateModified val="2010-3-9 17:1:35.690" />
+<Name>
+<AUni ws="es">sujeto inanimado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">suj. inan. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Sujeto inanimado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">suj. inan.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="00acf9a4-5c4e-4375-a222-f561fe0f6cbd" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-3-9 17:2:1.777" />
+<DateModified val="2010-6-24 18:58:3.640" />
+<Name>
+<AUni ws="es">(complemento)</AUni>
+</Name>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento (verbo)</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="82ffde9f-3ed2-4bbe-ac4f-d1a48873d239" />
+<objsur t="o" guid="81655442-7be1-436a-b380-beac9d7a3cd5" />
+<objsur t="o" guid="fe1a28e5-35ee-4092-8a2d-9cfd686c3191" />
+</SubPossibilities>
+</rt>
+<rt class="LexEntryType" guid="82ffde9f-3ed2-4bbe-ac4f-d1a48873d239" ownerguid="00acf9a4-5c4e-4375-a222-f561fe0f6cbd">
+<DateCreated val="2010-3-9 17:2:24.687" />
+<DateModified val="2010-6-24 18:58:3.653" />
+<Name>
+<AUni ws="es">complemento plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">compl. pl. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento plural (verbo)</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="5273e336-50a4-4016-94ed-79bf5a91ae04" />
+<objsur t="o" guid="60ed07aa-5122-44a3-ac86-2627f676fe3f" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">compl. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="5273e336-50a4-4016-94ed-79bf5a91ae04" ownerguid="82ffde9f-3ed2-4bbe-ac4f-d1a48873d239">
+<DateCreated val="2010-3-9 17:4:8.83" />
+<DateModified val="2010-3-9 17:4:8.83" />
+<Name>
+<AUni ws="es">complemento plural animado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">compl. pl. anim. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento plural animado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">compl. pl. anim.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="60ed07aa-5122-44a3-ac86-2627f676fe3f" ownerguid="82ffde9f-3ed2-4bbe-ac4f-d1a48873d239">
+<DateCreated val="2010-3-9 17:5:1.113" />
+<DateModified val="2010-3-9 17:5:1.113" />
+<Name>
+<AUni ws="es">complemento plural inanimado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">compl. pl. inan.</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento plural inanimado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">compl. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="81655442-7be1-436a-b380-beac9d7a3cd5" ownerguid="00acf9a4-5c4e-4375-a222-f561fe0f6cbd">
+<DateCreated val="2010-3-9 17:2:59.257" />
+<DateModified val="2010-3-9 17:3:2.0" />
+<Name>
+<AUni ws="es">complemento animado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">compl. anim. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento animado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">compl. anim.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="fe1a28e5-35ee-4092-8a2d-9cfd686c3191" ownerguid="00acf9a4-5c4e-4375-a222-f561fe0f6cbd">
+<DateCreated val="2010-3-9 17:3:25.557" />
+<DateModified val="2010-3-9 17:4:0.183" />
+<Name>
+<AUni ws="es">complemento inanimado</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">compl. inan. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Complemento inanimado (verbo)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">compl. inan.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="975e8319-4158-4445-b2dc-980bfa0a60b1" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:21:45.13" />
+<DateModified val="2010-12-21 23:22:13.290" />
+<Name>
+<AUni ws="es">habitual</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">hab. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Habitual (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">hab.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="6e07c186-4d49-4a9a-b533-43a7d0da4347" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:22:58.423" />
+<DateModified val="2010-12-21 23:23:2.553" />
+<Name>
+<AUni ws="es">completivo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">com. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Completivo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">com.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="bd6f2b3b-c959-4c64-844f-37a8295117a3" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:24:19.663" />
+<DateModified val="2010-12-21 23:25:27.990" />
+<Name>
+<AUni ws="es">irreal</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">irr. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Irreal (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">irr.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="f404e78f-abb1-43b6-af2b-004083e9bd2c" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:25:59.190" />
+<DateModified val="2010-12-21 23:26:12.627" />
+<Name>
+<AUni ws="es">potential</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pot. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Potential (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">pot.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="f4dedd95-72b8-49e4-8da1-1481791da3bb" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:26:59.43" />
+<DateModified val="2010-12-21 23:27:0.883" />
+<Name>
+<AUni ws="es">estativo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">est. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Estativo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">est.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="10588c47-b87a-4f56-b9b3-0312aef0daff" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2010-12-21 23:27:42.137" />
+<DateModified val="2010-12-21 23:28:0.580" />
+<Name>
+<AUni ws="es">incompletivo</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">incom. de</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="es">
+<Run ws="es">Incompletivo (aspecto)</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="es">incom.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" ownerguid="e063634b-d96e-4e42-a9a2-dffdc933cf4c">
+<DateCreated val="2009-1-29 17:34:31.940" />
+<DateModified val="2009-1-29 17:34:31.940" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Spelling Variant</AUni>
+<AUni ws="zh-CN">拼写变体</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">sp. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregularly spelled variant of a major entry lexeme, not attributable to variety of speech.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">sp. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.890" />
+<DateModified val="2010-6-24 18:54:0.707" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Compound</AUni>
+<AUni ws="es">Compuesto</AUni>
+<AUni ws="zh-CN">复合</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">comp. of</AUni>
+<AUni ws="es">Véase</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of more than one root.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">comp.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="c5c0eb04-811d-4c19-854f-94ffe54d635e" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2010-3-9 16:44:40.917" />
+<DateModified val="2010-6-24 18:56:5.367" />
+<Name>
+<AUni ws="en">UNSPECIFIED</AUni>
+<AUni ws="es">NO ESPECIFICADO</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Not specified in input file.</Run>
+</AStr>
+<AStr ws="es">
+<Run ws="es">No especificado en el archivo importado.</Run>
+</AStr>
+</Description>
+</rt>
+<rt class="LexEntryType" guid="98c273c4-f723-4fb0-80df-eede2204dfca" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.927" />
+<DateModified val="2010-6-24 18:54:19.830" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Derivative</AUni>
+<AUni ws="es">Derivación</AUni>
+<AUni ws="zh-CN">派生</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">der. of</AUni>
+<AUni ws="es">Véase</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of a root plus an affix that adds a non-inflectional component of meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">der.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.930" />
+<DateModified val="2010-6-24 18:54:30.303" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Idiom</AUni>
+<AUni ws="es">Modismo</AUni>
+<AUni ws="zh-CN">俗语</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">id. of</AUni>
+<AUni ws="es">Véase</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A multi-word expression that is recognized as a semantic unit.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">id.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="cce519d8-a9c5-4f28-9c7d-5370788bfbd5" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.933" />
+<DateModified val="2010-6-24 18:54:44.440" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Keyterm Phrase</AUni>
+<AUni ws="es">Frase clave</AUni>
+<AUni ws="zh-CN">关键术语词组</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">kt. phr. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A phrase equivalent for a key term for translation.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">kt. phr.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.937" />
+<DateModified val="2010-6-24 18:54:51.270" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Phrasal Verb</AUni>
+<AUni ws="es">Verbo frasal</AUni>
+<AUni ws="zh-CN">短语动词</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">ph. v. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A combination of a lexical verb and a verbal particle that forms a single semantic and syntactic unit.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">ph. v.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9466d126-246e-400b-8bba-0703e09bc567" ownerguid="555c81cc-ec77-4645-a6e5-6f8bd96170e8">
+<DateCreated val="2009-1-29 17:34:31.937" />
+<DateModified val="2010-6-24 18:54:59.87" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Saying</AUni>
+<AUni ws="es">Dicho</AUni>
+<AUni ws="zh-CN">谚语</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">say. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Any pithy phrasal expression of wisdom or truth; esp., an adage, proverb, or maxim.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">say.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="b2eb0587-0d50-42dc-b79a-6441bb93fbb3" class="LexEntryType" ownerguid="2008a742-cad3-4355-9f47-419e5c45332e">
+<Name>
+<AUni ws="es">primera persona</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">1a. pers. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:37:40.620" />
+<DateModified val="2011-4-26 21:38:45.826" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<SubPossibilities>
+<objsur guid="f12074e4-f4e0-4881-a4ca-d55277a0de65" t="o" />
+<objsur guid="61548b3b-767c-462b-b36a-38e0fc739ea9" t="o" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">1a. pers.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="2008a742-cad3-4355-9f47-419e5c45332e" class="LexEntryType" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<Name>
+<AUni ws="es">(persona)</AUni>
+</Name>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:37:30.605" />
+<DateModified val="2011-4-26 21:40:52.833" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<SubPossibilities>
+<objsur guid="b2eb0587-0d50-42dc-b79a-6441bb93fbb3" t="o" />
+<objsur guid="82de7284-200a-4c93-b2ae-398c4a8e9342" t="o" />
+<objsur guid="c011e431-853c-4fd2-ad1b-8c2443789427" t="o" />
+</SubPossibilities>
+</rt>
+<rt guid="f12074e4-f4e0-4881-a4ca-d55277a0de65" class="LexEntryType" ownerguid="b2eb0587-0d50-42dc-b79a-6441bb93fbb3">
+<Name>
+<AUni ws="es">primera persona del singular</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">1a. sing. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:38:8.587" />
+<DateModified val="2011-4-26 21:40:27.762" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">1a. sing.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="61548b3b-767c-462b-b36a-38e0fc739ea9" class="LexEntryType" ownerguid="b2eb0587-0d50-42dc-b79a-6441bb93fbb3">
+<Name>
+<AUni ws="es">primera persona del plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">1a. pl. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:38:45.825" />
+<DateModified val="2011-4-26 21:40:33.656" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">1a. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="82de7284-200a-4c93-b2ae-398c4a8e9342" class="LexEntryType" ownerguid="2008a742-cad3-4355-9f47-419e5c45332e">
+<Name>
+<AUni ws="es">segunda persona</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">2a. pers. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:39:14.661" />
+<DateModified val="2011-4-26 21:40:2.236" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<SubPossibilities>
+<objsur guid="d17c186c-4d7f-4832-a3d1-cc649998ffcc" t="o" />
+<objsur guid="2c755ece-4ebd-4e5f-b715-14543f173be9" t="o" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">2a. pers.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="d17c186c-4d7f-4832-a3d1-cc649998ffcc" class="LexEntryType" ownerguid="82de7284-200a-4c93-b2ae-398c4a8e9342">
+<Name>
+<AUni ws="es">segunda persona del singular</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">2a. sing. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:39:40.674" />
+<DateModified val="2011-4-26 21:40:40.650" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">2a. sing.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="2c755ece-4ebd-4e5f-b715-14543f173be9" class="LexEntryType" ownerguid="82de7284-200a-4c93-b2ae-398c4a8e9342">
+<Name>
+<AUni ws="es">segunda persona del plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">2a. pl. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:40:2.236" />
+<DateModified val="2011-4-26 21:40:47.508" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">2a. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="c011e431-853c-4fd2-ad1b-8c2443789427" class="LexEntryType" ownerguid="2008a742-cad3-4355-9f47-419e5c45332e">
+<Name>
+<AUni ws="es">tercera persona</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">3a. pers. d</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:40:52.833" />
+<DateModified val="2011-4-26 21:41:38.539" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<SubPossibilities>
+<objsur guid="d1a81bb2-6ec0-4596-bc30-893ffabec4e6" t="o" />
+<objsur guid="9c9d5142-3537-43dc-9d76-b805026f59e4" t="o" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="es">3a. pers.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="d1a81bb2-6ec0-4596-bc30-893ffabec4e6" class="LexEntryType" ownerguid="c011e431-853c-4fd2-ad1b-8c2443789427">
+<Name>
+<AUni ws="es">tercera persona del singular</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">3a. sing. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:41:22.791" />
+<DateModified val="2011-4-26 21:41:34.606" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">3a. sing.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="9c9d5142-3537-43dc-9d76-b805026f59e4" class="LexEntryType" ownerguid="c011e431-853c-4fd2-ad1b-8c2443789427">
+<Name>
+<AUni ws="es">tercera persona del plural</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">3a. pl. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-26 21:41:38.539" />
+<DateModified val="2011-4-26 21:41:54.378" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">3a. pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt guid="d65a3854-2f9b-4040-8f4a-50cb6c601d46" class="LexEntryType" ownerguid="b8f76060-f20b-4c00-80e2-9d325146cc4f">
+<Name>
+<AUni ws="es">presente de la tercera persona del singular</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="es">pres. 3a. sing. de</AUni>
+</Abbreviation>
+<SortSpec val="0" />
+<DateCreated val="2011-4-27 18:41:22.554" />
+<DateModified val="2011-4-27 18:41:41.476" />
+<ForeColor val="0" />
+<BackColor val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<ReverseAbbr>
+<AUni ws="es">pres. 3a. sing.</AUni>
+</ReverseAbbr>
+</rt>
+</languageproject>

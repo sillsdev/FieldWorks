@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Included projects for Translation Editor -->
+<project name="Translation Editor" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<target name="remakete" description="Completely rebuilds TE.">
+		<property name="remakeSfx" value="te"/>
+		<call target="remakeFOO" cascade="false"/>
+		<!--call target="InstallLanguage" cascade="false"/-->
+		<call target="FDOBrowser" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="allTe"
+		description="Translation Editor"
+		depends="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,RBRExtensions,
+			TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="ScrControls" description="Build ScrControls project."
+		depends="FwControls,FwUtils,copy-nmockDll,ScrUtilsInterfaces,ScriptureUtils,FDO,SharedScrUtils,SharedScrControls,TeScrInitializer,XMLUtils">
+		<call target="ScrControls-nodep" cascade="false"/>
+	</target>
+	<target name="ScrControls-nodep" description="Build ScrControls project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/Common/Controls/ScrControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeDll" description="Build TE project."
+		depends="Framework,FDO,FdoUi,ScriptureUtils,UIAdapterInterfaces,TestUtils,RootSite,
+		TeResources,SimpleRootSite,copy-uiAutomation,TeViewConstructors,TeStylesXml,TeScrInitializer,TeEditing,DiffView,
+		copy-nmockDll,TeRegistrySettings,FwCoreDlgControls,ITextDll,SharedScrUtils,SplitGridView,
+		ScrControls,TeDialogs,TeEditorialChecks,TePrintLayout,FwPrintLayoutComponents,
+		TePrintLayoutComponents,TeKeyTerms,OxesIO,TeImportExport,NotesView,TeUIAdapters">
+		<call target="TeDll-nodep" cascade="false"/>
+	</target>
+	<target name="TeDll-nodep" description="Build TE project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TeDll"/>
+		<call target="vsconvert-convert"/>
+		<!-- Validate TeStyles.xml file against TeStyles.dtd (specified in TeStyles.xml) -->
+		<if test="${not platform::is-unix()}">
+		<validatexml>
+			<files>
+				<include name="${dir.fwdistfiles}/Translation Editor/TeStyles.xml"/>
+			</files>
+		</validatexml>
+		</if> <!-- TODO-Linux: validation fails invesigate -->
+	</target>
+	<target name="NotesView" description="Build TE NotesView project."
+		depends="COMInterfaces,Framework,FwControls,FwCoreDlgs,FwCoreDlgControls,FwUtils,RootSite,xCoreInterfaces,FDO,
+		ScriptureUtils,ScrControls,TeResources,TeEditing,TeDialogs,BasicUtils,EncConvertersDlls,TeRegistrySettings,
+		TeScrInitializer,SharedScrUtils,TeImportExport">
+		<call target="NotesView-nodep" cascade="false"/>
+	</target>
+	<target name="NotesView-nodep" description="Build TE NotesView project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/NotesView"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeResources" description="Build TE Resources project."
+		depends="FwResources">
+		<call target="TeResources-nodep" cascade="false"/>
+	</target>
+	<target name="TeResources-nodep" description="Build TE Resources Project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeResources"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TePrintLayoutComponents" description="Build TE Print Layout Components project."
+		depends="COMInterfaces,FDO,FwCoreDlgControls,FwCoreDlgs,FwPrintLayoutComponents,
+		FwResources,FwUtils,PrintLayout,TeRegistrySettings,TeResources,BasicUtils">
+		<call target="TePrintLayoutComponents-nodep" cascade="false"/>
+	</target>
+	<target name="TePrintLayoutComponents-nodep" description="Build TE Print Layout Components Project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TePrintLayoutComponents"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeStylesXml" description="Build TE StylesXml project."
+		depends="FDO,BasicUtils,COMInterfaces,FwUtils,FwCoreDlgs,TeResources,FwControls,EncConvertersDlls,
+			SharedScrUtils,ScrUtilsInterfaces">
+		<call target="TeStylesXml-nodep" cascade="false"/>
+	</target>
+	<target name="TeStylesXml-nodep" description="Build TE StylesXml Project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeStylesXml"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TePrintLayout" description="Build TE PrintLayout project."
+		depends="PrintLayout,TeViewConstructors,SimpleRootSite,TeEditing,UIAdapterInterfaces,
+		TeScrInitializer, ITextDll, TeResources, TeRegistrySettings,SharedScrUtils,ScrUtilsInterfaces">
+		<!-- ScrUtilsInterfaces for tests -->
+		<call target="TePrintLayout-nodep" cascade="false"/>
+	</target>
+	<target name="TePrintLayout-nodep" description="Build TE PrintLayout project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TePrintLayout"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeEditorialChecks" description="Build TE Editorial Checks project."
+		depends="COMInterfaces,FDO,Framework,FwControls,FwCoreDlgs,RootSite,SimpleRootSite,TeEditing,
+		TeViewConstructors, TeRegistrySettings,SplitGridView,ScriptureUtils,SharedScrUtils,SilUtils">
+		<call target="TeEditorialChecks-nodep" cascade="false"/>
+	</target>
+	<target name="TeEditorialChecks-nodep" description="Build TE Editorial Checks project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeEditorialChecks"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeKeyTerms" description="Build TE Key Terms project."
+		depends="COMInterfaces,FDO,SimpleRootSite,TeEditing,TeImportExport,SilUtils,XMLUtils,
+		TeViewConstructors, TeRegistrySettings, SplitGridView,TeEditorialChecks,SharedScrUtils">
+		<call target="TeKeyTerms-nodep" cascade="false"/>
+	</target>
+	<target name="TeKeyTerms-nodep" description="Build TE Key Terms project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeKeyTerms"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeImportExport" description="Build TE Import/Export project."
+		depends="COMInterfaces,FDO,Framework,FwUtils,ScriptureUtils,BasicUtils,EncConvertersDlls,
+		TeRegistrySettings,RootSite,xCoreInterfaces,TeDialogs,OxesIO,ProjectUnpacker,CopyDlls,ScrControls,
+		TestUtils,Widgets,SimpleRootSite,TeEditorialChecks,TeResources,SharedScrUtils,
+		XMLUtils,FwControls,ScrChecks,initLinux">
+		<!-- ScrChecks is runtime dependency of tests -->
+		<call target="TeImportExport-nodep" cascade="false"/>
+	</target>
+	<target name="TeImportExport-nodep" description="Build TE Import/Export project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeImportExport"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="OxesIO" description="Build OxesIO project."
+		depends="BasicUtils,TestUtils,COMInterfaces"><!-- IMPORTANT: NO DEPENDENCIES ON ANY OTHER FieldWorks CODE! --><!-- EB/2010-04-13: already depends on BasicUtils. Dependency on TestUtils and COMInterfaces is needed for tests. -->
+		<call target="OxesIO-nodep" cascade="false"/>
+	</target>
+	<target name="OxesIO-nodep" description="Build OxesIO project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/OxesIO"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeScrInitializer" description="Build TE ScrInitializer project."
+		depends="COMInterfaces,CoreImpl,FDO,FwControls,TeResources,TeStylesXml,BasicUtils,ScriptureUtils,
+		FwCoreDlgs,FwUtils,ScrUtilsInterfaces,FwPrintLayoutComponents,SharedScrUtils">
+		<call target="TeScrInitializer-nodep" cascade="false"/>
+	</target>
+	<target name="TeScrInitializer-nodep" description="Build TE ScrInitializer project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeScrInitializer"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeViewConstructors" description="Build TE ViewConstructors project."
+		depends="BasicUtils,COMInterfaces,CoreImpl,FDO,FdoUi,Framework,FwControls,FwResources,RootSite,ScriptureUtils,
+		ScrUtilsInterfaces,SharedScrUtils,SimpleRootSite,TeRegistrySettings,TeResources,xCoreInterfaces,PrintLayout,ScrControls">
+		<call target="TeViewConstructors-nodep" cascade="false"/>
+	</target>
+	<target name="TeViewConstructors-nodep" description="Build TE ViewConstructors project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeViewConstructors"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="DiffView" description="Build TE DiffView project."
+		depends="BasicUtils,COMInterfaces,CoreImpl,FDO,Framework,FwControls,FwResources,FwUtils,ITextDll,RootSite,
+		ScriptureUtils,ScrUtilsInterfaces,SharedScrUtils,SilUtils,SimpleRootSite,SplitGridView,TeEditing,TeResources,
+		TeViewConstructors,xCoreInterfaces">
+		<call target="DiffView-nodep" cascade="false"/>
+	</target>
+	<target name="DiffView-nodep" description="Build TE DiffView project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/DiffView"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeDialogs" description="Build TE Dialogs project."
+		depends="BasicUtils,COMInterfaces,DiffView,FDO,Framework,FwControls,FwResources,FwUtils,RootSite,
+		ScrControls,ScriptureUtils,ScrUtilsInterfaces,SharedScrUtils,SimpleRootSite,TeRegistrySettings,TeResources,
+		Widgets,xCoreInterfaces">
+		<call target="TeDialogs-nodep" cascade="false"/>
+	</target>
+	<target name="TeDialogs-nodep" description="Build TE Dialogs project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeDialogs"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeRegistrySettings" description="Build TE Dialogs project."
+		depends="FwUtils,TeResources,FwResources,Reporting,FwCoreDlgs,SilUtils">
+		<call target="TeRegistrySettings-nodep" cascade="false"/>
+	</target>
+	<target name="TeRegistrySettings-nodep" description="Build TE Registry Settings project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeRegistrySettings"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeEditing" description="Build TE Editing helpers project."
+		depends="SharedScrUtils,SharedScrControls,COMInterfaces,CoreImpl,SimpleRootSite,copy-uiAutomation,FDO,TeResources,FwUtils,FwCoreDlgs,FwCoreDlgControls,TeRegistrySettings,TeViewConstructors">
+		<call target="TeEditing-nodep" cascade="false"/>
+	</target>
+	<target name="TeEditing-nodep" description="Build TE Editing helpers project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TE/TeEditing"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TeExe" description="Build TE executable."
+		depends="FieldWorks,TeDll,RootSite,SimpleRootSite,ManagedVwDrawRootBuffered,ManagedVwWindow">
+		<call target="TeExe-nodep" cascade="false"/>
+	</target>
+	<target name="TeExe-nodep" description="Build TE executable.">
+		<property name="dir.srcProj" value="${fwroot}/Src/TeExe"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakete-internal" description="Completely rebuilds TE - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakete-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<target name="remakete-internal-core" description="Allows for replacing two 'call' task with one 'depends'."
+		depends="allTe"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+	<!-- -->
+</project>

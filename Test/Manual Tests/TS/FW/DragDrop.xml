@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="dragdrop" num="9.0" abbr="dd" file="FW\DragDrop.xml">
+<title tag="dragdrop">Drag and Drop Tests</title>
+<index>
+<li>test</li>
+<li>drag</li>
+<li>drop</li>
+</index>
+<introduction>
+<p>Drag and drop gesturing provides many intuitive operations including openning and replacing content and linking. Embedded links in structured text fields that reference other entries, subentries, fields, structured paragraphs or selected text. Cross-reference links are the kind of links found in cross-reference fields (e.g., in the Data Notebook Analysis entry, cross-reference fields are the Supporting Evidence and Counter Evidence fields; in the lexicon, cross-references are used extensively for linking one lexeme with another, as in synonyms, antonyms, lexical functions, etc.)</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/CrossRef/Cross-ref.html" type="doc">Drag-and-Drop, Links and Cross-references</link>
+</p>
+
+<p name="note">Drag/drop capabilities may not be implemented for Browse and Document view in v1</p>
+</introduction>
+<context>
+<p>Many combinations of sources and targets are possible. Testing does not require exhaustive combinations of these, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Drag and Drop"</p>
+</context>
+
+
+<case id="ddFile" num="1" order="any">
+<title tag="ddFile">Dragged Files</title>
+<context>
+<p>When the application is running.</p>
+</context>
+<p name="note">These appear to be working for WorldPad, implemented for Data Notebook?</p>
+<step name="1.1" link="Bug">
+From the Windows Explorer, select a file and drag it to the application icon on the desktop and drop it.
+<r>
+<ul>
+<li>If the file is one the application recognizes, the application opens with content from the file.</li>
+<li>If the file was created with a previous version of the application, a message box asks the user if the data is to be updated. Answering No cancels the action and the application returns to its previous state.</li>
+<li>Otherwise, the cursor turns to a universal "NO" symbol over the application and it does not respond in any way.</li>
+</ul>
+</r>
+<p name="bug">Drag and Drop to icon does not open valid file</p>
+<p name="bug">Drag and Drop to icon opens invalid file</p>
+</step>
+<step name="1.2" link="Bug">From the Windows Explorer, select a file and drag it to the open application and drop it in the main window.
+   <r>
+<ul>
+<li>If the file is one the application recognizes, the application opens a new window with content from the file.</li>
+<li>Otherwise, the application brings up a dialog asking the user to identify what kind of file it is. If not canceled, the dialog disapears opening a new window which attempts to open the file as indicated.</li>
+<li>Otherwise, the cursor turns to a universal "NO" symbol over the application main window and it does not respond in any way.</li>
+</ul>
+</r>
+<p name="bug">Drag and Drop to main window does not open valid file</p>
+<p name="bug">Drag and Drop to main window does not spawn new window</p>
+</step>
+</case>
+
+<case id="ddBehav" num="2" order="any">
+<title tag="ddBehav">Drag/Drop Behavior</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="2.1" link="Bug">
+As you drag an object, hover over an active program button on the taskbar.
+<r>Focus is brought to that window and it is brought to the top of the stack (so that it is easy to drop something in that window).</r>
+<p name="bug">Drag and Drop: window is not activated on hover over taskbar button</p>
+</step>
+
+<step name="2.2" link="Bug">
+Hover an object being dragged over the top or bottom of the view pane.
+<r>It causes the window to scroll up or down so the user can drop the object somewhere other than what was originally showing in the window.</r>
+<p name="bug">Drag and Drop: window does not scroll on hover above/below</p>
+</step>
+
+<step name="2.3" link="Bug">
+Hold down the Ctrl key while dragging/dropping an object.
+<r>The object is copied rather than creating a link (if text is the object) or moving (if an entry or subentry is the object).</r>
+<p name="bug">Drag and Drop: Ctrl does not create a copy of the object</p>
+</step>
+
+<step name="2.4" link="Bug">Press Esc while in the process of dragging/dropping an object.
+<r>The action is cancelled, the object that was being dragged is released.</r>
+<p name="bug">Drag and Drop: Esc does not cancel a drag and drop operation</p>
+</step>
+
+<step name="2.5" link="Bug">Drag an object to a place where it should not be allowed to be dropped (ex. My Computer onto the Main Window of the application).
+<r>The location is indicted as not a legal place to drop the object by showing the circle with a line through it. The object cannot be dropped there.</r>
+<p name="bug">Drag and Drop: object allowed to be dropped on illegal drop area</p>
+<p name="bug">Drag and Drop: no illegal icon displayed for illegal drop area</p>
+</step>
+
+<step name="2.6" link="Bug">The object being dragged should be identified somehow.
+<r>
+<ul>
+<li>For an entry being dragged in Data Notebook it is identified by the format Entry Name - Title - Date</li>
+<li>Subentries are displayed similiarly</li>
+<li>Fields have the Field Name - First 20 Characters plus ... if needed (not v1)</li>
+<li>Paragraphs show first 20 characters plus ... if needed (not v1)</li>
+<li>Selected text show the first 20 characters plus ... if needed(not v1)</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+
+<case id="ddmove" num="3" order="any">
+<title tag="ddmove">Moving Items using Drag/Drop</title>
+<context>
+<p>When the application is running:</p>
+</context>
+
+<step name="3.1" link="Bug">
+Changing the order of items. Drag and Drop can be used to move one item above another or vice versa.  Find an entry with several subentries. Move the subentries around in a different order by dragging and dropping in the grey left column area.
+<r>The subentries order can be changed by dragging them to their new desired location.</r>
+<p name="bug">
+</p>
+<p name="note">When a subentry is dragged to a new location, it takes any and all of its subentries with it.</p>
+</step>
+
+<step name="3.2" link="Bug">
+Changing the hierarchy of items. Drag and drop can be used to <i>promote</i> a subentry. Drag the subentry out of its parent entry and drop it next to its parent (above the title in the grey column).
+<r>The subentry is now at the same level as its former parent entry (to promote a subentry to a main entry use the right click menu command Promote).</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="3.3" link="Bug">
+Changing the hierarchy of items. Drag and drop can be used to <i>demote</i> a subentry. Drag the subentry and drop it on to the title of another subentry.
+<r>The subentry dragged is now the child entry or subentry of the subentry that it was dropped on.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="3.4" link="Bug">
+Drag and drop can also be performed in the List Chooser Dialog. Run tests 3.1-3.3 on the Items displayed in the List Chooser Dialog list.
+<r>The items in the List Chooser Dialog can be moved around and the hierarchy changed via drag and drop.</r>
+<p name="bug">
+</p>
+<p name="note">List Properties may prevent items from being reordered (sort by name is on)</p>
+<p name="note">List Properties may prevent items from being hierarchical (support hierarchy is off)</p>
+</step>
+
+<step name="3.5" link="Bug">
+Drag and drop can also be performed in the Topics List Editor. Run tests 3.1-3.3 on the items displayed under List Items of the Topics List Editor.
+<r>The items in List Items of the Topics List Editor can be moved around and the hierarchy changed via drag and drop.</r>
+<p name="bug">
+</p>
+<p name="note">List Properties may prevent items from being reordered (sort by name is on)</p>
+<p name="note">List Properties may prevent items from being hierarchical (support hierarchy is off)</p>
+</step>
+
+</case>
+
+<case id="ddlinks" num="4" order="any">
+<title tag="ddlinks">Creating Internal Links</title>
+<context>
+<p>When the application is running:</p>
+</context>
+<p name="todo">Update tests for later versions as many special cases not implemented for v1</p>
+
+<step name="4.1" link="Bug">
+Drag an entry by clicking on the grey left column area and drop it on the location to place the link.
+<r>
+<ul>
+<li>If the link is dropped in structured text it becomes an embedded internal link (not v1).</li>
+   <li>If the link is dropped in a Cross Reference field it is a Cross Reference link.</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+
+<case id="ddcrow" num="5" order="any">
+<title tag="ddcrow">Cross-Reference Field links (one way)</title>
+<context>
+<p>When the application is running:</p>
+</context>
+
+<step name="5.1" link="Bug">Select an entry and drag it to a cross-reference field in another window (Set up a second window by opening Window-New Window and then use Window-Tile Windows).
+   <r>
+<ul>
+<li>The title or description of the target entry is inserted in the cross-reference field</li>
+<li>When clicked upon the new entry references back to the entry the link was dragged from</li>
+<li>The inserted link looks like the rest of the text in the cross-reference field (it gets its attributes from the field)</li>
+</ul>
+</r>
+<p name="bug">Drag and Drop: Cross-reference link created does not reference intended target</p>
+<p name="bug">Drag and Drop: Cross-reference link text description not created correctly</p>
+</step>
+
+<step name="5.2" link="Bug">
+When the cursor is in the Cross Reference field test the shortcut keys to make sure they are working.
+<r>
+<ul>
+<li>Use Shift-arrow to select the link (Cross-references are treated as single characters)</li>
+   <li>&lt;Enter&gt; will follow the selected link</li>
+   <li>&lt;Delete&gt; will delete the selected link</li>
+   <li>Shift&lt;F10&gt; or the special Windows key opens the right click menu</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="5.3" link="Bug">
+Follow a Cross Reference field link by clicking on it or selecting it and pressing &lt;Enter&gt;.
+<r>The entry or subentry referenced by the link is opened in a new window.</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+<update date="Aug-28-01" author="MikeL">Created</update>
+<update date="Jun-14-02" author="RussD">Updated to agree with specs.</update>
+<update date="Sep-05-02" author="MikeL">Added bit about opening older version data</update>
+
+</test>

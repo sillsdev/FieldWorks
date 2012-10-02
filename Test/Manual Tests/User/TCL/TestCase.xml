@@ -1,0 +1,19 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\TestCase.xml">
+ <title tag="tclCase">What is a test case?</title>
+ <index>
+  <li>test case: definition</li>
+ </index>
+ <definition>
+  <p>User interface objects, such as dialogs and toolbars, and features, such as storing and retrieving data from a file, can be invoked in different ways resulting in different behavior. Each test case tries a single behavior. The collection of test cases for a single object or feature is a <i>Test Script</i>.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a Test Case:</p>
+  <table>
+   <tr><td>Header</td><td>Preseents a number, name, code name and order of execution.</td></tr>
+   <tr><td>Context</td><td>Lists criteria for the test case to be valid.</td></tr>
+   <tr><td><link uri="CaseStep.xml" type="module">Test Case Steps</link></td><td>A simple task that has a specified outcome.</td></tr>
+   <tr><td><link uri="..\Bugs\Pattern.xml" type="module">Bug Patterns</link></td><td>When testing finds a bug, these patterns show how the bug is to be reported.</td></tr>
+  </table>
+ </partsAndFunctions>
+</concept>

@@ -1,0 +1,51 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\trouble.xml">
+ <title tag="wrttrb">Trouble-shooting your XML test script</title>
+ <index>
+  <li>XML: trouble-shooting</li>
+ </index>
+ <prerequisites>
+  <p>Before trouble-shooting an XML test script library, you should:</p>
+  <ul>
+   <li>Have an error, default tag list display or a blank window from trying to display the library from its *.htm file.</li>
+   <li>Review the structure of a <link uri="..\TCL\TestCaseLib.xml" type="module">test case library</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for trouble-shooting an XML test script:</p>
+  <ul>
+   <li>If you have a default tag list display (Each line starts with a &lt;tag> and maybe a "-" preceeding it. Some are indented.) then MSXSL.exe was not run successfully. See <link uri="tools.xml" type="module">Using the XML authoring tools</link> to run it.</li>
+   <li>If you got an error message from your browser:
+	<ul>
+	 <li>Not located: An &lt;insert-test> element in the <i>folder-name</i>.xml file may not have the right path specified or the file name is misspelled. If the following look OK, try a "File error" item below.
+<p name="Owned">For test scripts owned by this library, the path should just be the name of its file with the ".xml" extension.</p>
+<p name="Example">&lt;insert-test>FmtFont.xml&lt;/insert-test></p>
+<p name="Import">For test scripts imported from other libraries, the path should have one parent directory symbol, "..", and only one subdirectory named.</p>
+<p name="Example">&lt;insert-test>..\StdCtrls\PrintDlg.xml&lt;/insert-test></p>
+	 </li>
+	 <li>File error: The ModularBook.dtd file may not be in the correct directory. See <link uri="tools.xml" type="module">Using the XML authoring tools</link> for its proper location. If it is OK, try the next "File error" item.</li>
+	 <li>File error: The HelpFile.xsl file may not be in the correct directory. See <link uri="tools.xml" type="module">Using the XML authoring tools</link> for its proper location.</li>
+	</ul>
+   </li>
+   <li>If you have a blank window with no indication as to what happened, your test script is not valid. This can happen because the xml is not <i>well-formed</i> or because it does not match the dtd. Try the following:
+	<ul>
+	 <li>To check for <b>well-formedness</b>, double click your test script file (*.xml). An error message will be displayed if it is not well-formed. An arrow points to the location of the first bad character, end tag or punctuation.
+<p name="Bad character">Sometimes blank spaces are really unprintable, invalid xml characters that creep in from cutting and pasting. An error message with a line of dashes to a caret point out its location. Simply open the *.xml file, delete the character (a blank) and type in a new space.</p>
+<p name="Bad end tag">Each tag must be empty or have a matching end tag. Only image tags &lt;img ... /> are empty in the ModularBook.dtd, so chances are its another one. Open the *.xml file and find the end tag pointed to. See if all the tags started above it are paired with end tags or are image tags with the empty tag ending />.</p>
+<p name="Bad punctuation">Sometimes a bracket, equal sign or quote mark is left off a tag or attribute. The missing equal sign gives a clear error message. Open the *.xml file and add it. A missing quote or end bracket may give the most obscure error message. Open the *.xml file and look for a missing end bracket > or doublequote ".</p>
+	 </li>
+	 <li>It is more difficult to find <b>dtd mismatches</b>. To make sure you are only finding them in your test script, copy the <i>folder-name</i>.xml file. Delete all &lt;insert-test> elements except your test script (you can turn them into XML comments too if you know how). Now try to validate it again. If the problem remains, make a copy of your xml file and debug:
+	  <ol>
+	   <li>Open the test script xml file (not the copy).</li>
+	   <li>Open the ModularBook dtd and note which tags are required for the &lt;test> tag. Make sure these are present. Check the required attributes as well.</li>
+	   <li>If all required tags and attributes are present, check the order of optional tags. Check their required attributes as well.</li>
+	   <li>If there are too many tags or the problem still remains, cut out a section of tags leaving what seems to be a valid set of tags. Try to validate it again. Repeat this step removing more until the test script validates. Then continue to the next step.</li>
+	   <li>Open the test script copy and copy a section of tags back into the shortened original. Try to validate it again. If it validated, continue adding tags until it does not validate. When it does not validate, the last tag or set of tags copied back into the file contain an error. Check the dtd content models to see if the tags are out of order, missing required attributes or requird tags inside of them. Repeat this step until the content is correctly restored and the test script validates.</li>
+	  </ol>
+	 </li>
+	</ul>
+   </li>
+  </ul>
+ </guidelines>
+</task>

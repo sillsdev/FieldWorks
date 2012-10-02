@@ -1,0 +1,129 @@
+'=====================================================================
+' TEST CASE NAME:
+'
+' GENERAL DESCRIPTION OF WHAT IS VERIFIED:
+'
+'
+' SPECIFIC AREA ADDRESSED BY THIS TEST CASE:
+'
+'
+' NAME OF APPLICATION UNDER TEST:
+'
+'=====================================================================
+' TEST CASE PURPOSE:
+'
+'
+' TEST CASE ABSTRACT OF TECHNIQUES USED TO TEST THE FEATURE:
+'
+'
+' SCENARIOS:    1.
+'               2.
+'               3.
+'               4.
+'               5.
+'               6.
+'               7.
+'               8.
+'               9.
+'              10.
+'
+'---------------------------------------------------------------------------
+' OTHER FILES REQUIRED TO RUN TEST CASE:
+'
+'
+'
+'---------------------------------------------------------------------------
+' REVISION HISTORY:
+'
+'	[ 0]	<DD-MM-YY>		<NAME>	: <CHANGES MADE>
+'	[ 1]	  -  -			<????>	: Created test.
+'---------------------------------------------------------------------------
+
+
+' '$DEFINE and '$INCLUDE metacommands for test case
+'-------------------------------------------------------------------
+'$INCLUDE '..\DNTesting.inc'
+
+
+' DIM statements, TYPE declarations, global variables,
+' constants, and so on for test case
+'-------------------------------------------------------------------
+
+
+' *************************
+' **** BEGIN TEST CASE ****
+' *************************
+
+'******* Test Case INITIALIZATION/SETUP *********
+'Minimize the Visual Test window.
+dim hwnd as long
+hwnd = GetHandle(GH_HWNDCLIENT)
+if hwnd <> 0 Then WMinWnd(hwnd)
+
+'Start Data Notebook
+hwnd = StartDN(1, 0)
+
+
+'******* SCENARIO SECTION ***********************
+
+'*** Scenario 1: open Format Font dialog
+Scenario ("DN Format Font Dialog Open (2.6.1: 0.0)")
+	hwnd = FindDNWindow(True, 0)
+
+
+	'Select some text so that we can open the Format Font dlg.
+	'Uggh, this is very dependent on the sizing of DN, enabling of
+	'certain toolbars, sizing of columns, etc. etc.
+	Play hwnd, "{DBLCLICK 220, 215}"
+
+	WToolbarButtonClk(_id(FWIDMenuToolbar), "F&ormat")
+	WMenuSelect("&Font...")
+	WaitUntilIdle(TimeoutMsec)
+
+	hwnd = WFndWndC(FWFFDlgTitle, FWDialogClass, FW_FOCUS, Timeout)
+	if hwnd = 0 then fail "Couldn't open Font dialog (cursor not placed?)"
+
+Scenario Cleanup 'and handling of scenario failure
+
+	Play "{esc}"  'close dialog
+
+End Scenario
+
+
+'*** Scenario 2: open Format Font dialog
+Scenario ("DN Format Font Dialog Open (2.6.1: 0.1)")
+	hwnd = FindDNWindow(True, 0)
+
+	'Select some text so that we can open the Format Font dlg.
+	'Uggh, this is very dependent on the sizing of DN, enabling of
+	'certain toolbars, sizing of columns, etc. etc.
+	Play hwnd, "{DBLCLICK 220, 215}"
+
+	WToolbarButtonClk(_id(FWIDMenuToolbar), "F&ormat")
+	WMenuSelect("&Font...")
+	WaitUntilIdle(TimeoutMsec)
+
+	hwnd = WFndWndC(FWFFDlgTitle, FWDialogClass, FW_FOCUS, Timeout)
+	if hwnd = 0 then fail "Couldn't open Font dialog (cursor in wrong place?)"
+
+Scenario Cleanup 'and handling of scenario failure
+
+	Play "{esc}"  'close dialog
+
+End Scenario
+
+
+'******* Test Case CLEANUP **********************
+
+
+
+' *************************
+' ***** END TEST CASE *****
+' *************************
+End
+
+
+
+'*****************************************************************************
+'                          LOCAL SCRIPT SUBS/FUNCTIONS
+'*****************************************************************************

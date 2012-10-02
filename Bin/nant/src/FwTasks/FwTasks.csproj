@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1C027178-008E-48AB-B588-01F59B1C5406}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>FwTasks</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bounds|AnyCPU' ">
+	<OutputPath>bin\Bounds\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<BaseAddress>285212672</BaseAddress>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<FileAlignment>4096</FileAlignment>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="IDLImporter, Version=1.0.3259.32663, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\..\IDLImporter.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="NAnt.Contrib.Tasks, Version=0.85.2479.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\extensions\common\neutral\NAntContrib\NAnt.Contrib.Tasks.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.Core, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\bin\NAnt.Core.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="NAnt.DotNetTasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\bin\NAnt.DotNetTasks.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="NAnt.NUnit, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\NAnt.NUnit.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.NUnit2Tasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\NAnt.NUnit2Tasks.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.VisualCppTasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	  <HintPath>..\..\bin\NAnt.VisualCppTasks.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AssemblyLinkerTaskEx.cs" />
+	<Compile Include="CircularReferencesTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClWorkaround.cs" />
+	<Compile Include="COMRegisterTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConcatTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CopyAsmRefsTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CopyReferencesTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DbVersionTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DelReferencesTask.cs" />
+	<Compile Include="FwBaseTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FwFunctions.cs" />
+	<Compile Include="FwInitProject.cs" />
+	<Compile Include="FwRootTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FwSandcastleTask.cs" />
+	<Compile Include="GetTypeLibTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IdlImpTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportRegistryTask.cs" />
+	<Compile Include="MakeMSMFileListsTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MidlTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NAntTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NUnit2ExTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NUnit2ExTaskWorkaround.cs" />
+	<Compile Include="PropertyDeleteTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RegFreeCreator.cs" />
+	<Compile Include="RegFreeTask.cs" />
+	<Compile Include="ResGenTaskEx.cs" />
+	<Compile Include="SetEnvTask.cs" />
+	<Compile Include="UnitppTask.cs" />
+	<Compile Include="UserFunctions.cs" />
+	<Compile Include="VersionExTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WriteRegistryTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlAssembly.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlAssemblyCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<None Include="build.build" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

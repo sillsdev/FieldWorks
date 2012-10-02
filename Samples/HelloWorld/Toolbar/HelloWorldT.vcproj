@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="HelloWorld Toolbar"
+	ProjectGUID="{BA867D5F-2328-41C3-ADD7-1ACEFCA9C93A}"
+	SccProjectName="&quot;$/Samples/HelloWorld/Toolbar&quot;, XWFAAAAA"
+	SccAuxPath=""
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\HelloWorld___Win32_Debug"
+			IntermediateDirectory=".\HelloWorld___Win32_Debug"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkhwt.bat"
+				ReBuildCommandLine="..\..\..\bin\mkhwt.bat cc"
+				Output="..\..\..\output\debug\HelloWorldTool.exe"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkhwt.bat r"
+				ReBuildCommandLine="..\..\..\bin\mkhwt.bat r cc"
+				Output="..\..\..\output\release\HelloWorld ToolBar.exe"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Res"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath=".\Res\HelloWorld.ico">
+			</File>
+			<File
+				RelativePath=".\Res\HelloWorld.rc">
+			</File>
+			<File
+				RelativePath=".\Res\Resource.h">
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\HelloWorld.cpp">
+		</File>
+		<File
+			RelativePath=".\HelloWorld.h">
+		</File>
+		<File
+			RelativePath=".\Main.h">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

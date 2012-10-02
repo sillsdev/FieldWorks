@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<backup-and-restore role="dialog" title="Backup and Restore" path="18:$title;/" root="yes">
+
+  <backup role="tab" name="Backup">
+	<tab path="9:Tab1/37:Backup"/>
+	<var id="ptbu" set="Projects to back up:"/>
+	<projects-to-back-up name="$ptbu" path="9:$name;">
+	  <label name="$ptbu" path="/41:$name"/>
+	  <list ak="P" path="[2]/44:"/>
+	</projects-to-back-up>
+	<destination name="Destination:" path="9:$name">
+	  <label name="Destination:" path="/41:$name"/>
+	  <text ak="D" path="[2]/9:Destination:/46:Destination:/9:Destination:/42:Destination:"/>
+	  <browse name="Browse..." path="[2]/9:Destination:/43:Open">
+		<dialog name="Browse for Backup Folder"/>
+	  </browse>
+	</destination>
+	<var id="readable" set="Include a human readable (XML) backup"/>
+	<readable name="$readable" path="9:$readable;/44:$readable">
+	  <check ak="I" />
+	  <label name="$readable" dx="150"/>
+	</readable>
+	<reminders name="Reminders" ak="R" path="9:$name;.../43:$name;...">
+	  <dialog name="Backup Reminders"/>
+	</reminders>
+	<schedule name="Schedule" ak="c" path="9:$name;.../43:$name;...">
+	  <dialog name="Backup Schedule"/>
+	</schedule>
+	<password name="Password" ak="w" path="9:$name;.../43:$name;...">
+	  <dialog name="Backup Password"/>
+	</password>
+
+	<start-backup name="Start Backup" ak="S" path="9:$name;/43:$name"/>
+	<close name="Close" path="9:$name;/43:$name"/>
+	<help name="Help" path="9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Backup and Restore, Backup tab" topic-path="$topic"/>
+	</help>
+  </backup>
+
+  <restore role="tab" name="Restore">
+	<tab path="9:Tab1/37:Restore"/>
+	<var id="restFrom" set="9:Restore from:"/>
+	<restore-from name="Restore from:" >
+	  <label name="Restore from:" path="$restFrom;/41:$name"/>
+	  <text name="Restore from:" ak="R" path="$restFrom;[2]/9:$name;/46:$name;/9:$name;/42:$name"/>
+	  <drop name="Open" path="$restFrom;[2]/9:Restore from:/43:Open"/>
+	  <browse name="Browse..." path="9:$name;/43:$name">
+		<dialog name="Select File to Restore"/>
+	  </browse>
+	</restore-from>
+	<project name="Project:"  path="9:$name">
+	  <label name="Project:" path="/41:$name"/>
+	  <var id="projCombo" set="[2]/9:Project:/46:Project:/"/>
+	  <text name="Project:" ak="P" path="$projCombo;41:$name"/>
+	  <drop name="Open" path="$projCombo;43:$name"/>
+	  <list name="Project:" path="$projCombo;9:$name;/33:$name;/34:"/><!-- project name -->
+	</project>
+	<version name="Version:" path="9:$name">
+	  <label name="Version:" path="[2]/41:$name"/>
+	  <list ak="V" path="[2]/34:"/>
+	</version>
+	<var id="restore" set="Restore from the XML file, if available." />
+	<check name="$restore" path="9:$name;/44:$name" >
+	  <check ak="X" />
+	  <label name="$restore" dx="150"/>
+	</check>
+
+	<start-restore name="Start Restore" ak="S" path="9:$name;/43:$name"/>
+	<close name="Close" path="9:$name;/43:$name"/>
+	<help name="Help" path="9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Backup and Restore, Restore tab" topic-path="$topic"/>
+	</help>
+  </restore>
+
+</backup-and-restore>

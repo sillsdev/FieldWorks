@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<FxtDocumentDescription dataLabel="Wordforms" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">
+	Export the wordforms and associated information to an XML file. This is slow due to producing the counts.
+	</FxtDocumentDescription>
+
+	<class name="LangProject">
+		<element name="wordforms" progressIncrement="true">
+			<objVector objProperty="AllWordforms"/>
+		</element>
+	</class>
+
+	<class name="WfiWordform">
+		<element name="wordform" progressIncrement="true">
+			<attribute name="UserAnalyses" simpleProperty="UserCount"/>
+			<attribute name="PredictedAnalyses" simpleProperty="ParserCount"/>
+			<newLine/>
+			<multilingualStringElement name="form" simpleProperty="Form" ws="all vernacular"/>
+			<newLine/>
+			<objVector objProperty="AnalysesOC"/>
+		</element>
+		<newLine/>
+	</class>
+
+	<class name="WfiAnalysis">
+		<element name="analysis">
+			<objVector objProperty="MeaningsOC"/>
+			<objAtomic objProperty="CategoryRA"/>
+		</element>
+		<newLine/>
+	</class>
+
+	<class name="WfiGloss">
+		<multilingualStringElement name="gloss" simpleProperty="Form" ws="all analysis"/>
+		<newLine/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<element name="category">
+			<string simpleProperty="Name" ws="analysis"/>
+		</element>
+	</class>
+
+</template>

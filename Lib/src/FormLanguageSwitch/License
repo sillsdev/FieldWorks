@@ -1,0 +1,58 @@
+Reply-To: <julijan.sribar@zg.htnet.hr>
+From: "julijan" <julijan.sribar@zg.htnet.hr>
+To: <steve_mcconnel@sil.org>
+References: <EXCHANGESERVERzxDPH0000b118@mail.codeproject.com>
+Subject: RE: [CodeProject] Re: Problem representing untranslated texts
+Date: Tue, 30 Jan 2007 09:00:18 +0100
+Message-ID: <000301c74444$af20b650$2501a8c0@envox.local.hr>
+
+Hello Steve,
+
+You are free to use the code, but please include a reference to the =
+article page (http://www.codeproject.com/csharp/formlanguageswitch.asp) =
+into the list of credits.
+
+Also, I would appreciate further information and notifications on the =
+product in which this code will be used (for my personal reference only =
+:o) ).
+
+Of course, if you notice some bugs and needs bug fixing, feel free to =
+contact me, either directly or through CodeProject message forum.
+
+Regards,
+
+Julijan
+
+> -----Original Message-----
+> From: CodeProject Forums [mailto:noreply@mail.codeproject.com]
+> Sent: Monday, January 29, 2007 11:57 PM
+> To: julijan.sribar@zg.htnet.hr
+> Subject: [CodeProject] Re: Problem representing untranslated texts
+>
+> This is a direct email response to your message on the page 'Instantly
+> Changing Language in the Form':
+> This message has not appeared on the discussion board for that page.
+>
+> To reply send an email to the email address below.
+>
+> URL : http://www.codeproject.com/csharp/formlanguageswitch.asp?msg=3D1847423#xx1847423xx
+> From: Steve McConnel <steve_mcconnel@sil.org>
+>
+> Hi,
+> Is this code freely reusable in our own projects?  I'm currently assigned
+> to adding this sort of functionality to our program, and may be interested
+> in using this code if allowed.  We're currently using the expat XML parser
+> and the ICU (International Components for Unicode) libraries, which are
+> both explicitly open source licensed.  I haven't been able to figure out
+> the license on your FormLanguageSwitch DLL.  :-)
+> Also, I'd certainly be interested in any bug fixes that you have made.  :-)
+> Thanks.
+>
+>
+> Steve McConnel
+>
+> ---------------------------------------------------------------
+> NOTE: This message has been sent from an unattended email box.
+>
+> Daily news delivered: The Code Project Insider.
+> Sign up <a href=3D"http://www.codeproject.com/Redir.aspx?id=3D1648">here</a>.

@@ -1,0 +1,468 @@
+Comment *===================================================================
+Comment * Copyright 1992 Avinash Chopde, All Rights Reserved.
+Comment *
+Comment * Permission to use, copy, modify and distribute this software
+Comment * and its documentation for any purpose is hereby granted without
+Comment * fee, provided that the above copyright notice appear in all
+Comment * copies and that both that copyright notice and this permission
+Comment * notice appear in supporting documentation, and that the name of
+Comment * Avinash Chopde not be used in advertising or publicity
+Comment * pertaining to distribution of the software without specific,
+Comment * written prior permission.
+Comment * Avinash Chopde makes no representations about the suitability
+Comment * of this software for any purpose.
+Comment * It is provided "as is" without express or implied warranty.
+Comment *
+Comment * AVINASH CHOPDE DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+Comment * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+Comment * AND FITNESS, IN NO EVENT SHALL AVINASH CHOPDE BE LIABLE FOR
+Comment * ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+Comment * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
+Comment * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+Comment * ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+Comment * OF THIS SOFTWARE.
+Comment *
+Comment * Author:  Avinash Chopde, 1992
+Comment *
+Comment ===================================================================
+itrans: Comment $Header: /home/cvsroot/itrans/nextrel/lib/tlgutx.ifm,v 1.2 1998/09/13 00:40:31 avinash Exp $
+
+Comment Using following maps:
+Comment vowels: a aa i ii u uu ri rii li lii ay aay ai o oo au (..gap..) aha
+Comment note that in south indian languages, the ri, rii, li, lii vowels
+Comment are actually pronouced: ro, roo, lo, and loo respectively.
+
+itrans: StartINDIAN
+itrans: TEX telugu tel12.tfm
+XX Disable Hyphenation itrans: HYPHENCHAR 45 ;
+
+itrans: Comment ----------- Vowels
+itrans: CC a 2 ; PCC 23 0 0 ; PCC none 100 0 ;
+itrans: CC aa 2 ; PCC 24 0 0 ; PCC none 100 0 ;
+itrans: CC i 2 ; PCC 25 0 0 ; PCC none 100 0 ;
+itrans: CC ii 2 ; PCC 26 0 0 ; PCC none 100 0 ;
+itrans: CC u 2 ; PCC 27 0 0 ; PCC none 100 0 ;
+itrans: CC uu 2 ; PCC 28 0 0 ; PCC none 100 0 ;
+itrans: CC ri 2 ; PCC 29 0 0 ; PCC none 100 0 ;
+itrans: CC rii 2 ; PCC 30 0 0 ; PCC none 100 0 ;
+itrans: CC li 2 ; PCC 31 0 0 ; PCC none 100 0 ;
+itrans: CC lii 2 ; PCC 32 0 0 ; PCC none 100 0 ;
+itrans: CC ay 2 ; PCC 65 0 0 ; PCC none 100 0 ;
+itrans: CC aay 2 ; PCC 66 0 0 ; PCC none 100 0 ;
+itrans: CC ai 2 ; PCC 67 0 0 ; PCC none 100 0 ;
+itrans: CC o 2 ; PCC 68 0 0 ; PCC none 100 0 ;
+itrans: CC oo 2 ; PCC 69 0 0 ; PCC none 100 0 ;
+itrans: CC au 2 ; PCC 70 0 0 ; PCC none 100 0 ;
+Comment             No "am" in telugu...
+itrans: Comment aha is also the visargha (H)
+itrans: CC aha 2 ; PCC 10 -60 0 ; PCC none 200 0 ;
+
+itrans: Comment ----------- Digits
+Comment     used since the font uses a non-ASCII mapping for telugu digits
+itrans: CC zero 1 ; PCC 13 0 0 ;
+itrans: CC one 1 ; PCC 14 0 0 ;
+itrans: CC two 1 ; PCC 15 0 0 ;
+itrans: CC three 1 ; PCC 16 0 0 ;
+itrans: CC four 1 ; PCC 17 0 0 ;
+itrans: CC five 1 ; PCC 18 0 0 ;
+itrans: CC six 1 ; PCC 19 0 0 ;
+itrans: CC seven 1 ; PCC 20 0 0 ;
+itrans: CC eight 1 ; PCC 21 0 0 ;
+itrans: CC nine 1 ; PCC 22 0 0 ;
+
+itrans: Comment ----------- Consonant-Vowel Construction Rules
+
+itrans: CCADD tmpl ;
+Comment Is for consonants that do not take a "hat" (check mark) at the top
+itrans: CC tmpl-half 3 ; PCC implicit 0 0 ; PCC 148 ox+120 0 ; PCC none 100 0 ;
+itrans: CC tmpl-a 2 ; PCC implicit 0 0 ; PCC none 100 0 ;
+itrans: CC tmpl-aa 3 ; PCC implicit 0 0 ; PCC 129 -270 0 ; PCC none 100 0 ;
+itrans: CC tmpl-i 4 ; PCC implicit 0 0 ; PCC 131 -230 0 ; PCC none 30 0 ; PCC none 100 0 ;
+itrans: CC tmpl-ii 4 ; PCC implicit 0 0 ; PCC 132 -230 0 ; PCC none 30 0 ; PCC none 100 0 ;
+itrans: CC tmpl-u 3 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC tmpl-uu 3 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC none 100 0 ;
+itrans: CC tmpl-ri 3 ; PCC implicit 0 0 ; PCC 137 -140 0 ; PCC none 100 0 ;
+itrans: CC tmpl-rii 3 ; PCC implicit 0 0 ; PCC 138 -140 0 ; PCC none 100 0 ;
+itrans: CC tmpl-li 4 ; PCC implicit 0 0 ; PCC 139 -432 0 ; PCC none 183 0 ; PCC none 0 cy-150 ;
+itrans: CC tmpl-lii 4 ; PCC implicit 0 0 ; PCC 140 -467 0 ; PCC none 0 0 ; PCC none 0 cy-150 ;
+itrans: CC tmpl-ay 4 ; PCC implicit 0 0 ; PCC 141 -300 0 ; PCC none 285 0 ; PCC none 100 0 ;
+itrans: CC tmpl-aay 4 ; PCC implicit 0 0 ; PCC 142 -300 0 ; PCC none 298 0 ; PCC none 100 0 ;
+itrans: CC tmpl-ai 5 ; PCC implicit 0 0 ; PCC 141 -300 0 ; PCC 143 ox+50 0 ; PCC none 185 0 ; PCC none 0 cy-200 ;
+itrans: CC tmpl-o 3 ; PCC implicit 0 0 ; PCC 144 -220 0 ; PCC none 100 0 ;
+itrans: CC tmpl-oo 3 ; PCC implicit 0 0 ; PCC 145 -200 0 ; PCC none 100 0 ;
+itrans: CC tmpl-au 3 ; PCC implicit 0 0 ; PCC 147 -100 0 ; PCC none 100 0 ;
+
+itrans: CCADD tmplA ;
+Comment Is for consonants that take a "hat" (check mark) at the top (sometimes)
+itrans: CC tmplA-half 3 ; PCC implicit 0 0 ; PCC 148 ox+100 0 ; PCC none 100 0 ;
+itrans: CC tmplA-a 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC none 11 0 ; PCC none 100 0 ;
+itrans: CC tmplA-aa 3 ; PCC implicit 0 0 ; PCC 129 -379 0 ; PCC none 100 0 ;
+itrans: CC tmplA-i 4 ; PCC implicit 0 0 ; PCC 131 -278 0 ; PCC none 68 0 ; PCC none 100 0 ;
+itrans: CC tmplA-ii 4 ; PCC implicit 0 0 ; PCC 132 -278 0 ; PCC none 68 0 ; PCC none 100 0 ;
+itrans: CC tmplA-u 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC tmplA-uu 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 136 0 0 ; PCC none 100 0 ;
+itrans: CC tmplA-ri 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 137 -80 0 ; PCC none 100 0 ;
+itrans: CC tmplA-rii 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 138 -80 0 ; PCC none 100 0 ;
+itrans: CC tmplA-li 5 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 139 -349 0 ; PCC none 183 0 ; PCC none 0 cy-150 ;
+itrans: CC tmplA-lii 5 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 140 -349 0 ; PCC none 100 0 ; PCC none 0 cy-150 ;
+itrans: CC tmplA-ay 4 ; PCC implicit 0 0 ; PCC 141 -442 0 ; PCC none 110 0 ; PCC none 100 0 ;
+itrans: CC tmplA-aay 4 ; PCC implicit 0 0 ; PCC 142 -442 0 ; PCC none 123 0 ; PCC none 100 0 ;
+itrans: CC tmplA-ai 5 ; PCC implicit 0 0 ; PCC 141 -442 0 ; PCC 143 ox+0 0 ; PCC none 157 0 ; PCC none 0 cy-200 ;
+itrans: CC tmplA-o 3 ; PCC implicit 0 0 ; PCC 144 -241 0 ; PCC none 100 0 ;
+itrans: CC tmplA-oo 3 ; PCC implicit 0 0 ; PCC 145 -241 0 ; PCC none 100 0 ;
+itrans: CC tmplA-au 3 ; PCC implicit 0 0 ; PCC 147 -167 0 ; PCC none 100 0 ;
+
+itrans: CCADD tmplB ;
+Comment Is like tmplA, just the "hat" is more to the left...
+itrans: CC tmplB-half 3 ; PCC implicit 0 0 ; PCC 148 ox+120 0 ; PCC none 100 0 ;
+itrans: CC tmplB-a 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC none 311 0 ; PCC none 100 0 ;
+itrans: CC tmplB-aa 5 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC none 311 0 ; PCC 129 100 0 ; PCC none 100 0 ;
+itrans: CC tmplB-i 4 ; PCC implicit 0 0 ; PCC 131 -617 0 ; PCC none 400 0 ; PCC none 100 0 ;
+itrans: CC tmplB-ii 4 ; PCC implicit 0 0 ; PCC 132 -617 0 ; PCC none 400 0 ; PCC none 100 0 ;
+itrans: CC tmplB-u 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 135 311 0 ; PCC none 100 0 ;
+itrans: CC tmplB-uu 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 136 311 0 ; PCC none 100 0 ;
+itrans: CC tmplB-ri 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 137 140 0 ; PCC none 100 0 ;
+itrans: CC tmplB-rii 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 138 140 0 ; PCC none 100 0 ;
+itrans: CC tmplB-li 5 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 139 -349 0 ; PCC none 328 0 ; PCC none 0 cy-150 ;
+itrans: CC tmplB-lii 5 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 140 -349 0 ; PCC none 100 0 ; PCC none 0 cy-150 ;
+itrans: CC tmplB-ay 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC none 65 0 ; PCC none 100 0 ;
+itrans: CC tmplB-aay 5 ; PCC 142 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC none 65 0 ; PCC none 100 0 ;
+itrans: CC tmplB-ai 6 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 143 ox+200 0 ; PCC none 100 0 ; PCC none 0 cy-200 ;
+itrans: CC tmplB-o 3 ; PCC implicit 0 0 ; PCC 144 -241 0 ; PCC none 100 0 ;
+itrans: CC tmplB-oo 3 ; PCC implicit 0 0 ; PCC 145 -241 0 ; PCC none 100 0 ;
+itrans: CC tmplB-au 3 ; PCC implicit 0 0 ; PCC 147 -167 0 ; PCC none 100 0 ;
+
+itrans: Comment ----------- Consonants
+
+itrans: CCS ka tmplA ;
+itrans: CC ka-implicit 1 ; PCC 71 0 0 ;
+itrans: CC ka-conjunct 3 ; PCC none -200 0 ; PCC 149 0 0 ; PCC none 100 0 ;
+itrans: CC ka-u 2 ; PCC 184 0 0 ; PCC none 100 0 ;
+itrans: CC ka-uu 3 ; PCC 184 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+
+itrans: CCS kha tmpl ;
+itrans: CC kha-implicit 1 ; PCC 72 0 0 ;
+itrans: CC kha-conjunct 2 ; PCC 150 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC kha-aa 3 ; PCC 72 0 0 ; PCC 130 -180 0 ; PCC none 100 0 ;
+itrans: CC kha-i 2 ; PCC 185 0 0 ; PCC none 100 0 ;
+itrans: CC kha-ii 3 ; PCC 185 0 0 ; PCC 133 -180 0 ; PCC none 100 0 ;
+itrans: CC kha-li 4 ; PCC implicit 0 0 ; PCC 139 -370 -50 ; PCC none 38 0 ; PCC none 0 cy-200 ;
+itrans: CC kha-lii 4 ; PCC implicit 0 0 ; PCC 140 -400 -50 ; PCC none 0 0 ; PCC none 0 cy-200 ;
+itrans: CC kha-o 2 ; PCC 186 0 0 ; PCC none 100 0 ;
+itrans: CC kha-oo 3 ; PCC 186 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS ga tmplA ;
+itrans: CC ga-implicit 1 ; PCC 73 0 0 ;
+itrans: CC ga-conjunct 2 ; PCC 151 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ga-i 2 ; PCC 187 0 0 ; PCC none 100 0 ;
+itrans: CC ga-ii 3 ; PCC 187 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS gha tmplB ;
+itrans: CC gha-implicit 1 ; PCC 74 0 0 ;
+itrans: CC gha-conjunct 2 ; PCC 152 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gha-aa 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 129 100 0 ; PCC none 100 0 ;
+itrans: CC gha-o 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC gha-oo 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 129 -250 0 ; PCC none 100 0 ;
+itrans: CC gha-au 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 147 200 0 ; PCC none 100 0 ;
+
+itrans: CCS nga tmpl ;
+itrans: CC nga-implicit 1 ; PCC 75 0 0 ;
+itrans: CC nga-conjunct 2 ; PCC 153 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC nga-aa 3 ; PCC implicit 0 0 ; PCC 130 -89 0 ; PCC none 100 0 ;
+itrans: CC nga-u 3 ; PCC implicit 0 0 ; PCC 188 0 0 ; PCC none 100 0 ;
+itrans: CC nga-uu 3 ; PCC implicit 0 0 ; PCC 189 0 0 ; PCC none 100 0 ;
+
+itrans: CCS cha tmplA ;
+itrans: CC cha-implicit 1 ; PCC 76 0 0 ;
+itrans: CC cha-conjunct 3 ; PCC none -200 0 ; PCC 154 0 0 ; PCC none 100 0 ;
+itrans: CC cha-i 2 ; PCC 190 0 0 ; PCC none 100 0 ;
+itrans: CC cha-ii 3 ; PCC 190 0 0 ; PCC 133 -208 0 ; PCC none 100 0 ;
+itrans: CC cha-o 2 ; PCC 191 0 0 ; PCC none 100 0 ;
+itrans: CC cha-oo 3 ; PCC 191 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS chha tmplA ;
+itrans: CC chha-implicit 1 ; PCC 77 0 0 ;
+itrans: CC chha-conjunct 3 ; PCC none -200 0 ; PCC 155 0 0 ; PCC none 100 0 ;
+itrans: CC chha-i 2 ; PCC 192 0 0 ; PCC none 100 0 ;
+itrans: CC chha-ii 3 ; PCC 192 0 0 ; PCC 133 -208 0 ; PCC none 100 0 ;
+itrans: CC chha-o 2 ; PCC 193 0 0 ; PCC none 100 0 ;
+itrans: CC chha-oo 3 ; PCC 193 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS ja tmpl ;
+itrans: CC ja-implicit 1 ; PCC 78 0 0 ;
+itrans: CC ja-conjunct 2 ; PCC 156 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ja-aa 3 ; PCC implicit 0 0 ; PCC 130 -89 0 ; PCC none 100 0 ;
+itrans: CC ja-i 2 ; PCC 194 0 0 ; PCC none 100 0 ;
+itrans: CC ja-ii 3 ; PCC 194 0 0 ; PCC 133 -50 0 ; PCC none 100 0 ;
+itrans: CC ja-u 3 ; PCC implicit 0 0 ; PCC 195 0 0 ; PCC none 100 0 ;
+itrans: CC ja-uu 3 ; PCC implicit 0 0 ; PCC 196 0 0 ; PCC none 100 0 ;
+itrans: CC ja-o 2 ; PCC 197 0 0 ; PCC none 100 0 ;
+itrans: CC ja-oo 3 ; PCC 197 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS jha tmplB ;
+itrans: CC jha-implicit 1 ; PCC 79 0 0 ;
+itrans: CC jha-conjunct 2 ; PCC 157 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC jha-aa 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 129 100 0 ; PCC none 100 0 ;
+itrans: CC jha-o 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC jha-oo 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 129 -250 0 ; PCC none 100 0 ;
+itrans: CC jha-au 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 147 200 0 ; PCC none 100 0 ;
+
+itrans: CCS jnh tmpl ;
+itrans: CC jnh-implicit 1 ; PCC 80 0 0 ;
+itrans: CC jnh-conjunct 2 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC jnh-aa 3 ; PCC implicit 0 0 ; PCC 130 -89 0 ; PCC none 100 0 ;
+itrans: CC jnh-li 4 ; PCC implicit 0 0 ; PCC 139 -550 0 ; PCC none 218 0 ; PCC none 0 cy-200 ;
+itrans: CC jnh-lii 4 ; PCC implicit 0 0 ; PCC 140 -600 0 ; PCC none 50 0 ; PCC none 0 cy-200 ;
+itrans: CC jnh-u 3 ; PCC implicit 0 0 ; PCC 188 0 0 ; PCC none 100 0 ;
+itrans: CC jnh-uu 3 ; PCC implicit 0 0 ; PCC 189 0 0 ; PCC none 100 0 ;
+itrans: CC jnh-ai 6 ; PCC implicit 0 0 ; PCC 143 -620 50 ; PCC none -120 0 ; PCC 141 0 0 ; PCC none 100 0 ; PCC none 0 cy-200 ;
+
+itrans: CCS tta tmpl ;
+itrans: CC tta-implicit 1 ; PCC 81 0 0 ;
+itrans: CC tta-conjunct 2 ; PCC 159 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC tta-aa 3 ; PCC implicit 0 0 ; PCC 130 -170 0 ; PCC none 100 0 ;
+itrans: CC tta-u 3 ; PCC implicit 0 0 ; PCC 135 10 0 ; PCC none 100 0 ;
+itrans: CC tta-uu 3 ; PCC implicit 0 0 ; PCC 136 10 0 ; PCC none 100 0 ;
+itrans: CC tta-o 2 ; PCC 198 0 0 ; PCC none 100 0 ;
+itrans: CC tta-oo 3 ; PCC 198 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS ttha tmplA ;
+itrans: CC ttha-implicit 1 ; PCC 82 0 0 ;
+itrans: CC ttha-conjunct 2 ; PCC 160 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ttha-i 2 ; PCC 199 0 0 ; PCC none 100 0 ;
+itrans: CC ttha-ii 3 ; PCC 199 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS dda tmplA ;
+itrans: CC dda-implicit 1 ; PCC 83 0 0 ;
+itrans: CC dda-conjunct 2 ; PCC 161 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC dda-u 2 ; PCC 200 0 0 ; PCC none 100 0 ;
+itrans: CC dda-uu 3 ; PCC 200 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+
+itrans: CCS ddha tmplA ;
+itrans: CC ddha-implicit 1 ; PCC 84 0 0 ;
+itrans: CC ddha-conjunct 2 ; PCC 162 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ddha-u 2 ; PCC 201 0 0 ; PCC none 100 0 ;
+itrans: CC ddha-uu 3 ; PCC 201 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+
+itrans: CCS nna tmpl ;
+itrans: CC nna-implicit 1 ; PCC 85 0 0 ;
+itrans: CC nna-conjunct 2 ; PCC 163 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC nna-aa 3 ; PCC 85 0 0 ; PCC 130 -300 0 ; PCC none 100 0 ;
+itrans: CC nna-i 4 ; PCC implicit 0 0 ; PCC 131 -300 0 ; PCC none 83 0 ; PCC none 100 0 ;
+itrans: CC nna-ii 4 ; PCC implicit 0 0 ; PCC 132 -300 0 ; PCC none 83 0 ; PCC none 100 0 ;
+
+itrans: CCS ta tmplA ;
+itrans: CC ta-implicit 1 ; PCC 86 0 0 ;
+itrans: CC ta-conjunct 2 ; PCC 164 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ta-i 2 ; PCC 202 0 0 ; PCC none 100 0 ;
+itrans: CC ta-ii 3 ; PCC 202 0 0 ; PCC 133 -150 0 ; PCC none 100 0 ;
+itrans: CC ta-o 2 ; PCC 203 0 0 ; PCC none 100 0 ;
+itrans: CC ta-oo 3 ; PCC 203 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS tha tmplA ;
+itrans: CC tha-implicit 1 ; PCC 87 0 0 ;
+itrans: CC tha-conjunct 2 ; PCC 165 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC tha-i 2 ; PCC 204 0 0 ; PCC none 100 0 ;
+itrans: CC tha-ii 3 ; PCC 204 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS da tmplA ;
+itrans: CC da-implicit 1 ; PCC 88 0 0 ;
+itrans: CC da-conjunct 2 ; PCC 166 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC da-i 2 ; PCC 205 0 0 ; PCC none 100 0 ;
+itrans: CC da-ii 3 ; PCC 205 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS dha tmplA ;
+itrans: CC dha-implicit 1 ; PCC 89 0 0 ;
+itrans: CC dha-conjunct 2 ; PCC 167 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC dha-i 2 ; PCC 206 0 0 ; PCC none 100 0 ;
+itrans: CC dha-ii 3 ; PCC 206 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS na tmplA ;
+itrans: CC na-implicit 1 ; PCC 90 0 0 ;
+itrans: CC na-conjunct 3 ; PCC none -200 0 ; PCC 168 0 0 ; PCC none 100 0 ;
+itrans: CC na-i 2 ; PCC 207 0 0 ; PCC none 100 0 ;
+itrans: CC na-ii 3 ; PCC 207 0 0 ; PCC 133 -150 0 ; PCC none 100 0 ;
+itrans: CC na-o 2 ; PCC 208 0 0 ; PCC none 100 0 ;
+itrans: CC na-oo 3 ; PCC 208 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS pa tmplA ;
+itrans: CC pa-implicit 1 ; PCC 97 0 0 ;
+itrans: CC pa-conjunct 3 ; PCC none -200 0 ; PCC 169 0 0 ; PCC none 100 0 ;
+itrans: CC pa-aa 3 ; PCC 209 0 0 ; PCC 129 -350 0 ; PCC none 100 0 ;
+itrans: CC pa-u 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 210 -320 0 ; PCC none 100 0 ;
+itrans: CC pa-uu 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 212 -320 0 ; PCC none 100 0 ;
+itrans: CC pa-o 3 ; PCC 209 0 0 ; PCC 144 -240 0 ; PCC none 100 0 ;
+itrans: CC pa-oo 3 ; PCC 209 0 0 ; PCC 145 -240 0 ; PCC none 100 0 ;
+itrans: CC pa-au 3 ; PCC 209 0 0 ; PCC 147 -300 0 ; PCC none 100 0 ;
+
+itrans: CCS pha tmplA ;
+itrans: CC pha-implicit 1 ; PCC 98 0 0 ;
+itrans: CC pha-conjunct 3 ; PCC none -200 0 ; PCC 170 0 0 ; PCC none 100 0 ;
+itrans: CC pha-aa 3 ; PCC 214 0 0 ; PCC 129 -350 0 ; PCC none 100 0 ;
+itrans: CC pha-u 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 210 -320 0 ; PCC none 100 0 ;
+itrans: CC pha-uu 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 212 -320 0 ; PCC none 100 0 ;
+itrans: CC pha-o 3 ; PCC 214 0 0 ; PCC 144 -240 0 ; PCC none 100 0 ;
+itrans: CC pha-oo 3 ; PCC 214 0 0 ; PCC 145 -240 0 ; PCC none 100 0 ;
+itrans: CC pha-au 3 ; PCC 214 0 0 ; PCC 147 -300 0 ; PCC none 100 0 ;
+
+itrans: CCS ba tmpl ;
+itrans: CC ba-implicit 1 ; PCC 99 0 0 ;
+itrans: CC ba-conjunct 3 ; PCC none -200 0 ; PCC 171 0 0 ; PCC none 100 0 ;
+itrans: CC ba-aa 3 ; PCC implicit 0 0 ; PCC 130 -150 0 ; PCC none 100 0 ;
+itrans: CC ba-i 2 ; PCC 217 0 0 ; PCC none 100 0 ;
+itrans: CC ba-ii 3 ; PCC 217 0 0 ; PCC 133 -170 0 ; PCC none 100 0 ;
+itrans: CC ba-o 2 ; PCC 218 0 0 ; PCC none 100 0 ;
+itrans: CC ba-oo 3 ; PCC 218 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS bha tmplA ;
+itrans: CC bha-implicit 1 ; PCC 100 0 0 ;
+itrans: CC bha-conjunct 3 ; PCC none -200 0 ; PCC 172 0 0 ; PCC none 100 0 ;
+itrans: CC bha-aa 3 ; PCC implicit 0 0 ; PCC 130 -150 0 ; PCC none 100 0 ;
+itrans: CC bha-i 2 ; PCC 219 0 0 ; PCC none 100 0 ;
+itrans: CC bha-ii 3 ; PCC 219 0 0 ; PCC 133 -208 0 ; PCC none 100 0 ;
+itrans: CC bha-o 2 ; PCC 220 0 0 ; PCC none 100 0 ;
+itrans: CC bha-oo 3 ; PCC 220 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS ma tmplB ;
+itrans: CC ma-implicit 1 ; PCC 101 0 0 ;
+itrans: CC ma-conjunct 3 ; PCC none -200 0 ; PCC 173 0 0 ; PCC none 100 0 ;
+itrans: CC ma-aa 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 129 100 0 ; PCC none 100 0 ;
+itrans: CC ma-i 3 ; PCC 227 0 0 ; PCC 135 20 0 ; PCC none 100 0 ;
+itrans: CC ma-ii 4 ; PCC 227 0 0 ; PCC 133 -160 0 ; PCC 135 40 0 ; PCC none 100 0 ;
+itrans: CC ma-o 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC ma-oo 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 129 -250 0 ; PCC none 100 0 ;
+itrans: CC ma-au 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 147 200 0 ; PCC none 100 0 ;
+
+itrans: CCS ya tmplB ;
+itrans: CC ya-implicit 1 ; PCC 102 0 0 ;
+itrans: CC ya-conjunct 3 ; PCC none -200 0 ; PCC 174 0 0 ; PCC none 100 0 ;
+itrans: CC ya-aa 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 129 100 0 ; PCC none 100 0 ;
+itrans: CC ya-i 2 ; PCC 102 0 0 ; PCC none 100 0 ;
+itrans: CC ya-ii 3 ; PCC implicit 0 0 ; PCC 129 -201 0 ; PCC none 100 0 ;
+itrans: CC ya-o 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC ya-oo 5 ; PCC 141 0 0 ; PCC none -300 0 ; PCC implicit 0 0 ; PCC 129 -250 0 ; PCC none 100 0 ;
+itrans: CC ya-au 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 147 200 0 ; PCC none 100 0 ;
+
+itrans: CCS ra tmplA ;
+itrans: CC ra-implicit 1 ; PCC 103 0 0 ;
+itrans: CC ra-conjunct 2 ; PCC 175 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ra-i 2 ; PCC 221 0 0 ; PCC none 100 0 ;
+itrans: CC ra-ii 3 ; PCC 221 0 0 ; PCC 134 -167 0 ; PCC none 100 0 ;
+
+itrans: CCS rra tmpl ;
+itrans: CC rra-implicit 1 ; PCC 104 0 0 ;
+itrans: CC rra-conjunct 2 ; PCC 176 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC rra-u 3 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC rra-uu 3 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC none 100 0 ;
+
+itrans: CCS la tmpl ;
+itrans: CC la-implicit 1 ; PCC 105 0 0 ;
+itrans: CC la-conjunct 2 ; PCC 177 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC la-aa 3 ; PCC implicit 0 0 ; PCC 130 -120 0 ; PCC none 100 0 ;
+itrans: CC la-i 2 ; PCC 222 0 0 ; PCC none 100 0 ;
+itrans: CC la-ii 3 ; PCC 222 0 0 ; PCC 133 -170 0 ; PCC none 100 0 ;
+itrans: CC la-u 3 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC la-uu 3 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC none 100 0 ;
+itrans: CC la-o 2 ; PCC 223 0 0 ; PCC none 100 0 ;
+itrans: CC la-oo 3 ; PCC 223 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS lda tmplA ;
+itrans: CC lda-implicit 1 ; PCC 106 0 0 ;
+itrans: CC lda-conjunct 3 ; PCC none -200 0 ; PCC 178 0 0 ; PCC none 100 0 ;
+itrans: CC lda-i 2 ; PCC 224 0 0 ; PCC none 100 0 ;
+itrans: CC lda-ii 3 ; PCC 224 0 0 ; PCC 133 -130 0 ; PCC none 100 0 ;
+itrans: CC lda-u 2 ; PCC 225 0 0 ; PCC none 100 0 ;
+itrans: CC lda-uu 3 ; PCC 225 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+itrans: CC lda-o 2 ; PCC 226 0 0 ; PCC none 100 0 ;
+itrans: CC lda-oo 3 ; PCC 226 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS va tmplA ;
+itrans: CC va-implicit 1 ; PCC 107 0 0 ;
+itrans: CC va-conjunct 3 ; PCC none -200 0 ; PCC 179 0 0 ; PCC none 100 0 ;
+itrans: CC va-aa 3 ; PCC implicit 0 0 ; PCC 130 -200 0 ; PCC none 100 0 ;
+itrans: CC va-i 2 ; PCC 227 0 0 ; PCC none 100 0 ;
+itrans: CC va-ii 3 ; PCC 227 0 0 ; PCC 133 -170 0 ; PCC none 100 0 ;
+itrans: CC va-u 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 210 -320 0 ; PCC none 100 0 ;
+itrans: CC va-uu 4 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 212 -320 0 ; PCC none 100 0 ;
+itrans: CC va-o 2 ; PCC 228 0 0 ; PCC none 100 0 ;
+itrans: CC va-oo 3 ; PCC 228 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+
+itrans: CCS sha tmplA ;
+itrans: CC sha-implicit 1 ; PCC 108 0 0 ;
+itrans: CC sha-conjunct 3 ; PCC none -200 0 ; PCC 180 0 0 ; PCC none 100 0 ;
+itrans: CC sha-i 2 ; PCC 229 0 0 ; PCC none 100 0 ;
+itrans: CC sha-ii 3 ; PCC 229 0 0 ; PCC 133 -150 0 ; PCC none 100 0 ;
+itrans: CC sha-u 3 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC none 100 0 ;
+itrans: CC sha-uu 3 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC none 100 0 ;
+itrans: CC sha-o 2 ; PCC 230 0 0 ; PCC none 100 0 ;
+itrans: CC sha-oo 3 ; PCC 230 0 0 ; PCC 146 -100 0 ; PCC none 100 0 ;
+
+itrans: CCS shha tmplA ;
+itrans: CC shha-implicit 1 ; PCC 109 0 0 ;
+itrans: CC shha-conjunct 2 ; PCC 181 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC shha-aa 3 ; PCC 231 0 0 ; PCC 129 -350 0 ; PCC none 100 0 ;
+itrans: CC shha-u 2 ; PCC 232 0 0 ; PCC none 100 0 ;
+itrans: CC shha-uu 3 ; PCC 232 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+itrans: CC shha-o 3 ; PCC 231 0 0 ; PCC 144 -330 0 ; PCC none 100 0 ;
+itrans: CC shha-oo 3 ; PCC 231 0 0 ; PCC 145 -330 0 ; PCC none 100 0 ;
+itrans: CC shha-au 3 ; PCC 231 0 0 ; PCC 147 -380 0 ; PCC none 100 0 ;
+
+itrans: CCS sa tmplA ;
+itrans: CC sa-implicit 1 ; PCC 110 0 0 ;
+itrans: CC sa-conjunct 3 ; PCC none -200 0 ; PCC 182 0 0 ; PCC none 100 0 ;
+itrans: CC sa-aa 3 ; PCC 233 0 0 ; PCC 129 -350 0 ; PCC none 100 0 ;
+itrans: CC sa-o 3 ; PCC 233 0 0 ; PCC 144 -240 0 ; PCC none 100 0 ;
+itrans: CC sa-oo 3 ; PCC 233 0 0 ; PCC 145 -240 0 ; PCC none 100 0 ;
+itrans: CC sa-au 3 ; PCC 233 0 0 ; PCC 147 -300 0 ; PCC none 100 0 ;
+
+itrans: CCS ha tmplB ;
+itrans: CC ha-implicit 1 ; PCC 111 0 0 ;
+itrans: CC ha-conjunct 2 ; PCC 183 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC ha-aa 2 ; PCC 234 0 0 ; PCC none 100 0 ;
+itrans: CC ha-u 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 195 300 0 ; PCC none 100 0 ;
+itrans: CC ha-uu 4 ; PCC implicit 0 0 ; PCC 128 -600 0 ; PCC 196 300 0 ; PCC none 100 0 ;
+itrans: CC ha-o 2 ; PCC 235 0 0 ; PCC none 100 0 ;
+itrans: CC ha-oo 3 ; PCC 235 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ;
+itrans: CC ha-au 4 ; PCC implicit 0 0 ; PCC 128 -300 0 ; PCC 147 200 0 ; PCC none 100 0 ;
+
+itrans: CCS ksha tmplA ;
+itrans: CC ksha-implicit 1 ; PCC 112 0 0 ;
+Comment        No ksha-conjunct.
+itrans: CC ksha-u 2 ; PCC 236 0 0 ; PCC none 100 0 ;
+itrans: CC ksha-uu 3 ; PCC 236 0 0 ; PCC 130 -140 0 ; PCC none 100 0 ;
+itrans: CC ksha-li 5 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 139 -349 -170 ; PCC none 183 0 ; PCC none 0 cy-150 ;
+itrans: CC ksha-lii 5 ; PCC implicit 0 0 ; PCC 128 -278 0 ; PCC 140 -349 -170 ; PCC none 100 0 ; PCC none 0 cy-150 ;
+itrans: CC ksha-ai 6 ; PCC implicit 0 0 ; PCC 141 -442 0 ; PCC none -110 0 ; PCC 143 -192 -150 ; PCC none 93 0 ; PCC none 0 cy-150 ;
+
+% june 2001: added GYA rule - to work same as ja-jnh (  j~n )
+% telugu makes C1 + C2 + V print as C1+V + C2-conjunct
+% itrans: CC ja-implicit 1 ; PCC 78 0 0 ;
+% itrans: CC tmpl-a 2 ; PCC implicit 0 0 ; PCC none 100 0 ;
+% itrans: CC jnh-conjunct 2 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-implicit 4 ; PCC 78 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-conjunct 4 ; PCC 78 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-a 4 ; PCC 78 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-aa 5 ; PCC 78 0 0 ; PCC 130 -89 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-i 4 ; PCC 194 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-ii 5 ; PCC 194 0 0 ; PCC 133 -50 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-u 5 ; PCC 78 0 0 ; PCC 195 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-uu 5 ; PCC 78 0 0 ; PCC 196 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-o 4 ; PCC 197 0 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-oo 5 ; PCC 197 0 0 ; PCC 146 -150 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-ri 5 ; PCC 78 0 0 ; PCC 137 -140 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-rii 5 ; PCC 78 0 0 ; PCC 138 -140 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-li 6 ; PCC 78 0 0 ; PCC 139 -432 0 ; PCC none 183 0 ; PCC none 0 cy-150 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-lii 6 ; PCC 78 0 0 ; PCC 140 -467 0 ; PCC none 0 0 ; PCC none 0 cy-150 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-ay 6 ; PCC 78 0 0 ; PCC 141 -300 0 ; PCC none 285 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-aay 6 ; PCC 78 0 0 ; PCC 142 -300 0 ; PCC none 298 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-ai 7 ; PCC 78 0 0 ; PCC 141 -300 0 ; PCC 143 ox+50 0 ; PCC none 185 0 ; PCC none 0 cy-200 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+itrans: CC gya-au 5 ; PCC 78 0 0 ; PCC 147 -100 0 ; PCC none 100 0 ; PCC 158 ox+50 cy+0 ; PCC none 0 cy-300 ;
+
+
+itrans: Comment Specials
+itrans: CC viraam-implicit 3 ; PCC 148 -270 0 ; PCC none 185 0 ; PCC none 100 0 ;
+itrans: CC avagraha-implicit 2 ; PCC 12 -100 0 ; PCC none 100 0 ;
+itrans: CC rahalf-implicit 2 ; PCC 8 -50 0 ; PCC none 100 0 ; % arasunna
+itrans: CC anusvara-implicit 2 ; PCC 9 -50 0 ; PCC none 100 0 ; % sunna
+
+itrans: EndINDIAN

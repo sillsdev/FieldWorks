@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!--
+		  Often used variables for the Words tools
+   -->
+
+  <var id="menuWORDS" set="$menuVIEW;menu:Texts  Words/"/>
+
+  <var id="wrdFormPane" set="$multiBROWSE;9:wordList/9:wordList/$nl"/>
+  <var id="wrdFormHEAD" set="$wrdFormPane;/9:HeaderListView/33:HeaderListView/$NL;"/>
+  <var id="wrdFormHeadForm" set="$wrdFormHEAD;25:Form"/>
+  <var id="wrdFormColChanger" set="$wrdFormPane;[3]/43:NAMELESS"/>
+  <var id="wrdFormFilter" set="$wrdFormPane;/9:FilterBar/9:FwComboBox"/>
+  <var id="idForm" set="1"/>  <!-- 1 is Form -->
+  <var id="idGloss" set="2"/> <!-- 2 is Word Glosses -->
+  <var id="idCorp" set="3"/>   <!-- 3 is Number in Corpus -->
+  <var id="wrdFormRec" set="$wrdFormPane;/20:RootSite/24:Table"/>
+
+  <var id="wrdConcFind" set="$EDIT;43:Find wordform..."/>
+  <var id="wrdConcDict" set="$INSERT;43:Find in Dictionary"/>
+  <!-- to get the Analysis Usage dialog, click $AssignAnalysis then insert {DOWN}~ -->
+  <var id="AssignAnalysis" set="$multiEDIT;9:normalEdit/9:RecordEditView.DataTree/9:summary/9:SplitContainer/9:Panel2/9:Slice_unknown/$nl"/><!-- click needs a dx of 300 as the link is to the right-->
+
+<!-- Words Concordance Pane -->
+  <var id="wrdConcPANE" set="$AreaROOT;9:XCore.MultiPane/9:CSC.SplitContainer.One/9:CollapsingSplitContainer.First/"/>
+  <var id="wrdConcCriteria" set="$wrdConcPANE;9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/$NL"/>
+  <var id="wrdConcLine" set="$wrdConcCriteria;9:For the text:[2]/41:For the text:"/>
+  <var id="wrdConcWs" set="$wrdConcCriteria;9:Writing System:[2]/41:Writing System:"/>
+  <var id="wrdConcText" set="$wrdConcCriteria;20:RootSite/$Text"/>
+  <var id="wrdConcSearch" set="$wrdConcCriteria;9:Search/43:Search"/>
+  <var id="wrdConcHelp" set="$wrdConcCriteria;9:Help/43:Help"/>
+
+  <var id="wrdConcResults" set="$wrdConcPANE;9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/"/>
+  <var id="wrdConcOccurPane" set="$wrdConcResults;9:wordOccurrenceList/9:wordOccurrenceList/$nl"/>
+
+  <var id="wrdConcOccurHEAD" set="$wrdConcOccurPane;/9:HeaderListView/33:HeaderListView/$NL"/>
+  <var id="wrdConcOccurRef" set="$wrdConcOccurHEAD;25:Ref"/>
+  <var id="wrdConcOccurrence" set="$wrdConcOccurHEAD;25:Occurrence"/>
+  <var id="wrdConcColChanger" set="$wrdConcOccurPane;[3]/43:NAMELESS"/>
+  <var id="wrdConcRec" set="$wrdConcOccurPane;/20:RootSite/24:Table"/>
+  <var id="wrdConcRecUp" set="$wrdConcOccurPane;[2]/43:Line up"/>
+  <var id="wrdConcRecDown" set="$wrdConcOccurPane;[2]/43:Line down"/>
+
+<!-- Words Interlinear Pane -->
+
+  <var id="wrdInterPANE" set="$multiEdPANE;9:CSC.SplitContainer.Two/"/>
+  <var id="wrdConcTABS" set="$multiEDIT;9:ITextControl/9:m_tabCtrl.AccessibleName/"/>
+  <var id="wrdConcBaseline" set="$wrdConcTABS;37:Baseline"/>
+  <var id="wrdConcInterline" set="$wrdConcTABS;37:Analyze"/>
+  <var id="wrdConcInput" set="$wrdConcTABS;60:m_tabCtrl.AccessibleName/9:m_tpRawText.AccessibleName/20:RootSite/$Text"/>
+
+<!-- Words Analysis Pane -->
+  <var id="wrdEditPANE" set="$multiEDIT;9:normalEdit/9:RecordEditView.DataTree/"/>
+
+</include>

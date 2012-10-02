@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000040">
+
+	<!-- a LexEntry with ExcludeAsHeadword=True -->
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<DateCreated val="2005-6-23 16:30:31.590" />
+		<DateModified val="2006-9-29 21:58:0.17" />
+		<ExcludeAsHeadword val="True" />
+		<Restrictions>
+			<AUni ws="en">Do not use: Check this out</AUni>
+		</Restrictions>
+	</rt>
+
+	<!-- a LexEntry without ExcludeAsHeadword -->
+	<rt class="LexEntry" guid="77b2397d-19c9-4321-b581-7a4ccfa9fc0e">
+		<Custom name="Plural">
+			<Str>
+				<Run ws="seh">pyakuipa</Run>
+			</Str>
+		</Custom>
+		<CitationForm>
+			<AUni ws="seh">ipa</AUni>
+		</CitationForm>
+		<DateCreated val="2005-6-23 16:30:31.590" />
+		<DateModified val="2006-8-23 19:41:35.100" />
+	</rt>
+
+	<!-- a LexEntry with ExcludeAsHeadword=False -->
+	<rt class="LexEntry" guid="a78bb1d7-a86c-40c5-8ad1-8d75b71c4962">
+		<DateCreated val="2005-6-23 16:30:31.607" />
+		<DateModified val="2006-8-16 20:24:25.620" />
+		<ExcludeAsHeadword val="False" />
+	</rt>
+
+	<!-- a LexEntry with ExcludeAsHeadword=garbled (treated as False) -->
+	<rt class="LexEntry" guid="1e4ae08a-2672-4df2-9e2d-980be367e893">
+		<DateCreated val="2005-6-23 16:30:31.620" />
+		<DateModified val="2007-1-22 19:8:0.90" />
+		<ExcludeAsHeadword val="garbled" />
+	</rt>
+
+	<rt guid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad" class="LangProject">
+		<DateCreated val="2005-4-29 20:57:23.193" />
+		<DateModified val="2011-3-2 21:9:26.862" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en pt</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>seh</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>pt en</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>seh-fonipa-x-etic</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>seh seh-fonipa-x-etic</Uni>
+		</VernWss>
+		<LexDb>
+			<objsur guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" t="o" />
+		</LexDb>
+	</rt>
+
+	<rt guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" class="LexDb" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<Name>
+			<AUni ws="en">Sena Dictionary</AUni>
+		</Name>
+		<DateCreated val="2005-6-22 13:56:8.370" />
+		<DateModified val="2009-4-8 21:49:25.197" />
+		<IsHeadwordCitationForm val="False" />
+		<IsBodyInSeparateSubentry val="False" />
+	</rt>
+
+</languageproject>

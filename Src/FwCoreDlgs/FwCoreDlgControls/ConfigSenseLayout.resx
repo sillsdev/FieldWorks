@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="m_cbNumberFont.AccessibleName" xml:space="preserve">
+	<value>m_cbNumberFont</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_cbNumberFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>83, 79</value>
+  </data>
+  <data name="m_cbNumberFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>190, 21</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_cbNumberFont.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberFont.Name" xml:space="preserve">
+	<value>m_cbNumberFont</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberFont.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberFont.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberFont.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="m_cbNumberStyle.AccessibleName" xml:space="preserve">
+	<value>m_cbNumberStyle</value>
+  </data>
+  <data name="m_cbNumberStyle.Location" type="System.Drawing.Point, System.Drawing">
+	<value>83, 49</value>
+  </data>
+  <data name="m_cbNumberStyle.Size" type="System.Drawing.Size, System.Drawing">
+	<value>121, 21</value>
+  </data>
+  <data name="m_cbNumberStyle.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberStyle.Name" xml:space="preserve">
+	<value>m_cbNumberStyle</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberStyle.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_cbNumberStyle.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_tbBeforeNumber.AccessibleName" xml:space="preserve">
+	<value>m_tbBeforeNumber</value>
+  </data>
+  <data name="m_tbBeforeNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 49</value>
+  </data>
+  <data name="m_tbBeforeNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbBeforeNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_tbBeforeNumber.WordWrap" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_tbBeforeNumber.Name" xml:space="preserve">
+	<value>m_tbBeforeNumber</value>
+  </data>
+  <data name="&gt;&gt;m_tbBeforeNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbBeforeNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_tbBeforeNumber.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.AccessibleName" xml:space="preserve">
+	<value>m_chkSenseItalicNumber</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_chkSenseItalicNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>282, 53</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>48, 17</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="m_chkSenseItalicNumber.Text" xml:space="preserve">
+	<value>Italic</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseItalicNumber.Name" xml:space="preserve">
+	<value>m_chkSenseItalicNumber</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseItalicNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseItalicNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseItalicNumber.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_lblNumberStyle.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblNumberStyle.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblNumberStyle.Location" type="System.Drawing.Point, System.Drawing">
+	<value>83, 27</value>
+  </data>
+  <data name="m_lblNumberStyle.Size" type="System.Drawing.Size, System.Drawing">
+	<value>73, 13</value>
+  </data>
+  <data name="m_lblNumberStyle.TabIndex" type="System.Int32, mscorlib">
+	<value>27</value>
+  </data>
+  <data name="m_lblNumberStyle.Text" xml:space="preserve">
+	<value>Number Style:</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberStyle.Name" xml:space="preserve">
+	<value>m_lblNumberStyle</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberStyle.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberStyle.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.AccessibleName" xml:space="preserve">
+	<value>m_chkSenseBoldNumber</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>283, 31</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>47, 17</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="m_chkSenseBoldNumber.Text" xml:space="preserve">
+	<value>Bold</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseBoldNumber.Name" xml:space="preserve">
+	<value>m_chkSenseBoldNumber</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseBoldNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseBoldNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseBoldNumber.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_tbAfterNumber.AccessibleName" xml:space="preserve">
+	<value>m_tbAfterNumber</value>
+  </data>
+  <data name="m_tbAfterNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>208, 49</value>
+  </data>
+  <data name="m_tbAfterNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbAfterNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_tbAfterNumber.WordWrap" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_tbAfterNumber.Name" xml:space="preserve">
+	<value>m_tbAfterNumber</value>
+  </data>
+  <data name="&gt;&gt;m_tbAfterNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbAfterNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_tbAfterNumber.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_lblBeforeNumber.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblBeforeNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBeforeNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 27</value>
+  </data>
+  <data name="m_lblBeforeNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>41, 13</value>
+  </data>
+  <data name="m_lblBeforeNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="m_lblBeforeNumber.Text" xml:space="preserve">
+	<value>Before:</value>
+  </data>
+  <data name="&gt;&gt;m_lblBeforeNumber.Name" xml:space="preserve">
+	<value>m_lblBeforeNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblBeforeNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBeforeNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblBeforeNumber.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_chkNumberSingleSense.AccessibleName" xml:space="preserve">
+	<value>m_chkNumberSingleSense</value>
+  </data>
+  <data name="m_chkNumberSingleSense.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkNumberSingleSense.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkNumberSingleSense.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 119</value>
+  </data>
+  <data name="m_chkNumberSingleSense.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 17</value>
+  </data>
+  <data name="m_chkNumberSingleSense.TabIndex" type="System.Int32, mscorlib">
+	<value>17</value>
+  </data>
+  <data name="m_chkNumberSingleSense.Text" xml:space="preserve">
+	<value>Number even a single sense</value>
+  </data>
+  <data name="&gt;&gt;m_chkNumberSingleSense.Name" xml:space="preserve">
+	<value>m_chkNumberSingleSense</value>
+  </data>
+  <data name="&gt;&gt;m_chkNumberSingleSense.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkNumberSingleSense.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_chkNumberSingleSense.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_lblNumberFont.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="m_lblNumberFont.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblNumberFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 79</value>
+  </data>
+  <data name="m_lblNumberFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>68, 13</value>
+  </data>
+  <data name="m_lblNumberFont.TabIndex" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="m_lblNumberFont.Text" xml:space="preserve">
+	<value>Font:</value>
+  </data>
+  <data name="m_lblNumberFont.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberFont.Name" xml:space="preserve">
+	<value>m_lblNumberFont</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberFont.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberFont.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblNumberFont.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lblAfterNumber.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblAfterNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblAfterNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>208, 27</value>
+  </data>
+  <data name="m_lblAfterNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>32, 13</value>
+  </data>
+  <data name="m_lblAfterNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="m_lblAfterNumber.Text" xml:space="preserve">
+	<value>After:</value>
+  </data>
+  <data name="&gt;&gt;m_lblAfterNumber.Name" xml:space="preserve">
+	<value>m_lblAfterNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblAfterNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblAfterNumber.Parent" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_lblAfterNumber.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_grpSenseNumber.AccessibleName" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="m_grpSenseNumber.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_grpSenseNumber.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_grpSenseNumber.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_grpSenseNumber.Size" type="System.Drawing.Size, System.Drawing">
+	<value>342, 155</value>
+  </data>
+  <data name="m_grpSenseNumber.TabIndex" type="System.Int32, mscorlib">
+	<value>32</value>
+  </data>
+  <data name="m_grpSenseNumber.Text" xml:space="preserve">
+	<value>Sense Number Configuration</value>
+  </data>
+  <data name="&gt;&gt;m_grpSenseNumber.Name" xml:space="preserve">
+	<value>m_grpSenseNumber</value>
+  </data>
+  <data name="&gt;&gt;m_grpSenseNumber.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_grpSenseNumber.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_grpSenseNumber.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_btnMoreStyles.AccessibleName" xml:space="preserve">
+	<value>m_btnMoreStyles</value>
+  </data>
+  <data name="m_btnMoreStyles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnMoreStyles.Location" type="System.Drawing.Point, System.Drawing">
+	<value>179, 184</value>
+  </data>
+  <data name="m_btnMoreStyles.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnMoreStyles.TabIndex" type="System.Int32, mscorlib">
+	<value>38</value>
+  </data>
+  <data name="m_btnMoreStyles.Text" xml:space="preserve">
+	<value>Styles...</value>
+  </data>
+  <data name="&gt;&gt;m_btnMoreStyles.Name" xml:space="preserve">
+	<value>m_btnMoreStyles</value>
+  </data>
+  <data name="&gt;&gt;m_btnMoreStyles.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnMoreStyles.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnMoreStyles.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_cbSenseParaStyle.AccessibleName" xml:space="preserve">
+	<value>m_cbSenseParaStyle</value>
+  </data>
+  <data name="m_cbSenseParaStyle.Location" type="System.Drawing.Point, System.Drawing">
+	<value>33, 184</value>
+  </data>
+  <data name="m_cbSenseParaStyle.Size" type="System.Drawing.Size, System.Drawing">
+	<value>140, 21</value>
+  </data>
+  <data name="m_cbSenseParaStyle.TabIndex" type="System.Int32, mscorlib">
+	<value>36</value>
+  </data>
+  <data name="&gt;&gt;m_cbSenseParaStyle.Name" xml:space="preserve">
+	<value>m_cbSenseParaStyle</value>
+  </data>
+  <data name="&gt;&gt;m_cbSenseParaStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbSenseParaStyle.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbSenseParaStyle.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.AccessibleName" xml:space="preserve">
+	<value>m_chkSenseParagraphStyle</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 161</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.Size" type="System.Drawing.Size, System.Drawing">
+	<value>189, 17</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.TabIndex" type="System.Int32, mscorlib">
+	<value>39</value>
+  </data>
+  <data name="m_chkSenseParagraphStyle.Text" xml:space="preserve">
+	<value>Display each sense in a paragraph</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseParagraphStyle.Name" xml:space="preserve">
+	<value>m_chkSenseParagraphStyle</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseParagraphStyle.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseParagraphStyle.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkSenseParagraphStyle.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>342, 222</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ConfigSenseLayout</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

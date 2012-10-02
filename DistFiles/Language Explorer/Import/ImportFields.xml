@@ -1,0 +1,2824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ImportFields PUBLIC "-//XMLmind//DTD ImportFields//EN"
+"ImportFields.dtd">
+<!--
+	Notes on the fields and attributes:
+	id: used for XSLT identification (a SFM marker maps to one of these as used as the id in the map file)
+	type: data type (date and string currently)
+	property: rough FW property that we store the data in
+	uiname: what shows up in the Import Wizard
+	signature: kind of FW object that is stored in this property
+	list: 'yes' if a ref to a possiblilty list
+	multi: 'yes' if this field can occur 'n' times in one hierarchy
+	ref: 'yes' if a combo chooser is enabled to pick from a list.
+	unique: 'yes' Only allow one of the unique fields in each instance of a class
+	MDF: info about possible input SFM
+	autofield: can be either an entry or sense - not specified but is determined at run time
+-->
+<ImportFields>
+  <AbbreviationSignatures names="CmPossibility CmAnthroItem PartOfSpeech CmSemanticDomain CmLocation" />
+
+  <Class name="Entry" partOf="records">
+	<Field MDF="\a" id="allo" list="no" multi="yes" property="AlternateForms"
+		   signature="MultiUnicode" type="string"
+		   uiname="Alternate Form (Allomorph)">
+	  <Help>
+		<Usage>When you have a marker that gives an allomorph for this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, creates an allomorph for each field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\a -ed</Example>
+
+		  <Example>\a -pped</Example>
+
+		  <Example>\a ible +/ {ible} _ (allomorph with phonological
+		  environment -- see limitations)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The import process currently does not handle allomorph
+		  environments. It simply imports the entire field content as a single
+		  allomorph. If your field contains environment information as in the
+		  last example, you'll either need to remove them prior to import,
+		  manually fix them inside of Flex after import, or use an advanced
+		  process to manipulate the final XML file prior to
+		  import.</Limitation>
+
+		  <Limitation>Flex currently does not interpret multiple allomorphs in
+		  a single SFM field. You will either need to split these into
+		  individual \a fields prior to import, or clean up the problem inside
+		  of Flex.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>Flex uses affix marks (e.g., the hyphens in the examples) to
+		  create an affix or stem allomorph and fills in the form from the
+		  field contents. The Morph Type for the allomorph is also determined
+		  by the affix marks. The affix marks will then be stripped from the
+		  form inside of Flex.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field id="ebib" list="no" multi="yes" property="Bibliography"
+		   signature="MultiString" type="string" uiname="Bibliography (Entry)">
+	  <Help>
+		<Usage>When you have a marker that gives bibliographical references
+		for this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\bb See IJAL 20:30-35 for more information.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\lc" id="cit" list="no" multi="yes" property="CitationForm"
+		   signature="MultiUnicode" type="string"
+		   uiname="Citation Form (Entry)">
+	  <Help>
+		<Usage>When you have a marker that gives the citation form for this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\lc gatos</Example>
+
+		  <Example>\lc mang- (includes default prefix affix marker)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+
+		  <Limitation>If your \lc field includes a homograph number, it should
+		  either be moved to a \hm field or removed from this
+		  field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The affix marker will be removed from the citation form
+		  field, but will be used to set the Morph Type for the entry. Flex
+		  shows the affix markers from the Morph Type when displaying
+		  headwords.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\cf" id="cref" list="no" multi="yes"
+		   property="LexicalRelation" ref="yes" signature="Unicode"
+		   type="string" uiname="Cross Reference">
+	  <Help>
+		<Usage>When you have a marker that specifies a cross reference to some
+		other entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		and select or type a Lexical Reference Type. (Also see Sense: Lexical
+		Function and Lexeme, Function: Lexical Function, and Sense: Lexical
+		Relation.)</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field produces a new function.</Appends>
+
+		<List>No (except Lexical Reference Type matches a list item)</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\cf house</Example>
+
+		  <Example>\cf bank2 1.2 (2nd subsense of first sense of bank
+		  homograph 2)</Example>
+
+		  <Example>\cf house; cottage (don't include multiple lexemes in one
+		  field)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The format of the lexeme must be headword2 1.1 where an
+		  optional homograph number is appended to the headword and an
+		  optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, and the target is a sense instead of an
+		  entry, the first sense in the entry will be used.</Limitation>
+
+		  <Limitation>The headword should be used in this field. If an entry
+		  has a citation form, it will use this when searching for the
+		  headword. Otherwise it will use the lexeme form.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>Only one cross reference is allowed per field at this
+		  point. If you have multiple forms separated by a separator, you
+		  should break these into individual fields prior to import, or the
+		  links will fail to match the desired entries.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The Lexical Reference Type combobox allows you to select an
+		  existing cross reference type. If you want, you can type in a name
+		  for a new lexical reference type. If a new lexical reference type is
+		  created, the name and abbreviation will both be set to the field
+		  contents and it will be set to a pair mapping type with one
+		  name.</Extra>
+
+		  <Extra>A link will be set between the current entry and the entry or
+		  sense specified in the field. If an existing cross reference
+		  collection exists to which this can be a part, they will be merged.
+		  Otherwise a new cross reference collection will be created. Thus, if
+		  the current entry was sedan and it has two fields, \cf car and \cf
+		  auto, all three entries could be linked to each other, depending on
+		  the lexical reference type.</Extra>
+
+		  <Extra>In Flex if you set a lexical function to one sense or entry,
+		  a corresponding function will automatically be inserted in the
+		  target sense or entry back to this entry.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field id="creat" list="no" multi="no" property="DateCreated"
+		   signature="Time" type="date" uiname="Date Created">
+	  <Help>
+		<Usage>When you have a marker that gives the creation date for this
+		entry.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\dc 23 Feb 2006</Example>
+
+		  <Example>\dc January 13, 1994</Example>
+
+		  <Example>\dc 10/23/2003</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This field should only contain a date in a standard
+		  format that can be converted to a date using your default Windows
+		  locale. Any other date format will be rejected.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\dt" id="mod" list="no" multi="no" property="DateModified"
+		   signature="Time" type="date" uiname="Date Modified">
+	  <Help>
+		<Usage>When you have a marker that gives the modification date for
+		this entry.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\dt 10/12/2006</Example>
+
+		  <Example>\dt 30 Dec 1978</Example>
+
+		  <Example>\dt March 14, 2001</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This field should only contain a date in a standard
+		  format that can be converted to a date using your default Windows
+		  locale. Any other date format will be rejected.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\hm" id="hom" list="no" multi="no" property="HomographNumber"
+		   signature="Integer" type="string" uiname="Homograph Number">
+	  <Help>
+		<Usage>When you have a marker that records a homograph number for this
+		entry.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\hm 2</Example>
+		</Examples>
+
+		<Extras>
+		  <Extra>Homograph numbers are maintained automatically once inside of
+		  Flex. You can always use Tools...Utilities and choose the Reassign
+		  Homographs method to recalculate all homographs numbers whether or
+		  not they were included in your import.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field autofield="yes" id="eires" list="no" multi="yes"
+		   property="ImportResidue" signature="String" type="string"
+		   uiname="Import Residue (Entry)">
+	  <Help>
+		<Usage>When you have a marker that doesn't have an adequate desination
+		in a FieldWorks entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\oi mag-, pang-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Be sure to specify the writing system for each field so
+		  the correct writing system and encoding converter will be applied.
+		  Different fields that go into import residue can have different
+		  writing systems.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The entire field, including backslash code is added to import
+		  residue so you can see the source of the data. When multiple fields
+		  are appended, a space is inserted before each non-initial
+		  backslash.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\lx" id="lex" list="no" multi="yes" property="Form"
+		   signature="MultiUnicode" type="string" uiname="Lexeme Form">
+	  <Help>
+		<Usage>When you have a marker that gives the lexeme form for this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\lx casa</Example>
+
+		  <Example>\lx maN- (showing affix marker)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+
+		  <Limitation>If your \lx field includes a homograph number, it should
+		  either be moved to a \hm field or removed from this
+		  field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The affix marker will be removed from the lexeme form field,
+		  but will be used to set the Morph Type for the entry. Flex shows the
+		  affix markers from the Morph Type when displaying headwords.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field id="litm" list="no" multi="yes" property="LiteralMeaning"
+		   signature="MultiString" type="string" uiname="Literal Meaning">
+	  <Help>
+		<Usage>When you have a marker that has a literal meaning for this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\lm house big</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\mn" id="meref" list="no" multi="yes"
+		   property="MainEntriesOrSenses" signature="MultiUnicode"
+		   type="string" uiname="Main Entry/Sense Reference">
+	  <Help>
+		<Usage>When you have a marker that specifies the main entry, subentry,
+		or sense for which this is a minor entry or subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\mn tener</Example>
+
+		  <Example>\mn house; cottage (not allowed)</Example>
+
+		  <Example>\mn bank2 1.2 (2nd subsense of first sense of bank
+		  homograph 2)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The format of the lexeme must be headword2 1.1 where an
+		  optional homograph number is appended to the headword and an
+		  optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, and the target is a sense instead of an
+		  entry, the first sense in the entry will be used.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>The headword should be used in this field. If an entry
+		  has a citation form, it will use this when searching for the
+		  headword. Otherwise it will use the lexeme form.</Limitation>
+
+		  <Limitation>Even though Flex can handle multiple main entries or
+		  senses, during import, only one main entry or sense is allowed at
+		  this point.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>A link will be set between the current entry and the main
+		  entry or sense specified in the field. Normally there is a
+		  corresponding \va or \se field in the main entry that references
+		  this entry and defines the entry type of this entry. Without this
+		  other reference, a link is still set to the main entry or sense, but
+		  it may not be immediately visible in the detail view because the
+		  entry type will be assigned to main entry, and we normally do not
+		  show main entry links for main entries. (This may or may not be
+		  fixed for Flex Version 1.0.)</Extra>
+
+		  <Extra>If there is a corresponding \va or \se field in the main
+		  entry, this will generate a minor entry or subentry automatically.
+		  If there is already a minor entry or subentry in the SFM file, the
+		  extra duplicate entry will be eliminated.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field id="com" list="no" multi="yes" property="Comment"
+		   signature="MultiString" type="string" uiname="Note">
+	  <Help>
+		<Usage>When you have a marker that has a comment about this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\cm This is a general comment on this word.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="erest" list="no" multi="yes" property="Restrictions"
+		   signature="MultiUnicode" type="string"
+		   uiname="Restrictions (Entry)">
+	  <Help>
+		<Usage>When you have a marker that records restrictions on this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\re only used in formal occasions</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="sdef" list="no" multi="yes" property="SummaryDefinition"
+		   signature="MultiString" type="string" uiname="Summary Definition">
+	  <Help>
+		<Usage>When you have a marker that has a summary definition for this
+		entry. Normal definitions should be stored under the sense rather than
+		here.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\sd baskets</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="ulf" list="no" multi="yes" property="UnderlyingForm"
+		   signature="MultiUnicode" type="string" uiname="Underlying Form">
+	  <Help>
+		<Usage>When you have a marker that has an underlying form for this
+		entry. For example, maN may represent an unspecified nasal.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\uf maN-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>Flex will create an Alternate Form in the entry with the
+		  underlying form. It will have Is Abstract Form set to true. The
+		  Morph Type will be set based on the affix markers on the underlying
+		  form.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Etymology" partOf="Entry Subentry">
+	<Field MDF="\ec" id="etc" multi="yes" property="Comment"
+		   signature="MultiString" type="string" uiname="Etymology Comment">
+	  <Help>
+		<Usage>When you have a marker that has a comment for the etymology of
+		this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ec This was in use up until around 1890.</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex only allows one etymology cluster per entry, with a
+		  form, comment, gloss, and source.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\et" id="etf" list="no" multi="yes" property="Form"
+		   signature="MultiUnicode" type="string" uiname="Etymology Form">
+	  <Help>
+		<Usage>When you have a marker that has the form of the etymology of
+		this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\et gustus</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex only allows one etymology cluster per entry, with a
+		  form, comment, gloss, and source.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\eg" id="etg" multi="yes" property="Gloss"
+		   signature="MultiUnicode" type="string" uiname="Etymology Gloss">
+	  <Help>
+		<Usage>When you have a marker that has a gloss for the etymology of
+		this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\eg taste</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex only allows one etymology cluster per entry, with a
+		  form, comment, gloss, and source.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\es" id="ets" multi="no" property="Source" signature="Unicode"
+		   type="string" uiname="Etymology Source">
+	  <Help>
+		<Usage>When you have a marker that has a source for the etymology of
+		this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\es Latin</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex only allows one etymology cluster per entry, with a
+		  form, comment, gloss, and source.</Limitation>
+
+		  <Limitation>Flex currently displays this field only in the first
+		  analysis language, so if your source is in some other language,
+		  there may be display problems. Setting the Language Descriptor for
+		  this field simply selects the right encoding converter to use for
+		  converting the contents to Unicode.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Example" partOf="Sense">
+	<Field MDF="\xv" id="sent" multi="yes" property="Example"
+		   signature="MultiString" type="string" uiname="Example" unique="yes">
+	  <Help>
+		<Usage>When you have a marker that has the vernacular example
+		sentence.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>No, additional \xv fields will start a new example
+		cluster.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\xv Je m'appelle Sally.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\rf" id="ref" list="no" multi="no" property="Reference"
+		   signature="String" type="string" uiname="Reference">
+	  <Help>
+		<Usage>When you have a marker that has a reference for this example
+		sentence.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\rf Santa Lucia</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\xe \xn \xr" id="trans" multi="yes" property="Translation"
+		   signature="MultiString" type="string" uiname="Translation">
+	  <Help>
+		<Usage>When you have a marker that has a translation for an example
+		sentence.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\xe My name is Sally.</Example>
+
+		  <Example>\xn Yo me llamo Sally.</Example>
+		</Examples>
+
+		<RelatedFields>These should normally follow an \xv
+		field.</RelatedFields>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Function" partOf="Entry Subentry Sense">
+	<Field MDF="\lf" id="func" list="yes" multi="no"
+		   property="LexicalRelation" signature="LexRefType"
+		   type="string" uiname="Lexical Function">
+	  <Help>
+		<Usage>When you have a marker that specifies a lexical function using
+		the current MDF recommendation. (Also see Sense: Lexical Function and
+		Lexeme, Entry: Cross Reference, and Sense: Lexical Relation.)</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		(needs to match what's in your Lexical Reference Type
+		list).</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, you can have multiple function pairs. Each generates a
+		reference.</Appends>
+
+		<List>Yes, this matches an item in the Lexical Reference Type
+		list.</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\lf syn (using abbreviation)</Example>
+
+		  <Example>\lv house</Example>
+
+		  <Example>\lf synonym (using name)</Example>
+
+		  <Example>\lv bungalo</Example>
+		</Examples>
+
+		<RelatedFields>The \lf field should always be followed by a \lv field.
+		These fields come in pairs.</RelatedFields>
+
+		<Limitations>
+		  <Limitation>If this relation is part of an entry, the field should
+		  map a Lexical Reference Type that has a Mapping Type of Entry or
+		  Entry or Sense. If it is part of a sense, the field should map a
+		  Lexical Reference Type that has a Mapping Type of Sense or Entry or
+		  Sense.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Lexical Reference
+		  Type list or creates a new item in the root of the list if an
+		  existing one is not found. The program checks both the name and
+		  abbreviation for a match. If a new type is created, the name and
+		  abbreviation will both be set to the field contents and it will be
+		  set to a pair mapping type with one name.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\lv" id="funlex" list="no" multi="no"
+		   property="LexicalRelation" signature="Unicode" type="string"
+		   uiname="Lexical Function Lexeme">
+	  <Help>
+		<Usage>When you have a marker that specifies a lexeme form for the
+		function specified in the preceding \lf marker. This is the current
+		MDF recommendation. (Also see Sense: Lexical Function and Lexeme,
+		Entry: Cross Reference, and Sense: Lexical Relation.)</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, you can have multiple function pairs. Each generates a
+		reference.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\lf ant</Example>
+
+		  <Example>\lv fast</Example>
+		</Examples>
+
+		<RelatedFields>The \lv field should always follow a \lf field. These
+		fields come in pairs.</RelatedFields>
+
+		<Limitations>
+		  <Limitation>The format of the lexeme must be headword2 1.1 where an
+		  optional homograph number is appended to the headword and an
+		  optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, and the target is a sense instead of an
+		  entry, the first sense in the entry will be used.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>The headword should be used in this field. If an entry
+		  has a citation form, it will use this when searching for the
+		  headword. Otherwise it will use the lexeme form.</Limitation>
+
+		  <Limitation>Only one lexeme is allowed per field at this point. If
+		  you have multiple forms separated by a separator, you should break
+		  these into individual pairs of fields prior to import, or the links
+		  will fail to match the desired entries.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>A link will be set between the current entry or sense and the
+		  entry or sense specified in the field. If an existing cross
+		  reference collection exists to which this can be a part, they will
+		  be merged. Otherwise a new function collection will be
+		  created.</Extra>
+
+		  <Extra>In Flex if you set a lexical function to one sense or entry,
+		  a corresponding function will automatically be inserted in the
+		  target sense or entry back to this entry.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Picture" partOf="Sense">
+	<Field MDF="\pc" id="picc" list="no" multi="yes" property="Caption"
+		   signature="MultiString" type="string" uiname="Picture Caption">
+	  <Help>
+		<Usage>When you have a marker that specifies a picture
+		caption.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\pc This is a typical village house.</Example>
+		</Examples>
+
+		<RelatedFields>This field typically follows a \pc field, but if your
+		\pc field has more than a simple file name with path, you could map it
+		to this field, which would record the file name and related
+		information in a caption field, then inside of Flex you could attach
+		the actual picture.</RelatedFields>
+
+		<Extras>
+		  <Extra>See Picture File for details.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\pc" id="picf" list="no" multi="no" property="PictureFile"
+		   signature="CmFile" type="string" uiname="Picture File">
+	  <Help>
+		<Usage>When you have a marker that specifies a picture file name,
+		including the path.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each \pc will generate another picture link.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\pc c:\pictures\cowbell.jpg</Example>
+
+		  <Example>\px c:\house.jpg This is a typical village house. (too much
+		  data)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This field should only have a full path and file name.
+		  If you have any other information about the picture, such as
+		  positioning information or a caption, it will fail to link to the
+		  picture. In this case, it would be best to convert your \pc field
+		  into two fields and map the actual file name to this field, and map
+		  the remaining contents to an associated caption field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>Flex will attempt to find the specified file on your
+		  computer, and if it succeeds, it will make a copy of the file in
+		  your FieldWorks\Pictures folder and create a CmFile that links to
+		  this picture. It then creates a CmPicture that is stored in the
+		  sense and links to the CmFile. The CmPicture also contains
+		  multilingual captions for the use of the picture in this sense. If
+		  the picture file is not found where it was specified, a blank
+		  CmPicture is added to the sense and a warning is included in the
+		  import log stating that the picture was not found.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Pronunciation" partOf="Entry Subentry">
+	<Field MDF="" id="prncv" list="no" multi="no" property="CVPattern"
+		   signature="String" type="string" uiname="Pronunciation CV Pattern">
+	  <Help>
+		<Usage>When you have a marker that specifies a CV pattern for a
+		pronunciation.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\cv CCVC</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Only one CV pattern field is allowed per
+		  pronunciation.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="prnm" list="no" multi="no" property="MediaFile"
+		   signature="CmFile" type="string" uiname="Pronunciation File">
+	  <Help>
+		<Usage>When you have a marker that specifies a sound/video file name,
+		including the path to demonstrate a pronunciation.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each \pf will generate another media link.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\pf c:\media\cowbell.avi</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This field should only have a full path and file name.
+		  If you have any other information about the media file, it will fail to link to the
+		  media file. In this case, it would be best to convert your \pf field
+		  into two fields and map the actual file name to this field, and map
+		  the remaining contents to some other pronunciation field. (It should
+		  actually go in the CmMedia label field, but Flex currently does not
+		  have a way to import into the label.)</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>Flex will attempt to find the specified file on your
+		  computer, and if it succeeds, it will make a copy of the file in
+		  your FieldWorks\Media folder and create a CmFile that links to this
+		  file. It then creates a CmMedia that is stored in the
+		  pronunciation and links to the CmFile. The CmMedia also contains a
+		  multilingual label for the media in this pronunciation.
+		  If the media file is not found where it was specified, a blank
+		  CmMedia is added to the pronunciation and a warning is included in
+		  the import log stating that the media was not found.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ph" id="prnf" list="no" multi="yes" property="Form"
+		   signature="MultiUnicode" type="string" uiname="Pronunciation Form">
+	  <Help>
+		<Usage>When you have a marker that specifies a pronunciation
+		form.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each SFM marker begins a new pronunciation
+		cluster.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\ph klik</Example>
+		</Examples>
+
+		<Extras>
+		  <Extra>Each \ph field will generate a pronunciation cluster capable
+		  of having forms, a CV pattern, a tone string, and media
+		  files.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="prnl" list="yes" multi="no" property="Location"
+		   signature="CmLocation" type="string"
+		   uiname="Pronunciation Location">
+	  <Help>
+		<Usage>When you have a marker that specifies a location where a
+		certain pronunciation occurs</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\plo Mambago</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have location fields in multiple languages in
+		  your SFM file, only one of these can be mapped to this field. The
+		  others should be excluded from input. Flex stores names in
+		  additional writing systems on each location item, but they cannot be
+		  imported in this way.</Limitation>
+
+		  <Limitation>At this point, Flex only allows one location field per
+		  pronunciation. If you have multiple \plo fields for a given
+		  pronunciation, they will be concatenated into a single
+		  field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the location list or
+		  creates a new item in the root of the list if an existing one is not
+		  found. The program checks both the name and abbreviation for a
+		  match. If a new location item is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+
+		  <Extra>If your location field contents are inconsistent, you can
+		  either clean them up prior to import or clean them up after import.
+		  In this case, Flex will produce separate list items for each
+		  spelling.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="prnt" list="no" multi="no" property="Tone"
+		   signature="String" type="string" uiname="Pronunciation Tone">
+	  <Help>
+		<Usage>When you have a marker that specifies a tone pattern for a
+		pronunciation.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\tn HLL</Example>
+
+		  <Example>\tn ábà</Example>
+
+		  <Example>\tn a²ba³</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Only one tone field is allowed per
+		  pronunciation.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="SemanticDomain" partOf="Sense">
+	<Field MDF="\is" id="sem" list="yes" multi="yes"
+		   property="SemanticDomains" signature="CmSemanticDomain"
+		   type="string" uiname="Semantic Domain">
+	  <Help>
+		<Usage>When you have a marker that specifies a semantic domain
+		reference (e.g., the number for a semantic domain).</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field.
+		For Ron Moe's semantic list this should be English, since the
+		reference number is stored in the English abbreviation of the semantic
+		domain list item. Check the abbreviation content.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, adds a new semantic domain link for each
+		field.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\is 122</Example>
+		</Examples>
+
+		<RelatedFields>These fields are primarily designed to map to Ron Moe's
+		semantic categories using the typical \is \sd \th set of fields for
+		each link. The \sd and \th fields are optional.</RelatedFields>
+
+		<Limitations>
+		  <Limitation>When using Ron Moe's standard semantic domain list, you
+		  need to make sure the numbers in this field map to the appropriate
+		  number based on the current version of Ron Moe's list. FieldWorks
+		  currently uses version 4 of this list. If your numbers are from an
+		  older list, you need to convert these to current numbers. Ron Moe
+		  has a CC table to map older versions to the current
+		  version.</Limitation>
+
+		  <Limitation>The semantic domain list is hierarchical, but we cannot
+		  specify the hierarchy in the SFM file. If there are duplicate names
+		  in the hierarchy, Flex will associate with the first one it happens
+		  to find. Ron Moe's list does not have any duplicates.</Limitation>
+
+		  <Limitation>Only one reference is allowed per field at this point.
+		  If you have multiple items separated by a separator, you should
+		  either break these into individual fields prior to import, or you'll
+		  need to clean up the bad items after import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the semantic domain
+		  list or creates a new item in the root of the list if an existing
+		  one is not found. The program checks both the name and abbreviation
+		  for a match. If a new usage type is created, the name and
+		  abbreviation will both be set to the field contents unless \sd \th
+		  fields are included as part of this cluster.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\sd" id="seme" list="no" multi="no" property="Name"
+		   signature="MultiUnicode" type="string"
+		   uiname="Semantic Domain English Name">
+	  <Help>
+		<Usage>When you have a marker that specifies a semantic domain English
+		name.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\sd Substance, matter</Example>
+		</Examples>
+
+		<RelatedFields>These fields are primarily designed to map to Ron Moe's
+		semantic categories using the typical \is \sd \th set of fields for
+		each link. The \sd and \th fields are optional.</RelatedFields>
+
+		<Limitations>
+		  <Limitation>Only one \sd field is allowed with each \is field.
+		  Normally the semantic domain item will be located via the \is field.
+		  If so, this field will modify the name in the specified writing
+		  system for this item if it is missing a name. If a name already
+		  exists, this field is ignored.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>If you are adding a new item to the semantic domain list, the
+		  abbreviation will come from the \is field, and the analysis name
+		  will come from this \sd field.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\th" id="semv" list="no" multi="no" property="Name"
+		   signature="MultiUnicode" type="string"
+		   uiname="Semantic Domain Vernacular Name">
+	  <Help>
+		<Usage>When you have a marker that specifies a semantic domain
+		vernacular name.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\th Sortes de sol</Example>
+		</Examples>
+
+		<RelatedFields>These fields are primarily designed to map to Ron Moe's
+		semantic categories using the typical \is \sd \th set of fields for
+		each link. The \sd and \th fields are optional.</RelatedFields>
+
+		<Limitations>
+		  <Limitation>Only one \th field is allowed with each \is field.
+		  Normally the semantic domain item will be located via the \is field.
+		  Once a semantic domain item is found, this field will overwrite the
+		  vernacular name specified for this item.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>If you are adding a new item to the semantic domain list, the
+		  abbreviation will come from the \is field, and the analysis name
+		  will come from the \sd field, and the vernacular name will come from
+		  this \th field.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Sense" partOf="Entry Subentry">
+	<Field id="dom" list="yes" multi="yes" property="DomainTypes"
+		   signature="CmPossibility" type="string" uiname="Academic Domains">
+	  <Help>
+		<Usage>When you have a marker that lists academic domains of this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field associates with a different list
+		item.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\ad legal</Example>
+
+		  <Example>\ad media; medicine (multiple domains cause problems. see
+		  below)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have domains in multiple languages in your SFM
+		  file, only one of these can be mapped to this field. The others
+		  should be excluded from input. Flex stores names in additional
+		  writing systems on each domain, but they cannot be imported in this
+		  way.</Limitation>
+
+		  <Limitation>Only one domain is allowed per field at this point. If
+		  you have multiple items separated by a separator, you should either
+		  break these into individual fields prior to import, or you'll need
+		  to clean up the bad items after import.</Limitation>
+
+		  <Limitation>The academic domain list is hierarchical, but we cannot
+		  specify the hierarchy in the SFM file. If there are duplicate names
+		  in the hierarchy, Flex will associate with the first one it happens
+		  to find.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Academic Domains
+		  list or creates a new item in the root of the list if an existing
+		  one is not found. The program checks both the name and abbreviation
+		  for a match. If a new domain is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="anth" list="yes" multi="yes" property="AnthroCodes"
+		   signature="CmAnthroItem" type="string" uiname="Anthro Codes">
+	  <Help>
+		<Usage>When you have a marker that lists an anthropology category for
+		this sense. This is typically an OCM code, but the user can create
+		their own list when creating a new FieldWorks project instead of using
+		OCM codes.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		(English for OCM), and check whether the content is a full name or
+		abbreviation (usually abbreviation for OCM).</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field associates with a different list
+		item.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\ac 144 (links to OCM code 144 -- Physical events and
+		  states)</Example>
+
+		  <Example>\ac Physical events and states (links to OCM code 144 as
+		  well)</Example>
+
+		  <Example>\ac 144, 321 (multiple codes cause problems. see
+		  below)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have anthropology categories in multiple
+		  languages in your SFM file, only one of these can be mapped to this
+		  field. The others should be excluded from input. Flex stores names
+		  in additional writing systems on each anthropology category, but
+		  they cannot be imported in this way.</Limitation>
+
+		  <Limitation>Only one category is allowed per field at this point. If
+		  you have multiple categories separated by a separator, you should
+		  either break these into individual fields prior to import, or you'll
+		  need to clean up the bad categories after import.</Limitation>
+
+		  <Limitation>The anthropology category list is hierarchical, but we
+		  cannot specify the hierarchy in the SFM file. If there are duplicate
+		  names in the hierarchy, Flex will associate with the first one it
+		  happens to find.</Limitation>
+
+		  <Limitation>Flex uses the entire field contents to match against the
+		  name or abbreviation. If you include both the name and abbreviation
+		  in the field, it will fail to find an existing category. Thus if you
+		  have both in the field, one should be deleted prior to import. The
+		  OCM code is stored in the abbreviation field, and is generally more
+		  reliable for matching purposes than the name, so it would be best to
+		  delete the name. Likewise, if you have multiple codes in one field,
+		  it will not match any existing field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Anthropology
+		  Categories list or creates a new item in the root of the list if an
+		  existing one is not found. The program checks both the name and
+		  abbreviation for a match. If a new category is created, the name and
+		  abbreviation will both be set to the field contents.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\na" id="anote" multi="yes" property="AnthroNote"
+		   signature="MultiString" type="string" uiname="Anthro Note">
+	  <Help>
+		<Usage>When you have a marker that describes anthropological or
+		ethnographic information about this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\na Measured by the senses - as sound, taste, smell, feel -
+		  as sticky, smooth, soft; appearance - as bright, light skinned,
+		  red.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\bb" id="sbib" list="no" multi="yes" property="Bibliography"
+		   signature="MultiString" type="string" uiname="Bibliography (Sense)">
+	  <Help>
+		<Usage>When you have a marker that gives bibliographical references
+		for this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\bb See IJAL 20:30-35 for more information.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ps" id="pos" list="yes" property="MorphoSyntaxAnalysis"
+		   signature="PartOfSpeech" type="string"
+		   uiname="Category (Part Of Speech)">
+	  <Help>
+		<Usage>When you have a marker for grammatical category (part of
+		speech) of a sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\ps n (using abbreviation)</Example>
+
+		  <Example>\ps noun (using full name)</Example>
+		</Examples>
+
+		<RelatedFields>none</RelatedFields>
+
+		<Limitations>
+		  <Limitation>If you have parts of speech in multiple languages in
+		  your SFM file, only one of these can be mapped to this field. The
+		  others should be excluded from input. Flex stores names in
+		  additional writing systems on each category, but they cannot be
+		  imported in this way.</Limitation>
+
+		  <Limitation>Flex only allows one part of speech per sense. If you
+		  have multiple \ps fields for a given sense, you'll need to combine
+		  these into a single \ps field prior to import.</Limitation>
+
+		  <Limitation>The grammatical category list is hierarchical, but we
+		  cannot specify the hierarchy in the SFM file. If there are duplicate
+		  names in the hierarchy, Flex will associate with the first one it
+		  happens to find.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Category list or
+		  creates a new item in the root of the list if an existing one is not
+		  found. The program checks both the name and abbreviation for a
+		  match. If a new category is created, the name and abbreviation will
+		  both be set to the field contents.</Extra>
+
+		  <Extra>If your category names are inconsistent, you can either clean
+		  them up prior to import or clean them up after import. In this case,
+		  Flex will produce separate list items for each spelling.</Extra>
+
+		  <Extra>If a nested sense does not have a category, the import
+		  process will pick up the category from an owning sense and insert
+		  that into the nested sense.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\de \dn \dr \dv" id="def" multi="yes" property="Definition"
+		   signature="MultiString" type="string" uiname="Definition">
+	  <Help>
+		<Usage>When you have a marker that gives the definition of a
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single
+		definition.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\de a red or beige bean, like a 'black eyed pea'</Example>
+
+		  <Example>\de For someone (agent &amp; theme ma-, -on) |bto get
+		  away|r from a location</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\nd" id="dnote" multi="yes" property="DiscourseNote"
+		   signature="MultiString" type="string" uiname="Discourse Note">
+	  <Help>
+		<Usage>When you have a marker that describes a discourse feature of
+		this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\nd This is a note about a discourse feature of this
+		  sense.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ee \en \er \ev" id="enc" multi="yes"
+		   property="EncyclopedicInfo" signature="MultiString" type="string"
+		   uiname="Encyclopedic Info">
+	  <Help>
+		<Usage>When you have a marker that gives encyclopedic information
+		about this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ee Rana speakers use fv:ahut to refer to rough seas when
+		  they are down at the coast, but it is taboo to use the term up at
+		  the lake.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\nt" id="gnote" multi="yes" property="GeneralNote"
+		   signature="MultiString" type="string" uiname="General Note">
+	  <Help>
+		<Usage>When you have a marker that gives a general note about
+		something in this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\nt Check grammar statement here.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ge \gn \gr \gv" id="glos" multi="yes" property="Gloss"
+		   signature="MultiUnicode" type="string" uiname="Gloss">
+	  <Help>
+		<Usage>When you have a marker that gives the gloss for a
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single gloss.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ge bean (English gloss)</Example>
+
+		  <Example>\gn kacang merah (national language gloss)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex only allows one gloss per sense. If you have more
+		  than one gloss, they will be combined into a single
+		  gloss.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ng" id="grnote" multi="yes" property="GrammarNote"
+		   signature="MultiString" type="string" uiname="Grammar Note">
+	  <Help>
+		<Usage>When you have a marker that explains something about the
+		grammar of a sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ng This is the uc:genitive_possessive marker.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field autofield="yes" id="sires" list="no" multi="yes"
+		   property="ImportResidue" signature="String" type="string"
+		   uiname="Import Residue (Sense)">
+	  <Help>
+		<Usage>When you have a marker that doesn't have an adequate desination
+		in a FieldWorks sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\oi mag-, pang-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Be sure to specify the writing system for each field so
+		  the correct writing system and encoding converter will be applied.
+		  Different fields that go into import residue can have different
+		  writing systems.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The entire field, including backslash code is added to import
+		  residue so you can see the source of the data. When multiple fields
+		  are appended, a space is inserted before each non-initial
+		  backslash.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\lf part = wall" id="funold" list="yes" multi="yes"
+		   property="LexicalRelation" signature="Unicode" type="string"
+		   uiname="Lexical Function and Lexeme">
+	  <Help>
+		<Usage>When you have a marker that uses the older MDF standard of
+		including the function name as well as the lexical form in the same
+		field. (Also see Function: Lexical Function, Sense: Lexical Relation,
+		and Entry/Subentry: Cross Reference.)</Usage>
+
+		<Settings>Set the Language Descriptor to the language of the lexical
+		form. (The function name is assumed to be in the first analysis
+		language.)</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field produces a new function.</Appends>
+
+		<List>Yes/No. The function matches a lexical reference list item, but
+		the lexical form is not a list item.</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\lf part = wall (a wall is part of a room)</Example>
+
+		  <Example>\lf part = ceiling (a ceiling is part of a room)</Example>
+
+		  <Example>\lf whole = house (a room is part of a house)</Example>
+
+		  <Example>\lf syn = car; auto (should be broken into two
+		  fields)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The format of the lexical form must be headword2 1.1
+		  where an optional homograph number is appended to the headword and
+		  an optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, the first sense in the entry will be
+		  used.</Limitation>
+
+		  <Limitation>The headword should be used in this field. If an entry
+		  has a citation form, it will use this when searching for the
+		  headword. Otherwise it will use the lexeme form.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>Only one lexical form is allowed per field at this
+		  point. If you have multiple forms separated by a separator, you
+		  should break these into individual fields prior to import, or the
+		  links will fail to match the desired entries.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The function part of this field finds an existing item in the
+		  lexical reference type list or creates a new item in the root of the
+		  list if an existing one is not found. The program checks both the
+		  name and abbreviation for a match. If a new lexical reference type
+		  is created, the name and abbreviation will both be set to the field
+		  contents and it will be set to a pair mapping type with one
+		  name.</Extra>
+
+		  <Extra>A link will be set between the current sense and the sense
+		  specified in the lexical form. If an existing lexical relation
+		  collection exists to which this can be a part, they will be merged.
+		  Otherwise a new lexical relation collection will be created. Thus,
+		  if the current sense was sedan and it has two fields, \lf syn = car
+		  \lf syn = auto, all three senses will be linked in one synonym
+		  relationship.</Extra>
+
+		  <Extra>In Flex if you set a lexical function to one sense or entry,
+		  a corresponding function will automatically be inserted in the
+		  target sense or entry back to this sense.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\sy \an" id="lxrel" list="no" multi="yes"
+		   property="LexicalRelation" ref="yes" signature="Unicode"
+		   type="string" uiname="Lexical Relation">
+	  <Help>
+		<Usage>When you have a marker that specifies a specific lexical
+		relation.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		and select or type a Lexical Reference Type. (Also see Sense: Lexical
+		Function and Lexeme, Function: Lexical Function, and Entry/Subentry:
+		Cross Reference.)</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field produces a new function.</Appends>
+
+		<List>No (except Lexical Reference Type matches a list item)</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\sy house (synonym relationship)</Example>
+
+		  <Example>\an fast (antonym relationship)</Example>
+
+		  <Example>\sy house; cottage (don't include multiple lexemes in one
+		  field)</Example>
+
+		  <Example>\my abaca (my custom relationship)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The format of the lexeme must be headword2 1.1 where an
+		  optional homograph number is appended to the headword and an
+		  optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, the first sense in the entry will be
+		  used.</Limitation>
+
+		  <Limitation>The headword should be used in this field. If an entry
+		  has a citation form, it will use this when searching for the
+		  headword. Otherwise it will use the lexeme form.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>Only one lexical form is allowed per field at this
+		  point. If you have multiple forms separated by a separator, you
+		  should break these into individual fields prior to import, or the
+		  links will fail to match the desired entries.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The Lexical Reference Type combobox allows you to select an
+		  existing lexical reference type. If you want, you can type in a name
+		  for a new lexical reference type. If a new lexical reference type is
+		  created, the name and abbreviation will both be set to the field
+		  contents and it will be set to a pair mapping type with one
+		  name.</Extra>
+
+		  <Extra>A link will be set between the current sense and the sense
+		  specified in the field. If an existing lexical relation collection
+		  exists to which this can be a part, they will be merged. Otherwise a
+		  new lexical relation collection will be created. Thus, if the
+		  current sense was sedan and it has two fields, \sy car and \sy auto,
+		  all three senses will be linked in one synonym relationship,
+		  assuming the lexical reference type was set to synonyms.</Extra>
+
+		  <Extra>In Flex if you set a lexical function to one sense or entry,
+		  a corresponding function will automatically be inserted in the
+		  target sense or entry back to this sense.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\nt" id="pnote" multi="yes" property="PhonologyNote"
+		   signature="MultiString" type="string" uiname="Phonology Note">
+	  <Help>
+		<Usage>When you have a marker that explains something about the
+		phonology or morphophonemics of a sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\np If fv:de (fn:sudah) occurs at the end of a sentence
+		  which would take a fv:e (question mark) the two are combined and
+		  pronounced [fv:da].</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\oe \on \or \ov" id="srest" list="no" multi="yes"
+		   property="Restrictions" signature="MultiUnicode" type="string"
+		   uiname="Restrictions (Sense)">
+	  <Help>
+		<Usage>When you have a marker that records restrictions on this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\oe fv:ka tends to be used in nominal constructions,
+		  whereas fv:jaga tends to be used in verbal constructions.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\re \rn \rr" id="rev" multi="yes" property="ReversalEntries"
+		   signature="ReversalIndexEntry" type="string"
+		   uiname="Reversal Entries">
+	  <Help>
+		<Usage>When you want to add this sense to a reversal index.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Each field generates a separate reversal index.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, each language goes in the index for that
+		language.</Multilingual>
+
+		<Examples>
+		  <Example>\re house (adds sense to English reversal index)</Example>
+
+		  <Example>\re small bungalo</Example>
+
+		  <Example>\re building|house (adds sense to house as a subitem of
+		  building)</Example>
+
+		  <Example>\rn casa (adds sense to Spanish reversal index)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Only one item is allowed per field at this point,
+		  although that item may be nested as in the building|house example
+		  above. Spaces are allowed in item names.</Limitation>
+
+		  <Limitation>If you have multiple writing systems for a single
+		  reversal language (e.g., Chinese and Pinyin), you can only import
+		  the primary language for the index at this point. The other writing
+		  systems should be excluded from import. You'll need to add the
+		  alternate forms inside of Flex in the Reversal Indexes
+		  tool.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>If the index item already exists, the sense will be added to
+		  that item. Otherwise, it will create a new item and add the sense to
+		  the new item.</Extra>
+
+		  <Extra>When specifying nested items, it will use existing items when
+		  present, otherwise it will add as many items as needed to reach the
+		  nested item.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\sc" id="sci" property="ScientificName" signature="String"
+		   type="string" uiname="Scientific Name">
+	  <Help>
+		<Usage>When you have a marker that gives the scientific name for this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\sc Phalanger spp</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>A scientific name is typically Latin, but at this point
+		  Flex defaults to the first Analysis language for this field, so
+		  English is typically used in this case, even though it is
+		  technically Latin.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="snote" list="no" multi="yes" property="SemanticsNote"
+		   signature="MultiString" type="string" uiname="Semantics Note">
+	  <Help>
+		<Usage>When you have a marker that describes semantic information
+		about this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\sn This is a semantic primitive.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\sn" id="sn" property="Senses" signature="Integer"
+		   type="string" uiname="Sense Number">
+	  <Help>
+		<Usage>When you have a marker that gives a sense number for this sense
+		or when you want to force new senses.</Usage>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\sn (forces new sense without specifying a number—see
+		  limitations)</Example>
+
+		  <Example>\sn 1 (specify a top level sense)</Example>
+
+		  <Example>\sn 1.1 (specify a subsense under 1)</Example>
+
+		  <Example>\sn 1.1.1 (specify a subsense under 1.1)</Example>
+
+		  <Example>\sn 1.2 (specify a second sense under 1)</Example>
+
+		  <Example>\sn 2 (specify a second top level sense)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Flex will import nested senses if this field is used
+		  properly. For it to work, every sense should have a \sn field with
+		  the content being a single digit for top level senses, and then use
+		  legal outline numbering for subsenses (e.g., 1, 1.1, 1.2, 1.2.1,
+		  1.2.2, 1.3, 2, 2.1). If you start with with more than one digit
+		  (e.g., 1.0) the import process will currently fail to import that
+		  sense. It is not designed to handle alpha or alphanumeric sense
+		  numbers (e.g., a, b, 1a, 1b, etc.). It also assumes senses are in
+		  the correct order (e.g., 1, 3, 2, 3.1 will not work). This field is
+		  not intended for non-European numbers.</Limitation>
+
+		  <Limitation>Flex does not store sense numbers in the database, but
+		  just uses the internal ownership hierarchy to generate a sense
+		  number. Thus, other than for nested senses, the contents of this
+		  field are ignored.</Limitation>
+
+		  <Limitation>By default, an MDF import allows \sn or \ps to start a
+		  new sense. If you don't have a \sn for each sense, \sn will not
+		  necessarily force a new sense. For example, given fields \sn \ps v
+		  \ps n \sn, the final \sn will not force a new sense. This happens
+		  whenever you allow multiple key markers for a group of fields. A new
+		  sense will only be started if the key marker is already used up in
+		  the existing sense. Thus \sn \ps v will go into one sense, then \ps
+		  n will start a new sense since the first sense already has a \ps
+		  field. The final \sn will be part of the second sense since that
+		  field is still unfilled in the second sense.</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="" id="styp" list="yes" multi="no" property="SenseType"
+		   signature="CmPossibility" type="string" uiname="Sense Type">
+	  <Help>
+		<Usage>When you have a marker that records the sense type of this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No, discards all but last field.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\sty figurative (using name)</Example>
+
+		  <Example>\sty fig (using abbreviation)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have sense type fields in multiple languages in
+		  your SFM file, only one of these can be mapped to this field. The
+		  others should be excluded from input. Flex stores names in
+		  additional writing systems on each sense type, but they cannot be
+		  imported in this way.</Limitation>
+
+		  <Limitation>Flex only allows one sense type per sense. If you have
+		  multiple \sty fields for a given sense, Flex will discard all but
+		  the last one, so if you don't want to lose information, you will
+		  need to concatenate them into a single field prior to
+		  import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the sense type list
+		  or creates a new item in the root of the list if an existing one is
+		  not found. The program checks both the name and abbreviation for a
+		  match. If a new sense type is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+
+		  <Extra>If your sense type field contents are inconsistent, you can
+		  either clean them up prior to import or clean them up after import.
+		  In this case, Flex will produce separate list items for each
+		  spelling.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ns" id="slnote" list="no" multi="yes"
+		   property="SocioLinguisticsNote" signature="MultiString"
+		   type="string" uiname="Sociolinguistics Note">
+	  <Help>
+		<Usage>When you have a marker that describes sociolinguistic
+		information about this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ns This can be used of headgears, other than the Sani
+		  ladies' one.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\so" id="src" property="Source" signature="String"
+		   type="string" uiname="Source">
+	  <Help>
+		<Usage>When you have a marker that records the source of information
+		in this sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\so Joachin</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\st" id="stat" list="yes" multi="no" property="Status"
+		   signature="CmPossibility" type="string" uiname="Status">
+	  <Help>
+		<Usage>When you have a marker that records the status of this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No, discards all but last field.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\st Confirmed (using name)</Example>
+
+		  <Example>\st Conf (using abbreviation)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have status fields in multiple languages in your
+		  SFM file, only one of these can be mapped to this field. The others
+		  should be excluded from input. Flex stores names in additional
+		  writing systems on each status list item, but they cannot be
+		  imported in this way.</Limitation>
+
+		  <Limitation>Flex only allows one status field per sense. If you have
+		  multiple \st fields for a given sense, Flex will discard all but the
+		  last one, so if you don't want to lose information, you will need to
+		  concatenate them into a single field prior to import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the status list or
+		  creates a new item in the root of the list if an existing one is not
+		  found. The program checks both the name and abbreviation for a
+		  match. If a new status item is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+
+		  <Extra>If your status field contents are inconsistent, you can
+		  either clean them up prior to import or clean them up after import.
+		  In this case, Flex will produce separate list items for each
+		  spelling.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ue" id="utyp" list="yes" multi="yes" property="UsageTypes"
+		   signature="CmPossibility" type="string" uiname="Usages">
+	  <Help>
+		<Usage>When you have a marker that records a usage type for this
+		sense.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, adds a new usage type for each field.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\ue archaic (using name)</Example>
+
+		  <Example>\ue arch (using abbreviation)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have usage type fields in multiple languages in
+		  your SFM file, only one of these can be mapped to this field. The
+		  others should be excluded from input. Flex stores names in
+		  additional writing systems on each sense type, but they cannot be
+		  imported in this way.</Limitation>
+
+		  <Limitation>The usage type list is hierarchical, but we cannot
+		  specify the hierarchy in the SFM file. If there are duplicate names
+		  in the hierarchy, Flex will associate with the first one it happens
+		  to find.</Limitation>
+
+		  <Limitation>Only one usage type is allowed per field at this point.
+		  If you have multiple items separated by a separator, you should
+		  either break these into individual fields prior to import, or you'll
+		  need to clean up the bad items after import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the usage type list
+		  or creates a new item in the root of the list if an existing one is
+		  not found. The program checks both the name and abbreviation for a
+		  match. If a new usage type is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+
+		  <Extra>If your usage type field contents are inconsistent, you can
+		  either clean them up prior to import or clean them up after import.
+		  In this case, Flex will produce separate list items for each
+		  spelling.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<!-- <Field id="msref" type="string" property="MainEntriesOrSenses" uiname="Main Sense Reference" signature="MultiUnicode" list="no" multi="yes" MDF="\mn"/> -->
+  </Class>
+
+  <Class name="Subentry" partOf="Entry">
+	<Field id="sebib" list="no" multi="yes" property="Bibliography"
+		   signature="MultiString" type="string"
+		   uiname="Bibliography (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that gives bibliographical references
+		for this subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\bb See IJAL 20:30-35 for more information.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\lc" id="scit" list="no" multi="yes" property="CitationForm"
+		   signature="MultiUnicode" type="string"
+		   uiname="Citation Form (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that gives the citation form for this
+		subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\lc gatos</Example>
+
+		  <Example>\lc mang- (includes default prefix affix marker)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+
+		  <Limitation>If your \lc field includes a homograph number, it should
+		  be removed from this field.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The affix marker will be removed from the citation form
+		  field, but will be used to set the Morph Type for the subentry. Flex
+		  shows the affix markers from the Morph Type when displaying
+		  headwords.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\cf" id="scref" list="no" multi="yes"
+		   property="LexicalRelation" ref="yes" signature="Unicode"
+		   type="string" uiname="Cross Reference (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that specifies a cross reference to some
+		other entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		and select or type a Lexical Reference Type. (Also see Sense: Lexical
+		Function and Lexeme, Function: Lexical Function, and Sense: Lexical
+		Relation.)</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field produces a new function.</Appends>
+
+		<List>No (except Lexical Reference Type matches a list item)</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\cf house</Example>
+
+		  <Example>\cf house; cottage (don't include multiple lexemes in one
+		  field)</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>The format of the lexeme must be headword2 1.1 where an
+		  optional homograph number is appended to the headword and an
+		  optional sense number can be included after a space. This example
+		  would search for the second homograph of headword and the first
+		  subsense under the first sense. Note that the headword is the
+		  citation form, if it exists, otherwise the lexeme form. If a sense
+		  number is not specified, and the target is a sense instead of an
+		  entry, the first sense in the entry will be used.</Limitation>
+
+		  <Limitation>If the specified entry/sense cannot be found, an error
+		  message is stored in import residue listing the
+		  problem.</Limitation>
+
+		  <Limitation>Only one cross reference is allowed per field at this
+		  point. If you have multiple forms separated by a separator, you
+		  should break these into individual fields prior to import, or the
+		  links will fail to match the desired entries.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The Lexical Reference Type combobox allows you to select an
+		  existing cross reference type. If you want, you can type in a name
+		  for a new lexical reference type. If a new lexical reference type is
+		  created, the name and abbreviation will both be set to the field
+		  contents and it will be set to a pair mapping type with one
+		  name.</Extra>
+
+		  <Extra>A link will be set between the current subentry and the entry
+		  or sense specified in the field. If an existing cross reference
+		  collection exists to which this can be a part, they will be merged.
+		  Otherwise a new coss reference collection will be created. Thus, if
+		  the current subentry was sedan and it has two fields, \cf car and
+		  \cf auto, all three entries could be linked to each other, depending
+		  on the lexical reference type.</Extra>
+
+		  <Extra>In Flex if you set a lexical function to one sense or entry,
+		  a corresponding function will automatically be inserted in the
+		  target sense or entry back to this subentry.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field autofield="yes" id="seires" list="no" multi="yes"
+		   property="ImportResidue" signature="String" type="string"
+		   uiname="Import Residue (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that doesn't have an adequate desination
+		in a FieldWorks subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\oi mag-, pang-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Be sure to specify the writing system for each field so
+		  the correct writing system and encoding converter will be applied.
+		  Different fields that go into import residue can have different
+		  writing systems.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The entire field, including backslash code is added to import
+		  residue so you can see the source of the data. When multiple fields
+		  are appended, a space is inserted before each non-initial
+		  backslash.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field id="slitm" list="no" multi="yes" property="LiteralMeaning"
+		   signature="MultiString" type="string"
+		   uiname="Literal Meaning (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that has a literal meaning for this
+		subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\lm house big</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="scom" list="no" multi="yes" property="Comment"
+		   signature="MultiString" type="string" uiname="Note (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that has a comment about this
+		subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\cm This is a general comment on this word.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="serest" list="no" multi="yes" property="Restrictions"
+		   signature="MultiUnicode" type="string"
+		   uiname="Restrictions (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that records restrictions on this
+		subentry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, appends field contents into a single field</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\re only used in formal occasions</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\se" id="sub" list="no" multi="yes" property="CitationForm"
+		   ref="yes" signature="MultiUnicode" type="string" uiname="Subentry/Complex Form"
+		   unique="yes">
+	  <Help>
+		<Usage>When you have a marker that specifies a subentry (treated as a complex form in Flex).</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field
+		and select or type a Complex Entry Type.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each \se starts a new subentry (complex form).</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\se blackboard</Example>
+		  <Example>\se kick the bucket</Example>
+		  <Example>\se amazement</Example>
+		</Examples>
+
+		<RelatedFields>A subentry (complex form) can have senses and a subset of entry
+		fields.</RelatedFields>
+
+		<Extras>
+		  <Extra>In Flex, these subentries are stored as separate complex form entries in
+		  the lexicon. They have the Complex Form Type set as selected from the Complex Entry Type combo, and 'Components' and 'Show Subentry under' references set back to the main entry. If you don't want the subentry (complex form)
+		  to show as a main headword in the dictionary, you can manually uncheck
+		  the Show Minor Entry field after the import is completed.</Extra>
+
+		  <Extra>If you want to use more than one type of subentry (complex form), you'll
+		  need to use a different SFM marker for each type and then map the
+		  SFM marker to the proper type.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\sec" id="subc" list="no" multi="yes"
+		   property="Summary" signature="MultiString" type="string"
+		   uiname="Comment (Subentry/Complex Form)">
+	  <Help>
+		<Usage>When you want to associate a comment to this subentry (complex form).</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\sec used in ... context</Example>
+		</Examples>
+
+		<RelatedFields>This could follow a \se field to give additional
+		information about the subentry (complex form) that can be shown in references to this complex form similar to the \ve field for variants.</RelatedFields>
+	  </Help>
+	</Field>
+
+	<Field id="ssdef" list="no" multi="yes" property="SummaryDefinition"
+		   signature="MultiString" type="string"
+		   uiname="Summary Definition (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that has a summary definition for this
+		subentry. Normal definitions should be stored under the sense rather
+		than here.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\sd baskets</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field id="sulf" list="no" multi="yes" property="UnderlyingForm"
+		   signature="MultiUnicode" type="string"
+		   uiname="Underlying Form (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that has an underlying form for this
+		subentry. For example, maN may represent an unspecified nasal.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\uf maN-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>Flex will create an Alternate Form in the entry with the
+		  underlying form. It will have Is Abstract Form set to true. The
+		  Morph Type will be set based on the affix markers on the underlying
+		  form.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+  </Class>
+
+  <Class name="Variant" partOf="Entry Subentry Sense">
+	<Field autofield="yes" id="veires" list="no" multi="yes"
+		   property="ImportResidue" signature="String" type="string"
+		   uiname="Import Residue (Variant)">
+	  <Help>
+		<Usage>When you have a marker that doesn't have an adequate desination
+		in a FieldWorks variant.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\oi mag-, pang-</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>Be sure to specify the writing system for each field so
+		  the correct writing system and encoding converter will be applied.
+		  Different fields that go into import residue can have different
+		  writing systems.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>The entire field, including backslash code is added to import
+		  residue so you can see the source of the data. When multiple fields
+		  are appended, a space is inserted before each non-initial
+		  backslash.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\va" id="var" list="no" multi="yes" property="CitationForm"
+		   ref="yes" signature="MultiUnicode" type="string" uiname="Variant Form"
+		   unique="yes">
+	  <Help>
+		<Usage>When you have a marker that specifies a variant.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field and and select or type a Variant Type.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each \va starts a new variant.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes, for alternate vernacular writing
+		systems.</Multilingual>
+
+		<Examples>
+		  <Example>\va colour</Example>
+		  <Example>\va inlu'ut</Example>
+		  <Example>\va men</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>This should only be the form plus valid affix markers.
+		  Affix markers are defined in the Morpheme Types list in the Lists
+		  area.</Limitation>
+
+		  <Limitation>The affix marker will be removed from the form, but will
+		  be used to set the Morph Type for the minor entry. Flex shows the
+		  affix markers from the Morph Type when displaying
+		  headwords.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>In Flex, these variants are stored as separate entries in the
+		  lexicon, but have the Variant Type set as selected in the Variant Type combo, and have a
+		  'Variant of' reference set back to the main entry or sense. If you don't want the variant
+		  to show as a main headword in the dictionary, you can manually uncheck
+		  the 'Show Minor Entry' field after the import is completed.</Extra>
+
+		  <Extra>If you want to use more than one type of variant, you'll need
+		  to use a different SFM marker for each type and then map the SFM
+		  marker to the proper type.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+
+	<Field MDF="\ve \vn \vr" id="varc" list="no" multi="yes"
+		   property="Summary" signature="MultiString" type="string"
+		   uiname="Comment (Variant)">
+	  <Help>
+		<Usage>When you have a marker that has a condition or comment about
+		this variant.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ve formal, written</Example>
+		</Examples>
+
+		<RelatedFields>This normally follows a \va to give additional
+		information about the variant.</RelatedFields>
+	  </Help>
+	</Field>
+  </Class>
+</ImportFields>

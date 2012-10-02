@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="OpenOffice/LibreOffice Writer" formatLabel="ODT" defaultExtension="odt" filter="OO/LO Writer files (*.odt)|*.odt|All files (*.*)|*.*" mode="openOffice">
+	<implementation contentTransform="xml2OO.xsl" styleTransform="xml2OOStyles.xsl"/>
+Export to an OpenOffice or LibreOffice Writer file.
+</FxtDocumentDescription>

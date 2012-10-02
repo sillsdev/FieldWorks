@@ -1,0 +1,270 @@
+;Test interaction with boundary markers and morphosyntactic info.
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name vowel      features (cons - voc +)>)
+(load_nat_class message <nat_class name cons       features (cons + voc -)>)
+(load_nat_class message <nat_class name high_v     features (cons - voc + high +)>)
+(load_nat_class message <nat_class name back_v     features (cons - voc + back +)>)
+(load_nat_class message <nat_class name unrnd_v    features (cons - voc + round -)>)
+(load_nat_class message <nat_class name low_unrnd  features (high - low + round -)>)
+(load_nat_class message <nat_class name back_rnd   features (back + round +)>)
+(load_nat_class message <nat_class name unback_unrnd  features (back - round -)>)
+(load_nat_class message <nat_class name low_back   features (back + low + high -)>)
+(load_nat_class message <nat_class name unvd_unasp features (vd - asp -)>)
+(load_nat_class message <nat_class name asp  features (asp +)>)
+(load_nat_class message <nat_class name back_rnd_v features (cons - voc + back + round +)>)
+(load_nat_class message <nat_class name unback_unrnd_v features (cons - voc + back - round -)>)
+(load_nat_class message <nat_class name bilab_cons features (cons + voc - poa bilabial)>)
+(morpher_set message (*quit_on_error* false))
+;First test rules that require boundary markers.
+; i -> u / u + __
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class back_rnd>)
+						  left_environ <ptemp pseq (<simp_cntxt class back_rnd_v>
+													<bdry rep + ctable table3>)
+									   >
+					>
+				   )
+  >
+)
+;Trace it
+(trace_morpher_rule message (true true rule1))
+;Now we morph a word (1x ambiguous, but we should find two underlying forms during anal):
+(morph_and_lookup_word pretty_print buub)
+;Mirror image rule (except the Vs are reversed, so we use same lex entry):
+; u -> i / __ + i
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class unback_unrnd>)
+						  right_environ <ptemp pseq (<bdry rep + ctable table3>
+													 <simp_cntxt class unback_unrnd_v>)
+										>
+					>
+				   )
+  >
+)
+;Should be unambiguous:
+(morph_and_lookup_word pretty_print biib)
+
+;Now test rules that don't refer to bdry markers, to ensure they will work despite
+; bdry markers in lex entries:
+; i -> u / u __
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class back_rnd>)
+						  left_environ <ptemp pseq (<simp_cntxt class back_rnd_v>)>
+					>
+				   )
+  >
+)
+;Should be 2x ambiguous:
+(morph_and_lookup_word pretty_print buub)
+;Mirror image again:
+; u -> i / __ i
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class unback_unrnd>)
+						  right_environ <ptemp pseq (<simp_cntxt class unback_unrnd_v>)>
+					>
+				   )
+  >
+)
+;Should be 2x ambiguous:
+(morph_and_lookup_word pretty_print biib)
+
+;Make sure deletion rules don't rm bdry markers:
+; i -> 0 / __ b
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<seg rep i ctable table3>)
+		  subrules (<psub out_pseq ()
+						  right_environ <ptemp pseq (<seg rep b ctable table3>)>
+					>
+				   )
+  >
+)
+; u -> a / __ + b  (note feeding by rule1)
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class back_v>)
+		  subrules (<psub out_pseq (<seg rep a ctable table3>)
+						  right_environ <ptemp pseq (<bdry rep + ctable table3>
+													 <seg rep b ctable table3>)
+										>
+					>
+				   )
+  >
+)
+(trace_morpher_rule message (true true rule2))
+;Should be 1x ambiguous:
+(morph_and_lookup_word pretty_print bab)
+
+;Mirror image:
+; u -> 0 / b __
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<seg rep u ctable table3>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<seg rep b ctable table3>)>
+					>
+				   )
+  >
+)
+; i -> a / b + __  (note feeding by rule1)
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class unrnd_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class low_back>)
+						  left_environ <ptemp pseq (<seg rep b ctable table3>
+													<bdry rep + ctable table3>)>
+					>
+				   )
+  >
+)
+;Should be 1x ambiguous:
+(morph_and_lookup_word pretty_print bab)
+
+(remove_morpher_rule message rule2)
+;Now test cases where the bdry marker is inside the target.  First load a rule which specifically
+; requires the bdry:
+; b+b -> p+p / V__V
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class bilab_cons>
+	   <bdry rep + ctable table3>
+	   <simp_cntxt class bilab_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class unvd_unasp>
+									<bdry rep + ctable table3>
+									<simp_cntxt class unvd_unasp>)
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+;Should find two lex entries, $ab+ba$ and $abba$, but only the former survives synthesis:
+(morph_and_lookup_word pretty_print appa)
+
+;Now modify the rule so it does NOT apply across "+":
+; bb -> pp / V__V
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class bilab_cons>
+				   <simp_cntxt class bilab_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class unvd_unasp>
+									<simp_cntxt class unvd_unasp>)
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+;Trace it
+(trace_morpher_rule (true true rule1))
+;Again, find same two lex entries, but this time only the latter survives synthesis:
+(morph_and_lookup_word pretty_print appa)
+
+;Try a rule that calls for a morpheme bdry that doesn't exist in
+; the rule's stratum (we do this by specifying the wrong ctable for
+; the stratum; this test was added because I thought I got just such an error):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class asp>)
+						  left_environ <ptemp pseq (<bdry rep + ctable table3>)>
+					>
+				   )
+  >
+)
+;Try it; the rule should unapply during analysis, but not apply
+; during synthesis:
+(morph_and_lookup_word pretty_print pHipH)
+
+
+;Now test for prule application limited to a particular POS (like Axininca Campa).
+; 0 --> ta / #_CV#, where word is a noun
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<seg rep t ctable table1><seg rep a ctable table1>)
+						  left_environ <ptemp init true pseq ()>
+						  right_environ <ptemp fin true pseq (<simp_cntxt class cons><simp_cntxt class vowel>)>
+						  r_pos (N)
+					>
+				   )
+  >
+)
+;Test it.  First one should give noun:
+(morph_and_lookup_word pretty_print taba)
+;...and second should give verb:
+(morph_and_lookup_word pretty_print ba)
+
+;Now test for prule application requiring a particular rule feature:
+; 0 --> ta / #_CV#, where word has RF 'latinate'
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<seg rep t ctable table1><seg rep a ctable table1>)
+						  left_environ <ptemp init true pseq ()>
+						  right_environ <ptemp fin true pseq (<simp_cntxt class cons><simp_cntxt class vowel>)>
+						  r_rf (latinate)
+					>
+				   )
+  >
+)
+;Test it.  Should get just the one with ID= pos1:
+(morph_and_lookup_word pretty_print taba)
+
+;...and for prule application prohibiting a particular rule feature:
+; 0 --> ta / #_CV#, where word does NOT have RF 'latinate'
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<seg rep t ctable table1><seg rep a ctable table1>)
+						  left_environ <ptemp init true pseq ()>
+						  right_environ <ptemp fin true pseq (<simp_cntxt class cons><simp_cntxt class vowel>)>
+						  x_rf (latinate)
+					>
+				   )
+  >
+)
+;Test it.  Should get just the one with ID= pos2:
+(morph_and_lookup_word pretty_print taba)
+
+;Done, clear the rules:
+(morpher_set message (*quit_on_error* true))
+
+(remove_morpher_rule message rule1)
+;...and the natural classes:
+(remove_nat_class message vowel)
+(remove_nat_class message cons)
+(remove_nat_class message high_v)
+(remove_nat_class message back_v)
+(remove_nat_class message unrnd_v)
+(remove_nat_class message low_unrnd)
+(remove_nat_class message back_rnd)
+(remove_nat_class message unback_unrnd)
+(remove_nat_class message low_back)
+(remove_nat_class message unvd_unasp)
+(remove_nat_class message asp)
+(remove_nat_class message back_rnd_v)
+(remove_nat_class message unback_unrnd_v)
+(remove_nat_class message bilab_cons)

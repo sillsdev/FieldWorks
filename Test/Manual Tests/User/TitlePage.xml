@@ -1,0 +1,25 @@
+<?xml-stylesheet type="text/xsl" href="..\XSL\HelpFile.xsl" ?>
+<titlePage file="TitlePage.xml">
+ <title tag="tp">FieldWorks Test Manual</title>
+ <index>
+  <li>title page</li>
+  <li>beginning of manual</li>
+  <li>start of manual</li>
+ </index>
+ <authors>
+  <div>Rick MacLean (department manager)</div>
+  <div>Michael Lastufka (creator, drudge)</div>
+  <div>Lars Huttar (test case author)</div>
+  <div>Janet Watkins (test case author)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="Welcome.xml" type="module">Welcome</link>
+ <img uri="dogrun.gif" alt="Happiness is being bug free!"/>
+ <shortcuts>
+  <link uri="Starting\maintask.xml" type="module">Getting Started</link>
+  <link uri="Using\maintask.xml" type="module">How to use a test script</link>
+  <link uri="Apps\maintask.xml" type="module">Testing a FieldWorks application</link>
+  <link uri="Writing\maintask.xml" type="module">How to write a test script</link>
+  <link uri="Building\maintask.xml" type="module">How to build this manual</link>
+ </shortcuts>
+</titlePage>

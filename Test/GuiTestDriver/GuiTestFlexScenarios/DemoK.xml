@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo section K -->
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+
+<!-- K.	Residue -->
+<!-- 1.	Go to Grammar Sketch and go to the Residue section. -->
+	<click path="$menuGRAMMAR;menu:Grammar Sketch" />
+
+<skip>
+
+  <var id="html" set="$grmSkPanel;/$nl"/>
+
+   <!--/10:file:////C:\Documents and Settings\lastufka.DALLAS\Local Settings\Temp\tmpBEE.htm" / this part of the path changes, so let the path finder feel its way around it and don't put in the path-->
+
+  <click path="$html" />
+	  <click path="$html;/16:A sketch of Kalaba Morphology/42:11 Residue"/>
+	  <!--insert>{PGDN}</insert-->
+
+</skip>
+
+<!-- 2.	This section is where -->
+<!-- a.	the user is saying "I don't know how to correctly model this part of my language yet"; or -->
+<!-- b.	the current implementation of our parsing mechanism (i.e. Stage 1) does not have any way to deal with some issue; or -->
+<!-- c.	our WordWorks grammar model actually does not have a disciplined way to deal with some issue (e.g. Zapotec person hierarchy and the ordering of pronominal clitics). -->
+<!-- 3.	Unmarked affixes (or unknown affixes) -->
+<!-- a.	These are the affixes which the user labeled as neither inflectional nor as derivational. -->
+<!-- b.	The parser treats these in a special way: -->
+<!-- 1.	 basically they can appear anywhere (modulo the morpheme type) -->
+<!-- 2.	Most likely this way they will show up as Predicted Analyses when the user knows that this analysis is incorrect.  Hopefully, this will motivate the user to say what the conditions are for when one of these affixes can legitimately appear. -->
+<!-- 4.	Ad hoc constraints -->
+<!-- a.	Talk about why these are here. -->
+<!-- b.	Note the groups, allomorphs and morpheme varieties.  Discuss/ask why there might be these three types. -->
+<!-- c.	Note that a given constraint involves a non-empty set of X which cannot occur "location" a given X. -->
+<!-- d.	Go to Grammar / Adhoc Coprohibitions -->
+  <click path="$menuGRAMMAR;menu:Ad hoc Rules" />
+
+<!-- 1.	Add a new morpheme one.  Show the possibilities. -->
+  <click path="$insGrmAhmr"/>
+  <click path="$grmArEDIT;9:custom[2]/$sp;1/9:Other Morpheme(s)"/>
+  <click path="$grmArEDIT;9:custom[2]/$sp;2/9:Other Morpheme(s)/9:.../$NL;43:NAMELESS"/>
+
+<!-- insert an "n" in the Find box, and click the OK button.-->
+	 <on-dialog title="Choose Morpheme and Grammatical Info.">
+	   <insert>n</insert>
+	   <click path="$ok"/>
+	 </on-dialog>
+   <click path="$grmArEDIT;9:custom/$sp;1/9:Key Morpheme"/>
+   <click path="$grmArEDIT;9:custom/$sp;2/9:Key Morpheme/9:.../$NL;43:NAMELESS"/>
+	 <on-dialog title="Choose Morpheme and Grammatical Info.">
+	 <insert>m</insert>
+	 <click path="$ok"/>
+   </on-dialog>
+
+<!-- 2.	Add a new allomorph one.  Show the possibilities. -->
+  <click path="$insGrmAhar"/>
+  <click path="$grmArEDIT;9:custom[2]/$sp;1/9:Other Allomorph(s)"/>
+  <click path="$grmArEDIT;9:custom[2]/$sp;2/9:Other Allomorph(s)/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose Allomorph">
+	 <insert>b</insert>
+	 <do-once until="100000" > <!-- this search can take a long time -->
+	   <glimpse id="goToButton" path="$ok" prop="unavailable" expect="false"/>
+	 </do-once>
+	 <click path="$ok"/>
+  </on-dialog>
+   <click path="$grmArEDIT;9:custom/$sp;1/9:Key Allomorph"/>
+   <click path="$grmArEDIT;9:custom/$sp;2/9:Key Allomorph/9:.../$NL;43:NAMELESS"/>
+	 <on-dialog title="Choose Allomorph">
+	 <insert>l</insert>
+	 <do-once until="100000" > <!-- this search can take a long time -->
+	   <glimpse id="goToButton2" path="$ok" prop="unavailable" expect="false"/>
+	 </do-once>
+	 <click path="$ok"/>
+   </on-dialog>
+
+<!-- 3.	Go to the co-index group and type "First and second person, co-indexed subject and object agreement markers never can co-occur.  One must use a reflexive marker instead." In the description. -->
+  <click  path="$grmArRec;[*]/$Col;[3]/$Text;/value:Co-indexed subject and object prefixes"/>
+  <click path="$grmArEDIT;$msp;2/20:Description"/>
+  <insert wait="200" >^a</insert>
+  <insert wait="200">First and second person, co-indexed subject and object agreement markers never can co-occur.  One must use a reflexive marker instead.</insert>
+
+<!-- 4.	Back to grammar sketch and regenerate.  Note how the description now shows up. -->
+  <click path="$menuGRAMMAR;menu:Grammar Sketch" />
+  <click path="$Generate" />
+  <click path="$grmSkPanel" />
+  <insert>{PGDN 45}</insert>
+
+ </on-application>
+</accil>

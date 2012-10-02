@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version number="" />
+		<generation date="2010-11-19T16:04:08" />
+		<language type="fa" />
+	</identity>
+	<collations>
+		<collation>
+			<base>
+				<alias source="fa" />
+			</base>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType value="OtherLanguage" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation value="Per" />
+		<palaso:defaultFontFamily value="Charis SIL" />
+		<palaso:languageName value="Persian" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled value="False" />
+		<fw:windowsLCID value="1033" />
+	</special>
+</ldml>

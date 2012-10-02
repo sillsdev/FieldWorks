@@ -1,0 +1,884 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:DChartHelperMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_0653DC33427492D55D93E7492E0D21D8"
+		"OwnerKey" = "8:_691CF6F29B95BBCA068A51ADF41ED4CC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_691CF6F29B95BBCA068A51ADF41ED4CC"
+		"OwnerKey" = "8:_C17D6F8A169442BC6C7C858FDE6E9E60"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_691CF6F29B95BBCA068A51ADF41ED4CC"
+		"OwnerKey" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_691CF6F29B95BBCA068A51ADF41ED4CC"
+		"OwnerKey" = "8:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6BCDB13AD88DF5996770E3D5859D646E"
+		"OwnerKey" = "8:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9680DAB723D04F07B374AEDC0F3F6F43"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C17D6F8A169442BC6C7C858FDE6E9E60"
+		"OwnerKey" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CF5ADD244AB3B4FDFA44BFC6B63BC579"
+		"OwnerKey" = "8:_C17D6F8A169442BC6C7C858FDE6E9E60"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+		"OwnerKey" = "8:_C17D6F8A169442BC6C7C858FDE6E9E60"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+		"OwnerKey" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_C17D6F8A169442BC6C7C858FDE6E9E60"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_691CF6F29B95BBCA068A51ADF41ED4CC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\DChartHelperMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\DChartHelperMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0653DC33427492D55D93E7492E0D21D8"
+			{
+			"SourcePath" = "8:ECInterfaces.tlb"
+			"TargetName" = "8:ECInterfaces.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:DChartHelper, Version=4.0.0.0, Culture=neutral, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+					{
+					"Name" = "8:DChartHelper.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\DChartHelper.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_691CF6F29B95BBCA068A51ADF41ED4CC"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_691CF6F29B95BBCA068A51ADF41ED4CC"
+					{
+					"Name" = "8:ECInterfaces.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ECInterfaces.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BCDB13AD88DF5996770E3D5859D646E"
+			{
+			"SourcePath" = "8:SilEncConverters40.tlb"
+			"TargetName" = "8:SilEncConverters40.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9680DAB723D04F07B374AEDC0F3F6F43"
+			{
+			"SourcePath" = "8:..\\..\\DChartHelper\\Discourse Chart Helper Readme.pdf"
+			"TargetName" = "8:Discourse Chart Helper Readme.pdf"
+			"Tag" = "8:"
+			"Folder" = "8:_E370F879C30643BB8724C63F1029ECB8"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C17D6F8A169442BC6C7C858FDE6E9E60"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:AIGuesserEC, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_C17D6F8A169442BC6C7C858FDE6E9E60"
+					{
+					"Name" = "8:AIGuesserEC.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:AIGuesserEC.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CF5ADD244AB3B4FDFA44BFC6B63BC579"
+			{
+			"SourcePath" = "8:AIGuesserEC.tlb"
+			"TargetName" = "8:AIGuesserEC.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_D44DDE85E9CCEA8ABAF753AFAD1FC054"
+					{
+					"Name" = "8:SilEncConverters40.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:SilEncConverters40.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{1525181F-901A-416C-8A58-119130FE478E}:_3B688F9FAC7D4016AFC74C99631D1296"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_0870C5EE27E44A3E92CFD351C4F661C9"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_C698D68979F141D7AA96D929E6520425"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_D5F204ECF5004F41958F5F5D9F299DA7"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_E518403F5F7C4140B2BDA01A4D8E7ABC"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_509251E0ED884684B67A42A04DBBEE9A"
+			{
+			"DefaultLocation" = "8:[ProgramFilesFolder]SIL\\SILConverters"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_E370F879C30643BB8724C63F1029ECB8"
+					{
+					"Name" = "8:Help"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_BB45D1CD72C64F60AEF06FF42B0E6621"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:DChartHelper40MergeModule.0AC039723787421495FDA1079355DB60"
+		"Version" = "8:4.0.0.0"
+		"Title" = "8:DChartHelperMM"
+		"Subject" = "8:"
+		"Author" = "8:SIL"
+		"Keywords" = "8:Discourse Analysis; Discourse Charting; SILConverters; SIL"
+		"Comments" = "8:Discourse Chart Helper"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1FA8730AA4DE4412AFD0CCC5A983AE32"
+					{
+					"Name" = "8:SOFTWARE"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_949E9796FE4E48DB9E610449A7BF6A92"
+							{
+							"Name" = "8:Classes"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1B2D33C695564D8A880E0B3020876D46"
+									{
+									"Name" = "8:Applications"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_DEB3C3FB8829410F8AC76D4D2D633FAB"
+											{
+											"Name" = "8:DChartHelper.exe"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_FE4809DDADEF4874B7932E630A92B005"
+													{
+													"Name" = "8:shell"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_28A87F9B31D641DDBEBFB8537D711A96"
+															{
+															"Name" = "8:open"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:FALSE"
+															"DeleteAtUninstall" = "11:FALSE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																	"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_59C988EF018F4A4AAFB424C90C446B88"
+																	{
+																	"Name" = "8:command"
+																	"Condition" = "8:"
+																	"AlwaysCreate" = "11:FALSE"
+																	"DeleteAtUninstall" = "11:FALSE"
+																	"Transitive" = "11:FALSE"
+																		"Keys"
+																		{
+																		}
+																		"Values"
+																		{
+																			"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_905399513F8F426A8A401CD60DF4A54C"
+																			{
+																			"Name" = "8:"
+																			"Condition" = "8:"
+																			"Transitive" = "11:FALSE"
+																			"ValueTypes" = "3:1"
+																			"Value" = "8:\"[TARGETDIR]DChartHelper.exe\" \"%1\""
+																			}
+																		}
+																	}
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F3A3D0C798C64F0EA23506868C2587B3"
+																	{
+																	"Name" = "8:"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:&Open"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_A5C26BC9ADA7499AB0A7A499556016FE"
+									{
+									"Name" = "8:.xml"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_EA012FF8274F4AEB9D3CA901ED219A45"
+											{
+											"Name" = "8:OpenWithList"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_ACB86368B7AD47E5AB89F180225520EA"
+													{
+													"Name" = "8:DChartHelper.exe"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+														}
+														"Values"
+														{
+															"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_B7FC211E9B9C439EA06B3B5007C14193"
+															{
+															"Name" = "8:"
+															"Condition" = "8:"
+															"Transitive" = "11:FALSE"
+															"ValueTypes" = "3:1"
+															"Value" = "8:"
+															}
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+										}
+										"Values"
+										{
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_19B6574250724A63BF5411B0FF2420FD"
+											{
+											"Name" = "8:Content Type"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:text/xml"
+											}
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_3761FE97D81F44EFACF42814C8B60F53"
+											{
+											"Name" = "8:PerceivedType"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:text"
+											}
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_6CD246629DF9411C8C83B7FAEA0F5AF2"
+											{
+											"Name" = "8:"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:xmlfile"
+											}
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_65FCA3C30B4C43FC94E83EDCB8D911B2"
+					{
+					"Name" = "8:.xml"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_0639D128AFDB46ACA3813676F9866F68"
+							{
+							"Name" = "8:OpenWithList"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_308967AB2D3B4AD782F8938C7EA37B4C"
+									{
+									"Name" = "8:DChartHelper.exe"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+										}
+										"Values"
+										{
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E8096874005B48C7AFEF2B826076C950"
+											{
+											"Name" = "8:"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:"
+											}
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_162AD36D3A70426FB664C72E9A36C599"
+							{
+							"Name" = "8:"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:xmlfile"
+							}
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_869367D088274C08813B4F4015C9BB52"
+							{
+							"Name" = "8:PerceivedType"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:text"
+							}
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_87D4DCD5BF134926BC34E7956BABFCE0"
+							{
+							"Name" = "8:Content Type"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:text/xml"
+							}
+						}
+					}
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_C1D4C95F45C94DC0BBDF12FCD71FC7FE"
+					{
+					"Name" = "8:Applications"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_17EFF2EC5D0B44819C0FC7B823B3BF9A"
+							{
+							"Name" = "8:DChartHelper.exe"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_7AD32ECB00E84766B852CAEE7B2A3FBA"
+									{
+									"Name" = "8:shell"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D1530E8041424FFAAFF03F9D673AC750"
+											{
+											"Name" = "8:open"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_EAB454C6A99D462CB08FC717FB244402"
+													{
+													"Name" = "8:command"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+														}
+														"Values"
+														{
+															"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_FAC73F343FD344858E39F5361A1DCECC"
+															{
+															"Name" = "8:"
+															"Condition" = "8:"
+															"Transitive" = "11:FALSE"
+															"ValueTypes" = "3:1"
+															"Value" = "8:\"[TARGETDIR]DChartHelper.exe\" \"%1\""
+															}
+														}
+													}
+												}
+												"Values"
+												{
+													"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F3A253B259A24E78832D271880CA8115"
+													{
+													"Name" = "8:"
+													"Condition" = "8:"
+													"Transitive" = "11:FALSE"
+													"ValueTypes" = "3:1"
+													"Value" = "8:&Open"
+													}
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_5F9145DF038B4A5D9F80D296BCE59E5A"
+			{
+			"Name" = "8:Readme for Discourse Chart Helper"
+			"Arguments" = "8:"
+			"Description" = "8:View readme/help document for the Discourse Chart Helper application"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_9680DAB723D04F07B374AEDC0F3F6F43"
+			"Folder" = "8:_D5F204ECF5004F41958F5F5D9F299DA7"
+			"WorkingFolder" = "8:_E370F879C30643BB8724C63F1029ECB8"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B2B6A10146734D42B0E309D060E64B03"
+			{
+			"Name" = "8:Discourse Chart Helper"
+			"Arguments" = "8:"
+			"Description" = "8:Prepare discourse analysis charts"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:32512"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+			"Folder" = "8:_0870C5EE27E44A3E92CFD351C4F661C9"
+			"WorkingFolder" = "8:_509251E0ED884684B67A42A04DBBEE9A"
+			"Icon" = "8:_21BD3BF8C52C4E20AE3F4CBC25797CEF"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

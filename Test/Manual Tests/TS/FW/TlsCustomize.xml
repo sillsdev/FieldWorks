@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlscustomize" num="2.7.10" abbr="tlcu" file="FW\TlsCustomize.xml" ready="V2">
+<title tag="tlscustomize">Tools-Customize Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Customize dialog is called in response to the Tools-Customize menu item. It is similar to the customize dialog used in many of the Microsoft Office software, except that it places the shortcuts into the same control as the commands.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Customize" type="doc">Tools-Customize</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/Customize/Customize.html" type="doc">Customize Dialog</link>
+</p>
+<p name="todo">This test script requires editing to fit the specifications listed above. This is just a template to start out with.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Customize"</p>
+</context>
+
+<case id="tlcuAct" num="0" order="any">
+<title tag="tlcuAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Invoke Tools-Customize. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Customize" type="doc">Definition of Tools-Customize.</link>
+<r>Expected result.</r>
+<p name="bug">Tools-Customize not working</p>
+</step>
+<step name="0.1" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Customize ..</p>
+</step>
+
+</case>
+
+<case id="tlcuDiac" num="1" order="any">
+<title tag="tlcuDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools-Customize is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Tools-Customize. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/Customize/Customize.html" type="doc">Tools-Customize specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Tools-Customize layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Tools-Customize" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Customize ..</p>
+</step>
+
+</case>
+
+<case id="tlcu??" num="2" order="any">
+<title tag="tlcu??">Other controls</title>
+<context>
+<p>When the Tools-Customize is displayed:</p>
+</context>
+
+<step name="2.1">
+<link uri="../StdCtrls/??.xml" type="module">?? control</link> and use the shortcut &lt;Alt&gt;&lt;?&gt; to test the ?? control.
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Report any failures as suggested using "Tools-Customize ??" as the name of the control.</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Customize ..</p>
+</step>
+
+</case>
+
+<case id="tlcuSe" num="3" order="any">
+<title tag="tlcuSe">Side effects</title>
+<context>
+<p>When the Tools-Customize is displayed:</p>
+</context>
+
+<step name="3.1">Exercise the Tools-Customize on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly, resembling the form of the preview.</li>
+<li>
+</li>
+</ul>
+</r>
+<p name="bug">Tools-Customize control sequence causes problem</p>
+</step>
+<step name="3.2" link="Bug">Exercise the Tools-Customize on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Tools-Customize again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Tools-Customize &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+
+</test>

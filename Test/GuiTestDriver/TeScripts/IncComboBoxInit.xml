@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+	<var id="Cb1stItem" set="FALSE"/>
+	<var id="Cb2ndItem" set="FALSE"/>
+	<var id="Cb3rdItem" set="FALSE"/>
+	<var id="Cb4rthItem" set="FALSE"/>
+	<var id="Cb5thItem" set="FALSE"/>
+	<var id="Cb6thItem" set="FALSE"/>
+	<var id="Cb7thItem" set="FALSE"/>
+	<var id="Cb8thItem" set="FALSE"/>
+	<var id="Cb9thItem" set="FALSE"/>
+
+</include>

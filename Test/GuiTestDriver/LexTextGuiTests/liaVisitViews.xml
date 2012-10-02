@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Visits the list tool views. -->
+
+<accil on-fail="assert">
+   <goal>Visit all List views</goal>
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+<on-application log="all" run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+  <model select="menubar/view/lists/*">
+	 <!--do-once until="9999999"-->
+	   <click until="9999999" path="$guiPath"/>
+	 <!--/do-once-->
+  </model>
+
+</on-application>
+</accil>

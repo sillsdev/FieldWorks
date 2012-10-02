@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?>
+
+<!-- This model is independant of database -->
+
+<fwuiml id="TE" model="Translation Editor" title =" - Translation Editor">
+
+	<section file="Menu.xml"/>
+	<section file="XmlFromCsv2.xml" />
+
+	<!--Define Variables -->
+	<var id="OK" set="9:OK/43:OK"/>
+	<var id="Yes" set="9:Yes/43:Yes"/>
+	<var id="YesToAll" set="9:Yes to All/43:Yes to All"/>
+	<var id="No" set="9:No/43:No"/>
+	<var id="Cancel" set="9:Cancel/43:Cancel"/>
+	<var id="Close" set="9:Close/43:Close"/>
+	<var id="Browse" set="9:Browse.../43:Browse..."/>
+	<var id="Save" set="9:Save/43:Save"/>
+	<var id="Open" set="9:Open/43:Open"/>
+	<var id="Next" set="9:Next >/43:Next >"/>
+	<var id="Modify" set="9:Modify.../43:Modify..."/>
+	<var id="Finish" set="9:Finish/43:Finish"/>
+
+</fwuiml>

@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>fsfptov</form>
+  <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+	  <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <failure>While the derivational affix allomorph '-fptov (fp to verb): fptov' is not conditioned to occur when the stem it attaches to has certain features, there are other allomorphs in the entry that are so conditioned.  Thus, the stem must not be inflected for certain features, but it is.  The features the affix must not be inflected for are: [nagr:[gen:f num:sg]].  The inflected features for this stem are: [nagr:[gen:f num:sg]].</failure>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	  <morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+		<shortName>-fptov (fp to verb): fptov</shortName>
+		<alloform>-fptov</alloform>
+		<affixAlloFeats>
+		  <not>
+			<fs id="15478">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </not>
+		</affixAlloFeats>
+		<gloss>fp to verb</gloss>
+		<citationForm>fptov</citationForm>
+		<derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	  </morph>
+	</stem>
+  </seq>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	</full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (N) of the inflectional template "Possessed noun" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs><stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+"><fs id="15022"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>f</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs><morph alloid="15023" morphname="15022" type="root" wordType="root"><shortName>fs (fem.sing): fs</shortName><alloform>fs</alloform><gloss>fem.sing</gloss><citationForm>fs</citationForm><stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+"><fs id="15022"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>f</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></stemMsa></morph></stem></full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (comm) of the inflectional template "test stem name features" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs><stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+"><fs id="15022"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>f</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs><morph alloid="15023" morphname="15022" type="root" wordType="root"><shortName>fs (fem.sing): fs</shortName><alloform>fs</alloform><gloss>fem.sing</gloss><citationForm>fs</citationForm><stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+"><fs id="15022"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>f</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></stemMsa></morph></stem><failure>The inflectional template named 'test stem name features' for category 'common noun' failed because the required suffix slot 'Gender' was not found.</failure></full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(15022andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>f</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="15022">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>f</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="15023" morphname="15022" type="root" wordType="root">
+		  <shortName>fs (fem.sing): fs</shortName>
+		  <alloform>fs</alloform>
+		  <gloss>fem.sing</gloss>
+		  <citationForm>fs</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="15022">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>f</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="15474" morphname="15473" type="sfx" wordType="derivSfx">
+	  <shortName>-fptov (fp to verb): fptov</shortName>
+	  <alloform>-fptov</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15478">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>f</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>fp to verb</gloss>
+	  <citationForm>fptov</citationForm>
+	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+	</morph>
+  </seq>
+</word>

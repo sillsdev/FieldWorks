@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="vwsortm" num="2.3.3" abbr="vsm" file="FW\VwSortM.xml">
+ <title tag="vwsortm">View-Sort Methods Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>This menu item brings up a cascading submenu whose primary purpose is allow the user to select which Sort Method the data is presented in. Individual applications will define these sort methods, and users will be able to customize and add their own.</p>
+   <p>For an overview, see discussion at the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="doc">Sorting spec</link>. The layout of the View-Sort Methods menu is shown there.</p>
+   <p name="todo">Not all of the Sorting spec details are yet reflected in this test, e.g., the progress bar and ability to cancel building the sort index. These are not included in version 1.</p>
+   <p>(Dynamic menu simply means that the contents of the menu change to reflect the current state of the program, e.g. as more sort methods are added to the Tools Options Sort Methods tab, those new sort methods should also appear in the View bar and in the View-Sort Methods cascading menu (making this menu a dynamic one).</p>
+  </introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "View-Sort Methods"</p>
+</context>
+
+ <case id="vsmBsc" num="0" order="any">
+  <title tag="vsmBsc">Basic View-Sort Methods Menu</title>
+  <context>
+<p>Under the View menu select the Sort Methods item</p>
+</context>
+
+<step name="0.1" link="Bug">Invoke Sort Methods Tab and View Bar support. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="doc">Sort Methods Tab and View Bar support specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">View-Sort Methods support layout incorrect</p>
+</step>
+  <step name="0.2" link="Bug">
+   Compare this list on the View Menu with the one on the left side of the window in the Sort Methods tab.
+   <r>
+<ul>
+<li>Shows a list of all of the Sort Methods that have been defined via Tools-Options (Sort Methods Tab).</li>
+	<li>This list has <i>Default Sort</i> at the top and <i>Configure...</i> at the bottom as in the image under the heading "Using the Menu System" in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="module">spec</link>.</li>
+	<li>Otherwise it matches what is found in the Sort Methods tab of the View Bar.</li>
+	<li>The Sort Methods are listed alphabetically by name in both places.</li>
+	<li>What is checked in the menu is exactly what is depressed in the side bar.</li>
+</ul>
+</r>
+   <p name="bug">View-Sort Methods List of Sort Methods does not appear</p>
+   <p name="bug">View-Sort Methods Incorrect list of Sort Methods</p>
+   <p name="bug">View-Sort Methods Wrong Sort Method(s) depressed</p>
+  </step>
+
+  <step name="0.3" link="Bug">
+   Select the sort method that is already checked.
+   <r>
+<ul>
+<li>Nothing happens. (The sort method stays checked, the sort method in the Side Bar stays depressed, the order of entries does not change, the status bar does not change.)</li>
+	<li>There is no way to turn off sorting in FieldWorks. The only way to turn off one sort method is to activate another.</li>
+</ul>
+</r>
+   <p name="bug">View-Sort Methods something changes on selection of active sort</p>
+  </step>
+
+  <step name="0.4" link="Bug">
+   Select Configure from the Sort Methods submenu on the View menu.
+   <r>Should open up the Tools-Options-Sort Methods dialog so the user can configure sorts for the project.</r>
+   <p name="bug">View-Sort Methods does not bring up Options dialog on selecting Configure</p>
+  </step>
+
+ </case>
+
+ <case id="vsmUnch" num="1" order="any">
+  <title tag="vsmUnch">Selecting a new Sort Method</title>
+  <context>
+<p>Select an unchecked item (but not Default Sort) from the View-Sort Order submenu. Then</p>
+</context>
+
+  <step name="1.1" link="Bug">
+   Inspect the View-Sort Order submenu.
+   <r>
+<ul>
+<li>The selected item is checked.</li>
+	<li>Any other checked items, including Default Sort, become unchecked.</li>
+</ul>
+</r>
+   <p name="Note">This section all assumes that only one Sort Method can be active at a time, which is true in the current spec.  If that changes, this test will have to change.</p>
+   <p name="bug">View-Sort Methods Wrong Sort Method(s) checked</p>
+  </step>
+
+  <step name="1.2" link="Bug">
+   Check the record order in the current view.
+   <r>
+<ul>
+<li>The records should be sorted in the newly selected sort order.</li>
+	<li>In Browse View and Document View this is obvious.</li>
+	<li>In Data Entry View, the only change should be the first number on the right of the status bar, e.g. <b>2</b>/8).</li>
+</ul>
+</r>
+   <p name="Note">The second number may change depending on sort settings like including subentries and sorting on a multi item field.</p>
+   <p name="bug">View-Sort Methods Records incorrectly sorted</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+   Inspect the status bar. (If it is turned off, turn it on via the View menu.)
+   <r>
+<ul>
+<li>The third panel in the status bar displays the word "Sorted" with a green background.</li>
+	<li>The second panel in the status bar shows the value in the current record of the field that is now being sorted on.</li>
+</ul>
+</r>
+   <p name="bug">View-Sort Methods "Sorted" does not appear</p>
+   <p name="bug">View-Sort Methods Wrong/no data in second panel</p>
+  </step>
+
+  <step name="1.4" link="Bug">
+   Hover the mouse over the third panel in the status bar.
+   <r>A temporary balloon shows the name of the current sort method.</r>
+   <p name="bug">View-Sort Methods Balloon does not appear</p>
+   <p name="bug">View-Sort Methods Wrong info in balloon</p>
+  </step>
+
+  <step name="1.5" link="Bug">
+   Inspect the Side Bar's Sort Methods section.
+   <r>The depressed sort method in the view bar is the same as the one that's checked in the menu.</r>
+   <p name="bug">View-Sort Methods Wrong sort method depressed</p>
+  </step>
+
+  <step name="1.6" link="Bug">
+   Click on a sort method in the side bar and inspect the View-Sort Methods submenu.
+   <r>The sort method depressed in the view bar is now also checked in the menu.</r>
+   <p name="bug">View-Sort Methods Wrong sort method depressed</p>
+  </step>
+ </case>
+
+ <case id="vsmDef" num="2" order="any">
+  <title tag="vsmDef">Default Sort</title>
+  <context>
+<p>Select 'Default Sort' from the View-Sort Methods submenu. Then</p>
+</context>
+
+  <step name="2.1" link="Bug">
+   Inspect the View-Sort Methods submenu.
+   <r>
+<ul>
+<li>Default Sort is checked.</li>
+	<li>All other items are unchecked.</li>
+</ul>
+</r>
+   <p name="bug">View-Sort Methods Wrong sort order(s) checked</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+   Check the record order in the current view.
+   <r>
+<ul>
+<li>The records are sorted in the default sort order (i.e., the primary sort field is Date Created, and the secondary sort field is Title, normal order sequence).</li>
+	<li>In Browse View and Document View this is obvious.</li>
+	<li>In Data Entry View, the only change should be the first number on the right of the status bar, e.g. <b>2</b>/8).</li>
+</ul>
+</r>
+   <p name="Note">The second number may change depending on sort settings like including subentries and sorting on a multi item field.</p>
+  <p name="bug">
+</p>
+  </step>
+
+  <step name="2.3" link="Bug">
+   Inspect the status bar.
+   <r>The second and third fields are blank.</r>
+   <p name="bug">View-Sort Methods Second and third fields not blank</p>
+  </step>
+
+  <step name="2.4" link="Bug">
+   Hover the mouse over the third panel in the status bar.
+   <r>Nothing happens.</r>
+   <p name="bug">View-Sort Methods Something happens</p>
+  </step>
+
+  <step name="2.5" link="Bug">
+   Inspect the Side Bar's Sort Methods section.
+   <r>
+<ul>
+<li>Default Sort is depressed in the view bar.</li>
+	<li>No other sort methods are depressed.</li>
+</ul>
+</r>
+   <p name="bug">View-Sort Methods Wrong sort methods(s) depressed</p>
+  </step>
+
+  <step name="2.6" link="Bug">
+   Click on a sort method in the side bar.
+   <r>The sort method is depressed in the side bar.</r>
+   <p name="bug">View-Sort Methods Wrong sort methods(s) depressed</p>
+  </step>
+ </case>
+
+
+ <update date="Sep-28-01" author="MikeL">Test created.</update>
+ <update date="Mar-22-01" author="JanetW">Test updated.</update>
+ <update date="May-15-01" author="JanetW">Test converted to XML.</update>
+ <update date="Jul-13-01" author="MikeL">Made minimal changes to merge with FW library.</update>
+ <update date="Jul-26-02" author="RussD">Updated to conform with specs</update>
+
+</test>

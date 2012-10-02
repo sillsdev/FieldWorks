@@ -1,0 +1,33 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: NetworkTreeView.rc
+Responsibility: John Wimbish
+Last reviewed: Not yet.
+
+Description:
+	Resources for the NetworkTreeView (a tree control for showing the network neighborhood).
+-------------------------------------------------------------------------------*//*:End Ignore*/
+#include "..\..\Widgets\Res\NetworkTreeViewRes.h"
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+// Images for the Network Tree Control
+kridImagesNetwork  BITMAP DISCARDABLE "..\..\Widgets\Res\NetworkImages.bmp"
+
+// Strings for the Network Tree Control
+STRINGTABLE DISCARDABLE
+BEGIN
+	kridNetNeighboorhood        "Network Neighborhood"
+	kridNetEntireNetwork        "Entire Network"
+	kridNetWindowsNetwork       "Microsoft Windows Network"
+END
+
+#endif    // English (U.S.) resources

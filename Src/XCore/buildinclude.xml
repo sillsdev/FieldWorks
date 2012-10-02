@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+	<if test="${platform::is-unix()}">
+	<copy todir="${dir.buildOutput}">
+	  <fileset>
+		<include name="${fwroot}/DistFiles/Linux/webkit-sharp.dll"/>
+		<include name="${fwroot}/DistFiles/Linux/webkit-sharp.dll.config"/>
+	  </fileset>
+	</copy>
+	</if>
+  </pre-build>
+</include>

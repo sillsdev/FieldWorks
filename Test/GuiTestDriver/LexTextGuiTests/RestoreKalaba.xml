@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!--  -->
+
+<accil on-fail="assert">
+
+	<goal>Restores Kalaba from a backup file</goal>
+
+   <bug id="LT-8862" desc="Crash at end of restore"/>
+
+<!-- This Restores Kalaba from a backup file and sets it up to run the tests -->
+	<var id="OpenProject" set="Kalaba"/>
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency = "500" duration = "500"/>
+
+	<on-application run = "ok" args = "-db $projectName" close = "no" on-fail = "assert">
+
+   <click log="all" select="menubar/file/project-management/backup-and-restore"/>
+   <on-dialog select="backup-and-restore/restore">
+	 <click select="tab"/>
+	 <click select="restore-from/text"/>
+	 <insert wait="500">{END}</insert>
+	 <insert wait="500">+{HOME}</insert>
+	 <insert wait="500">C:\GuiTestDriver\</insert>
+	 <!--click select="restore-from/browse" won't click this /-->
+	 <insert wait="500">{TAB}~</insert>
+	 <!--click path="$ok" won't click this /-->
+	 <insert wait="500">{TAB}~</insert>
+
+	 <insert>%P</insert><!-- Project -->
+	 <click select="project/drop"/>
+	 <insert wait="1000">{PGDN }</insert><!-- Project -->
+	 <insert wait="1000">{PGDN }</insert><!-- Project -->
+	 <hover-over wait="1000" select="project/list" path="$OpenProject"/>
+	 <click wait="1000" select="project/list" path="$OpenProject"/>
+	 <insert wait="5000">%V</insert> <!-- go to Version but wait for scrolling to the previous click -->
+	 <insert>^{END}</insert>
+	 <insert>%S</insert>
+	 <do-once until="5000" on-fail="skip">
+		<on-dialog until="500" title="Restore Options" on-fail="skip">
+		  <insert>{DOWN}~</insert>
+		</on-dialog>
+		<on-dialog until="500" title="FieldWorks Backup System" on-fail="skip">
+			<click path="$ok"/>
+		</on-dialog>
+	 </do-once>
+   </on-dialog>
+
+   <do-once until="60000" waiting-for="$OpenProject;$FlexSig" on-fail="skip">
+	  <on-dialog until="500" title="Characters within words" on-fail="skip">
+		  <click path="$no"/>
+	  </on-dialog>
+   </do-once>
+
+ </on-application>
+
+   <sound frequency = "700" duration = "500"/>
+
+   <on-application args='-app Flex -proj "C:\GuiTestDriver\$OpenProject;.xml" -db XML' run="yes" close="no" on-fail="assert">
+	  <click wait="10000" id="clkLexEdNotSel" select="sidebar/list" path="Lexicon Edit"/>
+	  <glimpse id="LexEdNotSel" select="sidebar/list" path="Lexicon Edit" prop="selected"/>
+   </on-application>
+
+</accil>

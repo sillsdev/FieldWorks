@@ -1,0 +1,26 @@
+<!-- ScrBookRef.dtd -->
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this DTD must be accompanied by the generation of a new DTDVer using guidgen.
+	The DTD version should be changed below and in ScrBookRef.xml and TeScrBookRefsInit.cs.
+	TE will only work with files having the DTD version for which it was created.
+	TE must be modified and recompiled to process a file having an updated DTD. Field personnel
+	who do not have the capability to rebuild the software should not modify this file.
+	*********************************************************************************************
+-->
+<!ELEMENT ScrBookRef ( writingsystem+ ) >
+<!ATTLIST ScrBookRef DTDver (6CFDEBDD-FF59-4b4d-8E58-9228B8319E0C) #REQUIRED
+	date CDATA #REQUIRED
+	version CDATA #REQUIRED >
+
+<!ELEMENT book EMPTY >
+<!ATTLIST book SILBookId (GEN | EXO | LEV | NUM | DEU | JOS | JDG | RUT | 1SA | 2SA | 1KI | 2KI | 1CH | 2CH |
+	EZR | NEH | EST | JOB | PSA | PRO | ECC | SNG | ISA | JER | LAM | EZK | DAN | HOS | JOL | AMO | OBA |
+	JON | MIC | NAM | HAB | ZEP | HAG | ZEC | MAL | MAT | MRK | LUK | JHN | ACT | ROM | 1CO | 2CO | GAL |
+	EPH | PHP | COL | 1TH | 2TH | 1TI | 2TI | TIT | PHM | HEB | JAS | 1PE | 2PE | 1JN | 2JN | 3JN | JUD | REV) #REQUIRED
+	Name CDATA #REQUIRED
+	Abbreviation CDATA #REQUIRED
+	AlternateName CDATA #REQUIRED >
+
+<!ELEMENT writingsystem ( book+ ) >
+<!ATTLIST writingsystem xml:lang CDATA #REQUIRED >

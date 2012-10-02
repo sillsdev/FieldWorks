@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for Content Navigation combo box
+	 This is a start any way!
+-->
+
+<accil on-fail="assert">
+	<on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+		<click path="tray:Views" />
+		<click path="button:Draft" />
+		<select-text id="before" path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21" />
+		<!--click path="toolbar:toolBarFwStandard/button:6/list:Jude/list:14" / no more exists-->
+		<!-- where is the IP? -->
+	</on-application>
+</accil>

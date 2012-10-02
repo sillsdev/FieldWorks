@@ -1,0 +1,121 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xWorks", "..\..\..\Src\xWorks\xWorks.csproj", "{86B57733-A74B-43F1-863F-31A39E60F120}"
+	ProjectSection(ProjectDependencies) = postProject
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317} = {131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}
+		{511ACFDE-4010-4BA8-A717-4096C97670E9} = {511ACFDE-4010-4BA8-A717-4096C97670E9}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIAdapters", "..\UIAdapters\DotNetBarAdapter\UIAdapters.csproj", "{1B1BC7F4-3A87-485C-B0A8-84947821E55A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E44F49EA-789A-4C28-B029-F6255B7390F3} = {E44F49EA-789A-4C28-B029-F6255B7390F3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xCoreOpenSourceAdapter", "..\..\..\Src\XCore\xCoreOpenSourceAdapter\xCoreOpenSourceAdapter.csproj", "{FF4CE3EC-DD8B-43F1-B4AE-9D794EED93D7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E44F49EA-789A-4C28-B029-F6255B7390F3} = {E44F49EA-789A-4C28-B029-F6255B7390F3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xCoreInterfaces", "..\..\..\Src\XCore\xCoreInterfaces\xCoreInterfaces.csproj", "{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBarAdapter", "DotNetBarAdapter.csproj", "{511ACFDE-4010-4BA8-A717-4096C97670E9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317} = {131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}
+		{E44F49EA-789A-4C28-B029-F6255B7390F3} = {E44F49EA-789A-4C28-B029-F6255B7390F3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xCoreInterfacesTests", "..\..\..\Src\XCore\xCoreInterfaces\xCoreInterfacesTests\xCoreInterfacesTests.csproj", "{E44F49EA-789A-4C28-B029-F6255B7390F3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317} = {131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xCore", "..\..\..\Src\XCore\xCore.csproj", "{FA1C6692-C63F-4022-82F6-4130E4C88211}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xCoreTests", "..\..\..\Src\XCore\xCoreTests\xCoreTests.csproj", "{12A16FBF-04C4-43C5-91C3-27006F39C2E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FdoUi", "..\..\..\Src\FdoUi\FdoUi.csproj", "{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 6
+		SccProjectUniqueName0 = ..\\..\\..\\Src\\xWorks\\xWorks.csproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..\\..\\..
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection0 = Src\\xWorks\\
+		SccProjectUniqueName1 = ..\\..\\..\\Src\\XCore\\xCoreOpenSourceAdapter\\xCoreOpenSourceAdapter.csproj
+		SccProjectName1 = Perforce\u0020Project
+		SccLocalPath1 = ..\\..\\..
+		SccProvider1 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection1 = Src\\XCore\\xCoreOpenSourceAdapter\\
+		SccProjectUniqueName2 = ..\\..\\..\\Src\\XCore\\xCoreInterfaces\\xCoreInterfaces.csproj
+		SccProjectName2 = Perforce\u0020Project
+		SccLocalPath2 = ..\\..\\..
+		SccProvider2 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection2 = Src\\XCore\\xCoreInterfaces\\
+		SccProjectUniqueName3 = ..\\..\\..\\Src\\XCore\\xCore.csproj
+		SccProjectName3 = Perforce\u0020Project
+		SccLocalPath3 = ..\\..\\..
+		SccProvider3 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection3 = Src\\XCore\\
+		SccProjectUniqueName4 = ..\\..\\..\\Src\\XCore\\xCoreTests\\xCoreTests.csproj
+		SccProjectName4 = Perforce\u0020Project
+		SccLocalPath4 = ..\\..\\..
+		SccProvider4 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection4 = Src\\XCore\\xCoreTests\\
+		SccProjectUniqueName5 = ..\\..\\..\\Src\\FdoUi\\FdoUi.csproj
+		SccProjectName5 = Perforce\u0020Project
+		SccLocalPath5 = ..\\..\\..
+		SccProvider5 = MSSCCI:Perforce\u0020SCM
+		SccProjectFilePathRelativizedFromConnection5 = Src\\FdoUi\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Bounds|Any CPU = Bounds|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86B57733-A74B-43F1-863F-31A39E60F120}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{86B57733-A74B-43F1-863F-31A39E60F120}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{86B57733-A74B-43F1-863F-31A39E60F120}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86B57733-A74B-43F1-863F-31A39E60F120}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1BC7F4-3A87-485C-B0A8-84947821E55A}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1BC7F4-3A87-485C-B0A8-84947821E55A}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{1B1BC7F4-3A87-485C-B0A8-84947821E55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1BC7F4-3A87-485C-B0A8-84947821E55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4CE3EC-DD8B-43F1-B4AE-9D794EED93D7}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4CE3EC-DD8B-43F1-B4AE-9D794EED93D7}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{FF4CE3EC-DD8B-43F1-B4AE-9D794EED93D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4CE3EC-DD8B-43F1-B4AE-9D794EED93D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{131AD5C0-01C5-4FCA-AE66-D9BA0EF9E317}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{511ACFDE-4010-4BA8-A717-4096C97670E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E44F49EA-789A-4C28-B029-F6255B7390F3}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{E44F49EA-789A-4C28-B029-F6255B7390F3}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{E44F49EA-789A-4C28-B029-F6255B7390F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E44F49EA-789A-4C28-B029-F6255B7390F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1C6692-C63F-4022-82F6-4130E4C88211}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1C6692-C63F-4022-82F6-4130E4C88211}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{FA1C6692-C63F-4022-82F6-4130E4C88211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1C6692-C63F-4022-82F6-4130E4C88211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A16FBF-04C4-43C5-91C3-27006F39C2E5}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{12A16FBF-04C4-43C5-91C3-27006F39C2E5}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{12A16FBF-04C4-43C5-91C3-27006F39C2E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A16FBF-04C4-43C5-91C3-27006F39C2E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}.Bounds|Any CPU.ActiveCfg = Release|Any CPU
+		{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}.Bounds|Any CPU.Build.0 = Release|Any CPU
+		{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B119B65-DD6F-4AFB-BBA3-682DC084FB33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!--
+		  Often used variables for the Grammar tools
+   -->
+
+  <var id="menuGRAMMAR" set="$menuVIEW;menu:Grammar/"/>
+
+  <!-- Category Edit -->
+  <var id="insGrmCat" set="$INSERT;43:Category (or Part of Speech)"/>
+  <var id="grmCeEDIT" set="$singlePANE;9:advancedEdit/9:RecordEditView.DataTree/"/>
+  <var id="grmCeTABLE" set="$grmCeEDIT;9:custom/9:SplitContainer/9:Panel2/20:Table/20:Div/24:Table/"/>
+
+  <var id="gmCeField" set="$grmCeEDIT;9:multistring[*]/9:SplitContainer/9:Panel2/20:"/>
+  <!-- gmCeField prepends to any gmCe field. No way to distinguish duplicates like Description except by index -->
+  <var id="gmCeName" set="$gmCeField;Name/$Text"/>
+  <var id="gmCeAbbr" set="$gmCeField;Abbreviation/$Text"/>
+  <var id="gmCeDesc" set="$gmCeField;Description/$Text"/>
+  <var id="gmCeSection" set="$grmCeEDIT;9:summary[*]/9:SplitContainer/9:Panel2/9:Slice_unknown/20:Root/$Text;/value:"/>
+   <!-- path="$gmCeSection;Subcategories" or Affix Templates, Affix Slots, Inflection Class Info, Features, Stem Names -->
+  <var id="gmCeAfxTmpl" set="$gmCeSection;Affix Templates"/>
+  <!-- usually followed by <insert>{DOWN}~</insert>< Create affix template -->
+  <!-- template header -->
+  <var id="grmCeHeader" set="$grmCeEDIT;9:custom/9:SplitContainer/9:Panel2/20:Table/20:Div/24:Table/$Col"/>
+  <!-- the second template header -->
+  <var id="grmCeHeader2" set="$grmCeEDIT;9:custom[2]/9:SplitContainer/9:Panel2/20:Table/20:Div/24:Table/$Col"/>
+
+  <var id="crInfAfx" set=" Create new inflectional affix "/>
+  <var id="grmCeNewInfAfx" set="9:$crInfAfx;/41:$crInfAfx;/30:$crInfAfx"/>
+  <var id="obSlot" set="rexp#Add an obligatory slot to"/>
+  <var id="opSlot" set="rexp#Add an optional slot to"/>
+  <var id="addObSlot" set="9:$obSlot;/41:$obSlot;/30:$obSlot"/>
+  <var id="addOpSlot" set="9:$opSlot;/41:$opSlot;/30:$opSlot"/>
+  <var id="customCat" set="The category I need is not in the catalog. Create a custom category"/>
+  <var id="grmCeCustCat" set="9:$customCat;/41:$customCat;/30:$customCat"/>
+
+  <!-- Category Browse -->
+  <var id="grmCatBrCols" set="$singlePANE;9:POSList/9:POSList/$nl"/>
+  <var id="grmCatBrFilter" set="$grmCatBrCols;/9:FilterBar/9:FwComboBox"/>
+  <var id="grmCatBrHEADER" set="$grmCatBrCols;/9:HeaderListView/33:HeaderListView/$NL"/>
+  <var id="grmCatBrColName" set="$grmCatBrHEADER;25:Name"/>
+  <var id="grmCatBrRow" set="$grmCatBrCols;/grp:RootSite/24:Table"/>
+  <var id="grmCatBrPgUp" set="$grmCatBrCols;[2]/43:Page up"/>
+  <var id="grmCatBrPgDn" set="$grmCatBrCols;[2]/43:Page down"/>
+
+  <!-- Compound Rules -->
+  <var id="insGrmCrHc" set="$INSERT;43:Headed Compound"/>
+  <var id="insGrmCrNc" set="$INSERT;43:Non-headed Compound"/>
+
+  <var id="grmCrPANE" set="$multiBROWSE"/>
+  <var id="grmCrCols" set="$grmCrPANE;9:CompoundRuleList/9:CompoundRuleList/$nl"/>
+  <var id="grmCrRec" set="$grmCrCols;/20:RootSite/24:Table"/>
+  <var id="grmCrEDIT" set="$multiEDIT;9:advancedEdit/9:RecordEditView.DataTree/"/>
+  <var id="grmCrName" set="$grmCrEDIT;9:multistring/9:SplitContainer/9:Panel2/20:Name"/>
+  <var id="grmCrDesc" set="$grmCrEDIT;9:multistring[*]/9:SplitContainer/9:Panel2/20:Description"/>
+  <var id="grmCrLmcBtn" set="$grmCrEDIT;9:atomicreferencepos/9:SplitContainer/9:Panel2/9:Category/$NL;43:NAMELESS"/>
+ <var id="grmCrRmcBtn" set="$grmCrEDIT;9:atomicreferencepos[2]/9:SplitContainer/9:Panel2/9:Category/$NL;43:NAMELESS"/>
+  <var id="grmCrRhChk" set="$grmCrEDIT;9:checkbox/9:SplitContainer/9:Panel2/9:Right Headed/44:Right Headed"/>
+
+  <!-- Phonemes -->
+  <var id="insGrmPh" set="$INSERT;43:Phoneme"/>
+  <var id="grmPhEDIT" set="$multiEDIT;9:edit/9:RecordEditView.DataTree/"/>
+  <var id="grmPhCols" set="$multiBROWSE;9:PhonemeList/9:PhonemeList/$nl"/>
+  <var id="grmPhRec" set="$grmPhCols;/20:RootSite/24:Table"/>
+
+  <!-- Natural Classes -->
+  <var id="insGrmNc" set="$INSERT;43:Natural Class"/>
+  <var id="grmNcEDIT" set="$multiEDIT;9:RecordEditView/9:RecordEditView.DataTree/"/>
+  <var id="grmNcCols" set="$multiBROWSE;9:NaturalClassList/9:NaturalClassList/$nl"/>
+  <var id="grmNcRec" set="$grmNcCols;/20:RootSite/table:Table"/>
+
+  <!-- Environments -->
+  <var id="grmEnEDIT" set="$multiEDIT;9:RecordEditView/9:RecordEditView.DataTree/"/>
+  <var id="gmEnName" set="$grmEnEDIT;9:multistring[*]/9:SplitContainer/9:Panel2/20:Name/$Text"/>
+  <var id="gmEnDesc" set="$grmEnEDIT;9:multistring[*]/9:SplitContainer/9:Panel2/20:Description/$Text"/>
+  <var id="grmEnCols" set="$multiBROWSE;9:EnvironmentList/9:EnvironmentList/$nl"/>
+  <var id="grmEnRec" set="$grmEnCols;/20:RootSite/24:Table"/>
+
+  <!-- Ad hoc Rules -->
+  <var id="insGrmAhmr" set="$INSERT;43:Rule to prevent morpheme co-occurrence"/>
+  <var id="insGrmAhar" set="$INSERT;43:Rule to prevent allomorph co-occurrence"/>
+  <var id="insGrmAhgr" set="$INSERT;43:Group of ad hoc rules"/>
+  <var id="grmArEDIT" set="$multiEDIT;9:RecordEditView/9:RecordEditView.DataTree/"/>
+  <var id="grmArCols" set="$multiBROWSE;9:AdhocCoprohibList/9:AdhocCoprohibList/$nl"/>
+  <var id="grmArRec" set="$grmArCols;/20:RootSite/24:Table"/>
+
+  <!-- Features -->
+  <var id="insGrmFe" set="$INSERT;43:Feature"/>
+  <var id="grmFeEDIT" set="$multiEDIT;9:RecordEditView/9:RecordEditView.DataTree/"/>
+
+  <!-- Exception "Features" -->
+  <var id="insGrmEf" set="$INSERT;43:Exception &quot;Feature&quot;"/>
+  <var id="grmEfEDIT" set="$multiEDIT;9:advancedEdit/9:RecordEditView.DataTree/"/>
+  <var id="grmEfCols" set="$multiBROWSE;9:ProductivityRestrictionsList/9:ProductivityRestrictionsList/$nl"/>
+  <var id="grmEfRec" set="$grmEfCols;/grp:RootSite/table:Table"/>
+
+  <!-- Grammar Sketch-->
+  <var id="grmSK" set="$APP;9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:FxtViewer/"/>
+  <var id="Generate" set="$grmSK;9:panelTop/9:btnGenerate/43:btnGenerate"/><!-- Grammar Generate button -->
+  <var id="grmSkPanel" set="$grmSK;9:panelBottom/9:HtmlControl/9:SHDocVw.WebBrowser_V1"/>
+
+</include>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xml" type="configured" datatype="ExportedNotebook" xslt="Configured.xsl">
+	<FxtDocumentDescription dataLabel="Configured Notebook" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">Export to XML following the configuration of the document view, and any current filters and sorts.</FxtDocumentDescription>
+</template>

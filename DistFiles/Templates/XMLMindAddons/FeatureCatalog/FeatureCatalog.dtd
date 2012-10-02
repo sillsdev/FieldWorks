@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD for Master Gloss List data
+	 G. Simons, 25 Sept 2002
+	 Modifed by A. Black 08 Nov 2002
+	 Revised 12 Sep 2005
+	 Revised for XMLmind 17 Apr 2006 -->
+<!ELEMENT FeatureCatalog (item+)>
+<!ATTLIST FeatureCatalog
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT item (Languages, item*)>
+<!ATTLIST item
+	id ID #IMPLIED
+	status (visible | hidden) #IMPLIED
+	type (fsType | complex | feature | value | group | deriv | xref) #REQUIRED
+	target IDREF #IMPLIED
+	embed IDREFS #IMPLIED
+	append IDREF #IMPLIED
+	carry (yes | no) #IMPLIED
+	posid CDATA #IMPLIED
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT Abbreviation (#PCDATA)>
+<!ELEMENT Citation (#PCDATA)>
+<!ELEMENT Citations (Citation*)>
+<!ELEMENT Description (#PCDATA)>
+<!ELEMENT LangCode (#PCDATA)>
+<!ELEMENT Language (LangCode, Name, Abbreviation, Description, Citations)>
+<!ELEMENT Languages (Language+)>
+<!ELEMENT Name (#PCDATA)>

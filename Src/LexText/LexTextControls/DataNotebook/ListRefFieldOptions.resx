@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="m_chkDelimMultiEnable.AccessibleName" xml:space="preserve">
+	<value>chkDelimMultiEnable</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_chkDelimMultiEnable.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_chkDelimMultiEnable.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 35</value>
+  </data>
+  <data name="m_chkDelimMultiEnable.Size" type="System.Drawing.Size, System.Drawing">
+	<value>230, 17</value>
+  </data>
+  <data name="m_chkDelimMultiEnable.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_chkDelimMultiEnable.Text" xml:space="preserve">
+	<value>Delimiters indicating multiple items on a line:</value>
+  </data>
+  <metadata name="m_toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_chkDelimMultiEnable.ToolTip" xml:space="preserve">
+	<value>If selected, you can enter character(s) that separate multiple items within a field.</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimMultiEnable.Name" xml:space="preserve">
+	<value>m_chkDelimMultiEnable</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimMultiEnable.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimMultiEnable.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimMultiEnable.ZOrder" xml:space="preserve">
+	<value>22</value>
+  </data>
+  <data name="m_chkDelimSubEnable.AccessibleName" xml:space="preserve">
+	<value>chkDelimSubEnable</value>
+  </data>
+  <data name="m_chkDelimSubEnable.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkDelimSubEnable.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 59</value>
+  </data>
+  <data name="m_chkDelimSubEnable.Size" type="System.Drawing.Size, System.Drawing">
+	<value>166, 17</value>
+  </data>
+  <data name="m_chkDelimSubEnable.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_chkDelimSubEnable.Text" xml:space="preserve">
+	<value>Delimiters indicating subitems:</value>
+  </data>
+  <data name="m_chkDelimSubEnable.ToolTip" xml:space="preserve">
+	<value>If selected, you can enter character(s) that cause the importer to recognize the hierarchical considerations.</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimSubEnable.Name" xml:space="preserve">
+	<value>m_chkDelimSubEnable</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimSubEnable.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimSubEnable.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkDelimSubEnable.ZOrder" xml:space="preserve">
+	<value>21</value>
+  </data>
+  <data name="m_chkBetweenEnable.AccessibleName" xml:space="preserve">
+	<value>chkBetweenEnable</value>
+  </data>
+  <data name="m_chkBetweenEnable.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkBetweenEnable.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 83</value>
+  </data>
+  <data name="m_chkBetweenEnable.Size" type="System.Drawing.Size, System.Drawing">
+	<value>154, 17</value>
+  </data>
+  <data name="m_chkBetweenEnable.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_chkBetweenEnable.Text" xml:space="preserve">
+	<value>Only consider text between</value>
+  </data>
+  <data name="m_chkBetweenEnable.ToolTip" xml:space="preserve">
+	<value>If selected, you can enter pairs of characters that mark the beginning and end of list item names (or abbreviations) within a field item.</value>
+  </data>
+  <data name="&gt;&gt;m_chkBetweenEnable.Name" xml:space="preserve">
+	<value>m_chkBetweenEnable</value>
+  </data>
+  <data name="&gt;&gt;m_chkBetweenEnable.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkBetweenEnable.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkBetweenEnable.ZOrder" xml:space="preserve">
+	<value>20</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.AccessibleName" xml:space="preserve">
+	<value>chkOnlyBeforeEnable</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 107</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.Size" type="System.Drawing.Size, System.Drawing">
+	<value>143, 17</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.Text" xml:space="preserve">
+	<value>Only consider text before</value>
+  </data>
+  <data name="m_chkOnlyBeforeEnable.ToolTip" xml:space="preserve">
+	<value>If selected, you can enter character(s) after which the data (in a given item) is not imported.</value>
+  </data>
+  <data name="&gt;&gt;m_chkOnlyBeforeEnable.Name" xml:space="preserve">
+	<value>m_chkOnlyBeforeEnable</value>
+  </data>
+  <data name="&gt;&gt;m_chkOnlyBeforeEnable.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkOnlyBeforeEnable.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkOnlyBeforeEnable.ZOrder" xml:space="preserve">
+	<value>19</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.AccessibleName" xml:space="preserve">
+	<value>chkDiscardNewStuff</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 131</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.Size" type="System.Drawing.Size, System.Drawing">
+	<value>238, 17</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.Text" xml:space="preserve">
+	<value>Throw away everything not already in the list.</value>
+  </data>
+  <data name="m_chkDiscardNewStuff.ToolTip" xml:space="preserve">
+	<value>If selected, only items that already exist in the target list will be imported.  All other items in the source data are discarded.</value>
+  </data>
+  <data name="&gt;&gt;m_chkDiscardNewStuff.Name" xml:space="preserve">
+	<value>m_chkDiscardNewStuff</value>
+  </data>
+  <data name="&gt;&gt;m_chkDiscardNewStuff.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkDiscardNewStuff.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_chkDiscardNewStuff.ZOrder" xml:space="preserve">
+	<value>18</value>
+  </data>
+  <data name="m_tbBetweenAfter.AccessibleName" xml:space="preserve">
+	<value>tbBetweenAfter</value>
+  </data>
+  <data name="m_tbBetweenAfter.Location" type="System.Drawing.Point, System.Drawing">
+	<value>170, 83</value>
+  </data>
+  <data name="m_tbBetweenAfter.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbBetweenAfter.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_tbBetweenAfter.ToolTip" xml:space="preserve">
+	<value>If active, the initial marker character(s).  If more than one such character or character sequence exists, they are separated by spaces.</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenAfter.Name" xml:space="preserve">
+	<value>m_tbBetweenAfter</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenAfter.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenAfter.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenAfter.ZOrder" xml:space="preserve">
+	<value>17</value>
+  </data>
+  <data name="m_tbOnlyBefore.AccessibleName" xml:space="preserve">
+	<value>tbOnlyBefore</value>
+  </data>
+  <data name="m_tbOnlyBefore.Location" type="System.Drawing.Point, System.Drawing">
+	<value>170, 107</value>
+  </data>
+  <data name="m_tbOnlyBefore.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbOnlyBefore.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_tbOnlyBefore.ToolTip" xml:space="preserve">
+	<value>If active, the "end of item" marker character(s).  If more than one such character or character sequence exists, they are separated by spaces.</value>
+  </data>
+  <data name="&gt;&gt;m_tbOnlyBefore.Name" xml:space="preserve">
+	<value>m_tbOnlyBefore</value>
+  </data>
+  <data name="&gt;&gt;m_tbOnlyBefore.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbOnlyBefore.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbOnlyBefore.ZOrder" xml:space="preserve">
+	<value>16</value>
+  </data>
+  <data name="m_tbDelimMulti.AccessibleName" xml:space="preserve">
+	<value>tbDelimMulti</value>
+  </data>
+  <data name="m_tbDelimMulti.Location" type="System.Drawing.Point, System.Drawing">
+	<value>270, 35</value>
+  </data>
+  <data name="m_tbDelimMulti.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbDelimMulti.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_tbDelimMulti.ToolTip" xml:space="preserve">
+	<value>If active, the character(s) that delimit multiple items within a field. If more than one such character or character sequence exists, they are separated by spaces.</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimMulti.Name" xml:space="preserve">
+	<value>m_tbDelimMulti</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimMulti.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimMulti.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimMulti.ZOrder" xml:space="preserve">
+	<value>15</value>
+  </data>
+  <data name="m_tbDelimSub.AccessibleName" xml:space="preserve">
+	<value>tbLRFDelimSub</value>
+  </data>
+  <data name="m_tbDelimSub.Location" type="System.Drawing.Point, System.Drawing">
+	<value>270, 59</value>
+  </data>
+  <data name="m_tbDelimSub.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbDelimSub.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_tbDelimSub.ToolTip" xml:space="preserve">
+	<value>If active, the hierarchical delimiter character(s).  If more than one such character or character sequence exists, they are separated by spaces.</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimSub.Name" xml:space="preserve">
+	<value>m_tbDelimSub</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimSub.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimSub.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbDelimSub.ZOrder" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <data name="m_tbBetweenBefore.AccessibleName" xml:space="preserve">
+	<value>tbBetweenBefore</value>
+  </data>
+  <data name="m_tbBetweenBefore.Location" type="System.Drawing.Point, System.Drawing">
+	<value>270, 83</value>
+  </data>
+  <data name="m_tbBetweenBefore.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 20</value>
+  </data>
+  <data name="m_tbBetweenBefore.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_tbBetweenBefore.ToolTip" xml:space="preserve">
+	<value>If active, the matching final marker character(s).  If more than one such character or character sequence exists, they are separated by spaces.</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenBefore.Name" xml:space="preserve">
+	<value>m_tbBetweenBefore</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenBefore.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenBefore.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbBetweenBefore.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <data name="m_lblAnd.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblAnd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>240, 85</value>
+  </data>
+  <data name="m_lblAnd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>25, 13</value>
+  </data>
+  <data name="m_lblAnd.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="m_lblAnd.Text" xml:space="preserve">
+	<value>and</value>
+  </data>
+  <data name="m_lblAnd.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnd.Name" xml:space="preserve">
+	<value>m_lblAnd</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnd.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnd.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="m_lvSubstitutions.AccessibleName" xml:space="preserve">
+	<value>lvSubstitutions</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lvSubstitutions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left</value>
+  </data>
+  <data name="columnHeader1.Text" xml:space="preserve">
+	<value>Your Data</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+	<value>164</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+	<value>Becomes</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+	<value>164</value>
+  </data>
+  <data name="m_lvSubstitutions.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 239</value>
+  </data>
+  <data name="m_lvSubstitutions.Size" type="System.Drawing.Size, System.Drawing">
+	<value>333, 110</value>
+  </data>
+  <data name="m_lvSubstitutions.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_lvSubstitutions.ToolTip" xml:space="preserve">
+	<value>This pane and the associated buttons allow you to search for and substitute (or delete) text.</value>
+  </data>
+  <data name="&gt;&gt;m_lvSubstitutions.Name" xml:space="preserve">
+	<value>m_lvSubstitutions</value>
+  </data>
+  <data name="&gt;&gt;m_lvSubstitutions.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lvSubstitutions.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lvSubstitutions.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_lblTextChanges.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lblTextChanges.Location" type="System.Drawing.Point, System.Drawing">
+	<value>1, 222</value>
+  </data>
+  <data name="m_lblTextChanges.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 13</value>
+  </data>
+  <data name="m_lblTextChanges.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="m_lblTextChanges.Text" xml:space="preserve">
+	<value>Text changes:</value>
+  </data>
+  <data name="&gt;&gt;m_lblTextChanges.Name" xml:space="preserve">
+	<value>m_lblTextChanges</value>
+  </data>
+  <data name="&gt;&gt;m_lblTextChanges.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblTextChanges.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblTextChanges.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="m_btnAddSubst.AccessibleName" xml:space="preserve">
+	<value>btnAddSubst</value>
+  </data>
+  <data name="m_btnAddSubst.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnAddSubst.Location" type="System.Drawing.Point, System.Drawing">
+	<value>130, 355</value>
+  </data>
+  <data name="m_btnAddSubst.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 23</value>
+  </data>
+  <data name="m_btnAddSubst.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="m_btnAddSubst.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="m_btnAddSubst.ToolTip" xml:space="preserve">
+	<value>Add makes a new substitution.</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddSubst.Name" xml:space="preserve">
+	<value>m_btnAddSubst</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddSubst.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddSubst.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddSubst.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_btnModifySubst.AccessibleName" xml:space="preserve">
+	<value>btnModifySubst</value>
+  </data>
+  <data name="m_btnModifySubst.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnModifySubst.Location" type="System.Drawing.Point, System.Drawing">
+	<value>200, 355</value>
+  </data>
+  <data name="m_btnModifySubst.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 23</value>
+  </data>
+  <data name="m_btnModifySubst.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_btnModifySubst.Text" xml:space="preserve">
+	<value>&amp;Modify...</value>
+  </data>
+  <data name="m_btnModifySubst.ToolTip" xml:space="preserve">
+	<value>Modify allows you to change the selected substitution.</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifySubst.Name" xml:space="preserve">
+	<value>m_btnModifySubst</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifySubst.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifySubst.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifySubst.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_btnDeleteSubst.AccessibleName" xml:space="preserve">
+	<value>btnDeleteSubst</value>
+  </data>
+  <data name="m_btnDeleteSubst.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnDeleteSubst.Location" type="System.Drawing.Point, System.Drawing">
+	<value>270, 355</value>
+  </data>
+  <data name="m_btnDeleteSubst.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 23</value>
+  </data>
+  <data name="m_btnDeleteSubst.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="m_btnDeleteSubst.Text" xml:space="preserve">
+	<value>&amp;Delete</value>
+  </data>
+  <data name="m_btnDeleteSubst.ToolTip" xml:space="preserve">
+	<value>Delete removes the selected substitution.</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteSubst.Name" xml:space="preserve">
+	<value>m_btnDeleteSubst</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteSubst.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteSubst.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteSubst.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_tbDefaultValue.AccessibleName" xml:space="preserve">
+	<value>tbDefaultValue</value>
+  </data>
+  <data name="m_tbDefaultValue.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_tbDefaultValue.Location" type="System.Drawing.Point, System.Drawing">
+	<value>173, 153</value>
+  </data>
+  <data name="m_tbDefaultValue.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 20</value>
+  </data>
+  <data name="m_tbDefaultValue.TabIndex" type="System.Int32, mscorlib">
+	<value>17</value>
+  </data>
+  <data name="m_tbDefaultValue.ToolTip" xml:space="preserve">
+	<value>If active, the default value to use for empty fields.</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultValue.Name" xml:space="preserve">
+	<value>m_tbDefaultValue</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultValue.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultValue.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbDefaultValue.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_lblDefault.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_lblDefault.Location" type="System.Drawing.Point, System.Drawing">
+	<value>2, 152</value>
+  </data>
+  <data name="m_lblDefault.Size" type="System.Drawing.Size, System.Drawing">
+	<value>170, 23</value>
+  </data>
+  <data name="m_lblDefault.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="m_lblDefault.Text" xml:space="preserve">
+	<value>Insert value in empty fields:</value>
+  </data>
+  <data name="m_lblDefault.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefault.Name" xml:space="preserve">
+	<value>m_lblDefault</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefault.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefault.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblDefault.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_rbMatchAbbr.AccessibleName" xml:space="preserve">
+	<value>rbMatchAbbr</value>
+  </data>
+  <data name="m_rbMatchAbbr.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_rbMatchAbbr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 179</value>
+  </data>
+  <data name="m_rbMatchAbbr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 17</value>
+  </data>
+  <data name="m_rbMatchAbbr.TabIndex" type="System.Int32, mscorlib">
+	<value>18</value>
+  </data>
+  <data name="m_rbMatchAbbr.Text" xml:space="preserve">
+	<value>Match list items against abbreviations</value>
+  </data>
+  <data name="m_rbMatchAbbr.ToolTip" xml:space="preserve">
+	<value>You can match imported items against either abbreviations or full names in the current list.</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchAbbr.Name" xml:space="preserve">
+	<value>m_rbMatchAbbr</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchAbbr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchAbbr.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchAbbr.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_rbMatchName.AccessibleName" xml:space="preserve">
+	<value>rbMatchName</value>
+  </data>
+  <data name="m_rbMatchName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_rbMatchName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 201</value>
+  </data>
+  <data name="m_rbMatchName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>184, 17</value>
+  </data>
+  <data name="m_rbMatchName.TabIndex" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="m_rbMatchName.Text" xml:space="preserve">
+	<value>Match list items against full names</value>
+  </data>
+  <data name="m_rbMatchName.ToolTip" xml:space="preserve">
+	<value>You can match imported items against either abbreviations or full names in the current list.</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchName.Name" xml:space="preserve">
+	<value>m_rbMatchName</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_rbMatchName.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_cbWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>100, 4</value>
+  </data>
+  <data name="m_cbWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>162, 21</value>
+  </data>
+  <data name="m_cbWritingSystem.TabIndex" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="m_cbWritingSystem.ToolTip" xml:space="preserve">
+	<value>Sets the writing system for this field.</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Name" xml:space="preserve">
+	<value>m_cbWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbWritingSystem.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_btnAddWritingSystem.AccessibleName" xml:space="preserve">
+	<value>btnAddWritingSystem</value>
+  </data>
+  <data name="m_btnAddWritingSystem.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnAddWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>267, 3</value>
+  </data>
+  <data name="m_btnAddWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 23</value>
+  </data>
+  <data name="m_btnAddWritingSystem.TabIndex" type="System.Int32, mscorlib">
+	<value>21</value>
+  </data>
+  <data name="m_btnAddWritingSystem.Text" xml:space="preserve">
+	<value>Add</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWritingSystem.Name" xml:space="preserve">
+	<value>m_btnAddWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWritingSystem.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.LexText.Controls.AddWritingSystemButton, LexTextControls, Version=6.1.1.18084, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWritingSystem.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddWritingSystem.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lblWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>1, 4</value>
+  </data>
+  <data name="m_lblWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>95, 21</value>
+  </data>
+  <data name="m_lblWritingSystem.TabIndex" type="System.Int32, mscorlib">
+	<value>22</value>
+  </data>
+  <data name="m_lblWritingSystem.Text" xml:space="preserve">
+	<value>Writing system:</value>
+  </data>
+  <data name="m_lblWritingSystem.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Name" xml:space="preserve">
+	<value>m_lblWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblWritingSystem.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>338, 382</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+	<value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+	<value>columnHeader2</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_toolTip.Name" xml:space="preserve">
+	<value>m_toolTip</value>
+  </data>
+  <data name="&gt;&gt;m_toolTip.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ListRefFieldOptions</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

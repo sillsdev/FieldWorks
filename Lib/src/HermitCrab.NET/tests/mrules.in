@@ -1,0 +1,14 @@
+;Test morpher rules.
+; Most of the tests are contained in separate files, which are loaded individually.
+(morpher_input_from_file message startup.in)
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))
+(morpher_input_from_file message morphsyn.in)
+(morpher_input_from_file message percolat.in)
+(morpher_input_from_file message rzrules.in)
+(morpher_input_from_file message suffix.in)
+(morpher_input_from_file message prefix.in)
+(morpher_input_from_file message infix.in)
+(morpher_input_from_file message simulfix.in)
+(morpher_input_from_file message redup.in)
+(morpher_input_from_file message truncate.in)

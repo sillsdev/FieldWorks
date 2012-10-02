@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!-- Adds and then Deletes a category -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="Kalaba"/>
+ <var id="toolsMenu" set="window:ParentOfMenuBar/window:MenuBar/menu:View /"/>
+ <var id="MenuBar2" set="9:The Window/9:ParentOfMenuBar/9:ParentOfMenuBar/2:MenuBar/"/>
+
+ <on-application log="all" run="yes" args="-db $projectName" on-fail="assert">
+
+	<click wait="200" path="$toolsMenu;menu:Grammar/menu:Category Edit"/>
+
+ <!-- See DemoF to see how to get to the category list. This won't work!!  -->
+	<click path="window:xWindow.mainPanel/window:xWindow.leftPanel/window:XCore.RecordBar/olitem:modifier"/>
+
+	<click wait="1000" path="$MenuBar2;menu:Insert"/>
+	<click path="$MenuBar2;menu:Insert/menu:Category"/>
+
+	<insert>^i</insert>
+	<on-dialog title="Add from Catalog" on-fail="assert">
+		<click wait="1000" path="window:Grammatical Category Catalog/outline:Grammatical Category Catalog/olitem:Emphatic pronoun"/>
+		<!-- click wait="1000" path="10:Add from Grammatical Category Catalog/9:Grammatical Categories/36:Emphatic pronoun"/-->
+
+		<click wait="1000" path="window:Add/button:Add"/>
+	</on-dialog>
+
+	<click path="window:xWindow.mainPanel/window:xWindow.leftPanel/window:XCore.RecordBar/olitem:Emphatic pronoun"/>
+	<click path="window:ParentOfMenuBar/window:Standard/toolbar:Standard/tray:Delete Record..."/>
+	<on-dialog title="Delete Category (or Part of Speech)" on-fail="assert">
+		<click wait="1000" path="window:Delete/button:Delete"/>
+	</on-dialog>
+
+ </on-application>
+</accil>
